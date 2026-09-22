@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Burnside
 /-!
 # Surjectivity detected by the Frattini quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Surjective)
+
 A homomorphism into a profinite pro-`p` group has dense range exactly when its composites
 with all index-`p` quotient maps are surjective. Equivalently, its composite with the
 Frattini quotient map has dense range. For continuous homomorphisms from compact groups,

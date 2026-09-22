@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.LocalField.RamificationIndex
 /-!
 # The residue degree of an extension of local fields, and `e · f = [L : K]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.InertiaDegree)
+
 Let `L/K` be an extension of nonarchimedean local fields whose valuations are compatible, in the
 sense of `ValuativeExtension K L`. This file defines the residue degree
 

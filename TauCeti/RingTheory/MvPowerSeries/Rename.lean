@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.MvPowerSeries.Substitution
 /-!
 # Renaming the variables of a multivariate power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.Rename)
+
 Gaps in Mathlib's `rename` API, in three groups. The first compares a renaming with another
 operation on the same series — substitution, evaluation, or reading a single-variable
 coefficient — together with one consequence of those comparisons: that reindexing a two-variable

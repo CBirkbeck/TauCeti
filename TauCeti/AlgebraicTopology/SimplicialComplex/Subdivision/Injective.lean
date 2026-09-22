@@ -12,6 +12,8 @@ import TauCeti.Order.Chain
 /-!
 # Injectivity of the barycentric-subdivision realization map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Injective)
+
 The canonical realization map sends a face-vertex of the barycentric subdivision to the
 barycenter of that face. This file proves that the map is injective, and hence bijective by the
 surjectivity theorem in `Subdivision.Surjective`.

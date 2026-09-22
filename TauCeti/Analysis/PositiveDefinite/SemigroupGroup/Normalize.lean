@@ -11,6 +11,8 @@ public import Mathlib.Topology.Constructions.SumProd
 /-!
 # Normalizing semigroup-group positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Normalize)
+
 This file records the standard normalization step for Berg--Christensen--Ressel
 semigroup-group positive-definite functions on `ℝ≥0 × V`: if `F (0, 0) ≠ 0`, then multiplying
 `F` by the reciprocal of the nonnegative real number `(F (0, 0)).re` gives a

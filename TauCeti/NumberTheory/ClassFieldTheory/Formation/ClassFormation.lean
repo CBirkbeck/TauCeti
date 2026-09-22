@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Refinement
 /-!
 # Class formations and fundamental classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.ClassFormation)
+
 A **class formation** in the sense of Artin–Tate is a formation whose finite normal layers
 `K/F` (with Galois group `Γ = U ⧸ V` and coefficient module `C = A^V`) satisfy
 

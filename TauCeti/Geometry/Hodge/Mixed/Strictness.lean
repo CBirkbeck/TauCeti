@@ -11,6 +11,8 @@ public import TauCeti.Order.CompactlyGenerated
 /-!
 # Strictness of a morphism of mixed Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Mixed.Strictness)
+
 A morphism of mixed Hodge structures is **strict**: an element of the target that lies in a step
 of a filtration *and* in the image of the morphism is already the image of an element of the
 corresponding step of the source. Filtration-preserving maps are not strict in general — this is

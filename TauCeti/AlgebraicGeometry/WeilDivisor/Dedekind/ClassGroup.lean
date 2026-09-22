@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.ClassGroup.Basic
 /-!
 # The divisor class group of a Dedekind domain is its ideal class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Dedekind.ClassGroup)
+
 For a Dedekind domain `R` with fraction field `K`,
 `TauCeti.AlgebraicGeometry.WeilDivisor.Dedekind.Basic` packages the height-one spectrum of `R` as
 the points of an affine curve and the order of vanishing of a rational function as the order system

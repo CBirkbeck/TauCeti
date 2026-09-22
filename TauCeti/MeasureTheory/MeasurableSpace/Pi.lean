@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
 /-!
 # Splitting a finite block of coordinates into consecutive subblocks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.Pi)
+
 A function on `Fin (n * m)` carries the same data as `n` consecutive blocks of `m` coordinates:
 the flattened index `finProdFinEquiv (r, j) = j + m * r` is position `j` of block `r`. This file
 records that reindexing as a measurable equivalence, together with the restriction to one fixed

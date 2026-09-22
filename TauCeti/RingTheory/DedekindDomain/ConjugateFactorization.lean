@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.UniqueFactorizationDomain.SubsetProduct
 /-!
 # Factoring a product of conjugate primes in a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.ConjugateFactorization)
+
 Let `R` be a Dedekind domain carrying a ring endomorphism `σ`, and let `S` be a finite set of
 nonzero primes of `R` on which `σ` acts involutively. This file characterizes the ideals `A` with
 `A * σ A = ∏ p ∈ S, p` as exactly the products over the transversals of `σ` on `S`. When `σ`

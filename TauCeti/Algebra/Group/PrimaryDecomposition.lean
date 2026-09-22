@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Torsion
 /-!
 # Primary decomposition of finite abelian groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.PrimaryDecomposition)
+
 This file packages the canonical decomposition of a finite abelian group as the product of its
 prime-primary components. The equivalence sends a tuple of primary elements to their sum in the
 ambient group. It also defines the part of an additive subgroup lying in one primary component.

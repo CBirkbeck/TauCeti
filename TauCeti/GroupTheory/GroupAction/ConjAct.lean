@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.Subgroup.Pointwise
 /-!
 # Conjugation by an element of a normal subgroup, seen through a commutative target
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupAction.ConjAct)
+
 A normal subgroup `N` of `G` carries the conjugation action `MulAut.conjNormal` of the whole of
 `G`. Conjugation by an element of `N` itself is inner, so a homomorphism `ψ : N →* M` to a
 *commutative* monoid cannot see it: conjugate elements of `N` have the same image in `M`.

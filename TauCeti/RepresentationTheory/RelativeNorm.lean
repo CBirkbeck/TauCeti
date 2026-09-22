@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # The relative norm and the relative transfer of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.RelativeNorm)
+
 Let `ρ : Representation R G V` and let `H ≤ G` be a subgroup of finite index. Summing the action
 over a left transversal of `H` gives two endomorphisms of `V`,
 

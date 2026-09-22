@@ -12,6 +12,8 @@ import Mathlib.Tactic
 /-!
 # Uniqueness of the CAR staircase occupation weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.WeightUniqueness)
+
 The half-integral weights arising from the CAR model have the form `a i + 1 / 2`, where `a` is a
 tuple of natural-number occupation counts. This file specializes the integer staircase criterion
 from `TauCeti.Combinatorics.Majorization` to the finite natural-number tuples produced by that

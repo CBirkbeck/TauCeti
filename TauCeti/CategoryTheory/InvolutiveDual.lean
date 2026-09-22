@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Opposites
 /-!
 # Involutive contravariant endofunctors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.InvolutiveDual)
+
 A contravariant endofunctor `F : Cᵒᵖ ⥤ C` is *involutive* when double dualization is naturally
 isomorphic to the identity by an isomorphism satisfying the triangle identity
 `CategoryTheory.Functor.IsInvolutiveDual`, which is strictly stronger than the bare existence of

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.QuadraticSu
 /-!
 # Quadratic subfields of the candidate genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.QuadraticSubfield)
+
 The candidate genus field of `ℚ(√d)` is the compositum of the quadratic fields attached to the
 prime discriminants dividing `fundamentalDiscriminant d`. `Prime/Discriminant/QuadraticSubfield`
 classifies the quadratic subfields of such a compositum for an arbitrary family of prime

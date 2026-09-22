@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.PiTensorProduct.Basis
 /-!
 # The tensor product of hom modules is the hom module of the tensor products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.PiTensorProduct.Hom)
+
 Mathlib's `PiTensorProduct.piTensorHomMap` is the canonical comparison map
 
 `⨂ᵢ (Mᵢ →ₗ Nᵢ) → (⨂ᵢ Mᵢ →ₗ ⨂ᵢ Nᵢ)`,  `⨂ᵢ fᵢ ↦ ⨂ᵢ mᵢ ↦ ⨂ᵢ fᵢ mᵢ`,

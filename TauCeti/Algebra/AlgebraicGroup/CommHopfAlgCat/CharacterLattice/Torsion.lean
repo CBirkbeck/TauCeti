@@ -15,6 +15,8 @@ public import TauCeti.Algebra.Bialgebra.GroupLike.Torsion
 /-!
 # The characters of a geometrically reduced, geometrically connected affine group are torsion free
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.CharacterLattice.Torsion)
+
 A geometric character of an affine group `Spec H` is a group-like element of the coordinate Hopf
 algebra of its base change to an algebraic closure. This file proves that when `H` is
 geometrically reduced and geometrically connected, no geometric character has finite order, and

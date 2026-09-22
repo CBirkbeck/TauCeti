@@ -11,6 +11,8 @@ public import Mathlib.Topology.Connected.PathConnected
 /-!
 # Path-connectedness of the cube and its boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Cube.Basic)
+
 Mathlib's higher homotopy groups `π_ n X x` are built from generalized loops `Ω^ N X x`,
 continuous maps `I^N → X` sending the cube boundary `Cube.boundary N`
 (`{y | ∃ i, y i = 0 ∨ y i = 1}`) to the base point. Reasoning about `π_ n` for `n ≥ 2`

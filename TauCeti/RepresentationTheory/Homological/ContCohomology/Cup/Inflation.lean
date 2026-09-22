@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Inflation
 /-!
 # Inflation preserves explicit low-degree cup products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Inflation)
+
 Let `N` be a normal subgroup of `G`. An equivariant pairing `M × A → P` restricts to a pairing
 `Mᴺ × Aᴺ → Pᴺ` on the invariant coefficients over `G ⧸ N`. Inflation preserves each of the six
 explicit cup products:

@@ -19,6 +19,8 @@ public import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 /-!
 # Endomorphisms of finite order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.End.FiniteOrder)
+
 An endomorphism `f` of a vector space with `f ^ n = 1` is annihilated by `X ^ n - 1`. Two
 consequences are recorded here: every root of its characteristic polynomial is an `n`-th root of
 unity, and if `n` is invertible in the coefficient field then `f` is semisimple, because `X ^ n - 1`

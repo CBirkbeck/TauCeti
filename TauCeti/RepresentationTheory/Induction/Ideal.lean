@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.VirtualCharacter
 /-!
 # The virtual characters induced from a family of subgroups form an ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Ideal)
+
 Fix a finite group `G` and a property `P` of its subgroups.  The virtual characters of `G` induced
 from subgroups satisfying `P` span an additive subgroup
 `TauCeti.ClassFunction.indVirtualCharacters k G P` of the functions on `G`; in Serre's notation,

@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Ray.Basic
 /-!
 # Primitive generators of toric rays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Ray.Primitive)
+
 A rational salient ray in an integral lattice contains a unique primitive lattice vector pointing
 along it. This file characterizes that vector as the primitive generator and provides a canonical
 choice for each ray of a toric cone.

@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Orthogonal.Complement
 /-!
 # Orthogonal quotients of finite bilinear modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Orthogonal.Quotient)
+
 Let `A` be a finite bilinear module and let `H` be an additive subgroup of it.  The pairing of
 `A` restricted to `H⊥` kills the vectors of `H` that lie in `H⊥`, so it descends to the quotient
 

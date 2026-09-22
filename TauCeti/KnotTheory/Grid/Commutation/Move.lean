@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Commutation.Relabeling
 /-!
 # Elementary grid commutation moves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Move)
+
 This file packages row and column commutations as relations between grid diagrams. Two columns
 are eligible for an elementary commutation when they are cyclically adjacent, their marking
 segments are non-interleaving, and the target diagram is obtained by swapping them. Row

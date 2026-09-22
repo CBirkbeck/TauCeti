@@ -12,6 +12,8 @@ public import TauCeti.Probability.Recurrent
 /-!
 # A nonrecurrent Markov exchangeable process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.AbsorbedWalk)
+
 The deterministic path `false, true, true, …` is a Markov chain and hence Markov exchangeable,
 but it visits `false` only once. Thus recurrence is a genuine additional hypothesis in the
 Diaconis–Freedman representation theorem.

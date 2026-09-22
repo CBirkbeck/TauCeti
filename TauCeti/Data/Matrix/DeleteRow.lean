@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.Defs
 /-!
 # Deleting a row of a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Matrix.DeleteRow)
+
 For a matrix `G` with rows indexed by `ρ` and a row index `r`, the matrix `Matrix.deleteRow G r`
 has rows indexed by `{s : ρ // s ≠ r}` and retains every row of `G` except row `r`. It is the
 submatrix of `G` along the inclusion of the remaining row indices.

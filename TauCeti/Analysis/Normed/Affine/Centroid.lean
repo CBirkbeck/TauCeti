@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.AffineSpace.Centroid
 /-!
 # Distances to the centroid of finitely many points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Affine.Centroid)
+
 For a nonempty finite family of points `p i`, `i ∈ s`, of a real normed affine space whose
 pairwise distances are at most `d`, the centroid `s.centroid ℝ p` lies within
 `(1 - 1 / #s) * d` of each point `p j`, `j ∈ s`, and of the centroid of every nonempty subfamily.

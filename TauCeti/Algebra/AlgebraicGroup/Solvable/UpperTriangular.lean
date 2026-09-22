@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperTriangular.Solvable
 /-!
 # Geometric solvability of upper-triangular general linear groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.UpperTriangular)
+
 Over a field, the geometric points of the upper-triangular subgroup scheme are solvable: its
 points are identified with the abstract upper-triangular matrix group, whose diagonal quotient is
 abelian and whose upper-unitriangular kernel is nilpotent.

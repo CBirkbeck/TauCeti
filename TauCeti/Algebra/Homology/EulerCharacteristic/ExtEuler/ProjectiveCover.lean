@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Module.ProjectiveCover.Multiplicity
 /-!
 # Ext-Euler characteristics of projective covers against simple modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.ProjectiveCover)
+
 Let `P ⟶ S` be a projective cover of a simple module over an algebra `A` over a field `k`. Since
 `P` is projective, its Ext-Euler characteristic against a simple module `T` is
 `χ(P, T) = dim_k Hom_A(P, T)`. This is the dimension of the division algebra `End_A(S)` when

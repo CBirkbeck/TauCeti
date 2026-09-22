@@ -11,6 +11,8 @@ import TauCeti.Data.ZMod.Units
 /-!
 # Reduced integer solutions to linear congruences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Int.LinearCongruence)
+
 A linear congruence with coefficient coprime to its modulus has a solution in the canonical
 interval of representatives.
 

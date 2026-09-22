@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.InfiniteSum.Real
 /-!
 # The Taylor series of `-log (1 - ·)` summed over a family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Complex.LogBounds)
+
 Mathlib's `Complex.hasSum_taylorSeries_neg_log'` expands `-log (1 - z)` as `∑' e, z ^ (e+1)/(e+1)`
 for a single `z` of modulus less than one.  This file sums that over a family `r : ι → ℂ`: the
 double family indexed by `ι × ℕ` is summable, so the sum may be regrouped fibrewise and the

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Polynomial.CoeffList
 /-!
 # The cyclotomic polynomials, computably
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Cyclotomic.Computable)
+
 Mathlib defines `Polynomial.cyclotomic n R` through the primitive `n`-th roots of unity in `ℂ`,
 so nothing about it evaluates: `Polynomial` is a `Finsupp` and `cyclotomic` is `noncomputable`.
 This file computes the coefficients of `Φ_n` over `ℤ` instead, and proves that the computation is
@@ -69,7 +71,10 @@ is the intended interface.  This recursion cannot be `private`, since the expose
 /-- **The coefficients of the `n`-th cyclotomic polynomial over `ℤ`**, highest degree first, as a
 genuine `def`: `cyclotomicCoeffs 12 = [1, 0, -1, 0, 1]`, the coefficients of `X ^ 4 - X ^ 2 + 1`.
 `TauCeti.cyclotomicCoeffs_eq_coeffList` proves that this is `Polynomial.coeffList` of
-`Polynomial.cyclotomic n ℤ`. -/
+`Polynomial.cyclotomic n ℤ`.
+
+Tested by: 4 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.cyclotomicCoeffs) -/
 @[expose] def cyclotomicCoeffs (n : ℕ) : List ℤ := cyclotomicCoeffsAux n n
 
 /-- Dropping leading zeros from a coefficient list does not change the polynomial. -/
@@ -204,7 +209,10 @@ theorem cyclotomicCoeffs_eq_coeffList (n : ℕ) :
 /-- **Reduction modulo `Φ_e`**, on coefficient lists: the residue of the polynomial with
 coefficient list `l`, returned as its `φ e` coordinates on the power basis
 `ζ ^ (φ e - 1), …, ζ, 1` of `ℤ[ζ_e] = ℤ[X]/Φ_e`, highest power first.  This is the reduction step
-of multiplication in the exact cyclotomic integers. -/
+of multiplication in the exact cyclotomic integers.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.modByCyclotomic) -/
 @[expose] def modByCyclotomic (e : ℕ) (l : List ℤ) : List ℤ :=
   modByMonicList (cyclotomicCoeffs e).tail l
 

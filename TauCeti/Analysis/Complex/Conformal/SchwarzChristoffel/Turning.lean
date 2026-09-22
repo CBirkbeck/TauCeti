@@ -11,6 +11,8 @@ import Mathlib.Analysis.Convex.Between
 /-!
 # Turning at Schwarz--Christoffel vertices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Turning)
+
 The direction of a Schwarz--Christoffel boundary edge is
 `exp (schwarzChristoffelEdgeAngle a e p * I)`.  When two consecutive edge intervals meet at a
 prevertex `q`, their angle difference is `-π` times the total exponent at `q`.  Thus an exponent in

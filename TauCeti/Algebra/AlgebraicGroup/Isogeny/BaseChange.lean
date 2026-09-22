@@ -14,6 +14,8 @@ import TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Isomorphism
 /-!
 # Base change of isogenies in Hopf coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Isogeny.BaseChange)
+
 Let `f : H ⟶ K` be a morphism of commutative Hopf algebras over a commutative ring `k`.
 Scalar extension along `k → L` gives a coordinate morphism
 `L ⊗[k] H ⟶ L ⊗[k] K`. This file proves that isogenies and central isogenies remain so after

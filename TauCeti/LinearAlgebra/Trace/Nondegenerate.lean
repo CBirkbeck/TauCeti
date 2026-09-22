@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # Nondegeneracy of the trace pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Trace.Nondegenerate)
+
 This file records that the trace pairing on the endomorphisms of a finite free module is
 nondegenerate.
 

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.C.Model
 /-!
 # The simply connected root datum of type `Cₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.C.Datum)
+
 This file constructs, uniformly in the rank `n`, the pinned integral root datum of type `Cₙ` on the
 character and cocharacter lattices `Fin n → ℤ`. The character lattice is written in the
 fundamental-weight basis and the cocharacter lattice in the simple-coroot basis, so the `i`-th

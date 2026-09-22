@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Witt.Cancellation
 /-!
 # Witt's extension theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Witt.Extension)
+
 An isometry between two regular subspaces of a finite-dimensional quadratic space extends to an
 isometry of the whole space.  The construction splits the ambient space as each subspace
 orthogonally summed with its orthogonal complement.  Witt cancellation identifies the two

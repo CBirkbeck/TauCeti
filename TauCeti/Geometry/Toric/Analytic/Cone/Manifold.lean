@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Toric.Analytic.Cone.Chart
 /-!
 # The complex manifold of a regular affine toric cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Analytic.Cone.Manifold)
+
 The complex points of the affine toric scheme of a regular cone form a complex manifold.  After
 choosing an integral basis extending the primitive ray generators and numbering the rays, the
 ambient cone chart embeds them as the open mixed-coordinate locus

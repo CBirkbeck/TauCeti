@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Levi.B
 /-!
 # Injective-weight Levis and the diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Levi.DiagonalTorus)
+
 For a weight `w : Fin N → ℤ`, the weight Levi consists of the invertible matrices whose
 `(i,j)` entry vanishes when `w i ≠ w j`. If `w` is injective, these are precisely the diagonal
 matrices. This file identifies the corresponding coordinate Hopf algebra with that of the

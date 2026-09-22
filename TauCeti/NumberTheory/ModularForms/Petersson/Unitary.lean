@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Petersson.Adjoint
 /-!
 # The Petersson product is unitary under a normalising slash
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Unitary)
+
 The Petersson product `CuspForm.peterssonInnerCosets` on `S_k(Γ)` is a sum over the cosets of
 `Γ·{±I}` in `SL₂(ℤ)` of level-one-domain pairings of slashed forms. Slashing both arguments by
 an `α ∈ SL₂(ℤ)` that *normalises* `Γ·{±I}` permutes those cosets — right multiplication by `α⁻¹`

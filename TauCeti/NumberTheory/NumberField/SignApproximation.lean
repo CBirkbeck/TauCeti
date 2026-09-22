@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.InfinitePlace.Basic
 /-!
 # Prescribing the signs of a number field element at the real places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.SignApproximation)
+
 Weak approximation says that a number field `K` is dense in the product of its completions at the
 infinite places; Mathlib records the diagonal form of this,
 `NumberField.InfinitePlace.denseRange_algebraMap_pi`, on the product of the copies of `K` carrying

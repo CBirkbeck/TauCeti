@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.GradedModule.TensorProduct
 /-!
 # The graded tensor product of two internally `ℤ`-graded algebras is graded
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.GradedAlgebra.TensorProduct)
+
 Mathlib's `GradedTensorProduct R 𝒜 ℬ`, written `𝒜 ᵍ⊗[R] ℬ`, is the tensor product `A ⊗[R] B`
 with the Koszul-signed multiplication
 

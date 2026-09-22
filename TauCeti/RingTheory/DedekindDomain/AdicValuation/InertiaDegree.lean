@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Valuation.ValuativeRel.Extension
 /-!
 # The residue degree of a completion is the inertia degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.InertiaDegree)
+
 Let `R ⊆ B` be Dedekind domains with fraction fields `K ⊆ L`, and let `w` be a height-one prime of
 `B` lying over the height-one prime `v` of `R`. The completions `K_v` and `L_w` carry valuative
 relations, and the canonical map `K_v → L_w` is a valuative extension, so the residue field

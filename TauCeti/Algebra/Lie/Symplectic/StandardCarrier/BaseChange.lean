@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Base change of the full-weight type-C carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.BaseChange)
+
 For `n : ℕ`, `TauCeti.SpStd.groupScheme` is the explicit integral affine group scheme obtained by
 closing the numbered standard type-`C_(n+1)` root subgroups and the standard weight torus inside
 `GL_(2n+2)`. This file specializes the base-change construction for a general Kostant toral

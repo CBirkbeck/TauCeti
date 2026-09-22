@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Integral.ExpDecay
 /-!
 # The Fourier transform of the two-sided exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.ExpNegAbs)
+
 For `0 < a` the function `x ↦ exp (-(a * |x|))` on `ℝ` is integrable, and pairing it against the
 oscillation `exp (b * x * I)` produces the Lorentzian `2 * a / (a ^ 2 + b ^ 2)`. In Mathlib's
 normalisation `𝓕 f ξ = ∫ x, exp (-2 π i x ξ) f x` this reads

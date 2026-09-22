@@ -13,6 +13,8 @@ public import Mathlib.AlgebraicGeometry.Properties
 /-!
 # Invertible sheaves on a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.LineBundle.Basic)
+
 This file begins the scheme-level line-bundle lane of the Jacobian challenge. An invertible
 sheaf on a scheme `X` is an `𝒪_X`-module which is locally free of rank one.
 

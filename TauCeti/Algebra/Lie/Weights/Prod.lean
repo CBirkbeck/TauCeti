@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Prod
 /-!
 # Weight spaces of a product of Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Prod)
+
 For two modules `M` and `N` over a nilpotent Lie algebra, the generalized `χ`-weight space of
 `M × N` is the product of the generalized `χ`-weight spaces of the factors. Consequently a linear
 form is a weight of the product exactly when it is a weight of at least one factor, and a product of

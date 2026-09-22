@@ -12,6 +12,8 @@ import TauCeti.Topology.Algebra.Module.Complement
 /-!
 # Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Basic)
+
 This file connects Mathlib's analytic notion of a **Fredholm operator** to the nonlinear-analysis
 substrate of the analytic Heegaard Floer roadmap (Lane F0, "Fredholm operators and index theory").
 All Fredholm hypotheses use `ContinuousLinearMap.IsFredholm` directly. That predicate asks for a

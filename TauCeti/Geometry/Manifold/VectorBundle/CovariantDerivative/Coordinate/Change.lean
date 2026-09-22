@@ -12,6 +12,8 @@ import TauCeti.Geometry.Manifold.VectorField.Regularity
 /-!
 # Coordinate changes for Christoffel maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Coordinate.Change)
+
 This file proves the transformation law for the model-space Christoffel map of a covariant
 derivative on the tangent bundle.  The law is stated for independent vector and direction
 arguments, so its diagonal specialization is available for the geodesic spray.

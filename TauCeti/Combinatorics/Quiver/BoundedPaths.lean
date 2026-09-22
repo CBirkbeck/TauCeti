@@ -14,6 +14,8 @@ public import Mathlib.Data.Set.Finite.Basic
 /-!
 # Finitely many paths of bounded length
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Quiver.BoundedPaths)
+
 A quiver with finitely many vertices and finitely many arrows between any two of them has only
 finitely many paths of any given length, because a path of length at most `n` is a list of at most
 `n` arrows. No acyclicity is involved: the bound on the length is what makes the count finite,

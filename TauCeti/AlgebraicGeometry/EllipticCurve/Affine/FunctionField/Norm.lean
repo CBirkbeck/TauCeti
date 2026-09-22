@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finra
 /-!
 # The norm of a function on a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Norm)
+
 The function field `F(W)` of an affine Weierstrass curve is a quadratic extension of the rational
 function field `F(x)` — that is `WeierstrassCurve.Affine.finrank_functionField` — so every
 function has an algebra norm `N : F(W) → F(x)`. Mathlib's `Algebra.norm` supplies it, over

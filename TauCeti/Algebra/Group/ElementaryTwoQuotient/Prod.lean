@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic
 /-!
 # The maximal elementary-2 quotient distributes over products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.ElementaryTwoQuotient.Prod)
+
 The maximal elementary-2 quotient `G / G²` of `TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic`
 sends a product of commutative groups to the product of the quotients, `ZMod 2`-linearly: `(G ×
 H)/(G × H)²` is `G/G² × H/H²`, and the same holds for an arbitrary indexed product. Reading `ZMod

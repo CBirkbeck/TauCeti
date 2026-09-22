@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.Basic
 /-!
 # Local compactness of finite adele rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.LocallyCompact)
+
 The finite adele ring of a Dedekind domain with finite residue fields is locally compact.  Each
 adic completion is a nonarchimedean local field, and its integer ring is compact and open.  The
 result then follows from the local-compactness theorem for restricted products.

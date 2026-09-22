@@ -16,6 +16,8 @@ public import Mathlib.Probability.Independence.InfinitePi
 /-!
 # A recurrent Markov exchangeable process whose successor array is not row exchangeable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.UnvisitedRow)
+
 The Diaconis–Freedman representation of a Markov exchangeable process passes through its
 **successor array** `TauCeti.Probability.successorProcess`, whose `(a, k)`-entry is the state
 reached right after the `k`-th visit to `a`. The change of variables back from a row exchangeable

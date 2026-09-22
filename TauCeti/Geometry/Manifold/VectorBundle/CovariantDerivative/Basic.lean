@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Basic
 /-!
 # Covariant derivatives of finite sums of sections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Basic)
+
 Mathlib's `IsCovariantDerivativeOn` is additive on pairs of sections differentiable at a point of
 the set it is a covariant derivative on. This file iterates that additivity to finite sums of
 sections.

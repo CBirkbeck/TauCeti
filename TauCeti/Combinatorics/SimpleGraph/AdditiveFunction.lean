@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
 /-!
 # The Cartan matrix of a graph carrying a positive additive function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.AdditiveFunction)
+
 For a finite simple graph `G` with adjacency matrix `A`, the matrix `2I - A` is the generalized
 Cartan matrix of `G` read as a simply-laced diagram. This file proves that `2I - A` is positive
 semidefinite as soon as `G` carries a positive *additive function*, a vector `δ` with

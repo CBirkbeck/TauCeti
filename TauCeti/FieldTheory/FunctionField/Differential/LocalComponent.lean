@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Differential.Weil
 /-!
 # Local components of a Weil differential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Differential.LocalComponent)
+
 A `k`-linear form `ω` on the repartition space `A_F` of an algebraic function field `F / k` can be
 evaluated on the repartitions supported at a single place: writing `ι_P x` for the repartition
 with the entry `x` at `P` and `0` everywhere else, the **local component** of `ω` at `P` is the

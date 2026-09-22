@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Basic
 /-!
 # Towers of extensions of places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Tower)
+
 Restriction of places is functorial through a tower of algebraic field extensions. The
 ramification index and relative residue degree are multiplicative in the same tower. These are
 the tower statements in Stichtenoth, *Algebraic Function Fields and Codes*, Proposition 3.1.6.

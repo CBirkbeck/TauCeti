@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # Linear independence of rows in partitioned matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.ColumnRowPartitioned)
+
 This file proves that the rows of a column-partitioned matrix are linearly independent when one
 of its blocks is an identity matrix. The identity block already separates the row indices: two
 distinct combinations of the rows differ on the identity columns, so no nontrivial combination

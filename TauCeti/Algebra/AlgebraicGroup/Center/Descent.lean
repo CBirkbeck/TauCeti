@@ -11,6 +11,8 @@ import Mathlib.RingTheory.Finiteness.Descent
 /-!
 # Descent of finiteness of the center
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.Descent)
+
 A field extension preserves and reflects finiteness of the scheme-theoretic center of an
 affine group. Thus finiteness may be proved over an algebraic closure and then descended to
 the original field, as in the finite-center theorem for semisimple groups. No smoothness,

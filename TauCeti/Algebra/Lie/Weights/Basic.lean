@@ -11,6 +11,8 @@ import TauCeti.Algebra.Lie.Submodule.Finrank
 /-!
 # Elementary identities for Lie algebra weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Basic)
+
 This file records general identities for weights that are used by several parts of the Lie algebra
 weight-space theory.
 

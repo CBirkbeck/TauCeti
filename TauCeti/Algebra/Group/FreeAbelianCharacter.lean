@@ -12,6 +12,8 @@ public import Mathlib.Data.Int.Cast.Lemmas
 /-!
 # Characters of a free abelian group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.FreeAbelianCharacter)
+
 The free abelian group on an index type `σ` is modelled as `Multiplicative (σ →₀ ℤ)`: its
 underlying additive group `σ →₀ ℤ` is the free `ℤ`-module on `σ`. This file records its
 universal property in the form most useful for the functor of points of a split torus: a

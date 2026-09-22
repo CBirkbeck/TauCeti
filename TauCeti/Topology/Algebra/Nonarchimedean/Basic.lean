@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 /-!
 # Transporting a nonarchimedean topology to a quotient or a subobject
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Basic)
+
 `NonarchimedeanGroup G` asks that every neighbourhood of `1` contain an *open subgroup*. That
 property passes to the target of any open homomorphism that is continuous at `1`: the image of an
 open subgroup inside `f ⁻¹' U` is an open subgroup inside `U`.

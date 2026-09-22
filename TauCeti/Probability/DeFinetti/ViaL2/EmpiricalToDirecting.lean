@@ -11,6 +11,8 @@ public import TauCeti.Probability.DeFinetti.DirectingMeasure.Basic
 /-!
 # Block averages of an indicator converge to the directing measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaL2.EmpiricalToDirecting)
+
 `Contractable.tendsto_integral_abs_blockAverage_sub_condExp` identifies the `L¹` limit of the block
 averages of an observable with `μ[f ∘ X 0 | tailProcess X]`, along **any** selection that is
 injective for all sufficiently large lengths — the selection may move with the length.

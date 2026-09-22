@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Measure.FiniteMeasure
 /-!
 # Symmetric kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Kernel.Basic)
+
 A **symmetric kernel** on a measure space `(Ω, μ)` is an honest, everywhere-defined function
 `Ω → Ω → ℝ` that is symmetric, jointly measurable, and uniformly bounded. It is the carrier the
 dense graph limit theory is built on: a graphon is a `[0, 1]`-valued symmetric kernel, and the cut

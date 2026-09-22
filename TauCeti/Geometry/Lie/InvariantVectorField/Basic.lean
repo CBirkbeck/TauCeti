@@ -13,6 +13,8 @@ import Mathlib.Geometry.Manifold.VectorBundle.Tangent
 /-!
 # Invariant vector fields on Lie groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.InvariantVectorField.Basic)
+
 This file records regularity properties of invariant vector fields expressed through Mathlib's
 tangent Lie algebra. These results depend only on `GroupLieAlgebra`, not on the separate
 left-invariant-derivation model of a Lie algebra. The regularity proofs reuse generic

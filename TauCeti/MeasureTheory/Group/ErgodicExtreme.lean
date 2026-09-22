@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.ProbabilityMeasure.Coding
 /-!
 # Ergodic group actions and extreme invariant measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.ErgodicExtreme)
+
 For a countable group `G` acting measurably on `X`, an invariant measure of finite total mass is
 ergodic if and only if it is an extreme point of the `G`-invariant measures of that total mass;
 in particular an invariant probability measure is ergodic if and only if it is an extreme point of

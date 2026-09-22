@@ -12,6 +12,8 @@ public import Mathlib.Topology.Maps.Basic
 /-!
 # The weak Whitney topology in one global chart
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ContMDiffMap.WeakWhitney)
+
 For maps between normed spaces, the weak Whitney `C^n` topology is the initial topology for all
 iterated derivatives of order at most `n`, each regarded as a continuous map with the compact-open
 topology. Thus a family converges precisely when every derivative converges uniformly on compact

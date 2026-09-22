@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Real.Sqrt
 /-!
 # Galois groups from prime-discriminant radicands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.GaloisGroup)
+
 The genus-field layer of the multiquadratic roadmap uses prime discriminants `D` but adjoins
 square roots of the associated squarefree radicands `primeDiscriminantRadicand D`: `-1`, `2`,
 `-2`, or an odd prime discriminant itself. The field-generic Galois-group theorem

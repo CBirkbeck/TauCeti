@@ -14,6 +14,8 @@ import TauCeti.Analysis.Contour.Winding.Number.Reparam
 /-!
 # Excising a crossing window and capping it with a circular arc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.Excision)
+
 Hungerbühler–Wasem Proposition 2.2 decomposes a closed piecewise-`C¹` immersion `Λ` that meets a
 point `s` finitely often as `Λ = \tilde{\Lambda} + Γ₁ + ⋯ + Γₙ`, where `\tilde{\Lambda}` avoids `s`
 and each `Γ_ℓ` is a local loop at a crossing, and concludes

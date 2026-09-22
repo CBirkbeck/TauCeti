@@ -12,6 +12,8 @@ import TauCeti.Algebra.Lie.Submodule.Atom
 /-!
 # The Casimir operator of an `sl₂` triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Casimir)
+
 For an `sl₂` triple `t : IsSl2Triple h e f` in a Lie algebra `L` over a field `K` in which `2` is
 nonzero, and an `L`-module `M`, the **Casimir operator** is the second-order operator
 

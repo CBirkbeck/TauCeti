@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Geometric reducedness of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.GeometricallyReduced)
+
 This file compares geometric reducedness of a same-universe commutative Hopf algebra with
 Mathlib's scheme-theoretic `GeometricallyReduced` predicate on its Hopf spectrum.
 

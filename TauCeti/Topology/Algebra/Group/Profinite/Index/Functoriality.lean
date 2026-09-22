@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Index.Basic
 /-!
 # Functoriality of profinite index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Index.Functoriality)
+
 This file establishes the image and preimage formulas for supernatural index under continuous
 surjections of compact topological groups. If `f : G → H` is surjective, the index of the
 image of `K ≤ G` is the index of `K ⊔ ker f`; equivalently, taking the preimage of a subgroup

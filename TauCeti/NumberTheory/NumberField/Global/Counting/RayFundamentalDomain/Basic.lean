@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.CanonicalEmbedding.UnitAction
 /-!
 # Fundamental domains for congruence subgroups of number-field units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Basic)
+
 A unit congruent to one modulo a modulus `𝔪` is constrained in two ways: it lies in a finite-index
 subgroup of `(𝓞 K)ˣ`, and it is positive at every real place selected by the infinite part of `𝔪`.
 The set `rayFundamentalDomain 𝔪` built here is cut out by the matching two conditions on the mixed

@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 /-!
 # The standard representation of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.StandardComodule)
+
 The generic matrix defines a coaction of the coordinate Hopf algebra `O(GLₙ)` on the column
 space `Rⁿ`: the `j`-th standard basis vector goes to the `j`-th column of the generic matrix.
 This is the standard representation of `GLₙ`, and this file constructs it and establishes the

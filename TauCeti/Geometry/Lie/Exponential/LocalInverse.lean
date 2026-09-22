@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.LocalDiffeomorph
 /-!
 # Local inverse of the Lie-group exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.LocalInverse)
+
 The smooth coordinate exponential has derivative the identity at zero, so the inverse function
 theorem supplies a chosen smooth local logarithm in model-space identity coordinates.
 

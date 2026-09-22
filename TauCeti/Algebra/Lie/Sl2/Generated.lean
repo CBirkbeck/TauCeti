@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.Subalgebra.Top
 /-!
 # A primitive vector generates a copy of `V(n)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Generated)
+
 `TauCeti/Algebra/Lie/Sl2/WeightString.lean` and `TauCeti/Algebra/Lie/Sl2/Classification.lean`
 classify the modules that are *irreducible* over an `sl₂` triple and carry a primitive vector: they
 are the standard modules `V(n)`. That classification says nothing about a primitive vector sitting

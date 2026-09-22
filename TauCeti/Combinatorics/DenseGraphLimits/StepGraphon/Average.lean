@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Integral.Average
 /-!
 # Block-averaged step graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Average)
+
 This file specializes `stepGraphon` to the matrix of averages of a graphon over the rectangles
 of a measurable finite partition.  This is the step graphon used by the Frieze--Kannan weak
 regularity argument: on a block `p ×ˢ q`, its value is the Mathlib set average of the original

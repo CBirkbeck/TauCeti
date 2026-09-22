@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.Finiteness.Prod
 /-!
 # The dimension of the Vinberg `ℤ/3`-model of split `E₈`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E8.Vinberg)
+
 Vinberg's `ℤ/3`-graded construction of the split exceptional Lie algebra `E₈` puts
 
 `𝔢₈ = 𝔰𝔩₉ ⊕ ⋀³(K⁹) ⊕ ⋀³(K⁹)^*`,

@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.EffectiveBounds.UnitSquares.Basic
 /-!
 # An effective class-number bound
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EffectiveBounds.ClassNumber.Basic)
+
 For a number field `F` of degree `n`, the class number is bounded by
 
 `h_F ≤ |d_F| · 4ⁿ`.

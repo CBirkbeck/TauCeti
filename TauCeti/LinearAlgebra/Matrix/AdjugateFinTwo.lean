@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Matrix.StdBasis
 /-!
 # Adjugation of two-by-two matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.AdjugateFinTwo)
+
 This file contains the characteristic-not-two-independent linear algebra used by the Spin(3)
 matrix model: the adjugate is linear in size two, and it is characterized by reversal of products
 and scalar translates of the negative. These results are generic matrix facts and are kept outside

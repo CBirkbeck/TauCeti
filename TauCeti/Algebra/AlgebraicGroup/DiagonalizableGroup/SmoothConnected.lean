@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.BaseChange
 /-!
 # Geometric connectedness and reducedness of diagonalizable groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.SmoothConnected)
+
 The coordinate ring of a diagonalizable group is a group algebra. When its character group has
 the unique-product property, this group algebra is a domain over every field, so it is reduced and
 has connected prime spectrum. In particular, this applies to the finite-rank free character group

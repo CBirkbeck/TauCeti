@@ -15,6 +15,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Frattini
 /-!
 # Burnside generation for pro-`p` groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Burnside)
+
 For a pro-`p` group, the Frattini subgroup detects topological generation. A closed subgroup
 which is not contained in any open normal subgroup of index `p` is the whole group, and hence a
 set topologically generates the group exactly when its image topologically generates the

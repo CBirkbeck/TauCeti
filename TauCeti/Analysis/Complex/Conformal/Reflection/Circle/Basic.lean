@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Euclidean.Inversion.Basic
 /-!
 # Reflection in a circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Reflection.Circle.Basic)
+
 This file connects Mathlib's Euclidean inversion to the conjugate-reciprocal formula for
 reflection in a circle in `ℂ`. It also packages the restriction to the punctured plane as a
 homeomorphism and records the inside/outside behavior needed for Schwarz reflection.

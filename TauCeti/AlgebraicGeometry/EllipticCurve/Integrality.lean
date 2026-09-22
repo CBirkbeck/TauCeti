@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Polynomial.IsIntegral
 /-!
 # Integrality of points on a Weierstrass curve over a unique factorization domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Integrality)
+
 Let `R` be a unique factorization domain with fraction field `K` and let `W : WeierstrassCurve R`
 have coefficients in `R`. This file gives the three integrality steps of the Nagell–Lutz argument
 that do not mention torsion.

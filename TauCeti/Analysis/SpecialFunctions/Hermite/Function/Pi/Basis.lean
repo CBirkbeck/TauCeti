@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Function.HilbertBasis
 /-!
 # The multi-index Hermite-function basis of `L²(ℝ^ι)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Pi.Basis)
+
 The `Fintype`-indexed product of the one-dimensional Hermite-function basis: the multi-index family
 `Ψ_a(x) = ∏ᵢ ψ_{aᵢ}(xᵢ)` is a Hilbert basis of `L²(volume^ι)`, the standard eigenbasis of the
 `ℝ^ι` harmonic oscillator.

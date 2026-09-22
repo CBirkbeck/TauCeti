@@ -11,6 +11,8 @@ import Mathlib.Tactic.Group
 /-!
 # The transversal word of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TransversalWord)
+
 Let `U` be a subgroup of a group `G` and let `t : G ⧸ U → G` be a *transversal*, that is, a map
 picking a representative of each coset. The **transversal word**
 ```

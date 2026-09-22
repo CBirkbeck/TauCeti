@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.OfAssociative
 /-!
 # The adjoint action on a symmetric algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.AdjointAction)
+
 Let `L` be a Lie algebra over a commutative ring `R`. The adjoint endomorphism `y ↦ ⁅x, y⁆`
 extends uniquely from `L` to a derivation of its symmetric algebra `S(L)`, and these extensions
 preserve brackets. This file specialises `SymmetricAlgebra.derivationOfEnd` to

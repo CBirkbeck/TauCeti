@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Basic
 /-!
 # Links and stars in abstract simplices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Link)
+
 This file computes the closed star, link, and deletion constructions on the standard abstract
 simplex and its boundary.  These formulas are the standard-model calculations used by the
 recursive link condition for combinatorial manifolds in layer 11 of the geometric-topology

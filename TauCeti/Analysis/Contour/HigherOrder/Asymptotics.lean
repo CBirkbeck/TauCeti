@@ -17,6 +17,8 @@ import Mathlib.Analysis.Calculus.MeanValue
 /-!
 # Higher-order antiderivative asymptotics at an on-curve pole
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.HigherOrder.Asymptotics)
+
 For the higher-order pole integrand `1/(z-s)^k` (`k ≥ 2`) with single-valued antiderivative
 `F(z) = -1/[(k-1)(z-s)^(k-1)]`, this file proves the asymptotics the sector-cancellation
 argument of the generalized residue theorem consumes: along a branch of a curve leaving `s`

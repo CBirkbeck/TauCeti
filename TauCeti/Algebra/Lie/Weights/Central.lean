@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
 /-!
 # The central weight of an irreducible Lie module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Central)
+
 A central element `z` of a Lie algebra `L` acts on any `L`-module `M` by a morphism of `L`-modules,
 because `⁅x, ⁅z, m⁆⁆ = ⁅⁅x, z⁆, m⁆ + ⁅z, ⁅x, m⁆⁆` and the first summand vanishes. When `M` is a
 finite-dimensional irreducible module over an algebraically closed field, Schur's lemma turns that

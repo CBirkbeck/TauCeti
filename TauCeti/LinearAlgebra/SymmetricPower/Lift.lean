@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.SymmetricPower.Basic
 /-!
 # The universal property of the symmetric tensor power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricPower.Lift)
+
 A multilinear map `f : Mⁱ → N` that is unchanged by permuting its arguments factors uniquely
 through the symmetric tensor power. This file builds that factorization,
 `SymmetricPower.lift`, as the descent of `PiTensorProduct.lift f` through the quotient map

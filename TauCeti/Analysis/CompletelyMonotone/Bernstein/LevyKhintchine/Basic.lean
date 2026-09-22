@@ -14,6 +14,8 @@ import Mathlib.Analysis.Calculus.ParametricIntegral
 /-!
 # Levy--Khintchine exponents of Bernstein functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.LevyKhintchine.Basic)
+
 This file develops the forward half of the Levy--Khintchine representation for Bernstein
 functions. A measure `mu` on `ℝ≥0` is a Bernstein Levy measure when it has no atom at zero and
 `min 1 x` is integrable. Its jump exponent is

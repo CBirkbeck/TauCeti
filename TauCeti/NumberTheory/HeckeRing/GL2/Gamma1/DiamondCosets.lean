@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The diamond double cosets of the `Γ₁(N)` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.DiamondCosets)
+
 The Hecke monoid `Δ₀(N)` asks its elements only to have a *unit* upper-left entry modulo `N`,
 which is what puts all of `Γ₀(N)` inside it (`HeckeRing/GL2/Gamma1/Basic.lean`). This file takes
 the resulting payoff: for `γ ∈ Γ₀(N)` the double coset `Γ₁(N) γ Γ₁(N)` is a basis element of the

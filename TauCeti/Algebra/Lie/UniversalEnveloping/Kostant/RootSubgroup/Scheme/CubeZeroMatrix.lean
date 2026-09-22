@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The matrix of a cube-zero root subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.CubeZeroMatrix)
+
 The matrix of a Kostant root subgroup at parameter `t` is the divided-power exponential
 `∑ₖ tᵏ e⁽ᵏ⁾` of the root operator, read in the chosen lattice basis. When the operator squares to
 zero this is `1 + t X` for the integral matrix `X` of the operator, which is

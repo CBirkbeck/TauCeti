@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.LocalRing.RingHom.Basic
 /-!
 # The maximal-ideal filtration is invariant under ring automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.LocalRing.Pointwise)
+
 A group acting on a local ring by ring automorphisms acts by surjective local homomorphisms, so it
 fixes the maximal ideal and every one of its powers. This file records that invariance, both as an
 equality of ideals for the pointwise action and in the membership form its consumers use.

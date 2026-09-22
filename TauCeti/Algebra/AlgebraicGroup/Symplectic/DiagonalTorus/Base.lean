@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Basic
 /-!
 # A base of the root datum of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.DiagonalTorus.Base)
+
 For `Sp₂ₘ` with its paired diagonal torus, the roots
 
 ```text

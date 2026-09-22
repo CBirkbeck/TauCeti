@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Basic
 /-!
 # The split maximal torus of a Kostant elementary group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Torus.Basic)
+
 Let `U_ℤ = kostantForm e h` act on a rational representation `V` through `ρ` and preserve an
 additive subgroup `M ≤ V`. A **weight basis** of `M` is an integral basis `b : Basis η ℤ M` each of
 whose vectors is a joint eigenvector of the designated Cartan operators `ρ(hⱼ)`, with integer

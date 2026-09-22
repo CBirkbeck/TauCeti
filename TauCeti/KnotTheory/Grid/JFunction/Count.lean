@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.JFunction.Basic
 /-!
 # The grid `J`-function as a neighbor count
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.JFunction.Count)
+
 The ordered southwest count `GridPoint.I s t` and the symmetrized `J`-function are defined in
 `JFunction.lean` as cardinalities of a filtered product of point sets. This file records their
 fiberwise reading: `I s t` is the sum over the left points of the number of right points strictly

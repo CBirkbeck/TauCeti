@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Squares
 /-!
 # A pair of rectangles returning to its source covers an annulus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Annulus)
+
 A term in the square of a grid differential is a pair of composable oriented rectangles. This
 file treats the *annular* case, in which the second rectangle returns to the source of the
 first: `R` runs from a grid state `x` to a grid state `y` and `S` runs from `y` back to `x`.

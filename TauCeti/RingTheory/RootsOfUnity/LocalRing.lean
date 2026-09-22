@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.RootsOfUnity.Basic
 /-!
 # Roots of unity in a local ring and its residue field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.LocalRing)
+
 Reduction modulo the maximal ideal maps the roots of unity of a local ring to those of its
 residue field. This map is injective when the order is invertible in the ring.
 

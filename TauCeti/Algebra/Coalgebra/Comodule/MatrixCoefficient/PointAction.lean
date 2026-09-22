@@ -17,6 +17,8 @@ import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Point actions and coefficient matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.PointAction)
+
 Let `M` be a finite free comodule over a coalgebra `C`. In a basis `b`, the matrix of the
 endomorphism induced by an algebra-valued point `g : C →ₐ[R] A` is obtained by applying `g`
 entrywise to the coefficient matrix of `M`. Thus the coefficient matrix records all point actions

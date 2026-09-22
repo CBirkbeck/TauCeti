@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.RelativeNorm
 /-!
 # Restriction in negative Tate degrees and maps in the two low degrees
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.Restriction)
+
 Let `G` be a finite group, `H ≤ G` a subgroup and `M` a `G`-representation. In every Tate degree
 there are a restriction map `tateCohomology M n ⟶ tateCohomology (Rep.res H.subtype M) n` and a
 corestriction map back, and the composite of the two is multiplication by the index `[G : H]`.

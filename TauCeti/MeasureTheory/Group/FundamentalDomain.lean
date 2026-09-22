@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Group.FundamentalDomain
 /-!
 # Fundamental domains for subgroups by coset tiling
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.FundamentalDomain)
+
 If `s` is a fundamental domain for a group `G` acting on `α`, a subgroup `H ≤ G` with
 countable coset space has the `[G : H]`-fold tiling `⋃ q : G ⧸ H, (q.out)⁻¹ • s` as a
 fundamental domain. This is how a fundamental domain for a finite-index subgroup (a

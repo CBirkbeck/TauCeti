@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.Exponent
 /-!
 # A multiquadratic field is Galois
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Galois.Basic)
+
 For square roots `root i` of radicands `d i ∈ K`, the multiquadratic field `M = K(rootᵢ : i)` is
 the splitting field of `∏ᵢ (X² - dᵢ)`, hence normal; when `2 ≠ 0` in `K` each generator is
 separable, so `M / K` is Galois. Along the way we record the basic structure shared by the later

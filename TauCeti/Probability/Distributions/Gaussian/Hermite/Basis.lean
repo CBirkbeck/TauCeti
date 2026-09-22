@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Polynomial.Hermite.Real
 /-!
 # The Hermite polynomials as a Hilbert basis of `L²(γ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Hermite.Basis)
+
 Roadmap milestone **A3′**: the measure-side one-dimensional Gaussian Hermite basis. Where
 `TauCeti.hermiteHilbertBasis` puts the Gaussian envelope inside the *function* (`ψₙ` in `L²(ℝ)`),
 this puts it in the *measure*: `Hₙ/√(n!)` is an orthonormal basis of `L²(γ)` for the standard

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Root.Datum
 /-!
 # The diagonal root datum and the adjoint roots of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Root.Adjoint)
+
 For `GL_n` with its diagonal split torus, the coordinate root datum has roots `e_i - e_j`,
 indexed by ordered pairs `i ≠ j`. Independently, the nontrivial weights of the restricted
 adjoint representation have been classified as the same characters. This file identifies the

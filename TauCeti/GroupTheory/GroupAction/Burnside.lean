@@ -11,6 +11,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Burnside's lemma on a product of two `G`-sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupAction.Burnside)
+
 A point of a product `G`-set `X × Y` is fixed by `g` exactly when both of its components are, so
 Mathlib's Burnside lemma `MulAction.sum_card_fixedBy_eq_card_orbits_mul_card_group`, applied to
 `X × Y`, reads

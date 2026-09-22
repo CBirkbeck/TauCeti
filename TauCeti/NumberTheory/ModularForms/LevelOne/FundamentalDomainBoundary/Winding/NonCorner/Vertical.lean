@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 /-!
 # Winding of the boundary contour at the open vertical edges
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner.Vertical)
+
 A point `w` of an open vertical edge is crossed by exactly one straight segment of the
 boundary contour, and the winding number there is `-1/2`: half a clockwise turn. Along the
 crossing segment the shifted contour `γ t - w` is purely imaginary, so the chord distance is

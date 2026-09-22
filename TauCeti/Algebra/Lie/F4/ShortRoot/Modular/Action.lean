@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.F4.ShortRoot.Modular.Basis
 /-!
 # The adjoint action on the modular F₄ short-root ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.Modular.Action)
+
 This file restricts the adjoint action of the full Chevalley lattice reduced modulo two to its
 twenty-six-dimensional short-root ideal. It expresses that representation in the canonical basis
 of short-root vectors and the two short simple coroots.

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Connected.Basic
 /-!
 # The acting group of a quotient covering map is its deck group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Quotient.ActingGroup)
+
 Let `f : E → X` be a quotient covering map for a group `G` acting on `E`, in the sense of
 Mathlib's `IsQuotientCoveringMap`. Every group element then acts on `E` by a homeomorphism
 over `X`, so translation gives a group homomorphism `G →* deck f`.

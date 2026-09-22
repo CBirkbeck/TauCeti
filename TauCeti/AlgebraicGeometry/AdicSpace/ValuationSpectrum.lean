@@ -15,6 +15,8 @@ public import Mathlib.RingTheory.Spectrum.Prime.Topology
 /-!
 # The valuation spectrum of a ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum)
+
 We define the valuation spectrum `Spv A` following Wedhorn, *Adic Spaces*
 (arXiv:1910.05934v1), Definition 4.1.
 

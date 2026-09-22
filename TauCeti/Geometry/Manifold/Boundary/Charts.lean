@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.Boundary.Model
 /-!
 # The boundary of a manifold with boundary is a manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Charts)
+
 Mathlib carries the boundary `I.boundary M` of a manifold with boundary only as a *set*: there is
 no manifold structure on it, so nothing can be glued along it. This file supplies that structure in
 the basic case, the one Layer 1 of the geometric-topology roadmap pins down first: `M` is a `C^k`

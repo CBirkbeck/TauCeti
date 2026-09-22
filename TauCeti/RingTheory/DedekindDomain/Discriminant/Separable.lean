@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.Discriminant.Basic
 /-!
 # Relative discriminants of separable extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Discriminant.Separable)
+
 This file develops the first arithmetic properties of the relative discriminant ideal. For a
 separable extension of fraction fields, the relative discriminant is nonzero, and in a tower of
 Dedekind domains it satisfies the usual transitivity formula.

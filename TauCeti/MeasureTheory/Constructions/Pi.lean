@@ -11,6 +11,8 @@ import Mathlib.Probability.Independence.Basic
 /-!
 # Coordinate projections of finite product measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Constructions.Pi)
+
 This file records measure-preserving coordinate projections and refreshes for finite product
 measures.
 

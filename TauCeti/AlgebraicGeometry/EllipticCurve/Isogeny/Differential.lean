@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Unramified.Field
 /-!
 # The pullback of differentials along an isogeny, and separability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Differential)
+
 An isogeny `φ : W₁ → W₂` pulls differentials back along its function-field pullback,
 `φ^* : Ω[K(W₂)/F] → Ω[K(W₁)/F]`. This file packages that map, records its basic properties, and
 proves the differential criterion for separability: `φ` is separable exactly when `φ^*ω₂ ≠ 0`,

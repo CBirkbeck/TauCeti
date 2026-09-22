@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Ideal.Maps
 /-!
 # Transporting ideals of a ring of integers along an isomorphism of fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.RingOfIntegers.Transport)
+
 An isomorphism of fields `e : K ≃+* L` restricts to `NumberField.RingOfIntegers.mapRingEquiv e`
 between the rings of integers, and pulling ideals back along it identifies the ideals of `𝓞 L`
 with those of `𝓞 K`.  This file records that this identification is functorial and reflects the

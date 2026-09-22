@@ -14,6 +14,8 @@ import TauCeti.FieldTheory.FunctionField.AffineModel.Place
 /-!
 # The points with a pole at a place form a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.PolePoints)
+
 Let `W` be an elliptic curve over `F`, let `K` be a field extension of `F` and let `P` be a place
 of `K / F`. A point of `W` over `K` either has both coordinates in the valuation ring of `P` or has
 a pole of `x` there (`Affine/ValuationIntegrality.lean`). This file shows that the points with a

@@ -19,6 +19,8 @@ import TauCeti.Analysis.Contour.Argument.Principle
 /-!
 # The ceiling of the boundary contour maps to a `q`-circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.CuspCircle)
+
 Under the level-one `q`-parameter `𝕢 1 z = exp (2πiz)`, the truncation ceiling of the
 fundamental-domain boundary — the horizontal from `-1/2 + H·i` to `1/2 + H·i` — traces
 the circle of radius `e^{-2πH}` about the origin, traversed once counterclockwise. This

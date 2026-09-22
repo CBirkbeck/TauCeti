@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Germ
 /-!
 # The residue sequence `0 ⟶ 𝒪_X(D) ⟶ 𝒪_X(D + y) ⟶ κ(y)_y ⟶ 0`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.ResidueSequence)
+
 Let `X` be a Noetherian integral scheme whose codimension-one local rings are discrete valuation
 rings, `D` a Weil divisor on `X` and `y` a codimension-one point. Near `y` a section `f` of
 `𝒪_X(D + y)` has order at least `-D(y) - 1` at `y`, so for a rational function `g` of order

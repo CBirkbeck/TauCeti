@@ -15,6 +15,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Rank-one Kostant straightening
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Straightening)
+
 This file proves the rank-one straightening formula for divided powers in an associative
 `ℚ`-algebra. If `H`, `E`, and `F` satisfy the `sl₂` commutator relations, then
 

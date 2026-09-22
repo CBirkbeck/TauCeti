@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.Dual
 /-!
 # Base change of a root pairing carried by the standard lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.BaseChange)
+
 An integral root datum carries its roots and coroots on the standard lattices `κ → ℤ`, paired by
 the dot product. The constructions which build a Lie algebra out of a root system — Serre's
 presentation, and Geck's construction — instead want a root system over a field of characteristic

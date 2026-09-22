@@ -15,6 +15,8 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # Connectedness over an algebraically closed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Connected.ScalarExtension)
+
 A connected algebra over an algebraically closed field remains connected after any extension
 of that field. No finite-type or reducedness assumption on the connected algebra is needed.
 

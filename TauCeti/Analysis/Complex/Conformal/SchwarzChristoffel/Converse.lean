@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Primitive
 /-!
 # Integrating the Schwarz--Christoffel differential equation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Converse)
+
 The pre-Schwarzian differential equation
 
 `F'' / F' = ∑ i, e i / (z - a i)`

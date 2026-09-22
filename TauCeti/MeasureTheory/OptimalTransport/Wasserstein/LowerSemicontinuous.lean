@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Infinity.Basic
 /-!
 # Lower semicontinuity of the Wasserstein distance under weak convergence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.LowerSemicontinuous)
+
 On a Polish ground space the `p`-Wasserstein distance is a lower semicontinuous function of the
 pair of laws for the weak topology on `ProbabilityMeasure X × ProbabilityMeasure X`: if
 `μₙ ⇀ μ` and `νₙ ⇀ ν`, then

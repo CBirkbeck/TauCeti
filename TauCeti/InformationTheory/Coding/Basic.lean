@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Module.Pi
 /-!
 # Linear and additive codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Basic)
+
 This file fixes the carrier conventions for finite-coordinate codes. A linear code over a field
 is a submodule of the word space, while an additive code over a commutative additive group is an
 additive subgroup. Consequently, the lattice operations, maps, comaps, and membership notation

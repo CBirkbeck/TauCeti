@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Mixture
 /-!
 # Transport costs along finite partitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.Partition)
+
 Two measures of equal finite mass can be transported cell by cell along matching finite
 measurable partitions of the two spaces. The deterministic estimate
 `TauCeti.transportCost_le_sum_of_partition` bounds their transport cost by the cost inside

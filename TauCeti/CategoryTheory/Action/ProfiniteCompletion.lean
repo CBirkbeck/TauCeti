@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Completion
 /-!
 # Profinite completion and finite group actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.ProfiniteCompletion)
+
 The action of an abstract group `G` on a finite set extends uniquely and continuously to the
 profinite completion of `G`. These extensions are natural in the finite `G`-set, and together
 exhibit the profinite completion as the fundamental group of the forgetful fibre functor from

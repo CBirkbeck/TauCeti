@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.ExplicitFu
 /-!
 # Conjugation on explicit first continuous cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Conjugation)
+
 If `N` is a normal subgroup of a topological group `G`, conjugation by `g` on `N`, together
 with the action of `g` on coefficients, is a compatible pair.  This file packages the resulting
 map on the explicit quotient `H¹(N, M)`.  The map is written with the inverse conjugation

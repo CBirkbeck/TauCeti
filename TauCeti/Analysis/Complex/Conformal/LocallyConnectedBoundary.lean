@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Module.Convex
 /-!
 # Local connectedness of the boundary of a conformally mapped domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.LocallyConnectedBoundary)
+
 Carathéodory's *continuity theorem* — the analytic half of layer **L5** of the conformal-mapping
 roadmap — says that a Riemann map `f : 𝔻 → Ω` extends continuously to the closed disc **if and only
 if** `∂Ω` is locally connected. This file proves the "only if" half, the half that holds with no

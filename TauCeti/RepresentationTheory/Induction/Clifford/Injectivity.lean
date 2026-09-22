@@ -11,6 +11,8 @@ import TauCeti.RepresentationTheory.Irreducible
 /-!
 # Injectivity in the Clifford correspondence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Injectivity)
+
 Let `N` be a normal subgroup of a finite group `G`, let `V` be an irreducible representation of
 `N`, and put `T = inertia V`.  Induction from `T` to `G` sends irreducible representations lying
 over `V` to irreducible representations lying over `V`.  This file proves the uniqueness half of

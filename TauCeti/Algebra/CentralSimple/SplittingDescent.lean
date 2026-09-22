@@ -15,6 +15,8 @@ import Mathlib.RingTheory.Flat.Basic
 /-!
 # Finite descent of splitting fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.SplittingDescent)
+
 A splitting of a finite-dimensional algebra over an algebraic extension descends to a finite
 intermediate field. A matrix presentation over the algebraic extension uses only finitely many
 coefficients, and adjoining those coefficients to the base field produces the desired finite

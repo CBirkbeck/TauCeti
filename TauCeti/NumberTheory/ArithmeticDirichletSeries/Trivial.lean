@@ -13,6 +13,8 @@ public import Mathlib.NumberTheory.NumberField.DedekindZeta
 /-!
 # The trivial ideal weight and Dedekind zeta coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Trivial)
+
 This file identifies the norm coefficients of the trivial ideal weight with the coefficients of
 the Dedekind zeta function.  There is one necessary exception: Mathlib's coefficient counts all
 integral ideals and therefore has value `1` at index zero, contributed by the zero ideal, whereas

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Symplectic.Prod.Basic
 /-!
 # Product operations for constant-structure `J`-holomorphic maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.Prod.Basic)
+
 This file adds the product calculus for the map-level constant-structure `J`-holomorphic predicate
 used by the
 analytic Heegaard Floer roadmap. The target product carries the direct-sum almost complex

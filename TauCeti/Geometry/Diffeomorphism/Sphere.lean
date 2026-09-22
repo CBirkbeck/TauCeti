@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.OrthogonalGroup
 /-!
 # The orthogonal group acts on the sphere by diffeomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Diffeomorphism.Sphere)
+
 A linear isometry equivalence of a real inner product space `E` preserves norms, so it restricts
 to a self-map of the unit sphere; this file shows that restriction is a diffeomorphism of the
 sphere as an analytic manifold, and assembles the restrictions into a group homomorphism

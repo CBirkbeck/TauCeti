@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.PerfectPairing.Basic
 /-!
 # The Frobenius trace pairing on the dual numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.DualNumber.Trace)
+
 This file equips the dual numbers over a commutative semiring with the perfect symmetric
 associative bilinear form obtained by taking the infinitesimal coefficient of a product.
 

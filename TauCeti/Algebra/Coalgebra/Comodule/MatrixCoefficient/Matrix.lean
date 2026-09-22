@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Comul
 /-!
 # The coefficient matrix of a comodule with a finite basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Matrix)
+
 For a right comodule `M` over `C` with a finite basis `(eⱼ)` and coordinate functionals `(eⁱ)`,
 the matrix coefficients `c(eⁱ, eⱼ)` assemble into a square matrix over `C`. The comodule laws say
 that this matrix is multiplicative under comultiplication and specializes to the identity matrix

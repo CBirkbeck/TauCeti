@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Perm.Fin
 /-!
 # Transitivity from cyclic rotation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupAction.FinRotate)
+
 A permutation subgroup containing cyclic rotation acts transitively on the finite ordinal.
 This gives a transitivity criterion for groups specified by generators, including the empty
 and singleton ordinals.

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.TensorAction.SchurWeyl
 /-!
 # Schur-Weyl duality between the images of `k[GLₙ]` and `k[S_d]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TensorAction.GeneralLinear)
+
 The symmetric group `S_d` acts on `(kⁿ)^{⊗d}` by permuting the tensor factors
 (`TauCeti.permTensorAction`) and the general linear group acts diagonally by the tensor power
 `TauCeti.tensorPowerRep` of its standard representation; the two actions commute, by

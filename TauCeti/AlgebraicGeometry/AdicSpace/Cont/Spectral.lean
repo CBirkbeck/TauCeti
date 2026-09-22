@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.SpvOfIdeal.Spectral
 /-!
 # `Cont A` is a spectral space: the second half of Wedhorn's Corollary 7.12
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Cont.Spectral)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Corollary 7.12.**
 
 The continuous points of the valuation spectrum of a Huber ring form a spectral space. Wedhorn

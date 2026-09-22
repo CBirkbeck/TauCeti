@@ -11,6 +11,8 @@ import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Smooth parametrizations of regular Fredholm level sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.LevelSet.Smooth)
+
 At a point where a map between Banach spaces has surjective derivative with complemented kernel,
 `TauCeti.levelSetChart` identifies its level set locally with that kernel. This file proves that
 the inverse chart is, at the chart origin, as smooth as the original map, and computes its

@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.ObjectProperty.Opposite
 /-!
 # Opposite exact structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Opposite)
+
 Every exact structure on an additive category induces an exact structure on the opposite
 category. Its conflations are the opposites of the original conflations, so its inflations are
 the opposites of the original deflations and its deflations are the opposites of the original

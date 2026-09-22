@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Integral.OddSymmetric
 /-!
 # The two-ray corner and its vanishing index principal value
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ModelSector.Corner)
+
 The Hungerbühler–Wasem model sector (HW (2.4)) is the closed curve made of a radial segment into
 its centre, a circular arc of opening angle `α`, and a radial segment back out. The arc's
 contribution is `α / 2π` (`indexIntegral_arc`); this file supplies the other half, that the

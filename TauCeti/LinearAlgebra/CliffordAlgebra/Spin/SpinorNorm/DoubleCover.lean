@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Spin.SpinorNorm.Basic
 /-!
 # The Spin cover of the spinor-norm kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.SpinorNorm.DoubleCover)
+
 Over a general field, the Spin action need not be surjective onto the whole special orthogonal
 group. Its image is exactly the kernel of the spinor norm. `SpinorNorm.Basic` corestricts the
 action to that kernel; this file packages the resulting short exact sequence as a group extension.

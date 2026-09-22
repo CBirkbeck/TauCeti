@@ -17,6 +17,8 @@ import TauCeti.Analysis.Contour.PolarPart.CPV
 /-!
 # Assembling the generalized residue sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.Assembly)
+
 The engine of the Hungerbühler–Wasem generalized residue theorem, over an explicit polar
 decomposition: along a **closed** piecewise-`C¹` immersion in `U` whose crossings of each pole
 are interior and (at every surviving higher-order coefficient) flat and sector-compatible, the

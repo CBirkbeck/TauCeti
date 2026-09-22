@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.SmoothConnected
 /-!
 # Existence of maximal tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Existence)
+
 Every finite-type affine group over a field has a maximal torus, and more precisely every torus
 closed subgroup is contained in a maximal one. The argument is the standard dimension count: tori
 are smooth and connected, so a torus of maximal Lie dimension among those containing a given one

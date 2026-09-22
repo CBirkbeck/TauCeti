@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.VariableChange
 /-!
 # Automorphisms of an elliptic curve with `j ∉ {0, 1728}`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Aut)
+
 Let `E` be an elliptic curve over a field `K`. Over a field, isomorphisms of Weierstrass curves
 are exactly the admissible changes of variables `WeierstrassCurve.VariableChange K`, acting via
 `•`; the automorphisms of `E` are therefore the `C : VariableChange K` with `C • E = E`. This file

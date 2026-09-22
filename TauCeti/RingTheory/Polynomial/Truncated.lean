@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Nilpotent.Basic
 /-!
 # The truncated polynomial algebra `R[X]/(Xⁿ⁺¹)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Truncated)
+
 Mathlib builds `AdjoinRoot f` for any polynomial and, for a monic `f`, its power basis
 `AdjoinRoot.powerBasis'`. It does not record what the quotient by a power of `X` looks like. This
 file does: the class of `X` is nilpotent, and over a local ring `R` the algebra `R[X]/(Xⁿ⁺¹)` is

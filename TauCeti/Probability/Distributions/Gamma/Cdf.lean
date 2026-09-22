@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Gamma.Basic
 /-!
 # The cumulative distribution function of a gamma law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Cdf)
+
 This file computes `ProbabilityTheory.cdf (gammaMeasure a r)` in closed form: for a positive
 shape `a` and a positive rate `r` it is the regularized lower incomplete gamma function
 `TauCeti.regularizedGamma` read at the rate-scaled point, `P(a, r * x)`.

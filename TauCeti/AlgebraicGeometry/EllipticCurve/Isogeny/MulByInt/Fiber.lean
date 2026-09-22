@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.Coset.Fiber
 /-!
 # How many points `[n]` sends to a given one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Fiber)
+
 The points that `[n]` carries to a fixed `T` form a coset of `ker [n]` as soon as there is one of
 them, so there are exactly `#ker [n]` of them — and over an algebraically closed field with `n`
 invertible that is `n ²`. The coset count itself is group theory, and lives in

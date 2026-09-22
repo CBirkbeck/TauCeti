@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
 /-!
 # Substitution in symmetric multivariate polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Substitution)
+
 Substituting the same univariate polynomial into every variable of a symmetric multivariate
 polynomial preserves symmetry. For finitely many variables over a commutative ring, the fundamental
 theorem of symmetric polynomials then expresses the substituted polynomial in the elementary

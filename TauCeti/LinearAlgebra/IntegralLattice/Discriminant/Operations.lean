@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Quotient.Prod
 /-!
 # Discriminant forms under orthogonal sums and negation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Operations)
+
 The dual carrier of an orthogonal sum is the product of the two dual carriers.  Passing the
 embedded original carriers through this equivalence and then quotienting gives the canonical
 equivalence

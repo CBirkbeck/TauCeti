@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Index
 /-!
 # The index of the Ree family of type `G₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeG2.Index)
+
 `TauCeti.LieTypeIndex` names the Ree family of type `G₂` by its constructor `reeG2 m`, whose
 field order is `3 ^ (2m+1)`. This file selects that constructor and validates it, giving the
 restricted index domain `TauCeti.ReeG2LieIndex` on which the family's carrier, Steinberg

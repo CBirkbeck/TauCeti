@@ -12,6 +12,8 @@ import TauCeti.Analysis.SpecialFunctions.Trigonometric.Angle
 /-!
 # The model sector's crossing angle is its opening angle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ModelSector.CrossingAngle)
+
 `TauCeti.Contour.crossingAngle` reads the opening angle at a crossing off the two one-sided
 tangent limits, and `TauCeti.Contour.windingNumber_closedModelSector` gives the model sector of
 opening `α` winding number `α / 2π` about its corner. Nothing connected the two: the winding

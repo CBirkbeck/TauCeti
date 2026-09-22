@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 /-!
 # The slash sum preserves holomorphy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Holomorphic)
+
 `heckeSlashSum` is a finite sum of slashes, so it is holomorphic whenever its argument is. This
 is one of the two conditions separating `SlashInvariantForm` from `ModularForm`; the other,
 boundedness at the cusps, is not addressed here.

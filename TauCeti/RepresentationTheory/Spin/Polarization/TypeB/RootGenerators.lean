@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeB.Basic
 /-!
 # The type-`B` root vectors as quadratic Clifford elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeB.RootGenerators)
+
 `TauCeti.SpinPolarizationData.typeBQuadraticEquiv` identifies the split type-`B` matrix algebra
 `LieAlgebra.Orthogonal.typeB ι K` with the quadratic elements of the Clifford algebra of an odd
 polarization. This file evaluates that identification on the Bourbaki-numbered root and coroot

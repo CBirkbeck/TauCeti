@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Basic
 /-!
 # Semisimple affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Semisimple.Basic)
+
 A finite-type affine group over a field is semisimple when it is smooth and geometrically
 connected and, after extension to an algebraic closure, it has no nontrivial connected normal
 smooth solvable closed subgroup. In coordinate-Hopf-algebra terms, a closed subgroup of the

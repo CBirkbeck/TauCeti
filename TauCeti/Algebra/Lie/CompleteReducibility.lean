@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.Submodule.Finrank
 /-!
 # Complete reducibility from a single irreducible input
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.CompleteReducibility)
+
 Weyl's complete reducibility theorem and its `sl₂` rank-one case share one and the same argument.
 Only a single step of that argument is representation-theoretic; everything else is formal, and this
 file isolates the formal part so that it is proved once.

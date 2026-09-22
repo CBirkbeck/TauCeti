@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Tangent.LieEquiv
 /-!
 # The adjoint action on left-invariant derivations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Derivation)
+
 The tangent adjoint action is transported across the canonical Lie equivalence between the tangent
 space at the identity and left-invariant derivations. The result is the roadmap-facing group adjoint
 `Ad` on Mathlib's Lie algebra `LeftInvariantDerivation I G`.

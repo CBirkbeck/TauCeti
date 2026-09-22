@@ -13,6 +13,8 @@ public import Mathlib.Topology.Semicontinuity.Basic
 /-!
 # Approximating a lower semicontinuous function from below
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Semicontinuity.Approximation)
+
 On a pseudometric space, an `ℝ≥0∞`-valued lower semicontinuous function is the pointwise supremum
 of an increasing sequence of bounded Lipschitz functions. This file builds that sequence
 explicitly, as the truncated inf-convolution

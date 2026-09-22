@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Inversions.StrongExchange
 /-!
 # Length equals inversions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Inversions.Length)
+
 The number of positive roots that a Weyl-group element sends to negative roots is exactly the
 number of letters in a shortest word in the simple reflections spelling that element. One
 inequality is the exchange step: a letter changes the inversion count by exactly one, so a word of

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Algebra.Hom.Strict
 /-!
 # Strictly unital morphisms of A-infinity algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.Hom.Unital)
+
 An `A∞` morphism between algebras with chosen strict units is strictly unital when its linear
 component carries the source unit to the target unit and every higher component vanishes as soon
 as one input is the source unit.  This file packages that property for general `A∞` morphisms.

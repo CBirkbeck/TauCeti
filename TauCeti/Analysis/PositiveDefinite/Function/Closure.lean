@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PositiveDefinite.Basic
 /-!
 # Weighted closure for positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Function.Closure)
+
 This file adds the weighted finite-mixture and Schur-power API for
 `TauCeti.IsPositiveDefinite`, the positive-definite-function predicate on an involutive additive
 monoid. The basic file already proves binary sums, nonnegative complex scalar multiples, pointwise

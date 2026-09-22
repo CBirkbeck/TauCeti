@@ -12,6 +12,8 @@ public import Mathlib.Topology.Homotopy.Lifting
 /-!
 # The fundamental group of the base of a regular cover and its deck group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.FundamentalGroup.Basic)
+
 For a covering map `p : E → X` with **simply connected** total space whose deck action is
 **regular** (`p` surjective, with `deck p` acting transitively on every fibre), the
 fundamental group of the base is anti-isomorphic to the deck transformation group:

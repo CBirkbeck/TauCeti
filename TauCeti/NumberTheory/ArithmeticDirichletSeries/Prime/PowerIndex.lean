@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Counting
 /-!
 # Indexing the prime-power ideals by a prime and an exponent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.PowerIndex)
+
 Every prime-power ideal of `𝓞 K` is `𝔭 ^ (k + 1)` for a unique height-one prime `𝔭` and a unique
 `k : ℕ`. This file records that bijection and what it does to an infinite sum: a *summable* family
 on the prime-power ideals has the same sum as the iterated sum over primes and exponents, and a

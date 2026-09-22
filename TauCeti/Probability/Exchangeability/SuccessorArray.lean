@@ -12,6 +12,8 @@ public import TauCeti.Probability.Exchangeability.Basic
 /-!
 # The successor array of a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.SuccessorArray)
+
 The combinatorial successor-array encoding and its inverse are defined in
 `TauCeti.Combinatorics.Enumerative.SuccessorArray`. This file relates that encoding to transition
 counts and proves that both directions of the change of variables are measurable.

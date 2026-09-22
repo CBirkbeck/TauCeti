@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.Presentation.GroupPresentation
 /-!
 # A transcribed presentation of the Higman--Sims group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.HigmanSims)
+
 This file carries the `HS` row of the sporadic presentation data required by milestone S1 of
 `TauCetiRoadmap/CFSGStatement/README.md`. It records John Bray's ATLAS version 3 presentation of
 the Higman--Sims group on its standard generators `a` and `b` as a `TauCeti.GroupPresentation`,

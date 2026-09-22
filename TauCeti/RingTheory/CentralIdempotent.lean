@@ -14,6 +14,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Central idempotents
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.CentralIdempotent)
+
 A **central idempotent** of a ring `R` is an element `e` with `e * e = e` that commutes with
 everything.  Such an element splits `R` as a product of the two rings `eR` and `(1 - e)R`, so the
 central idempotents record how far `R` is from being indecomposable as a ring.

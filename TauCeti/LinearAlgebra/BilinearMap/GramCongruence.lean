@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Determinant
 /-!
 # Change of basis for matrices of bilinear and sesquilinear maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearMap.GramCongruence)
+
 Mathlib's `LinearMap.toMatrix₂_mul_basis_toMatrix` records how the matrix of a bilinear map
 responds to a change of basis, but it is stated for `B : M₁ →ₗ[R] M₂ →ₗ[R] R`, whose values are
 the scalars themselves. A bilinear map valued in an `R`-algebra `S` has no such lemma, because its

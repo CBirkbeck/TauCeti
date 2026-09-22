@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Normal.Finite
 /-!
 # Connected algebraic actions on normal-subgroup joint weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Normal.Connected)
+
 Let `H` be the coordinate ring of a connected affine group over a field `k`, acting linearly on a
 finite-dimensional vector space. A normal subgroup of the base-valued point group determines a
 finite set of characters with nonzero joint weight space, and the ambient point group permutes

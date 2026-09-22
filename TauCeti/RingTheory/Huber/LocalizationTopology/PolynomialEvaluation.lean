@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
 /-!
 # Evaluating polynomials at the fractions of a rational subset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.PolynomialEvaluation)
+
 For numerators `t₁, …, tₖ` drawn from `T`, the evaluation `Xᵢ ↦ tᵢ/s` of *polynomials* lands in
 the localisation `Aₛ = A⟨T/s⟩` itself, not in its completion: a polynomial in the fractions is a
 finite sum, so no convergence is involved. That is what makes this map one the completion functor

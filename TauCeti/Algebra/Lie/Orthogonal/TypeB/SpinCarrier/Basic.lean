@@ -19,6 +19,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The full-weight type-B spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.SpinCarrier.Basic)
+
 This file specializes the type-`Bₙ₊₁` spin representation to the canonical split quadratic
 space `(M* × M) × ℚ`, where `M = Fin (n + 1) → ℚ`. Its exterior coordinate lattice has a
 basis indexed by `Finset (Fin (n + 1))`; the simple-root Kostant form preserves this lattice,

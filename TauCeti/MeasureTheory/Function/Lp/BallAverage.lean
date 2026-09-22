@@ -20,6 +20,8 @@ import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # The ball average of an `Lᵖ` function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.BallAverage)
+
 The **ball average** of `f` at scale `r` is
 
 `A_r f x = ⨍ y in Metric.ball x r, f y ∂μ`,

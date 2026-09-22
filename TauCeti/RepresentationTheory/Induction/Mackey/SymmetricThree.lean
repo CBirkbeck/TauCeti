@@ -18,6 +18,8 @@ public import TauCeti.RepresentationTheory.Symmetric.SignCharacter
 /-!
 # Mackey on `S₃`: the point stabilizer against the alternating subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.SymmetricThree)
+
 The roadmap's smallest Mackey example takes `G = S₃` and contrasts its two kinds of proper
 nontrivial subgroup.
 

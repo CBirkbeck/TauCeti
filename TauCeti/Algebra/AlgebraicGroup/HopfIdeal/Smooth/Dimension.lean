@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.FiniteType
 /-!
 # Comparing smooth connected closed subgroups by Lie dimension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Smooth.Dimension)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A closed
 subgroup is encoded contravariantly by a Hopf ideal, so `I ≤ J` says that the subgroup cut out by
 `I` contains the one cut out by `J`. Lie dimension is antitone in the defining ideal, and this

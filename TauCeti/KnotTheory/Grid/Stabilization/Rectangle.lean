@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Stabilization.Basic
 /-!
 # Rectangles under grid-point insertion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Stabilization.Rectangle)
+
 This file transports an oriented rectangle between grid states along the insertion of a common
 point into its source and target. It characterizes the sides and covered squares of the transported
 rectangle, proves that transport is a bijection onto the rectangles between states containing the

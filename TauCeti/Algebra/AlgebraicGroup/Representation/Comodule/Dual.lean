@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Evaluation
 /-!
 # Dual comodules and point representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Dual)
+
 For a finite-projective right comodule over a commutative Hopf algebra, this file expresses the
 evaluation identities for dual comodule point actions through the fixed-object
 representation--comodule dictionary. The point action on the dual is adjoint to the original

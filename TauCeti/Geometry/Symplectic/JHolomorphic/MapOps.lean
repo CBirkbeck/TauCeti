@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Symplectic.JHolomorphic.Transport
 /-!
 # Operations preserving constant-structure `J`-holomorphic maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.MapOps)
+
 This file is the aggregate import for elementary map-level operations under which the
 normed-vector-space constant-structure `J`-holomorphic predicates are invariant, used by the
 analytic Heegaard Floer roadmap.

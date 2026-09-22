@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Flat.QuotientRegular
 /-!
 # The Laurent quotients `A⟨X⟩/(f - X)` and `A⟨X⟩/(1 - f X)` are flat
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.Laurent)
+
 Wedhorn's Lemma 8.31(2): for a complete noetherian Tate ring `A` and `f ∈ A`, the rings
 `A⟨X⟩/(f - X)` and `A⟨X⟩/(1 - f X)` are flat over `A`. They are the coordinate rings of the
 Laurent rational subsets `{|f| ≤ 1}` and `{|f| ≥ 1}` of `Spa A` (Wedhorn, Example 6.38), which is

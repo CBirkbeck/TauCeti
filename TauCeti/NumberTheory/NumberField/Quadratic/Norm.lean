@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Norm.Quadratic
 /-!
 # The field norm on a quadratic number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Norm)
+
 For a quadratic number field `K = ℚ(√d)` presented by an algebraic integer `θ : 𝓞 K` generating
 `K` over `ℚ` with `minpoly ℤ θ = X² - d`, this file computes the field norm `Algebra.norm ℚ` on
 `K` in terms of the coordinates in the basis `1, θ`:

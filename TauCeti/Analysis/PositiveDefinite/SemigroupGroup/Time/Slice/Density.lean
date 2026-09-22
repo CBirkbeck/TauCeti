@@ -13,6 +13,8 @@ public import TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Slice.Measur
 /-!
 # The fibrewise spatial densities of a Berg--Christensen--Ressel positive-definite function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Slice.Density)
+
 Let `F` be a bounded continuous positive-definite function on the involutive semigroup `ℝ≥0 × V`,
 with `V` a finite-dimensional real inner-product space. Its spatial Bochner measures
 `bochnerMeasure (F (t, ·))` decrease in time, so each of them has a Radon--Nikodym derivative

@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Enumerative.SuccessorArray
 /-!
 # Last-exit reconstruction of a finite path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.LastExit)
+
 This file proves the finite combinatorial lemma behind the successor-array proof of the
 Diaconis--Freedman theorem. Fix a finite prefix of a path and reorder the successor entries used
 by that prefix, separately within each row. If each reordering permutes the used part of its row

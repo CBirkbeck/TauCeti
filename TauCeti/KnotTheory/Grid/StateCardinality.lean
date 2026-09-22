@@ -13,6 +13,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Basic
 /-!
 # Cardinality of grid states
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.StateCardinality)
+
 This file records the finite size of the generator set for an `n × n` grid complex. A grid state
 is encoded in `TauCeti.KnotTheory.Grid.Diagram.Basic` as a permutation graph on the columns, so the
 set of grid states is equivalent to `Equiv.Perm (Fin n)` and has cardinality `n!`.

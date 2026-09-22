@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Preadditive.Projective.Basic
 /-!
 # Essential epimorphisms and the uniqueness of a projective cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Projective.Cover)
+
 A *projective cover* of an object `M` is an epimorphism `π : P ⟶ M` from a projective object which
 is minimal, in the sense of being an **essential epimorphism**: a morphism `g` into `P` is an
 epimorphism as soon as `g ≫ π` is one. That epimorphism condition is the definition used here —

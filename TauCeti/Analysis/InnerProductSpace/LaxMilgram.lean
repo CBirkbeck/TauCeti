@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.LaxMilgram
 /-!
 # Existence and uniqueness form of Lax--Milgram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.LaxMilgram)
+
 Mathlib's Lax--Milgram theorem is packaged as
 `IsCoercive.continuousLinearEquivOfBilin`: a coercive continuous bilinear form
 `B : V →L[ℝ] V →L[ℝ] ℝ` induces a continuous linear equivalence `V ≃L[ℝ] V` sending

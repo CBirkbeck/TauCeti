@@ -13,6 +13,8 @@ import TauCeti.Topology.Algebra.Group.Subgroup
 /-!
 # Bases of the Frattini quotient and topological generation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Basis)
+
 Burnside's topological generation criterion says that a set generates a profinite pro-`p`
 group topologically exactly when its image spans a dense subspace of the Frattini quotient
 over `𝔽_p`. When the quotient is finite, this is equivalent to algebraic spanning. Any basis

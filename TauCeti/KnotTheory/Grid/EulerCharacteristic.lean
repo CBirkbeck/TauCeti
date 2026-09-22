@@ -14,6 +14,8 @@ import Mathlib.Algebra.MonoidAlgebra.MapDomain
 /-!
 # The graded Euler characteristic of the grid chain module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.EulerCharacteristic)
+
 `Grading/Chain.lean` decomposes the grid chain module of a diagram with an odd number of link
 components into its homogeneous pieces, one for each pair (`O`-Maslov grading, Alexander grading),
 and `Determinant.lean` evaluates the alternating Alexander state sum of a grid diagram as a

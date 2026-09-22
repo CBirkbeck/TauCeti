@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Transvection.Basic
 /-!
 # The standard representation of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.StandardComodule)
+
 The standard representation of `SL_n` is obtained by restricting the standard representation of
 `GL_n` along the determinant-one closed immersion. In coordinate algebras, this is corestriction
 of the standard `O(GL_n)`-comodule along the quotient map

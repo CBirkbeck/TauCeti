@@ -12,6 +12,8 @@ public import Mathlib.NumberTheory.PrimesCongruentOne
 /-!
 # The auxiliary prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.AuxiliaryPrime)
+
 The Chebotarev density argument repeatedly needs a rational prime that is simultaneously large,
 congruent to `1` modulo a prescribed level, unramified in two number fields, and such that the
 cyclotomic polynomial stays irreducible over the base. This file produces one, with all of those

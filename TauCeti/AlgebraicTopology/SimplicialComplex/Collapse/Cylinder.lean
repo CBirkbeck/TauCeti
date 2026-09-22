@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Product
 /-!
 # Collapsing ordered simplicial cylinders
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Collapse.Cylinder)
+
 If a complex is a cone whose apex is the greatest vertex, then its ordered cylinder is again a
 cone: its apex is the pair of the original apex with the terminal interval vertex. Consequently a
 finite such cylinder collapses to that apex. In particular this applies to the full simplex,

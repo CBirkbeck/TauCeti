@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Rational
 /-!
 # The pinned split Lie algebra of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgebra.Basic)
+
 `TauCeti.DynkinType.simplyConnectedRootDatum` pins one integral root datum per valid Dynkin type,
 and `TauCeti.DynkinType.rationalRootSystem` reads it as a root system over `ℚ`. This file feeds
 that root system to Geck's construction and names the resulting Lie algebra:

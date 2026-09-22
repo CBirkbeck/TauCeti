@@ -17,6 +17,8 @@ import TauCeti.Probability.Exchangeability.PathSpace.Law.Bridge
 /-!
 # The de Finetti measure is the mixing law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.CanonicalMixture)
+
 The development names the mixing law of an exchangeable process three times:
 
 * `deFinettiMeasure μ X`, the law of the canonical tail directing measure

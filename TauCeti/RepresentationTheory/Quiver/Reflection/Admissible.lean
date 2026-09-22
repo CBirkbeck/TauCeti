@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.Iterate
 /-!
 # Sink-admissible orderings of the vertices of a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Admissible)
+
 Reflecting a quiver at a sink reverses the arrows meeting that vertex. Composing several such
 reflections calls for a list of vertices that is *sink-admissible*: each entry must be a sink of
 the quiver obtained by reflecting at all the entries preceding it, the iterated reflection

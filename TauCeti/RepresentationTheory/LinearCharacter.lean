@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Simple.Basic
 /-!
 # One-dimensional representations from linear characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.LinearCharacter)
+
 A **linear character** of a monoid `G` over a commutative semiring `k` is a multiplicative
 character `χ : G →* kˣ`. It acts on the one-dimensional `k`-module `k` by scalar multiplication.
 This file packages that action as `Representation.ofLinearCharacter χ`, bundles it as an object
@@ -145,7 +147,10 @@ namespace FDRep
 variable {k : Type u} {G : Type v}
 
 /-- **The one-dimensional representation carrying a linear character, as an object of
-`FDRep k G`.** This is the shape induction consumes. -/
+`FDRep k G`.** This is the shape induction consumes.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=FDRep.ofLinearCharacter) -/
 noncomputable def ofLinearCharacter [CommRing k] [Monoid G] (χ : G →* kˣ) : FDRep k G :=
   FDRep.of (Representation.ofLinearCharacter χ)
 

@@ -13,6 +13,8 @@ import TauCeti.Probability.Distributions.Dirac
 /-!
 # Transforms and moments of the negative-binomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.NegativeBinomial.Transforms)
+
 This file develops the analytic API of the real cast of the negative-binomial law. For positive
 shape `r` and success probability `0 < p ≤ 1`, its exponential moments exist exactly when
 `(1 - p) exp t < 1`. The resulting moment-generating, cumulant-generating, and characteristic

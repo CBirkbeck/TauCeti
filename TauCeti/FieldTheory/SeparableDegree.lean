@@ -12,6 +12,8 @@ import Mathlib.FieldTheory.PurelyInseparable.Tower
 /-!
 # Separable and inseparable degrees under a surjective base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.SeparableDegree)
+
 In a tower `K → E → L` of fields whose lower map `algebraMap K E` is onto, `E` carries no more
 information over `K` than `K` itself does, so the degree of `L` is the same whichever of the two
 it is measured over. This file records that for the separable and inseparable degrees, alongside

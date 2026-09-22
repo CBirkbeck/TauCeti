@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # The Euler characteristic of a sheaf of modules on a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Cohomology.EulerCharacteristic)
+
 For a scheme `X` over a field `k`, the cohomology `Hⁱ(X, M)` of a sheaf of modules is a
 `k`-vector space, so the alternating sum of its dimensions can be formed. This file introduces
 that alternating sum, truncated at a degree `n`, and proves that it is additive on short exact

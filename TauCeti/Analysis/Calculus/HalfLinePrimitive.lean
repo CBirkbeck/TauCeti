@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 /-!
 # The primitive of a function on the nonnegative half-line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.HalfLinePrimitive)
+
 Given `f : ℝ → ℝ`, this file constructs `TauCeti.halfLinePrimitive f`, the primitive `t ↦ ∫₀ᵗ f`
 of `f` on `[0, ∞)`. To make the function total on `ℝ`, the integrand is composed with `max · 0`,
 so on `[0, ∞)` the value is the ordinary integral `∫₀ᵗ f` and on `(-∞, 0]` it is the linear

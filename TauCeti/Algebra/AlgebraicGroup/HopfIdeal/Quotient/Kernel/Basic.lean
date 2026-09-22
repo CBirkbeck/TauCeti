@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Map
 /-!
 # The kernel Hopf ideal of a morphism of commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.Basic)
+
 For a morphism `f : H ⟶ K` of commutative Hopf algebras, the kernel Hopf ideal is the
 extension of the augmentation ideal of `H` along `f` — the ideal `K·f(H⁺)` of the
 codomain, which is the coordinate ring of the *source* of the induced morphism of affine

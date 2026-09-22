@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.Basic
 /-!
 # Open ideals of a Huber ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.OpenIdeal)
+
 Fix a pair of definition `(A₀, I)` for a Huber ring `A`. The neighbourhoods of zero that are
 cofinal are the *images* of the powers `Iⁿ` in `A`, not the ideals they generate — an ideal span
 can be much larger than the additive subgroup it is spanned by. What makes the ideal statement

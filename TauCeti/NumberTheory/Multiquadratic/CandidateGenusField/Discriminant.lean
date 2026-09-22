@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Compositum
 /-!
 # The discriminant and the ramified primes of the candidate genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Discriminant)
+
 For a squarefree integer `d`, `candidateGenusField hd` is the compositum of the quadratic fields
 attached to the prime discriminants dividing `fundamentalDiscriminant d`. This file computes its
 field discriminant

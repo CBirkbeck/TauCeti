@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.GroupScheme.ClosedSubgroup
 /-!
 # Closed generators of the type-E7 minuscule carrier after base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.ClosedGenerators)
+
 The integral type-`E₇` minuscule carrier comes with fourteen numbered simple-root subgroups
 and a rank-seven weight torus. This file proves that their transported coordinate maps remain
 surjective after base change from `ℤ` to an arbitrary commutative ring. Contravariantly, the

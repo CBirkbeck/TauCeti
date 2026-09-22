@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 /-!
 # The `q`-expansion of the upper-triangular Hecke sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.QExpansion)
+
 `UpperTri/Sum.lean` defines `heckeSlashUpperTri k p f = ∑ b < p, f ∣[k] !![1, b; 0, p]`, and the
 files beside it carry it past holomorphy, the cusps and invariance under `T`. What was missing is
 what the sum does to Fourier coefficients, and that is what this file computes:

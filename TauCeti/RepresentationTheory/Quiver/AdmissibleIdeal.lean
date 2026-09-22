@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # Admissible ideals and bound quiver algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.AdmissibleIdeal)
+
 A two-sided ideal `I` of a path algebra `kQ` is *admissible* when it is squeezed between a power
 of the arrow ideal `R` and its square, `R ^ N ≤ I ≤ R ^ 2`. The two bounds say complementary
 things about the relations `I` imposes. The upper bound `I ≤ R ^ 2` says that every relation is a

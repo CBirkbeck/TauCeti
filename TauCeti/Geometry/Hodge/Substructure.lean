@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Submodule.Compl
 /-!
 # Sub-Hodge structures and the strictness of Hodge morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Substructure)
+
 A subspace of the ambient complex vector space of a pure Hodge structure is a **sub-Hodge
 structure** when it is stable under the conjugation and is spanned by its intersections with the
 Hodge components. Such a subspace inherits a pure Hodge structure of the same weight, namely the

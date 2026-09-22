@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Central
 /-!
 # The space of morphisms between irreducible Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Schur)
+
 Let `M` and `N` be irreducible Lie modules over a Lie algebra `L`. A nonzero morphism `M → N` has
 kernel and range that are Lie submodules, so both are trivial or everything; being nonzero forces
 the kernel to be `⊥` and the range to be `⊤`, and the morphism is an equivalence

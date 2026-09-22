@@ -17,6 +17,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Basic results about finite ordinal types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Fin.Basic)
+
 This file collects elementary facts about finite ordinal types, including the classification of
 permutations of `Fin 2`, sums of reversed indices, indicator sums indexed by `Fin n`, and the final
 value of a partial product.

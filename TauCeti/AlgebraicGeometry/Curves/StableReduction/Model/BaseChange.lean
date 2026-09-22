@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.Model.Basic
 /-!
 # Base change of models over discrete valuation rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Model.BaseChange)
+
 A chosen finite extension of a discrete valuation ring carries a model to the pullback model over
 the chosen local ring.  Its prescribed generic fibre is the scalar extension of the original
 curve to the extension field.  The generic-fibre identification is the canonical comparison

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Path
 /-!
 # Point-set topology of path components
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.PathComponent)
+
 Paths and path homotopies based in `pathComponent x₀` remain in that component, without any
 local path-connectedness assumption. This gives path connectedness of the component as a
 subspace; under local path connectedness of the ambient space, openness of path components also

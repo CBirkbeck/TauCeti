@@ -15,6 +15,8 @@ import Mathlib.GroupTheory.GroupAction.Jordan
 /-!
 # Recognizing cycles and transpositions in a permutation group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.Recognition)
+
 This file supplies recognition steps that read off structure of a permutation group from cycle
 data. A transitive subgroup of a finite symmetric group whose degree is prime contains a full
 cycle. A permutation with exactly one 2-cycle and all its other cycles of odd length has an odd

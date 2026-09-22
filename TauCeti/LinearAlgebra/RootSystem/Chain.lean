@@ -13,6 +13,8 @@ import TauCeti.Data.Fin.Basic
 /-!
 # Chains with simple or double edges
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Chain)
+
 The diagrams that the classification of finite-type Cartan matrices has to weigh are built out of
 **chains**. This file isolates the entry functions for a simply-laced chain and for a chain whose
 last edge may be double, together with the summation identities used by weighting arguments.

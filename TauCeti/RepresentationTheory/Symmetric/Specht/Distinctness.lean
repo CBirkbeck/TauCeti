@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Dominance
 /-!
 # Distinctness of Specht modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Distinctness)
+
 The rational Specht modules of two partitions of the same integer are isomorphic only when their
 shapes agree.  This is the irredundancy half of the classification of the irreducible
 representations of the symmetric group.

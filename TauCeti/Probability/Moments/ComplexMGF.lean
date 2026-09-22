@@ -12,6 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Analytic continuation of a moment-generating function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.ComplexMGF)
+
 The moment-generating function of a real random variable `X` is the restriction to the real axis
 of `ProbabilityTheory.complexMGF X μ`, which is analytic on the vertical strip over the interior
 of the exponential-integrability domain.  A closed form for `mgf X μ` on a real interval therefore

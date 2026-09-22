@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PairOfDefinition
 /-!
 # Comparing `A⟨X₁,…,X_{k+m}⟩` with `A⟨X₁,…,Xₖ⟩⟨Y₁,…,Y_m⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Iterate)
+
 Splitting the variables of a completed restricted power-series algebra into a first block of `k`
 and a second of `m` presents the algebra in `k + m` variables as an algebra in `m` variables over
 the algebra in `k`. This file constructs the two comparison maps

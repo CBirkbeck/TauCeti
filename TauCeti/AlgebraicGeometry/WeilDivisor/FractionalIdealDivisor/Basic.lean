@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Dedekind.Basic
 /-!
 # The Weil divisor of an invertible fractional ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.Basic)
+
 For a Dedekind domain `R` with fraction field `K`,
 `TauCeti.AlgebraicGeometry.WeilDivisor.Dedekind.Basic` turns the height-one spectrum of `R` into the
 points of an affine curve and packages the order of vanishing of a rational function as the order

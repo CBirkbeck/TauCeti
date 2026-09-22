@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 /-!
 # Paths in acyclic simple graphs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.Acyclic)
+
 This file records reusable consequences of acyclicity for paths in simple graphs.
 
 ## Main results

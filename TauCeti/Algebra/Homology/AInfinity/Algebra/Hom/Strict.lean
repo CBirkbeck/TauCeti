@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Algebra.Unit
 /-!
 # Strict morphisms of A-infinity algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.Hom.Strict)
+
 A strict morphism of uncurved nonunital `A∞` algebras is a degree-zero linear map that commutes
 with every unsuspended operation.  It is the special case of an `A∞` morphism whose components
 above arity one vanish.  Applying the map letterwise gives the corresponding morphism between

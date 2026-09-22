@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Valuation.ValuativeRel.Basic
 /-!
 # Comap for valuative relations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.ValuativeRel.Comap)
+
 We define the pullback (comap) of a `ValuativeRel` along a ring homomorphism.
 
 ## Main definitions

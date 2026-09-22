@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Connected
 /-!
 # The identity-component affine group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.GroupScheme)
+
 Let `H` be a finite-type commutative Hopf algebra over an algebraically closed field.  The ideal
 cutting out the connected component of the counit point is a Hopf ideal.  This file takes its
 quotient Hopf algebra and packages the corresponding Hopf spectrum as the identity-component

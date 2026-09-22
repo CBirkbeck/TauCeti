@@ -14,6 +14,8 @@ import Mathlib.RingTheory.PrincipalIdealDomain
 /-!
 # Closure properties of finitely generated groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Finiteness)
+
 Mathlib has a substantial theory of finitely generated commutative groups in
 `Mathlib/GroupTheory/FiniteAbelian/Basic.lean` — the structure theorem, `finite_of_fg_isMulTorsion`,
 and `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, which is the finiteness of `G ⧸ Gⁿ`. Three

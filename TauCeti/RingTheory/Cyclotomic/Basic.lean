@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Polynomial.Cyclotomic.Computable
 /-!
 # Computable cyclotomic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Cyclotomic.Basic)
+
 This file defines `TauCeti.Cyclotomic e`, an exact, computable model of
 `ℤ[X] / (Polynomial.cyclotomic e ℤ)`.  Its elements are the `e.totient` coefficients of the
 canonical representative, in descending order; `TauCeti.Cyclotomic.coeff` reads off the coordinate
@@ -42,7 +44,10 @@ namespace TauCeti
 /-! ## The exact ring -/
 
 /-- Exact `e`-th cyclotomic integers, represented by the `e.totient` coefficients of the
-canonical polynomial representative in descending order. -/
+canonical polynomial representative in descending order.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Cyclotomic) -/
 @[expose] def Cyclotomic (e : ℕ) : Type _ := {l : List ℤ // l.length = e.totient}
   deriving DecidableEq
 
@@ -350,7 +355,10 @@ noncomputable def equivAdjoinRoot :
 theorem equivAdjoinRoot_apply (x : Cyclotomic e) : equivAdjoinRoot x = toAdjoinRoot x := by
   rw [equivAdjoinRoot, RingEquiv.ofBijective_apply, toAdjoinRootRingHom_apply]
 
-/-- The distinguished generator `ζ`, represented by the polynomial `X`. -/
+/-- The distinguished generator `ζ`, represented by the polynomial `X`.
+
+Tested by: 7 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Cyclotomic.zeta) -/
 @[expose] def zeta (e : ℕ) : Cyclotomic e := ofCoeffList e [1, 0]
 
 @[simp]
@@ -462,7 +470,10 @@ theorem evalCoeffs_eq_sum {R : Type*} [CommRing R] (f : ℤ →+* R) (r : R) (x 
 
 /-- Reduction of exact cyclotomic integers in `ZMod p`, evaluated at a chosen residue `r`.
 When `r` is an `e`-th primitive root, `TauCeti.Cyclotomic.reduceRingHom` packages this as a ring
-homomorphism. -/
+homomorphism.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Cyclotomic.reduce) -/
 @[expose] def reduce (p : ℕ) (r : ZMod p) (x : Cyclotomic e) : ZMod p :=
   evalCoeffs (Int.castRingHom (ZMod p)) r x
 

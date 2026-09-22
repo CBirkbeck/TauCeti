@@ -15,6 +15,8 @@ import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Augmentation
 /-!
 # The conormal sequence of a closed affine subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Cotangent)
+
 Let `I` be a Hopf ideal of a commutative Hopf algebra `H`. The quotient map `H ⟶ H/I` induces a
 surjection on augmentation cotangent spaces. Its kernel is the image of `I` in the ambient
 cotangent space, the conormal space of the corresponding closed subgroup at the identity. Thus

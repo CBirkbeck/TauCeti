@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Smooth.Product
 /-!
 # The represented weight-parabolic Levi decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Levi.SemidirectProduct)
+
 Let `w : Fin N → ℤ`. The weight-unipotent subgroup `U(w)` is normal in the weight parabolic
 `P(w)`, and the weight Levi subgroup `L(w)` acts on it by conjugation. The resulting represented
 semidirect product maps to `P(w)` by multiplication. This file proves that multiplication is an

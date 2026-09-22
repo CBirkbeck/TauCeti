@@ -15,6 +15,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The upper-unitriangular group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Scheme)
+
 For a commutative ring `R`, the polynomial Hopf algebra on the entries strictly above the
 diagonal represents the upper-unitriangular group `U_n`.  The entrywise inclusion of
 upper-unitriangular matrices into `GL_n` is represented by a surjective coordinate Hopf-algebra

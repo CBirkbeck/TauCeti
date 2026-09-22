@@ -13,6 +13,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # The standard two-by-two grid grading computation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.SmallGrid.Gradings)
+
 This file records the first explicit grading calculation for the grid-combinatorial lane.
 There are exactly two grid states in grid size two: the identity graph and the transposition
 graph. The standard `2 × 2` grid diagram used for the unknot has `O` markings on the identity

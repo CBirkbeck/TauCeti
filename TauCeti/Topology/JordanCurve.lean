@@ -14,6 +14,8 @@ public import TauCeti.Topology.JordanCurve.Subcontinuum
 /-!
 # Jordan curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.JordanCurve)
+
 This module re-exports the Jordan-curve API: the predicate `TauCeti.IsJordanCurve` together with
 its transfer lemmas (`TauCeti.Topology.JordanCurve.Basic`), the criterion recognizing the range of
 a simple closed path as a Jordan curve (`TauCeti.Topology.JordanCurve.Path`), the cutting of a

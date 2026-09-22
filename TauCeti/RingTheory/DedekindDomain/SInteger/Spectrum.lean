@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger.Basic
 /-!
 # The height one spectrum of a ring of `S`-integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.Spectrum)
+
 Let `R` be a Dedekind domain with fraction field `K` and `S` a set of height-one primes of `R`.
 `TauCeti/RingTheory/DedekindDomain/SInteger/Basic.lean` shows that the ring of `S`-integers is
 again a Dedekind domain, so it has a height one spectrum of its own. This file identifies that

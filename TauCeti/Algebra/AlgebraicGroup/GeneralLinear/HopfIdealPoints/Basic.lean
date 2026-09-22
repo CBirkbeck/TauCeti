@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 /-!
 # General-linear points cut out by Hopf ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.HopfIdealPoints.Basic)
+
 This file transports the algebra-valued points of a quotient of the coordinate Hopf algebra of
 `GLₙ` through `GeneralLinear.pointsMulEquiv`. The resulting matrix subgroup is characterized by
 vanishing on the Hopf ideal and is functorial in the value algebra.

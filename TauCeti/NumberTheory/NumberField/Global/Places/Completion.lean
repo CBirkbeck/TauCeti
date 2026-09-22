@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.Completion.InfinitePlace
 /-!
 # Normalized absolute values on number-field completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Places.Completion)
+
 The finite and infinite completions of a number field carry their usual norm, but the global
 product formula uses the normalized local absolute value: the norm at a real place and the square
 of the norm at a complex place.  This file packages those values as multiplicative maps with zero.

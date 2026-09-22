@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Petersson.Hecke
 /-!
 # Hecke stability of the old and new subspaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.HeckeStability)
+
 The old and new subspaces of `S_k(Γ₁(N))` are stable under the Hecke operator `Tₚ`, for a
 prime `p` coprime to the level.
 

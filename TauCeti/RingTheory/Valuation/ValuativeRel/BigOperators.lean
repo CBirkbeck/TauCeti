@@ -13,6 +13,8 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 /-!
 # Finite products under a valuative relation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.ValuativeRel.BigOperators)
+
 For a valuative relation on a commutative semiring, a finite product has positive value exactly
 when every factor does, and finite products are monotone. When the other factors have positive
 value, replacing one factor of a finite product moves the value of the product in the same

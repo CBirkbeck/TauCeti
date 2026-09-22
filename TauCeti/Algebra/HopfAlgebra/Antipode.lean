@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Convolution
 /-!
 # Antipode identities for Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.Antipode)
+
 The antipode of a Hopf algebra is an antihomomorphism for both its algebra and coalgebra
 structures. Mathlib already proves the multiplicative statement directly, as
 `HopfAlgebra.antipode_mul_antidistrib`. This file records the coalgebraic statement: applying

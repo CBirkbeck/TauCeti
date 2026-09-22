@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Equivalence
 /-!
 # Two-sided unimodular equivalence of matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Equivalence)
+
 Matrices related by `L * A * R` with `L` and `R` in `SL`. Nothing here assumes a Smith normal
 form or a divisibility chain along a diagonal, so these facts sit below that theory rather
 than inside it, and hold over an arbitrary finite index type. The corresponding statement for

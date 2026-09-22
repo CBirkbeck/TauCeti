@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Comap
 /-!
 # Quotients by subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Quotient)
+
 This file equips the quotient of a right comodule by a subcomodule with the induced
 right-comodule structure. The quotient coaction is the unique linear map whose composite
 with the quotient map is `(N.mkQ ⊗ id) ∘ ρ`.

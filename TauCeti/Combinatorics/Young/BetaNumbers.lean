@@ -12,6 +12,8 @@ public import Mathlib.Combinatorics.Young.YoungDiagram
 /-!
 # Beta-numbers of a Young diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.BetaNumbers)
+
 Fix a Young diagram `μ` and a bound `r` on its number of rows. The `i`-th **beta-number**
 `YoungDiagram.betaNumber μ r i = μ.rowLen i + (r - 1 - i)` is the length of row `i` plus the number
 `r - 1 - i` of rows of the bounding `r`-row strip that lie below it. Adding that shift to the weakly

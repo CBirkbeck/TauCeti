@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Uniqueness
 /-!
 # Krull-Schmidt multiplicities of an indecomposable module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullSchmidt.Multiplicity)
+
 A module of finite length is an internal direct sum of finitely many indecomposable submodules,
 and the Krull-Schmidt theorem matches any two such decompositions summand by summand.  Counting
 how often a fixed module `N` occurs among the summands is therefore an invariant of the module

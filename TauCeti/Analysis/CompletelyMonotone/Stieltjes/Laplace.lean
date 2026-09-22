@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Integral.ExpDecay
 /-!
 # Stieltjes functions are the Laplace transforms of completely monotone functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Stieltjes.Laplace)
+
 The Stieltjes kernel factors through a second exponential integration,
 
 `(t + x)⁻¹ = ∫₀^∞ e^{-s(t + x)} ds = ∫₀^∞ e^{-ts} e^{-sx} ds`,

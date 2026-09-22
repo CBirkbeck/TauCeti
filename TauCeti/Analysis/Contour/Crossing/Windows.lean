@@ -17,6 +17,8 @@ import Mathlib.Topology.MetricSpace.Infsep
 /-!
 # Pairwise-disjoint windows around a finite set of crossings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.Windows)
+
 For a finite set of crossing parameters in an open interval `(a, b)`, off a finite exceptional
 set, there is a common radius `r > 0` whose closed windows `[t_i - r, t_i + r]` stay within
 `[a, b]`, are pairwise disjoint, and avoid the exceptional set

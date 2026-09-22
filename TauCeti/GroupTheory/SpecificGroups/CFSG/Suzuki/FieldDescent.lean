@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.GeneratorInclusion
 /-!
 # Descent of Suzuki fixed points to the finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.FieldDescent)
+
 The Steinberg fixed-point construction of the Suzuki groups lives in a general linear group over
 an algebraic closure, whereas the standard generators live over `GaloisField 2 (2 * m + 1)`.
 This file proves that the embedding chosen for the generators has exactly the Frobenius-fixed

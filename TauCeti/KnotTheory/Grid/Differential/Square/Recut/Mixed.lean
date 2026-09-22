@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Recut.Terminal
 /-!
 # Recutting two-step grid rectangle decompositions with a mixed common side
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Recut.Mixed)
+
 Two composable empty rectangles sharing exactly one side column form an L-shaped domain with a
 second cut uniquely characterized by its computed side rows and row configuration. The cases where
 the common column is initial for both rectangles or terminal for both are handled in

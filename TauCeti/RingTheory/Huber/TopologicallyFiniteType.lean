@@ -16,6 +16,8 @@ import TauCeti.Topology.Algebra.GroupCompletion
 /-!
 # Homomorphisms topologically of finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.TopologicallyFiniteType)
+
 Wedhorn's §6.6. A ring homomorphism `φ : A → B` is *topologically of finite type* when `B` is
 presented as an `A`-algebra by an open quotient map out of the completion of a weighted restricted
 power-series ring `A⟨X₁, …, Xₖ⟩_T` on finitely many variables, each weight `Tᵢ` finite. It is

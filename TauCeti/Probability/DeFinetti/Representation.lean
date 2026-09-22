@@ -11,6 +11,8 @@ public import TauCeti.Probability.DeFinetti.Theorem
 /-!
 # The unique de Finetti mixture representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.Representation)
+
 De Finetti's theorem identifies an exchangeable sequence with a unique mixture of i.i.d. sequence
 laws. In path-law form, there is a unique probability measure `π` on `ProbabilityMeasure α` such
 that

@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Matrix.EuclideanLin
 /-!
 # Sandwiches by the square root of a positive-semidefinite matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.Sqrt)
+
 The continuous-functional-calculus square root `CFC.sqrt S` of a matrix `S` is positive
 semidefinite (`CFC.sqrt_nonneg`), hence Hermitian. Sandwiching a Hermitian matrix `Θ` between
 two copies of it gives the Hermitian matrix `CFC.sqrt S * Θ * CFC.sqrt S`, whose quadratic form

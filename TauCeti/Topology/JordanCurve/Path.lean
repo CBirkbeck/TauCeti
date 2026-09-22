@@ -11,6 +11,8 @@ import Mathlib.Topology.Instances.AddCircle.Real
 /-!
 # Jordan curves traced by paths
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.JordanCurve.Path)
+
 A path whose two endpoints agree is a parametrised closed curve, but its range need not be a
 Jordan curve: the path may pause, retrace an arc, or cross itself. This file supplies the exact
 criterion needed to exclude those degeneracies. If a closed path has no repeated values except

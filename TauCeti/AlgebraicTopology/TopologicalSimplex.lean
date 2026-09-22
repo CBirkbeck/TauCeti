@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Convex.ConvexSpace.ContractibleSpaceStdSimplex
 /-!
 # The topological simplices and the singular simplices of a space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.TopologicalSimplex)
+
 The topological `n`-simplex is a standard simplex on a finite nonempty type, up to a universe
 lift, hence contractible and in particular simply connected.  This file also names its initial
 vertex, and the continuous map on the topological `n`-simplex that underlies a singular

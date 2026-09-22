@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.Harmonic.Constructions
 /-!
 # The planar Newtonian kernel away from its pole
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Planar)
+
 This file introduces the logarithmic kernel for the negative Laplacian on the complex plane,
 
 `G(z) = -(2 * π)⁻¹ * log ‖z‖`,

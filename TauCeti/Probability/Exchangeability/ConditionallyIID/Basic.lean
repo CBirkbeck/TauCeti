@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Measure.GiryMonad
 /-!
 # Conditionally i.i.d. families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Basic)
+
 The **conditional** strengthening of the mixture identity: a family is *conditionally i.i.d.*
 with directing measure `ν` when, along every finite selection of distinct coordinates, the
 **joint** law of `(ν, block)` is the disintegration `∫ δ_{ν ω} ⊗ (ν ω)^{⊗m} dμ(ω)` — conditionally

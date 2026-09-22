@@ -12,6 +12,8 @@ import TauCeti.Probability.McDiarmid
 /-!
 # Concentration of sampled homomorphism densities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Concentration)
+
 For a fixed finite graph `F`, its ordinary homomorphism density in a graphon sample `G(n, W)`
 concentrates exponentially around the graphon homomorphism density. The proof applies McDiarmid's
 bounded-differences inequality to the padded vertex exposure: its coordinates are independent, its

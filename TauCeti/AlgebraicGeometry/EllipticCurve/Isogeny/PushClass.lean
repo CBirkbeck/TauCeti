@@ -18,6 +18,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 /-!
 # The class-group map induced by an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PushClass)
+
 For an isogeny `φ : Isogeny W₁ W₂`, extending an ideal of `W₁.CoordinateRing` into the
 intermediate ring and taking the relative norm down to `W₂.CoordinateRing` gives a homomorphism
 of class groups.

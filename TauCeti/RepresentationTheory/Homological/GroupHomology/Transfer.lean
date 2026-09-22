@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.GroupHomology.Shapiro
 /-!
 # Transfer in group homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer)
+
 Let `S` be a finite-index subgroup of a group `G`. Group homology has a transfer map
 
 `H_n(G, M) ⟶ H_n(S, Resˢᴳ M)`.

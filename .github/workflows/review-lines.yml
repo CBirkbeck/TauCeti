@@ -1,0 +1,54 @@
+name: Review lines
+
+# Keeps this fork's sources carrying the review lines: one link per file to its
+# page on the review site, and the counts on each reviewed declaration. Runs
+# daily, after the review site has followed Tau Ceti's main, and opens one pull
+# request against THIS FORK's main. It never touches TauCetiProject/TauCeti.
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: review-lines
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SITE: https://cbirkbeck.github.io/tauceti-reviewed-by-test/
+    steps:
+      - name: Take this fork's main up to Tau Ceti's
+        run: gh api -X POST repos/${{ github.repository }}/merge-upstream -f branch=main || true
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read the reviews and write the lines
+        run: |
+          git clone -q --depth 1 https://github.com/CBirkbeck/tauceti-reviewed-by-test "$RUNNER_TEMP/site"
+          curl -fsSL "$SITE/reviews.json" -o "$RUNNER_TEMP/reviews.json"
+          python3 "$RUNNER_TEMP/site/scripts/apply.py" --clone . --site "$SITE" --reviews "$RUNNER_TEMP/reviews.json"
+      - name: Open or update the pull request
+        run: |
+          if git diff --quiet; then echo "nothing to write"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C review-lines
+          git commit -qam "Review lines: a link per file, and the counts on each reviewed declaration" \
+            -m "Written from $SITE by scripts/apply.py of CBirkbeck/tauceti-reviewed-by-test. A trial in this fork; Tau Ceti itself is untouched."
+          git push -qf origin review-lines
+          open=$(gh api "repos/${{ github.repository }}/pulls?head=${{ github.repository_owner }}:review-lines&state=open" --jq 'length')
+          if [ "$open" = "0" ]; then
+            gh api "repos/${{ github.repository }}/pulls" -f head=review-lines -f base=main \
+              -f title="Review lines from the review site" \
+              -f body="Each file's module docstring carries one link to its page on the review site, where any of its declarations can be reviewed; each reviewed declaration carries its counts. Rewritten daily from the site's reviews.json. This is a trial in this fork: nothing here is proposed to TauCetiProject/TauCeti."
+          fi

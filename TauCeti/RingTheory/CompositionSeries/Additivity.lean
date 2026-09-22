@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.CompositionSeries.Multiplicity
 /-!
 # Additivity of the Jordan-Hölder multiplicities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.CompositionSeries.Additivity)
+
 The Jordan-Hölder multiplicity `[M : S]` counts the factors isomorphic to `S` in a composition
 series of `M`.  This file proves that it is **additive in a short exact sequence**: for a submodule
 `p` of a module `M` of finite length,

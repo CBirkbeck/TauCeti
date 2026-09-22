@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.BilinearForm.Multilinear
 /-!
 # Determinant transformation laws, and determinants of updated rows
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Determinant)
+
 Precomposing an alternating form of top degree with an endomorphism `φ` multiplies it by
 `LinearMap.det φ`, and — the direction that is actually used — a *nonzero* form merely known to be
 *scaled* by some `d` thereby identifies `d` as the determinant, without computing it, as soon as

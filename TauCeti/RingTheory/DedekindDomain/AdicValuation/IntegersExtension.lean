@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicCompletionExtension
 /-!
 # The completed integer rings of an extension of Dedekind domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.IntegersExtension)
+
 Let `R ⊆ B` be Dedekind domains with fraction fields `K ⊆ L`, and let `w` be a height-one prime
 of `B` lying over the height-one prime `v` of `R`. The canonical map `K_v → L_w` restricts to a
 ring homomorphism `adicCompletionIntegersExtension : 𝒪_v →+* 𝒪_w` between the rings of integers

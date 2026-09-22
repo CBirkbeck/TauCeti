@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Solvable
 /-!
 # Nonsolvability of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Solvable)
+
 If a field contains an element `a` with `a ≠ 0` and `a² ≠ 1`, then `GL₂` is nonsolvable.
 In particular, this holds over every infinite field.
 

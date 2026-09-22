@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Exact.Stable.Connecting
 /-!
 # The cone of a morphism in a Frobenius exact category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Cone)
+
 Let `E` be a Frobenius exact structure with chosen conflations `X ⟶ I(X) ⟶ ΣX`. The **cone** of
 a morphism `f : X ⟶ Y` is the pushout
 

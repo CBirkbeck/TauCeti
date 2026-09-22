@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 /-!
 # The residue of a meromorphic function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.Basic)
+
 For `f : ℂ → ℂ` and `z₀ : ℂ`, the **residue** `TauCeti.Contour.residue f z₀` is the order-`(−1)`
 Laurent coefficient of `f` at `z₀` — the quantity summed in Cauchy's residue theorem. It is built
 directly on Mathlib's `meromorphicOrderAt` / analytic-part API rather than a parallel

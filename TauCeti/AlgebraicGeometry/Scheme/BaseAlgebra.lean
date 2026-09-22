@@ -12,6 +12,8 @@ public import Mathlib.AlgebraicGeometry.FunctionField
 /-!
 # Algebra structures induced by a scheme over an affine base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.BaseAlgebra)
+
 For a scheme `X` over `Spec k`, this file records the canonical `k`-algebra structures on the
 function field of an integral `X`, on its stalks, and on its residue fields. It also proves that
 the base, stalk, and function-field algebra structures form a scalar tower.

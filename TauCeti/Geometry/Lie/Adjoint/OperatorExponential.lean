@@ -13,6 +13,8 @@ import TauCeti.Analysis.Normed.Algebra.Basic
 /-!
 # Exponentiating the commutator operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.OperatorExponential)
+
 In a real Banach algebra, exponentiating the continuous commutator operator
 `y ↦ x * y - y * x` gives conjugation by `exp x`. This is the Banach-algebra shadow of the Lie-group
 identity `Ad (lieExp X) = exp (ad X)`. The final result identifies the underlying linear map of the

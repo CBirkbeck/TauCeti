@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Weyl.
 /-!
 # Weyl representatives in the Kostant toral closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.Weyl)
+
 The Weyl element attached to an `sl₂` root pair is the product
 
 ```text

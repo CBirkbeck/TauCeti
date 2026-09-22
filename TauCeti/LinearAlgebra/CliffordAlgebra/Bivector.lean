@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Filtration
 /-!
 # Clifford bivectors and exterior squares
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Bivector)
+
 This module packages the generic half-normalized Clifford commutator into an alternating map and
 the induced linear map from the second exterior power. Its action on a Clifford generator is given
 by the polarization of the quadratic form.

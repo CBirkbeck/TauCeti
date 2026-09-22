@@ -11,6 +11,8 @@ public import Mathlib.AlgebraicGeometry.FunctionField
 /-!
 # Rational trivializations of line bundles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.LineBundle.RationalTrivialization)
+
 A line bundle on an integral scheme is trivial on a dense open subset.  Equivalently, it has a
 basis near the generic point.  This is the first step in associating a divisor to an arbitrary
 line bundle: after fixing such a rational basis, its transition functions at codimension-one

@@ -12,6 +12,8 @@ import TauCeti.Probability.Distributions.Gaussian.PolynomialMemLp
 /-!
 # The Hermite functions as a Hilbert basis of `L²(ℝ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.HilbertBasis)
+
 This file instantiates the weighted-measure machinery at the Gaussian weight `w(x) = e^{-x²}` and
 the dilated Hermite polynomials `Hₙ(x√2)`, whose `√w`-envelope is exactly the Hermite function
 `ψₙ` of `TauCeti.hermiteFunction`.

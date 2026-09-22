@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Prod
 /-!
 # Sign-switch equivalence for Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.SignSwitch)
+
 Adjoining one positive line identifies the Clifford algebras of a quadratic form and its
 negation. The construction is generic over a commutative ring.
 

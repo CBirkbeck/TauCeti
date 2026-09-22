@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Subalgebra.Top
 /-!
 # The standard irreducible representations of `sl₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Standard)
+
 `TauCeti/Algebra/Lie/Sl2/WeightString.lean` classifies the finite-dimensional modules irreducible
 over the subalgebra of an `sl₂` triple and carrying a primitive vector of weight `n`: there is at
 most one, of rank `n + 1`. It does not exhibit one, so the classification is so far vacuous for

@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Decomposi
 /-!
 # The grading of the componentwise zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Grading)
+
 The public zigzag algebra carries the product grading of its connected-component factors.
 On a component with an edge this is the grading descended from path length; on a singleton
 it is the dual-number grading with the infinitesimal generator in degree two. The global

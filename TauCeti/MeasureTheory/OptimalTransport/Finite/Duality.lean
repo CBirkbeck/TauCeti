@@ -15,6 +15,8 @@ public import TauCeti.Topology.Sion
 /-!
 # Kantorovich duality on finite spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Finite.Duality)
+
 On finite source and target spaces the transport problem is a linear program: minimise
 `∑ i, ∑ j, c (i, j) * A i j` over the transportation matrices `A` with prescribed marginals
 `μ` and `ν`. Its dual maximises `∑ i, μ i * φ i + ∑ j, ν j * ψ j` over the pairs of real

@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.Monoidal.Closed.Preadditive
 /-!
 # The closed monoidal category of sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Closed)
+
 Let `R` be a sheaf of commutative rings on a small site. This file makes sheaves of `R`-modules
 into a closed symmetric monoidal category. Consequently, tensoring on the left has the internal
 Hom functor as a right adjoint; Mathlib's standard `ihom.adjunction`, `ihom.ev`, and `ihom.coev`

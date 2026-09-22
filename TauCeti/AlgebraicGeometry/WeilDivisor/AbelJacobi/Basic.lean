@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic
 /-!
 # The abstract Abel-Jacobi divisor class map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Basic)
+
 This file adds the point-level divisor-class shadow of the Abel-Jacobi map to the formal
 Layer A divisor API.  Once the Jacobian is constructed as `Pic⁰(X)`, the Abel-Jacobi morphism
 attached to a base point `x₀` sends a point `x` to the degree-zero line bundle

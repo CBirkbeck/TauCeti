@@ -14,6 +14,8 @@ import Mathlib.Analysis.Calculus.Deriv.Shift
 /-!
 # Periodicity of the derivative and the logarithmic derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.PeriodicDeriv)
+
 Differentiation commutes with translation of the domain, so the Fréchet and the
 one-variable derivative of a periodic function are periodic with the same period, and
 hence so is the logarithmic derivative. All three statements are unconditional:

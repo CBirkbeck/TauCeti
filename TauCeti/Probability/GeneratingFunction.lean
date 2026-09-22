@@ -18,6 +18,8 @@ import Mathlib.Probability.Independence.Integration
 /-!
 # Probability-generating functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.GeneratingFunction)
+
 This file defines the probability-generating function of a natural-number-valued random variable
 and establishes its basic measure-theoretic API.  The central results relate it to Mathlib's
 moment-generating function and show that it turns sums of independent random variables into

@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Monoidal
 /-!
 # Tensor products of sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Basic)
+
 Given a site `(C, J)` carrying a sheaf of commutative rings `R`, and two sheaves of
 `R`-modules `M`, `N`, we construct their tensor product `M ⊗ N` as a sheaf of modules:
 sectionwise one tensors the modules of sections over the rings of sections, and the

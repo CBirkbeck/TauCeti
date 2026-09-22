@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 /-!
 # Tangent forcing: flatness bounds the deviation against the tangent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.TangentForcing)
+
 `Contour.FlatOfOrder γ t₀ n` bounds the perpendicular deviation of the curve against **some**
 non-zero one-sided witness directions. This file shows the witnesses are forced onto the actual
 one-sided tangents: if `γ` has one-sided derivative `L ≠ 0` and is flat of order `n ≥ 1`, the

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.FundamentalGroup.HomotopyEquiv
 /-!
 # Asphericity and the `K(G, 1)` property are homotopy invariants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.EilenbergMacLane.HomotopyEquiv)
+
 Both properties are stated at a base point, but neither depends on it
 (`TauCeti.IsAspherical.of_basepoint`, `TauCeti.IsEilenbergMacLaneSpaceOne.of_basepoint`): an
 aspherical space is path connected, so base-point change identifies its homotopy groups at any two

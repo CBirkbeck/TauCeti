@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Base change of the full-weight type-B spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.SpinCarrier.BaseChange)
+
 `TauCeti.TypeBSpinCarrier.groupScheme n` is the explicit integral affine group scheme obtained
 by closing the numbered type-`Bₙ₊₁` root subgroups and the full spin weight torus inside
 `GL_(2^(n+1))`. This file specializes the base-change construction for a general Kostant toral

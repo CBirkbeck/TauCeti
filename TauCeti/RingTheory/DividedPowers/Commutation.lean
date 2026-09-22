@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DividedPowers.Associative
 /-!
 # Commuting binomial coefficients with divided powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DividedPowers.Commutation)
+
 Suppose that `a * x = x * (a + c)` in an associative algebra over `ℚ`, with `c` commuting with
 `x`.  This file combines polynomial semiconjugacy with normalized powers to prove
 

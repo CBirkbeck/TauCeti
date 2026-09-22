@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.FirstCountable
 /-!
 # First countability of the weighted restricted series ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.FirstCountable)
+
 `TauCeti.Huber.weightedRestrictedSubring` carries the topology whose neighbourhoods of zero are
 the `U⟨X⟩` for `U` an open additive subgroup of the coefficient ring `A`
 (`TauCeti.Huber.hasBasis_nhds_zero_weightedTopology`). That basis is indexed by *all* of

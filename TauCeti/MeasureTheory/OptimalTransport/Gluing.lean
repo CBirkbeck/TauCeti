@@ -13,6 +13,8 @@ public import TauCeti.Probability.Kernel.Disintegration.Countable
 /-!
 # Gluing transport plans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Gluing)
+
 Two transport plans that share an intermediate marginal can be realised simultaneously: if `π` is a
 measure on `X × Y` whose second marginal agrees with the first marginal of a measure `σ` on
 `Y × Z`, then there is a measure `γ` on `X × Y × Z` whose `(X, Y)`-marginal is `π` and whose

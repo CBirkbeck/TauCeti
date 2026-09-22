@@ -18,6 +18,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.GL2.PrincipalSeries.Ch
 /-!
 # The Steinberg character of `GL₂(𝔽_q)` on the four families of conjugacy classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.CharacterValues)
+
 `TauCeti.character_GL2Steinberg` computes the Steinberg character of `GL₂(𝔽_q)` at `g` as the
 number of points of the projective line fixed by `g`, less one. The conjugacy classes of `GL₂(𝔽_q)`
 fall into four families, and

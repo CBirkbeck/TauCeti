@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Smooth.AlgebraicallyClosed
 /-!
 # The reduced center of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.Reduced)
+
 The center of an affine group can be nonreduced, even when the ambient group is smooth. This file
 constructs its reduction in Hopf coordinates. First quotient by the center ideal, then quotient
 that coordinate algebra by its nilradical. Equivalently, the reduced center is cut out in the

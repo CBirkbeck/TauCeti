@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Semigroups.Basic
 /-!
 # Similar semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Similarity)
+
 Transporting a C₀-semigroup `S` on `X` along a continuous linear equivalence `e : X ≃L[ℝ] Y`
 gives the C₀-semigroup `t ↦ e ∘ S t ∘ e⁻¹` on `Y`, whose operators are the conjugates
 `e.conjContinuousAlgEquiv (S t)`.  Its generator is described in

@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.SymmetricPower.Basis
 /-!
 # The coordinates of a pure symmetric tensor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricPower.Coordinates)
+
 `TauCeti/LinearAlgebra/SymmetricPower/Basis.lean` builds the basis `Module.Basis.symmetricPower`
 of `Sym[R]^n M` induced by a basis `b : Basis κ R M`, and reads off the coordinates of a pure
 symmetric tensor whose factors are *basis vectors*: it is a basis vector.  This file reads off the

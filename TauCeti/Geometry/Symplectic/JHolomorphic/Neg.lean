@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Symplectic.JHolomorphic.Basic
 /-!
 # Negating both almost complex structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.Neg)
+
 This file records the elementary sign-change invariance of the pointwise Cauchy--Riemann
 equation used by the analytic Heegaard Floer roadmap. A real-linear map satisfies
 `F ∘ J = J' ∘ F` exactly when it satisfies the same equation after both almost complex

@@ -15,6 +15,8 @@ import TauCeti.GroupTheory.GroupAction.Transitive
 /-!
 # The pairing of two permutation characters counts double cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.DoubleCosetPairing)
+
 The character of a permutation representation `k[X]` counts fixed points, so the normalized
 pairing of two permutation characters is the Burnside average
 `|G|⁻¹ ∑ g, |X^g| · |Y^g|`, which counts the orbits of `G` on `X × Y`.  Taking `X = G ⧸ H` and

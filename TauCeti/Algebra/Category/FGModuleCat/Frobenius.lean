@@ -14,6 +14,8 @@ public import Mathlib.Algebra.Category.FGModuleCat.Abelian
 /-!
 # Finite-dimensional modules over a self-injective algebra form a Frobenius category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.FGModuleCat.Frobenius)
+
 Let `A` be a finite-dimensional algebra over a field `k` which is self-injective on both sides:
 its regular left module and its regular right module are injective. This file proves that the
 canonical exact structure on the abelian category `FGModuleCat A` of finitely generated (that is,

@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Clos
 /-!
 # The Schwarz--Christoffel image and the closing side
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Image)
+
 For strictly ordered prevertices with exponents in `(-1, 0)` summing to `-2`, the
 Schwarz--Christoffel polygon lies in the closed half-plane above its horizontal closing side. The
 filled-hull bound for the primitive therefore puts its entire upper-half-plane image in the same

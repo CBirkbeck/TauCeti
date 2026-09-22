@@ -11,6 +11,8 @@ import Mathlib.RingTheory.Polynomial.Pochhammer
 /-!
 # Limits of binomial coefficients along proportional sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Choose)
+
 For fixed `k`, the leading term of `a.choose k` is `a ^ k / k!`. This file records the
 corresponding limit when `a` and the normalizing denominator vary together: if `a i / b i`
 converges to `x` and `b i⁻¹` converges to zero, then

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PositiveDefinite.Basic
 /-!
 # Normalizing positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Normalize)
+
 This file records the standard normalization step for positive-definite functions: if
 `F : M → ℂ` is positive definite and `F 0 ≠ 0`, then multiplying by the reciprocal of the
 nonnegative real number `(F 0).re` gives a positive-definite function whose value at the origin

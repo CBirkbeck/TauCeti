@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.End.ScalarExtension
 /-!
 # Base change of tensor automorphisms of scalar extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.BaseChange)
+
 Let `H` be a bialgebra over a commutative semiring `R`, and let `f : A →ₐ[R] B` be a morphism
 of commutative `R`-algebras. A tensor automorphism of scalar extension on the finite
 `H`-comodules has, at each comodule `M`, an `A`-linear automorphism of `A ⊗[R] M`. Base changing

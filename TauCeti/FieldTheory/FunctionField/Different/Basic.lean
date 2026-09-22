@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.AffineModel.Extension
 /-!
 # The different exponent of a place
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Different.Basic)
+
 Let `F' / k'` be an extension of the field extension `F / k` in which `F' / F` is finite and
 separable, and let `P'` be a place of `F' / k'` lying over the place `P = P'.restrict k F` of
 `F / k`.  Stichtenoth attaches to that pair the **different exponent** `d(P' ∣ P)`, read off the

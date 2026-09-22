@@ -16,6 +16,8 @@ import Mathlib.Analysis.InnerProductSpace.Calculus
 /-!
 # Strict monotonicity of the distance to a crossed point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.Monotonicity)
+
 Near a transverse crossing — `γ t₀ = s` with non-zero one-sided derivative limit `L`, for a
 curve `γ : ℝ → F` into a real inner product space — the distance `‖γ t - s‖` is strictly
 monotone on a one-sided closed interval at `t₀`: increasing to

@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Unipotent.NormalJoin
 /-!
 # Smooth unipotence of semidirect products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.SemidirectProduct)
+
 An internal action of affine groups equips the product of their underlying affine schemes with
 the semidirect-product group law. This file proves that if both factors are geometrically
 unipotent, then so is the semidirect product, and consequently that semidirect products of smooth

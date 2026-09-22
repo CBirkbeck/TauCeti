@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Basic
 /-!
 # Pair projections of multi-marginal couplings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Pair)
+
 This file connects the finite multi-marginal coupling API with the two-marginal coupling API.
 A multi-marginal coupling can be projected to any ordered pair of coordinates. Conversely, a
 coupling indexed by `Fin 2` is precisely a two-marginal coupling, transported along

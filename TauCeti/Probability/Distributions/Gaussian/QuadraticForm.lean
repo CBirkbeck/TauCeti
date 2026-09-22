@@ -13,6 +13,8 @@ public import TauCeti.Probability.Distributions.Gaussian.Multivariate
 /-!
 # Moment-generating functions of Gaussian quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.QuadraticForm)
+
 Let `S` be the matrix parameter of a centred multivariate Gaussian and `Θ` a real symmetric
 matrix. This file determines exactly when the quadratic statistic `x ↦ ⟪x, Θ x⟫` of that Gaussian
 vector has finite exponential moments of order `t`, and computes its moment-generating function

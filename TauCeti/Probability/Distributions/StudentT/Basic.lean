@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
 /-!
 # Student's t distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.StudentT.Basic)
+
 Student's t law with `ν` degrees of freedom is the symmetric law on the line with density
 proportional to `(1 + x ^ 2 / ν) ^ (-(ν + 1) / 2)`. This file defines it, proves that it is a
 probability measure for `0 < ν`, identifies it as a `MeasureTheory.HasPDF` law with that density,

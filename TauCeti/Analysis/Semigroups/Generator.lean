@@ -19,5 +19,7 @@ public import TauCeti.Analysis.Semigroups.Generator.IteratedDomain
 /-!
 # Infinitesimal generators of strongly continuous semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator)
+
 This module re-exports the generator API.
 -/

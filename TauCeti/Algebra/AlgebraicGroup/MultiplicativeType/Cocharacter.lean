@@ -13,6 +13,8 @@ import TauCeti.Algebra.Bialgebra.GroupLike.Evaluation
 /-!
 # Cocharacter lattices of groups of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.Cocharacter)
+
 For a group `T` of multiplicative type over a field `k`, a geometric cocharacter is a group-scheme
 morphism `G_m → T` after extension to the chosen algebraic closure. Contravariantly, it is a
 morphism of coordinate Hopf algebras

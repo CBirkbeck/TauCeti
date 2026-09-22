@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.Continuous.Unitary.Equivalence
 /-!
 # The Peter-Weyl theorem: the matrix coefficients are a Hilbert basis of `L²(G)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.PeterWeyl)
+
 Let `G` be a compact group. Schur orthogonality
 (`TauCeti/RepresentationTheory/Compact/Orthonormal.lean`) says that the normalized matrix
 coefficients `√(dim V_i) · (π i)_{ab}` of a family of pairwise inequivalent finite-dimensional

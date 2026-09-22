@@ -11,6 +11,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Splitting the divisor class group along the degree at a rational point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Splitting)
+
 This file records the structural consequence of having a weight-one base point for the abstract
 divisor class group of an order system, continuing the Jacobian roadmap's Layer A.
 

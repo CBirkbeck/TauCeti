@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Finiteness.Ideal
 /-!
 # A power of the image of a finitely generated ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.Nilpotent)
+
 Let `I` be an ideal of a semiring `B` and let `f : B →+* C` be a ring homomorphism into a
 commutative semiring. If every prime of `C` contains `I.map f`, that image lies in the nilradical
 of `C`; when `I` is finitely generated the image is then a nilpotent ideal, so one of its powers

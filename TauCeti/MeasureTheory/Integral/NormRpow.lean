@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
 /-!
 # Integrals of a weakly singular norm power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.NormRpow)
+
 Let `E` be a finite-dimensional real normed space of dimension `d`.  This file
 computes the integral of the kernel `x ↦ ‖x‖ ^ s` on a ball centred at the origin, for every
 exponent `s > -d`.  The singularity is locally integrable because the radial Jacobian is

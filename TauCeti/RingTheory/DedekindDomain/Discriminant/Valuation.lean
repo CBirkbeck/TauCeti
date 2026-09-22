@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Ideal.Norm.RelNorm
 /-!
 # Coefficients of the relative discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Discriminant.Valuation)
+
 The relative discriminant `relDiscr A B` is the relative norm of the different ideal, so its
 coefficient at a nonzero maximal ideal `p` of `A` is determined by the coefficients of the
 different at the primes of `B` above `p`, each weighted by a residue degree:

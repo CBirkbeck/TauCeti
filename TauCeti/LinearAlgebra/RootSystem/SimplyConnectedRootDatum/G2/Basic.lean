@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Reduced
 /-!
 # The simply connected root datum of type G2
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Basic)
+
 This file constructs the pinned integral root datum of type `G2` on the character and cocharacter
 lattices `Fin 2 -> Z`. The character lattice is written in the fundamental-weight basis and the
 cocharacter lattice in the simple-coroot basis. Consequently the two simple roots are the rows

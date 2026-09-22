@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.SesquilinearForm.NumericalQuotient.Basic
 /-!
 # Numerical quotients of the graded Ext-Euler pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Numerical)
+
 The graded Ext-Euler characteristic gives a Laurent-polynomial-valued sesquilinear pairing on
 the Laurent-module Grothendieck groups of two extension-closed, shift-stable subcategories. This
 file quotients the first group by the left radical and the second group by the right radical, and

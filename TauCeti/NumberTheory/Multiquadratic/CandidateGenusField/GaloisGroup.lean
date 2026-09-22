@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.GaloisGroup
 /-!
 # Galois group of the candidate genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.GaloisGroup)
+
 For a squarefree integer `d`, `candidateGenusField hd` is generated over `ℚ` by the chosen square
 roots of the radicands of the prime discriminants in `genusPrimeDiscriminants hd`. This file proves
 that the resulting extension is abelian Galois and identifies its Galois group with

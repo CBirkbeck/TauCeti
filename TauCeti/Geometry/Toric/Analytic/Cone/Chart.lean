@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Toric.Analytic.RegularChart
 /-!
 # The affine analytic chart of a regular cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Analytic.Cone.Chart)
+
 An integral basis of the lattice whose vectors at the ray indices are the primitive ray generators
 of a cone `σ` splits the dual semigroup of `σ` as `(ToricRay σ →₀ ℕ) × (ι →₀ ℤ)`, so the complex
 points of the affine toric scheme of `σ` become the mixed chart `ℂ ^ k × (ℂ ^ *) ^ l`, with `k` the

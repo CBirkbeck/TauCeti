@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.Diffeomorph
 /-!
 # The group of self-diffeomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Diffeomorphism.Group)
+
 Mathlib's `Diffeomorph I I' M M' n` is the type of `Cⁿ` diffeomorphisms between two manifolds,
 with composition (`Diffeomorph.trans`), inverse (`Diffeomorph.symm`), and the identity
 (`Diffeomorph.refl`) already in place. When the source and target coincide these assemble into a

@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Huber.Completion
 /-!
 # Completion matches rational subsets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Completion.RationalSubset)
+
 For a Huber ring `A` with a compatible uniform structure and any subring `A⁺ ⊆ A`, the
 homeomorphism
 

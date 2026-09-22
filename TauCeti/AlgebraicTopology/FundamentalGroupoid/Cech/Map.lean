@@ -11,6 +11,8 @@ public import TauCeti.Topology.Category.TopCat.Cech.Map
 /-!
 # Maps of fundamental-groupoid Čech diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroupoid.Cech.Map)
+
 A map of covered spaces induces a natural transformation between the corresponding
 fundamental-groupoid Čech diagrams.  Its components commute with the canonical cocones into the
 ambient fundamental groupoids.  Thus a natural map on the eventual Čech colimits is forced to be

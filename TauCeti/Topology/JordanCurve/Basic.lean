@@ -15,6 +15,8 @@ import Mathlib.Analysis.LocallyConvex.WithSeminorms
 /-!
 # Jordan curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.JordanCurve.Basic)
+
 A **Jordan curve** — a simple closed curve — is a subset of a topological space homeomorphic to
 the circle. This file introduces the predicate `TauCeti.IsJordanCurve` and its basic API.
 

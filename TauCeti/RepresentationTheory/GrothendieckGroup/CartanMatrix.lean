@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.GrothendieckGroup.SimpleBasis
 /-!
 # Projective-simple coordinates and the Cartan matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GrothendieckGroup.CartanMatrix)
+
 Let `R` be an Artinian ring, and choose exhaustive families `(P i)` and `(S i)` of pairwise
 nonisomorphic indecomposable projective and simple modules, indexed so that `P i` is a projective
 cover of `S i`. The corresponding bases of `K₀(proj R)` and `G₀(mod R)` are in perfect integral

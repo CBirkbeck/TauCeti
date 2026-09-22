@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Continuous.Square.Basic
 /-!
 # The invariant tensors of an irreducible unitary representation are at most a line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Square.Invariants)
+
 For an irreducible unitary representation `π` of a monoid on a finite-dimensional inner product
 space over an algebraically closed field, the invariants of the **tensor square** are at most
 one-dimensional, and consequently so are the invariants of the symmetric and of the exterior

@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Galois.Basic
 /-!
 # The Galois theory of separable quadratic extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Galois.Basic)
+
 Material complementing `Mathlib/FieldTheory/Galois/Basic.lean` for a separable quadratic
 extension `L/K`: it has exactly two automorphisms, so the identity and any one nontrivial
 automorphism exhaust `Gal(L/K)`, and an element fixed by a nontrivial automorphism lies in the

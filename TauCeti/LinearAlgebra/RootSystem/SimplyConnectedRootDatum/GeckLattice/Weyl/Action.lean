@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Reduced
 /-!
 # The Weyl-group action on the Geck torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.Weyl.Action)
+
 The pinned simple Weyl points of the Geck carrier act on its represented split torus by the
 corresponding simple reflections. Products of those points were initially indexed by words in the
 Bourbaki nodes. This file proves that the resulting action on the torus depends only on the element

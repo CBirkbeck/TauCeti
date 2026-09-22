@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Basic
 /-!
 # The Spin action on the special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.SpecialOrthogonal)
+
 The determinant of the twisted-conjugation action records the parity of a Lipschitz element on a
 finite free module. Thus the conjugation action of an even element has determinant one. Outside
 the finite-free case, Mathlib defines the determinant to be one, so the codomain restriction

@@ -14,6 +14,8 @@ import Mathlib.GroupTheory.Index
 /-!
 # Corestriction in degrees zero, one and two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Corestriction.Basic)
+
 For a finite-index subgroup `U` of a group `G` acting on an abelian group `M`, the corestriction
 attached to a transversal `t : G ⧸ U → G` is, in the three lowest degrees,
 

@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Huber.OpenIdeal
 /-!
 # The presentation-indexed limit behind the structure presheaf
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic)
+
 Wedhorn §8.1 assigns `A⟨T/s⟩` to the rational subset `R(T/s)` and extends the assignment to an
 arbitrary open `V ⊆ Spa(A,A⁺)` by the limit over the rational subsets contained in `V`. This file
 constructs that limit **indexed by presentations rather than by rational subsets**, and makes it a

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.InfinitePlace.Basic
 /-!
 # The infinite place of a quadratic field `ℚ(√d)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.InfinitePlace)
+
 For `d < 0`, the imaginary quadratic field `ℚ(√d)` is totally complex: a special case of
 `NumberField.isTotallyComplex_of_sq_ratCast_of_neg` via the generator `θ` with `θ² = d`.
 

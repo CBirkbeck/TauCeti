@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.NullHomologous
 /-!
 # Reparametrization invariance of the generalized winding number
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Reparam)
+
 Precomposing a curve `γ` with a `C¹` change of parameter `φ` leaves the generalized winding number
 of Hungerbühler–Wasem (Def 2.1) about a point off the curve unchanged, the parameter interval
 `[[a, b]]` being replaced by `[[φ a, φ b]]`; null-homology in an ambient set transports the same

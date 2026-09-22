@@ -20,6 +20,8 @@ import TauCeti.Algebra.Lie.Submodule.Decomposition
 /-!
 # Weyl's complete reducibility theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.CompleteReducibility)
+
 Let `L` be a finite-dimensional Lie algebra with nondegenerate Killing form over an algebraically
 closed field of characteristic zero. **Every Lie submodule of a finite-dimensional `L`-module is a
 direct summand** (`TauCeti.exists_isCompl_of_isKilling`), so the lattice of Lie submodules is

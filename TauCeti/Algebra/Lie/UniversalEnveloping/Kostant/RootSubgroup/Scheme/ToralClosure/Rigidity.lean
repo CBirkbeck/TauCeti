@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Rigidity of the toral Kostant carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.Rigidity)
+
 The toral Kostant carrier is the smallest closed subgroup scheme of `GLₙ` containing both the
 represented root subgroups and the represented weight torus. Consequently, a homomorphism out of
 that carrier is determined by its restrictions to those generators.

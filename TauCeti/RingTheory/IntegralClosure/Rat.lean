@@ -11,6 +11,8 @@ public import Mathlib.Algebra.GCDMonoid.IntegrallyClosed
 /-!
 # Rational algebraic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.Rat)
+
 `ℤ` is integrally closed in `ℚ`, so an algebraic integer that happens to be rational is an
 integer. This file records the numerical reading of that fact: an identity `n · z = m` between an
 algebraic integer `z` and two natural numbers is a divisibility `n ∣ m`. It holds over an

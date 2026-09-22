@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 /-!
 # Cofinal elements of an ordered group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.Group.Cofinal)
+
 Cofinality following Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §1.4: an element is
 cofinal for a subgroup if its powers eventually fall below every member. The definition
 needs only a group with a strict order; the results relating cofinality to convex

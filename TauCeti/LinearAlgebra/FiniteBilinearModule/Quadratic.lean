@@ -14,6 +14,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Prod
 /-!
 # Finite quadratic modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Quadratic)
+
 A finite quadratic module is a finite abelian group equipped with a quadratic map to `ℚ/ℤ`.
 Its symmetric bilinear pairing is not stored separately: it is the polar form of the quadratic
 map.  This file packages that canonical underlying finite bilinear module and develops restriction,

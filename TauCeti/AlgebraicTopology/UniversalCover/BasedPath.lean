@@ -13,6 +13,8 @@ public import Mathlib.Topology.Order.Basic
 /-!
 # Based paths
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.BasedPath)
+
 This file introduces the compact-open based-path space `BasedPath x₀` and the path-component
 machinery of `endpoint ⁻¹' U` used in the universal-cover construction. It is adapted from
 [#38292](https://github.com/leanprover-community/mathlib4/pull/38292) by Kim Morrison.

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.Cycle.Basic
 /-!
 # The Cauchy principal value along a contour cycle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cycle.PrincipalValue)
+
 A contour cycle is a formal integer combination of closed piecewise-`C¹` curves, and every
 additive invariant of curves extends to it by linearity. This file carries out that extension
 for the set-level Cauchy principal value, the invariant the Hungerbühler–Wasem generalized

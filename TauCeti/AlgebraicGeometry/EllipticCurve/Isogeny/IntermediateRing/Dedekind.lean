@@ -15,6 +15,8 @@ import TauCeti.RingTheory.DedekindDomain.IntegralClosure
 /-!
 # The intermediate ring is a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Dedekind)
+
 For an isogeny `φ : Isogeny W₁ W₂`, the intermediate ring — the integral closure of
 `W₂.CoordinateRing` in `W₁.FunctionField` — is a Dedekind domain whenever the target's coordinate
 ring is one. Nothing is assumed about the function-field extension beyond what the isogeny already

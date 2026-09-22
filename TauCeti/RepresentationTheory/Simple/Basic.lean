@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.Subrepresentation
 /-!
 # Simple objects of `Rep k G` and `FDRep k G`, and their isomorphism classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Simple.Basic)
+
 Two notions of "irreducible representation" coexist. `Representation.IsIrreducible ρ` says that the
 lattice of subrepresentations of `ρ` has exactly two elements, and it is the notion in which the
 representation-theoretic arguments of this repository are phrased.

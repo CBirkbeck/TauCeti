@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 /-!
 # Tightness of the Chafaï approximating measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.Tightness)
+
 This file proves the tightness input for the Prokhorov extraction step in Bernstein's theorem.
 For a completely monotone function `f`, the rescaled Chafaï measures have uniformly bounded
 first moment:

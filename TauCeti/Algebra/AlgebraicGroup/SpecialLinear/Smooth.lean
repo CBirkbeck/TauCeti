@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Lift
 /-!
 # Smoothness of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Smooth)
+
 The coordinate algebra of `SLₙ` is smooth over every commutative ring. The proof uses the
 infinitesimal lifting criterion for formal smoothness. Under the algebra-valued-points
 equivalence, lifting a coordinate-algebra map through a square-zero quotient is exactly lifting a

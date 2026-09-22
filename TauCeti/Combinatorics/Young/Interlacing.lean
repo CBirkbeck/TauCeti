@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.Young.Kostka
 /-!
 # Interlacing shapes and the branching of bounded tableaux
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Interlacing)
+
 A Young diagram `ν` **interlaces** `μ` when their row lengths alternate,
 `μ₀ ≥ ν₀ ≥ μ₁ ≥ ν₁ ≥ ⋯`; equivalently `ν ⊆ μ` and the skew shape `μ / ν` is a *horizontal
 strip*, having at most one cell in each column.  This file defines that relation,

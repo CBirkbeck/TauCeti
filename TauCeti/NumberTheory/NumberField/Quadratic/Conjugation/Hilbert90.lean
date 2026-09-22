@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Basic
 /-!
 # Integral Hilbert 90 for quadratic conjugation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Hilbert90)
+
 This file proves Hilbert's Theorem 90 for quadratic conjugation in the integral form needed for
 ideal-class descent. Mathlib provides `groupCohomology.exists_div_of_norm_eq_one`; for a quadratic
 extension the elementary construction here gives an element of `𝓞 K` rather than merely of `K`.

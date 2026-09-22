@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Exact.Stable.Suspension
 /-!
 # The connecting morphism of a conflation in a Frobenius stable category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Connecting)
+
 Let `E` be a Frobenius exact structure and let `X ⟶ Y ⟶ Z` be a conflation. The inflation
 `X ⟶ I(X)` of the chosen suspension presentation extends along `X ⟶ Y` to a map `Y ⟶ I(X)`,
 since `I(X)` is injective, and this extension induces a map `Z ⟶ ΣX` on cokernels. In the

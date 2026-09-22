@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.GradedCoderivation
 /-!
 # Odd squares of homogeneous tensor-coalgebra coderivations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.OddSquare)
+
 A homogeneous endomorphism of the reduced tensor coalgebra whose degree `r` and twist parameter
 `q` satisfy `(-1)^(q * r) = -1` is odd: it anticommutes with the letterwise Koszul involution of
 parameter `q`. Consequently the square of such a graded coderivation is an ordinary coderivation,

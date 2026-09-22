@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basic
 /-!
 # The basis and dimension of a skew-zigzag relation quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basis)
+
 A skew-zigzag parameter `c` labels each ordered pair of incident edges of a finite simple graph by
 a unit-valued ratio, and `TauCeti.skewZigzagQuotient` imposes `backtrack(h) = c.ratio h h' •
 backtrack(h')` on top of the relations killing non-returning quadratic paths and paths of length at

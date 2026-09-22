@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.LinearIndependent.Defs
 /-!
 # The square-class group `Kˣ ⧸ (Kˣ)²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.SquareClassGroup.Basic)
+
 For a field `K`, the **square-class group** is the quotient of `Kˣ` by its squares. Every element
 has order dividing `2`, so the quotient is an `𝔽₂ = ZMod 2`-vector space (Mathlib's
 `QuotientAddGroup.zmodModule`, written additively on `Additive Kˣ`).

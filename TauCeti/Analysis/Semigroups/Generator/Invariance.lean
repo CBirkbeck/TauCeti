@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Semigroups.Generator.Basic
 /-!
 # Invariance of the generator domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator.Invariance)
+
 This file proves that every operator of a strongly continuous semigroup preserves the domain
 of its infinitesimal generator and commutes with the generator there.  The mechanism is
 `StronglyContinuousSemigroup.tendsto_genQuot_map_of_commute`: a bounded operator commuting with

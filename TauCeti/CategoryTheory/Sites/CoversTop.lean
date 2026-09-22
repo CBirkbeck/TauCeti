@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Sites.CoversTop.Basic
 /-!
 # Common refinements of covering families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Sites.CoversTop)
+
 This file provides the cover-theoretic common refinement construction used by local
 trivializations. It reuses Mathlib's `GrothendieckTopology.intersection_covering` theorem; no
 formalization is vendored.

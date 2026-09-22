@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Burau.OneSubVecMulVec
 /-!
 # The reduced Burau representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Burau.Reduced)
+
 The unreduced Burau representation on `Rⁿ` fixes the row covector
 `(1, t, ..., t ^ (n - 1))`. Its kernel is consequently an invariant submodule of rank `n - 1`;
 the action on that kernel is the **reduced Burau representation**. This file constructs the

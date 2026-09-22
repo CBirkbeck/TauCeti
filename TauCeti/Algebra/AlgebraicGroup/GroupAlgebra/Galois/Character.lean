@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.HopfAlgebra.GroupLike
 /-!
 # Characters of a descended group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Character)
+
 For a finite Galois extension `L/k` and an integral representation `rho` on an abelian
 group `M`, let `B` be the invariant algebra of `L[M]` under the simultaneous action on
 coefficients and exponents. The characters over `L` of the affine group with coordinate

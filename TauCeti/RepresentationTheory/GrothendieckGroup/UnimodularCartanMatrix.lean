@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.GrothendieckGroup.CartanMatrix
 /-!
 # Unimodularity of the Cartan matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GrothendieckGroup.UnimodularCartanMatrix)
+
 Let `R` be an Artinian ring with finite exhaustive families of indecomposable projectives and
 simple modules, indexed so that their classes give the projective and simple bases. If every
 finitely generated `R`-module admits a finite resolution by finitely generated projectives, the

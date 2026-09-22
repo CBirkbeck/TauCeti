@@ -13,6 +13,8 @@ public import TauCeti.Algebra.MonoidAlgebra.Torsion
 /-!
 # Torsion in groups of group-like elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.GroupLike.Torsion)
+
 Group-like elements of a Hopf algebra over a field are linearly independent, so evaluation embeds
 their group algebra into the Hopf algebra. Consequently, reducedness and connectedness of the
 Hopf algebra pass to this group algebra and force its group of group-like elements to be

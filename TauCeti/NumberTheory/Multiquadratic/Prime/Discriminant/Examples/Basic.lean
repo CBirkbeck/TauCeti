@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.Internal.PrimeDivisibility
 /-!
 # Complete splitting criteria for the first genus-field examples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Examples.Basic)
+
 The multiquadratic roadmap's genus-field worked examples begin with
 `ℚ(√-5)`, whose prime-discriminant generators are `-4` and `5`, and
 `ℚ(√-21)`, whose prime-discriminant generators are `-4`, `-3`, and `-7`.

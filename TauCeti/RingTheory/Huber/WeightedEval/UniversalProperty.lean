@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Continuous
 /-!
 # The universal property of `A⟨X⟩_T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.UniversalProperty)
+
 Wedhorn's Proposition 5.50 is the universal property of `A⟨X₁, …, Xₖ⟩_T`: a ring homomorphism
 `φ : A →+* B` into a complete Hausdorff nonarchimedean ring, continuous at zero, together with
 values `bᵢ ∈ B` making each weighted variable `φ(Tᵢ) · bᵢ` power-bounded, extends to `A⟨X⟩_T` in

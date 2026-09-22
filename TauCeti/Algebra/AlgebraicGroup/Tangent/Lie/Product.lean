@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Finiteness.Prod
 /-!
 # The tangent Lie algebra of a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Product)
+
 The tensor product of two commutative bialgebras is the coordinate algebra of the direct product
 of the represented affine monoid schemes. Restricting a counit-valued derivation along the two
 canonical inclusions gives its two tangent components. Conversely, the canonical projections,

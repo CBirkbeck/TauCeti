@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.Tangent
 /-!
 # Coordinates of tangent fields along curves in two charts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.SectionAlongCurve.Tangent)
+
 For a tangent field along a curve, the coordinate readings `TauCeti.Manifold.sectionCoord` in the
 preferred tangent-bundle trivializations at two points differ by the tangent coordinate change
 between the two charts, wherever the curve lies in both base sets.

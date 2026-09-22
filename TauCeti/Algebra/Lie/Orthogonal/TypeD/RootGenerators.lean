@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.ToLin
 /-!
 # The numbered simple-root generators of the split type-D Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.RootGenerators)
+
 For `4 ≤ n`, this file puts the Bourbaki-numbered Chevalley generators of the split orthogonal
 Lie algebra `LieAlgebra.Orthogonal.typeD (Fin n) K` into explicit matrix form. In the hyperbolic
 basis, whose Gram matrix is

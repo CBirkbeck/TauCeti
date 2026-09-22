@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.Semisimple.Basic
 /-!
 # The centre and the derived ideal of `gl n R`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Basic)
+
 The general linear Lie algebra `gl n R` is `Matrix n n R` with the commutator bracket. It is the
 basic *reductive* — as opposed to semisimple — example: it splits as its centre plus its derived
 ideal as soon as `Fintype.card n` is invertible in `R`. This file identifies both pieces.

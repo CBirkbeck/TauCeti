@@ -13,6 +13,8 @@ import Mathlib.NumberTheory.ZetaValues
 /-!
 # A clean constant bound for the `p`-series beyond exponent two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PSeries)
+
 `∑' m : ℕ, m ^ (-t) ≤ 2` for every real `t ≥ 2`. Mathlib supplies the exact value at the endpoint,
 `ζ (2) = π ^ 2 / 6`, and summability throughout `t > 1`, but no inequality valid across a range of
 exponents; that is what this file adds.

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Adjoin
 /-!
 # Matrix coefficients of group-like and trivial comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Trivial)
+
 This file packages the generated coefficient objects for group-like and trivial comodules.
 The group-like results hold over coalgebras, with algebra-generation statements requiring only
 an ambient compatible algebra structure. The individual coefficient calculations are already in

@@ -16,6 +16,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Commutators in associative semirings and rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Ring.Commutator)
+
 This file records identities for moving elements past powers when the two elements almost commute.
 
 Over a semiring the hypothesis is written as a relation, `x * y = y * x + z`, since there is no

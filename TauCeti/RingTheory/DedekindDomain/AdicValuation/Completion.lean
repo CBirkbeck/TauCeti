@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Henselian.Basic
 /-!
 # The ring of integers of a single adic completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion)
+
 The ring of integers `𝒪_v` of the completion `K_v` of the fraction field of a Dedekind domain `R`
 at a height-one prime `v` is a local ring, and this file collects what it is: its maximal ideal
 contracts to `v` itself, its ideal filtration is the valuation filtration `K_v` induces on it, and

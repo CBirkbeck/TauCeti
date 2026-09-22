@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.Removability.Circle
 /-!
 # The Schwarz reflection principle across a circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Reflection.Circle.Principle)
+
 This file proves the circle case of the Schwarz reflection principle. A continuous function
 holomorphic on one side of a circle and taking that circle into another circle extends across the
 source circle by conjugating it with the two circle inversions. The extension is holomorphic

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Galois.Group
 /-!
 # The Galois group of a multiquadratic field has exponent two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Galois.Exponent)
+
 Over a field `K` in which `2 ≠ 0`, a multiquadratic field `M = K(rootᵢ : i)` (with
 `rootᵢ ^ 2 = dᵢ ∈ K`) is Galois, and every automorphism sends each generator to `± rootᵢ`; applying
 such an automorphism twice restores every generator, so it is an involution

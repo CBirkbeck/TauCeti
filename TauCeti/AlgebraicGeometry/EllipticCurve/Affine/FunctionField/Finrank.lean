@@ -16,6 +16,8 @@ import TauCeti.FieldTheory.IntermediateField.FieldRange
 /-!
 # The function field of a Weierstrass curve has degree two over `R(x)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank)
+
 Mathlib gives the coordinate ring `R[W]` a power basis `{1, Y}` over `R[X]`, and defines the
 function field `R(W)` as its fraction field. It says nothing about `R(W)` as an extension of the
 rational function field. The algebra structure for that pair *is* Mathlib's

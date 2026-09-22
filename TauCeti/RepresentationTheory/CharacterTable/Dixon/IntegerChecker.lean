@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ExactChecker
 /-!
 # An exact checker for integer-valued character tables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.IntegerChecker)
+
 The rational stage of the Dixon--Schneider algorithm produces integer central-character and
 ordinary character tables.  This file specializes the coefficient-independent exact certificate
 from `TauCeti.RepresentationTheory.CharacterTable.Dixon.ExactChecker` to `ℤ`, where `star` is the

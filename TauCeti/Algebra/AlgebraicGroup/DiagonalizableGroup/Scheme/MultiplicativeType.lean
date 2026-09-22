@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.MultiplicativeType
 /-!
 # Multiplicative type of diagonalizable group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.MultiplicativeType)
+
 Every finite-type diagonalizable group scheme over a field is of multiplicative type. The result
 is first stated for an arbitrary finite-type affine group scheme satisfying the scheme-side
 diagonalizable property, and then specialized to the canonical object `D(G) = Spec k[G]`.

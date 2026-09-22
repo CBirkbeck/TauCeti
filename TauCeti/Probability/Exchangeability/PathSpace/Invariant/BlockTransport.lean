@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 /-!
 # Moving a block through a reindexing, over an invariant event
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Invariant.BlockTransport)
+
 Over a shift-invariant event, a **law-preserving** reindexing that is eventually a translation
 changes no set-integral; so for a **contractable** law, where strict monotonicity supplies that
 preservation, a strictly increasing finite selection may be displaced onto the prefix

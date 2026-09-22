@@ -16,6 +16,8 @@ public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 /-!
 # Laplace-transform resolvents of strongly continuous semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Resolvent.Basic)
+
 This file develops the pointwise Bochner-integral resolvent for a C₀-semigroup with a
 growth bound, proves that it maps into the generator domain, and establishes the
 right-inverse identity and norm estimate. It also packages the resolvent as a function of

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.Rank
 /-!
 # The extended ternary Golay code
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.TernaryGolay)
+
 The extended ternary Golay code is the row space of the systematic matrix `[I₆ | A]`
 over `ZMod 3` displayed below. Its first six coordinates recover the message, and the same
 matrix is a parity-check matrix. The code is Euclidean self-dual with parameters `[12,6,6]`.

@@ -14,6 +14,8 @@ public import Mathlib.Algebra.Homology.ShortComplex.Exact
 /-!
 # Reduced singular homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Reduced)
+
 Reduced singular homology is the kernel of the augmentation in degree zero and ordinary singular
 homology in positive degrees. The inclusion into ordinary homology is natural and reduced homology
 is homotopy invariant. A chosen point splits zeroth homology as reduced homology plus the

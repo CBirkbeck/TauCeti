@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Signature
 /-!
 # The signature of a Seifert matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Signature)
+
 The *signature* of a knot is the signature of the symmetrised Seifert matrix `V + Vᵀ` of any
 Seifert surface for it. Because `Matrix.signature` reads only the quadratic form
 `x ↦ x ⬝ᵥ V *ᵥ x`, which sees `V` only through `V + Vᵀ`, that invariant is `Matrix.signature V`

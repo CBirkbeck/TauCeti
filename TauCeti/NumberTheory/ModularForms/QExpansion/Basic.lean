@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.Periodic
 /-!
 # The `q`-expansion as a linear map, and uniqueness of coefficients for raw functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.QExpansion.Basic)
+
 The `q`-expansion of modular forms for a determinant-one subgroup of `GL(2, ℝ)`, bundled as
 a `ℂ`-linear map into power series, refining Mathlib's additive `ModularForm.qExpansionAddHom`.
 

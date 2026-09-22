@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.PontryaginDual
 /-!
 # The continuous characters of the circle are the Fourier monomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.AddCircle)
+
 Mathlib's `fourier n : C(AddCircle T, ℂ)` is developed as a family of `L²` monomials: the lemmas
 about it record how it behaves in the *index* `n` (`fourier_add`, `fourier_neg`) and what it
 contributes to the Fourier basis. Read the other way, as a family of *characters* of the group

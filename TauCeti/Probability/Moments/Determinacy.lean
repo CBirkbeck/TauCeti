@@ -13,6 +13,8 @@ import TauCeti.Probability.Moments.Basic
 /-!
 # Moment determinacy of finite measures with finite exponential moments
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.Determinacy)
+
 A finite measure on `ℝ` whose exponential moments are finite in a neighbourhood of the origin is
 determined by its sequence of polynomial moments `∫ xⁿ dμ`.  This is the analytic engine behind the
 completeness step (**B1**) of the `OrthogonalL2Bases` roadmap

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.HahnSeries.Summable
 /-!
 # `leadingCoeff` of inverses and quotients of Hahn series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.HahnSeries.Inverse)
+
 Over a field of coefficients a nonzero Hahn series is invertible, and `HahnSeries.leadingCoeff` is
 multiplicative (`HahnSeries.leadingCoeff_mul`). This file records what that gives for inversion and
 division, which Mathlib states for products only.

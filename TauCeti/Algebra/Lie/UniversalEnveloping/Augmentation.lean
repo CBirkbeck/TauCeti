@@ -13,6 +13,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Basic
 /-!
 # The augmentation ideal of a universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Augmentation)
+
 The augmentation of `U(L)` is the counit `ε : U(L) →ₐ[R] R` of its Hopf algebra structure, the
 algebra homomorphism induced by the zero Lie homomorphism `L → R`. Its kernel `U⁺(L)`, the
 augmentation Hopf ideal `TauCeti.HopfIdeal.augmentation R (UniversalEnvelopingAlgebra R L)`, is

@@ -13,6 +13,8 @@ import TauCeti.Analysis.Complex.Conformal.LocalDegree
 /-!
 # Schwarz reflection of a conformal map is conformal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Reflection.Injective)
+
 `Conformal/Reflection/Principle.lean` extends a function holomorphic on the upper part of a
 conjugation-symmetric open set `Ω` and real on `Ω ∩ ℝ` to a function holomorphic on all of `Ω`.
 This file upgrades that extension from *holomorphic* to *conformal*: if the original map is

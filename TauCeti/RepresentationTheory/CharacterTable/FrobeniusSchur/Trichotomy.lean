@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.InvariantForm
 /-!
 # The Frobenius-Schur trichotomy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.Trichotomy)
+
 `TauCeti.Representation.frobeniusSchurIndicator_eq_sub_finrank_invariants` computes the indicator
 `ν₂(ρ) = |G|⁻¹ ∑_g χ(g²)` as the signed count `dim (Sym²V)ᴳ - dim (Λ²V)ᴳ` of invariants in the two
 squares.  This file identifies those two invariant counts with counts of **bilinear forms** on `V`,

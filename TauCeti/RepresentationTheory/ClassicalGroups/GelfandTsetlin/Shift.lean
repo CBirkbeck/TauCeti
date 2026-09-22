@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.GelfandTsetlin.Tablea
 /-!
 # Determinant shifts of Gelfand-Tsetlin patterns
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.GelfandTsetlin.Shift)
+
 Tensoring a rational representation of `GL n` by a power of the determinant adds the same integer
 to every component of its highest weight.  On a Gelfand-Tsetlin pattern the corresponding operation
 adds that integer to every entry in the triangular array.  This file constructs that translation as

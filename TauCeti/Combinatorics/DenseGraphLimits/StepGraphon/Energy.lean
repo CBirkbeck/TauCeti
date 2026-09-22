@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.MeasurableSpace.Finpartition
 /-!
 # The graphon partition energy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Energy)
+
 The Frieze--Kannan weak regularity argument is a potential argument: refine a measurable finite
 partition as long as the block-average step graphon fails to approximate the graphon in cut norm,
 and bound the number of refinements by the growth of an `L²` potential that is trapped in `[0, 1]`.

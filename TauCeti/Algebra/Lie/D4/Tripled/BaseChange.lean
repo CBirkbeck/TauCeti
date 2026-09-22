@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Base change of the tripled type-D4 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.BaseChange)
+
 `TauCeti.D4Tripled.groupScheme` is the explicit integral affine group scheme obtained by closing
 the eight numbered type-`D₄` root subgroups and the rank-four weight torus of
 `V(ϖ₁) ⊕ V(ϖ₃) ⊕ V(ϖ₄)` inside `GL₂₄`. This file specializes the base-change construction for a

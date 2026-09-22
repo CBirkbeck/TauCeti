@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Basic
 /-!
 # Conjugation symmetry of the plumbing-lattice weight function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Conjugation)
+
 The spin^c structures of a plumbed three-manifold are encoded by characteristic covectors of the
 plumbing lattice, and spin^c **conjugation** acts by negating the covector. The involution itself,
 `PlumbingGraph.conjugate`, lives at the characteristic-covector layer in `Characteristic.lean`;

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Basic
 /-!
 # Abelian layers of a formation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.AbelianLayer)
+
 An open normal subgroup `V` of a topological group has abelian quotient precisely when it contains
 the closure of the commutator subgroup. This file packages that condition as
 `IsAbelianClassFieldLayer V` and identifies it with commutativity of `G ⧸ V`.

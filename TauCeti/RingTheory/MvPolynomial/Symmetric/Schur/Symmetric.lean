@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Basic
 /-!
 # Schur polynomials are symmetric
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Symmetric)
+
 A Schur polynomial is the generating function of the semistandard tableaux of its shape, one
 monomial per tableau, the exponent of `xᵢ` being how often the letter `i` occurs.  Nothing in that
 description is symmetric in the letters: the tableaux are ordered objects, and the alphabet

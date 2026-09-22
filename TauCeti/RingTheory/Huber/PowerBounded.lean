@@ -14,6 +14,8 @@ public import Mathlib.Topology.Algebra.TopologicallyNilpotent
 /-!
 # Power-bounded and topologically nilpotent elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.PowerBounded)
+
 An element of a topological ring is *power-bounded* when the set of its nonnegative powers is
 bounded. Following Wedhorn, *Adic Spaces*, Definitions 5.25 and 5.27, we write
 

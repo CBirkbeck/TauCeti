@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgeb
 /-!
 # The root system of the pinned rational Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgebra.RootSystem)
+
 This file identifies the rational root system attached to a valid Dynkin type with the Killing
 root system of its pinned rational Geck Lie algebra. The identification is pinned: on simple roots
 it follows the common Bourbaki numbering supplied by `Fin t.rank`. Unlike

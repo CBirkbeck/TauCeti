@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Basic
 /-!
 # The squares a toroidal rectangle covers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Squares)
+
 A toroidal grid rectangle has two different finite domains, and the grid gradings need both.
 Its corners are grid points, that is, intersections of grid lines, and the grid points strictly
 inside it are `GridRectangle.interior`, the product of the two open cyclic intervals: this is the

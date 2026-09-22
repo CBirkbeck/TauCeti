@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Finsupp.LinearCombination
 /-!
 # Bases of divided powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DividedPowers.Basis)
+
 In an associative rational algebra, the divided powers of an element differ from its ordinary
 powers by the nonzero scalars `1 / n!`. Consequently the two families span the same rational
 submodule and one is linearly independent exactly when the other is. When they are independent,

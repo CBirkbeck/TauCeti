@@ -14,6 +14,8 @@ import Mathlib.NumberTheory.EulerProduct.ExpLog
 /-!
 # The zeros and the logarithm of an ideal Euler product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Data)
+
 A `TauCeti.EulerProductData` over a number field `K` carries a coprime-multiplicative coefficient
 function on the nonzero ideals of `𝓞 K`, together with its prime-power local data, and where its
 ideal-indexed Dirichlet series converges absolutely its local factors

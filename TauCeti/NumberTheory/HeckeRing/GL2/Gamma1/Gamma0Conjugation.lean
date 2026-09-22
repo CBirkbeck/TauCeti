@@ -11,6 +11,8 @@ import Mathlib.Data.Nat.Prime.Int
 /-!
 # The double coset of `diag(1, p)` is stable under conjugation by `Γ₀(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.Gamma0Conjugation)
+
 The diamond operators act on `M_k(Γ₁(N))` through `Γ₀(N) ⧸ Γ₁(N)`, and they commute with `Tₚ`.
 On the Hecke-ring side that commutation is not an analytic fact but a statement about double
 cosets. The diamond `⟨d⟩` is the basis element of `Γ₁(N) · g · Γ₁(N)` for a `g ∈ Γ₀(N)`, and such

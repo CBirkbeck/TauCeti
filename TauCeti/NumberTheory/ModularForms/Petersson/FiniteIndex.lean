@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 /-!
 # The Petersson inner product for a finite-index subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.FiniteIndex)
+
 The Petersson pairing of `Mathlib.NumberTheory.ModularForms.Petersson` is integrated over
 the standard fundamental domain `𝒟` of `SL₂(ℤ)`, which is too small for forms on a proper
 subgroup `Γ ≤ SL₂(ℤ)`: a fundamental domain for `Γ` is tiled by `[SL₂(ℤ) : Γ·{±I}]` translates of

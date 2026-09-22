@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Augmentation
 /-!
 # The quotient by the augmentation ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Augmentation)
+
 A Hopf ideal in the coordinate Hopf algebra of an affine group cuts out a closed subgroup, and
 the augmentation ideal cuts out the identity subgroup. This file records the corresponding
 identification of coordinate rings: the quotient of a finite-type commutative Hopf algebra by

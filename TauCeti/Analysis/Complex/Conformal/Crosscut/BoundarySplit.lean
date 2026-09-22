@@ -11,6 +11,8 @@ import TauCeti.Analysis.Normed.Module.Ball.Cut
 /-!
 # The two boundary pieces of a crosscut, and choosing between them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.BoundarySplit)
+
 Write `Ω = f '' U` for the image of an open `U ⊆ ℂ` under a conformal map, and cut `U` by a circle
 `sphere ζ ρ` into the near side `U ∩ ball ζ ρ`, the far side `U \ closedBall ζ ρ` and the cut
 `U ∩ sphere ζ ρ` itself, with images `A`, `B` and `γ`. `Conformal/Crosscut/Image.lean` observes that

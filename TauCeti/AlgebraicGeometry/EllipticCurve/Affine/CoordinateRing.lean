@@ -11,6 +11,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 /-!
 # The coordinate ring of an elliptic curve is a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing)
+
 For a Weierstrass curve `W` over a field `F` the coordinate ring `F[W] = F[X, Y]/(W(X, Y))` is a
 free `F[X]`-module of rank two, so it is noetherian of dimension at most one for free. The content
 of this file is the remaining, and only nontrivial, Dedekind axiom: `F[W]` is **integrally closed**

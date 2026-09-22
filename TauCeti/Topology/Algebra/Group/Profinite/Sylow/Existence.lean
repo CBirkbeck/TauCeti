@@ -13,6 +13,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Sylow.Basic
 /-!
 # Existence of Sylow subgroups in profinite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Sylow.Existence)
+
 Every profinite group has a Sylow pro-`p` subgroup. The construction takes the inverse limit
 of the finite sets of Sylow `p`-subgroups of its finite continuous quotients. The transition
 map sends a Sylow subgroup to its image under the quotient map; Mathlib's finite Sylow theory

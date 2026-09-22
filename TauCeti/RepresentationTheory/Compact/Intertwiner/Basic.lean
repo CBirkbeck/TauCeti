@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 /-!
 # Averaging an operator into an intertwiner
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Intertwiner.Basic)
+
 Given continuous representations `π` on `V` and `ρ` on `W` of a compact group `G`, any continuous
 linear map `T : V →L[𝕜] W` can be averaged against normalized Haar measure into
 

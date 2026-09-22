@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.DirichletCharacter.Basic
 /-!
 # Generalized Bernoulli numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.DirichletCharacter.GeneralizedBernoulli)
+
 This file defines the generalized Bernoulli numbers attached to a Dirichlet character. For a
 character `χ` modulo `N`, the definition is
 

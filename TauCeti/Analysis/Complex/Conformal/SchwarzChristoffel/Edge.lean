@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Primitive
 /-!
 # Straight boundary arcs of the Schwarz--Christoffel map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Edge)
+
 The Schwarz--Christoffel map is the primitive on the upper half-plane of the product
 `∏ i, (z - a i) ^ (e i)` of principal powers with real prevertices `a i`.  This file proves a
 boundary step toward identifying its image as a polygon: on a real interval containing no

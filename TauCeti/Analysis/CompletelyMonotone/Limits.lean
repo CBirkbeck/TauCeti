@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Convex.Continuous
 /-!
 # Pointwise limits of completely monotone functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Limits)
+
 Complete monotonicity on `(0, ∞)` is stable under pointwise convergence: no uniformity, no
 equicontinuity, and no smoothness of the limit need be assumed.  This file proves that closure
 property, completing the algebraic ones of

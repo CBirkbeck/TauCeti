@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.IntegralClosure.Rat
 /-!
 # The degree of an irreducible character divides the group order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Degree)
+
 For an irreducible representation `ρ` of a finite group `G` over an algebraically closed field of
 characteristic zero, the degree `χ(1) = dim V` divides `|G|`.
 

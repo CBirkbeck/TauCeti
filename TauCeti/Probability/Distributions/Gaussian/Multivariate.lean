@@ -15,6 +15,8 @@ import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 /-!
 # The covariance matrix of a multivariate Gaussian
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Multivariate)
+
 This file identifies the generic covariance matrix from
 `TauCeti.Probability.Moments.Covariance` with the covariance parameter of Mathlib's multivariate
 Gaussian, and records the centred multivariate Gaussian as the image of the standard Gaussian

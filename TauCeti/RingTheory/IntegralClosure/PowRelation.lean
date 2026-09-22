@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 /-!
 # Integrality as an explicit monic relation of positive degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.PowRelation)
+
 `IsIntegral S x` says a monic polynomial over `S` kills `x`. For arguments that adjust the
 coefficients one at a time it is more convenient to have the relation written out, and written
 so that its degree is visibly positive:

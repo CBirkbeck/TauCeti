@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Convex.Cone.Face.Finite
 /-!
 # Rays of toric cones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Ray.Basic)
+
 A ray of a cone is a one-dimensional face. This file defines the ray type on Mathlib's face
 lattice and proves the finiteness needed to index the primitive ray generators of a toric cone:
 finite generation of the ambient cone alone already bounds the rays. It also records the

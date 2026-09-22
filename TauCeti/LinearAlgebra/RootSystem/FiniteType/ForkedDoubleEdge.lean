@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.AdjoinPendant
 /-!
 # The affine diagrams `B̃ₗ` and `A⁽²⁾₂ₗ₋₁` are not of finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.ForkedDoubleEdge)
+
 A connected finite-type diagram is a tree of maximal degree three, and the constraints of the
 Cartan-Killing classification that remain concern where a branch vertex and a multiple edge may
 sit. The fork bound

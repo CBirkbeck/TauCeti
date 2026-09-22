@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Coalgebra.Basic
 /-!
 # Subcoalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcoalgebra.Basic)
+
 This file defines subcoalgebras of a coalgebra as submodules whose elements have
 comultiplication in the tensor square of the submodule. It is deliberately a lightweight
 predicate-style API: over a general commutative semiring, the map `D ⊗ D → C ⊗ C` need not be

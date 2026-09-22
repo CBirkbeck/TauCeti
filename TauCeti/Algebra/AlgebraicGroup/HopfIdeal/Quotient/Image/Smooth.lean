@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Smooth.GeometricallyReduced
 /-!
 # Smoothness of affine group images
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Smooth)
+
 Let `f : H ⟶ K` be a morphism of commutative Hopf algebras over a field. Contravariantly,
 `f` represents a homomorphism from the affine group with coordinate algebra `K` to the one with
 coordinate algebra `H`. If the target ambient group is of finite type, its scheme-theoretic image

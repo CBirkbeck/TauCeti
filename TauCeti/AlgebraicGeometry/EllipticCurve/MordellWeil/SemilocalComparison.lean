@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicCompletionExtension
 /-!
 # The semilocal comparison of `2`-descent at the good finite places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.SemilocalComparison)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal form
 over a number field `F`, with étale algebra `W.A = F[X] ⧸ (f)` and square classes `W.M`. Two
 subgroups of `W.M` cut out by valuation conditions are in play:

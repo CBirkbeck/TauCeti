@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Etale
 /-!
 # Step 6 of the weak Mordell–Weil theorem: the image of the descent map lies in `A(S,2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.SelmerGroupA)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`, let `R` be a Dedekind domain with fraction field `K`, and let `S` be the
 set of bad primes of `W` over `R`. The étale algebra `W.A = K[X] ⧸ (f)` splits as a product of

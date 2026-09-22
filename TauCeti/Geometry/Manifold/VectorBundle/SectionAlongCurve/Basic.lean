@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.MDifferentiable
 /-!
 # Coordinates of vector-bundle sections along curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.SectionAlongCurve.Basic)
+
 This file records the coordinate reading of a section of a vector bundle along a curve in one of
 the bundle's canonical trivializations. It also relates manifold differentiability of the
 corresponding total-space map to differentiability of that coordinate reading.

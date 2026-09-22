@@ -13,6 +13,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval
 /-!
 # Coordinates of scalar multiplication through the division polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul)
+
 The Nagell–Lutz route expresses `n • (X, Y)` on the universal curve through the division
 polynomials: the affine `X`-coordinate is `φₙ/ψₙ²` and the `Y`-coordinate is `ωₙ/ψₙ³`, as
 elements of `Universal.Field`. This file defines those two rational functions, `smulX` and

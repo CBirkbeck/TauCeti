@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Clifford.Equivalence
 /-!
 # The dimension form of Clifford's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Dimension)
+
 Let `N` be a normal subgroup of a group `G` and let `W` be an irreducible finite-dimensional
 representation of `G` over an algebraically closed field.  Clifford's theorem describes the
 restriction of `W` to `N` as `e` copies of each of the `[G : inertia V]` distinct conjugates of

@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Polynomial.Resultant.Discriminant
 /-!
 # The index formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.Discriminant)
+
 For an integral primitive element `θ` of a number field `K`, the discriminant of the minimal
 polynomial of `θ` over `ℤ`, the index `[𝓞 K : ℤ[θ]]` and the discriminant of `K` are related by
 

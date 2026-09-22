@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.Contractability
 /-!
 # The covariance structure of a contractable L² sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.Covariance)
+
 This file opens the Layer 3 (L²) lane of the Exchangeability roadmap
 (`TauCetiRoadmap/Exchangeability/README.md`, "Layer 3: L² averaging library and the
 standard-Borel de Finetti route"), whose first analytic input is the *uniform covariance

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Basic
 /-!
 # Disc automorphisms are infinitesimal isometries of the Poincaré metric
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzPick.AutomorphismIsometry)
+
 The infinitesimal Schwarz--Pick inequality `norm_deriv_div_one_sub_norm_sq_le` shows that
 every holomorphic self-map of the open unit disc contracts the Poincaré (hyperbolic) metric
 `|dz| / (1 - |z| ^ 2)`.  This file proves that the **disc automorphisms attain equality**: for

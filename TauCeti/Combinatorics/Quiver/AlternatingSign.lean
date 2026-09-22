@@ -11,6 +11,8 @@ public import Mathlib.Combinatorics.Quiver.Path
 /-!
 # Alternating vertex functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Quiver.AlternatingSign)
+
 A ring-valued function on the vertices of a quiver *alternates* when it is negated by every arrow,
 `c j = -c i` for all `a : i ⟶ j`. This file records what such a function does along a path: it is
 multiplied by `(-1)ⁿ` over a path of length `n`, so it is unchanged along a path of even length and

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Trace.Basic
 /-!
 # Linear forms over a separable extension, through the trace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Trace.Dual)
+
 Let `L / K` be a finite separable field extension and `V` a vector space over `L`.  Composing an
 `L`-linear form on `V` with the trace `Tr_{L/K} : L → K` gives a `K`-linear form on `V`, and every
 `K`-linear form on `V` arises this way from exactly one `L`-linear form.  This is the

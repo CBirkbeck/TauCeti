@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.IndexNormal
 /-!
 # The sign group of a linearly ordered ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.Ring.Units)
+
 For a linearly ordered ring, the positive units `Units.posSubgroup R` form an index-`2` subgroup, so
 it has finite index. Together with the general finite-index-preimage instance
 (`Subgroup.instFiniteIndexComap`), this yields the finiteness of the totally positive units of a

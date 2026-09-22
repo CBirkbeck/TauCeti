@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Produc
 /-!
 # The projection formula for the explicit low-degree cup products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.ProjectionFormula)
+
 The corestriction of a finite-index subgroup `U ≤ G` is not linear over the cohomology of `G`, but
 it is a map of modules over it: restricting a class of `G` to `U`, cupping there, and corestricting
 back is the same as cupping with the corestricted class. That is the **projection formula**

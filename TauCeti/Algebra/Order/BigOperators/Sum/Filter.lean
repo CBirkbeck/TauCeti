@@ -11,6 +11,8 @@ public import Mathlib.Order.Interval.Set.UnorderedInterval
 /-!
 # Finite sums over ordered filters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.BigOperators.Sum.Filter)
+
 This file records elementary consequences of a finite family being zero away from an initial
 interval.  They are useful whenever a filtered finite sum is evaluated after all of its nonzero
 terms have been passed.

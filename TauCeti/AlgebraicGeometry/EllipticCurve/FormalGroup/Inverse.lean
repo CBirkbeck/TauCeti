@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.MvPowerSeries.Inverse
 /-!
 # The formal inverse of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Inverse)
+
 In the `(z, w)`-chart of `WeierstrassCurve.formalW`, where `x = z / w` and `y = -1 / w`, the
 negative of the point with parameter `z` has parameter `ι(z) = -z / (1 - a₁ z - a₃ w(z))`. This
 file constructs that series and proves it is an involution.

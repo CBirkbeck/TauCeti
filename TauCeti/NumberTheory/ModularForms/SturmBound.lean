@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 /-!
 # The Sturm bound for finite-index subgroups of `SL(2, ℤ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.SturmBound)
+
 For `𝒢 ≤ GL(2, ℝ)` of finite relative index in `𝒮ℒ` with discrete strict periods and
 `f : ModularForm 𝒢 k`, if the `q`-expansion of `f` at the cusp `∞` (with cusp width
 `𝒢.strictWidthInfty`) has order strictly greater than `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12`, then

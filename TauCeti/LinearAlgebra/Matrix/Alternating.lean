@@ -11,6 +11,8 @@ public import Mathlib.Algebra.CharP.Defs
 /-!
 # Matrices equal to the negative of their transpose
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Alternating)
+
 A matrix satisfying `Mᵀ = -M` is determined by its entries above the diagonal, once its diagonal
 is known to vanish: the entries below are the negatives of their mirror images. The diagonal does
 vanish as soon as the value ring has no element that is its own negative apart from zero, which

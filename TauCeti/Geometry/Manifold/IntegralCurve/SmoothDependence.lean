@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.IntegralCurve.Maximal
 /-!
 # Smooth dependence of the maximal integral curve near time zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.IntegralCurve.SmoothDependence)
+
 Let `v` be a vector field on a separated boundaryless `C^1` manifold `M` modelled on a
 finite-dimensional space. This file shows that if `v` is `C^(n+1)` at `x₀`, then the maximal flow
 `(x, t) ↦ maximalIntegralCurve v x t` is jointly `C^(n+1)` in the initial point and the time at

@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.Perm.Sign
 /-!
 # Weyl groups of coordinate-difference root data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.RootDatum.WeylGroup)
+
 For a finite coordinate type `σ`, the roots of `SplitTorus.coordinateRootDatum σ` are all
 differences `e_i - e_j`. Its root reflections are therefore exactly the transpositions of the
 coordinates. Since transpositions generate the finite symmetric group, the Weyl group of this

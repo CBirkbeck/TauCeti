@@ -11,6 +11,8 @@ import TauCeti.Geometry.Manifold.MFDeriv.Curve
 /-!
 # Coordinate displacement is bounded by Riemannian path length
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.MetricBridge)
+
 This file supplies local analytic bridges between the Riemannian distance and coordinate charts.
 If the chart derivative is bounded along a `C¹` path, the coordinate displacement of the path is
 bounded by that derivative bound times its Riemannian length. Fix a point `x` and `r > 1`. Every

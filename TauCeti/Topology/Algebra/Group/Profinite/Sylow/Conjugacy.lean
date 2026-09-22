@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Sylow.Containment
 /-!
 # Conjugacy of Sylow subgroups in profinite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Sylow.Conjugacy)
+
 Any two Sylow pro-`p` subgroups of a profinite group are conjugate. This is containment read
 against maximality: a Sylow pro-`p` subgroup lies in a conjugate of any other by
 `IsProP.exists_le_map_conj`, and a conjugate of a Sylow pro-`p` subgroup is again Sylow pro-`p`,

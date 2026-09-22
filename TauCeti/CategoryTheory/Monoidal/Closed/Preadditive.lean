@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 /-!
 # Closed braided preadditive categories are monoidal preadditive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.Closed.Preadditive)
+
 In a closed braided monoidal category, tensoring on either side with a fixed object is a left
 adjoint, so it preserves binary coproducts. In a preadditive category, binary coproducts are
 binary biproducts, and a functor preserving them is additive. Hence the tensor product of

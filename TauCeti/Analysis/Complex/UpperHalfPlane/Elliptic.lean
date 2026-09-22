@@ -13,6 +13,8 @@ public import TauCeti.Topology.MetricSpace.ProperlyDiscontinuous
 /-!
 # The elliptic disc of a point of the upper half-plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.Elliptic)
+
 Let `Γ ≤ PSL(2, ℝ)` be a subgroup and `z` a point of the upper half-plane. The stabilizer of `z`
 in `Γ` acts by hyperbolic isometries fixing `z`, so it preserves every hyperbolic disc
 `Subgroup.stabilizerBall Γ z ε` about `z`. If the action of `Γ` is properly discontinuous — in

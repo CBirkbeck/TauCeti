@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Basic
 /-!
 # The simply connected root datum of type `E₆`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E6.Basic)
+
 This file constructs the pinned integral root datum of type `E₆` on the character and cocharacter
 lattices `Fin 6 → ℤ`. The character lattice is written in the fundamental-weight basis and the
 cocharacter lattice in the simple-coroot basis, so that the `i`-th simple root is the `i`-th row of

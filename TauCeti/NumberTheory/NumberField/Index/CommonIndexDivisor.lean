@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Polynomial.Monic.Irreducible
 /-!
 # Common index divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.CommonIndexDivisor)
+
 A prime `p` is a *common index divisor* of a number field `K` when it divides the index
 `[𝓞 K : ℤ[θ]]` of **every** integral primitive element `θ`. Such a prime obstructs monogenicity:
 `𝓞 K = ℤ[θ]` would force `index θ = 1`.

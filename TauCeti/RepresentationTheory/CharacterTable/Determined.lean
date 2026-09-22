@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Semisimple.Multiplicity
 /-!
 # Finite-group representations are determined by their characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Determined)
+
 For a finite group over a field of characteristic zero, two finite-dimensional representations
 with the same character are equivalent. Maschke's theorem
 makes their group-algebra modules semisimple, while the character pairing identifies the

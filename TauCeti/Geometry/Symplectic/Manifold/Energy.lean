@@ -16,6 +16,8 @@ public import TauCeti.Geometry.Symplectic.Manifold.TwoForm
 /-!
 # Pointwise and integrated energy for curves into almost complex manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Manifold.Energy)
+
 This file lifts the energy theory of $J$-holomorphic curves from normed vector spaces
 (`TauCeti.Geometry.Symplectic.JHolomorphic.Energy.Basic` and `Integral.lean`) to smooth manifolds.
 Given a manifold $M$ carrying a smooth two-form $\omega$ (`TauCeti.SmoothTwoForm`) and a smooth

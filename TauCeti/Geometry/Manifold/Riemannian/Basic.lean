@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.Riemannian.Basic
 /-!
 # Basic Riemannian bundle constructions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Basic)
+
 This file provides conversions between Mathlib's Riemannian bundle classes and bundled
 Riemannian metrics.
 

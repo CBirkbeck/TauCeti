@@ -16,6 +16,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Derivative
 /-!
 # The generic point of an affine Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint)
+
 The coordinate ring `W.CoordinateRing` is `R[X][Y]` modulo the Weierstrass relation, so the
 classes of `X` and `Y` in the function field are a pair satisfying that relation over
 `W.FunctionField`. They are the *generic point*: a point of `W` base-changed to its own function

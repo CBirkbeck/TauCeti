@@ -14,6 +14,8 @@ import Mathlib.Algebra.BigOperators.Option
 /-!
 # Discriminants of prime-discriminant composita
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Compositum)
+
 Let `D i` be distinct prime discriminants, at most one of which is even, and let `root i` be
 chosen square roots of their radicands in a number field. This file computes the absolute value of
 the discriminant of their compositum:

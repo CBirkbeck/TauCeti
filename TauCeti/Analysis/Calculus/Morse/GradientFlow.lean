@@ -19,6 +19,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 /-!
 # Negative gradient trajectories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.GradientFlow)
+
 This file develops the first dynamical facts about negative gradient trajectories in a real
 Hilbert space.  A curve `γ` is read through Mathlib's existing `IsIntegralCurveOn` predicate for
 the autonomous vector field `fun _ x ↦ -∇ f x`; no parallel notion of trajectory is introduced.

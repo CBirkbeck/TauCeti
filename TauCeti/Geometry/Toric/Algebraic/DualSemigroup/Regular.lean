@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Ray.Generation
 /-!
 # Regular coordinates on the dual semigroup of a toric cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.DualSemigroup.Regular)
+
 Let `σ` be a toric cone and let `b` be an integral basis of `N`, indexed by `ToricRay σ ⊕ ι`,
 whose vectors at the ray indices are the primitive ray generators of `σ`. Evaluating integral
 characters on `b` identifies `N →+ ℤ` with the integer-valued functions on the index set, and an

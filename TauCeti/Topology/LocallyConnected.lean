@@ -12,6 +12,8 @@ public import Mathlib.Topology.Separation.Hausdorff
 /-!
 # Local connectedness of continuous images of compact spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.LocallyConnected)
+
 Local connectedness is not preserved by continuous images in general — every metric space is a
 continuous image of a discrete one — but it *is* preserved by quotient maps, and hence by the
 continuous images that are automatically quotient maps: those of a compact space in a Hausdorff

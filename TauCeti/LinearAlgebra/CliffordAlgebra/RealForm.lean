@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Dimension
 /-!
 # The real Clifford algebras `Cliff(p, q)` and the base entries of the Bott table
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.RealForm)
+
 Over `ℂ` a nondegenerate quadratic form is determined by its rank, so there is one Clifford algebra
 in each dimension. Over `ℝ` this fails: a nondegenerate real form is classified by its signature
 `(p, q)`, and the resulting algebras `Cliff(p, q)` run through matrix algebras over `ℝ`, `ℂ` and

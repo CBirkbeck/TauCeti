@@ -13,6 +13,8 @@ import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Topological generation of a topological group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Generation)
+
 A subset of a topological group *generates it topologically* when the subgroup it generates is
 dense, that is when `(Subgroup.closure s).topologicalClosure = ⊤`. This file introduces the
 predicate `IsTopologicallyFinitelyGenerated`, asking for a *finite* topological generating set,

@@ -23,6 +23,8 @@ import TauCeti.Probability.Exchangeability.PathSpace.Law.Bridge
 /-!
 # Block-product factorisation and the de Finetti summit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.BlockFactorization)
+
 The block-product factorisation of the conditional expectation, and — built directly on it — the
 de Finetti summit for the reverse-martingale route.
 

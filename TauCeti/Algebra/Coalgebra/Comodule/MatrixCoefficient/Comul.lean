@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Basic
 /-!
 # Comultiplication of matrix coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Comul)
+
 The comultiplication of a matrix coefficient is controlled by the coaction:
 
 ```text

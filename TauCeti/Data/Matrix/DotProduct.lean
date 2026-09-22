@@ -10,6 +10,8 @@ public import Mathlib.Data.Matrix.Mul
 /-!
 # Dot products with words extended by zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Matrix.DotProduct)
+
 A vector indexed by `n` can be transported along an injective map `f : n → m` by extending it by
 zero off the range of `f`. Its dot product with any vector indexed by `m` then only sees the
 coordinates in the range of `f`. This lets orthogonality on a subset of coordinates be read off

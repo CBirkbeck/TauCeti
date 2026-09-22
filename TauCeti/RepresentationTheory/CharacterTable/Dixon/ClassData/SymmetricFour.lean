@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Basic
 /-!
 # Class data for the symmetric group on four letters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.SymmetricFour)
+
 The conjugacy classes of `S₄ = Equiv.Perm (Fin 4)` are indexed by the five partitions of four.
 This file gives one explicit permutation of each cycle type, then lets the executable
 `TauCeti.ClassData` API calculate the classes and their multiplication constants.

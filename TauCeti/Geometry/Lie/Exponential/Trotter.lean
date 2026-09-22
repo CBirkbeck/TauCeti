@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Interior
 /-!
 # The Trotter product formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Trotter)
+
 This file proves a tangent-to-identity power limit for finite-dimensional real Lie groups and
 applies it to the product of two exponential curves. The resulting Trotter formula supplies the
 addition-closure input for the subgroup Lie algebra in Deliverable A, Layer 2 of the Lie-groups

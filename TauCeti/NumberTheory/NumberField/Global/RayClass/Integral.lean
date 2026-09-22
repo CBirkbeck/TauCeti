@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Basic
 /-!
 # Integral representatives of ray classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Integral)
+
 Every ray class of a modulus `𝔪` of a number field is the class of a nonzero *integral* ideal
 prime to `𝔪`, and a ray class is trivial exactly when the ideal satisfies an integral equation
 `I · (b) = (a)` whose two generators are congruent to one modulo `𝔪`.  The construction behind both

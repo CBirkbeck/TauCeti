@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.LegendreSymbol.AddCharacter
 /-!
 # Characters of a cyclic group read off a `ZMod` coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.Cyclic.Character)
+
 A group `H` presented as cyclic of order `m` by a coordinate `e : H ≃* Multiplicative (ZMod m)`
 has its characters named by the `m`-th roots of unity: the character attached to `ζ` sends the
 element with coordinate `i` to `ζ ^ i`. This file reads Mathlib's `AddChar.zmodChar` through such

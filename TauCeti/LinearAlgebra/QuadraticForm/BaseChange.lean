@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.TensorProduct.Basis
 /-!
 # Base change of quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.BaseChange)
+
 This file supplies the functorial API for extending quadratic spaces along a commutative algebra.
 It lifts isometries and isometric equivalences by extending their underlying linear maps, records
 the interaction with the additive operations on forms, compares direct and successive extension

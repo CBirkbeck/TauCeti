@@ -11,6 +11,8 @@ public import TauCeti.Algebra.WordFiltration.Basic
 /-!
 # The PBW filtration of a universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.PBW.Basic)
+
 This file constructs the first stage of the Poincaré--Birkhoff--Witt development: the increasing
 filtration of `UniversalEnvelopingAlgebra R L` by word length in the image of the canonical Lie map
 `UniversalEnvelopingAlgebra.ι R`.

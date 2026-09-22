@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Functorial
 /-!
 # Degree zero of continuous cohomology, and compatible pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.DegreeZero)
+
 Mathlib computes one degree of continuous cohomology: `ContinuousCohomology.zeroIso` identifies
 `H⁰_cont(G, X)` with the invariants `X^G`. That identification is only usable once it is known to
 transport the *maps*, and this file supplies exactly that. For a continuous homomorphism

@@ -11,6 +11,8 @@ import TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Pullback.Basic
 /-!
 # Atomic regressions for the map form of the cut distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Pullback.Validation)
+
 The harder direction of `cutDist_eq_cutDistPullback` applies Janson's Thm A.9 to the *coupling*, so
 the atomic cases to check are atomic couplings. These three elaboration checks run the equivalence
 at a point-mass coupling, at a finitely atomic one, and at one mixing an atomic with a continuous

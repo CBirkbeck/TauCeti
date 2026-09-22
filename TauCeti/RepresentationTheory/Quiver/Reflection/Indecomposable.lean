@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Simple
 /-!
 # Reflecting an indecomposable representation at a sink
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Indecomposable)
+
 The Bernstein-Gelfand-Ponomarev reflection at a sink `i` replaces the vertex space `Mᵢ` by the
 kernel of the sum `TauCeti.incomingSum` of the arrows into `i`, and it acts on dimension vectors by
 the simple reflection `sᵢ` whenever that sum is onto (`TauCeti.dimVector_reflectRep`). This file

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Inversions.StrongExchange
 /-!
 # The closed dominant chamber is a strict fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FundamentalDomain)
+
 The Weyl translates of the closed dominant chamber of a base cover the whole weight space
 (`TauCeti.exists_mem_dominantChamber`). This file proves that they overlap only where they must:
 two dominant weights in the same Weyl orbit are equal, and the stabilizer of a dominant weight is

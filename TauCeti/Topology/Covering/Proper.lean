@@ -11,6 +11,8 @@ import Mathlib.Topology.Maps.Proper.CompactlyGenerated
 /-!
 # Local homeomorphisms that are proper over an open set are coverings there
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Proper)
+
 A local homeomorphism `f : E → X` need not be a covering map: an open inclusion is a local
 homeomorphism, and it is not evenly covered at the boundary of its image.  What fails there is
 properness, and the classical remedy is that a *proper* local homeomorphism between Hausdorff

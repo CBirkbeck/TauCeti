@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Basic
 /-!
 # Cyclical monotonicity for transport costs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.CyclicalMonotonicity)
+
 This file defines finite `c`-cyclical monotonicity for a transport cost with values in an
 additive commutative monoid equipped with a comparison relation, which covers both the
 extended-nonnegative costs of the primal interface and the real costs of the `c`-transform

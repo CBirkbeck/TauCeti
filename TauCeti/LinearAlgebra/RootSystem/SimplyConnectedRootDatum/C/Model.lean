@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Reflection
 /-!
 # The classical model of type `Cₙ` in the pinned coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.C.Model)
+
 This file sets up the coordinates in which
 `TauCeti.DynkinType.typeCSimplyConnectedRootDatum` is built, and proves everything about the roots
 of type `Cₙ` that can be said before they are indexed: the two coordinate families, the signed

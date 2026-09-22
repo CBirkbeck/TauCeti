@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Module
 /-!
 # The integer character of a Specht module, and the character table of `Sₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Character)
+
 The Specht module `S^μ` is a representation of `Sₙ` over `ℚ`, so its character
 `(spechtModule μ).character` takes values in `ℚ`. Those values are in fact **integers**: a
 character value at an element of finite order is an algebraic integer, and a rational algebraic

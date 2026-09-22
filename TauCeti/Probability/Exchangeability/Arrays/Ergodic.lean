@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.ZeroOne
 /-!
 # Ergodicity and dissociation for jointly exchangeable arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Ergodic)
+
 The finitely supported permutations of `ℕ` act diagonally on array path space: one permutation
 relabels both array coordinates.  For a jointly exchangeable array law, this action is ergodic
 exactly when the coordinate array is jointly dissociated.  By the corner-tail theorem in

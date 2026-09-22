@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Normed.Module.FiniteDimension
 /-!
 # Additive Haar measures and continuous linear equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Haar.NormedSpace)
+
 A continuous linear equivalence between finite-dimensional real normed spaces is nonsingular for
 any additive Haar measures chosen on its source and target: null sets correspond to null sets
 under it, whatever the normalizations. This is uniqueness of additive Haar measure, in the form

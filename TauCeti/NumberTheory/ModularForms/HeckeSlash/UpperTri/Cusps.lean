@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 /-!
 # The upper-triangular Hecke slash sum vanishes, and is bounded, at the cusps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Cusps)
+
 `heckeSlashUpperTri` is a finite sum of slashes by rational matrices `upperTriRep p b` of positive
 determinant. A slash is zero at a cusp `c` exactly when the original function is zero at `g • c`
 (`OnePoint.IsZeroAt.smul_iff`), and for an arithmetic subgroup `Γ` the rational transform `g • c`

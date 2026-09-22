@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 /-!
 # The Frobenius-Schur indicator of a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.FrobeniusSchur.Basic)
+
 For a finite-dimensional continuous representation `π` of a compact group `G`, the
 **Frobenius-Schur indicator** is the Haar average of the character over squares,
 

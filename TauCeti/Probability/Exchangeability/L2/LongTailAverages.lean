@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.L2.BlockAverages
 /-!
 # Long averages and following tail averages
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.LongTailAverages)
+
 This file proves the `l2_bound_long_vs_tail` milestone from Layer 3 of the Exchangeability
 roadmap.  It specializes the general two-window estimate for a contractable real-valued process
 to the two canonical adjacent blocks

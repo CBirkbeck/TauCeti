@@ -13,6 +13,8 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 /-!
 # Local inverse equations for the Banach algebra logarithm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.LogOneAdd.Inverse)
+
 This file proves that `NormedSpace.logOneAdd` and the exponential are inverse near the origin.
 The proof first computes the corresponding formal series compositions over the reals and then
 transports their scalar coefficients to an arbitrary real Banach algebra.

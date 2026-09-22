@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.Chord.TangentBound
 /-!
 # Immersions are flat of order one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.FlatnessOne)
+
 A piecewise-`C¹` immersion is `FlatOfOrder γ t₀ 1` at every interior parameter, and
 `FlatOfOrderBasepoint γ a b 1` across the join: the curve leaves each point first-order tangent
 to its non-zero one-sided tangent, so the perpendicular deviation from the tangent line is

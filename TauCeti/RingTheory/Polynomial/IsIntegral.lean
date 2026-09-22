@@ -12,6 +12,8 @@ import Mathlib.Tactic.ComputeDegree
 /-!
 # Integrality from a monic quadratic relation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.IsIntegral)
+
 Mathlib's `IsIntegral.of_aeval_monic_of_isIntegral_coeff` takes a monic polynomial and asks for
 each coefficient to be integral. Applying it to a quadratic means writing the polynomial out,
 discharging the degree computation, and answering the coefficient obligation index by index — the

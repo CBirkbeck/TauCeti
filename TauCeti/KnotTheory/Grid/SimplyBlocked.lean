@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Unblocked
 /-!
 # The simply blocked grid map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.SimplyBlocked)
+
 The unblocked grid complex `GC⁻` has one polynomial variable `V_c` for each `O`-marking.  Blocking
 the `O`-marking in a chosen column `i` means setting `V_i = 0`.  The resulting simply blocked
 construction keeps the variables indexed by the other columns and counts exactly the empty

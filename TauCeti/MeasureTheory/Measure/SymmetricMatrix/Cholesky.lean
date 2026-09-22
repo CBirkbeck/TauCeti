@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Function.Jacobian
 /-!
 # The Cholesky change of variables on the symmetric matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Cholesky)
+
 Every positive-definite symmetric matrix is `L * Lᵀ` for a unique lower-triangular `L` with
 positive diagonal, so the on-or-below-diagonal entries of `L` are free coordinates on the
 positive-definite cone. This file transports `TauCeti.symmetricLebesgue` through that

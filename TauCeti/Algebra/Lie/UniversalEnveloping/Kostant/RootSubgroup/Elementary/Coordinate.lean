@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Eleme
 /-!
 # Matrix coordinates of the parametrized Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Elementary.Coordinate)
+
 The root subgroup map `x_α` with its parameter read in the value ring, `kostantRootSubgroupParam`,
 takes values in the automorphisms of a scalar extension `A ⊗[ℤ] M`. A finite basis
 `b : Basis η ℤ M` turns those automorphisms into invertible matrices, and

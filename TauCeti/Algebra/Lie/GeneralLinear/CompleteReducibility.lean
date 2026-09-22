@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Dimension
 /-!
 # Complete reducibility for the general linear Lie algebra and its CAR module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CompleteReducibility)
+
 The Killing form of `gl n` is degenerate on the scalar matrices, so Weyl's complete-reducibility
 theorem does not apply to it directly. It does apply to `sl n`. This file restricts a `gl n`-module
 to `sl n`, and then promotes an `sl n`-stable complement back to `gl n` whenever the identity

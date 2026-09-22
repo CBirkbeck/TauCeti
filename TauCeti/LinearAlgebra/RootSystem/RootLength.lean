@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # Long and short simple roots of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.RootLength)
+
 A Cartan matrix records more than an unoriented diagram: the ratio of a transposed pair of its
 off-diagonal entries is the ratio of the squared lengths of the two simple roots. This file reads
 that information off the standard Cartan matrices of `TauCeti.DynkinType`, pinning for each type

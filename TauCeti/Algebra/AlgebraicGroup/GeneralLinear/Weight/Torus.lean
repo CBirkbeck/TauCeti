@@ -18,6 +18,8 @@ public import TauCeti.LinearAlgebra.Basis.DiagonalTorus.Basic
 /-!
 # Weight tori in the general linear group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Torus)
+
 Let `wt : Fin N → κ → ℤ` be a finite family of characters of the split torus `𝔾ₘ^κ`. Each
 character gives a diagonal entry, and together they define a group-scheme morphism
 

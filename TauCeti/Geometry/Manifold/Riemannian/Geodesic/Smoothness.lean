@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCiv
 /-!
 # Smoothness of the geodesic spray
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Smoothness)
+
 The geodesic spray of a smooth Riemannian manifold is a smooth vector field on its tangent
 bundle. In tangent-bundle coordinates it is
 

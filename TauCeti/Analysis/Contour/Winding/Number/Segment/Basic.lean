@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Integral.OddSymmetric
 /-!
 # The generalized winding number of a straight segment through the point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Segment.Basic)
+
 A straight segment traversed symmetrically **through** its reference point contributes nothing to
 the generalized winding number about that point. The mechanism is oddness: for the real inclusion
 `γ t = t` on `[-R, R]`, the index integrand `γ' t / (γ t - 0) = 1 / t` is odd, so every

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic
 /-!
 # The classical Cartan matrices are of finite type, and the simply-laced ones positive definite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Classical)
+
 `TauCeti.IsFiniteType` asks of an integer matrix that it be a generalized Cartan matrix carrying a
 positive rational symmetriser whose symmetrisation is positive definite. This file certifies the
 four infinite families of the standard list, Mathlib's `CartanMatrix.A`, `CartanMatrix.B`,

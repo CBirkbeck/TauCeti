@@ -12,6 +12,8 @@ public import TauCeti.Topology.Compactness.Compact
 /-!
 # Profinite groups: the finite-quotient limit description
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Limit)
+
 The unbundled workhorse of profinite group theory, phrased for the type-class stack
 `[Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]`
 (with `TotallyDisconnectedSpace G` only where needed) so that consumers outside the

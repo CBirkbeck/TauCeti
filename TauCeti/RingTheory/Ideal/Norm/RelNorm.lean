@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.Ideal
 /-!
 # Coefficients of a relative norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.Norm.RelNorm)
+
 For a finite torsion-free extension `A → B` of Dedekind domains and a nonzero maximal ideal `p`
 of `A`, the coefficient of `Ideal.relNorm A I` at `p` is determined by the coefficients of `I` at
 the primes of `B` above `p`, each weighted by a residue degree:

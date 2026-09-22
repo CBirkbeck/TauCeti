@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.SquareClassGroup.Basic
 /-!
 # Multiplicative square classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.SquareClassGroup.Multiplicative)
+
 This file relates the literal quotient `Kˣ ⧸ (Kˣ)²` to the additive square-class group used by
 the multiquadratic development. The multiplicative quotient is convenient for products and for
 cardinality formulas, while `SquareClassGroup K` carries the canonical `ZMod 2`-module structure.

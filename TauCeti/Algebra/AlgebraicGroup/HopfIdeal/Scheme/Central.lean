@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Central closed subgroup schemes are commutative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Central)
+
 A central Hopf ideal cuts out a commutative closed subgroup scheme. The coordinate quotient is
 cocommutative by `HopfIdeal.IsCentral.isCocomm_quotient`, so its Hopf spectrum carries a
 commutative group-object structure on the canonical Hopf-ideal quotient spectrum.

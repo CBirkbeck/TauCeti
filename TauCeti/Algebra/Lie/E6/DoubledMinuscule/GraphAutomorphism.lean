@@ -12,6 +12,8 @@ public import
 /-!
 # The graph automorphism of the doubled type-E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.GraphAutomorphism)
+
 The nontrivial symmetry of the Bourbaki-numbered `E₆` diagram exchanges the two minuscule
 representations `V(ϖ₁)` and `V(ϖ₆)`. On their direct sum it has a signed monomial lift which
 intertwines the represented positive and negative simple-root generators. This file constructs

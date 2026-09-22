@@ -14,6 +14,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The special orthogonal subgroup scheme of `GLₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Basic)
+
 For a commutative ring `R` and `n : ℕ`, the special orthogonal subgroup scheme `SOₙ` is cut out
 of `GL n` by the join of two Hopf ideals that already exist:
 

@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicTopology.SimplicialComplex.Basic
 /-!
 # Complexes that are cones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.IsCone)
+
 A simplicial complex is a *cone with apex `v`* when `v` is one of its vertices and adjoining `v`
 to a face gives a face again.  This file carries that condition as the predicate `IsCone K v`,
 stated for an apex `v` of the vertex type of `K` itself, so that a complex can be recognised as a

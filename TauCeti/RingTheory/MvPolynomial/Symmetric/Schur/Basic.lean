@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Young.Kostka
 /-!
 # Schur polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Basic)
+
 The **Schur polynomial** `s_μ` of a Young diagram `μ` in `N` variables is the generating function
 of the semistandard Young tableaux of shape `μ` whose entries are drawn from the `N`-letter
 alphabet: each such tableau contributes the monomial `∏ᵢ xᵢ ^ (number of cells filled with i)`.

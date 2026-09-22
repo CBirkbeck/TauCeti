@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.FiniteDimension
 /-!
 # The line representations of the generalized Kronecker quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.Line)
+
 Put the base field at both vertices of the generalized Kronecker quiver, let one distinguished
 arrow act by multiplication by a scalar `c` and every other arrow by the identity. This file
 builds that representation, `TauCeti.kroneckerLineRep`. Every member of the family is

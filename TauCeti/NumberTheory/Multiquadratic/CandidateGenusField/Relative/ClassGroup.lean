@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.InfinitePlace
 /-!
 # The relative candidate-genus-field Galois group has the same order as `Cl⁺ / Cl⁺²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.ClassGroup)
+
 For a quadratic field `K = ℚ(√d)` (`d` squarefree, not a rational square) let `K_gen` be its
 candidate genus field, the narrow genus field of `K` (`isNarrowGenusField_candidateGenusField`) and,
 for `d < 0`, its genus field (`isGenusField_candidateGenusField`). This file records that the

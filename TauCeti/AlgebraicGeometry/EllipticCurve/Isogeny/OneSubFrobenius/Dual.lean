@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.De
 /-!
 # The dual of `1 − π_q`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Dual)
+
 Over a finite field `𝔽_q` the kernel of `1 − π_q` is the set of all rational points, and its
 degree is their number `#E(𝔽_q)`. So `1 − π_q` satisfies the hypothesis `#ker φ = deg φ` of
 `Isogeny/Dual/Basic.lean`, and `[#E(𝔽_q)]` factors through it. The factor is the dual

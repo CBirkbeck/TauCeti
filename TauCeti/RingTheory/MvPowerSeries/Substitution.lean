@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 /-!
 # Evaluating a substitution over coefficients that need not be discrete
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.Substitution)
+
 Mathlib evaluates a substitution only over discrete coefficients: `MvPowerSeries.eval₂_subst` and
 `MvPowerSeries.comp_subst_apply` both carry `[DiscreteUniformity R] [DiscreteUniformity S]` on the
 two coefficient rings. That is unsatisfiable exactly where the statement is wanted. Substituting a

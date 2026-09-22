@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # Flags of upper-triangular comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Flag.Basic)
+
 Let `M` be a finite free comodule with basis `b₀, ..., bₙ₋₁`. Its coefficient matrix is upper
 triangular with diagonal `c` exactly when, for every `i`, the coaction of `bᵢ` is congruent to
 `bᵢ ⊗ cᵢ` modulo the span of the preceding basis vectors. Thus the standard basis flag is

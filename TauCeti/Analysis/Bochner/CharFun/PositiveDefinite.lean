@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.TaylorExpansi
 /-!
 # Characteristic functions as positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.CharFun.PositiveDefinite)
+
 This file connects the quadratic-form positivity calculation for characteristic functions to
 Tau Ceti's generic positive-definite-function predicate. If the involution on an additive group is
 negation, then Mathlib's characteristic function `MeasureTheory.charFun μ` of a finite measure is

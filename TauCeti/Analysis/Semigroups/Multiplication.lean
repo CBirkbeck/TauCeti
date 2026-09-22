@@ -21,6 +21,8 @@ import TauCeti.MeasureTheory.Integral.ExpDecay
 /-!
 # The multiplication semigroup on bounded continuous functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Multiplication)
+
 For a bounded continuous multiplier `m : α →ᵇ ℝ` this file constructs the **multiplication
 semigroup** on the Banach space `α →ᵇ ℝ` of bounded continuous real functions:
 

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.IntegralCurve.Maximal
 /-!
 # Maximal intervals of geodesics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Maximal)
+
 For initial data `(p, v)`, this file defines the set of times covered by open intervals carrying
 geodesic witnesses with those initial data.  It proves local existence, uniqueness on overlapping
 intervals, and that this set is an open interval containing zero.  The key homogeneity theorem

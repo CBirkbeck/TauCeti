@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.EnergyForm.Basic
 /-!
 # Linearity of pointwise PDE energy integrands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Linearity)
+
 The divergence-form energy integrand
 `energyIntegrand A b c` is linear in the coefficient triple `(A, b, c)`.  This file records
 that bookkeeping as bundled continuous-bilinear-map equalities and as pointwise evaluation

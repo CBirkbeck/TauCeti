@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Continuous.Intertwining
 /-!
 # Schur's lemma for continuous intertwiners
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Schur)
+
 Schur's lemma has two halves. Between inequivalent irreducible representations every intertwiner
 vanishes; and, over an algebraically closed field, every self-intertwiner of a finite-dimensional
 irreducible representation is scalar. This file records both halves for Mathlib's bundled

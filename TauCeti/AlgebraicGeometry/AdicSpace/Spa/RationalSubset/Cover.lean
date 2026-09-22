@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Support
 /-!
 # Standard rational families that cover the adic spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Cover)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Corollary 7.53.**
 
 For a finite subset `T` of a complete Hausdorff Huber pair `(A, A⁺)`, the standard rational

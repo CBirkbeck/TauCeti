@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.GeometryOfNumbers.Doubling
 /-!
 # A concrete rank-two lattice exercising the geometry-of-numbers engine
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.GeometryOfNumbers.RankTwoDoubling)
+
 The Layer-0 engine in `TauCeti/NumberTheory/GeometryOfNumbers/Doubling.lean` proves its
 packing and doubling bounds for an *arbitrary* additive subgroup `Λ ≤ (ι → ℂ)`. This file
 is the roadmap's acceptance-criterion worked example for that engine: a concrete rank-two

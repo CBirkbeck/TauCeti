@@ -11,6 +11,8 @@ public import Mathlib.Geometry.RingedSpace.Stalks
 /-!
 # The presentation-limit presheaf and its stalks as rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Stalks)
+
 The presentation-limit presheaf is naturally valued in complete separated topological
 commutative rings. Stalks, however, are algebraic colimits: their topology is discarded. This
 file forgets the topology on sections, packages the result as a `CommRingCat`-valued

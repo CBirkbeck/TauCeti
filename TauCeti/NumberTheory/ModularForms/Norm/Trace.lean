@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.GaloisProd
 /-!
 # Analytic properties of the translate package, and the norm decomposition at `∞`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Norm.Trace)
+
 For a modular form `f`, each translate in the package `SlashInvariantForm.quotientFunc` is
 holomorphic, and — when the cusp `∞` is a cusp of `ℋ` of finite relative index — bounded at
 infinity. For `𝒢` of finite relative index in `𝒮ℒ`, the norm of `f` from `𝒢` down to `𝒮ℒ`

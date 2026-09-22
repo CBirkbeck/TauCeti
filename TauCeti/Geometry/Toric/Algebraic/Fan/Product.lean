@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Regular
 /-!
 # Products of finite toric fans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Fan.Product)
+
 The cones `σ × τ`, for `σ` and `τ` ranging through two fans, form a fan in the product
 lattice. Faces of a product cone split uniquely as products of faces of its factors, which gives
 the face-closure axiom. Intersections and supports are computed componentwise.

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.BilinearForm.DualLattice
 /-!
 # Duals of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Dual.Basic)
+
 For an integral lattice `L` in a rational vector space with nondegenerate form, its dual carrier
 is the submodule
 

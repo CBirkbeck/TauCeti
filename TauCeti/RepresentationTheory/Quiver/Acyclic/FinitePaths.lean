@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Acyclic.Basic
 /-!
 # Finite paths in acyclic quivers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Acyclic.FinitePaths)
+
 This file proves that a finite quiver with finitely many arrows between any two vertices has only
 finitely many paths **exactly when** it is acyclic. The forward half supplies the finiteness
 hypothesis needed for the finite-dimensionality of its path algebra. The bound that makes the

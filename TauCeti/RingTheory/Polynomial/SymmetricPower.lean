@@ -16,6 +16,8 @@ import Mathlib.Data.Fin.VecNotation
 /-!
 # The symmetric power of a field, charted by elementary symmetric functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.SymmetricPower)
+
 A point of the `n`-th symmetric power `Sym R n` is an unordered `n`-tuple of scalars, and the monic
 polynomial `∏_{a ∈ s} (X - a)` records exactly that information: its coefficients are the
 elementary symmetric functions of the tuple, up to sign. Over an algebraically closed field the

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.MvPowerSeries.NoZeroDivisors
 /-!
 # The difference of two variables is a non-zero-divisor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.NonZeroDivisors)
+
 Mathlib shows that a *single* variable is a non-zero-divisor over an arbitrary semiring
 (`MvPowerSeries.X_mem_nonzeroDivisors`), and that `MvPowerSeries σ R` inherits `NoZeroDivisors`
 from `R`. Between those lies a gap: over a ring that *has* zero divisors, is `X i - X j` still

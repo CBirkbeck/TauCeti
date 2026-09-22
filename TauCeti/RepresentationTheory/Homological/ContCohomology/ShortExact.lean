@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.LowDegree
 /-!
 # Short exact sequences of discrete modules, and the low-degree connecting maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.ShortExact)
+
 A short exact sequence `0 → A → B → C → 0` of **discrete** `G`-modules induces short exact
 sequences of *continuous* cochains
 

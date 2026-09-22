@@ -13,6 +13,8 @@ import Mathlib.Topology.MetricSpace.HausdorffDistance
 /-!
 # The strong maximum principle for the Laplacian
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Laplacian.StrongMaximumPrinciple)
+
 The weak maximum principle of `TauCeti.Analysis.InnerProductSpace.Laplacian.WeakMaximumPrinciple`
 bounds a subharmonic function by its frontier values. This file proves the **strong maximum
 principle** in a finite-dimensional real inner product space: a `C²` function with `0 ≤ Δ u` on a

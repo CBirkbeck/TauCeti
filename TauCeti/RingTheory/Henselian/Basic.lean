@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Henselian
 /-!
 # Henselian rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Henselian.Basic)
+
 This file gathers the basic consequences of Henselianity that Mathlib does not provide.
 
 Mathlib has both halves of the comparison between `HenselianRing R I`, which lifts a simple root

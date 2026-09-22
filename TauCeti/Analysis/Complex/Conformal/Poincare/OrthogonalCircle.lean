@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.Poincare.Betweenness
 /-!
 # Poincaré geodesics are Euclidean circles orthogonal to the unit circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.OrthogonalCircle)
+
 `Conformal/Poincare/Geodesic.lean` builds the unit-speed geodesic lines of the Poincaré disc,
 `TauCeti.PoincareDisc.geodesicLine a u`, as the radial geodesics `t ↦ u * Real.tanh t` carried
 off the origin by a Moebius isometry, and `Conformal/Poincare/Betweenness.lean` shows that these

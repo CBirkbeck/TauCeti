@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Map
 /-!
 # Tensor products in the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.GeneralLinearGroup.TensorProduct)
+
 This file packages the tensor product of two linear automorphisms as an automorphism and records
 its compatibility with multiplication, inverses, and pure tensors.
 

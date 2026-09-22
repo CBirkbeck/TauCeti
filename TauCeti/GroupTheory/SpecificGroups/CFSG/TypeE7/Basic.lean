@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.TypeE7.Index
 /-!
 # The exceptional family `E₇(q)` on the minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeE7.Basic)
+
 The classification list carries a single family on the `E₇` diagram, the untwisted `E₇(q)`, cut out
 of the index datatype by `TauCeti.TypeE7LieIndex`. Tau Ceti's explicit full-weight Chevalley
 carrier for that diagram is `TauCeti.E7Minuscule.groupScheme`, the Kostant toral closure of the

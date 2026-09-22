@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.ModularForms.TrivialNebentypus
 /-!
 # The Fricke sign of a newform of trivial nebentypus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Fricke)
+
 For a newform `f` of level `N`, weight `k` and trivial nebentypus, the normalized Fricke
 operator `𝒲_N f = (√N) ^ (2 - k) • (f ∣[k] !![0, -1; N, 0])` is `ε_N · f` for a sign
 `ε_N ∈ {1, -1}`, the **Fricke sign** (or Fricke eigenvalue) of `f`. The sign of the functional

@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.Matrix.TensorProduct
 /-!
 # Classification of real Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Classification)
+
 The signature recurrences reduce every standard real Clifford algebra to one of eight matrix,
 complex, quaternionic, or split matrix models.
 

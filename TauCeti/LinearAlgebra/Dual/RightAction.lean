@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Dual.Defs
 /-!
 # The dual of a right module as a left module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dual.RightAction)
+
 For a right module `N` over a semiring `A` whose right action commutes with a base commutative
 semiring `k`, the duality `D = Hom_k(-, k)` turns `N` into a *left* `A`-module: a scalar `a` acts on
 a functional `φ` by precomposition with multiplication by `a`, `(a • φ) x = φ (x * a)`.

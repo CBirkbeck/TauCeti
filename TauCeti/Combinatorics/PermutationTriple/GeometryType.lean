@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.PermutationTriple.CycleData
 /-!
 # Orders and geometry types of permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.GeometryType)
+
 The order triple of a permutation triple records the orders of its monodromies at the ordered
 branch points `0`, `1`, and `∞`.  It is the `abc` invariant used in the classification of
 three-point covers.  Each entry is also the least common multiple of the corresponding full

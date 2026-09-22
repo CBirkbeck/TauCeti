@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.RootSystem.FiniteType.Dynkin
 /-!
 # The exceptional root lattices `E₆`, `E₇`, `E₈` and their discriminant forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RootLattice.TypeE)
+
 The root lattice of an exceptional simply laced type is the integral lattice whose Gram
 matrix in the simple-root basis is the corresponding Cartan matrix.  This file constructs the three
 of them inside `Fin n → ℚ`, proves them even and nondegenerate, and computes their discriminant

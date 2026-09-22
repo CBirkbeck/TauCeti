@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.Discriminant.Defs
 /-!
 # The discriminant of a number field from an integral basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Discriminant.OfIntegralBasis)
+
 If `b` is (the image in `K` of) a `ℤ`-basis of the ring of integers `𝒪_K` — an *integral
 basis* — then its rational trace-form discriminant is exactly the field discriminant,
 

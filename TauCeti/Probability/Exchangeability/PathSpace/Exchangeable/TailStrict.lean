@@ -11,6 +11,8 @@ import Mathlib.MeasureTheory.MeasurableSpace.NCard
 /-!
 # The path tail is strictly smaller than the exchangeable sigma-algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Exchangeable.TailStrict)
+
 For paths whose state-space σ-algebra is nontrivial, this file proves the strict comparison
 
 `pathTail alpha < exchangeableSigma alpha`.

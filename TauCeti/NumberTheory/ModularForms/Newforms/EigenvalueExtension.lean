@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 /-!
 # Eigenvalues agreeing outside a finite set agree at every good index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.EigenvalueExtension)
+
 Strong multiplicity one, in the form proved in AINTLIB, assumes that two eigenforms have the
 same eigenvalue at every index coprime to the level outside a finite exceptional set; Miyake's
 own hypothesis (Theorem 4.6.12) is agreement at every index prime to an auxiliary level `L`.

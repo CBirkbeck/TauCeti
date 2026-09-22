@@ -13,6 +13,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The diagonal torus as a closed subgroup of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.DiagonalTorus.ClosedImmersion)
+
 Over every commutative ring, the diagonal map from the rank-`m` split torus to `Sp₂ₘ` is a
 closed immersion. Its defining Hopf ideal is the kernel of restriction to diagonal coordinates,
 the quotient is isomorphic to the split-torus coordinate Hopf algebra, and the ideal is

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 /-!
 # The rational slash action of a diagonal Hecke representative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Diagonal.Basic)
+
 This file treats the rational diagonal Hecke representatives `natDiagGL 2 a`, specifically
 the scalar ones, and records how the weight-`k` rational slash action sees them: `diag(c, c)`
 acts trivially on the upper half-plane, so it only contributes the automorphy factor, which is

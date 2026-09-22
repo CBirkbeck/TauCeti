@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Vandermonde
 /-!
 # The Gelfand-Tsetlin dimension formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.GelfandTsetlin.Dimension)
+
 The Gelfand-Tsetlin patterns with a given weakly decreasing top row `λ` are counted by the Weyl
 dimension formula for `GL n`:
 

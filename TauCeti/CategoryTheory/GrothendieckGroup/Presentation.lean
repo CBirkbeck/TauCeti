@@ -12,6 +12,8 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 /-!
 # The small presentation of a categorical Grothendieck group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Presentation)
+
 Every categorical Grothendieck group -- split, exact, abelian, or triangulated -- is the quotient
 of a free abelian group on the isomorphism classes of objects by a family of additive relations.
 Only the relations differ. This file builds that common engine once, for an essentially small

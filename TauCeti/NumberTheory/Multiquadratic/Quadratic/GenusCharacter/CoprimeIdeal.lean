@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 /-!
 # Genus characters on coprime ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.CoprimeIdeal)
+
 For a factor `t` of a prime-discriminant factorization, the genus character
 `genusCharFun t` is multiplicative but can vanish on integers sharing a prime factor with `t`.
 This file packages its nonvanishing restriction as a genuine homomorphism on the monoid of

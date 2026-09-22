@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 /-!
 # Weyl's unitarian trick
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Unitarizable)
+
 Averaging the inner product of a Hilbert space over a compact group turns it into a
 `G`-invariant inner product. This file carries out that averaging for a continuous representation
 `π` of a compact group, in the form the roadmap prescribes: rather than producing a second

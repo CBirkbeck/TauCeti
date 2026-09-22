@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Overlattice.OrthogonalQuotie
 /-!
 # The comparison `A_(P ⊕ Q) ≅ (H⊥ / H) ⊥ (K⊥ / K)` for an orthogonal direct sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Overlattice.OrthogonalQuotient.OrthogonalSum)
+
 Let `L` and `M` be nondegenerate integral lattices in rational spaces `V` and `W`, and let
 `L ≤ P ≤ Lᵛ` and `M ≤ Q ≤ Mᵛ` be integral overlattices with subgroups `H = P / L ≤ A_L` and
 `K = Q / M ≤ A_M`. The assembled carrier `P ⊕ Q` is an integral overlattice of `L ⊥ M`, its

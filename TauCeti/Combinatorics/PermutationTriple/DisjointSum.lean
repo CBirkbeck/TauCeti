@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Perm.SumCongr
 /-!
 # Disjoint sums of permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.DisjointSum)
+
 Two covers of the thrice-punctured sphere may be laid side by side, and the resulting cover has
 the disjoint union of their sheets. On the combinatorial side this is the juxtaposition of two
 permutation triples: `TauCeti.PermutationTriple.disjointSum` takes a triple of degree `m` and one

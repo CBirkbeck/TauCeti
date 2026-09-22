@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Base change of the full-weight type-E7 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.BaseChange)
+
 `TauCeti.E7Minuscule.groupScheme` is the explicit integral affine group scheme obtained by
 closing the fourteen numbered type-`E₇` root subgroups and the minuscule weight torus inside
 `GL₅₆`. This file specializes the base-change construction for a general Kostant toral closure

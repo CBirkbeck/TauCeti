@@ -16,6 +16,8 @@ public import Mathlib.RepresentationTheory.Character
 /-!
 # Frobenius reciprocity as a character identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.FrobeniusReciprocity)
+
 For a finite-index subgroup `S` of a group `G`, Mathlib's adjunction `Rep.indResAdjunction`
 identifies `Hom_G(Ind_S^G A, B)` with `Hom_S(A, Res_S B)`.  This file transports that adjunction to
 finite-dimensional representations and reads it off as an identity of character scalar products:

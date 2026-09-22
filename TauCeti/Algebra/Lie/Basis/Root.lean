@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Positive
 /-!
 # Root vectors of a Lie algebra basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Basis.Root)
+
 This file relates a `LieAlgebra.Basis` to the root-space decomposition of its Cartan subalgebra.
 The raising and lowering generators lie in the expected simple-root spaces. Moreover, the
 three-part Cartan/lower-Borel/upper-Borel decomposition already constructed by Mathlib lies in

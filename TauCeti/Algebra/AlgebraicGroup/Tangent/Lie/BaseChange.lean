@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Bialgebra.TensorProduct
 /-!
 # Base change of the tangent Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.BaseChange)
+
 For a commutative bialgebra `H` over `R` and a commutative `R`-algebra `K`, restriction
 along `h ↦ 1 ⊗ h` identifies the tangent Lie algebra of `K ⊗[R] H` over `K` with the
 `K`-valued tangent derivations of `H`. The inverse sends `d` to `a ⊗ h ↦ a * d h`.

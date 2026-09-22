@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Contour.HungerbuhlerWasem
 /-!
 # The Hungerbühler–Wasem generalized residue theorem for contour cycles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cycle.HungerbuhlerWasem)
+
 This file lifts HW Thm 3.3 from one parametrized closed curve to a finite formal integer cycle
 `C` of them. For `f` holomorphic on `U ∖ S` and meromorphic at each point of the finite `S ⊆ U`,
 and a cycle `C` in `U` that is **null-homologous** there, whose curves are piecewise-`C¹`

@@ -14,6 +14,8 @@ import TauCeti.Geometry.Manifold.MFDeriv.Curve
 /-!
 # Regularity of integral curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.IntegralCurve.Basic)
+
 An integral curve gains one derivative over its vector field. In particular, integral curves of
 smooth vector fields on boundaryless smooth manifolds are smooth.
 

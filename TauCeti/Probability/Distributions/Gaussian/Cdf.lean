@@ -12,6 +12,8 @@ public import Mathlib.Probability.CDF
 /-!
 # The cumulative distribution function of a real Gaussian law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Cdf)
+
 This file computes `ProbabilityTheory.cdf (gaussianReal m v)` in closed form.  For a nonzero
 variance the answer is `(1 + erf ((x - m) / √(2 * v))) / 2`, and at the singular boundary
 `v = 0` the law is a Dirac mass, with the step-function cdf.

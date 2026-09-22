@@ -16,6 +16,8 @@ import TauCeti.AlgebraicGeometry.AugmentationPoint.ConnectedComponent
 /-!
 # The coordinate map to the component group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.Coordinate)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over an algebraically closed
 field. The connected components of `Spec H` form a finite group. This file constructs the
 algebra map from the functions on that finite group to `H`: a function `f` is sent to

@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Cyclotomic.Basic
 /-!
 # Lifting an exact cyclotomic integer out of its residues at the conjugate roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Cyclotomic.Lift)
+
 `TauCeti.Cyclotomic.reduce p r` evaluates an exact cyclotomic integer at a residue `r`, and when
 `r` is a primitive `e`-th root of unity modulo `p` that evaluation is a ring homomorphism
 `ℤ[ζ_e] → ZMod p` (`TauCeti.Cyclotomic.reduceRingHom`).  A single such residue loses far too much
@@ -125,7 +127,10 @@ variable {e p : ℕ}
 /-! ## The exponents of the Galois conjugates -/
 
 /-- The exponents `k < e` coprime to `e`, in increasing order.  These index the Galois group of
-`ℚ(ζ_e)` over `ℚ` by the power maps `σ_k : ζ ↦ ζ ^ k`, and there are `e.totient` of them. -/
+`ℚ(ζ_e)` over `ℚ` by the power maps `σ_k : ζ ↦ ζ ^ k`, and there are `e.totient` of them.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Cyclotomic.primitiveExponents) -/
 def primitiveExponents (e : ℕ) : List ℕ :=
   (List.range e).filter fun k => e.Coprime k
 
@@ -207,7 +212,10 @@ theorem conjugateRoot_injective {α : ZMod p} (hα : IsPrimitiveRoot α e) :
     (hα.pow_inj (primitiveExponent_lt e i) (primitiveExponent_lt e j) h)
 
 /-- The residues of `x` at the `e.totient` conjugate roots: the images of the Galois conjugates
-`σ_k x` in `ZMod p`, the data the modular phase of a character-table computation produces. -/
+`σ_k x` in `ZMod p`, the data the modular phase of a character-table computation produces.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Cyclotomic.conjugateResidues) -/
 def conjugateResidues {e p : ℕ} (α : ZMod p) (x : Cyclotomic e) :
     Fin e.totient → ZMod p :=
   fun j => reduce p (conjugateRoot e α j) x
@@ -318,7 +326,10 @@ theorem conjugateVandermonde_mulVec_liftResidues [Fact p.Prime] {α : ZMod p}
 
 /-- **The lift.**  The exact cyclotomic integer whose coordinates are the balanced representatives
 of the coordinate residues recovered from `r`.  This is a computation on the coefficient vector:
-the determinants Cramer's rule takes, the inverse in `ZMod p` and `ZMod.valMinAbs` all are. -/
+the determinants Cramer's rule takes, the inverse in `ZMod p` and `ZMod.valMinAbs` all are.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Cyclotomic.lift) -/
 def lift (e : ℕ) {p : ℕ} (α : ZMod p) (r : Fin e.totient → ZMod p) : Cyclotomic e :=
   ⟨(List.ofFn fun j => (liftResidues e α r j).valMinAbs).reverse, by simp⟩
 

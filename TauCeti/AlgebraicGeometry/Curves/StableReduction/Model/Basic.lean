@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.Fibers
 /-!
 # Models over discrete valuation rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Model.Basic)
+
 This file packages a model of a scheme over the fraction field of a discrete valuation ring.
 A model includes its total space, a flat morphism of finite presentation to the spectrum of the
 ring, and an explicit identification of its generic fibre with the prescribed scheme.  Thus a

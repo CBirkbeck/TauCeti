@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.IdealZetaSum
 /-!
 # Sets of primes of Dirichlet density zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.DirichletDensity.Negligible)
+
 For a number field `K`, Mathlib's `NumberField.Set.HasDirichletDensity S δ` says that
 `P_S(s) / P(s) → δ` as `s → 1⁺`, where `P_S(s) = ∑_{𝔭 ∈ S} N(𝔭) ^ (-s)` and `P` is the sum over
 all height-one primes. Since `P(s) → ∞` as `s → 1⁺`

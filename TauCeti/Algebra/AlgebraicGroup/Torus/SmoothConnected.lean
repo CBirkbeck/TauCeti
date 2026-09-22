@@ -14,6 +14,8 @@ import TauCeti.Algebra.AlgebraicGroup.GeometricallyReduced.BaseChange
 /-!
 # Smoothness and connectedness of tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.SmoothConnected)
+
 A torus becomes split over an algebraic closure. The base-change descent theorems transport both
 geometric properties back to the ground field. Finally, geometric reducedness of a finite-type
 affine group over a field implies smoothness, so every torus is smooth.

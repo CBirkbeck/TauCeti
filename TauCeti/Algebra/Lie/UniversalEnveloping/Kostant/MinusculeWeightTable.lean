@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.MulVec
 /-!
 # The admissible lattice of a minuscule weight table
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.MinusculeWeightTable)
+
 The rational representation of a minuscule weight table acts on the rational coordinate space of
 its index type, and the Kostant form of its Serre generators carries the integral lattice of that
 space into itself.

@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.GroupAction.ConjAct
 /-!
 # Conjugation on the group algebra of a normal subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.Conjugation)
+
 Let `N` be a normal subgroup of a group `G`.  Conjugating by `g : G` is an automorphism of `N`
 (`MulAut.conjNormal`), so it permutes the basis of the group algebra `k[N]` and therefore induces an
 algebra automorphism of `k[N]`.  This file packages that automorphism as a monoid homomorphism

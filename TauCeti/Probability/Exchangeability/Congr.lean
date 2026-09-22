@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.Basic
 /-!
 # Symmetry notions under a coordinatewise almost-everywhere change of process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Congr)
+
 Every symmetry predicate of Layer 0 is a statement about the finite-dimensional laws of `X`, or —
 for `FullyExchangeable` — about its path law, so each sees the coordinates only modulo `μ`-a.e.
 equality. This file records that: replacing each `X i` by a coordinatewise a.e. equal `Y i` changes

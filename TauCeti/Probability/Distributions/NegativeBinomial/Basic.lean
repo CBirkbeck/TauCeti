@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 /-!
 # The negative-binomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.NegativeBinomial.Basic)
+
 This file defines the negative-binomial family. The law counts failures before the `r`th success,
 with real shape `r` and success probability `p`. Its native mass is the Gamma-expression
 `Γ(k + r) / (k! Γ(r)) * p^r * (1 - p)^k`.

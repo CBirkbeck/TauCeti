@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.BilinearForm.BaseChange
 /-!
 # The Killing property under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Killing.BaseChange)
+
 `LieAlgebra.IsKilling R L` says that the Killing form of `L` is nonsingular. This file proves that
 for a finite free Lie algebra over an integral domain the property descends along any base change
 into a second integral domain, and that an injective base change loses nothing either:

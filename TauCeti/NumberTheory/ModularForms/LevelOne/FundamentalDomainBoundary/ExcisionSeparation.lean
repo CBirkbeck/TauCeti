@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Curve.Distance
 /-!
 # The arc keeps its distance from the vertical excision centres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisionSeparation)
+
 The principal-value assembly of the valence formula excises the union
 `arcSingularSet S ∪ verticalSingularSet S`. Along the closed arc `[1, 3]` of the boundary
 contour only the arc part can fire once `ε` is small: a vertical centre outside the arc set

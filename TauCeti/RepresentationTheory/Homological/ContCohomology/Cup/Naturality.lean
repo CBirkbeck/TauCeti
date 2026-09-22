@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Produc
 /-!
 # Naturality of the explicit low-degree cup products in compatible pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Naturality)
+
 A compatible pair `(φ : H →ₜ* G, f : M →+ M')` in the sense of
 `TauCeti/RepresentationTheory/Homological/ContCohomology/ExplicitFunctoriality.lean` pulls a cup
 product back to a cup product as soon as the two pairings are intertwined by the three coefficient

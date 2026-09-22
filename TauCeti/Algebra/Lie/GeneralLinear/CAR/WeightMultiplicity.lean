@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Idempotents.Eigenvalue
 /-!
 # The top-weight multiplicity of the CAR module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.WeightMultiplicity)
+
 For the left regular action of `gl_N` on the Clifford algebra of the trace form, this file computes
 the dimension of the half-staircase Cartan weight space.  The positive-pair occupation elements
 `pᵢⱼ`, `i < j`, are commuting idempotents, and this weight space is their common fixed space.

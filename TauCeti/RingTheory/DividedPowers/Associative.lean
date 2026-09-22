@@ -13,6 +13,8 @@ import Mathlib.Tactic.FieldSimp
 /-!
 # Divided powers in associative algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DividedPowers.Associative)
+
 For an element `x` of an associative algebra over `ℚ`, its `n`-th divided power is
 
 ```text

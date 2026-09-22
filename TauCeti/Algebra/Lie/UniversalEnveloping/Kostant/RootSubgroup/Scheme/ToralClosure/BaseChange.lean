@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Base change of the toral Kostant closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.BaseChange)
+
 The toral Kostant closure over `ℤ` is the closed subgroup scheme of `GLₙ` generated jointly by
 the represented root subgroups and a represented split torus. Its coordinate ring is the
 general-linear coordinate Hopf algebra modulo `kostantToralDefiningIdeal`.

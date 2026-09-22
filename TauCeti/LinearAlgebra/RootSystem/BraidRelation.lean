@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Coxeter.Matrix
 /-!
 # The order of a product of two simple reflections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.BraidRelation)
+
 The product of the reflections in two roots `αᵢ`, `αⱼ` changes every weight by an element of the
 span of the two roots. Over a characteristic-zero ring, its order is read off the Cartan product
 `c = ⟨αᵢ, αⱼ^∨⟩⟨αⱼ, αᵢ^∨⟩`: the values `1`, `2`, `3` give the orders `3`, `4`, `6`. This file proves

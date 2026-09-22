@@ -11,6 +11,8 @@ public import TauCeti.Topology.Category.TopCat.Cech.Diagram
 /-!
 # The fundamental-groupoid Čech diagram of a family of open sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroupoid.Cech.Diagram)
+
 For a family `U : ι → Opens X`, this file maps its topological Čech diagram through the
 fundamental-groupoid functor and constructs the canonical cocone to the fundamental groupoid of
 `X`. The cocone is the input for the groupoid van Kampen colimit theorem.

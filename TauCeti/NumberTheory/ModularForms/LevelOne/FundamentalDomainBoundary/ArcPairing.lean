@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deri
 /-!
 # The arc self-pairing of the logarithmic-derivative integrand
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcPairing)
+
 The reflection `t ↦ 4 - t` carries the unit-circle arc of the boundary contour to its
 own reversal through the inversion `S`. Composed with the `S`-transformation law of the
 logarithmic derivative of a weight-`k` form, the reflected integrand

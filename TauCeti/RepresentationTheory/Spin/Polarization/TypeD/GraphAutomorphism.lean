@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.KostantLattic
 /-!
 # The graph automorphism of the type-`D` spin representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.GraphAutomorphism)
+
 The Dynkin diagram `Dₙ` has the symmetry that exchanges its two fork nodes, and it is the source
 of the twisted family `²Dₙ(q)`. On the split orthogonal Lie algebra that symmetry is conjugation
 by an orthogonal transformation of determinant `-1`, and on the spinor module it is therefore

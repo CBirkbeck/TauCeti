@@ -17,6 +17,8 @@ import Mathlib.Topology.Order.MonotoneContinuity
 /-!
 # The annulus conjecture
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.LocallyFlat.Annulus)
+
 Two disjoint locally flat `n`-spheres in `ℝⁿ⁺¹`, one inside the region bounded by the other,
 cobound a closed region homeomorphic to `Sⁿ × [0, 1]`. This is the **annulus conjecture**, now a
 theorem in every dimension. The whole content is that the region between the spheres is a product;

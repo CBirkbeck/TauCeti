@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.Deriv.ZPow
 /-!
 # Stieltjes functions are completely monotone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Stieltjes.CompletelyMonotone)
+
 A Stieltjes representation is a nonnegative combination of a reciprocal, a constant, and an
 integral of shifted reciprocals.  This file proves that every such representation is completely
 monotone on `(0, ∞)`.  The open half-line is essential: the singular coefficient `a / t`, and

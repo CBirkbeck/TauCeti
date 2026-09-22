@@ -15,6 +15,8 @@ import Mathlib.Topology.Algebra.Polynomial
 /-!
 # Finite measure API for the Chebyshev `T` weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Measure)
+
 This file records the finite-measure bookkeeping for Mathlib's Chebyshev
 orthogonality measure `Polynomial.Chebyshev.measureT`, together with the
 single normalization constant used by the roadmap's Chebyshev Hilbert-basis

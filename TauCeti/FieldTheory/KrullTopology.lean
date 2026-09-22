@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.KrullTopology
 /-!
 # Stabilizers for the Krull topology are open
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.KrullTopology)
+
 `Mathlib/FieldTheory/KrullTopology.lean` supplies the Krull topology on `Gal(L/K)` together with
 `stabilizer_isOpen_of_isIntegral`, the fact that a point of an integral extension `L/K` has an
 **open** stabilizer. This file draws the consequence for a *unit* of `L`, an automorphism fixing

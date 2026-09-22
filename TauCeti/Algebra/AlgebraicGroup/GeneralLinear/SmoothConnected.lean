@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Smooth.GeometricallyReduced
 /-!
 # Smoothness and connectedness of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.SmoothConnected)
+
 The determinant localization defining the coordinate Hopf algebra of `GL_n` is smooth. It is
 also an integral domain whenever the base ring is an integral domain. After base change to any
 field it therefore has connected prime spectrum, proving geometric connectedness over a field.

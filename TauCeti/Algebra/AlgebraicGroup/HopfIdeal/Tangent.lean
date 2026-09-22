@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Basic
 /-!
 # The Lie algebra of a closed affine subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Tangent)
+
 A Hopf ideal `I` in a commutative Hopf algebra `H` presents the closed affine subgroup
 `Spec (H ⧸ I) ↪ Spec H`. The differential of this inclusion is contravariantly induced by the
 quotient bialgebra morphism `H → H ⧸ I`. This file identifies that differential as an injective

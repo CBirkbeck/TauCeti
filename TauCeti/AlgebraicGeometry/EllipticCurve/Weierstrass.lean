@@ -11,6 +11,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 /-!
 # Complements on Weierstrass curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass)
+
 Facts about the invariants of an elliptic curve, complementing
 `Mathlib/AlgebraicGeometry/EllipticCurve/Weierstrass.lean`:
 

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LocalTriviality
 /-!
 # Line-bundle classes attached to Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LineBundle)
+
 On a Noetherian integral scheme of dimension at most one whose codimension-one local rings are
 discrete valuation rings, every Weil divisor `D` is locally principal. Its sheaf `𝓞_X(D)` is
 therefore a line bundle. Linearly equivalent divisors have isomorphic sheaves, so this

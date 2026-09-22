@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.SpvOfIdeal.Spectral
 /-!
 # The adic spectrum is spectral: Wedhorn's Theorem 7.35
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Spectral)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Theorem 7.35.**
 
 For any subring `Aplus`, the subspace `spa Aplus` is pro-constructible in `Spv (A, IA)` and

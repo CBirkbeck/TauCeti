@@ -19,6 +19,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.IsometryEquiv
 /-!
 # The norm form of a quaternion algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.NormForm)
+
 The product `x * star x` of a quaternion with its conjugate is a scalar
 (`QuaternionAlgebra.mul_star_eq_coe`). Its real part is the reduced norm, and this file packages it
 as a quadratic form `QuaternionAlgebra.normForm` on `ℍ[R,c₁,c₂,c₃]` over a commutative ring, with

@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Hom
 /-!
 # The evaluation of `A⟨X⟩_T` is continuous
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Continuous)
+
 `WeightedEval/Hom.lean` packages Wedhorn's evaluation as a ring homomorphism `A⟨X⟩_T →+* B`. This
 file proves it continuous for the topology of `A⟨X⟩_T`, which is the last property Proposition
 5.50 asks of the extension apart from its uniqueness.

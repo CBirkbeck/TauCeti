@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Preprojective.Basic
 /-!
 # Base change for additive preprojective algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.BaseChange)
+
 The additive preprojective algebra is defined over a commutative ring, but its presentation has
 integer coefficients: the doubled paths are unchanged and only the coefficients are transported.
 Consequently a ring homomorphism `f : k →+* l` gives a canonical coefficient map

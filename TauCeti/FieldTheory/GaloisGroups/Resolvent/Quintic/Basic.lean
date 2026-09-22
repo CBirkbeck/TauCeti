@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Classification
 /-!
 # The quintic `F₂₀` resolvent specification and the resolvent sextic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Quintic.Basic)
+
 Index five formal roots by `ℤ/5` and set
 
 `Φ = ∑ a, xₐ² (xₐ₊₁ xₐ₋₁ + xₐ₊₂ xₐ₋₂)`,

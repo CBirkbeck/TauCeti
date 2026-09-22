@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Torus
 /-!
 # The tangent vector of a Kostant root subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Tangent)
+
 A pinning of a split reductive group scheme is the data `(G, T, B, {X_α})` of a split maximal
 torus, a Borel containing it, and a root vector `X_α` in the Lie algebra for each simple root.
 What ties that data to the root subgroup maps `x_α : 𝔾ₐ → G` is a pair of equations: the

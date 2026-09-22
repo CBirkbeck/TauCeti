@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Integral
 /-!
 # Ray class characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Character)
+
 A ray class character of a modulus `𝔪` is a multiplicative character of its finite ray class
 group with values in the complex units.  Composing with `idealClass 𝔪` evaluates it on the
 nonzero integral ideals prime to the finite part of `𝔪`; the coprimality proof remains in the

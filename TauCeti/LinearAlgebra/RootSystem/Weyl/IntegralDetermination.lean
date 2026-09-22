@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Alternating
 /-!
 # An alternating element below a weight is determined by its dominant integral coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.IntegralDetermination)
+
 An element of the integral group algebra `ℤ[M]` of the weight space of a root system is
 *alternating* for the dot action (`TauCeti.IsDotAlternating`) when its coefficients transform by
 the sign character. Such an element is determined by its coefficients on a fundamental domain of

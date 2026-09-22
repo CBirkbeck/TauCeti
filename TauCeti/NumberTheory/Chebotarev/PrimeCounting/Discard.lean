@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Chebotarev.PrimeCounting.VonMangoldt
 /-!
 # Negligible terms in Frobenius prime counting
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.PrimeCounting.Discard)
+
 Weighted crossing arguments bound the error incurred when passing from a Frobenius prime-power sum
 to a prime sum of residue degree one by three functions. These account for higher prime powers in
 the chosen Frobenius class and use unrestricted sums to majorize the contributions from primes of

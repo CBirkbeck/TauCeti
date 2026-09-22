@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 /-!
 # A form with a periodic level-`l` descent is old
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.AtkinLehner)
+
 Let `l` be a divisor of `N` other than `1`, and let `φ : ℍ → ℂ` be invariant under the weight-`k`
 slash action of `T`. If the level-raise `l ^ (1 - k) • (φ ∣[k] diag(l, 1))` is a cusp form `f` of
 level `Γ₁(N)` lying in the nebentypus space `S_k(N, χ)`, then `f` is old.

@@ -14,6 +14,8 @@ public import TauCeti.FieldTheory.RatFunc.Transcendental
 /-!
 # Over a finite constant field there are finitely many places of bounded degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.BoundedDegree)
+
 Let `F / k` be an algebraic function field whose constant field `k` is **finite**. Then for every
 bound `r` only finitely many places of `F / k` have degree at most `r`.
 

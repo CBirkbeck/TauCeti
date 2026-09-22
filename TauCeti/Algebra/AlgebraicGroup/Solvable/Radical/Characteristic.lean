@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Construction
 /-!
 # When the solvable radical is the whole group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Characteristic)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. The
 solvable radical of `H` is the whole represented group exactly when `H` itself is geometrically
 connected, smooth, and has a solvable group of geometric points. In Hopf coordinates, the whole

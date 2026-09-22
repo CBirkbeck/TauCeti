@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Differential.CanonicalDivisor
 /-!
 # Nonspecial divisors of degree `g` on prescribed rational places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Consequences.Nonspecial)
+
 A divisor `B` of a function field `F / k` of genus `g` is *nonspecial* when its index of
 specialty `i(B) = ℓ(B) - deg B - 1 + g` vanishes.  Every divisor of degree at least `2g - 1` is
 nonspecial, and an effective nonspecial divisor has degree at least `g`.  This file shows that

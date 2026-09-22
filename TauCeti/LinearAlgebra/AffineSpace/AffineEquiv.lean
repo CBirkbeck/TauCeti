@@ -13,6 +13,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Affine equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.AffineSpace.AffineEquiv)
+
 This file records computations with affine equivalences. In particular, identifying the
 commutator of two homotheties as a translation supports affine representations that detect
 infinite-order elements, such as those used for Euclidean triangle groups.

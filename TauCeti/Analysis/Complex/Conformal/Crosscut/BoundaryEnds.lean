@@ -11,6 +11,8 @@ import TauCeti.Analysis.Complex.Conformal.ShortCrosscut
 /-!
 # The ends of an image crosscut are two boundary points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.BoundaryEnds)
+
 A circular crosscut `ball c r ∩ sphere ζ ρ` at a boundary point `ζ` of a disc is carried by a
 conformal map `f` to a curve inside the image domain `f '' ball c r`, and that curve reaches the
 boundary of the image domain only in the limit. Two files describe what it reaches:

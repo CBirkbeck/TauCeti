@@ -14,6 +14,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.Map
 /-!
 # The determinant morphism of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Determinant)
+
 For a commutative ring `R`, this file constructs the determinant coordinate morphism
 
 `R[Multiplicative ℤ] ⟶ R[Xᵢⱼ][det(X)⁻¹]`.

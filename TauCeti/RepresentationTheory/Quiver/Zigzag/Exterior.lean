@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basic
 /-!
 # The exterior skew-zigzag parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Exterior)
+
 A skew-zigzag parameter labels each ordered pair of incident edges of a simple graph by the
 unit-valued ratio between the two backtracks they carry.  The **exterior** parameter gives
 distinct incident edges the ratio `-1`, so its relation makes the two backtracks at a vertex sum

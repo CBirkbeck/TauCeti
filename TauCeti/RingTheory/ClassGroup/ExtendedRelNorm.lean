@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.ClassGroup.RelNorm
 /-!
 # Extending a class into an overring and norming it back down
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.ClassGroup.ExtendedRelNorm)
+
 Two rings map into a common overring `M`: a ring `A` along `Algebra A M`, and a Dedekind domain
 `R` over which `M` is module-finite. Extending an ideal class from `A` into `M`
 (`ClassGroup.extendedHom`) and then taking its relative norm down to `R`

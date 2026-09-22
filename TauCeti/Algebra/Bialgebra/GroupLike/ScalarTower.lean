@@ -12,6 +12,8 @@ import TauCeti.Algebra.Bialgebra.BaseChange
 /-!
 # Characters over an extension of a splitting ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.GroupLike.ScalarTower)
+
 For a tower `k → L → K`, a commutative `k`-bialgebra split over `L` has the same
 characters over `L` and `K`, provided `L` is a domain, `L ⊗[k] A` is torsion-free
 over `L`, and `Spec K` is connected.

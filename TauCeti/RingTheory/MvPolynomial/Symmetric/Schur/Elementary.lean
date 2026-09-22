@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Basic
 /-!
 # The Schur polynomial of a one-column shape
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Elementary)
+
 A Young diagram with at most one column has one cell in each of its rows, and a semistandard
 tableau of that shape is exactly a strictly increasing list of letters, one per row: the entries
 of a column increase strictly downwards, and there is no row condition to satisfy.  So a bounded

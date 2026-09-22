@@ -12,6 +12,8 @@ import TauCeti.Topology.JordanCurve.Path
 /-!
 # The coincident-end case of an image crosscut
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.Jordan)
+
 A genuine circular crosscut of a disc is carried by a conformal map to a simple open arc in the
 image domain. When its image has finite length,
 `TauCeti.exists_path_range_eq_closure_image_ball_inter_sphere_of_injOn` packages the closure of

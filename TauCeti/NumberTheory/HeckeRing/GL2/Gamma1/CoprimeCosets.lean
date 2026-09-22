@@ -14,6 +14,8 @@ import TauCeti.Data.ZMod.Divisibility
 /-!
 # The double coset `Γ₁(N) · diag(1, p) · Γ₁(N)` at a prime `p ∤ N`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.CoprimeCosets)
+
 `Gamma1/UpperTriCosets.lean` decomposes this double coset at `p ∣ N`, where the `p`
 representatives `!![1, b; 0, p]` exhaust it. At a prime `p ∤ N` they do not: there is exactly one
 further right coset, and this file produces it, giving Diamond–Shurman's Proposition 5.2.1 in its

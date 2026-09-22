@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.PowerSeries.Log
 /-!
 # Formal logarithmic derivatives of power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.Log)
+
 For a power series `f` with constant coefficient one, Mathlib's `PowerSeries.logOf f` is the
 formal expansion of `log f`. This file defines its formal derivative and records the
 characteristic identity

@@ -12,6 +12,8 @@ import Mathlib.Data.Nat.Factorization.Basic
 /-!
 # Primary components of finite bilinear and quadratic modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Primary.Component)
+
 The primary components of a finite abelian group are already defined by Mathlib as
 `AddCommGroup.primaryComponent`. This file proves the form-theoretic fact needed to decompose
 finite bilinear and quadratic modules: components belonging to distinct primes are orthogonal.

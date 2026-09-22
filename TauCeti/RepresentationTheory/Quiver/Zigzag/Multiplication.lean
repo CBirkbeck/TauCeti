@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Basis
 /-!
 # The multiplication table of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Multiplication)
+
 The zigzag relation quotient `TauCeti.nonisolatedZigzagQuotient` of a simple graph `G` is spanned by
 the vertex idempotents `e_i`, the oriented edges `a_d` of the darts of `G`, and the volume classes
 `x_i`; `TauCeti.zigzagBasis` shows these are a basis when no vertex is isolated. This file computes

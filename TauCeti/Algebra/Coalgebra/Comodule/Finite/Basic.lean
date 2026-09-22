@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Zero
 /-!
 # Finitely generated comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Basic)
+
 This file packages finitely generated right comodules over a coalgebra as a full subcategory
 of `ComoduleCat`. An object of `FGComoduleCat R C` is a right `C`-comodule whose underlying
 `R`-module is finitely generated; over a field this is the finite-dimensional comodule

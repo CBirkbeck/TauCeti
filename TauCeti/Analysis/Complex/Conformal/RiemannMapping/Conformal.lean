@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.RiemannMapping.Existence
 /-!
 # The Riemann map as a conformal partial homeomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.RiemannMapping.Conformal)
+
 The Riemann mapping theorem in `RiemannMapping/Existence.lean` produces a holomorphic bijection
 between a simply connected proper domain and the open unit disc, together with a holomorphic
 inverse. This file packages the same result as an `OpenPartialHomeomorph ℂ ℂ`. Its source and

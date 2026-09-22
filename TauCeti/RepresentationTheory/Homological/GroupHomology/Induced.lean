@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
 /-!
 # Homology of modules induced from the trivial subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupHomology.Induced)
+
 By Shapiro's lemma, the representation `Ind_⊥^G X` induced from the trivial subgroup has vanishing
 homology in positive degrees.
 

@@ -17,6 +17,8 @@ import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 /-!
 # The coinduced discrete module of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced)
+
 For a topological group `G`, a subgroup `U` and a `U`-module `A`, the **coinduced module**
 ```
 Coind_U^G A = {f : G → A | f locally constant, f (u * g) = u • f g for all u ∈ U, g ∈ G}

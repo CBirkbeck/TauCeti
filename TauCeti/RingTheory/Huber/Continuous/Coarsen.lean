@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 /-!
 # Continuity of a vertical generization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Continuous.Coarsen)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Remark 7.11(2).**
 
 A vertical generization `v/H` of a continuous valuation on a Huber ring is again continuous. The

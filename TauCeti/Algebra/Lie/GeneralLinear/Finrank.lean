@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Dimension.Finite
 /-!
 # The dimension of the special linear Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Finrank)
+
 `sl n R` is the kernel of the trace on the `n × n` matrices, and it is free of rank
 `(card n) ^ 2 - 1` over any commutative ring: after fixing an index `i₀`, the entries away from the
 `(i₀, i₀)` place are free coordinates, and the trace-zero condition determines the `(i₀, i₀)` entry

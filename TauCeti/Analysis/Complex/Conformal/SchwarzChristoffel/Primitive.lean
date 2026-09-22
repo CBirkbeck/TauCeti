@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Primitive
 /-!
 # The Schwarz--Christoffel primitive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Primitive)
+
 The Schwarz--Christoffel map is obtained by integrating the product of complex powers attached to
 its real prevertices.  This file constructs the globally defined primitive on the upper half-plane,
 normalized to vanish at an arbitrary base point there.

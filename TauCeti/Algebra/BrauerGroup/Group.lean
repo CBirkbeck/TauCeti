@@ -23,6 +23,8 @@ public import Mathlib.GroupTheory.OrderOfElement
 /-!
 # The Brauer group of a field is a commutative group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.Group)
+
 Two finite-dimensional central simple `K`-algebras are **Brauer equivalent** when they become
 isomorphic after passing to matrix algebras over them (Mathlib's `IsBrauerEquivalent`), and
 `BrauerGroup K` is the quotient of `CSA K` by that relation. Mathlib defines that quotient and
@@ -113,7 +115,10 @@ dimension.
 
 This is the constructor for the inverse of the group law on `BrauerGroup K`
 (`TauCeti.BrauerGroup.mk_op`); the reason it *is* an inverse is
-`TauCeti.isBrauerTrivial_tensorOp`. -/
+`TauCeti.isBrauerTrivial_tensorOp`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.CSA.op) -/
 abbrev CSA.op (A : CSA.{u, v} K) : CSA.{u, v} K := CSA.of K (A : Type v)ᵐᵒᵖ
 
 /-- **Passing to the opposite algebra respects Brauer equivalence**, so it descends to a map of
@@ -135,7 +140,10 @@ namespace BrauerGroup
 
 Mathlib's `BrauerGroup K` is the quotient of `CSA K` by `Brauer.CSA_Setoid K`, which is a `def` and
 not an instance, so the quotient notation `⟦A⟧` is unavailable; this is the name for the projection
-that the lemmas below are stated in terms of. -/
+that the lemmas below are stated in terms of.
+
+Tested by: 6 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.BrauerGroup.mk) -/
 abbrev mk (A : CSA.{u, v} K) : BrauerGroup.{u, v} K := Quotient.mk (Brauer.CSA_Setoid K) A
 
 /-- To prove a property of every Brauer class, it suffices to prove it for the class of every

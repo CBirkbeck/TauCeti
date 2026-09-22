@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # When the pinned root lattice is the whole character lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.RootLattice)
+
 The character lattice of `TauCeti.DynkinType.simplyConnectedRootDatum` is the lattice of
 fundamental weights: `TauCeti.DynkinType.coroot_simpleIndex` makes the simple coroots the standard
 basis vectors, so `TauCeti.DynkinType.root_simpleIndex` writes each simple root as the

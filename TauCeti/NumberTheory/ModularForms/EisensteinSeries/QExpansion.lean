@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # The `q`-expansion of Eisenstein series with character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.EisensteinSeries.QExpansion)
+
 For Dirichlet characters `ψ` modulo `u` and `φ` modulo `v` and a weight `k ≥ 3` with
 `ψ(-1) φ(-1) = (-1)^k`, we compute the `q`-expansion of the Eisenstein series with character
 `G_k^{ψ,φ}(z) = ∑_{(c, d) ∈ ℤ²} ψ(c) φ⁻¹(d) (c v z + d)^(-k)`

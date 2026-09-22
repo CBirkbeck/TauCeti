@@ -11,6 +11,8 @@ import Mathlib.Algebra.Order.Group.Indicator
 /-!
 # Partitioning the partial Dirichlet series over a set of primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.ZetaSumPartition)
+
 Let `K` be a number field. Mathlib's partial Dirichlet series `NumberField.Set.primeIdealZetaSum`
 sums `𝔑𝔭 ^ (-s)` over a set of nonzero prime ideals of `𝓞 K`, and this file cuts that sum along a
 partition of the primes. The sum is additive along a finite pairwise disjoint union, given

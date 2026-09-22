@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Transport
 /-!
 # Transport invariance of matrix coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Transport)
+
 This file records how the matrix coefficients of a right comodule behave under transport of
 a comodule structure across a linear equivalence. The general functoriality lemmas for
 comodule morphisms live with the coefficient span and adjoin API in

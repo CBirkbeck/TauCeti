@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.LinearPMap.DomainPow
 /-!
 # The resolvent raises the order of an iterated domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Resolvent.DomainPow)
+
 At a point `lambda` of the resolvent set of an unbounded operator `A`, the resolvent
 `R(lambda, A)` is a right inverse of `lambda • I - A`, so `A R(lambda) y = lambda R(lambda) y - y`
 for every `y`. Reading that identity as a recursion turns a single regularity step,

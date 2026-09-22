@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Homotopy
 /-!
 # The loop-space shift for higher homotopy groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.LoopSpace)
+
 `GenLoop.homotopic_iff_joined` identifies homotopy of generalized loops relative to the cube
 boundary with path connectedness in `Ω^ N X x`. The payoff, proved here, is that *any*
 homeomorphism between generalized-loop spaces preserves and reflects homotopy, hence descends to

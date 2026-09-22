@@ -11,6 +11,8 @@ import TauCeti.Analysis.CompletelyMonotone.Bernstein.OpenHalfLine
 /-!
 # Uniqueness of the Levy--Khintchine representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.LevyKhintchine.Uniqueness)
+
 This file completes the Levy--Khintchine representation of Bernstein functions by proving that
 its killing coefficient, drift coefficient, and Levy measure are unique. The killing coefficient
 is the value of the exponent at zero, which agreement on the positive half-line already fixes

@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Basic
 /-!
 # Permuting tensor factors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic)
+
 This file defines the symmetric-group action on a power of a module by permuting its tensor
 factors. Mathlib's `Representation.asAlgebraHom` then extends the action linearly to the group
 algebra, which is the action used by Young symmetrizers.

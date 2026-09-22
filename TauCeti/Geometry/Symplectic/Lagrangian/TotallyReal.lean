@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.TotallyReal.Finrank
 /-!
 # Lagrangian subspaces of a tame pair are maximal totally real
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Lagrangian.TotallyReal)
+
 The analytic Heegaard Floer roadmap keeps *totally real* and *Lagrangian* as separate named
 hypotheses (a totally real subspace `L` is one disjoint from its `J`-image, `L ⊓ JL = ⊥`, and a
 maximal totally real one is moreover complementary, `V = L ⊕ JL`; a Lagrangian subspace is one

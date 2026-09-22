@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Function.Pi.Basis
 /-!
 # Parseval and expansions for the multi-index Hermite-function basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Pi.Parseval)
+
 `TauCeti.hermiteFunctionPiBasis` exhibits the multi-index Hermite functions
 `Ψ_a(x) = ∏ᵢ ψ_{aᵢ}(xᵢ)` as a Hilbert basis of `L²(ℝ^ι)`. This file states the expansion
 identities that basis was built for, phrased in the explicit tensors

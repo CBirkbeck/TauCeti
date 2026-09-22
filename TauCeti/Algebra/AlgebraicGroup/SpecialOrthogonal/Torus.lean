@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.FinTwo
 /-!
 # The two-dimensional special orthogonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Torus)
+
 Suppose a commutative ring `R` contains a square root `i` of `-1` and an element `half` with
 `2 * half = 1`. The standard special orthogonal group `SO₂` is then the rank-one split torus.
 On points, the identification sends a torus coordinate `u` to

@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.GraphTwisted
 /-!
 # The type-A families in the CFSG list
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeA.Basic)
+
 The full-weight type-`A_r` Chevalley carrier, its Frobenius endomorphism, and its pinned graph
 automorphism are already available in Tau Ceti. This file connects that construction to the
 validated indices for the two type-A families in the classification list:

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The pinning equation in the toral Kostant group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.Relations)
+
 The toral Kostant group scheme is the closed subgroup scheme of `GLₙ` generated jointly by a
 represented split torus and a family of represented root subgroups. Both kinds of generators
 factor through that carrier, but the equation relating them was previously available only after

@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Convex.Cone.Face.Finite
 /-!
 # The face lattice of a simplicial cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.Cone.Face.Simplicial)
+
 A simplicial cone is the cone hull of a linearly independent family `v : ι → M`. Because the
 coefficients of a conical combination of a linearly independent family are unique, the faces of
 such a cone are exactly the subcones spanned by subfamilies: the face lattice of

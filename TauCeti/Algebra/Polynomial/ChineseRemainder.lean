@@ -12,6 +12,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Monic polynomials with prescribed reductions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.ChineseRemainder)
+
 A finite family of monic polynomials of the same degree, over pairwise coprime residue rings,
 lifts simultaneously to a monic integer polynomial of that degree. In particular, one can
 prescribe reductions modulo 2, 3, and 5 independently. This is the coefficient-gluing step in

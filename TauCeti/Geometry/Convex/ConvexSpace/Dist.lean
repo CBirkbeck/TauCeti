@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Convex.ConvexSpace.Topology
 /-!
 # Weights of affine simplices in a standard simplex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.ConvexSpace.Dist)
+
 A point `w` of a standard simplex on a finite type `N` is determined by its weight vector
 `⇑w.weights : N → ℝ`, and Mathlib's topology on `StdSimplex ℝ N` is the one induced by this
 embedding (`Convexity.StdSimplex.isEmbedding_toFun_comp_weights`). This file computes the weight

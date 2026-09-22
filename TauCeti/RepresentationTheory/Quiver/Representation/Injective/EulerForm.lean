@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Injective.Basic
 /-!
 # The Euler form against the dimension vector of a vertex injective
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Injective.EulerForm)
+
 The Euler form of a finite quiver is the numerical shadow of the homological pairing: for
 finite-dimensional representations of an acyclic quiver, `⟨dim M, dim N⟩` is
 `dim Hom(M, N) - dim Ext¹(M, N)`. On the injective `Iᵢ` in the *right-hand* argument that identity

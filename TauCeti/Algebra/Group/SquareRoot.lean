@@ -11,6 +11,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Square roots in a group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.SquareRoot)
+
 The **square roots** of an element `x` of a group `G` are the `g` with `g * g = x`. Conjugation
 carries them bijectively onto the square roots of a conjugate of `x`
 (`TauCeti.squareRootConjEquiv`), so their number depends only on the conjugacy class of `x`

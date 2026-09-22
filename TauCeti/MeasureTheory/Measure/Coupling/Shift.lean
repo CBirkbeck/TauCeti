@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Measure.FiniteMeasure
 /-!
 # The shift coupling of two weightings of a finite carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Coupling.Shift)
+
 Two measures of equal finite total mass on a finite carrier that differ by a transfer of weight
 onto one designated atom `k₀` -- so that `ν'` is dominated by `ν` everywhere else -- are coupled
 here by keeping the matched mass `min (ν {k}) (ν' {k})` at `(k, k)` and putting the excess

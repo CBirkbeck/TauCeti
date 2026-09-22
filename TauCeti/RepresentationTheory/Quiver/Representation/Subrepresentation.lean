@@ -13,6 +13,8 @@ public import Mathlib.CategoryTheory.Simple
 /-!
 # Subrepresentations of a quiver representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Subrepresentation)
+
 A subrepresentation of a representation `M` of a quiver is a submodule of `Mₐ` at every vertex `a`,
 stable under the action of every path. This file packages that data as `TauCeti.QuiverSubrep M`,
 orders subrepresentations vertexwise — a bounded order, with `⊥` and `⊤` the zero subrepresentation

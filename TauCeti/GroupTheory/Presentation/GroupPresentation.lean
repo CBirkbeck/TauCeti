@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Presentation.Relator
 /-!
 # Auditable finite group presentations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Presentation.GroupPresentation)
+
 This file packages a finite group presentation together with the metadata needed to audit a
 transcription from a published source. The generator-name list alone fixes the relator index type
 to `Fin generatorNames.length`, so the relator arity cannot disagree with the generator names. The
@@ -210,7 +212,10 @@ abbrev Group (P : GroupPresentation) : Type :=
 /-- The recorded generator and relator counts agree with the transcribed data.
 
 This checks transcription metadata only; it makes no claim that the source presents a named group
-or that the transcription agrees with the source. -/
+or that the transcription agrees with the source.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.GroupPresentation.matchesMetadata) -/
 def matchesMetadata (P : GroupPresentation) : Prop :=
   P.generatorCount = P.expectedGeneratorCount ∧
     P.transcribed.length = P.expectedRelatorCount

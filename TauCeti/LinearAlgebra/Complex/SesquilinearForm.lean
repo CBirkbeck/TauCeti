@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.SesquilinearForm.Basic
 /-!
 # Balancing a sesquilinear form against a conjugate-semilinear map, and separation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Complex.SesquilinearForm)
+
 A sesquilinear form `H` on a module and a `star`-semilinear map `K` of that module are unrelated
 data.  This file makes them compatible: the **balanced** form
 

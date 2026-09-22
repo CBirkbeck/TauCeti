@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Calculus.ContinuousLinearMapInverse
 /-!
 # The inverse function theorem with a `C^n` inverse on a whole open set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.InverseFunctionTheorem)
+
 Mathlib's `ContDiffAt.toOpenPartialHomeomorph` turns a `C^n` map with invertible derivative at a
 point into an `OpenPartialHomeomorph`, but `ContDiffAt.to_localInverse` only produces a `C^n`
 inverse *at the image point*: `OpenPartialHomeomorph.contDiffAt_symm` needs an invertible

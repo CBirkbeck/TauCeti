@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Killing
 /-!
 # The Killing property as nondegeneracy of the Killing form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Killing.Basic)
+
 `LieAlgebra.IsKilling R L` is stated as the vanishing of the Killing orthogonal complement of the
 whole algebra. Mathlib turns that into nondegeneracy of the Killing form in
 `LieAlgebra.IsKilling.killingForm_nondegenerate`; this file supplies the converse and packages the

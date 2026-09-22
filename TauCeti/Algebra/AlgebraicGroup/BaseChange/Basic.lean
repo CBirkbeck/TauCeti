@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 /-!
 # Base change of bialgebra points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.BaseChange.Basic)
+
 This file records that the usual algebraic base-change adjunction is compatible with the
 convolution monoid structure on the functor of points of a bialgebra. For a bialgebra `A` over
 `k`, a `k`-algebra `K`, and a commutative `K`-algebra `R`, the `R`-points of the base-changed

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Hodge.Substructure
 /-!
 # Rational substructures of pure Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.RationalSubstructure)
+
 A rational Hodge substructure is a rational subspace whose complexification is spanned by its
 intersections with the Hodge components. This file packages that condition and equips the
 complexified subspace with the pure Hodge structure it inherits from the ambient one, so that the

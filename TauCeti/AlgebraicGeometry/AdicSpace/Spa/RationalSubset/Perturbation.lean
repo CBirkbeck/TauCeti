@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 /-!
 # Rational subsets do not move under small perturbations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Perturbation)
+
 **A strengthening of Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Proposition 7.34.** Wedhorn
 assumes a complete Hausdorff affinoid ring; the results here need only a Huber ring `A`. Fix a pair
 of definition `(A₀, I)`, a ring of integral elements `A⁺`, a finite numerator set `T` whose ideal

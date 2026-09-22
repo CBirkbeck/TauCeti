@@ -13,6 +13,8 @@ import Mathlib.Algebra.QuadraticDiscriminant
 /-!
 # Quadratic normal forms in intermediate fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.Quadratic)
+
 This file contains normal-form lemmas for adjoining one element whose square already lies in an
 intermediate field, together with the corresponding quadratic finrank and degree-doubling API.
 Conversely, it shows by completing the square that, when `2 ≠ 0`, every quadratic intermediate

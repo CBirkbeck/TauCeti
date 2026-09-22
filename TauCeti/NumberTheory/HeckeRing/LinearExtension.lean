@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Multiplication
 /-!
 # Multiplicativity of a linear extension is a basis-level condition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.LinearExtension)
+
 A `Z`-linear map out of the Hecke ring is determined by its values on the basis elements
 `single Z D 1`, one for each double coset. The same is true of its *multiplicativity*:
 `F (x * y) = F x * F y` for all `x` and `y` follows from the special case where both arguments

@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Index
 /-!
 # The index of the exceptional family `E₇(q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeE7.Index)
+
 The classification list carries a single family on the `E₇` diagram, the untwisted `E₇(q)`: the
 diagram is a tree with no nontrivial symmetry, so there is no graph automorphism to twist a
 Steinberg map by and no partner family beside it.

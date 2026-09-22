@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Product
 /-!
 # Matrix coefficients of product comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Product)
+
 This file records how matrix coefficients behave for the direct-sum/product comodule.  If
 `M × N` carries `Comodule.Prod`, a coefficient of a vector `(m, n)` is the sum of the
 corresponding left and right coefficients.  Consequently the coefficient submodule, and in

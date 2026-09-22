@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Short
 /-!
 # The integral short-root representation of type F4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.Basic)
+
 This file realizes the Chevalley generators of type `F₄` on the twenty-six-element weight
 diagram `TauCeti.DynkinType.f4ShortRootWeight`, whose weights are the twenty-four short roots
 and the zero weight taken twice. On the coordinate vector belonging to the `b`th weight, the

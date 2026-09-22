@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PowerBounded
 /-!
 # Remark 7.55: the Laurent quotient *is* `A⟨T'/s⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Identification)
+
 `TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Presentation` constructs the two maps
 between the Laurent quotient `A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)` and the enlarged rational localisation
 `A⟨T'/s⟩`. This file proves them mutually inverse, so that Wedhorn's Remark 7.55 is available as

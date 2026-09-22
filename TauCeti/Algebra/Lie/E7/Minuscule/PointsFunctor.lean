@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.E7.Minuscule.Carrier
 /-!
 # Presented points of the minuscule E₇ carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.PointsFunctor)
+
 `TauCeti.E7Minuscule.pointsPresentation` presents the carrier's matrix points by its defining
 integral Hopf ideal. The shared `GeneralLinear.IntegralPointsPresentation` API supplies maps
 of value rings, their functoriality, and the representing equivalence with quotient-algebra

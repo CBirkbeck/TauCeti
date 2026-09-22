@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divis
 /-!
 # The sum of a degree-zero divisor as a point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divisor.Sum)
+
 A degree-zero divisor of `F(W)` has a divisor class, and `Divisor/Class.lean` identifies the
 degree-zero classes with the points of `W`. Composing the two gives the sum map `σ`, which reads a
 degree-zero divisor as a point, and the principal divisors are exactly those it sends to `O`.

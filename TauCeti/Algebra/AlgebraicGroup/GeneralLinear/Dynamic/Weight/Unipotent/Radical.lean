@@ -15,6 +15,8 @@ import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Isomorphism
 /-!
 # Unipotent radicals of injective-weight parabolics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Unipotent.Radical)
+
 For an injective weight `w : Fin N → ℤ`, the dynamic parabolic `P(w)` has diagonal-torus
 Levi quotient and weight-unipotent kernel `U(w)`. This file identifies that kernel with the
 unipotent radical of `P(w)`.

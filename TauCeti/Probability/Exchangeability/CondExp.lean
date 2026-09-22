@@ -12,6 +12,8 @@ public import TauCeti.Probability.Process.Tail.Basic
 /-!
 # Conditional law of a contractable selection given the tail
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.CondExp)
+
 For a contractable process `X`, the conditional law of a selection of coordinates given the future,
 or given the tail, does not depend on *which* coordinates were selected. Four results, stated for
 an arbitrary measurable real observable `f`:

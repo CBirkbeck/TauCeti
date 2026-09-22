@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 /-!
 # Division polynomials of the cusp curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Cusp)
+
 The cusp curve `Y² = X³` has every coefficient zero, so its low division polynomials collapse to
 their leading terms. Two different mechanisms produce that collapse: `Ψ₂Sq`, `Ψ₃` and `preΨ₄` are
 polynomials in the `bᵢ`, all of which vanish, leaving the one monomial that carries no `bᵢ`;

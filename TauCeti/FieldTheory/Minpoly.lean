@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Minpoly.Field
 /-!
 # Minimal polynomials of quadratic elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Minpoly)
+
 This file collects reusable facts about minimal polynomials of quadratic elements.
 
 ## Main results

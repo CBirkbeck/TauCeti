@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.StructureConstant.Basic
 /-!
 # Symmetries of root-vector structure constants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.StructureConstant.Symmetry)
+
 Let `x` be an `IsSl2System`, so that its root vectors satisfy
 `⁅x α, x (-α)⁆ = α∨`. The structure constants of `x` were defined in
 `TauCeti.Algebra.Lie.Weights.StructureConstant.Basic` by

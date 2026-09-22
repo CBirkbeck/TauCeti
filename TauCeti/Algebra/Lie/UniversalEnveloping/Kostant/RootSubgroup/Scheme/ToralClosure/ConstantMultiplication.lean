@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The toral Kostant carrier inside a constant-multiplication subgroup scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.ConstantMultiplication)
+
 Fix a bilinear multiplication on `ℤⁿ` given by constant structure matrices
 `C : Fin n → Matrix (Fin n) (Fin n) ℤ`, and let `TauCeti.ConstantMultiplication.definingHopfIdeal`
 be the Hopf ideal cutting out the subgroup scheme of `GLₙ` whose points are the invertible

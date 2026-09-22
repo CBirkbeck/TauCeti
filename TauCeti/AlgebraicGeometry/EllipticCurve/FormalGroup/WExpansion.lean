@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.PowerSeries.SelfConvolution
 /-!
 # The `w`-expansion of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion)
+
 Substituting `x = z / w` and `y = -1 / w` into the Weierstrass equation of `W` and clearing
 denominators turns it into
 

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Polynomial.Laurent.Basic
 /-!
 # Specializing Laurent modules at a unit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Laurent.Specialization)
+
 Let `R` be a commutative ring and `ε` a unit of `R`.  Evaluation at `q = ε` is the `R`-algebra map
 `TauCeti.laurentEval ε : R[q,q⁻¹] → R`.  For a module `N` over `R[q,q⁻¹]`, the **specialization**
 of `N` at `ε` is the quotient

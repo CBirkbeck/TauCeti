@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
 /-!
 # `L^p` isometric equivalences from an almost-everywhere inverse pair
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.CompMeasurePreservingEquiv)
+
 Mathlib turns a measure-preserving map `f : α → β` into a linear isometry
 `MeasureTheory.Lp.compMeasurePreservingₗᵢ : Lp E p μb →ₗᵢ[𝕜] Lp E p μ`, but stops there: there is
 no constructor producing a `LinearIsometryEquiv`. Transporting structure between `L²` spaces —

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.MinimalProjectivePresentation.Basic
 /-!
 # The Auslander--Reiten transpose
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.AuslanderReiten.Transpose)
+
 Given a projective presentation `P₁ → P₀ → M`, applying `Hom_A(-, A)` reverses the first map.
 The cokernel
 

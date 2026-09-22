@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.RootBivectors
 /-!
 # Serre relations for the type-D spin bivectors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.Serre.Relations)
+
 Let `P` be a polarization of a quadratic module and let `b` be a basis of its first isotropic
 summand. This file proves that the integral positive, negative, and coroot Clifford products
 attached to the Bourbaki simple roots of type `Dₙ` satisfy the complete Chevalley--Serre

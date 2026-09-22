@@ -13,6 +13,8 @@ import Mathlib.Data.Setoid.Partition
 /-!
 # Integrals split by finite measurable partitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.Finpartition)
+
 A measurable finite partition of a measure space decomposes integrals on the product space into
 finite sums over partition rectangles.
 -/

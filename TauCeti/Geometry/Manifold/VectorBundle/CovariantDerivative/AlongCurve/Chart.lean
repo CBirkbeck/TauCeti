@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.SectionAlongCurve.Tangent
 /-!
 # The along-curve covariant derivative read in an arbitrary chart
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCurve.Chart)
+
 `CovariantDerivative.alongCurveWithin` differentiates a tangent field `V` along a curve `γ` by the
 moving-chart formula `v' + Γ (v, u')`, read in the chart centred at the current point `γ t`.  This
 file proves that the same formula computed in *any* chart around `γ t`, transported back to

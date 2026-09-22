@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 /-!
 # Commutativity of the `GL_n` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution)
+
 Transposition `ξ ↦ ᵗξ` is an anti-automorphism of `GL_n(ℚ)` preserving both `SL_n(ℤ)` and
 the submonoid `Δ` of integral matrices of positive determinant, so it restricts to a
 `HeckeAntiInvolution` of the arithmetic Hecke datum. Every double coset has a diagonal

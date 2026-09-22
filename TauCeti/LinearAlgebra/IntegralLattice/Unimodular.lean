@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Isometry
 /-!
 # Unimodular integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Unimodular)
+
 An integral lattice is unimodular when its carrier is equal to its dual carrier.  For a
 nondegenerate lattice this file identifies that condition with each of the standard criteria: the
 discriminant group is trivial, its cardinality is one, the Gram determinant is a unit, the

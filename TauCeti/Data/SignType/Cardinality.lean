@@ -12,6 +12,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Cardinalities of fibers of sign-valued functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.SignType.Cardinality)
+
 This file records cardinality results for functions valued in `SignType`.
 
 Since a sign takes only the three values `0`, `-1` and `1`, the cardinality of the zero fiber of a

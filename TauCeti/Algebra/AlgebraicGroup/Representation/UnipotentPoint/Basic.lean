@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.GeneralLinearGroup.Intertwining
 /-!
 # Unipotent points of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.Basic)
+
 Let `H` be a Hopf algebra over a commutative semiring `k` and let `K` be a commutative
 `k`-algebra. A
 `K`-valued point `g : H →ₐ[k] K` acts on the scalar extension of every finitely generated

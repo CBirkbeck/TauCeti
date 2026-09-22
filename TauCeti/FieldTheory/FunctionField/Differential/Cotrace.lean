@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Trace.Dual
 /-!
 # The cotrace of Weil differentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Differential.Cotrace)
+
 Let `F' / k'` be a finite separable extension of the algebraic function field `F / k`, with
 `k' / k` finite separable.  For every Weil differential `ω` of `F / k` there is exactly one Weil
 differential `ω'` of `F' / k'` with

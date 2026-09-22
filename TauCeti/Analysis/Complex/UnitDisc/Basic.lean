@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.ConstMulAction
 /-!
 # Basic API for the complex unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UnitDisc.Basic)
+
 This file collects small API lemmas for Mathlib's `Complex.UnitDisc`. It covers the transport
 between a self-map of the bundled disc and a scalar representative `ℂ → ℂ` of it — such a
 representative maps `Metric.ball 0 1` into itself, and bijectively onto itself when the bundled

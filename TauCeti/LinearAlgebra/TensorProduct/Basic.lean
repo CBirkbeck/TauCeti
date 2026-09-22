@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Associator
 /-!
 # Tensor-product contractions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorProduct.Basic)
+
 This file defines contraction of a tensor product against a linear functional on its right factor,
 and records its behavior on pure tensors and under tensor-product maps.
 Such contractions extract coordinates and test tensor identities, supporting componentwise

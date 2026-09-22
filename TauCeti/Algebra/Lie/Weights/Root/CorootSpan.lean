@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Weights.WeightLattice
 /-!
 # The integral span of root vectors and coroots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Root.CorootSpan)
+
 Let `L` be a finite-dimensional Lie algebra with nondegenerate Killing form, let `H` be a
 splitting Cartan subalgebra, and let `x` be a normalized system of root vectors. This file defines
 the `ℤ`-span in `L` of the root vectors `x α` and the coroots `α∨`.

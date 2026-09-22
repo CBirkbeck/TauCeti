@@ -18,6 +18,8 @@ import Mathlib.Tactic.Linarith
 /-!
 # Examples of permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Examples)
+
 This file names the small permutation triples that serve as test cases for the theory of
 three-point covers, and computes their invariants: connectedness, cycle data, Euler
 characteristic, genus, orders, geometry type, monodromy group and automorphism group.

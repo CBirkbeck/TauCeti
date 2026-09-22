@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Idempotents.Eigenvalue
 /-!
 # The coordinate spectrum of CAR diagonal eigenvectors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.WeightSpectrum)
+
 For the left regular action of `gl_n` on the Clifford algebra of its trace form, every eigenvalue
 of a diagonal matrix unit on a nonzero vector is one of the half-integral expressions `m + 1/2`
 for a natural number `m < n`. In particular, this restricts every coordinate of a highest weight.

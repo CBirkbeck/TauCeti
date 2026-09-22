@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.ClosedSubgroup
 /-!
 # Extensions of smooth unipotent affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Extension)
+
 Let `f : H ⟶ K` be a morphism of commutative Hopf algebras over a field `k`. In the
 contravariant affine-group dictionary it represents a homomorphism `Spec K ⟶ Spec H`. This
 file proves the pointwise extension principle: a point of `Spec K` is unipotent when its image in

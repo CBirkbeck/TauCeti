@@ -10,6 +10,8 @@ public import TauCeti.Probability.DeFinetti.ViaKoopman.Decoupling
 /-!
 # Factorizing a whole block over an invariant event
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaKoopman.BlockFactorization)
+
 Iterating the one-coordinate decoupling across a block of length `r`.
 
 The inductive step takes a block of length `r + 1` and peels its last coordinate, replacing

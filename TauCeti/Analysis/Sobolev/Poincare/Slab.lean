@@ -19,6 +19,8 @@ import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # The Poincaré inequality on a slab
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.Poincare.Slab)
+
 This file proves the **Poincaré inequality** (also called the Friedrichs inequality) for `C¹`
 functions supported in a slab: if `u` vanishes outside the slab
 `{x | x i ∈ Set.Icc a b}` of width `b - a`, then

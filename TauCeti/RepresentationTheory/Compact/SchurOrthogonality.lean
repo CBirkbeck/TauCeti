@@ -13,6 +13,8 @@ import TauCeti.RepresentationTheory.Irreducible
 /-!
 # Schur orthogonality for irreducible compact-group representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.SchurOrthogonality)
+
 This file proves the first Schur orthogonality relation for matrix coefficients of a
 finite-dimensional irreducible unitary representation of a compact group. Haar-averaging a
 rank-one operator produces a self-intertwiner. Schur's lemma makes that intertwiner scalar, and

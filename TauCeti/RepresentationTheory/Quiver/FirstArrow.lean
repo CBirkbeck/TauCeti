@@ -14,6 +14,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # The first arrow of a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.FirstArrow)
+
 A path `a → j` in a quiver is either trivial, which forces `a = j`, or a first arrow `a ⟶ b`
 followed by a path `b → j`. This file records that dichotomy as an equivalence and reads off the
 resulting recursion for the number of paths into a fixed vertex.

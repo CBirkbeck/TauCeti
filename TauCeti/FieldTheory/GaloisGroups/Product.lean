@@ -12,6 +12,8 @@ public import Mathlib.FieldTheory.SeparableClosure
 /-!
 # The Galois group of a product of polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Product)
+
 Mathlib embeds the Galois group of a product into the product of the Galois groups,
 `Polynomial.Gal.restrictProd : (p * q).Gal →* p.Gal × q.Gal`
 (`Polynomial.Gal.restrictProd_injective`), and when `p * q ≠ 0` both components are surjective

@@ -11,6 +11,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The auxiliary term of the second complement of a normalised EDS
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.ComplAux)
+
 Mathlib defines the second complement of a normalised EDS as a difference,
 
 `complEDS₂ b c d k =

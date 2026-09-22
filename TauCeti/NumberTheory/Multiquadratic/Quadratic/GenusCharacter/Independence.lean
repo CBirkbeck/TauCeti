@@ -11,6 +11,8 @@ import TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Dirichlet.
 /-!
 # Independence of the genus characters of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.Independence)
+
 Let `K = ℚ(√d)` with `d` squarefree, and let `D = P₁ ⋯ P_t` be the prime-discriminant
 factorization of its fundamental discriminant. The genus characters `χ_{P_i}` are characters of the
 narrow class group `Cl⁺(K)` (`genusCharFunNarrowClassGroupHom`), and their product over all `i` is

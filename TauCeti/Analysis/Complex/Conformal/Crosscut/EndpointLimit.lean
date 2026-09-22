@@ -14,6 +14,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # An image crosscut of finite length ends in two points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.EndpointLimit)
+
 `Conformal/Crosscut/Image.lean` identifies the boundary piece a circular crosscut clings to as the
 union of the *cluster sets* of the map at the crosscut's two endpoints, and shows each of them to be
 a continuum. Nothing there says those continua are single points; in its own words, the

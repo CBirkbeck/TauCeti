@@ -14,6 +14,8 @@ import Mathlib.Analysis.Real.Sqrt
 /-!
 # Rational radicands reduce to squarefree integer radicands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.SquareClass.Rational)
+
 The multiquadratic degree theorem `TauCeti.Multiquadratic.finrank_adjoin_range` is field-generic:
 its radicands are arbitrary elements `d i` of the base field. Over `ℚ` the roadmap works instead
 with *squarefree integers*, because those are the radicands the genus theory names (the prime

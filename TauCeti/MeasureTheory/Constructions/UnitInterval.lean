@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Function.Floor
 /-!
 # The equipartition of the unit interval into `m` cells
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Constructions.UnitInterval)
+
 `unitInterval.cellIdx m x` is the index of the cell containing `x` when `[0, 1]` is cut into `m`
 pieces of equal length,
 

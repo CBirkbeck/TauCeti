@@ -13,6 +13,8 @@ import TauCeti.Algebra.Order.BigOperators.Sum.LtSum
 /-!
 # The Garnir element and the straightening algorithm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Straightening)
+
 The Garnir relation of `TauCeti/RepresentationTheory/Symmetric/Specht/Garnir.lean` says that the
 signed sum
 

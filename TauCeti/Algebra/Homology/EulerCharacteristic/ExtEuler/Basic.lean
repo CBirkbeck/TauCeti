@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Exact
 /-!
 # Euler-admissible pairs and the Ext-Euler characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Basic)
+
 Let `C` be a `k`-linear abelian category with `Ext` groups. The **Ext-Euler characteristic** of a
 pair of objects is the alternating sum
 

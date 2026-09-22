@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Naturality
 /-!
 # The orthogonal subgroup scheme of `GLₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Orthogonal.Basic)
+
 For a commutative ring `R` and `n : ℕ`, the orthogonal subgroup scheme `Oₙ` of `GL n` is the
 subgroup scheme preserving the constant form `1`: the specialization of
 `TauCeti.ConstantForm` at `C = 1`, cut out of `GL n` by the entries of

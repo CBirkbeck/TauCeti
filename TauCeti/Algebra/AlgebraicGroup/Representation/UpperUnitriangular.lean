@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Scheme
 /-!
 # Representations with upper-unitriangular coefficient matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.UpperUnitriangular)
+
 Let `M` be a finite free comodule over a commutative Hopf algebra `H`. If the coefficient matrix
 of `M` in a basis `b` is upper unitriangular, evaluation at its strict-upper entries defines a
 coordinate Hopf-algebra morphism

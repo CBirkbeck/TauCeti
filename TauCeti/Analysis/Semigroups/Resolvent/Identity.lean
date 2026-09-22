@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Semigroups.Generator.OrbitDerivative
 /-!
 # The Laplace-transform resolvent is the resolvent of the generator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Resolvent.Identity)
+
 This file proves that the Laplace-transform resolvent is also a left inverse of
 `lambda • I - A` on the generator domain. Together with the right-inverse identity from
 `TauCeti/Analysis/Semigroups/Resolvent/Basic.lean` that identifies it as *the* resolvent of the

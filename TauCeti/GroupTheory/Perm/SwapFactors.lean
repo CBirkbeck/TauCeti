@@ -13,6 +13,8 @@ import Mathlib.Dynamics.PeriodicPts.Lemmas
 /-!
 # Transpositions and the number of orbits
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.SwapFactors)
+
 Multiplying a permutation `σ` of a finite type by the transposition `Equiv.swap a b` of two
 distinct points either merges the orbit of `a` with the orbit of `b`, or splits the single orbit
 carrying both of them in two. The number of orbits therefore changes by exactly one, and which way

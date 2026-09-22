@@ -13,6 +13,8 @@ public import TauCeti.MeasureTheory.Constructions.Pi
 /-!
 # Consistency of graphon sampling under restriction of labels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Consistency)
+
 Sampling `l` independent points from a graphon and then tossing an independent coin for each
 unordered pair produces a law on `SimpleGraph (Fin l)`. Restricting such a sample to a window of
 `k` labels is the same as running the `k`-point sampling procedure from the start: the window

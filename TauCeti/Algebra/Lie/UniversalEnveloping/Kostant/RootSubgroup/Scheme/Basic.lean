@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Point
 /-!
 # Scheme morphisms from Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Basic)
+
 Let a Kostant integral form act on a rational representation, preserving an integral lattice
 `M`. A finite basis of `M` turns the divided-power exponential attached to a nilpotent root vector
 into a natural family of homomorphisms

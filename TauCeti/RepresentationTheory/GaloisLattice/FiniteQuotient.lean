@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.GaloisLattice.Basic
 /-!
 # Finite quotients acting on Galois lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GaloisLattice.FiniteQuotient)
+
 A finite module representation whose vectors have open stabilizers has open kernel. Indeed, the
 kernel is already the intersection of the stabilizers of a finite generating family. The Krull
 neighborhood basis then puts a finite-dimensional normal subextension's fixing subgroup inside

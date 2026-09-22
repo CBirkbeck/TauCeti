@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Trace.Pi
 /-!
 # Norms and traces of finite products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.NormTrace.Pi)
+
 This file records the determinant, norm, and trace calculations for finite dependent products.
 The scalar-extension identities used by the number-field local-global development live in
 `TauCeti.RingTheory.NormTrace.BaseChange`.

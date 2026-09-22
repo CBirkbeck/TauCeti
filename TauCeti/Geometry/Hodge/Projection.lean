@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Hodge.Orthogonal
 /-!
 # Hodge projectors defined over `ℚ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Projection)
+
 A rational Hodge substructure of a polarizable pure Hodge structure is a direct summand of it as an
 *object*, not merely as a subspace: it is the image of an **idempotent rational endomorphism whose
 complexification is a morphism of pure Hodge structures**. That projector is the projection onto

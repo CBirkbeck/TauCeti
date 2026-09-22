@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Index.Basic
 /-!
 # The index of a primitive root of unity is `1`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.Cyclotomic)
+
 Let `K` be an `n`-th cyclotomic extension of `ℚ` and `ζ` a primitive `n`-th root of unity in `K`.
 Then `ζ` is an algebraic integer generating `K` over `ℚ`, hence an integral primitive element of
 `K`, and `𝓞 K = ℤ[ζ]` (Mathlib's `IsCyclotomicExtension.Rat.adjoin_singleton_eq_top`), so its index

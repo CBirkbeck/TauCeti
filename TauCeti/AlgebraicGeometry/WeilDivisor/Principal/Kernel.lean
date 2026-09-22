@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic
 /-!
 # The kernel of the principal-divisor map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Kernel)
+
 This file records the exactness at the rational-function side of the formal divisor-class
 sequence built in `TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic`.
 

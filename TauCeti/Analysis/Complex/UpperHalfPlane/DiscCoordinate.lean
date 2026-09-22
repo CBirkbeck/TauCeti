@@ -16,6 +16,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hyperbolic
 /-!
 # The disc coordinate centred at a point of the upper half-plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.DiscCoordinate)
+
 For `z ∈ ℍ`, the Cayley transform `τ ↦ (τ - z) / (τ - conj z)` is a bijection from the upper
 half-plane onto the open unit disc sending `z` to `0`, with inverse
 `w ↦ (z - conj z * w) / (1 - w)`; its modulus is `tanh (d / 2)` for the

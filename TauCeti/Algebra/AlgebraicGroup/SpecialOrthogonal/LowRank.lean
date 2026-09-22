@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Basic
 /-!
 # Special orthogonal groups in ranks zero and one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.LowRank)
+
 The standard special orthogonal groups `SO₀` and `SO₁` are trivial over every commutative base
 ring. In Hopf coordinates, their defining ideals agree with the corresponding special-linear
 ideals. In rank zero there are no orthogonality relations. In rank one, the single relation

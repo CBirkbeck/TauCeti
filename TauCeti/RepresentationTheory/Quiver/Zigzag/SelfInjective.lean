@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Projective.Basic
 /-!
 # The zigzag algebra is self-injective
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.SelfInjective)
+
 The public zigzag algebra of every finite simple graph is a symmetric Frobenius algebra, and hence
 is **self-injective**. On a nontrivial connected component, `TauCeti.zigzagTracePairing` is the
 perfect associative pairing whose Gram matrix exchanges an idempotent with a volume class and a

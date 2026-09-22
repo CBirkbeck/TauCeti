@@ -14,6 +14,8 @@ import TauCeti.Algebra.Squarefree
 /-!
 # Polynomials of degree three and four
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.SpecificDegree)
+
 Splitting criteria for low-degree polynomials and a separability criterion, all read off the
 coefficients.
 

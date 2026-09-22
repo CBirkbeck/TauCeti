@@ -10,6 +10,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Function.MemLp
 /-!
 # Hermite functions as `L²` vectors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Lp)
+
 This file packages the pointwise Hermite functions `TauCeti.hermiteFunction n` as elements of
 `Lp 𝕜 2 volume`, for any `RCLike` scalar field `𝕜`.  This is the `hermiteFunctionLp` family
 named in the `OrthogonalL2Bases` roadmap's Part A3: the later orthonormality and Hilbert-basis

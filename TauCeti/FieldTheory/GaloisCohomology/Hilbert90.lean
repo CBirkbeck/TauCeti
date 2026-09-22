@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.FiniteQuot
 /-!
 # Hilbert 90 for infinite Galois extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisCohomology.Hilbert90)
+
 For a Galois extension `L/K`, finite or infinite, the first continuous cohomology of `Gal(L/K)`
 with coefficients in the discrete module `Lˣ` vanishes:
 

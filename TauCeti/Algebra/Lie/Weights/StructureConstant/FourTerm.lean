@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.Weights.StructureConstant.Basic
 /-!
 # The four-term relation among root-vector structure constants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.StructureConstant.FourTerm)
+
 Let `x` be a `TauCeti.IsSl2System` in a Lie algebra `L` with non-degenerate Killing form, so that
 `⁅x α, x β⁆ = N(α, β) x(α + β)` whenever `α + β` is a root. This file proves the relation between
 the structure constants of four roots summing to zero.

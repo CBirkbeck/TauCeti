@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Basic
 /-!
 # Existence of joint eigenvectors for commuting endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Exists)
+
 Every commuting family of triangularizable endomorphisms of a nonzero finite-dimensional vector
 space has a joint eigenvector.  The proof is by induction on the dimension: either every
 endomorphism is scalar, or the eigenspace of a nonscalar member is a nonzero proper subspace

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.WordFiltration.AssociatedGraded
 /-!
 # The symmetric-algebra map to the associated graded of an enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.PBW.AssociatedGraded)
+
 For a Lie algebra `L` over a commutative ring `R`, the defining relation in its universal
 enveloping algebra says
 

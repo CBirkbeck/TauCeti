@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Valuation.Basic
 /-!
 # A valuation on a power of a spanned ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.SpanPow)
+
 If `v ≤ δ` on a generating set `s` and `v ≤ 1` on the ideal `Ideal.span s`, then
 `v ≤ δ ^ n` on `Ideal.span s ^ (n + 1)`.
 

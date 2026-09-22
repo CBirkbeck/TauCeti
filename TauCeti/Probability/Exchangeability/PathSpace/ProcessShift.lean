@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.Shift
 /-!
 # Process shift operation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.ProcessShift)
+
 The process-level path shift for a process `X : ℕ → Ω → α`, used to build the de Finetti
 block-product factorisation:
 

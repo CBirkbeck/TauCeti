@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Group.Pointwise
 /-!
 # Closures and pointwise quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Pointwise)
+
 Mathlib relates `closure` to a pointwise product when one factor is *open* — `IsOpen.mul_closure`
 and its neighbours in `Mathlib/Topology/Algebra/Group/Pointwise.lean` — and to a pointwise scalar
 product when the action is jointly continuous, in `smul_set_closure_subset`. The containment for

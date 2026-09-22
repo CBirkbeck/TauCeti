@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Integrated divergence-form energy forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Integrated.Basic)
+
 Lane D of the PDE roadmap asks for the weak energy form
 
 `a(u, v) = ∫ aⁱʲ ∂ᵢu ∂ⱼv + bⁱ ∂ᵢu v + c u v`.

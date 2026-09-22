@@ -11,6 +11,8 @@ import Mathlib.Tactic.NormNum.Prime
 /-!
 # Worked examples of fundamental discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Examples)
+
 The multiquadratic roadmap's `Worked examples` section (`TauCetiRoadmap/Multiquadratic/README.md`)
 lists `ℚ(√-5)`, with discriminant `-20` and genus field `ℚ(√-1, √5)`, and `ℚ(√-21)`, with
 discriminant `-84` and genus field `ℚ(√-1, √-3, √-7)`. This file establishes the

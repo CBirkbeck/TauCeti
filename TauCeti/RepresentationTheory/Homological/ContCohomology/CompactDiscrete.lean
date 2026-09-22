@@ -12,6 +12,8 @@ public import TauCeti.Topology.CompactOpen
 /-!
 # Continuous cohomology of a discrete representation of a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.CompactDiscrete)
+
 Mathlib builds continuous cohomology as the homology of the homogeneous cochain complex, whose
 terms are the invariants of the iterated coinduced representations `C(G, C(G, …, X.V))`. Over a
 compact group `G` and for a representation whose underlying module is discrete, every one of those

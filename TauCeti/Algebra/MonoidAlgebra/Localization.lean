@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Localization.Away.Basic
 /-!
 # Localizations of monoid algebras away from a monomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.Localization)
+
 Let `f : M →* N` be an injective homomorphism of commutative monoids and let `x : M` be an element
 whose image is a unit of `N`. When every element of `N` becomes an element of the image of `f`
 after multiplying by a sufficiently large power of `f x`, the induced map of monoid algebras

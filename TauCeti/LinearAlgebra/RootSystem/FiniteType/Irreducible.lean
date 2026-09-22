@@ -14,6 +14,8 @@ import Mathlib.Combinatorics.SimpleGraph.Hasse
 /-!
 # Irreducibility from a connected Dynkin diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Irreducible)
+
 This file proves the converse to the standard implication from irreducibility of a root pairing to
 connectedness of its Dynkin diagram. Over a field of characteristic zero, a crystallographic root
 system whose base has connected diagram is irreducible. It then checks that the standard Cartan

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Subfield.Classification
 /-!
 # The candidate genus field over `ℚ(√-21)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusTwentyOne.RelativeDegree)
+
 The multiquadratic roadmap's second genus-field example uses the prime discriminants
 `-4`, `-3`, and `-7`. Their associated radicands are `-1`, `-3`, and `-7`, with chosen
 complex roots `i`, `i√3`, and `i√7`. The ambient compositum has degree eight over `ℚ`;

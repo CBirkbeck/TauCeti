@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Module.Connected
 /-!
 # The exterior of a closed ball is preconnected
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Ball.Exterior)
+
 In a real normed space of dimension at least two the complement of a closed ball is preconnected:
 it is the union, over the radii `M` exceeding the ball's, of the spheres of radius `M`, strung
 together along a single ray from the centre.

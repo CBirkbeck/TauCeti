@@ -11,6 +11,8 @@ public import TauCeti.Probability.Recurrent
 /-!
 # Recurrence and successor arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.SuccessorArray)
+
 For a recurrent path, the visit times of a visited state are genuine, strictly increasing visits,
 and the visit counts along them run through every natural number; so the successor-array row of
 such a state is an infinite list of genuine transitions, read off at those times. Rows indexed by

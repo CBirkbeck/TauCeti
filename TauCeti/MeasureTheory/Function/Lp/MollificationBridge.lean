@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Function.AEEqOfIntegral
 /-!
 # Pointwise representatives of smooth `Lᵖ` mollification
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.MollificationBridge)
+
 This file connects the `Lᵖ`-valued average in
 `TauCeti.MeasureTheory.Function.Lp.ApproximateIdentity` with the usual pointwise convolution
 formula when the input has a compactly supported `MemLp` representative.  The representative

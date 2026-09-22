@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Enumerative.SuccessorArray
 /-!
 # The excursion process of a sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.ExcursionProcess)
+
 Fix a state `a` of a sequence `x : ℕ → α`.  Its `k`-th excursion from `a` is the finite
 list of values strictly between the `k`-th and `(k + 1)`-st visits to `a`.  This file defines that
 list as `TauCeti.excursion x a k` and packages the first `m` excursions as

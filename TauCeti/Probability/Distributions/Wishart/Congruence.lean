@@ -14,6 +14,8 @@ public import TauCeti.Probability.Distributions.Wishart.Nonsingular
 /-!
 # The scale of the nonsingular Wishart law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Wishart.Congruence)
+
 Congruence `A ↦ C * A * Cᵀ` by an invertible matrix carries the nonsingular Wishart law of scale
 `S` to the one of scale `C * S * Cᵀ`, because the density and the congruence Jacobian cancel
 exactly. Substituting `C⁻¹ B C⁻ᵀ` for the argument multiplies the determinant factor

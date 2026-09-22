@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Int.Basic
 /-!
 # Coprime representatives under the two-sided `Γ₀(N)` action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CoprimeRepresentative)
+
 An element of `Δ₀(N)` whose integral matrix is **primitive** — no prime divides all four
 entries — can be moved by the two-sided `Γ₀(N)` action to a representative whose upper-left
 entry is coprime to a prescribed modulus `c`, provided `c` is coprime to `N`. The `Δ₀(N)`

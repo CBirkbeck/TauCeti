@@ -13,6 +13,8 @@ import TauCeti.FieldTheory.Minpoly
 /-!
 # Trace lemmas for field extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Trace)
+
 This file collects reusable trace facts for finite field extensions.
 
 ## Main results

@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Measure.MapRestrictDensity
 /-!
 # The cut norm is invariant under measure-preserving pullback
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Kernel.Pullback)
+
 If `f : Ω' → Ω` pushes a probability measure `ν` forward to `μ`, then a symmetric kernel `K` on
 `(Ω, μ)` and its pullback `K.comap f` on `(Ω', ν)` have the *same* cut norm.
 

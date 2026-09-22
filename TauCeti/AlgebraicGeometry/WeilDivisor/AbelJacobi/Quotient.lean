@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.PicZeroQuotient
 /-!
 # Abel-Jacobi sums through the weighted-degree-zero quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Quotient)
+
 This file connects two existing Layer A models in the Jacobian roadmap.  The file
 `WeilDivisor.AbelJacobiSum` defines the formal Abel-Jacobi sum of a divisor as an element of
 the abstract `Pic⁰`, while `WeilDivisor.PicZeroQuotient` identifies `Pic⁰` with

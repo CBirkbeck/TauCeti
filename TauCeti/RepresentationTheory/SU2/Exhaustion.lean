@@ -19,6 +19,8 @@ public import TauCeti.RepresentationTheory.SU2.Irreducible
 /-!
 # The symmetric powers exhaust the irreducibles of `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Exhaustion)
+
 `TauCeti/RepresentationTheory/SU2/Irreducible.lean` shows the symmetric powers `Symᵈ(ℂ²)` of the
 standard representation of `SU(2)` are irreducible and pairwise inequivalent, and
 `TauCeti/RepresentationTheory/SU2/Completeness.lean` shows their characters span a uniformly dense

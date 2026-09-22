@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Orbit
 /-!
 # Integral exponential actions on Kostant-stable additive subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.LatticeAction)
+
 Let `U_ℤ = kostantForm e h` be a Kostant integral form in `U(L)`, let `ρ` be a representation of
 `U(L)` on a rational vector space `V`, and let `M ≤ V` be an additive subgroup preserved by
 `ρ(U_ℤ)`. If the endomorphism `ρ(eᵢ)` is nilpotent, the integral exponentials

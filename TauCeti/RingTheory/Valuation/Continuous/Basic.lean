@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.WithZeroTopology
 /-!
 # Continuous valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Continuous.Basic)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.7 and Remarks 7.8, 7.9.**
 
 `IsContinuous v` here says every `{a | v a < v b}` is open, the quantifier running over the

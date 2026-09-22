@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.Integral.Pi
 /-!
 # The counting lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Counting)
+
 The **counting lemma** bounds the gap between the homomorphism densities of a finite graph `F` in
 two graphons on one carrier by the cut norm of their difference:
 

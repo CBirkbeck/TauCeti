@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Chevall
 /-!
 # Generating the sum-root subgroups of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.SumRootGeneration)
+
 The standard type-`C_m` root system has short roots `eᵢ - eⱼ`, `eᵢ + eⱼ`, and
 `-eᵢ - eⱼ`, together with the long roots `±2eᵢ`. This file uses the multiply-laced
 Chevalley relations to recover the two sum-root families from the difference-root and long-root

@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # The adjugate of an invertible matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Adjugate)
+
 The adjugate of an invertible matrix is invertible, so `Matrix.adjugate` restricts to a map
 `GL n R → GL n R`. Its inverse is exhibited directly, without dividing by the determinant:
 `adjugate` is anti-multiplicative and sends `1` to `1`, so `adjugate g⁻¹` inverts `adjugate g`

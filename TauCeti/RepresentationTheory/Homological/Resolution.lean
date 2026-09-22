@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Coinduced
 /-!
 # The bar resolution along a group homomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.Resolution)
+
 Let `f : H →* G` be a homomorphism of groups. The bar resolution `Rep.barComplex k H` of the
 trivial representation `k` of `H` maps to the restriction along `f` of the bar resolution of `G`:
 in degree `n` a basis element `(h₁, …, hₙ)` is sent to `(f h₁, …, f hₙ)`. This file constructs

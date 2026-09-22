@@ -13,6 +13,8 @@ import Mathlib.NumberTheory.EulerProduct.ExpLog
 /-!
 # The Euler product over the primes of a number field, in exponential form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Basic)
+
 Mathlib's `EulerProduct.exp_tsum_primes_log_eq_tsum` writes the Euler product of a completely
 multiplicative `f : ℕ →*₀ ℂ` as `exp (∑' p, -log (1 - f p))`. This file is the ideal-indexed
 analogue, over the height-one primes of the ring of integers of a number field, mirroring the way

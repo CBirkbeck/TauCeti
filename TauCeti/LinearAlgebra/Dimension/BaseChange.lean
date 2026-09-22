@@ -13,6 +13,8 @@ import Mathlib.RingTheory.TensorProduct.Finite
 /-!
 # The dimension of a base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dimension.BaseChange)
+
 A module specified as a base change of a finite module is finite. If the module being extended is
 free and both semirings satisfy the strong rank condition, then the two modules have the same
 natural-number rank (`Module.finrank`), including when their rank is infinite and `finrank` is zero.

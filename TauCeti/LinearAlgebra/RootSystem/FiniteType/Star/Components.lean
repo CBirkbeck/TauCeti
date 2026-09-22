@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.UniqueBranch
 /-!
 # The three arms of a simply-laced finite-type diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.Components)
+
 A connected simply-laced finite-type diagram with a branch vertex becomes three paths when that
 vertex is deleted.  The finite-type degree bound supplies degree at most three, while the affine
 `D` obstruction in `TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.UniqueBranch` says that the

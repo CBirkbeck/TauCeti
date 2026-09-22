@@ -11,6 +11,8 @@ import TauCeti.Algebra.TensorProduct.BaseChange
 /-!
 # Bialgebra maps and base change for tensor products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.TensorProduct)
+
 This file packages the canonical inclusions into and projections out of a tensor product of
 bialgebras as bialgebra morphisms, and records their action on pure tensors. The projections are
 obtained by applying the counit to the other tensor factor.

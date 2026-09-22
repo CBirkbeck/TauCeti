@@ -13,6 +13,8 @@ import TauCeti.Analysis.Complex.Conformal.Crosscut.Endpoints
 /-!
 # How a circle splits the image of a domain, and its boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.Image)
+
 `Conformal/Crosscut/Basic.lean` cuts a disc `ball c r` at a boundary point `ζ` by the circle
 `sphere ζ ρ` and proves that the two sides `ball c r ∩ ball ζ ρ` and `ball c r \ closedBall ζ ρ`
 are the two connected components of what is left; for `0 < ρ < 2 * r` the piece

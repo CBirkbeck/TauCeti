@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 /-!
 # The conjugate transpose of a special unitary matrix is its adjugate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.UnitaryGroup)
+
 For a special unitary matrix the conjugate transpose is the inverse, and an invertible matrix of
 determinant one is its own adjugate's inverse, so the two descriptions of the inverse agree. This
 turns `star` on `Matrix.specialUnitaryGroup n α` into a polynomial expression in the entries, which

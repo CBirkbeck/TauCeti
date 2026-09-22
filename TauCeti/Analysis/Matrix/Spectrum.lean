@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Matrix.PosDef
 /-!
 # Eigen-coordinates of a Hermitian matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.Spectrum)
+
 Let `B` be a Hermitian matrix over an `RCLike` field with orthonormal eigenvector basis
 `hB.eigenvectorBasis` and real eigenvalues `hB.eigenvalues`. This file reads four quantities
 off the eigen-coordinates: the quadratic form `x ↦ ⟪x, B x⟫`, which becomes a weighted sum of

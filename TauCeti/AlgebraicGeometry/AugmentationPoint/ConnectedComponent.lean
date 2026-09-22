@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Idempotents.Connected.Component
 /-!
 # The connected component defined by an augmentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AugmentationPoint.ConnectedComponent)
+
 An algebra homomorphism from a commutative algebra to its ground field determines a rational point
 of the algebra's prime spectrum. This file records that the component idempotent maps to one and
 the factorization of the augmentation through the quotient cutting out that point's connected

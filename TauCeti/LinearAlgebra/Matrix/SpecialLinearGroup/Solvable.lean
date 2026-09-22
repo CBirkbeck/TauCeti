@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.IsPerfect
 /-!
 # Nonsolvability of `SL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Solvable)
+
 If a field contains an element `a` with `a ≠ 0` and `a² ≠ 1`, then `SL₂` is nonsolvable.
 In particular, this holds over every infinite field.
 

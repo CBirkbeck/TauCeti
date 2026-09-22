@@ -15,6 +15,8 @@ public import TauCeti.FieldTheory.FunctionField.Repartition.Basic
 /-!
 # The trace of repartitions along an extension of function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Repartition.Trace)
+
 Let `F' / k'` be a finite extension of the algebraic function field `F / k`.  Stichtenoth builds
 the cotrace of Weil differentials (Section III.4) from the repartitions of `F'` that are
 **constant on the fibres** of the restriction map, that is, whose entries at two places

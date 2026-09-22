@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.Weights.Diagonalizable
 /-!
 # Existence and uniqueness of highest weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Existence)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra, let `b` be a base of the root
 system `LieAlgebra.IsKilling.rootSystem H`, and let `M` be a nonzero finite-dimensional `L`-module.

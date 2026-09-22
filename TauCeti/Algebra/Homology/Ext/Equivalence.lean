@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.Ext.Basic
 /-!
 # `Ext` groups are invariant under an additive equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Ext.Equivalence)
+
 Mathlib's `CategoryTheory.Adjunction.extEquiv` promotes an adjunction `F ⊣ G` between exact
 functors to an additive equivalence `Extⁿ(F X, Y) ≃+ Extⁿ(X, G Y)`.  For an equivalence `e` this
 specialises, along `CategoryTheory.Equivalence.toAdjunction` and the transport of the target along

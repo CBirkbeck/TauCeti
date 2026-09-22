@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.FormalCharacter
 /-!
 # The `α`-string of weights above a weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.String)
+
 Let `M` be a finite-dimensional module over a nilpotent Lie algebra `H` -- in practice a Cartan
 subalgebra -- and let `μ` and `α` be linear forms on `H`.  The **`α`-string above `μ`** is the set
 of `j` for which `μ + j • α` is a weight of `M`.  Because `M` has only finitely many weights and,

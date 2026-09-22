@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Lattice
 /-!
 # Dual semigroups of toric cones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.DualSemigroup.Basic)
+
 An integral character of a lattice extends uniquely to a real-linear functional on the ambient
 real vector space (`TauCeti.Toric.IsIntegralLattice.realCharacter`). The dual semigroup of a cone
 consists of the integral characters whose real extensions are nonnegative on the cone. When the

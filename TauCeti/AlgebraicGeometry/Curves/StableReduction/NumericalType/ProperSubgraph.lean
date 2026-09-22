@@ -14,6 +14,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Proper subgraphs of `(-2)`-indices in a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.ProperSubgraph)
+
 A `(-2)`-index of a numerical type is a component `i` with `gᵢ = 0` and `aᵢᵢ = -2wᵢ`. The
 connected configurations of `(-2)`-indices that can occur as proper subsets of the components
 of a numerical type form a short explicit list, of Dynkin-diagram shape

@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Valuation.Basic
 /-!
 # Absolute values from valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.AbsoluteValue)
+
 This file constructs an absolute value by composing a valuation with a monotone, zero-reflecting
 monoid-with-zero homomorphism.
 -/

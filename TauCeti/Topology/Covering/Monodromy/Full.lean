@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Monodromy.Full
 /-!
 # Fullness of covering-space monodromy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Monodromy.Full)
+
 When the base is locally path-connected, the monodromy functor from covering spaces to
 fundamental-groupoid actions is full. The unbundled construction of the map between total spaces
 is proved in `TauCeti.Topology.Homotopy.Monodromy.Full`; this file packages it for bundled covering

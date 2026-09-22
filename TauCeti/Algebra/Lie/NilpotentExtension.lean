@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Nilradical
 /-!
 # Extending a nilpotent action by a normalizing element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.NilpotentExtension)
+
 Let `M` be a Lie module over `L`, let `H` be a Lie subalgebra of `L` acting nilpotently on `M`, and
 let `y : L` normalize `H` and act nilpotently on `M`.  This file proves that the Lie subalgebra
 `LieSubalgebra.lieSpan R L (insert y ↑H)` spanned by `y` and `H` again acts nilpotently on `M`, so

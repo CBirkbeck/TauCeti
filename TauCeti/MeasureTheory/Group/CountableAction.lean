@@ -12,6 +12,8 @@ public import Mathlib.Order.Filter.CountableInter
 /-!
 # Countable group actions: almost invariant events versus invariant events
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.CountableAction)
+
 Mathlib's `ErgodicSMul` is phrased with **almost** invariant events: an action is ergodic when
 every measurable `s` with `(g • ·) ⁻¹' s =ᵐ[μ] s` for all `g` is null or conull.  Concrete
 σ-algebras of invariant events — the invariant σ-algebra of a map, or the exchangeable σ-algebra

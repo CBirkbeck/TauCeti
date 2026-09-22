@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Symmetric
 /-!
 # Rigidity of finite-dimensional comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Rigid)
+
 Let `H` be a commutative Hopf algebra over a field `k`. This file upgrades the existing
 right-rigid monoidal structure on `FGComoduleCat.{u,v,u} k H` to a rigid monoidal structure.
 

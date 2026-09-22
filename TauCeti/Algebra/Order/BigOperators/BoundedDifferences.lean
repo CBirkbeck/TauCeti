@@ -11,6 +11,8 @@ public import Mathlib.Data.Fintype.BigOperators
 /-!
 # Bounded differences on a finite product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.BigOperators.BoundedDifferences)
+
 A function on a finite product `ι → β`, valued in a linearly ordered additive commutative group,
 has *bounded differences* with bounds `c : ι → α` when changing a single coordinate `i`, leaving
 the others fixed, moves the value by at most `c i`. `TauCeti.abs_sub_le_of_bounded_differences`

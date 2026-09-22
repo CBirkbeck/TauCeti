@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Smooth
 /-!
 # Smooth unipotent affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Unipotent)
+
 This file transports smooth unipotence from finite-type commutative Hopf algebras to affine
 group schemes of finite type over a field. The coordinate-ring predicate says that the algebra is
 smooth and that every point over an algebraic closure acts unipotently in every finite-dimensional

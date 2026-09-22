@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Semigroups.Dissipative.Basic
 /-!
 # Dissipativity under a bounded perturbation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Dissipative.Perturbation)
+
 Adding a bounded operator `B` to an unbounded operator `A` costs at most `‖B‖` of dissipativity:
 if `A` is dissipative then `B + A - ‖B‖ I` is again dissipative, because the triangle inequality
 absorbs `B x` into the extra `‖B‖ ‖x‖` gained by shifting the spectral parameter. Maximality is

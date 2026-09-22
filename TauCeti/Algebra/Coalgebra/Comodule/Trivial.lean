@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # Trivial comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Trivial)
+
 For a coalgebra `C` over `R` and a group-like element `g : GroupLike R C`, every `R`-module
 `M` has a right `C`-comodule structure with coaction `m ↦ m ⊗ g`. In a bialgebra, taking
 `g = 1` gives the trivial comodule. This is the comodule-theoretic analogue of the trivial

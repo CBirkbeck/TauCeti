@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.QuotientGroup.ThirdIso
 /-!
 # Indices in quotient groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.QuotientGroup.Index)
+
 This file records how the index of the image of a subgroup in a quotient group is computed in
 the original group. It is the `Nat.card` shadow of the coset-space bijection
 `QuotientGroup.quotientQuotientEquivQuotientSup`, and is read off it.

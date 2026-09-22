@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.Diffeomorph
 /-!
 # The weak Whitney topology on diffeomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Diffeomorphism.Topology)
+
 This topology is provided only when the source manifold `M` is compact; the noncompact case
 requires a separate choice between weak and strong Whitney topologies.
 

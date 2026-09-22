@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Primary.Decomposition
 /-!
 # Subgroups and primary decomposition of finite modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Primary.Subgroup)
+
 This file proves that the subgroup calculations used with finite bilinear and quadratic modules
 can be performed one prime at a time.  The `p`-primary part of a subgroup is its intersection with
 the ambient `p`-primary component, regarded as a subgroup of that component.  Bilinear and

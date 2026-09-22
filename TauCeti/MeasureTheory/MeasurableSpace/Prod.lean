@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Products of discrete σ-algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.Prod)
+
 The product of the discrete σ-algebras on two countable types is again discrete. Countability is
 what makes this work: the measurable rectangles already exhaust the singletons of the product, and
 countably many of them suffice to build any subset.

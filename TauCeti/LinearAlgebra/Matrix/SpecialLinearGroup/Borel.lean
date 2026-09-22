@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Solvable
 /-!
 # The upper-triangular subgroup of `SL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Borel)
+
 The standard Borel subgroup of `SL₂(R)` consists of the determinant-one upper-triangular
 matrices. Over a field, its two Bruhat cells are represented by the identity and by
 `ModularGroup.S = !![0, -1; 1, 0]`. Thus the Borel together with `ModularGroup.S` generates

@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Lagrange
 /-!
 # Regular functions with finite image
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.FiniteType.FiniteRange)
+
 A regular function on a reduced connected affine scheme of finite type over an algebraically
 closed field is constant if it takes only finitely many values on rational points. This permits
 one to turn finiteness of an algebraic action into constancy, without constructing a morphism

@@ -13,6 +13,8 @@ import Mathlib.Analysis.Normed.Group.Lemmas
 /-!
 # Analyticity of an unbounded operator's resolvent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Resolvent.Analytic)
+
 The resolvent of a `LinearPMap` on a complete normed space over a nontrivially normed field is
 analytic on its resolvent set. Locally at a resolvent point `lambda`, the Neumann formula
 identifies it with

@@ -11,6 +11,8 @@ import TauCeti.MeasureTheory.Integral.Bochner.Basic
 /-!
 # The `L²` pairing of symmetric kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Kernel.L2)
+
 The Frieze--Kannan weak regularity argument runs on an `L²(μ ⊗ μ)` potential, so the block-average
 step graphons of a refinement chain must be compared in `L²` and not only in cut norm.  This file
 defines the integrals `l2inner μ K L = ∫ K · L` and `l2sq μ K = ∫ K²` at the level of strict

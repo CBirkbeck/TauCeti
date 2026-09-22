@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Idempotents.LinearIndependent
 /-!
 # The primitive central idempotents decompose the identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.IdempotentDecomposition)
+
 Let `G` be a finite group and `k` an algebraically closed field in which `|G|` is invertible. To an
 irreducible representation `ρ` with character `χ`,
 `TauCeti/RepresentationTheory/CharacterTable/CentralIdempotent.lean` attaches the central element

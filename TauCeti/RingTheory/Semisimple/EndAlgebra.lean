@@ -25,6 +25,8 @@ import TauCeti.RingTheory.Semisimple.SimpleArtinian
 /-!
 # The endomorphism algebra of a module over a simple Artinian algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.EndAlgebra)
+
 Let `K` be a field, let `R` be a finite-dimensional **simple** `K`-algebra and let `M` be an
 `R`-module which is finite-dimensional over `K`. All simple `R`-modules are isomorphic, to a fixed
 minimal left ideal `S`, and `M` is a direct sum of `k` copies of `S`

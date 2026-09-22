@@ -13,6 +13,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The split torus in the Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.Torus)
+
 The represented Geck lattice of a valid Dynkin type `t` gives a morphism from the split torus
 of rank `t.rank` into the explicit Kostant toral-closure carrier
 `TauCeti.DynkinType.geckGroupScheme`. This file proves that the morphism is a closed immersion

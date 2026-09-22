@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.Conjugation
 /-!
 # Numbered symmetries of a Kostant elementary group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.NumberedSymmetry)
+
 Let `U_ℤ = kostantForm e h` act on a rational representation `V` preserving an additive subgroup
 `M ≤ V`, so that the divided-power exponentials of the distinguished root vectors `eᵢ` generate the
 elementary group `E(A) ≤ Aut_A(A ⊗[ℤ] M)` of

@@ -12,6 +12,8 @@ import Mathlib.Tactic.Module
 /-!
 # A function satisfying the parallelogram law is a quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram)
+
 Let `M` and `N` be additive commutative groups, suppose doubling is injective on `N`,
 and let `f : M → N` satisfy the **parallelogram law**
 

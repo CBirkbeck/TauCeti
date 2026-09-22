@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Normed.Operator.Resolvent.Unbounded
 /-!
 # Scalar shifts of unbounded operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Resolvent.Shift)
+
 For an unbounded operator `A`, subtracting the scalar operator `omega I` leaves its domain
 unchanged and translates its resolvent:
 

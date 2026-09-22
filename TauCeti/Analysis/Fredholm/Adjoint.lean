@@ -13,6 +13,8 @@ public import Mathlib.Analysis.InnerProductSpace.ProdL2
 /-!
 # Adjoints of Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Adjoint)
+
 This file proves the closed-range theorem for adjoints on Hilbert spaces and applies it to
 Fredholm operators. If a continuous linear map has closed range, then its adjoint has range
 equal to the orthogonal complement of the original kernel. Consequently, taking adjoints

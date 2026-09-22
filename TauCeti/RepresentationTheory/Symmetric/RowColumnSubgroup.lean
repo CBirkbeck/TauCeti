@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Perm.FiberSubgroup
 /-!
 # The row and column groups of a Young tableau
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.RowColumnSubgroup)
+
 A `μ`-tableau `t` is the datum a Young symmetrizer is built from: the row symmetrizer sums over
 the permutations of the labels that stay inside their row of `t`, and the column antisymmetrizer
 sums with signs over those that stay inside their column.

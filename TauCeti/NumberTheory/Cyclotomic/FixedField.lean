@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Cyclotomic.Adjoin
 /-!
 # The fixed field of a subgroup meeting the cyclotomic fixers trivially
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Cyclotomic.FixedField)
+
 If `M` contains a primitive `m`-th root of unity and a subgroup `H ≤ Gal(M/K)` meets
 `Gal(M/K(μ_m))` trivially, then `M` is an `m`-th cyclotomic extension of the fixed field `M ^ H`.
 

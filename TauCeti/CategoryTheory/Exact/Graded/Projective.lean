@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Exact.Projective
 /-!
 # Projectives and projective resolutions in a graded exact category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Graded.Projective)
+
 The grading shift of a graded exact category is a conflation-exact autoequivalence. Relative
 projectivity is therefore invariant under shifting: an object is projective precisely when its
 shift, or its inverse shift, is projective. This supplies the shift stability of the canonical

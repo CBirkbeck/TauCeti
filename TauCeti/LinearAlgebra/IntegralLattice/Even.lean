@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Norm
 /-!
 # Even integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Even)
+
 An integral lattice is **even** when the integral norm of every lattice vector is an even integer.
 This file characterizes evenness on generating sets, integral bases, and Gram matrices, and
 establishes non-existence results for odd or non-even norm vectors in even lattices. It also proves

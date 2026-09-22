@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.F4.ShortRoot.Carrier
 /-!
 # The points of the type-F4 short-root carrier, functorially
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.PointsFunctor)
+
 `TauCeti.F4ShortRoot.groupScheme` is the explicit short-root type-`F₄` carrier over `ℤ`, built
 from the `26`-dimensional short-root representation, and `TauCeti.F4ShortRoot.points A` realizes its
 `A`-valued points as a subgroup of `GL₂₆(A)`. This file supplies the homomorphism induced by an

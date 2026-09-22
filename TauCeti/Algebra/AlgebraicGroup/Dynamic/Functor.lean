@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.PointsFunctor
 /-!
 # Dynamic subgroup functors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Dynamic.Functor)
+
 The dynamic parabolic, Levi, and unipotent subgroups attached to a cocharacter are defined on
 points in `TauCeti.Algebra.AlgebraicGroup.Dynamic.Parabolic`. Their change-of-value-algebra
 theorems make these families into group-valued functors. This file packages those functors and

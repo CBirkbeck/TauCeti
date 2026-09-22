@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.MFDeriv.Atlas
 /-!
 # The punctured unit disc as a complex manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UnitDisc.PuncturedManifold)
+
 The inclusion of the punctured unit disc into the complex plane is an open embedding.
 Its single chart gives the complex manifold structure used by punctured-disc coordinates.
 -/

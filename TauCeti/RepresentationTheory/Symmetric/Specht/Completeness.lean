@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Distinctness
 /-!
 # The Specht modules classify the irreducible rational representations of `Sₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Completeness)
+
 The Specht modules `S^μ` are irreducible over `ℚ`
 (`TauCeti.isIrreducible_spechtModule`) and pairwise non-isomorphic
 (`TauCeti.spechtModule_iso_iff`). This file proves that there are no others: `μ ↦ S^μ` is a

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Even
 /-!
 # Evenness of Construction A lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.Even)
+
 The norm of a Construction A vector is the dot product of any integer lift divided by the
 modulus, so the lattice `P_m(C)` is even exactly when `2m` divides `∑ i, zᵢ²` for every integer
 lift `z` of a codeword. That divisibility is precisely the vanishing of the quadratic value

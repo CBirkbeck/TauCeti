@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Hodge.Tate.Basic
 /-!
 # Points of a period domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.PeriodDomain)
+
 Fix a lattice `V` — a finitely generated free `ℤ`-module — an integral bilinear form `Qint` on it,
 and a prescribed family of Hodge numbers. A **point of the period domain** is a Hodge filtration
 on the complexification of `V` that has those Hodge numbers and is polarized by that *same* form:

@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.CliffordAlgebra.Inversion
 /-!
 # The volume element of a Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.VolumeElement)
+
 The **volume element** (or pseudoscalar) of a quadratic space is the ordered Clifford product
 `ι Q v₁ * ⋯ * ι Q vₙ` of an orthogonal basis. This file proves the two facts that make it useful:
 how it commutes past a vector, and what its square is.

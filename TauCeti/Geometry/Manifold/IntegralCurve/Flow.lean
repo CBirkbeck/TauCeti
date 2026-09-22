@@ -12,6 +12,8 @@ import Mathlib.Topology.Connected.Clopen
 /-!
 # The flow law for maximal integral curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.IntegralCurve.Flow)
+
 The maximal integral curve of an autonomous vector field can be restarted at any time in its
 interval of existence. Its new maximal interval is the translate of the original interval, and
 the restarted curve is the corresponding translate of the original curve. These are the domain

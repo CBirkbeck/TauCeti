@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Vector
 /-!
 # The Weyl chambers of a base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Chamber)
+
 The dominant chamber of a base is one of a family: its translates under the Weyl group are the
 **Weyl chambers**. This file introduces them, in both the closed and the open form, and proves
 that the Weyl group permutes them **simply transitively**.

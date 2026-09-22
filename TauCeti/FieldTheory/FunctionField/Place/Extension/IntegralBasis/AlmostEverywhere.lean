@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Zeros
 /-!
 # Almost every place admits a prescribed integral basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.IntegralBasis.AlmostEverywhere)
+
 Let `F' / F` be a finite separable extension and fix an `F`-basis `b` of `F'`. This file proves
 that `b` is an integral basis over the valuation ring of all but finitely many places of an
 algebraic function field `F / k`. This is Stichtenoth, *Algebraic Function Fields and Codes*,

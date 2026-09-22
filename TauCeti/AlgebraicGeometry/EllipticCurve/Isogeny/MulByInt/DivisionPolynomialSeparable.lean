@@ -21,6 +21,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 /-!
 # Division polynomials are separable when `n` is invertible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.DivisionPolynomialSeparable)
+
 `preΨₙ` has degree `(n ² - 1) / 2` for odd `n` and `(n ² - 4) / 2` for even `n`, and its roots are
 the abscissae of the nonzero `n`-torsion points that are not `2`-torsion. Over an algebraically
 closed field there are `n ² - 1` of the former and at most three of the latter, and the abscissa map

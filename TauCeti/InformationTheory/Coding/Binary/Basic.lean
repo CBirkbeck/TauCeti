@@ -15,6 +15,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Even and doubly-even binary codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.Basic)
+
 Binary Hamming weights detect Euclidean orthogonality: the dot product is the parity of the
 intersection of supports, and the weight of a sum subtracts twice that intersection. Consequently,
 a binary linear code whose weights are all divisible by four is self-orthogonal.

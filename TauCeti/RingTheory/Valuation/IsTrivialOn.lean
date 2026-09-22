@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Valuation.Basic
 /-!
 # Restricting a valuation along an algebra map preserves triviality on the base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.IsTrivialOn)
+
 A valuation trivial on a base ring stays trivial on that base when restricted along a map of
 algebras over it. The restriction changes where the valuation is evaluated but not what it does to
 constants, because an algebra map fixes them.

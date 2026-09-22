@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Reduced
 /-!
 # The rational root system of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Rational)
+
 `TauCeti.DynkinType.simplyConnectedRootDatum` pins one integral root datum per valid Dynkin type,
 on the lattices `Fin t.rank → ℤ`. The constructions which build a semisimple Lie algebra out of a
 root system want instead a root *system* over a field of characteristic zero: the roots must span

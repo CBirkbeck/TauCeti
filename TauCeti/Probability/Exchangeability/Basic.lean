@@ -15,6 +15,8 @@ public import Mathlib.Tactic.Measurability
 /-!
 # Basic exchangeability definitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Basic)
+
 This file starts the Layer 0 exchangeability API: indexed block laws of a family,
 prefix laws, path laws, finite exchangeability, full exchangeability, and
 contractability. The definitions are intentionally hypothesis-light; measurability
@@ -63,7 +65,10 @@ def blockLaw (μ : Measure Ω) (X : ι → Ω → α) {m : ℕ} (k : Fin m → �
 def prefixLaw (μ : Measure Ω) (X : ℕ → Ω → α) (n : ℕ) : Measure (Fin n → α) :=
   blockLaw μ X fun i : Fin n => i.val
 
-/-- The law of the whole process as a measure on path space. -/
+/-- The law of the whole process as a measure on path space.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Probability.pathLaw) -/
 @[expose]
 def pathLaw (μ : Measure Ω) (X : ℕ → Ω → α) : Measure (ℕ → α) :=
   μ.map fun ω i => X i ω

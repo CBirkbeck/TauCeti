@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Lie.Derivation.BaseChange
 /-!
 # Integral exponentials of nilpotent Lie derivations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Derivation.IntegralExp)
+
 Let `D` be a nilpotent derivation of a Lie algebra over `ℚ`, and let an integral Lie subalgebra be
 stable under every divided power `Dⁿ / n!`. The restricted divided powers obey the coefficient-free
 Leibniz rule. Consequently their finite exponential preserves the Lie bracket after scalar

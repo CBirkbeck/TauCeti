@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Quaternion.SplittingCriterion
 /-!
 # The norm-equation Hilbert symbol
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HilbertSymbol.Basic)
+
 `TauCeti.hilbertSymbol a b` is the sign `+1` when `b = x² - a y²` is solvable, and
 `-1` otherwise. The definition makes sense over any field. This file supplies the
 field-generic part of its theory: the quadratic-algebra norm and quaternion splitting

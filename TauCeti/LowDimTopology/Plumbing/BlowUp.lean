@@ -12,6 +12,8 @@ public import TauCeti.LowDimTopology.Plumbing.NegativeDefinite
 /-!
 # Blowing up a plumbing graph at a vertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.BlowUp)
+
 This file adds the first of Neumann's plumbing moves: blowing up a plumbing graph at one of its
 vertices. Given a plumbing graph `P` and a vertex `v`, the blow-up `P.blowUpVertex v` is the
 plumbing graph on `Option V` obtained by adjoining a new vertex `none` with framing `-1`, joining
@@ -127,7 +129,10 @@ vectors this is `e_v ↦ e_v + e_none` (the total transform, or pullback, of the
 transform of the blown-up sphere is instead the basis vector `Pi.single (some v) 1`, the image of
 `(e_v, -1)`; unlike the total transform it meets the exceptional class once.
 
-The map depends only on the blown-up vertex, not on the framings or the edges. -/
+The map depends only on the blown-up vertex, not on the framings or the edges.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PlumbingGraph.blowUpVertexEquiv) -/
 def blowUpVertexEquiv (v : V) : ((V → ℤ) × ℤ) ≃ₗ[ℤ] (Option V → ℤ) where
   toFun p a := a.elim (p.1 v + p.2) p.1
   map_add' p q := by

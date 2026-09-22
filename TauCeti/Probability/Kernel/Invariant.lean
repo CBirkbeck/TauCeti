@@ -11,6 +11,8 @@ import Mathlib.Probability.Kernel.CompProdEqIff
 /-!
 # Invariance of conditional laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Kernel.Invariant)
+
 If a measure-preserving map fixes every event of a conditioning σ-algebra up to null sets, then
 almost every conditional law is invariant under that map. This is the invariance step in
 decomposing a probability law into invariant components. The conditioning σ-algebra need not be

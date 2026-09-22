@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Flip
 /-!
 # Duality of Dynkin types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Duality)
+
 Interchanging the roots and the coroots of a root pairing (`RootPairing.flip`) transposes every
 pairing `⟨αᵢ, αⱼ^∨⟩`, hence transposes the Cartan matrix of a base
 (`RootPairing.Base.cartanMatrix_flip`, proved in `TauCeti.LinearAlgebra.RootSystem.Flip`).

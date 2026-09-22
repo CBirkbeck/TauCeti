@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Basic
 /-!
 # The tangent Lie algebra of the additive group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.Tangent)
+
 The vector group represented by `SymmetricAlgebra R M` has `B`-valued tangent module
 `M →ₗ[R] B`. Concretely, a counit-valued derivation is determined by its values on the
 generators `SymmetricAlgebra.ι R M x`, and every linear assignment of generator values extends

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.Residue.SimplePole
 /-!
 # A circle integral with two simple poles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.TwoSimplePoles)
+
 This file verifies the two-pole worked example from the contour-integration roadmap.  For two
 distinct points `s₁` and `s₂`, the function
 

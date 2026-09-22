@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.CartanDieudonne.SpecialOrthogo
 /-!
 # Generation of Spin groups by reflection-pair lifts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Generation)
+
 The special orthogonal group of a finite-dimensional nondegenerate quadratic space is generated
 by products of two reflections. Consequently, a subgroup of the Spin group is the whole group as
 soon as it contains the kernel generator `-1` and one lift of every reflection pair. This file

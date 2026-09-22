@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.Bilinear
 /-!
 # Derivatives of the diagonal of a continuous bilinear map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Bilinear)
+
 The quadratic map `z ↦ B z z` attached to a continuous bilinear map `B : E →L[𝕜] E →L[𝕜] F` is
 smooth, with derivative at `y` the polarization `B.flip y + B y` of `B` evaluated at `y`; since
 that derivative is linear in `y`, the second derivative is the constant continuous linear map

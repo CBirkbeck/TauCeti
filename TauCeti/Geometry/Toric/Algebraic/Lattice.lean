@@ -16,6 +16,8 @@ import Mathlib.RingTheory.TensorProduct.IsBaseChangePi
 /-!
 # Integral lattices in a real vector space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Lattice)
+
 The combinatorics of a toric variety takes place in a real vector space `V` carrying a
 distinguished additive map `i : N →+ V` from an abelian group of integral vectors. For that
 picture to determine anything, `N` has to be finite free over `ℤ` and `V` has to be the real

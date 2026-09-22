@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Homological.TateCohomology.Basic
 /-!
 # Corestriction in negative Tate degrees
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.NegativeCorestriction)
+
 Let `f : H → G` be a homomorphism of finite groups and let `M` be a `G`-representation. In
 every Tate degree at most `-2`, Mathlib identifies Tate cohomology with ordinary group homology:
 

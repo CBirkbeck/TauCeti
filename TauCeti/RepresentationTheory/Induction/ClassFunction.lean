@@ -14,6 +14,8 @@ import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # The induced class function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.ClassFunction)
+
 Induction of representations along a finite-index subgroup `S ≤ G` sends a character of `S` to a
 character of `G`, by the coset-representative formula
 `TauCeti.character_indFDRep_sum_quotient`.  That formula makes sense for an arbitrary function on

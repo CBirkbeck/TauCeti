@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.JordanChevalley.Functoriality
 /-!
 # Jordan decomposition of commuting products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.JordanChevalley.Commuting)
+
 The multiplicative Jordan decomposition respects products of commuting linear automorphisms.
 More precisely, if `g` and `h` commute, then every Jordan factor of `g` commutes with every
 Jordan factor of `h`, and the semisimple and unipotent parts of `g * h` are the products of the

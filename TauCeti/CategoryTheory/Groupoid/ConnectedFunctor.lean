@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Groupoid
 /-!
 # Functors on a groupoid with a weakly initial object
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Groupoid.ConnectedFunctor)
+
 Let `C` be a groupoid and `x₀ : C` an object which admits a morphism to every object. Restricting
 functors `F G : C ⥤ D` to `x₀` produces objects of `D` with actions of the vertex group
 `End x₀`. This file proves that an isomorphism `F.obj x₀ ≅ G.obj x₀` commuting with these

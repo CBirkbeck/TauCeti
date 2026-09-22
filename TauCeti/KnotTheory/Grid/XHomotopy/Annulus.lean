@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.XHomotopy.Basic
 /-!
 # The diagonal of the `X`-marking anticommutator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.XHomotopy.Annulus)
+
 This file computes the diagonal matrix entries of `∂⁻ ∘ H_k + H_k ∘ ∂⁻`, where `H_k` is the
 `X`-marking homotopy of `TauCeti.KnotTheory.Grid.XHomotopy.Basic`.
 

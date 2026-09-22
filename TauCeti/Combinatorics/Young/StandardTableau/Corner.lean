@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Young.StandardTableau.Basic
 /-!
 # The corner recursion for standard Young tableaux
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.StandardTableau.Corner)
+
 The largest label of a standard Young tableau of shape `μ` sits at a corner of `μ`
 (`TauCeti.StandardYoungTableau.isCorner_maxCell`), and deleting that cell leaves a standard Young
 tableau of the smaller shape.  This is a bijection, and summing it over the corners gives the

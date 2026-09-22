@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Idempotents.Hom
 /-!
 # The graded homomorphism spaces of the zigzag vertex projectives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Hom)
+
 For a finite simple graph without isolated vertices, `TauCeti.zigzagProjective` is the
 indecomposable left projective `P_i = Z e_i` of the zigzag relation quotient and
 `TauCeti.zigzagCorner` is the corner `e_i Z e_j`.  This file supplies the dictionary those two

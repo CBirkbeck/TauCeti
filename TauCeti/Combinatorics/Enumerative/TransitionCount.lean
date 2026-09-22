@@ -14,6 +14,8 @@ public import Mathlib.Logic.Equiv.Basic
 /-!
 # Occurrence and transition counts of a finite word
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.TransitionCount)
+
 A word `w : Fin N → α` over an arbitrary alphabet `α` has two elementary statistics: the
 **occurrence count** `occCount w a`, the number of positions carrying the letter `a`, and — for a
 word of length `n + 1` — the **transition count** `transitionCount w a b`, the number of positions

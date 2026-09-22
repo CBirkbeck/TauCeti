@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Symplectic.JHolomorphic.Line
 /-!
 # Conjugation of the standard complex line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.Conj)
+
 This file records the flat reflection map on the standard complex line `ℝ × ℝ`,
 `(s, t) ↦ (s, -t)`, and its interaction with the constant-structure Cauchy--Riemann
 predicate. Conjugation anticommutes with the standard almost complex structure

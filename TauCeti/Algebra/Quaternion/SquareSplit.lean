@@ -12,6 +12,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Quaternion symbols with a square second parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.SquareSplit)
+
 This file constructs the explicit splitting of a quaternion symbol whose second parameter is a
 square. For units `a` and `b` over a commutative ring in which two is invertible, the equivalence
 

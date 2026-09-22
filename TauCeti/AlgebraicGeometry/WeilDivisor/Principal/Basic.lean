@@ -12,6 +12,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Principal divisors and the divisor class group of an order system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic)
+
 This file adds the next piece of the Jacobian roadmap's Layer A on top of the formal Weil
 divisor group: **principal divisors**, the **divisor class group** `Cl(X)`, and the abstract
 degree-zero subgroup `Pic⁰`.

@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Intermediates
 /-!
 # Reordering rectangle decompositions with disjoint side columns
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Disjoint)
+
 A two-step term in the square of the grid differential consists of a rectangle from `x` to an
 intermediate state and a second rectangle from that state to `z`. When the two rectangles use
 disjoint pairs of side columns, their column transpositions commute. They may therefore be applied

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.GeneralLinearGroup.Intertwining
 /-!
 # Functoriality of the multiplicative Jordan decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.JordanChevalley.Functoriality)
+
 The multiplicative Jordan--Chevalley decomposition of a linear automorphism does not depend on
 the coordinates used to describe it.  A linear equivalence `e : V ≃ₗ[K] W` transports an
 automorphism by conjugation.  This file proves that semisimplicity is invariant under this

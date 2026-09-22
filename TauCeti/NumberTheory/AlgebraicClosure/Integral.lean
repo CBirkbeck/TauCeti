@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Polynomial.RationalRoot
 /-!
 # Integral elements fixed by the absolute Galois group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.AlgebraicClosure.Integral)
+
 An algebraic integer in an algebraic closure of `ℚ` that is fixed by every `ℚ`-automorphism is
 the image of a rational integer. This combines the fixed-field theorem for the algebraic closure
 with the fact that `ℤ` is integrally closed in `ℚ`.

@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.ParametricIntegral
 /-!
 # Integral formulas and power bounds for semigroup resolvents
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Resolvent.PowerBounds)
+
 This file proves the integral formula for powers of a Laplace-transform resolvent,
 
 `R(lambda)^(n+1) x = 1 / n! * integral t in (0, infinity), t^n exp (-lambda t) S(t)x dt`,

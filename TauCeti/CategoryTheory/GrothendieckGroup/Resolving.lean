@@ -13,6 +13,8 @@ import Mathlib.Tactic.Module
 /-!
 # The resolution theorem for a resolving subcategory
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Resolving)
+
 Let `E` be an exact structure on an additive category `C` and let `P` be a resolving property:
 it contains a zero object, is closed under binary direct sums and extensions, is closed under
 kernels of deflations between its objects, and every object of `C` admits a finite

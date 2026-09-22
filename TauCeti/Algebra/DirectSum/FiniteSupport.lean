@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.DirectSum.Finite
 /-!
 # Direct sums whose summands vanish outside a finite set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.DirectSum.FiniteSupport)
+
 A direct sum `⨁ i, M i` over an infinite index type still behaves like a finite one as soon as all
 but finitely many summands are trivial: a family graded by `ℤ` with finitely many nonzero degrees
 is the standard example.  `TauCeti.DirectSum.restrictLinearEquiv` identifies such a direct sum with

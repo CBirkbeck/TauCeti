@@ -12,6 +12,8 @@ public import Mathlib.Algebra.MonoidAlgebra.Basic
 /-!
 # Class sums in a finite group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.Basic)
+
 This file defines the element of a group algebra obtained by summing the members of a conjugacy
 class.  It proves that every class sum is central, the first input to the class-algebra side of
 finite-group character theory.

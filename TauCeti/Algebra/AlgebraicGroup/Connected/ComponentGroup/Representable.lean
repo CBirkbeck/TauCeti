@@ -16,6 +16,8 @@ import Mathlib.Algebra.BigOperators.Pi
 /-!
 # Representability of the component group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.Representable)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over an algebraically closed
 field. This file identifies the fppf quotient `H / H⁰` with the fppf points sheaf of the finite
 constant group of connected components of `Spec H`.

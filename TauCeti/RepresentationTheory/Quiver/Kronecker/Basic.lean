@@ -12,6 +12,8 @@ public import Mathlib.Data.Fintype.BigOperators
 /-!
 # The generalized Kronecker quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.Basic)
+
 The generalized Kronecker quiver has two vertices, a source and a target, and one arrow from the
 source to the target for each element of an arrow type `A`. Taking `A = Fin 2` gives the
 *Kronecker quiver* `• ⇉ •`, the smallest connected acyclic quiver that is not of Dynkin type and

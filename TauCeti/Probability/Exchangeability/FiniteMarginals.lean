@@ -11,6 +11,8 @@ import Mathlib.MeasureTheory.Constructions.Projective
 /-!
 # Finite-dimensional marginal uniqueness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.FiniteMarginals)
+
 A finite measure on path space `ℕ → α` is determined by its finite prefix marginals: any measure
 agreeing with it on every prefix projection (`prefixProj α n`, the projection to the first `n`
 coordinates) is equal to it. This is the Layer 0 finite-marginal uniqueness milestone of

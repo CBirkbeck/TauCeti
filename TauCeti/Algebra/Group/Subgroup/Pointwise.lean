@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Group.Subgroup.Pointwise
 /-!
 # Conjugating a subgroup by a group element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Subgroup.Pointwise)
+
 Mathlib writes the conjugate `sHs⁻¹` of a subgroup `H` of a group `G` as the pointwise scalar
 action `MulAut.conj s • H`.  This file records the membership criterion for that subgroup and the
 two laws making `s ↦ MulAut.conj s • (-)` an action of `G` on the subgroups of `G`.

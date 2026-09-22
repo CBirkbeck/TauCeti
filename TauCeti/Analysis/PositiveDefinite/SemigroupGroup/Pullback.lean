@@ -12,6 +12,8 @@ public import Mathlib.Topology.Constructions.SumProd
 /-!
 # Spatial pullbacks of semigroup-group positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Pullback)
+
 This file records the spatial-coordinate pullback API for Berg--Christensen--Ressel
 positive-definite functions on `ℝ≥0 × V`. If `F` is semigroup-group positive definite and
 `φ : W →+ V` is an additive homomorphism, then `(t, w) ↦ F (t, φ w)` is again

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.SpecialLinear
 /-!
 # Reductivity of the type A standard carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Reductive)
+
 The full-weight type `A_r` standard carrier is an explicit closed subgroup of `GL_{r+1}` over
 `ℤ`, constructed from its numbered root subgroups and weight torus. After specialization to an
 algebraically closed field, its defining Hopf ideal is the determinant-one ideal by

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Hodge.Structure
 /-!
 # Polarizations of pure Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Polarization)
+
 A polarization of a weight-`n` Hodge structure on a lattice `V` is an integral bilinear form on
 `V` satisfying the Hodge–Riemann bilinear relations. This file states those relations as a
 predicate on a *fixed* form, `TauCeti.Hodge.IsPolarization`, so that a form can be required to

@@ -14,6 +14,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.PointAction
 /-!
 # Unipotence of the dynamic unipotent subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Dynamic.Unipotent)
+
 For a cocharacter `l : 𝔾ₘ → G`, the dynamic subgroup `U(l)` consists of the points whose
 conjugates by `l(t)` extend to `t = 0` with limit one. This file proves that these points are
 unipotent in the representation-theoretic sense: they act unipotently in every finite-dimensional

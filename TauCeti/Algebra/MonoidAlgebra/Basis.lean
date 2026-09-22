@@ -10,6 +10,8 @@ public import Mathlib.Algebra.MonoidAlgebra.Module
 /-!
 # The coordinates of the standard basis of a monoid algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.Basis)
+
 Mathlib defines the standard basis `MonoidAlgebra.basis X k` of `k[X]` by
 `repr := MonoidAlgebra.coeffLinearEquiv _` but records no lemma for the resulting `repr`. This
 file is that missing bridge: the coordinates in the standard basis are the coefficients.

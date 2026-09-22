@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Hom
 /-!
 # The category of comodules over a coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Cat)
+
 This file bundles the right comodules defined in `TauCeti.Algebra.Coalgebra.Comodule.Basic` into a
 category. For a fixed coalgebra `C` over a commutative semiring `R`, objects are
 `R`-semimodules with a right `C`-coaction and morphisms are the comodule morphisms already

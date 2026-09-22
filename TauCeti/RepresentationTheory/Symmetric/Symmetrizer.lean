@@ -17,6 +17,8 @@ public import TauCeti.RepresentationTheory.Symmetric.SignCharacter
 /-!
 # Young symmetrizers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Symmetrizer)
+
 For a Young tableau `t`, this file defines the row symmetrizer `a_t`, the column
 antisymmetrizer `b_t`, and the Young symmetrizer `c_t = a_t b_t` in the rational group
 algebra of the symmetric group on the entries of `t`.

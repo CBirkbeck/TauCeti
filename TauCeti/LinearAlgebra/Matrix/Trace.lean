@@ -11,6 +11,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Traces of products alternating with a fixed matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Trace)
+
 Fix a square matrix `S`. This file expands the quadratic map `M ↦ trace (M * S * M * S)` at a
 sum, so that polarization recovers the symmetric bilinear map `(M, N) ↦ trace (M * S * N * S)`
 from it.

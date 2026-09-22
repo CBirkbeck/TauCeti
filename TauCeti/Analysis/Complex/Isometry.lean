@@ -11,6 +11,8 @@ import Mathlib.Analysis.InnerProductSpace.TwoDim
 /-!
 # Distance-preserving maps of a disc about the origin
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Isometry)
+
 Mathlib's `Mathlib/Analysis/Complex/Isometry.lean` classifies the **linear** isometries of the
 plane: `linear_isometry_complex` says that every `f : ℂ ≃ₗᵢ[ℝ] ℂ` is `rotation a` or
 `conjLIE.trans (rotation a)`. That statement asks for a map defined on all of `ℂ`, and asks it to

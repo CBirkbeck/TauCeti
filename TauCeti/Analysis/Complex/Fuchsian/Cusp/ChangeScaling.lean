@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Fuchsian.Cusp.Coordinate
 /-!
 # Changing the scaling of a cusp
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.ChangeScaling)
+
 Two normalized data at the same cusp have the same positive primitive generator. Their scalings
 are related by `σ' = aσ + b`, with `a > 0`, and their widths satisfy `w' = aw`.
 Consequently their exponential coordinates differ by the constant

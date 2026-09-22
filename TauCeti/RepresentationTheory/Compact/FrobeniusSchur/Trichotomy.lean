@@ -14,6 +14,8 @@ import Mathlib.Analysis.Complex.Polynomial.Basic
 /-!
 # The Frobenius-Schur reality trichotomy for compact groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.FrobeniusSchur.Trichotomy)
+
 For an irreducible unitary representation `π` of a compact group on a finite-dimensional complex
 inner product space, the Frobenius-Schur indicator takes only the three values
 

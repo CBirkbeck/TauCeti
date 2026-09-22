@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.ContMDiff.Basic
 /-!
 # Piecewise smooth paths in a manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.PiecewisePath)
+
 This file defines piecewise `C^n` regularity for a path on a compact real interval using a finite
 strict partition. The predicate retains the partition only existentially. Thus two proofs using
 different partitions are proofs of the same property of the underlying path, rather than distinct

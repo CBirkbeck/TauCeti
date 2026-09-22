@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.HighestWeight.Trivial
 /-!
 # Minuscule weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Minuscule)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra and `b` a base of its root
 system. A dominant integral weight `mu` is **minuscule** when every weight of the irreducible

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.TensorProduct.Symmetric
 /-!
 # The bilinear form of a tensor on an inner product space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.BilinearForm)
+
 On an inner product space the inner product turns a tensor `t : V ⊗[𝕜] V` into a bilinear form on
 `V`,
 

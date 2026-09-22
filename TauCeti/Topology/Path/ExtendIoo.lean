@@ -15,6 +15,8 @@ import Mathlib.Topology.Separation.Hausdorff
 /-!
 # The path traced by a function on an open interval
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Path.ExtendIoo)
+
 A curve is often produced not as a `Path` but as a function `g : ℝ → X` defined on an *open*
 interval `Ioo a b`, continuous there, and converging at each of the two ends. This file turns such
 a function into an honest `Path` between its two limits, `TauCeti.Path.ofContinuousOnIoo`, and

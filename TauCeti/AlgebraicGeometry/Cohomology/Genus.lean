@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.RationalPoint.Basic
 /-!
 # The genus and the Euler characteristic of the structure sheaf
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Cohomology.Genus)
+
 For a scheme `X` over a field `k` with finite-dimensional `H¹(X, 𝒪_X)`, the genus is
 `g = dim_k H¹(X, 𝒪_X)`. For a smooth proper curve this is the usual genus.
 

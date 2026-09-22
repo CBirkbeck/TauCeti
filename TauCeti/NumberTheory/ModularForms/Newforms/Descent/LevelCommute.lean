@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 /-!
 # The descent slash sum does not see the level away from `p`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute)
+
 The descent family `descendMatrix p N` at a prime `p ∣ N` consists of the `p` upper-triangular
 matrices `[1, v; 0, p]`, which do not depend on `N` at all, together with — exactly when
 `p² ∤ N` — one extra representative `[1, 0; 0, p] · γ_N`, where `γ_N ∈ SL(2, ℤ)` is chosen

@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 /-!
 # Basic infrastructure for Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Basic)
+
 This file supplies general constructions for Lie modules that are missing from Mathlib.
 
 ## Main definitions

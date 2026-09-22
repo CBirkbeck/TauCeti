@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.Uniqueness
 /-!
 # Reflecting the generalized Kronecker quiver at its sink
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.Reflection)
+
 The generalized Kronecker quiver has a source `src`, a target `tgt`, and one arrow `src ⟶ tgt` for
 each element of an arrow type `A`; the `A₂` quiver `• → •` is the case of a one-element `A`. Its
 target is a sink, and this file computes the Bernstein--Gelfand--Ponomarev reflection there on the

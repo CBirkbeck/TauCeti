@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Compact-parameter integration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ParametricIntegral)
+
 This file uses Mathlib's continuity theorem for parameterized interval integrals and proves that
 integration over the compact unit interval preserves differentiation and continuous
 differentiability in a normed-space parameter. Continuous differentiability is preserved at every

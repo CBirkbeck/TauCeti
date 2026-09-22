@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.TensorProduct
 /-!
 # Tensor products of finitely generated comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.TensorProduct)
+
 This file lifts the tensor product of right comodules over a bialgebra to the category of
 finitely generated comodules. If `M` and `N` are finitely generated right `C`-comodules, their
 tensor product has the diagonal coaction

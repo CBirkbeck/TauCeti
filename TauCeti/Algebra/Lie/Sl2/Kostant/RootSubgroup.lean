@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Kostant root subgroups for the standard `sl₂` representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Kostant.RootSubgroup)
+
 This file supplies a concrete rank-one witness for the general Kostant root-step criterion. Both
 roots in the standard two-dimensional `sl₂` representation have a unit root step on the integral
 coordinate lattice, so both resulting root-subgroup morphisms are closed immersions.

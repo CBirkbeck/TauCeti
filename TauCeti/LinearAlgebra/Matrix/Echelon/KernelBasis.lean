@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # A computable basis of the kernel of a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Echelon.KernelBasis)
+
 `TauCeti.rowReduce` puts a list of rows into reduced row echelon form. This file reads a basis of
 the kernel off that form, as a genuine `def` on `[Field F] [DecidableEq F]` data.
 

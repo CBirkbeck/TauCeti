@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Units.Dirichlet
 /-!
 # The square classes of the unit group of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Units.ElementaryTwoQuotient)
+
 For a number field `F`, Dirichlet's unit theorem decomposes the unit group of its ring of
 integers as the product of its torsion subgroup (finite cyclic of even order, as it contains
 `-1`) and a free abelian group of rank `NumberField.Units.rank F` — the structural equivalence

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.IsCone
 /-!
 # The closed star, link, and deletion of a simplex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.LinkStar)
+
 For an abstract simplicial complex `K` and a simplex `σ`, this file builds the three local
 subcomplexes that organise `K` around `σ`:
 

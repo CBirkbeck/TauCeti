@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.DiscCoordinate
 /-!
 # Pick functions in Cayley coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Pick.Basic)
+
 A Pick function is holomorphic on the upper half-plane and has nonnegative imaginary part there.
 The Cayley coordinate `z ↦ (z - i) / (z + i)` carries the upper half-plane to the unit disc,
 and multiplication by `-i` carries nonnegative imaginary part to nonnegative real part.  The

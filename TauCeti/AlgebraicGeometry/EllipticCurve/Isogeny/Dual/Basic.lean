@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Degree
 /-!
 # Factoring multiplication through an isogeny whose kernel counts its degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Dual.Basic)
+
 The kernel form of the factorisation theorem
 `TauCeti.Isogeny.existsUnique_comp_eq_iff_ker_le` applies to `[n]` with `n = deg φ`: every point
 of `ker φ` is killed by the order of `ker φ`, which is `n`, so `[n]` factors through `φ`, uniquely.

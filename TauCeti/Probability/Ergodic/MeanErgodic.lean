@@ -13,6 +13,8 @@ import Mathlib.Analysis.InnerProductSpace.MeanErgodic
 /-!
 # Mean ergodic projection for measure-preserving maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Ergodic.MeanErgodic)
+
 This file defines the orthogonal projection from vector-valued `L²` onto the fixed space of the
 composition operator associated to a measure-preserving endomorphism. It characterizes the
 projection by membership, fixed points, its range, and the orthogonal error.

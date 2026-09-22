@@ -12,6 +12,8 @@ public import TauCeti.Topology.Sym.Basic
 /-!
 # Disjoint open embeddings into a symmetric power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Sym.Disjoint)
+
 Given open embeddings with pairwise disjoint ranges, ordered tuples mapped pointwise through those
 embeddings embed openly as unordered tuples. In particular, given pairwise disjoint open
 neighbourhoods `U i` of `n` distinct points, their product is an open subspace of `Sym α n`;

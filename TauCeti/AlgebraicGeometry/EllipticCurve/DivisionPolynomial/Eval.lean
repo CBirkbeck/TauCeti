@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval
 /-!
 # Evaluating the division polynomials at a point of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Eval)
+
 Mathlib relates the bivariate division polynomials `ψₙ`, `Ψₙ`, `φₙ` to their univariate companions
 `ΨSqₙ`, `Φₙ` only inside the coordinate ring `R[W]`, as the identities
 `Affine.CoordinateRing.mk_ψ`, `mk_Ψ_sq` and `mk_φ`. This file transports those identities to

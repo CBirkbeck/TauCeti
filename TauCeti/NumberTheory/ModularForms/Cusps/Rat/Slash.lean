@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 /-!
 # Finite sums of rational slashes at the cusps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Cusps.Rat.Slash)
+
 A slash is zero at `c` exactly when the original function is zero at `g • c`
 (`OnePoint.IsZeroAt.smul_iff`), and for a **rational** `g` the point `g • c` is again a cusp of an
 arithmetic subgroup (`IsCusp.smul_map_ratCast`). So a function vanishing, or bounded, at every

@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.Valuation.Discrete.Order
 /-!
 # The normalized valuation of a nonarchimedean local field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.NormalizedValuation)
+
 Mathlib equips a nonarchimedean local field `K` with a valuation `ValuativeRel.valuation K`
 taking values in an abstract value group `ValueGroupWithZero K`, together with an order
 isomorphism `IsNonarchimedeanLocalField.valueGroupWithZeroIsoInt` of that group with `ℤᵐ⁰`.

@@ -11,6 +11,8 @@ import Mathlib.GroupTheory.Perm.Sign
 /-!
 # Exchangeability from adjacent transpositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.AdjacentTranspositions)
+
 This file adds the finite adjacent-transposition characterization promised in
 `TauCetiRoadmap/Exchangeability/README.md`, Layer 0. For a fixed block length, invariance under
 the adjacent swaps of `Fin n` implies invariance under every permutation of `Fin n`; applying this

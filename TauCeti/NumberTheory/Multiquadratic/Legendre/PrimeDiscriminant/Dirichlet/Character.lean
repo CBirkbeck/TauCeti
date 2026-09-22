@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.DirichletCharacter.Basic
 /-!
 # Primitive Dirichlet characters of prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Dirichlet.Character)
+
 A prime discriminant `P` determines a real quadratic Dirichlet character of level `|P|`. This
 file bundles the previously unbundled function `primeDiscriminantCharFun P` as
 `primeDiscriminantChar P hP` and proves that its conductor is exactly `|P|`.

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.Kernel
 /-!
 # Normal scheme-theoretic images
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Image)
+
 Let `f : H →ₐc[k] K` be a morphism of commutative Hopf algebras over a commutative ring,
 representing a homomorphism from `Spec K` to `Spec H`. Its scheme-theoretic image has coordinate
 algebra `H / ker f`. This file proves that the image is normal when ambient conjugation admits an

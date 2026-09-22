@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 /-!
 # The generalized winding number (Hungerbühler–Wasem Def 2.1)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Basic)
+
 For a curve `γ : ℝ → ℂ` on `[a, b]` and a point `z₀`, the **generalized winding number**
 `windingNumber γ a b z₀` is the principal-value normalization of the index integral
 `(2πi)⁻¹ · PV ∮_γ dz/(z − z₀)` (Hungerbühler–Wasem Def 2.1); see

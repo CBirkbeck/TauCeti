@@ -12,6 +12,8 @@ import Mathlib.RepresentationTheory.Invariants
 /-!
 # Eigenvectors modulo a unipotent normal subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Unipotent.DerivedEigenvector)
+
 Let `N` be a normal subgroup containing the commutator subgroup of `G`, and let `G` act on a
 nonzero finite-dimensional vector space over an algebraically closed field. If every element of
 `N` acts unipotently, then the representation has a common eigenvector.

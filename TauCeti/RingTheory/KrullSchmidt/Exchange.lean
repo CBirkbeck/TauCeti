@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Indecomposable
 /-!
 # Azumaya's exchange lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullSchmidt.Exchange)
+
 This file proves the step that drives the uniqueness half of the Krull-Schmidt theorem. Suppose a
 module `M` is the internal direct sum of a finite family `Q` of indecomposable submodules, and
 suppose `N` is an indecomposable direct summand of `M`. Then `N` is isomorphic to one of the

@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.E7.Minuscule.PointsFunctor
 /-!
 # The standard representation of the type-E7 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.StandardComodule)
+
 The full-weight type-`E₇` minuscule carrier is a closed subgroup of `GL₅₆`.  After base
 change to a commutative ring `R`, its standard representation is therefore the corestriction of
 the standard `O(GL₅₆)`-comodule along the quotient coordinate morphism.

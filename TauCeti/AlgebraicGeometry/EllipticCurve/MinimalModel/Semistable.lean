@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.LocalizationAtPrime
 /-!
 # Semistable elliptic curves over a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.Semistable)
+
 Let `O` be a Dedekind domain with fraction field `K`. An elliptic curve over `K` is
 **semistable over `O`** when its reduction at every height-one prime is either good or
 multiplicative, equivalently never additive. Reduction is a property of a minimal equation, so

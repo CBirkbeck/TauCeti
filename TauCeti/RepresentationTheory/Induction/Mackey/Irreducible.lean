@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.Intertwining
 /-!
 # The Mackey irreducibility criterion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Irreducible)
+
 Let `H` be a subgroup of a finite group `G` and let `A` be a finite-dimensional representation of
 `H` over an algebraically closed field of characteristic zero.  The intertwining-number formula
 `TauCeti.finrank_hom_indFDRep_mackey_erase` reads

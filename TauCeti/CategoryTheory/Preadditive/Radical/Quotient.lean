@@ -16,6 +16,8 @@ import Mathlib.LinearAlgebra.Dimension.Constructions
 /-!
 # The space of irreducible morphisms of a linear category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.Radical.Quotient)
+
 Between two objects `X` and `Y` of a `k`-linear category with binary biproducts and local
 endomorphism rings, the morphisms lying in the radical but not in its square are exactly the
 irreducible ones

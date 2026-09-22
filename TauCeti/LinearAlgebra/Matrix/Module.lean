@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.Module
 /-!
 # Vanishing of a family fixed by a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Module)
+
 A family `y : n → P` in a module over a ring `A` satisfying `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` is exactly a
 fixed point of the `Matrix n n A`-action on `n → P`, so it is killed by `1 - B`. If `1 - B` is
 a unit, `y` vanishes.

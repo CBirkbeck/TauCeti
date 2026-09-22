@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # Traces of coordinate-reindexing maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Trace.Pi)
+
 This file computes the trace of an endomorphism of a finite product that selects an input
 coordinate for each output coordinate and applies a linear endomorphism there. Only fixed
 coordinates contribute to the trace.

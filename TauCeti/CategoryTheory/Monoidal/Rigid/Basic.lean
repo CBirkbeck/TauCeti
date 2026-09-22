@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Monoidal.Rigid.Basic
 /-!
 # Exact pairings in rigid monoidal categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.Rigid.Basic)
+
 This file records evaluation and coevaluation formulas for transported exact pairings and for the
 adjunction associated to an exact pairing.
 

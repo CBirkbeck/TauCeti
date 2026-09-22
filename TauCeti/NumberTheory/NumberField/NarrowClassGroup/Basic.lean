@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.ClassGroup.Basic
 /-!
 # The narrow class group of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.NarrowClassGroup.Basic)
+
 The **narrow class group** `Cl⁺(K)` of a number field `K` is the group of invertible fractional
 ideals of `𝓞 K` modulo the principal ones admitting a **totally positive** generator. It refines the
 ordinary class group `Cl(K)`, which quotients by *all* principal ideals: forgetting the positivity

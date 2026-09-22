@@ -12,6 +12,8 @@ import TauCeti.Algebra.Lie.Submodule.Finrank
 /-!
 # Lie dimensions of kernels of formally smooth group morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.FormallySmooth)
+
 For a formally smooth affine group morphism `G → H` with finite-dimensional tangent space
 at the identity of `G`, the dimensions satisfy `dim Lie(ker f) + dim Lie(H) = dim Lie(G)`.
 The groups themselves need not be smooth. Formal smoothness gives the surjectivity of the

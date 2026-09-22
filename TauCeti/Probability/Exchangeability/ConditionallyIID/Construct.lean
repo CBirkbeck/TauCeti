@@ -19,6 +19,8 @@ import TauCeti.MeasureTheory.Measure.GiryMonad
 /-!
 # The canonical conditionally i.i.d. process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Construct)
+
 Every measurable family of probability measures is *realized* as a directing measure. Given a
 probability measure `π` on a parameter space `T` and a measurable family
 `P : T → ProbabilityMeasure α`, the law

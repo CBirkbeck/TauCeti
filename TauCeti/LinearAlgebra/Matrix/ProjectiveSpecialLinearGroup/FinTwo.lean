@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 /-!
 # Parabolic elements of `PSL(2, R)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup.FinTwo)
+
 Mathlib classifies `2 × 2` matrices as parabolic, elliptic or hyperbolic
 (`Matrix.IsParabolic`, with the dot-notation synonym `Matrix.GeneralLinearGroup.IsParabolic`).
 Being parabolic is invariant under negation (`Matrix.isParabolic_neg_iff`), so over a ring without

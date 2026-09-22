@@ -10,6 +10,8 @@ public import Mathlib.Algebra.BigOperators.Finprod
 /-!
 # Products over a disjoint union of index types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finprod)
+
 `Fintype.prod_sum_type` splits a product over `α ⊕ β` into the two partial products, but it needs
 both index types to be finite.  This file records the `finprod` analogue, which only needs the two
 restricted families to have finite multiplicative support.

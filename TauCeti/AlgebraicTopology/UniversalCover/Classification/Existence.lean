@@ -14,6 +14,8 @@ import TauCeti.Topology.IsLocalHomeomorph
 /-!
 # The covering associated to a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Existence)
+
 For a subgroup `H ≤ π₁(X, x₀)`, `UniversalCover.SubgroupQuotient x₀ H` is already defined as
 the orbit quotient of the universal cover by `H`, and `UniversalCover.subgroupQuotientProj`
 is its descended endpoint projection. This file proves that the descended projection is a

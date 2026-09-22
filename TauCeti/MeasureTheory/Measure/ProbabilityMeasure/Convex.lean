@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Convex combinations of probability measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ProbabilityMeasure.Convex)
+
 `ProbabilityMeasure α` carries no addition and no scalar action: it is a subtype of `Measure α`,
 and neither `P + Q` nor `c • P` is a probability measure. What it does carry is a convex structure,
 and this file names it. For weights `a + b = 1`, `a • P + b • Q` is again a probability measure, and
@@ -72,7 +74,10 @@ namespace ProbabilityMeasure
 variable {α : Type*} [MeasurableSpace α]
 
 /-- The **convex combination** `a • P + b • Q` of two probability measures, for weights summing
-to `1`, bundled as a `ProbabilityMeasure`. Its underlying measure is `toMeasure_convexComb`. -/
+to `1`, bundled as a `ProbabilityMeasure`. Its underlying measure is `toMeasure_convexComb`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=MeasureTheory.ProbabilityMeasure.convexComb) -/
 def convexComb {a b : ℝ≥0∞} (hab : a + b = 1) (P Q : ProbabilityMeasure α) :
     ProbabilityMeasure α :=
   ⟨a • (P : Measure α) + b • (Q : Measure α),

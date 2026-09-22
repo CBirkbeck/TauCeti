@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Induced
 /-!
 # General facts about induced representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Basic)
+
 Mathlib's `Rep.ind φ` induces a representation along an arbitrary homomorphism of groups
 `φ : G →* H`, and `Rep.indMap φ` induces an intertwiner along it. This file collects the
 general properties of that construction that Mathlib does not record and that the rest of

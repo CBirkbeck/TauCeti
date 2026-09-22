@@ -16,6 +16,8 @@ public import TauCeti.AlgebraicGeometry.RationalPoint.Basic
 /-!
 # Abelian varieties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.Basic)
+
 This file opens the Jacobian roadmap's Layer E by defining an **abelian variety** over a field
 `K`.
 

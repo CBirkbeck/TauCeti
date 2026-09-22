@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.LowDegree
 /-!
 # The explicit continuous complex of a discrete group is Mathlib's inhomogeneous complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.GroupCohomologyIso)
+
 For a group `G` carrying the *discrete* topology every continuity condition in the explicit
 low-degree complex of continuous cochains is vacuous, so that complex is literally Mathlib's
 complex of inhomogeneous cochains of the representation `Rep.ofDistribMulAction ℤ G M`. This file

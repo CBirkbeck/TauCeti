@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Diagonal.Basic
 /-!
 # A Laurent-polynomial path in the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalPath)
+
 Specializing the generic Laurent unit in the two-coordinate unit diagonal family recovers
 Mathlib's `Matrix.SpecialLinearGroup.diag2n` matrix. This supplies the diagonal one-parameter
 family used to prove connectedness of `SLₙ`.

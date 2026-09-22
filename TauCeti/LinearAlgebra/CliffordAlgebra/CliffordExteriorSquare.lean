@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.Subalgebra
 /-!
 # The exterior-square model of quadratic Clifford elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.CliffordExteriorSquare)
+
 The half-normalized Clifford bivector map identifies the second exterior power with the canonical
 Lie subalgebra of quadratic elements in the Clifford algebra. Transporting its Lie structure
 equips the exterior square with the corresponding commutator bracket.

@@ -13,6 +13,8 @@ import Mathlib.Algebra.GroupWithZero.Idempotent
 /-!
 # Zero-one criteria and almost surely constant maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ZeroOne)
+
 A set under a finite measure has mass `0` or `1` if it admits arbitrarily close pairs of
 approximants whose intersection mass factors. No measurability of these sets is required.
 This is the approximation step of the Hewitt–Savage zero-one law and of dissociated-array

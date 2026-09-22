@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Order
 /-!
 # Lagrange's theorem for profinite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Lagrange)
+
 For a closed subgroup `H` of a profinite group `G`, the supernatural order of `G` is the
 product of the supernatural order of `H` and its supernatural index in `G`. The order of `H`
 is represented by its finite images in the quotients of `G`, and finite Lagrange formulas in

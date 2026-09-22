@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.OfAssociative
 /-!
 # Finite associative targets for Lie representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Lie.FiniteTarget)
+
 An injective Lie map from `L` to a finite-dimensional associative algebra `A` gives a faithful
 finite-dimensional representation: let `L` act on `A` by left multiplication. Conversely, a
 faithful finite-dimensional representation extends uniquely to an algebra homomorphism from the

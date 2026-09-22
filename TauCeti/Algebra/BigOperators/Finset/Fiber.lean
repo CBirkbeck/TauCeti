@@ -12,6 +12,8 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 /-!
 # Regrouping a finite sum by the fibres of a map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finset.Fiber)
+
 A sum over a finite type can be taken fibrewise along any map out of it: sum over the values the
 map actually takes, and within each value over the indices sent there.
 

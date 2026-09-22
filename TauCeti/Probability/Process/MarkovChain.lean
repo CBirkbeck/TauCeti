@@ -11,6 +11,8 @@ public import TauCeti.Probability.Kernel.Composition.MeasureCompProd
 /-!
 # The path law of a homogeneous Markov chain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Process.MarkovChain)
+
 Given an initial law `ν` on a state space `α` and a transition kernel `κ : Kernel α α`, this file
 builds the law `markovChainLaw ν κ` of the associated homogeneous Markov chain as a measure on path
 space `ℕ → α`, and computes its finite-dimensional laws.

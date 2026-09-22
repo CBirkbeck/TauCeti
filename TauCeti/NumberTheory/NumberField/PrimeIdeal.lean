@@ -14,6 +14,8 @@ import Mathlib.RingTheory.RamificationInertia.Basic
 /-!
 # Prime ideals of rings of integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.PrimeIdeal)
+
 This file records general utilities for choosing prime ideals of a number field above rational
 primes and packaging them as non-zero-divisors so that their classes can be taken with
 `ClassGroup.mk0`.

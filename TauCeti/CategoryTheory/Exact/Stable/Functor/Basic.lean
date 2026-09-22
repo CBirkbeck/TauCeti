@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Equivalence
 /-!
 # Functors between projective stable categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Functor.Basic)
+
 An additive functor between exact categories is **stable conflation-exact** when it preserves
 conflations and projective-injective objects. Between Frobenius exact categories, such a functor
 carries every morphism factoring through a projective to one factoring through a projective.

@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Multiplication
 /-!
 # The Frobenius trace of a skew-zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Trace)
+
 The skew-zigzag relation quotient of a finite simple graph without isolated vertices is a
 Frobenius algebra. After choosing one incident edge `t i` at every vertex, this file defines the
 trace to be one on the corresponding volume classes and zero on vertex idempotents and arrows.

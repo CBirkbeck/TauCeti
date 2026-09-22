@@ -15,6 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Elementary identities for binomial coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.Choose)
+
 This file records arithmetic identities involving natural-number binomial coefficients.
 
 Besides two identities for the second binomial coefficient, it develops Vandermonde's convolution

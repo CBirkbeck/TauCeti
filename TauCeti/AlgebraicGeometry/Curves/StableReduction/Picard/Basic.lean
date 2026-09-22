@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Bas
 /-!
 # The Picard group of a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Basic)
+
 Let `T` be a numerical type, with components `i`, multiplicities `mᵢ`, weights `wᵢ` and
 intersection matrix `A = (aᵢⱼ)`. A *multidegree* of `T` is a tuple `d : T.Component → ℤ`, and the
 Picard group of `T` is the cokernel of

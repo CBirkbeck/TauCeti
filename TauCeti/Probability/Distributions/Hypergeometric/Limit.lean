@@ -12,6 +12,8 @@ import TauCeti.Analysis.SpecialFunctions.Choose
 /-!
 # The binomial limit of hypergeometric probabilities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Hypergeometric.Limit)
+
 Fix a sample size `n`. Suppose a population of size `N` contains `K N` marked elements and the
 marked proportion `K N / N` converges to `p`. Then, for every fixed `k`, the probability that a
 sample without replacement contains `k` marked elements converges to the corresponding binomial

@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Matrix.BilinearForm
 /-!
 # The type-D matrix model of a polarization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.Basic)
+
 An even polarization identifies a quadratic space with the split space on two copies of the
 isotropic basis. This file compares that basis with Mathlib's matrix model of the type-`D` Lie
 algebra and then with the quadratic elements of the Clifford algebra.

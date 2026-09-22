@@ -14,6 +14,8 @@ import TauCeti.Analysis.InnerProductSpace.HilbertBasis.Map
 /-!
 # From an orthogonality relation to a Hilbert basis of a weighted measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.WeightedOrthogonalBasis)
+
 Given a family of real-valued functions `f : ℕ → α → ℝ`, an almost-everywhere-positive weight
 `w : α → ℝ`, and positive normalization constants `c : ℕ → ℝ` satisfying the orthogonality
 relation

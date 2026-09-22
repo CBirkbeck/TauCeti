@@ -15,6 +15,8 @@ import Mathlib.Algebra.Polynomial.BigOperators
 /-!
 # Squarefree polynomials with prescribed factorization patterns over finite fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.FactorizationPattern)
+
 This file constructs two squarefree factorization patterns over finite fields that are used to
 exhibit a large symmetric Galois group by reduction modulo primes:
 

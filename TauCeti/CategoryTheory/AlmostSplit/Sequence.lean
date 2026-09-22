@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.AlmostSplit.Basic
 /-!
 # Almost-split (Auslander-Reiten) sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.AlmostSplit.Sequence)
+
 An **almost-split sequence**, or **Auslander-Reiten sequence**, is a short exact sequence
 `0 ⟶ A ⟶ B ⟶ C ⟶ 0` whose first map is left almost split and whose second map is right almost
 split.  It is the basic object of Auslander-Reiten theory: `B ⟶ C` absorbs every map into `C` that

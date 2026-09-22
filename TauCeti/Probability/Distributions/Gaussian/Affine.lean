@@ -13,6 +13,8 @@ import Mathlib.Probability.Distributions.Gaussian.Fernique
 /-!
 # Affine images of multivariate Gaussian measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Affine)
+
 This file proves that a multivariate Gaussian measure is carried by a rectangular affine map to
 the multivariate Gaussian with the transformed mean and covariance.  Rectangular matrices are
 allowed, so the result applies both to embeddings and to possibly singular projections.

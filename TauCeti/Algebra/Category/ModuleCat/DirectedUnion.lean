@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Submodule.DirectedUnion
 /-!
 # Directed unions as colimits of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.DirectedUnion)
+
 A monotone family of submodules over a directed preorder defines a diagram in `ModuleCat`, with
 the submodule inclusions as transition maps. If its supremum is a submodule `T`, the inclusions
 into `T` exhibit `ModuleCat.of R T` as the colimit of this diagram.

@@ -18,6 +18,8 @@ import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Kolchin
 /-!
 # Embedding unipotent affine groups in upper-unitriangular groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Embedding)
+
 Let `H` be a reduced finite-type commutative Hopf algebra over an algebraically closed field `k`.
 If every `k`-valued point of `H` is unipotent, Kolchin's common fixed vector theorem gives a
 nonzero fixed vector in every nonzero finite-dimensional `H`-comodule. Point separation promotes

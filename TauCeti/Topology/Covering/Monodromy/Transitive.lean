@@ -10,6 +10,8 @@ public import TauCeti.Topology.Covering.Monodromy.Connected
 /-!
 # Monodromy of connected covers over a path-connected base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Monodromy.Transitive)
+
 Over a path-connected base the fibres of a connected covering space are nonempty, so its
 monodromy action is *transitive* on each fibre and not merely pretransitive. This file records
 that strengthening and lifts the monodromy functor of connected covers to the full subcategory

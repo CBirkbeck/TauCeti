@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.TautologicalPoint
 /-!
 # The kernel of an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Kernel)
+
 An isogeny is a map of function fields, so it has no point map to take a fibre of. Its kernel is
 read off the translation action instead: a point `P` of `W₁` lies in the kernel exactly when
 translating by `P` moves no function pulled back from `W₂`. On the points where the two notions

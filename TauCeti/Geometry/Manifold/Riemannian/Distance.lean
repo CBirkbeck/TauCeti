@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.Riemannian.Basic
 /-!
 # Finiteness of the Riemannian distance, and the induced metric space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Distance)
+
 `Manifold.riemannianEDist I x y` is the infimum of the lengths of `C¹` paths from `x` to `y`, an
 *extended* distance: it is `∞` as soon as no such path exists. This file identifies exactly when it
 is finite, and uses that to promote the extended metric space structure

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.SymmetricAlgebra.Homogeneous
 /-!
 # Homogeneous symmetric polynomials in a basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.BasisComparison)
+
 A basis identifies a symmetric algebra with a multivariate polynomial ring. This file records that
 the equivalence carries each homogeneous submodule of the symmetric algebra to the corresponding
 total-degree submodule of the polynomial ring.

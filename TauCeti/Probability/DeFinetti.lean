@@ -24,6 +24,8 @@ public import TauCeti.Probability.DeFinetti.Coding
 /-!
 # De Finetti's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti)
+
 The completed representation API: the summit theorems, their equivalence forms, the unique mixture
 representation, both uniqueness statements, the countable-index extension, and the correspondence
 between mixing laws and exchangeable path laws.

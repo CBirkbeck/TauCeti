@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.NumberField.ResidueDegree
 /-!
 # The primes of residue degree above one are negligible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.ResidueDegree)
+
 A height-one prime `𝔭` of `𝓞 K` lies over a unique rational prime `p`, and its absolute norm is
 `p ^ f` for `f` the residue degree `Ideal.inertiaDeg 𝔭.asIdeal ℤ`.  This file bounds the
 contribution of the primes with `f ≥ 2`, the set `TauCeti.higherDegreePrimes K`: they number

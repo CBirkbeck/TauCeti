@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.GaloisGroups.Degree
 /-!
 # Polynomials with full symmetric Galois group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Symmetric.Basic)
+
 `Polynomial.HasFullSymmetricGaloisGroup f` requires separability and surjectivity of
 the Galois action on the roots in the splitting field. Separability ensures that this is the
 symmetric group on `f.natDegree` points, rather than on a smaller set of distinct roots.

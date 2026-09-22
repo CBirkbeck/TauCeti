@@ -14,6 +14,8 @@ public import TauCeti.InformationTheory.Coding.MinimumDistance.Basic
 /-!
 # Weight distributions and weight enumerators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Weight.Enumerator)
+
 For a set of words `C` on a finite coordinate type `ι` of size `n`, the *weight distribution*
 `A_w(C)` counts the words of Hamming weight `w`, and the *homogeneous weight enumerator* is
 

@@ -14,6 +14,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
 /-!
 # The kernel of `[n]` has `n ²` points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.KernelCard)
+
 `Isogeny.ker` counts only the base field's points, so its order equals the degree exactly when the
 geometric kernel is **rational** and the isogeny is **separable**: an inseparable isogeny has
 strictly fewer geometric kernel points than its degree even over an algebraically closed field.

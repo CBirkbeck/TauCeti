@@ -13,6 +13,8 @@ public import TauCeti.Combinatorics.SimpleGraph.Measurable
 /-!
 # The padded vertex exposure of a sampled graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Exposure)
+
 The finite sampling law `sampleGraph W n` is defined by its masses, so it does not present the
 sampled graph as a function of independent coordinates. A bounded-differences inequality needs
 exactly such a presentation: a product of independent coordinates, together with a bound on how

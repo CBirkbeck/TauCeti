@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Induction.DoubleCosetPairing
 /-!
 # The Steinberg representation of `GL₂(𝔽_q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.Steinberg)
+
 The Borel subgroup `B` of `GL₂(𝔽_q)` has index `q + 1`, and `GL₂` permutes the cosets `GL₂ ⧸ B`
 — the points of the projective line. The resulting permutation representation `ℂ[GL₂ ⧸ B]` has the
 same character as the principal series `Ind_B^{GL₂}(1 ⊗ 1)` of

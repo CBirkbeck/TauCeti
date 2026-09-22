@@ -12,6 +12,8 @@ import Mathlib.Data.List.FinRange
 /-!
 # Tuples mapped into pairwise disjoint ranges
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Sym.Disjoint)
+
 An ordered tuple mapped pointwise into pairwise disjoint ranges is determined by the unordered
 tuple it presents. This file proves that injectivity statement and characterizes the range by
 counting how many points lie in each component range. The corresponding topological open embedding

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Smooth.Dimension
 /-!
 # Maximal-dimensional families of closed subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Product.Maximal)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field, and let
 `P` be a family of smooth connected closed subgroups. Suppose a normal member `I` of `P` has
 maximal Lie dimension and the scheme-theoretic product of `I` with each member of `P` remains in

@@ -28,6 +28,8 @@ import TauCeti.RingTheory.Semisimple.DoubleCentralizer
 /-!
 # Subfields of a central simple algebra, and the ones that split it
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Subfield)
+
 Let `A` be a finite-dimensional central simple algebra over a field `K`. A **subfield** of `A` is a
 field `L` together with a `K`-algebra homomorphism `f : L →ₐ[K] A`; no injectivity hypothesis is
 needed, because a ring homomorphism out of a field into a nontrivial ring is automatically

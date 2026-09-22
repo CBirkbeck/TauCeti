@@ -11,6 +11,8 @@ public import Mathlib.Order.Partition.Finpartition
 /-!
 # Finite partition helpers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Order.Partition.Finpartition)
+
 This file contains general-purpose constructions and facts about finite partitions: the partition
 of the top element into an element and its complement, the associated indexed partition,
 cardinality bounds for common refinements, and the behavior of intersections of parts under

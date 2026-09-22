@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Complex.Harmonic.MeanValue
 /-!
 # Harnack's inequality on a planar disk
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.Harnack.Planar)
+
 This file proves the Harnack inequality for real-valued harmonic functions on a disk in the
 complex plane.  Mathlib's Poisson integral formula writes the value at an interior point as a
 circle average weighted by the Poisson kernel; its sharp upper and lower bounds give the

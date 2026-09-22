@@ -14,6 +14,8 @@ public import TauCeti.Probability.Distributions.PDFInstances
 /-!
 # The density of the Dirichlet distribution in a simplex chart
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirichlet.Density)
+
 The Dirichlet law is carried by the standard simplex, which lies inside the affine hyperplane
 `∑ i, x i = 1` of `EuclideanSpace ℝ ι`, so it has no density against the ambient volume.  This
 file gives its density in the chart that drops one coordinate: after choosing `i₀ : ι`, a point of

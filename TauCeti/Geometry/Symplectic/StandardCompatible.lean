@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Symplectic.AlmostComplex
 /-!
 # The standard compatible triple on `V × V`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.StandardCompatible)
+
 For a real inner product space `V`, the doubled space `V × V` carries a canonical compatible
 triple `(ω, J, g)`: the standard symplectic form `ω₀`, the product almost complex structure
 `J(x, y) = (-y, x)` from `TauCeti.AlmostComplexStructure.product`, and the componentwise inner

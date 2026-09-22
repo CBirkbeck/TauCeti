@@ -14,6 +14,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # `sl₂` commutation relations in an associative algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Associative)
+
 Let `A` be an associative ring and let `H`, `E`, `F` be elements of `A` satisfying the `sl₂`
 relations for the ring commutator,
 

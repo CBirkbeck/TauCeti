@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Genus
 /-!
 # The index of specialty is the dimension of a repartition cokernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Repartition.IndexOfSpecialty)
+
 For a divisor `D` of an algebraic function field `F / k` with exact constant field, the index of
 specialty `i(D) = ℓ(D) - deg D - 1 + g` counts exactly how far the repartitions bounded by `D`
 together with the constants fall short of all repartitions:

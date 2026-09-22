@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Basis.Bilinear
 /-!
 # Common eigenrows of the class-multiplication matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.Eigenrow)
+
 For a finite group `G` the class sums `K_C` are a `k`-basis of the centre `Z(k[G])`
 (`TauCeti.classSumBasis`), and the class-multiplication matrices `Mᵢ`
 (`TauCeti.classMultMatrix`) record multiplication by `K_{Cᵢ}` in that basis. This file identifies

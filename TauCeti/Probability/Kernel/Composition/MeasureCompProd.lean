@@ -10,6 +10,8 @@ public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
 /-!
 # Pushing the base of a composition-product along a map the kernel factors through
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Kernel.Composition.MeasureCompProd)
+
 Mathlib's `MeasureTheory.Measure.compProd` records how `μ ⊗ₘ κ` reacts to operations on the
 kernel, but not what happens when the *base* measure is pushed forward. In general nothing does:
 `(μ ⊗ₘ κ).map (Prod.map f id)` cannot be read off `μ.map f`, because `κ` still sees the finer

@@ -18,6 +18,8 @@ import TauCeti.Probability.Exchangeability.FiniteMarginals
 /-!
 # Contractability API
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Contractability)
+
 This file records basic lemmas for `Contractable` processes. The definitions live in
 `TauCeti.Probability.Exchangeability.Basic`; this file is the Layer 0 home for
 contractability-specific API.

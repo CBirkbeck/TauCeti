@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.RootString.G2.Basic
 /-!
 # The type-G₂ commutator relation for Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Commutator.G2.Basic)
+
 This file transports the integral type-`G₂` exponential identity to the Kostant root subgroups
 attached to an admissible lattice. Suppose six distinguished root vectors follow the positive
 root string

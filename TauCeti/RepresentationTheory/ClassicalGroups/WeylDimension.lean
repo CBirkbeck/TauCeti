@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.DominantWeight
 /-!
 # The Weyl dimension formula for `GL n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.WeylDimension)
+
 The irreducible rational representation of `GL n` with dominant weight `λ₁ ≥ ⋯ ≥ λₙ` has dimension
 
 `∏_{i < j} (λᵢ - λⱼ + j - i) / (j - i)`,

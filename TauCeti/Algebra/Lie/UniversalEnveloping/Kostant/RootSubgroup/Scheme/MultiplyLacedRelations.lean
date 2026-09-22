@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Multiply-laced Chevalley relations for Kostant root-subgroup scheme morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.MultiplyLacedRelations)
+
 This file transports a conditional multiply-laced Chevalley commutator relation to scheme-valued
 points of the represented root-subgroup morphisms `xᵢ : 𝔾ₐ → GLₙ`. Under the stated bracket and
 nilpotence hypotheses for the chain `β`, `α + β`, `2α + β`, the relation is

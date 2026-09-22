@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance
 /-!
 # The twisted slash sum extended over the Hecke ring, on the character space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.CharRing)
+
 `Nebentypus/Invariance.lean` shows the twisted slash sum preserves `functionCharSpace` and
 restricts each double coset to `twistedHeckeSlashSumCharEnd`. This file takes the `ℤ`-linear
 extension of that assignment over the Hecke ring, exactly as `Nebentypus/Ring.lean` does for the

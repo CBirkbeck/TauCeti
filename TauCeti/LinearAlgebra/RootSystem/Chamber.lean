@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Group
 /-!
 # The dominant chamber of a base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Chamber)
+
 Over a linearly ordered coefficient ring the simple coroots of a base cut the weight space into
 sign-pattern cones, the Weyl chambers. This file introduces the dominant one, both closed and
 open, and proves that it meets every Weyl orbit: every weight can be moved into the closed

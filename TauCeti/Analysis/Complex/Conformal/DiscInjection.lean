@@ -13,6 +13,8 @@ import Mathlib.Analysis.Convex.Contractible
 /-!
 # A simply connected proper domain injects holomorphically into the unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.DiscInjection)
+
 The first step of the Riemann mapping theorem: the competing family is nonempty. Every nonempty,
 simply connected, open, *proper* subset of `ℂ` admits an injective holomorphic map into the open
 unit disc.

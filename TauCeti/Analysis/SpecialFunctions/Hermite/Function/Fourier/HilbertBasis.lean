@@ -14,6 +14,8 @@ import TauCeti.Probability.Distributions.Gaussian.PolynomialMemLp
 /-!
 # The Hermite functions diagonalize the Fourier transform of `L²(ℝ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Fourier.HilbertBasis)
+
 `TauCeti.fourier_twoPiHermiteFunction` computes the Fourier *integral* of the rescaled Hermite
 function `Φₙ(x) = √(√(2π)) ψₙ(√(2π)x)`, the family adapted to Mathlib's `e^{-2πixξ}` convention:
 `𝓕 Φₙ = (-i)ⁿ Φₙ`. That is a statement about one function at a time. This file turns it into a

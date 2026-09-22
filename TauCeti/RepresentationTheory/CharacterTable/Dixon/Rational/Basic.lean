@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Centra
 /-!
 # Rational lifting of modular central-character rows
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Basic)
+
 This file contains the group-independent bookkeeping for the last step of the rational instances of
 the Dixon--Schneider character-table computation: recovering a displayed integral matrix entrywise
 with `ZMod.valMinAbs`, once the modular search is known to return exactly the reductions of its

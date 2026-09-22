@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Basic
 /-!
 # Squared lengths of the pinned `F₄` roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Length)
+
 `TauCeti.DynkinType.f4SimplyConnectedRootDatum` tabulates its forty-eight roots in the
 fundamental-weight basis and its forty-eight coroots in the simple-coroot basis. Neither table
 displays how long a root is, and a consumer that has to distinguish long roots from short ones

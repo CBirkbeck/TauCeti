@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Bialgebra.MonoidAlgebra.GroupLike
 /-!
 # Scalar extension of characters of a split bialgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.GroupLike.BaseChange)
+
 Scalar extension sends a group-like element `g` to `1 ⊗ g`. If a commutative bialgebra over
 a domain is torsion-free and spanned by its group-like elements, this map is an equivalence
 for every scalar extension with connected prime spectrum. In particular, extending the

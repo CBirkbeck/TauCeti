@@ -18,6 +18,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Comparing the arithmetic and topological genera of a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.GenusComparison)
+
 For a component `i` of a numerical type, put
 
 `qᵢ = mᵢwᵢ` and `rᵢ = ∑_{j ≠ i} aᵢⱼ / wᵢ`.

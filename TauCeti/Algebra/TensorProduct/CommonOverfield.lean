@@ -17,6 +17,8 @@ import Mathlib.RingTheory.TensorProduct.Nontrivial
 /-!
 # A common overfield of two field extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.TensorProduct.CommonOverfield)
+
 Two extensions `K / k` and `L / k` embed into a common overfield: take a residue field of a
 maximal ideal of `K ⊗[k] L`. This file records that construction together with the comparison
 between successive and direct scalar extension, and the injective map induced by either field

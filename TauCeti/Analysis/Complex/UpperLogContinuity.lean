@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 /-!
 # Continuity of `arg` and `log` on the closed upper half-plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperLogContinuity)
+
 The principal argument and logarithm are continuous on the punctured closed upper
 half-plane `{z | 0 ≤ im z ∧ z ≠ 0}`. This strengthens Mathlib's continuity on the open
 slit plane: the negative real axis is allowed because the approach is confined to

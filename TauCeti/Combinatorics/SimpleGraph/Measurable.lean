@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.SimpleGraph.Maps
 /-!
 # Measurability of individual simple graphs and of relabelling
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.Measurable)
+
 Mathlib equips `SimpleGraph V` with the sigma-algebra induced by all adjacency coordinates. When
 `V` is countable, an individual graph is measurable because its edge set is a measurable point in
 the countable product space. This supplies the discrete integration API for finite random graphs.

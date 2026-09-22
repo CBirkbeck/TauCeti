@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Function.Lp.BallAverage
 /-!
 # Global Hölder functions in `Lᵖ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Holder.Lp)
+
 This file proves that a globally Hölder function with finite `Lᵖ` norm is bounded and bundles it
 as an element of the global Hölder Banach space. The pointwise estimate compares the function with
 its average on a unit ball: Hölder continuity controls the difference from the average, while

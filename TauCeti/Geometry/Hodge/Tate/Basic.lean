@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Dimension.Finite
 /-!
 # Tate Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Tate.Basic)
+
 The Tate structure `ℤ(m)` is the rank-one pure Hodge structure of weight `-2m` and type
 `(-m,-m)`. Its complexification is `ℂ`, with the integral lattice embedded by the usual map
 `ℤ → ℂ`; its decreasing filtration is the whole line through degree `-m` and zero above it.

@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.GeneralLinearGroup.Basic
 /-!
 # Root subgroups from Kostant-stable integral modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Basic)
+
 Let `U_ℤ = kostantForm e h` be a Kostant integral form acting on a rational vector space `V`,
 and let `M ≤ V` be an additive subgroup preserved by `U_ℤ`. If a designated root vector `eᵢ`
 acts nilpotently, its integral divided powers define, over every commutative ring `A`, an

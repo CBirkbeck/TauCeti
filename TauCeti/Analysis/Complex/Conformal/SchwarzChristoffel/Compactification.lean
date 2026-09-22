@@ -14,6 +14,8 @@ import TauCeti.Algebra.BigOperators.Finset.Fiber
 /-!
 # The compactified Schwarz--Christoffel boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Compactification)
+
 When the total Schwarz--Christoffel exponent is less than `-1`, the two ends of the real boundary
 have the same finite image.  This file therefore joins the ordinary boundary map on `ℝ` with its
 value at infinity to give a map on the real projective line `OnePoint ℝ`.

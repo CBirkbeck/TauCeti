@@ -15,6 +15,8 @@ public import Mathlib.Tactic.Group
 /-!
 # Permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Basic)
+
 A *permutation triple* of degree `n` is a triple `(σ0, σ1, σinf)` of permutations of `Fin n`
 subject to `σinf * σ1 * σ0 = 1`. Such triples are the combinatorial shadow of a covering of the
 sphere branched over three points: `σ0`, `σ1` and `σinf` are the monodromy permutations of the
@@ -70,7 +72,10 @@ public section
 namespace TauCeti
 
 /-- A permutation triple of degree `n`: three permutations of the `n` sheets, one for each of the
-three branch points, whose product in the order `σinf * σ1 * σ0` is the identity. -/
+three branch points, whose product in the order `σinf * σ1 * σ0` is the identity.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PermutationTriple) -/
 structure PermutationTriple (n : ℕ) where
   /-- The monodromy around the first branch point. -/
   σ0 : Perm (Fin n)
@@ -101,7 +106,10 @@ def component (t : PermutationTriple n) : Fin 3 → Perm (Fin n) :=
 
 @[simp] theorem component_two (t : PermutationTriple n) : t.component 2 = t.σinf := (rfl)
 
-/-- The triple with prescribed first two components, the third being forced. -/
+/-- The triple with prescribed first two components, the third being forced.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PermutationTriple.ofTwo) -/
 def ofTwo (σ0 σ1 : Perm (Fin n)) : PermutationTriple n where
   σ0 := σ0
   σ1 := σ1

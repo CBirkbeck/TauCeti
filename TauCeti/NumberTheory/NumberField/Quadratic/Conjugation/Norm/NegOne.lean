@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Norm.Basic
 /-!
 # Units of norm `-1` and total positivity in a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Norm.NegOne)
+
 Let `K = ℚ(√d)` be a quadratic number field, presented by `θ : 𝓞 K` with `minpoly ℤ θ = X² - d`
 and `Algebra.adjoin ℚ {θ} = ⊤`. This file records how a unit of norm `-1` interacts with total
 positivity.

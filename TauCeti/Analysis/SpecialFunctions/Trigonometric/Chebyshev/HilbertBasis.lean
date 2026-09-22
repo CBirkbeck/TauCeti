@@ -12,6 +12,8 @@ public import TauCeti.Probability.Moments.VanishingMoments
 /-!
 # The Chebyshev `T` polynomials as a Hilbert basis of `L²(measureT)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.HilbertBasis)
+
 Roadmap **Part C**: the normalized Chebyshev `T` modes `Tₙ/√‖Tₙ‖²` are a Hilbert basis of
 `L²([-1,1]; measureT)`, where `measureT` is Mathlib's Chebyshev orthogonality measure (weight
 `(1-x²)^{-1/2}`).

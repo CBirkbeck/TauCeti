@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.PiecewisePath
 /-!
 # The piecewise smooth description of the Riemannian distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.EDistComparison)
+
 do Carmo defines the distance between two points of a Riemannian manifold as the infimum of the
 lengths of the *piecewise* `C¹` paths joining them, whereas Mathlib's `Manifold.riemannianEDist`
 is the infimum over `C¹` paths only. This file proves that the two infima agree.

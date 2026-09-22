@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Chain
 /-!
 # Affine type D̃ₘ for m ≥ 5 is not of finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.AffineD)
+
 The diagram of an indecomposable finite-type Cartan matrix is a tree of maximum degree three. To
 finish the simply-laced part of the Cartan--Killing classification one must also show that such a
 tree cannot have two branch vertices.  The path between two branch vertices, together with two

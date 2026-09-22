@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.Perm.Cycle.Type
 /-!
 # The index and the conductor exponent have the same prime divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.Exponent)
+
 For an integral primitive element `θ` of a number field `K`, two integers measure how far the
 order `ℤ[θ]` is from `𝓞 K`: the index `[𝓞 K : ℤ[θ]]` (`IntegralPrimitiveElement.index`) and the
 conductor exponent `RingOfIntegers.exponent θ`, the least positive integer `e` with

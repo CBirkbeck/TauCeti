@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 /-!
 # Group extensions built from a factor set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupExtension.Of.FactorSet)
+
 A *factor set* of a group `G` with values in a `G`-module `M` (written multiplicatively: `M` is a
 commutative group carrying a `MulDistribMulAction` of `G`) is a normalized multiplicative
 `2`-cocycle `α : G × G → M`. This file builds the group extension `1 → M → E_α → G → 1` it

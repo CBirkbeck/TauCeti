@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Kernel
 /-!
 # The kernel of the represented weight-parabolic limit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Levi.Kernel)
+
 Let `w : Fin N → ℤ`. The dynamic limit from the weight parabolic `P(w)` to its Levi
 subgroup `L(w)` is already represented by a morphism of affine group schemes. This file
 identifies its scheme-theoretic kernel with the represented weight-unipotent subgroup `U(w)`.

@@ -18,6 +18,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 /-!
 # Exponential convergence of a negative gradient trajectory
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.ExponentialConvergence)
+
 A negative gradient trajectory that converges to a **nondegenerate** critical point `p` converges
 to it at an exponential rate:
 

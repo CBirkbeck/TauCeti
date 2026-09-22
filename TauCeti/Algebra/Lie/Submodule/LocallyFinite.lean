@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Finiteness.Bilinear
 /-!
 # Locally nilpotent and locally finite vectors of a Lie module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Submodule.LocallyFinite)
+
 Let `L` be a Lie algebra over a commutative ring `R` and let `M` be an `L`-module. Two
 finiteness conditions on a vector of `M` are collected here, both of them conditions that hold on a
 Lie submodule and are therefore either vacuous or universal on an irreducible module.

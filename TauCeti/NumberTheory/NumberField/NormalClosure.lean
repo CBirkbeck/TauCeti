@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Normal.Embeddings
 /-!
 # Normal closures of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.NormalClosure)
+
 The subfield dictionary of a number field `K` is read off the set of embeddings `K →ₐ[ℚ] M` into
 a field `M` large enough to contain every conjugate of `K`, rather than off an unnamed ambient
 field. `NormalClosureData K M` is the data exhibiting such an `M`: a chosen embedding of `K` into

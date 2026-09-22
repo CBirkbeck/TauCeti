@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.SemidirectProduct
 /-!
 # Semidirect products of internal groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Basic)
+
 Let `G` and `N` be group objects in a cartesian monoidal category. An internal left action of
 `G` on `N` is a morphism `G ⊗ N ⟶ N` whose action on generalized points is unital,
 multiplicative in `G`, and by group automorphisms of `N`. This file packages those three laws and

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Invariants
 /-!
 # The explicit low-degree finite-quotient systems
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.FiniteQuotient.Explicit)
+
 For a topological group `G` acting continuously on a discrete additive group `M`, the explicit
 cohomology groups in degrees zero, one, and two
 

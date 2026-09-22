@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.Presentation.Coxeter
 /-!
 # A transcribed presentation of the Baby Monster
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.BabyMonster)
+
 This file carries the `B` row of the sporadic presentation data required by milestone S1 of
 `TauCetiRoadmap/CFSGStatement/README.md`. It records the `Y₄₃₃` presentation of the Baby Monster
 as a `TauCeti.GroupPresentation`, together with the diagram it expands, the exact source, the

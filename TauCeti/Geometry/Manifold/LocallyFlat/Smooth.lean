@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.SmoothEmbedding.Basic
 /-!
 # Smooth embeddings are locally flat
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.LocallyFlat.Smooth)
+
 Local flatness (`TauCeti.IsLocallyFlat`) was isolated because topological embeddings can be wild:
 the Alexander horned sphere is a topologically embedded `2`-sphere that no ambient chart flattens.
 Smooth embeddings are never wild, and this file proves it: a `C^n` embedding of manifolds into a

@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Polynomial.Monic
 /-!
 # The monic polynomial with prescribed lower coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Monic.OfCoeff)
+
 A monic polynomial of degree `n` is exactly its `n` lower coefficients: the leading term is forced
 to be `X ^ n`. This file names the resulting polynomial `TauCeti.Polynomial.monicOfCoeff c` for a
 tuple `c : Fin n → R`, and records that reading the coefficients back off is inverse to it.

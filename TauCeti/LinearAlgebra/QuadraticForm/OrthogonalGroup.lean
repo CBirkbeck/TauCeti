@@ -15,6 +15,8 @@ import TauCeti.Algebra.Group.Subgroup.Map
 /-!
 # The orthogonal group of a quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.OrthogonalGroup)
+
 Mathlib knows the orthogonal group only in matrix form: `Matrix.orthogonalGroup n R` is the group of
 matrices `A` with `Aᵀ * A = 1` (`Matrix.mem_orthogonalGroup_iff'`). Such matrices preserve the
 *standard* form `x ↦ ∑ i, x i ^ 2` on `n → R`, and, as soon as `2` is not a zero divisor in `R`,

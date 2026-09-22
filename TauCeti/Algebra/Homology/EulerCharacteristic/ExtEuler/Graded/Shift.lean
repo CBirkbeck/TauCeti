@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Equivalence.Pow
 /-!
 # The shift identities of the graded Ext-Euler characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Shift)
+
 Let `C` be a `k`-linear abelian category with a grading shift `e : C ≌ C`, written `{1}`.  The
 q-Euler characteristic `χ_q(X, Y) = ∑ n,j (-1)^n q⁻ʲ dim_k Ext^n(X, Y{j})` of
 `TauCeti.gradedExtEuler` is q-linear in its second argument and q-antilinear in its first:

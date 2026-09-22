@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 /-!
 # The two spellings of `M_k(Γ₀(N))`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.TrivialNebentypus)
+
 There are two ways to say "modular form of level `N` with trivial nebentypus": as a modular
 form for the bare congruence subgroup `Γ₀(N)`, and as an element of the character space
 `M_k(Γ₁(N), χ)` of `TauCeti.NumberTheory.ModularForms.DiamondOperators` for the trivial

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Group
 /-!
 # The Weyl orbit of the simple roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Orbit)
+
 A base of a root pairing carries only finitely much data — the Cartan matrix of its simple roots —
 yet it controls every root, because the Weyl-group orbits of the simple roots cover all roots. This
 file proves that covering statement, at the level of root indices, and draws the consequence that

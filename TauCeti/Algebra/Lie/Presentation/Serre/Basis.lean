@@ -13,6 +13,8 @@ import TauCeti.Algebra.Lie.Sl2.WeightString
 /-!
 # The Serre system carried by a Lie algebra basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Presentation.Serre.Basis)
+
 A `LieAlgebra.Basis ι H` carries four of the six families of Serre relations as fields: the `hᵢ`
 commute, `⁅eᵢ, fᵢ⁆ = hᵢ`, `⁅eᵢ, fⱼ⁆ = 0` for `i ≠ j`, and the two eigenvector equations for
 `ad hᵢ`. This file proves the remaining two, the higher relations

@@ -14,6 +14,8 @@ public import Mathlib.GroupTheory.OrderOfElement
 /-!
 # Inversion and powers of conjugacy classes, and the size of a class
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Conj)
+
 Inversion of a group is compatible with conjugacy: `x` and `y` are conjugate exactly when `x⁻¹` and
 `y⁻¹` are (`TauCeti.isConj_inv_iff`). So inversion descends to the conjugacy classes, where it is an
 involution, recorded here as an `InvolutiveInv (ConjClasses G)` instance; `C⁻¹` is the class of the

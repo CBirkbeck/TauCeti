@@ -12,6 +12,8 @@ import Mathlib.Data.Rat.Star
 /-!
 # Exceptional Cartan matrices are of finite type, and the simply-laced ones positive definite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Dynkin)
+
 This file proves that the five exceptional Cartan matrices in `TauCeti.DynkinType` are of finite
 type, and that the three simply-laced ones are positive definite over `ℚ` -- for those the
 constant-one vector is a symmetriser, whose symmetrisation is the Cartan matrix itself read over

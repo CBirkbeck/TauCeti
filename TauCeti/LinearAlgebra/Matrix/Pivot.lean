@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 /-!
 # A symmetric matrix pivot for Gaussian elimination
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Pivot)
+
 Let `A` and `C` be two square matrices over a field. If their kernels meet trivially and
 `Aᵀ C = Cᵀ A`, then some symmetric matrix `X` makes `A + X C` invertible. Applied to the
 left blocks of a symplectic matrix, this says that multiplication by an upper symplectic

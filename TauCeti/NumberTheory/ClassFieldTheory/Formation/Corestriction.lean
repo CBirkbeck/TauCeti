@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.GroupCohomology.Corestric
 /-!
 # Corestriction between finite normal layers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.Corestriction)
+
 For a restriction of layers `K/E` inside `K/F`, corestriction carries
 `Hⁿ(Gal(K/E), A^V)` to `Hⁿ(Gal(K/F), A^V)`. The smaller Galois group is identified with the
 image of its inclusion into the larger one, and the coefficient identification `repIso`

@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Homomorphisms from preconnected topological groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Preconnected)
+
 This file records a local-to-global principle for monoid homomorphisms from a preconnected
 topological group: two such homomorphisms that agree near the identity agree everywhere.
 -/

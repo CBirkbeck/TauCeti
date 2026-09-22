@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.IntegrableOn
 /-!
 # Integrability of pointwise PDE energy densities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Integrability)
+
 The weak-form lane of the PDE roadmap will define the energy bilinear form by integrating the
 pointwise scalar density
 `x ↦ energyIntegrand (a x) (b x) (c x) (U x) (V x)`.  The preceding finite-dimensional files

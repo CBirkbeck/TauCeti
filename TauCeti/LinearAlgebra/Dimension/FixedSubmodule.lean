@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.FixedSubmodule
 /-!
 # Dimensions of common fixed submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dimension.FixedSubmodule)
+
 This file computes the dimension of the common fixed submodule of a finite family of commuting
 idempotent endomorphisms when each new fixed-point condition has an explicitly equivalent
 complementary eigenspace.

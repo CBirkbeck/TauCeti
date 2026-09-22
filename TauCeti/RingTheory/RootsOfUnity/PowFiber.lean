@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Basic
 /-!
 # The fibres of `u ↦ u ^ m` are the orbits of the `m`-th roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.PowFiber)
+
 In a commutative group with zero `M` (for instance a field), the group `rootsOfUnity m M` acts on
 `M` by multiplication. For `m ≠ 0`, two elements have the same `m`-th power exactly when they lie
 in the same orbit: if `u ^ m = v ^ m` with `u ≠ 0` then `v / u` is an `m`-th root of unity, and if

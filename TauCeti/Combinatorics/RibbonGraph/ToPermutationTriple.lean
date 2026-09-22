@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.GroupAction.Transitive
 /-!
 # The permutation triple of a bipartite ribbon graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.RibbonGraph.ToPermutationTriple)
+
 Numbering the edges of a finite bipartite ribbon graph by `Fin n` turns its black and white
 rotations into two permutations of `Fin n`.  Their product determines the third component of a
 permutation triple.  The third component is the transported face permutation, so the construction

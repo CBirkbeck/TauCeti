@@ -11,6 +11,8 @@ public import Mathlib.Order.KrullDimension
 /-!
 # Codimension-one points of a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.CodimensionOnePoint)
+
 A point of a scheme has codimension one when its coheight for the specialization order is one,
 equivalently when it is the generic point of an irreducible closed subset of codimension one.
 This file introduces the subtype of such points and records the one order-theoretic fact about

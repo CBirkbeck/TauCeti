@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Fiber.Basic
 /-!
 # Deck transformations of connected covers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Connected.Basic)
+
 For a covering projection with preconnected total space, two deck transformations are equal as
 soon as they agree at one point. Equivalently, the deck action on the total space is
 cancellative, and so is the induced action on every fibre.

@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Hodge.HodgeForm
 /-!
 # The Riemann bilinear relations in weight one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.WeightOne.Polarization)
+
 An effective Hodge structure of weight one has only the two Hodge components `H^{1,0}` and
 `H^{0,1}`, and its Weil operator `C` restricts to a complex structure on the real form of its
 lattice. For such a structure the Hodge–Riemann relations become the two classical **Riemann

@@ -14,6 +14,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
 /-!
 # Pointedness is decided by the `x`-coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MapsInfinity)
+
 `MapsInfinity` asks that every element of the source coordinate ring, read in the source function
 field, be integral over the target coordinate ring acting through the pullback. That is a
 condition on infinitely many elements, but it is equivalent to the single case of the generic

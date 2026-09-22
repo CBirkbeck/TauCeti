@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.Restriction
 /-!
 # Transporting generating sections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.GeneratingSections)
+
 This file provides a general transport for generating sections: first carry them along a
 colimit-preserving functor, then read them through an isomorphism of the resulting sheaf. The
 transport preserves the indexing type, invertibility of the generating morphism, and finiteness.

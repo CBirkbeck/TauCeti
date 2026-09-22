@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # The special linear group is reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Reductive)
+
 The coordinate Hopf algebra of `SL_n` is reductive over every field and in every natural rank.
 The proof uses the geometric definition, so it works in arbitrary characteristic.
 

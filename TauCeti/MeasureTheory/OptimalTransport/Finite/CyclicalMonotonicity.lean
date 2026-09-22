@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Finite.Duality
 /-!
 # Cyclical monotonicity of finite optimal transport plans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Finite.CyclicalMonotonicity)
+
 On finite spaces, Kantorovich duality gives a contact-potential certificate for every optimal
 transportation matrix. This file uses the existential complementary-slackness theorem in
 `TauCeti.MeasureTheory.OptimalTransport.Finite.Duality` to deduce that the support of every

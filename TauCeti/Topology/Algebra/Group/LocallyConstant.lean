@@ -11,6 +11,8 @@ public import Mathlib.Topology.LocallyConstant.Basic
 /-!
 # Locally constant functions on a compact group are uniformly locally constant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.LocallyConstant)
+
 A locally constant function `f : G → A` on a topological group is constant near each point, but
 the neighbourhood on which it is constant depends on the point. On a *compact* group the
 dependence disappears: there is a single open subgroup `V` with `f (x * v) = f x` for **every**

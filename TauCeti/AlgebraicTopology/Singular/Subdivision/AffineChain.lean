@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.Singular.Subdivision.Basic
 /-!
 # Affine chains in convex spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.AffineChain)
+
 An affine `k`-chain in a convex space `E` is a formal integral combination of `(k + 1)`-tuples of
 points of `E`, the vertex tuples of affine `k`-simplices. This file equips affine chains with the
 simplicial boundary, the push-forward along maps, the cone from a point and the barycentric

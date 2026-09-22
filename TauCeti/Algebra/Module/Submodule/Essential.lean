@@ -11,6 +11,8 @@ public import Mathlib.Order.Atoms
 /-!
 # Essential submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Submodule.Essential)
+
 A submodule `N` of `M` is **essential** (also called *large*) when it is indispensable for
 separating points of `M`: whenever `N ⊓ K = ⊥` for a submodule `K`, already `K = ⊥`. Essential
 submodules are the notion dual to the superfluous submodules of

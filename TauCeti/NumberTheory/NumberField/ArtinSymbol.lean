@@ -18,6 +18,8 @@ import TauCeti.NumberTheory.NumberField.SplitsCompletely.Basic
 /-!
 # The Artin symbol of an unramified prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.ArtinSymbol)
+
 For a finite Galois extension of number fields, this file attaches to an unramified
 prime ideal of the base the conjugacy class of its arithmetic Frobenius elements.
 The definition uses Mathlib's `IsArithFrobAt` and `arithFrobAt`; no Frobenius

@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Action.Monoidal
 /-!
 # Restricting an action along a monoid homomorphism is a monoidal functor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.Monoidal)
+
 For a monoidal category `V` and a monoid homomorphism `f : G →* H`, Mathlib's
 `Action.res V f : Action V H ⥤ Action V G` reindexes an action of `H` along `f`,
 keeping the underlying object of `V` and precomposing the action homomorphism with `f`. It is

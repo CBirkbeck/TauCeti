@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Fricke.Matrix
 /-!
 # The Atkin–Lehner slash operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.AtkinLehner.Operator)
+
 An Atkin–Lehner matrix `W` for a divisor `Q` of `N` normalizes `Γ₀(N)`
 (`TauCeti.IsAtkinLehnerMatrix.exists_mem_Gamma0_mul_eq_mul_left`), so the weight-`k` slash by `W`
 sends a modular form for `Γ₀(N)` to another one. That is the operator built here, on `M_k(Γ₀(N))`

@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.LSeries.Basic
 /-!
 # Twisting the coefficients of a Dirichlet series by a power of the index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.Twist)
+
 Multiplying the `n`-th coefficient of a Dirichlet series by `n ^ (-z)` translates the series by
 `z`: the `n`-th term becomes `f n * n ^ (-z) / n ^ s = f n / n ^ (s + z)`, so the twisted series
 at `s` is the original one at `s + z`. The identity is termwise, hence needs no convergence

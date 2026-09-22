@@ -12,6 +12,8 @@ import Mathlib.Analysis.Complex.RealDeriv
 /-!
 # The difference quotient of a complex exponential at `0`, along the positive reals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Complex.ExpSlope)
+
 For `c : ℂ`, the function `t ↦ exp (c t)` of a real variable has derivative `c` at `0`. This file
 records that derivative in the one-sided difference-quotient form
 

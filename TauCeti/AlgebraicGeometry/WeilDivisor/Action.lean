@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Order
 /-!
 # Monoid and group actions on Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Action)
+
 A monoid `G` acting on a type of points `X` acts on the formal divisors `WeilDivisor X` by
 pushing point coefficients forward: `g • ∑ n_x [x] = ∑ n_x [g • x]`. This file registers
 that action and records how it interacts with the divisor vocabulary — coefficients, point

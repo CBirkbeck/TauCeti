@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.ResidueDegree
 /-!
 # Residue fields at closed points are finite over global functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.ClosedPoint)
+
 Let `f : X ⟶ Y` be a morphism locally of finite type to an affine Jacobson scheme, for instance a
 scheme of finite type over a field. The residue field `κ(x)` at a closed point `x` of `X` is a
 finite extension of the residue field of its image (Hilbert's Nullstellensatz), so evaluation

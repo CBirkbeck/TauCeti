@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.BaseChangeAction
 /-!
 # Conjugating an integral nilpotent exponential by an intertwining automorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Nilpotent.Conjugation)
+
 Let `V` be a module over a `ℚ`-algebra `A`, let `M ≤ V` be an additive subgroup, and let
 `θ : V ≃ₗ[ℚ] V` be a `ℚ`-linear automorphism restricting to a bijection of `M`. If `θ` carries the
 action of `x : A` to the action of `y : A`, in the sense that `θ (x • v) = y • θ v`, then it carries

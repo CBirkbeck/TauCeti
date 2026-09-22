@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
 /-!
 # Pullbacks and quotient embeddings of sub-unit valuation loci
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.23, Remark 7.30, and
 Proposition 7.38.**
 

@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Monomial
 /-!
 # The monomial and Schur bases of the symmetric homogeneous polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Basis)
+
 Let `σ` be a finite alphabet and `R` a commutative ring.  This file proves that the Schur
 polynomials `s_μ` of `TauCeti/RingTheory/MvPolynomial/Symmetric/Schur/Basic.lean` form an
 `R`-basis of the symmetric polynomials in `σ` that are homogeneous of degree `n`, indexed by the

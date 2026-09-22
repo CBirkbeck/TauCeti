@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.Solvable.BaseChange
 /-!
 # Borel candidates under field extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Borel.BaseChange)
+
 The three conditions defining a Borel candidate — smoothness, geometric connectedness and
 geometric solvability of the coordinate quotient — descend along field extensions. Consequently,
 a Borel subgroup over an arbitrary field, whose base change to an algebraic closure is a maximal

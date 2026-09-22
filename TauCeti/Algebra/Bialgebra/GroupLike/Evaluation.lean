@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Coalgebra.Subcoalgebra.Map
 /-!
 # Evaluation of the group-like monoid algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.GroupLike.Evaluation)
+
 Every bialgebra `H` over a commutative semiring `R` receives a canonical bialgebra morphism from
 the monoid algebra on its group-like elements. It sends each standard basis element to its
 underlying group-like element. Its linear range is exactly the span of the group-like elements,

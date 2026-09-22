@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 /-!
 # Restriction and set integration on finite-measure sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.Restriction)
+
 This file provides the continuous map from `Lᵖ` to `L¹` obtained by restricting to a
 finite-measure set, together with the corresponding set-integral map.  These constructions are
 useful whenever an `Lᵖ` identity is tested against integrals on finite-measure sets.

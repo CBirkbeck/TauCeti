@@ -19,6 +19,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The full-weight Chevalley carrier of type `A`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Basic)
+
 Fix `r` and let `sl_{r+1}` act on the standard module `Fin (r+1) → ℚ`. This file feeds that
 representation, its coordinate `ℤ`-lattice and the Bourbaki-numbered Chevalley generators
 

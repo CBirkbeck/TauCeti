@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Basic
 /-!
 # The fixed subcomodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Fixed)
+
 Let `C` be a coalgebra with a distinguished element `1`, and let `M` be a right `C`-comodule. The
 vectors `v` with `coact v = v ⊗ 1` form a submodule, and it is a subcomodule because its own
 coaction already lands in it. For the comodule attached to a representation of an affine group

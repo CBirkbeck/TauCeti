@@ -12,6 +12,8 @@ public import
 /-!
 # Triality on the tripled type-D4 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.Triality)
+
 The order-three symmetry of the Bourbaki-numbered `D₄` diagram, `TauCeti.trialityPermD4`, fixes
 the central node and cycles the three outer nodes, and with them the three eight-dimensional
 representations `V(ϖ₁)`, `V(ϖ₃)` and `V(ϖ₄)`. On the tripled weight table it is the symmetry

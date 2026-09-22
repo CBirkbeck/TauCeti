@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Operator.Basic
 /-!
 # Basic facts about bounded operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Basic)
+
 This file records a shared uniform-bound lemma for continuous linear maps. It lets an evaluation
 `T i (g i)` pass to the limit when the operators `T i` are eventually uniformly bounded, their
 values at the limiting argument converge, and the arguments `g i` converge. In particular, it

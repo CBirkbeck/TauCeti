@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.FiniteType.BaseChange
 /-!
 # Base change and adjoint semisimple affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Adjoint.BaseChange)
+
 An adjoint semisimple affine group has trivial scheme-theoretic center. Formation of the center
 commutes with extension of the ground field, and field extensions are faithfully flat, so
 adjointness is unchanged by scalar extension whenever the base-changed group is supplied with

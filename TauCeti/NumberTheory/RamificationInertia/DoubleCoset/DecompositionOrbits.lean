@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # Decomposition-group orbits on cosets and the primes of a fixed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.DoubleCoset.DecompositionOrbits)
+
 Let `M / K` be a Galois extension of number fields with group `G`, let `H` be a subgroup of `G`
 with fixed field `E = M ^ H`, and let `Q` be a prime of `𝓞 M` above a prime `p` of `𝓞 K`, with
 decomposition group `D`. The double coset law of `TauCeti/NumberTheory/RamificationInertia/

@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.GeneralLinearGroup.Intertwining
 /-!
 # Faithfulness of point automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.PointFaithful)
+
 An algebra-valued point of a Hopf algebra acts naturally on the scalar extension of every
 comodule. This file proves that the resulting natural automorphism determines the point.
 

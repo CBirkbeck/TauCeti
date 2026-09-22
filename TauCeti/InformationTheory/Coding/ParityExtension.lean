@@ -12,6 +12,8 @@ public import Mathlib.Logic.Equiv.Option
 /-!
 # Parity extension and recovery of punctured codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.ParityExtension)
+
 Parity extension adds one coordinate, the negative sum of the original coordinates, so that
 every extended word has coordinate sum zero. The original coordinates are indexed by `some`
 and the new coordinate by `none`. The extension preserves dimension and cardinality.

@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 /-!
 # Comparing two products of elements of the unit ball
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.BigOperators.ProdSubProd)
+
 For families taking values in the closed unit ball of a seminormed commutative ring, the difference
 of the products is controlled by the sum of the pointwise differences:
 

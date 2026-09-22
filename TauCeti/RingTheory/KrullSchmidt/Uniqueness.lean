@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Exchange
 /-!
 # The Krull-Schmidt theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullSchmidt.Uniqueness)
+
 `TauCeti.exists_indecomposable_decomposition` writes a module of finite length as an internal
 direct sum of indecomposable submodules. This file proves that the decomposition is **unique**:
 any two of them have the same number of summands, matched up to isomorphism by a bijection of the

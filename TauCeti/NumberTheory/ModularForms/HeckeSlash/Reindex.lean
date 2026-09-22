@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 /-!
 # Reindexing the slash sum: slashing by any element of a double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Reindex)
+
 `heckeSlashSum` sums `f ∣[k] (δ τᵥ⁻¹)` over the decomposition of `Γ₁ δ Γ₂` into right cosets
 `Γ₁ aᵥ`. To show that sum is unchanged by right multiplication — the statement that turns the sum
 into an operator, and the proof of Shimura's Proposition 3.37 — one needs to know that the

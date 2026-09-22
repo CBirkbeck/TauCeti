@@ -15,6 +15,8 @@ import TauCeti.Probability.Martingale.Convergence
 /-!
 # Conditional array laws given the corner tail
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.ConditionalLaw)
+
 Condition a jointly exchangeable array law on its corner-tail σ-algebra. Almost every resulting
 conditional law is again jointly exchangeable, and it is jointly dissociated. These conditional
 laws are therefore the ergodic components in the decomposition used by the Aldous--Hoover

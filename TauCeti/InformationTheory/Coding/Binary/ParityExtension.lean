@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.ParityExtension
 /-!
 # Parity extension of binary codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.ParityExtension)
+
 Every binary parity extension is even, and parity-extending a puncture of an even binary code
 recovers the original code up to the displayed coordinate equivalence. This gives the recovery
 mechanism for punctured even codes, including extended binary Golay codes.

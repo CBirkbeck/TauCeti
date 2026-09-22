@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Basic
 /-!
 # Coordinate reversal of grid states and diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rotation)
+
 This file adds coordinate reversal on the toroidal grid to the grid-combinatorial lane of the
 Heegaard Floer roadmap, alongside the already-developed diagonal reflection (`transpose`) and
 marking swap (`swapMarkings`). Rotation reverses both the column and the row coordinate by the

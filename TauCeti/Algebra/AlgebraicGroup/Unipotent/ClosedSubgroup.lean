@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Basic
 /-!
 # Closed subgroups of smooth unipotent affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.ClosedSubgroup)
+
 A closed subgroup of an affine group is represented contravariantly by a surjective morphism of
 coordinate Hopf algebras. This file proves that geometric-point unipotence descends along such a
 morphism. Consequently, a smooth closed subgroup of a smooth unipotent affine group is again

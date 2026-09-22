@@ -11,6 +11,8 @@ public import Mathlib.Data.Int.Interval
 /-!
 # Vanishing outside the bounds of a bounded cochain complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Embedding.CochainComplex)
+
 Mathlib records the boundedness of a cochain complex indexed by `ℤ` in the classes
 `CochainComplex.IsStrictlyGE` and `CochainComplex.IsStrictlyLE`, and converts them into vanishing
 statements one strict inequality at a time. An argument that runs over the degrees of a bounded

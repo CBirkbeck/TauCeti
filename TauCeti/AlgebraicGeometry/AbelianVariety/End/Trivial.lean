@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Trivial
 /-!
 # The endomorphism ring of the trivial abelian variety
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.End.Trivial)
+
 The trivial abelian variety `AbelianVariety.trivial K` has a unique endomorphism, so its
 endomorphism ring is the zero ring and the multiplication-by-`n` endomorphism `[n]` is the identity
 for every `n` — a check that the construction of

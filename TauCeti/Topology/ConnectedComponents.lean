@@ -14,6 +14,8 @@ import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # Connected components
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.ConnectedComponents)
+
 This file records general topological properties of connected components, and of the quotient of a
 space by them.
 

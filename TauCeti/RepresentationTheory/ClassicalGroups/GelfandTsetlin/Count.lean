@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Counting Gelfand-Tsetlin patterns, from the branching side
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.GelfandTsetlin.Count)
+
 Deleting the top row of a Gelfand-Tsetlin pattern with `n + 1` rows and top row `l` leaves a
 pattern with `n` rows whose own top row interlaces `l`
 (`TauCeti.GTPattern.truncateEquiv`).  Sorting those by the row they expose turns that bijection

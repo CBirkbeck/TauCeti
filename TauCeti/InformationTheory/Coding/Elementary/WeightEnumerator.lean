@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.MacWilliams
 /-!
 # Weight enumerators of repetition and single-parity-check codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Elementary.WeightEnumerator)
+
 The repetition code consists of constant words, and the single-parity-check code consists of
 words whose coordinate sum is zero. They are Euclidean duals. Their homogeneous weight
 enumerators give explicit examples of the MacWilliams transform, alongside the zero code and

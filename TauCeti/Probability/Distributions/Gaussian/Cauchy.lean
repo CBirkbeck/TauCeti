@@ -10,6 +10,8 @@ public import TauCeti.Probability.Distributions.StudentT.ChiSquared
 /-!
 # Ratios of standard Gaussian variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Cauchy)
+
 This file proves that the quotient of two independent standard real Gaussian variables has the
 standard Cauchy law. The measure-level identity is primary, and a `HasLaw` formulation records the
 independence assumptions needed for random variables.

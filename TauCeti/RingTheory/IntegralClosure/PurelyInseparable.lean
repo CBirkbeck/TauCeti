@@ -27,6 +27,8 @@ import TauCeti.RingTheory.IntegralClosure.Transfer
 /-!
 # The integral closure of a polynomial ring in a purely inseparable extension is finite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.PurelyInseparable)
+
 Let `k` be a field, `P = k[X_1, …, X_r]`, `K` its fraction field and `M / K` a finite purely
 inseparable extension of exponent `e`, `q = p ^ e`. The integral closure of `P` in `M` is a finite
 `P`-module. This is the purely inseparable half of normalization-finiteness, the only part that

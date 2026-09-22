@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Symmetry
 /-!
 # Symmetries of the fully blocked grid complex act on cycles and boundaries
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.CycleSymmetry)
+
 `DifferentialSymmetry.lean` shows that the diagonal reflection and the `O`/`X` marking swap of
 a grid diagram are chain symmetries of the fully blocked grid complex: the marking swap fixes
 the differential outright, while the reflection intertwines the differentials of `G` and

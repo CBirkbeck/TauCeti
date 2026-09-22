@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Smooth.Dimension
 /-!
 # Existence of Borel subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Borel.Existence)
+
 A Borel subgroup of an affine algebraic group over an algebraically closed field is a maximal
 smooth, geometrically connected, geometrically solvable closed subgroup. This file proves existence
 by maximizing Lie dimension. More precisely, every Borel candidate is contained in a maximal one.

@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.Dimension.DirectSum
 /-!
 # Weight-space multiplicities in isotypic Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Multiplicity)
+
 This file connects the dimension of an honest weight space with the number of irreducible
 summands in an isotypic Lie module. A Lie-module equivalence preserves every weight space, while
 an internal direct sum of Lie submodules decomposes each weight space into the corresponding

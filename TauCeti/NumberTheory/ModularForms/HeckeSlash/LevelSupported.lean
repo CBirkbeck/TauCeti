@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # The Hecke operators at an index supported on the level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.LevelSupported)
+
 Call a positive integer `n` *supported on the level* `N` when every prime factor of `n` divides
 `N`, that is `n.primeFactors ⊆ N.primeFactors`. These are the indices at which the decomposition
 of `HeckeRing/GL2/Gamma1/UpperTriCosets.lean` writes the double coset

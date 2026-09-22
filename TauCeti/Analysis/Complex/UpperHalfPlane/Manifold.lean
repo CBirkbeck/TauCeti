@@ -12,6 +12,8 @@ import TauCeti.Topology.DiscreteSeparation
 /-!
 # Analyticity through `ofComplex`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.Manifold)
+
 A function holomorphic on the upper half-plane, extended to `ℂ` by `ofComplex`, is
 analytic at every point of the open upper half-plane. Holomorphy on `ℍ` is also invariant
 under the Möbius action of a positive-determinant real matrix, the biholomorphism

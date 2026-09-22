@@ -12,6 +12,8 @@ public import TauCeti.InformationTheory.Coding.DirectSum
 /-!
 # Minimum distance under coordinate operations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.MinimumDistance.Operations)
+
 Puncturing can reduce minimum distance by at most the number of deleted coordinates, and
 preserves dimension as long as the minimum distance is at least two.
 Shortening cannot reduce it unless the shortened code is zero. The minimum distance of a

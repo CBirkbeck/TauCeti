@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.Geodesic.Maximal
 /-!
 # The maximal geodesic with prescribed initial data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Trajectory)
+
 This file turns the maximal-interval description of geodesic existence into a canonical curve.
 The maximal geodesic through `p` with initial velocity `v` is the base projection of the maximal
 integral curve of the geodesic spray through `(p, v)`.  Its integral-curve domain is proved to be

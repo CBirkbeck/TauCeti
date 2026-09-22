@@ -13,6 +13,8 @@ import Mathlib.Topology.DiscreteSubset
 /-!
 # Partial fractions for functions with finitely many simple poles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PolarPart.PartialFraction)
+
 A function on `ℂ` that is holomorphic away from a finite set `S`, has at most simple poles at the
 points of `S`, and tends to `0` at infinity is the sum of its principal parts:
 

@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.ZeroOne
 /-!
 # Finite evaluation laws determine a measure on `ProbabilityMeasure α`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ProbabilityMeasure.Ext)
+
 A finite measure on `ProbabilityMeasure α` is determined by the laws of its finite evaluation
 families `P ↦ (P (B 0), …, P (B (n-1)))`.
 

@@ -13,6 +13,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 /-!
 # The intermediate ring of an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Basic)
+
 The integral closure of the target coordinate ring inside the source function field, taken along
 an isogeny's pullback. This is the normalization that `CoordinatePullback.MapsInfinity` names,
 and it receives both coordinate rings: the target's through the pullback, and the source's

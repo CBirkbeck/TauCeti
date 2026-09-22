@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Existence
 /-!
 # Holomorphy rings in an extension: `𝒪'_P` is the integral closure of `𝒪_P`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.HolomorphyRing.Extension)
+
 Let `F' / k'` be an extension of the algebraic function field `F / k`, integral both on the
 constants and on the functions. Every place `P'` of `F' / k'` restricts to a place
 `P'.restrict k F` of `F / k` (`TauCeti.Place.restrict`), and at a single place `P` the integral

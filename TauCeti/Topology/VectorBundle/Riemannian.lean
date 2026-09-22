@@ -11,6 +11,8 @@ public import Mathlib.Topology.VectorBundle.Riemannian
 /-!
 # Compactness of norm-bounded parts of a Riemannian vector bundle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.VectorBundle.Riemannian)
+
 In a vector bundle whose fibers carry inner products depending continuously on the base point,
 the fiber norm is a continuous function on the total space.  When the model fiber is
 finite-dimensional, this file proves that the vectors of norm at most `r` lying over a compact

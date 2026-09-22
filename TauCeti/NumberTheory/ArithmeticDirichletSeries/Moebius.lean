@@ -16,6 +16,8 @@ import Mathlib.Data.Nat.Choose.Sum
 /-!
 # The ideal Möbius function and Möbius inversion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Moebius)
+
 The Möbius function of a nonzero ideal `A` of the ring of integers of a number field `K` is
 `(-1) ^ k` when `A` is a product of `k` distinct prime ideals and `0` otherwise. This file packages
 it as a `TauCeti.IdealArithmeticFunction K`, computes it on prime powers, and proves that it is the

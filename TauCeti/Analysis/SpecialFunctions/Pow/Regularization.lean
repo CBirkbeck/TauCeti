@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 /-!
 # Real powers used in quadratic regularizations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Pow.Regularization)
+
 This file records elementary facts about the regularization `(a ^ 2 + t) ^ e` as `t → 0⁺`.
 They provide the algebraic identity at `t = 0`, convergence away from `a = 0`, and domination for
 nonpositive exponents.

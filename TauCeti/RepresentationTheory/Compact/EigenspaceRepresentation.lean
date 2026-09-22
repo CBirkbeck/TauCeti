@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Normed.Module.FiniteDimension
 /-!
 # The finite-dimensional representations carried by convolution eigenspaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.EigenspaceRepresentation)
+
 A compact group `G` acts on `L²(G)` by right translation, `(π g f) x = f (x * g)`
 (`TauCeti.rightRegularLp`). This action is isometric and strongly continuous, but nothing makes
 `g ↦ π g` continuous for the operator norm, so `L²(G)` itself does not come with the continuity

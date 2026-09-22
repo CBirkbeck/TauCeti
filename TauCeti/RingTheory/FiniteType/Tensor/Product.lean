@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # Reduced tensor products over an algebraically closed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.FiniteType.Tensor.Product)
+
 A reduced finite-type algebra over an algebraically closed field stays reduced after tensoring
 with any reduced algebra. This applies in particular to the tensor square of a coordinate ring
 modulo its nilradical, before any Hopf structure has been constructed on that quotient.

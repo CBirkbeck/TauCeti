@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Module.LinearMap.Index
 /-!
 # Index of linear maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.LinearMap.Index)
+
 This file extends Mathlib's algebraic `LinearMap.index` API with its invariance under composing
 with a linear equivalence.
 

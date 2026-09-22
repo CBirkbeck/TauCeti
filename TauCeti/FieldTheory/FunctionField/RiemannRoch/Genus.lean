@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Divisor.ProductFormula
 /-!
 # Riemann's theorem and the genus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.RiemannRoch.Genus)
+
 For a divisor `D` of an algebraic function field `F / k`, the quantity `deg D - ℓ(D)` is bounded
 above by a constant depending only on `F / k`.  The **genus** of `F / k` is the supremum
 
@@ -185,7 +187,10 @@ an unbounded range gives the junk value `0`.
 The value is truncated to `ℕ`.  Over an exact constant field this loses nothing, because `D = 0`
 already gives `deg 0 + 1 - ℓ(0) = 0`; see `TauCeti.exists_degree_add_one_sub_dim_eq_genus`.  Over a
 non-exact constant field the truncation is a junk value: for `ℝ ⊆ ℂ(x)` the true maximum is `-1`,
-because every `ℝ`-degree and every `ℝ`-dimension is twice its `ℂ`-counterpart. -/
+because every `ℝ`-degree and every `ℝ`-dimension is twice its `ℂ`-counterpart.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.genus) -/
 noncomputable def genus : ℕ :=
   sSup (Set.range fun D : Divisor k F ↦ (Divisor.degree D + 1 - Divisor.dim D).toNat)
 

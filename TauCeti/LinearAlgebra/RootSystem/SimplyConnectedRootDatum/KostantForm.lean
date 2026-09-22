@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgeb
 /-!
 # A simple-generator Kostant form of the pinned split Lie algebra of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.KostantForm)
+
 `TauCeti.DynkinType.lieAlgebra` is the split Lie algebra of a valid Dynkin type, realized by Geck's
 construction as an explicit Lie subalgebra of `GeckIndex`-indexed rational matrices, with Chevalley
 generators `TauCeti.DynkinType.lieBasis` numbered by Bourbaki node. This file attaches the

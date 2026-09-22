@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.RootLength
 /-!
 # Special node permutations of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SpecialNodePermutations)
+
 A *graph automorphism* of a Dynkin diagram is a permutation of its Bourbaki-numbered nodes
 preserving the standard Cartan matrix; those are pinned in
 `TauCeti/LinearAlgebra/RootSystem/DiagramPermutations.lean`, and each of them lifts to an

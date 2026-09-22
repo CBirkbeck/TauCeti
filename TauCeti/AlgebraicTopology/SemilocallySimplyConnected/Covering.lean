@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Covering
 /-!
 # Semilocal simple connectivity and covering maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SemilocallySimplyConnected.Covering)
+
 This file relates semilocal simple connectivity to local homeomorphisms and covering maps.
 
 The mechanism for descending semilocal simple connectivity is a local section. If `p : E → X`

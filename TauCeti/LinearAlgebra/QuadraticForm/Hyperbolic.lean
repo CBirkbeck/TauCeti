@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Basic
 /-!
 # The hyperbolic plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Hyperbolic)
+
 The hyperbolic plane over a commutative ring in which two is invertible is the diagonal quadratic
 form `⟨1, -1⟩`. It is nondegenerate, represents every scalar, and is isometric to the `xy`-form
 `QuadraticForm.dualProd`. Over a field in which two is invertible (that is, of characteristic not

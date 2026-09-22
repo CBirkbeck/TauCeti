@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.AbelSummation
 /-!
 # From the weighted prime count to the unweighted one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Transfer)
+
 A prime-number-theorem argument delivers its conclusion for a *logarithmically weighted* count: a
 Tauberian theorem applied to a logarithmic derivative sees the von Mangoldt coefficients, hence the
 count `ψ` weighted by `log p` and taken over prime powers, and a separate elementary estimate for

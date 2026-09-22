@@ -16,6 +16,8 @@ import TauCeti.Algebra.AlgebraicGroup.GeometricallyReduced.BaseChange
 /-!
 # Smoothness and geometric reducedness of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Smooth.GeometricallyReduced)
+
 Mathlib proves that a geometrically reduced group scheme locally of finite type over a field is
 smooth. Conversely, a smooth algebra over a field remains smooth, and hence reduced, after every
 field extension. Transporting both directions through Tau Ceti's affine Hopf/group-scheme

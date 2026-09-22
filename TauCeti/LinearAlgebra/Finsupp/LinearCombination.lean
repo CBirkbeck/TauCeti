@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Noetherian.Defs
 /-!
 # Linear combinations from independence and from Noetherianity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Finsupp.LinearCombination)
+
 This file collects two complements to Mathlib's description of the span of a family by linear
 combinations: membership in the span of a *linearly independent* family is witnessed by a unique
 finitely supported combination, and in a *Noetherian* module every sequence has a term that is a

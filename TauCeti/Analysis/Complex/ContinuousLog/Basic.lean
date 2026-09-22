@@ -14,6 +14,8 @@ import Mathlib.Topology.DiscreteSubset
 /-!
 # Continuous logarithms on a set, and the Borsuk map of two points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.ContinuousLog.Basic)
+
 A complex-valued function `g` **has a continuous logarithm on** a set `S` when some `h`,
 continuous on `S`, satisfies `exp (h x) = g x` throughout `S`; this file introduces that predicate,
 `TauCeti.HasContinuousLogOn`, and proves the two elementary facts about it that planar separation

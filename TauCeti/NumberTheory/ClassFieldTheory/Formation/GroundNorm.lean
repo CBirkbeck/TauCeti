@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Corestrict
 /-!
 # The norm between the ground levels of a restriction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.GroundNorm)
+
 Let `T : LayerRestriction small big` be a restriction of finite normal layers, the layer `K/F`
 restricted to `K/E` for an intermediate field `F ⊆ E ⊆ K`, with ground subgroups `U' ≤ U`. On
 ground levels a restriction has the inclusion `A^U ⊆ A^{U'}` (`LayerRestriction.groundInclusion`)

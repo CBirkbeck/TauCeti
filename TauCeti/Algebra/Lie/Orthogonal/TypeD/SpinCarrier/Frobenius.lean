@@ -13,6 +13,8 @@ import TauCeti.Algebra.CharP.Frobenius.Basic
 /-!
 # Frobenius on the full-weight type-D spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.SpinCarrier.Frobenius)
+
 `TauCeti.TypeDSpinCarrier.groupScheme n hn` is the explicit full-weight Chevalley carrier of type
 `Dₙ`, cut out inside `GL_(2^n)` over `ℤ` by the split spin representation and its exterior
 coordinate lattice. For a commutative value ring `A` of exponential characteristic `p`, this file

@@ -15,6 +15,8 @@ import TauCeti.Data.Fin.Basic
 /-!
 # Decomposing a tensor square
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorSquare)
+
 When `2` is invertible, the tensor square of a module is the direct sum of its symmetric and
 alternating parts. This file constructs the natural equivalence
 

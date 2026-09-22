@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.Boundary.Collar.Basic
 /-!
 # Collar charts on a manifold with boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Collar.Chart)
+
 `Boundary.Collar.Basic` identifies the model half-space `EuclideanHalfSpace (n + 1)` with the
 product `EuclideanSpace ℝ (Fin n) × EuclideanHalfSpace 1` of its boundary model and an inward normal
 coordinate. That is a statement about the *model*; this file transports it to an arbitrary

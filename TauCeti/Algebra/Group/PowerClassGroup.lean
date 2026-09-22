@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Group.PowMonoidHom
 /-!
 # The group of `n`th power classes `G ⧸ Gⁿ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.PowerClassGroup)
+
 For a commutative group `G` the subgroup `Gⁿ` of `n`th powers is the range of `powMonoidHom n`,
 and this file names it together with the quotient `G ⧸ Gⁿ` and the class of an element. At `n = 2`
 the subgroup is Mathlib's `Subgroup.square G`, by `TauCeti.square_eq_powMonoidHom_two_range`.

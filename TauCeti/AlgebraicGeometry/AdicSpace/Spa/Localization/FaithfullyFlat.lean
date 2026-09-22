@@ -18,6 +18,8 @@ import TauCeti.RingTheory.RingHom.FaithfullyFlat
 /-!
 # Faithful flatness of a rational cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.FaithfullyFlat)
+
 **Wedhorn's Corollary 8.32**: let `A` be a complete Hausdorff strongly noetherian Tate ring and let
 the rational subsets `R(Tᵢ/sᵢ)` of a finite family cover `Spa(A, A⁺)`. Then the map
 `A → ∏ᵢ A⟨Tᵢ/sᵢ⟩` into the product of the rational localisations is faithfully flat, and in

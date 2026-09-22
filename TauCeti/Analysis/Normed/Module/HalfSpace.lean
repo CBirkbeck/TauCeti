@@ -12,6 +12,8 @@ import Mathlib.Algebra.Module.LinearMap.DivisionRing
 /-!
 # Strict half-spaces of a real normed space are unbounded
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.HalfSpace)
+
 A strict half-space `{y | φ y < u}` cut out by a nonzero linear functional holds points of
 arbitrarily large norm, and is therefore unbounded. Linearity alone suffices: `φ` need not be
 continuous, so the results apply to a discontinuous functional on an infinite-dimensional space.

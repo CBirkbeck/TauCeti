@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic
 /-!
 # The factor dichotomy of the coprime sieve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Dichotomy)
+
 Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p L`, for a prime `p ∣ N` and an
 `L` coprime to `p` (so `L ≠ 0`) whose primes divide `N`. Either `f` already vanishes at every index
 coprime to `L`, or the nebentypus `χ` factors through `N / p`. This is

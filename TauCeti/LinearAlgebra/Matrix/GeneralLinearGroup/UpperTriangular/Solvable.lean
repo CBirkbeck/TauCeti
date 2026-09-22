@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular.Nilpot
 /-!
 # Solvability of upper-triangular general linear groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperTriangular.Solvable)
+
 The diagonal quotient of the upper-triangular group is abelian, while its kernel is the
 nilpotent upper-unitriangular group. Hence every upper-triangular general linear group over a
 commutative ring is solvable.

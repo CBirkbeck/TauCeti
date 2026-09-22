@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.Chebotarev.PrimeCounting.VonMangoldt
 /-!
 # The Frobenius von Mangoldt series as a character sum of logarithmic derivatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.PrimeCounting.CharacterExpansion)
+
 Let `L / K` be a finite **abelian** Galois extension of number fields with group `G`, and fix
 `σ ∈ G`. For each character `χ : G →* ℂˣ` let `L_χ` be the `L`-series of the Galois character
 weight `MonoidHom.galoisCharacterWeight χ`, whose Euler product omits the primes ramified in `L`.

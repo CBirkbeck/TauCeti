@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.Valuation.ValuativeRel.Extension
 /-!
 # The ring of integers of an extension of local fields is a finite free module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.IntegerRing)
+
 Let `L/K` be an extension of nonarchimedean local fields whose valuations are compatible, in the
 sense of `ValuativeExtension K L`. This file proves that `𝒪[L]` is a free `𝒪[K]`-module of finite
 rank `[L : K]`, and in particular that `L/K` is finite: no finiteness of `L/K` is assumed anywhere

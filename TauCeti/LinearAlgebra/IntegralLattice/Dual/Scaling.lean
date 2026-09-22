@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Module.Submodule.Pointwise
 /-!
 # Dual lattices under form scaling
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Dual.Scaling)
+
 Scaling the form of an integral lattice `L` by a nonzero integer `n` scales its dual carrier by
 `n⁻¹` in the common rational ambient space:
 

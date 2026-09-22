@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Matrix.SchurComplement
 /-!
 # Determinant of a module reflection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Reflection)
+
 This file computes the determinant of Mathlib's `Module.reflection` on a finite free module.
 -/
 

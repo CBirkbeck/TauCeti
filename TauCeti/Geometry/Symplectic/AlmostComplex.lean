@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Complex.LinearPart
 /-!
 # Almost complex structures and compatible symplectic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.AlmostComplex)
+
 This file starts the pointwise linear-algebra API for the analytic Heegaard Floer roadmap.
 It records almost complex structures on real modules, symplectic bilinear forms, and the
 standard tameness and compatibility predicates between them.

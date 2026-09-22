@@ -10,6 +10,8 @@ public import Mathlib.Data.ZMod.Basic
 /-!
 # Applying `ZMod.finEquiv`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ZMod.FinEquiv)
+
 Mathlib defines `ZMod.finEquiv : Fin n ≃+* ZMod n` for `[NeZero n]` and states nothing about
 applying it. This file states the two evaluation rules as `@[simp]` lemmas, so that an argument
 indexed by `Fin n` rewrites into `ZMod n` arithmetic instead of being unfolded at each use.

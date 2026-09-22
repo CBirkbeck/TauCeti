@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Sites.SheafCohomology.MayerVietoris
 /-!
 # Vanishing consequences of the Mayer-Vietoris sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Sites.SheafCohomology.MayerVietoris)
+
 For a Mayer-Vietoris square `S` in a site, where `S.X₄` is covered by `S.X₂` and `S.X₃`
 meeting in `S.X₁`, Mathlib provides a long exact sequence relating the cohomology of an abelian
 sheaf `F` on those four objects. This file records the two consequences that a vanishing

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.SU2.Basic
 /-!
 # The Borel structure of `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Borel)
+
 `SU(2)` carries the subspace topology of the `2 × 2` complex matrices, which makes it a compact
 Hausdorff topological group (`TauCeti/RepresentationTheory/SU2/Basic.lean`), but no measurable
 structure comes with it. This file equips it with its Borel σ-algebra, which is what lets the Haar

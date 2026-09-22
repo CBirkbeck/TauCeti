@@ -14,6 +14,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Matrix
 /-!
 # Right rigidity of finite-dimensional comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.RightRigid)
+
 Let `H` be a Hopf algebra over a field `k`. This file equips the monoidal category
 `FGComoduleCat.{u,v,u} k H` with right duals. The right dual of a finite-dimensional
 comodule is its antipode-twisted linear dual; evaluation and coevaluation are the

@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.ContDiff.Deriv
 /-!
 # The along-curve derivative of a pulled-back vector field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCurve.Pullback)
+
 `CovariantDerivative.alongCurveWithin` differentiates a tangent field along a curve by the
 moving-chart formula `v' + Γ(v, u')` of
 `TauCeti/Geometry/Manifold/VectorBundle/CovariantDerivative/AlongCurve/Basic.lean`, which reads

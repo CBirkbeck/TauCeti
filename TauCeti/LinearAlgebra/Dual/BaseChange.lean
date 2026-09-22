@@ -11,6 +11,8 @@ import Mathlib.LinearAlgebra.Contraction
 /-!
 # Evaluation after scalar extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dual.BaseChange)
+
 This file defines the canonical pairing between the scalar extensions of a module and its linear
 dual. It sends an `R`-linear functional extended to `A` to the corresponding `A`-linear functional
 on the scalar extension of its domain. For a finite projective module, this map is an equivalence.

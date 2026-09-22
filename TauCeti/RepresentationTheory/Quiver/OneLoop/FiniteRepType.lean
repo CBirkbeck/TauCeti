@@ -16,6 +16,8 @@ public import Mathlib.CategoryTheory.PathCategory.MorphismProperty
 /-!
 # The loop quiver has infinite representation type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.OneLoop.FiniteRepType)
+
 A representation of the quiver `•↺` with one vertex and one loop is a vector space together with an
 endomorphism of it. Two families of them are built here. The one-dimensional ones are the scalars:
 for `c` in the base field, `TauCeti.oneLoopRep k c` is the line `k` with the loop acting by

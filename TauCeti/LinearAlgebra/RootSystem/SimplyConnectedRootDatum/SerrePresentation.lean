@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgeb
 /-!
 # The Serre presentation of the pinned split Lie algebra of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.SerrePresentation)
+
 `TauCeti.DynkinType.lieAlgebra` is the concrete matrix Lie algebra that Geck's construction
 attaches to the pinned root datum of a valid Dynkin type, and `TauCeti.DynkinType.lieBasis` is its
 Chevalley generators numbered by Bourbaki node. `Matrix.ToLieAlgebra ℚ t.cartanMatrixᵀ` is the

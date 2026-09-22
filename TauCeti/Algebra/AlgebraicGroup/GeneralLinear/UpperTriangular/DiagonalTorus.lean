@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.UpperTriangular.Basic
 /-!
 # The diagonal torus in the upper-triangular group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.UpperTriangular.DiagonalTorus)
+
 The standard diagonal torus of `GLₙ` factors through its upper-triangular subgroup scheme. In
 Hopf coordinates, the diagonal-torus morphism kills every generic matrix coordinate strictly
 below the diagonal, so it descends uniquely through the quotient defining the upper-triangular

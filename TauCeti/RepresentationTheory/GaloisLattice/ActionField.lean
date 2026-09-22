@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.GaloisLattice.FiniteQuotient
 /-!
 # Finite action fields of Galois lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GaloisLattice.ActionField)
+
 The continuous action of the absolute Galois group on a Galois lattice factors through a finite
 quotient. This file realizes that factorization over an actual finite normal subextension of the
 chosen algebraic closure. Its fixing subgroup lies in the kernel of the lattice action, so the

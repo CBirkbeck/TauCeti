@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Group.Subgroup.Map
 /-!
 # Hecke rings: the double coset API
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Basic)
+
 Basic API for the double cosets `HeckeCoset` indexing a Hecke coset module, following
 [Shimura][shimura1971], Chapter 3. This file provides representatives of double cosets, the
 characterisation of when two elements give the same double coset, and the quotient

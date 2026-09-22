@@ -17,6 +17,8 @@ import TauCeti.RingTheory.Ideal.Operations
 /-!
 # A rational localisation as a quotient of `A⟨X₁, …, Xₖ⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Quotient)
+
 Wedhorn's Example 6.38 presents the coordinate ring of a rational subset as a quotient of a
 restricted power series ring. For a presentation `(T, s)` whose numerators other than `s` are
 listed by `t : Fin k → A`, this file constructs the identification

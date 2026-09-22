@@ -10,6 +10,8 @@ public import Mathlib.Probability.Martingale.Basic
 /-!
 # Reverse martingale infrastructure (finite horizon)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Martingale.Reverse)
+
 Reversing time on a finite horizon `N` turns an antitone family of σ-algebras `𝔽`, and its
 conditional-expectation process `n ↦ μ[f | 𝔽 n]`, into a *forward* filtration `revFiltration` on
 which the conditional-expectation process is a genuine forward martingale (via Mathlib's

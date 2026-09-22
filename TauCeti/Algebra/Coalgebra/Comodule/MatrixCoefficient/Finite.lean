@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Adjoin
 /-!
 # Finite matrix-coefficient submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Finite)
+
 This file proves that the matrix-coefficient submodule of a finite projective right comodule
 over a commutative semiring is finite.
 

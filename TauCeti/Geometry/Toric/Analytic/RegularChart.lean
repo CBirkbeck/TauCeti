@@ -17,6 +17,8 @@ public import TauCeti.Geometry.Toric.Analytic.AffinePoint
 /-!
 # Mixed coordinates on the complex points of a split affine semigroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Analytic.RegularChart)
+
 An affine semigroup that splits as a product `(ι →₀ ℕ) × (κ →₀ ℤ)` of a free commutative monoid
 and a free abelian group has a completely explicit space of complex points: a `ℂ`-algebra
 homomorphism out of its monoid algebra is the same data as a family of complex numbers indexed by

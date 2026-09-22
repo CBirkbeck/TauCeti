@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
 /-!
 # The dimension-shifting sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.DimensionShift)
+
 For a representation `A` of a group `G`, the embedding `A ⟶ Coind_⊥^G A` into the representation
 coinduced from the trivial subgroup and the projection `Ind_⊥^G A ⟶ A` from the induced
 representation give short exact sequences

@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.SmithNormalForm
 /-!
 # The `GL₂` multiplication table: telescoping identities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.MultiplicationTable)
+
 The first multiplication identity of Shimura's Theorem 3.24 for the `GL₂` Hecke ring:
 `T(1, pᵏ) = T(pᵏ) − T(p,p) · T(p^(k−2))` for `k ≥ 2`, by telescoping the divisor-pair
 expansion of `T(pᵏ)` against the index shift `T(p,p) · T(pʲ, p^d) = T(p^(j+1), p^(d+1))`.

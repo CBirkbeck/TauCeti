@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 /-!
 # The slash sum over a double-coset decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic)
+
 A Hecke operator acts on a modular form by slashing it against representatives of the double
 coset and summing. This file defines that sum. It is unconditionally *additive* in `f` and kills
 `0`; homogeneity — and so `ℂ`-linearity — additionally needs the representatives to have positive

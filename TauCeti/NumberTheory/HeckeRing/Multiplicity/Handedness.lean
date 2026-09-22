@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Associativity
 /-!
 # Right-coset collisions and the handedness of Shimura's multiplicity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Multiplicity.Handedness)
+
 `DoubleCoset.multiplicity Γ₁ Γ₂ Γ₃ g h d` counts the pairs of representatives of the *left*-coset
 decompositions `Γ₁ g Γ₂ = ⊔ᵢ σᵢ g Γ₂` and `Γ₂ h Γ₃ = ⊔ⱼ τⱼ h Γ₃` whose product lies in the left
 coset `d Γ₃`. A slash sum runs instead over the *right*-coset decomposition

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.TensorProduct.Basic
 /-!
 # Tensor-product basis coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorProduct.Basis)
+
 This file records how contractions against one factor of a tensor product detect equality when
 that factor is free. It also proves that the coordinates in bases obtained by scalar extension
 commute with a map of the scalar-extension algebras, and that over a basis with at most one

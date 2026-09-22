@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.Conjugate
 /-!
 # Restriction to a normal subgroup preserves semisimplicity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Basic)
+
 Let `N` be a normal subgroup of `G` and let `ρ` be an irreducible representation of `G`.  Cutting
 the group down to `N` does not preserve irreducibility, but it does preserve semisimplicity: the
 restriction of `ρ` to `N` is a sum of irreducibles, as soon as there is a minimal nonzero

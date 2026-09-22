@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.JordanChevalley.Multiplicative
 /-!
 # Scalar extension of multiplicative Jordan decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.JordanChevalley.ScalarExtension)
+
 Let `R` be a commutative semiring, let `K` and `L` be `R`-algebras that are fields, and let
 `f : K →ₐ[R] L`. An automorphism of `K ⊗[R] V` extends canonically to an automorphism of
 `L ⊗[R] V`. If `K` is perfect, scalar extension preserves semisimplicity: the squarefree

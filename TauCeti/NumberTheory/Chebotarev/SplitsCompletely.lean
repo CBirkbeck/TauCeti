@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.SplitsCompletely.Basic
 /-!
 # The completely split primes as the identity Artin fibre
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.SplitsCompletely)
+
 Let `L / K` be a finite Galois extension of number fields. Among the fibres of the Artin class
 studied in `TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet`, the fibre of the identity class
 `1` is distinguished: it consists exactly of the primes of `𝓞 K` that split completely in `L`.

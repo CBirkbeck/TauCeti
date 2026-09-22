@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Exact
 /-!
 # Abelian `K₀` of an essentially small abelian category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Abelian)
+
 The abelian Grothendieck group `TauCeti.AbelianK0 C` of an essentially small abelian category `C`
 is the free abelian group on the isomorphism classes of objects modulo the relations
 `[X₂] = [X₁] + [X₃]`, one for each short exact sequence `X₁ ⟶ X₂ ⟶ X₃`.

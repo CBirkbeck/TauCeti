@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap
 /-!
 # The addition-and-subtraction map on symmetric `x`-coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap)
+
 Mathlib defines `sym2x P Q`, the symmetric function of the two `x`-coordinates recording the
 unordered pair `{P, Q}`, and the quadratic map `addSubMap` that should induce
 `{P, Q} ↦ {P + Q, P - Q}` on it. This file proves that it does — up to a nonzero scalar, which

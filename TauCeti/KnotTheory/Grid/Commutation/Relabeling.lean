@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Relabeling
 /-!
 # Relabeling and grid commutation arcs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Relabeling)
+
 This file records the relabeling bookkeeping for the row and column arcs used in grid
 commutation hypotheses. A column relabeling only renames the columns, so it transports column
 arcs and column non-interleaving by applying the inverse column permutation to the labels. Dually,

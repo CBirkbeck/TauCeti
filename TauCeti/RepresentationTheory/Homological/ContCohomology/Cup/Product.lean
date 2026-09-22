@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.ExplicitFu
 /-!
 # Cup products in low degrees on the explicit model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Product)
+
 A cup product on continuous cochains is relative to a `G`-equivariant biadditive pairing
 `μ : M →+ N →+ P`, that is one with `μ (g • m) (g • n) = g • μ m n`, which is furthermore
 jointly continuous. This file builds the six low-degree shapes

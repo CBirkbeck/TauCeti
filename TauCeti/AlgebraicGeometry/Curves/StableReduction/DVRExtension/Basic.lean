@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Localization.LocalizationLocalization
 /-!
 # Finite separable extensions of a discrete valuation ring, with a chosen place
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.DVRExtension.Basic)
+
 Let `R` be a discrete valuation ring with fraction field `K`. A `TauCeti.FiniteDVRExtension R K`
 records a finite separable extension `K'` of `K` together with a *chosen* place of `K'` above the
 closed point of `R`: the integral closure `C` of `R` in `K'`, a maximal ideal `𝔪'` of `C` lying

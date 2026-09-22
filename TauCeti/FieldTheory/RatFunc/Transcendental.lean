@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.Separable
 /-!
 # The rational function field as a base for a transcendental element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.RatFunc.Transcendental)
+
 Let `F` be an extension of a field `k` and let `x ∈ F` be transcendental over `k`. Mathlib's
 `RatFunc.algEquivOfTranscendental` identifies `k(X)` with the intermediate field `k⟮x⟯`;
 composing with its inclusion into `F` makes `F` an algebra over `k(X)` in which `X` acts as `x`.

@@ -14,6 +14,8 @@ import Mathlib.CategoryTheory.Limits.Constructions.FiniteProductsOfBinaryProduct
 /-!
 # Direct sums of polarizable pure Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Prod)
+
 The direct sum of two pure Hodge structures of the same weight `n` carries the product filtration
 `F^p ⊕ F'^p` on the product space, and its Hodge components are the products of the Hodge
 components. Opposedness is inherited factor by factor because a conjugation acting componentwise

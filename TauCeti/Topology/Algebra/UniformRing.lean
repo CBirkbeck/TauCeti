@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.UniformRing
 /-!
 # Ring homomorphisms out of a completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.UniformRing)
+
 Results about `UniformSpace.Completion` as a *ring*. Those about the completion itself live in
 the root `UniformSpace.Completion` namespace they extend; `RingHom.completionCoe_comp_heq`, whose
 subject is the homomorphism being followed by the coercion, lives in `RingHom` so that it is

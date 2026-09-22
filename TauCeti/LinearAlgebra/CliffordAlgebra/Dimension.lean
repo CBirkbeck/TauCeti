@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.ParitySwap
 /-!
 # Freeness and dimension of a Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Dimension)
+
 The Clifford relation `ι Q m * ι Q m = Q m` does not preserve the number of generators in a
 product, so a Clifford algebra is not graded by degree; what it does do is leave the *size* of the
 algebra alone. Over a ring in which `2` is invertible this is Mathlib's

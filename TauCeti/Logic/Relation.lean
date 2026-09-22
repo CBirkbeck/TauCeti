@@ -11,6 +11,8 @@ public import Mathlib.Logic.Relation
 /-!
 # Totality of a reflexive transitive closure as the absence of a closed proper subset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Logic.Relation)
+
 Read `r : α → α → Prop` as the edge relation of a directed graph. Saying that
 `Relation.ReflTransGen r` relates every pair of points is the "any two points are joined by a
 chain" form of connectedness; saying that every nonempty proper subset of `α` has an edge leaving

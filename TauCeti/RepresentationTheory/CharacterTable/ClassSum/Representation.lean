@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Character
 /-!
 # The action of a class sum on a representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.Representation)
+
 A representation of a finite group `G` extends to the group algebra, so each class sum `K_C` acts
 on it. This file computes that action and its trace: the action is the sum of the actions of the
 members of the class, and, the character being constant on a conjugacy class, the trace is the size

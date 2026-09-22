@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Quotient.Basic
 /-!
 # Profinite groups: quotients by normal subgroups, and open subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Basic)
+
 The foundational layer for profinite groups in the unbundled classes: `G` is a group with a
 topology making it a topological group, compact and totally disconnected. The separation chain
 itself needs no new work — Mathlib derives `T1Space`, `T2Space` and `T3Space` on such a `G` from

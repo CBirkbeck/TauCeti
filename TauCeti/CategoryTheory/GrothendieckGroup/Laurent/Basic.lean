@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Polynomial.Laurent.Specialization
 /-!
 # The Laurent coefficient ring acting on the graded Grothendieck group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Laurent.Basic)
+
 The grading shift `{1}` of a graded exact category acts on its exact Grothendieck group by the
 automorphism `TauCeti.GradedExactStructure.shiftEquiv`, and iterating it gives the `ℤ`-action
 `TauCeti.GradedExactStructure.shiftZPow`.  Repackaging that `ℤ`-action as a module structure over

@@ -16,6 +16,8 @@ import Mathlib.RingTheory.Ideal.Int
 /-!
 # The structure of an ambiguous ideal of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Ambiguous.Structure)
+
 Let `K` be a quadratic number field with quadratic conjugation `σ`. An ideal `I` of `𝓞 K` is
 *ambiguous* when `σI = I`. This file describes the *nonzero* ambiguous ideals completely: they are
 exactly the products

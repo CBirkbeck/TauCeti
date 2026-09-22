@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.QExpansion
 /-!
 # Upper-triangular slashes of a level-raise
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.LevelRaise)
+
 For `g` slash-invariant under a group with `1` as a strict period, the level-raise
 `V_p g = p^(1-k) • (g ∣[k] scaleGL p)` (the function `τ ↦ g (p τ)`) is slashed by the
 upper-triangular matrix `!![1, b; 0, p]` back to `p⁻¹ • g`:

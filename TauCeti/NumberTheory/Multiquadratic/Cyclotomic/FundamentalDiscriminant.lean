@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Complex
 /-!
 # A quadratic field lies in the cyclotomic field of its discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Cyclotomic.FundamentalDiscriminant)
+
 Let `D` be a fundamental discriminant. The quadratic field `ℚ(√D)` lies in the cyclotomic field
 `ℚ(ζ_|D|)`: inside any field `L` of characteristic zero, an intermediate field of `L / ℚ` holding a
 primitive `N`-th root of unity with `|D| ∣ N` contains both square roots of `D`. For a squarefree

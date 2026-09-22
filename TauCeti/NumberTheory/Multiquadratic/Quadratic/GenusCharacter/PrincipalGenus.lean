@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Quadratic.TwoRank
 /-!
 # The principal genus theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.PrincipalGenus)
+
 Let `K = ℚ(√d)` with `d` squarefree and let `D = ∏ P ∈ s, P` be the prime-discriminant
 factorization of the fundamental discriminant of `d`, so that `t = #s` is the number of rational
 primes ramifying in `K`. The `t` genus characters `χ_P` assemble into a `ZMod 2`-linear map

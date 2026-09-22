@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Integral.Indicator
 /-!
 # The visited successor array of a recurrent Markov exchangeable process is row exchangeable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.RowExchangeable)
+
 Diaconis and Freedman represent a recurrent Markov exchangeable process as a mixture of Markov
 chains by passing to its **successor array**, whose `(a, k)`-entry is the state reached right after
 the `k`-th visit to `a`. `TauCeti/Probability/Exchangeability/DiaconisFreedman.lean` supplies the

@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.Finiteness
 /-!
 # Finite generation of the `S`-units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.Unit)
+
 Mathlib defines the group `Set.unit S K` of `S`-units — the `x : Kˣ` with `v x = 1` for every
 `v ∉ S` — and identifies it with the units of the ring of `S`-integers, but says nothing about its
 size. Its own module docstring records the gap: `Mathlib/RingTheory/DedekindDomain/SInteger.lean`

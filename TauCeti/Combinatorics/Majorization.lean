@@ -12,6 +12,8 @@ import Mathlib.Tactic
 /-!
 # A strict majorization criterion for staircase sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Majorization)
+
 This file identifies an integer sequence from three numerical properties: it is antitone, it is
 majorized by the finite staircase `N - 1, ..., 0`, and it has the same value as that staircase
 under a particular quadratic weighted sum.

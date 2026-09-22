@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 /-!
 # The upper-triangular Hecke slash sum under `T`-invariance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic)
+
 The classical upper-triangular Hecke sum `heckeSlashUpperTri k p f = ∑ b < p, f ∣[k] !![1, b; 0, p]`
 preserves invariance under the translation matrix `T = !![1, 1; 0, 1]`.
 

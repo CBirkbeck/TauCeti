@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Basic
 /-!
 # Diagonal matrices in the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Diagonal.Basic)
+
 The diagonal torus of `SL_n` is the preimage of the diagonal torus of `GL_n`. A unit in a
 commutative ring also defines a determinant-one diagonal matrix by placing the unit and its
 inverse in two distinct diagonal positions. This generalizes Mathlib's field-valued

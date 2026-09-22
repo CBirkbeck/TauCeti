@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.D.SpinWe
 /-!
 # The tripled minuscule weight table of type D4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.D.TripledWeight)
+
 The three eight-dimensional representations of type `D₄`, the natural representation `V(ϖ₁)` and
 the two half-spin representations `V(ϖ₃)` and `V(ϖ₄)`, are minuscule: every pairing of one of
 their weights with a simple coroot is `-1`, `0` or `1`. This file enumerates their twenty-four

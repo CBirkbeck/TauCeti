@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Stellar.Eq
 /-!
 # Combinatorial balls, spheres, and manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.CombinatorialManifold)
+
 A simplicial complex is a **combinatorial `n`-ball** when it is stellar equivalent to the standard
 `n`-simplex, and a **combinatorial `n`-sphere** when it is stellar equivalent to the boundary of
 the standard `(n+1)`-simplex. A complex is a **combinatorial `n`-manifold** when the link of each

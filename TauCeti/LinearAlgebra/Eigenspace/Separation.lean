@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Eigenspace.Basic
 /-!
 # Separating eigenspace summands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.Separation)
+
 Suppose `p` is a sum `⨆ j ∈ s, W j` of subspaces on which an endomorphism `A` already
 acts by scalars, one scalar `g j` per summand, and suppose the scalar `g k` of one distinguished
 summand is attained by no other. Then that summand is *exactly* the `g k`-eigenspace of `A` inside

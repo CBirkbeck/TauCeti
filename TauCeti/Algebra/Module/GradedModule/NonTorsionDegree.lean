@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Module.Torsion.Basic
 /-!
 # Maximal non-torsion degree of a graded `k[X]`-module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.NonTorsionDegree)
+
 Let `M` be a `ℤ`-graded module over a polynomial ring `k[X]` in which `X` lowers degree by a fixed
 `d`. The degrees of the homogeneous elements of `M` that are not torsion form a set
 `G.nonTorsionDegrees`. Its supremum `G.supNonTorsionDegree` is attained, and hence is its maximal

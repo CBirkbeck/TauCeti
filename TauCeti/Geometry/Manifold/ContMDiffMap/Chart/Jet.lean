@@ -12,6 +12,8 @@ import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
 /-!
 # Derivatives on manifold chart domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ContMDiffMap.Chart.Jet)
+
 For a vector-valued smooth map on a manifold, differentiate its coordinate representative within
 the target of each extended source chart. These derivatives are continuous on that target, even
 when the manifold has boundary or corners: the model with corners supplies unique derivatives

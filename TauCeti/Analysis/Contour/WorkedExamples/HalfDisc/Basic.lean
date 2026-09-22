@@ -16,6 +16,8 @@ public import TauCeti.Analysis.Contour.Winding.Number.Segment.Basic
 /-!
 # The half-disc boundary contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Basic)
+
 For `0 < R`, the boundary of the upper half-disc of radius `R` about the origin, traversed
 counterclockwise on `[-R, R + π]`: the diameter along the real axis from `-R` to `R`, followed by
 the semicircular arc from `R` back to `-R`, the arc carrying its angle in `t - R`.

@@ -20,6 +20,8 @@ import TauCeti.Probability.Exchangeability.ConditionallyIID.Congr
 /-!
 # The de Finetti–Ryll-Nardzewski theorem and equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.Theorem)
+
 The de Finetti summit in its **conditional** form, together with its conditional and mixture
 equivalences.
 

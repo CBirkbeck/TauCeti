@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.Spin.Weight
 /-!
 # The integral lattice in the spinor module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.IntegralLattice)
+
 For a polarized rational quadratic space, the spinor module is the exterior algebra of the first
 isotropic summand. A basis `b` of that summand gives it the coordinate integral lattice
 `TauCeti.ExteriorAlgebra.integralLattice b`.

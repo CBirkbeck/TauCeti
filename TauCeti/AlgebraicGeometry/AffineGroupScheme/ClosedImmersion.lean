@@ -12,6 +12,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Closed immersions of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.ClosedImmersion)
+
 The scheme morphism underlying the contravariant `hopfSpec` image of a morphism of commutative
 Hopf algebras is a closed immersion exactly when the coordinate morphism is surjective. This
 criterion requires no hypotheses beyond commutativity of the base and coordinate rings.

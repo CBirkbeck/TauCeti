@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Semisimple unipotent affine groups are trivial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Semisimple)
+
 Over a perfect field, a point that is both semisimple and unipotent is the identity. This file
 turns that pointwise fact into a scheme-theoretic rigidity statement: if a reduced finite-type
 commutative Hopf algebra has only semisimple and unipotent geometric points, then its counit is an

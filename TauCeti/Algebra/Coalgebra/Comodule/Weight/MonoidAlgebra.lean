@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Weight.Space
 /-!
 # Group-like weight spaces for monoid-algebra comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Weight.MonoidAlgebra)
+
 This file identifies the group-like weight space indexed by `single g 1` with the usual weight
 space of a comodule over a monoid algebra.
 

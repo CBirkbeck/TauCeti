@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.VertexFixing
 /-!
 # The cohomology class of a skew-zigzag parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Cohomology)
+
 A skew-zigzag parameter `c` of a simple graph `G` labels each ordered pair of incident edges by a
 unit-valued ratio between the two backtracks they carry. This file identifies the gauge classes of
 such parameters with the first cohomology `H¹(G, kˣ)` of the graph.

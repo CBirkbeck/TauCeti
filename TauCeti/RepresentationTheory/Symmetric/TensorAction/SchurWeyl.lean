@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Semisimple.DoubleCentralizer
 /-!
 # Schur-Weyl duality: the symmetric-group image and the diagonal span are mutual commutants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TensorAction.SchurWeyl)
+
 The symmetric group `S_d` acts on `(kⁿ)^{⊗d}` by permuting the tensor factors, the diagonal
 operators `f^{⊗d}` act by applying one endomorphism of `kⁿ` in every factor, and the two actions
 commute (`PiTensorProduct.commute_reindexRepresentation_map`). **Schur-Weyl duality** says that

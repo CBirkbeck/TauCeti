@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Group.Commute.Units
 /-!
 # Centralizers and maximal commutative subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Subgroup.Centralizer)
+
 Centralizers of a group of units are computed on the underlying monoid: a unit centralizes another
 exactly when their values commute. Mathlib has both halves —
 `Subgroup.mem_centralizer_singleton_iff` turns membership into an equation, and

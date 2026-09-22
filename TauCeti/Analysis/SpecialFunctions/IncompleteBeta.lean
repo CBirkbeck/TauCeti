@@ -11,6 +11,8 @@ import TauCeti.Analysis.Calculus.RealCharts
 /-!
 # The regularized incomplete beta function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.IncompleteBeta)
+
 For positive shape parameters `a` and `b` the *regularized incomplete beta function* is
 `I_x(a, b) = (∫ t in 0..x, t ^ (a - 1) * (1 - t) ^ (b - 1)) / Β(a, b)`, where `Β` is Euler's beta
 function `ProbabilityTheory.beta`. It is the cumulative distribution function of the beta law, and

@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
 /-!
 # Integrality descends along multiplication by `n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Descent)
+
 If `n • P` has integral coordinates then so does `P`. This is the descent step of the
 Nagell–Lutz argument: it lets an integrality claim about a torsion point be pulled back from a
 multiple where it is easier to establish.

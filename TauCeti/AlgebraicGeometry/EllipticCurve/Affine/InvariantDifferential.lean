@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Differential.Kaehler
 /-!
 # The invariant differential of an elliptic curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.InvariantDifferential)
+
 For an elliptic curve `E` over a field `F` this file constructs the invariant differential
 `ω = dx / (2y + a₁x + a₃)` inside the module of Kähler differentials `Ω[K(E)/F]` of the
 function field, and proves that `ω` is a basis: `Ω[K(E)/F]` is a one-dimensional `K(E)`-vector

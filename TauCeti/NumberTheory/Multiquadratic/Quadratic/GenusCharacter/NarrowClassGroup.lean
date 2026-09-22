@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.Congruence.Basic
 /-!
 # Genus characters on the narrow class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.NarrowClassGroup)
+
 The genus character of a quadratic field is initially defined only on ideals whose absolute norm
 is coprime to a chosen product of prime discriminants. This file uses coprime representatives to
 descend that arithmetic character to the whole narrow class group. The resulting homomorphism is

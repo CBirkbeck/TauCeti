@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # The three-dimensional Heisenberg Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Heisenberg)
+
 The Heisenberg Lie algebra is the strictly upper triangular `3 × 3` matrices, that is,
 `TauCeti.strictUpperTriangular R (Fin 3)`, and `TauCeti.heisenberg` is that Lie subalgebra of
 `gl 3 R` under its traditional name. It is free of rank three on the matrix units

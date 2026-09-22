@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Semigroups.Generator.Basic
 /-!
 # Generators of exponentially shifted semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator.ExponentialShift)
+
 The exponentially shifted semigroup `t ↦ exp (-omega t) S(t)` has the same generator domain as
 `S`, and its generator is `A - omega I`.  This identifies the shift used to move semigroup growth
 bounds with the scalar shift used in unbounded-resolvent hypotheses.

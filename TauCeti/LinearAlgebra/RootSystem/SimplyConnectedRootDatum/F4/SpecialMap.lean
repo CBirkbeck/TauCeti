@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Lengt
 /-!
 # The special length-exchanging map of the pinned type `F₄` root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.SpecialMap)
+
 In characteristic two, the Ree construction of the families `²F₄` and the Tits group uses a special
 isogeny of the simply connected group of type `F₄`. At the root-datum level its character-lattice
 map reverses the four Bourbaki nodes and multiplies in the long-root direction. In the

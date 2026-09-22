@@ -12,6 +12,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 /-!
 # Connected components of doubled graph quivers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Connected)
+
 Graph walks become directed paths in the doubled quiver by replacing each traversed edge with its
 corresponding arrow. Conversely, a doubled-quiver path gives a graph walk by forgetting the lifted
 adjacency proofs. These constructions identify graph reachability with directed reachability in the

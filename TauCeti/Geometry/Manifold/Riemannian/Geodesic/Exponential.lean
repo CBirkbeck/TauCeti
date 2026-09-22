@@ -13,6 +13,8 @@ import TauCeti.Geometry.Manifold.VectorField.Regularity
 /-!
 # The Riemannian exponential map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Exponential)
+
 For a point `p` of a smooth finite-dimensional Riemannian manifold `M`, the exponential map sends
 a tangent vector `v ∈ T_p M` to the point reached at time `1` by the maximal geodesic leaving `p`
 with velocity `v`.  Its natural domain is the set of `v` whose maximal geodesic interval contains

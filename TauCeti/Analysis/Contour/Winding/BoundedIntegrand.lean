@@ -12,6 +12,8 @@ public import Mathlib.Topology.MetricSpace.Bounded
 /-!
 # Boundedness of the real winding integrand at crossings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.BoundedIntegrand)
+
 For a plane curve `γ` that is `C¹` everywhere, and is `C²` with nonzero velocity where it meets
 a point `w`, the real winding integrand
 

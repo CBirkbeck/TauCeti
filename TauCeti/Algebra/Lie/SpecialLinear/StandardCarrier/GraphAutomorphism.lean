@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The pinned graph automorphism of the type-A standard carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.GraphAutomorphism)
+
 The signed reverse-inverse-transpose automorphism of `GL_{r+1}` preserves the full-weight
 type-`A_r` Chevalley carrier. This file descends it to an automorphism of
 `TauCeti.SlStd.groupScheme r`. On the chosen pinning it reverses the Bourbaki numbering without

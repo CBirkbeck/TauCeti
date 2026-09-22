@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Product
 /-!
 # Aspherical spaces and Eilenberg--Mac Lane spaces of type `K(G, 1)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.EilenbergMacLane.Basic)
+
 A based space is aspherical when it is path-connected and all of its homotopy groups in
 dimensions at least two are trivial. An Eilenberg--Mac Lane space of type `K(G, 1)` is an
 aspherical space whose fundamental group is isomorphic to `G`.

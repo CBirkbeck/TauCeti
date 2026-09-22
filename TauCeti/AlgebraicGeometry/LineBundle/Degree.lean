@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.LineBundle.Class
 /-!
 # The Euler-characteristic degree of a line bundle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.LineBundle.Degree)
+
 On a proper curve over a field, the degree of a line bundle `L` can be recovered from Euler
 characteristics by
 

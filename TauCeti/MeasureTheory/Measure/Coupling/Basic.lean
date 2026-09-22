@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Basic couplings of measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Coupling.Basic)
+
 A **coupling** of two measures `μ₁` and `μ₂` is a measure on their product whose marginals are
 `μ₁` and `μ₂`. This file provides the carrier-independent coupling API used by the dense graph
 limit theory: marginal projection rules, measure-preserving projections, integral transfer,

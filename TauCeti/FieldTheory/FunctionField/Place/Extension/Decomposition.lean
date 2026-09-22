@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.Galois.FixedField
 /-!
 # The decomposition group and the decomposition field of a place
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Decomposition)
+
 Let `F' / F` be a finite Galois extension of fields, `k` a subfield of `F`, and `P` a place of
 `F' / k`.  The Galois group acts on the places of `F' / k` and is transitive on each fibre of
 restriction, so the fibre through `P` is the orbit of `P` and the stabilizer of `P` — Mathlib's

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.HopfAlgebra.Basic
 /-!
 # Convolution groups of algebra homomorphisms out of a Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints)
+
 For an arbitrary Hopf algebra `H` over `R` and a commutative `R`-algebra `A`, the convolution
 monoid of `R`-algebra homomorphisms `H →ₐ[R] A` is a **group**, with inverse `f ↦ f ∘ S`,
 where `S` is the antipode of `H`. The source `H` need only be a Hopf algebra; it is *not*

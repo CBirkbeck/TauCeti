@@ -13,6 +13,8 @@ import TauCeti.Algebra.Algebra.Pi
 /-!
 # Constant finite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.ConstantGroup.Basic)
+
 Let `G` be a finite group and `R` a commutative ring. The coordinate ring of the constant
 `R`-group associated to `G` is the function algebra `G → R`. We construct it intrinsically as
 the finite Hopf dual of the group algebra `R[G]`. This supplies its Hopf structure without making

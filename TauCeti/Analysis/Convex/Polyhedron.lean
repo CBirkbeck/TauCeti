@@ -12,6 +12,8 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 /-!
 # Convex polyhedra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Convex.Polyhedron)
+
 A *convex polyhedron* in a real topological vector space is the solution set of finitely many
 non-strict affine inequalities `g i x ≤ 0`, the `g i` being continuous affine functionals. This
 file introduces that predicate and the three closure properties a piecewise-linear calculus needs:

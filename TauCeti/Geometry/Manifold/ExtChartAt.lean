@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 /-!
 # Extended manifold charts as measurable embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ExtChartAt)
+
 Mathlib's extended chart at a point is a `PartialEquiv` between a manifold and its model vector
 space. Its restrictions to the chart source and target are mutually continuous, hence the chart
 restricted to its source is a measurable embedding for the Borel measurable spaces. This is the

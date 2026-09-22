@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.ReeG2.Closure
 /-!
 # The ambient group of the Ree family of type `G₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeG2.Carrier)
+
 The Ree family `²G₂(3^(2m+1))` is built inside the group of algebraic-closure-valued points of
 the short-root type-`G₂` carrier over the prime field `𝔽₃`. That carrier is the closed subgroup
 scheme of `GL₇` generated over `𝔽₃` by the reductions of the numbered simple root subgroups and

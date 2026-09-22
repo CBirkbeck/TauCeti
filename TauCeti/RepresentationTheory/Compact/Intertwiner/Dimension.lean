@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Compact.Invariants
 /-!
 # The character integral counts the intertwiners
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Intertwiner.Dimension)
+
 For finite-dimensional continuous representations `π` on `V` and `ρ` on `W` of a compact group,
 
 `∫ g, χ_π(g⁻¹) · χ_ρ(g) ∂(haarProb G) = dim Hom_G(V, W)`,

@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Localization.NumDen
 /-!
 # Nagell–Lutz integrality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NagellLutz)
+
 Over `ℤ`, a nonzero torsion point of a Weierstrass curve has integral coordinates — unless it has
 order exactly two, where the honest bound is that `4x` and `8y` are integral. Over the fraction
 field `K` of a general unique factorisation domain `R` the same holds **given squarefreeness of

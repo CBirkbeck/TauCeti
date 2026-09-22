@@ -13,6 +13,8 @@ import Mathlib.FieldTheory.PrimitiveElement
 /-!
 # Minimal polynomials over a relatively algebraically closed base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Minpoly.IsIntegrallyClosedIn)
+
 Let `F / k` be a field extension in which `k` is relatively algebraically closed, that is,
 `IsIntegrallyClosedIn k F` — equivalently `algebraicClosure k F = ⊥` — and let `E` be a further
 commutative `F`-algebra.  An element `x` of `E` algebraic over `k` then has the same minimal

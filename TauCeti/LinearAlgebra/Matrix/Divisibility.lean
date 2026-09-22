@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.Coprime.Basic
 /-!
 # Divisibility of matrix entries under multiplication
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Divisibility)
+
 A common divisor of the entries of a matrix survives multiplication on either side: every
 entry of `P * A * Q` is an `S`-combination of entries of `A`, so anything dividing all of
 those divides all of these.

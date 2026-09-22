@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.RibbonGraph.ToPermutationTriple
 /-!
 # Ribbon graphs and permutation triples classify each other
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.RibbonGraph.Classification)
+
 Numbering the edges of a finite bipartite ribbon graph turns it into a permutation triple
 (`TauCeti.BipartiteRibbonGraph.toPermutationTriple`), and every permutation triple has a ribbon
 graph (`TauCeti.PermutationTriple.ribbonGraph`). This file proves that the two constructions are

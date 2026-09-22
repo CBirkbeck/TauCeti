@@ -13,6 +13,8 @@ import Mathlib.Probability.Independence.ZeroOne
 /-!
 # Dissociated arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Dissociated)
+
 The Aldous--Hoover representation of an exchangeable array has an **ergodic form**, in which the
 array is a fixed measurable function of one variable per row, one per column, and one per cell,
 with no global variable; the general form is a mixture of these over the global variable. The class

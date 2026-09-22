@@ -15,6 +15,8 @@ import Mathlib.GroupTheory.Sylow
 /-!
 # Burnside's `pᵃqᵇ` theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Solvable)
+
 A finite group whose order has at most two prime divisors is solvable. The proof is the classical
 character-theoretic one, and it runs through the statement that a **conjugacy class of prime-power
 size larger than one forces a proper nontrivial normal subgroup**

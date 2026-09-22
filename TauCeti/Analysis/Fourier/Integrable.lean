@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 /-!
 # Integrability of Fourier transforms of smooth compactly supported functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.Integrable)
+
 A smooth compactly supported function is a Schwartz function, so its Fourier transform is also a
 Schwartz function and hence integrable. This supplies the Fourier-integrability hypotheses needed
 in dominated-convergence arguments, such as the Wiener--Ikehara boundary identity.

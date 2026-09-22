@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Group
 /-!
 # Inversion sets in a Weyl group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Inversions.Basic)
+
 Relative to a base of a root pairing, the inversion set of a Weyl-group element consists of the
 positive roots that it sends to negative roots. This file gives the set-theoretic API for inversion
 sets and computes the inversion set of the identity and of a simple reflection.

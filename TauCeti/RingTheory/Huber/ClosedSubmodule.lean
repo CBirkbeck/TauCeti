@@ -14,6 +14,8 @@ import TauCeti.Topology.Algebra.Nonarchimedean.Pi
 /-!
 # Submodules with a module-finite closure are closed
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.ClosedSubmodule)
+
 A submodule of a complete, metrisable module over a complete Tate ring whose topological closure
 is module-finite is itself closed. This is Bosch–Güntzer–Remmert §3.7.2/1 in its closure form, and
 it is the closedness prerequisite on the route to Wedhorn 6.17/6.18. Its consequence for a

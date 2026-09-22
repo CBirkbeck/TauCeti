@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.Restriction
 /-!
 # Conjugate representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Conjugate)
+
 For a subgroup `H` of a group `G` and `s : G`, this file defines the conjugate of an
 `H`-representation as a representation of `sHs⁻¹`.  The action is transported along the canonical
 isomorphism

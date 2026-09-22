@@ -13,6 +13,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries
 /-!
 # Nakayama for a matrix with topologically nilpotent entries
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Matrix)
+
 Over a complete nonarchimedean ring, `1 - B` is invertible as soon as every entry of `B` is
 topologically nilpotent, and consequently a family satisfying `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` vanishes.
 

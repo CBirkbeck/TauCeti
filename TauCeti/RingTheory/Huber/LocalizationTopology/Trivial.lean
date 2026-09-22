@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.RingOfDefinition
 /-!
 # The trivial presentation: `A⟨T/1⟩` is the completion of `A`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Trivial)
+
 This file identifies the completed localisation `A⟨T/1⟩` with the Hausdorff completion of `A`.
 Everything rests on one computation: for numerators lying in the ring of definition, the
 localisation topology at the denominator `1` is the topology `A` already carries.

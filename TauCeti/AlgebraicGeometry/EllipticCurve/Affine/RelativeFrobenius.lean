@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Polynomial.Expand
 /-!
 # Relative Frobenius on affine coordinate rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.RelativeFrobenius)
+
 For a Weierstrass curve `W` over a commutative ring of exponential characteristic `p`, this file
 constructs the relative Frobenius map from the coordinate ring of the Frobenius twist
 `W.map (frobenius R p)` to `W.CoordinateRing`. It sends the two coordinates to their `p`-th

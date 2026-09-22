@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.Congruence
 /-!
 # The corner minor of a doubly singular matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.CornerMinor)
+
 The *corner minor* of a square matrix `A` indexed by `Fin (n + 1)` is the determinant of the
 submatrix obtained by deleting its last row and its last column, that is, the determinant of
 `A.submatrix Fin.castSucc Fin.castSucc`. Unlike the determinant it is not a conjugation

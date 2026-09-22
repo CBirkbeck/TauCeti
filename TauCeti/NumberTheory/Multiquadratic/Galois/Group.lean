@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Galois.Basic
 /-!
 # The Galois group of a multiquadratic field is `(ℤ/2)ⁿ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Galois.Group)
+
 Over a field `K` in which `2 ≠ 0`, a multiquadratic field `M = K(rootᵢ : i)` (with
 `rootᵢ ^ 2 = dᵢ ∈ K`) is Galois (`TauCeti.NumberTheory.Multiquadratic.Galois.Basic`). Each
 automorphism sends every generator to `± rootᵢ`, so it is determined by a *sign pattern* `ι → ℤ/2`;

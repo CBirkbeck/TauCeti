@@ -11,6 +11,8 @@ import Mathlib.Analysis.Calculus.Deriv.Slope
 /-!
 # The residue of a quotient at a simple zero of the denominator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.Quotient)
+
 For `g, h` analytic at `z₀` with `h z₀ = 0` and `h' z₀ ≠ 0`, the quotient `g / h` has at worst a
 simple pole at `z₀` and
 

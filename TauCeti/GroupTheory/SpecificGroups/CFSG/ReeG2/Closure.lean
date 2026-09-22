@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.ReeG2.Index
 /-!
 # The algebraic closure for the Ree family of type `G₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeG2.Closure)
+
 This file records that the algebraic closure attached to a validated Ree index of type `G₂` has
 characteristic three, and equips it with the resulting structure of an algebra over the field of
 three elements. This is the base ring over which the family's short-root carrier is defined.

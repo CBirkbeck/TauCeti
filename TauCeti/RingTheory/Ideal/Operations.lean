@@ -15,6 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Complements on ideal multiplication and the ideal action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.Operations)
+
 This file collects general facts about the multiplication of ideals and about the action `I • N`
 of an ideal on a module, complementing `Mathlib/RingTheory/Ideal/Operations.lean`.
 

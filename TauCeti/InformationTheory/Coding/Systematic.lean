@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.Matrix
 /-!
 # Systematic matrices from an information set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Systematic)
+
 A chosen information set determines a unique generator matrix whose information columns are
 an identity matrix. Its rows encode the unit messages. Splitting the coordinates into the
 information set and its complement puts this matrix in the form `[I | A]`; the matrix

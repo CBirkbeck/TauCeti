@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.Unblocked
 /-!
 # The bigrading of the unblocked grid complex `GC⁻`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.UnblockedChain)
+
 `Unblocked.lean` builds the unblocked grid complex `GC⁻`, the free module on grid states over
 `R[V₀, …, V_{n-1}]`, and records how one rectangle counted by its differential moves the two
 gradings of a grid state. This file fixes the bigrading those two records were made for and proves

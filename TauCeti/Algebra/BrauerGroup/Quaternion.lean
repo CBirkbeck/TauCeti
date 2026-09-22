@@ -27,6 +27,8 @@ import TauCeti.Algebra.BrauerGroup.BaseChange
 /-!
 # The Brauer class of the real quaternions has order two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.Quaternion)
+
 This file applies the general Brauer-group API to the real quaternions. Quaternion conjugation
 identifies `ℍ[ℝ]` with its opposite algebra, so its Brauer class is self-inverse; and `ℍ[ℝ]` is a
 central division algebra of dimension `4`, so that class is not the identity

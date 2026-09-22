@@ -13,6 +13,8 @@ import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.GaussSum
 /-!
 # Square roots of prime discriminants in a field of roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Cyclotomic.GaussSum)
+
 This file extracts the square roots of the prime discriminants from roots of unity. Let `L` be a
 field of characteristic zero and let `F` be an intermediate field of `L / ℚ`.
 

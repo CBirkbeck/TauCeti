@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.UnitGroup
 /-!
 # Proper ideals of a complete Huber pair are contained in supports
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Support)
+
 Over a complete Hausdorff Huber pair `(A, A⁺)` every proper ideal `J` of `A` is contained in the
 support of some point of `Spa (A, A⁺)`:
 

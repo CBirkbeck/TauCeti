@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Measurable
 /-!
 # Holomorphy of Dixon's `h₁` on the region
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Dixon.H1Diff)
+
 Dixon's `h₁` integral `dixonH1 f γ a b w = ∫ t in a..b, dslope f w (γ t) * deriv γ t` is
 holomorphic in the point `w`, throughout the open region `U` where `f` is holomorphic and the
 curve `γ` lives. This is the removable-singularity half of the analyticity of Dixon's glued

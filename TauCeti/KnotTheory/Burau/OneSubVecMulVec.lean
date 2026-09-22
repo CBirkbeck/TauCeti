@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.OneSubVecMulVec
 /-!
 # Braid-group homomorphisms from the matrices `1 - u ⊗ v`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Burau.OneSubVecMulVec)
+
 This file constructs a braid-group homomorphism into `GL` from a family of rank-one perturbations
 of the identity `1 - vecMulVec (u i) (v i)`, indexed by the elementary braids, whose pairings have
 the values occurring in the Burau representation. The calculus of a single such matrix, or of a

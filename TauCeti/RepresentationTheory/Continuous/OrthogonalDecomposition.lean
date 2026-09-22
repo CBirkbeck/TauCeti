@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Irreducible
 /-!
 # The orthogonal decomposition of a unitary representation into irreducibles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.OrthogonalDecomposition)
+
 A finite-dimensional unitary continuous representation of a group is an **orthogonal internal
 direct sum of irreducible subrepresentations**. This is the geometric — as opposed to
 lattice-theoretic — form of complete reducibility: not merely that every subrepresentation has a

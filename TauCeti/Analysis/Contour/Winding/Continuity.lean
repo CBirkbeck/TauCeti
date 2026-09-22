@@ -14,6 +14,8 @@ import TauCeti.Analysis.Contour.Winding.Number.Reverse
 /-!
 # Continuity of the generalized winding number in the point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Continuity)
+
 For a curve `γ` continuous on the interval with endpoints `a`, `b` whose index integrand
 `(γ · - w₀)⁻¹ * deriv γ` at an avoided point `w₀` is interval-integrable, the generalized winding
 number `fun w ↦ windingNumber γ a b w` is continuous at `w₀`

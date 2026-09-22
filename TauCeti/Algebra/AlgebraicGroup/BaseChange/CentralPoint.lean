@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.CentralPoint
 /-!
 # Central points under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.BaseChange.CentralPoint)
+
 Let `H` be a bialgebra over `k`, let `K` be a commutative `k`-algebra, and let `A` be a
 commutative `K`-algebra. The standard equivalence
 

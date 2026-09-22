@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.LinearPMap.SmulSub
 /-!
 # Shifts of a partial linear map on a normed space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.LinearPMap.SmulSub)
+
 For a partial linear map `A` on a normed space and a scalar `c`, this file studies the shift
 `x ↦ c • x - A x` (bundled as `LinearPMap.smulSub` in `TauCeti.LinearAlgebra.LinearPMap.SmulSub`)
 under a lower bound.  A shift bounded below by a multiple of `‖x‖` is injective; a shift bounded

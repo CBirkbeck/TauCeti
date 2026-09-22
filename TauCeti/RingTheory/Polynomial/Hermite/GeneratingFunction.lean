@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Polynomial.Hermite.Basic
 /-!
 # The exponential generating function of the probabilists' Hermite polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Hermite.GeneratingFunction)
+
 Mathlib defines `Polynomial.hermite` by the one-step recursion
 `hermite (n + 1) = X * hermite n - derivative (hermite n)` and develops its coefficient and
 derivative API, but it records nothing about the classical exponential generating function

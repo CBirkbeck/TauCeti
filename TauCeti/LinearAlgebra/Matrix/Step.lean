@@ -10,6 +10,8 @@ public import Mathlib.Data.Matrix.Basic
 /-!
 # Matrices with at most one nonzero entry in each column
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Step)
+
 A *step matrix* is a matrix each of whose columns is a scalar multiple of a coordinate vector:
 the `b`th column is `c b` times the `t b`th coordinate vector, for a target function `t` and a
 coefficient function `c`. Permutation matrices, diagonal matrices and the matrix units are step

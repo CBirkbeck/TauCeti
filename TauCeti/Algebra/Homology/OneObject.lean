@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 /-!
 # One-object homological complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.OneObject)
+
 A square-zero endomorphism of an object in a category with zero morphisms determines a
 homological complex indexed by `Unit`, using the circular shape `ComplexShape.refl Unit`. This
 file provides that construction and records its unique object and differential.

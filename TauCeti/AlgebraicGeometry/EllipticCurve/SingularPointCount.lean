@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.NodePolynomial
 /-!
 # Point counts at a singular Weierstrass model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.SingularPointCount)
+
 The projective equation points of a Weierstrass model split into its nonsingular affine points,
 its singular affine points, and the point at infinity. Mathlib's `WeierstrassCurve.Affine.Point`
 contains the first and third parts. Consequently, `pointCount` is the cardinality of that point

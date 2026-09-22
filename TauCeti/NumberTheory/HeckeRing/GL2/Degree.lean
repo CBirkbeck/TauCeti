@@ -13,6 +13,8 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 /-!
 # Degrees of the `GL₂` Hecke operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Degree)
+
 Shimura's Theorem 3.24, identities (6) and (7): the double coset of `diag(pⁱ, pⁱ⁺ᵏ)` has
 degree `pᵏ⁻¹(p + 1)` for `k > 0`, and the degrees of the summed operators `T(m)` assemble
 into the divisor-sum function, `deg T(m) = σ₁(m)`.

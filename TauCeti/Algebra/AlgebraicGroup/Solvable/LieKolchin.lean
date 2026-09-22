@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Exists
 /-!
 # Lie--Kolchin reduction to the derived subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.LieKolchin)
+
 Let `H` be the coordinate Hopf algebra of a reduced affine group of finite type over an
 algebraically closed field. This file proves the representation-theoretic reduction at the heart
 of Lie--Kolchin: if the derived closed subgroup has only unipotent points, then every nonzero

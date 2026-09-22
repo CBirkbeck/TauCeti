@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Submodule.Prod
 /-!
 # Direct sums of linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.DirectSum)
+
 This file defines the direct sum of two linear codes on the disjoint union of their coordinate
 types. A word belongs to the direct sum precisely when its restrictions to the two summands belong
 to the respective codes.

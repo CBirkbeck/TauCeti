@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.TensorPower
 /-!
 # The first decomposition of the standard representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Decomposition)
+
 When `2` is invertible, the tensor square of a representation splits into its symmetric and
 exterior squares. This file establishes the representation equivalence and specializes it to the
 standard representation of the general linear group. Over any field, it also records the

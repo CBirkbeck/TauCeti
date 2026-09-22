@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Skeletal
 /-!
 # Comparing objects in the skeleton of a full subcategory
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Skeletal)
+
 Mathlib's `CategoryTheory.toSkeleton_eq_toSkeleton_iff` says that two objects have the same class
 in `CategoryTheory.Skeleton C` exactly when they are isomorphic *in `C`*. When `C` is a full
 subcategory `P.FullSubcategory`, that is an isomorphism of the bundled pairs, whereas a consumer

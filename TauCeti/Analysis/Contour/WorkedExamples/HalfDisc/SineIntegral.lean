@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # The Dirichlet integral `∫₀^∞ sin x / x dx = π / 2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.SineIntegral)
+
 `WorkedExamples/HalfDisc/Dirichlet.lean` evaluates the Hungerbühler--Wasem motivating example in
 its complex form: the Cauchy principal values of `e^{iaz}/z` along the real segment `[-R, R]`
 converge to `π i` as `R → ∞`, the pole at the origin sitting *on* the contour and contributing

@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Cube.Generator
 /-!
 # Exponent sums around plumbing-lattice face squares
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.Face.Exponent)
+
 The cubical generators for lattice homology have two codimension-one faces in each direction:
 a lower face and an upper face. The `U`-exponents attached to these faces are differences between
 the cube weight and the face weight. This file records the corresponding codimension-two

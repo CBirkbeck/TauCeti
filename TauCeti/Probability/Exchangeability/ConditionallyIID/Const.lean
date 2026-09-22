@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.MixedIID.Const
 /-!
 # Constant directing measures: the degenerate case of de Finetti
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Const)
+
 At a constant random measure `ω ↦ p`, the conditional and mixture identities coincide. Thus an
 i.i.d. sequence is conditionally i.i.d. with its common law as a constant directing measure.
 

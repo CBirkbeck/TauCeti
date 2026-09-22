@@ -13,6 +13,8 @@ import Mathlib.Topology.Algebra.Order.ArchimedeanDiscrete
 /-!
 # Normalized cusp data of a Fuchsian group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.Datum)
+
 Let `Γ ≤ PSL(2, ℝ)` be a discrete subgroup and `c ∈ OnePoint ℝ` a cusp point of `Γ`, that is, a
 point fixed by a parabolic element of `Γ`. Choose `σ ∈ PSL(2, ℝ)` with `σ • c = ∞`. Then the
 stabilizer of `c` in `Γ` is infinite cyclic, and `σ` conjugates it onto the group of translations

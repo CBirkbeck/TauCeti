@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.Yoneda
 /-!
 # Scheme-valued points of affine Hopf-algebra spectra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.SchemePoints)
+
 For a commutative ring `R` and a same-universe commutative bialgebra `H`, this file identifies
 the convolution monoid of `H`-points with morphisms over `Spec R` into `Spec H`. It treats both
 affine test schemes `Spec A` and arbitrary schemes `T`, whose points are valued in the relative

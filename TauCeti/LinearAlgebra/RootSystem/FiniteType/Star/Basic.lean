@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic
 /-!
 # The fork bound for finite-type Cartan matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.Basic)
+
 A connected finite-type diagram is a tree whose vertices have degree at most three. Such a tree may
 branch at several vertices, and a branch vertex together with a choice of path into each of its
 three branches carries a **star**: that vertex as the centre, with three arms hanging off it. Which

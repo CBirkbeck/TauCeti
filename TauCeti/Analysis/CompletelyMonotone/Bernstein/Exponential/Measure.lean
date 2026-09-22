@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Exponential
 /-!
 # Exponential measures as Bernstein representing measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.Exponential.Measure)
+
 The exponential probability measure with rate `r > 0`, transported from `ℝ` to `ℝ≥0`, has
 Laplace transform
 

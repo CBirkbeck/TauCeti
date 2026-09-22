@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Comap
 /-!
 # The largest Hopf ideal in a family of kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.CommonKernel.Basic)
+
 Given morphisms `f i : H ⟶ K i` of commutative Hopf algebras, the ordinary intersection of
 their ring-theoretic kernels need not come equipped with the structure of a Hopf ideal. This file
 instead takes the supremum of all Hopf ideals contained in every kernel. The result is the largest

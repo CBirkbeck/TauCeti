@@ -14,6 +14,8 @@ import TauCeti.Data.ZMod.Units
 /-!
 # Special linear groups: reduction, centers, and coordinate descriptions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic)
+
 The natural reduction map `SL₂(ℤ) → SL₂(ℤ/dℤ)` is surjective (strong approximation for
 `SL₂`; Shimura §1.6, Serre Ch. VII) — jointly so at two coprime moduli, by the Chinese
 remainder theorem — and the base-change map `SL(n, R) → GL(n, S)` sends

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
 /-!
 # Riemann--Lebesgue along a vertical line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.RiemannLebesgue)
+
 Testing a function on the vertical line `Re s = c` against a Dirichlet series produces the
 oscillating factor `x ^ (i t)`, which is the Fourier character of frequency `-(2π)⁻¹ log x` in
 the variable `t`. Letting `x → ∞` therefore pushes the frequency out of every compact set, and the

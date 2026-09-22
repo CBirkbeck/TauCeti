@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Quaternion.CentralSimple
 /-!
 # Brauer classes of quaternion symbols
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.BrauerClass)
+
 For a field `K` with `2` invertible, this file bundles the quaternion symbol with unit parameters
 `a b : Kˣ` as a central simple algebra and defines its Brauer class. The general centrality and
 simplicity results used here are in `TauCeti.Algebra.Quaternion.CentralSimple`.

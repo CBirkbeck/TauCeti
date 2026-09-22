@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 /-!
 # Measures on the circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.Circle)
+
 This file defines the measure on `Circle` obtained from a continuous nonnegative density on the
 unit circle with respect to normalized arc length. Its integral is identified with Mathlib's
 `Real.circleAverage`.

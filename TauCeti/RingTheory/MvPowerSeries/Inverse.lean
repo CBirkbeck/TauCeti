@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 /-!
 # Ring homomorphisms and `invOfUnit`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.Inverse)
+
 `MvPowerSeries.invOfUnit D u` inverts a power series whose constant coefficient is the unit `u`.
 This file records that a ring homomorphism between power series rings carries it to the
 `invOfUnit` of the image.

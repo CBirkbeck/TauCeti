@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Character
 /-!
 # Invariants of the dual representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Dual)
+
 The dual `ρ.dual` of a representation acts on functionals by `ψ ↦ ψ ∘ ρ g⁻¹`, so a functional
 invariant for it is exactly one that the action of `G` on the space leaves unchanged:
 `ψ (ρ g u) = ψ u`.  That characterization of membership in `ρ.dual.invariants` is all a

@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Coxeter.Length
 /-!
 # The parity and the functoriality of the length function of a Coxeter system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.Length)
+
 Let `cs : CoxeterSystem M W` be a Coxeter system. Left multiplication by a fixed simple reflection
 changes the length of an element by exactly one (`CoxeterSystem.length_mul_mod_two`), so it flips
 the parity of the length. This file packages that pairing as an explicit equivalence

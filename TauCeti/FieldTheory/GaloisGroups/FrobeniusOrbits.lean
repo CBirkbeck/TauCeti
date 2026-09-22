@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Perm.Partition
 /-!
 # Factor degrees over a finite field are Frobenius orbit sizes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.FrobeniusOrbits)
+
 Let `g` be a polynomial over a finite field `F` with `q` elements and let `E` be an algebraic
 extension of `F` in which `g` splits.  Two groups act on the roots of `g` in `E`: the Galois
 group `Polynomial.Gal g`, whose orbits are matched with the monic irreducible factors of `g` in

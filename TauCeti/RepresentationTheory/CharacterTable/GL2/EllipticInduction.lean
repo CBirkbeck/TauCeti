@@ -24,6 +24,8 @@ import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # The class function of `GL₂(𝔽_q)` induced from the non-split torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.EllipticInduction)
+
 Let `E/F` be a quadratic extension of a finite field with `q` elements and let
 `T = TauCeti.GL2NonSplitTorus F E hE` be the resulting elliptic torus of `GL₂(F)`, a copy of `Eˣ`.
 This file computes the induced class function `TauCeti.indClassFun T f` on the four families of

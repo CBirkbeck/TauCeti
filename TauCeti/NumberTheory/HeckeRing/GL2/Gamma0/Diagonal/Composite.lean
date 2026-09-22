@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.AtkinLehner
 /-!
 # The composite diagonal element of the `Γ₀(N)` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Composite)
+
 `Diagonal/PrimePower.lean` builds the generator `T_p` and the family `T_{p^r}` that the
 Diamond–Shurman recurrence produces, and closes by naming its own gap: "the composite element
 assembled over a prime factorisation is [not] proved here". This file assembles it.

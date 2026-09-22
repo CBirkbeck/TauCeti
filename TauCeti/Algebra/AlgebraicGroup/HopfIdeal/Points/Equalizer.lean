@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Basic
 /-!
 # Points of the equalizer of two homomorphisms of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Equalizer)
+
 The quotient by `TauCeti.CommHopfAlgCat.equalizerHopfIdeal` cuts out a subgroup of each point
 group. This file identifies that subgroup: an `A`-point of `K` lies in it exactly when the two
 morphisms induce the same map on it, which is the defining condition of the equalizer subfunctor.

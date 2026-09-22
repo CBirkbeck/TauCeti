@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Semigroups.Resolvent.PowerBounds
 /-!
 # The resolvent of a bounded perturbation of a generator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Resolvent.Perturbation)
+
 For a semigroup `S` of growth `(omega, M)` and a bounded operator `B`, the sharp Hille--Yosida
 bound `‖R(lambda, S.generator)‖ ≤ M / (lambda - omega)` makes the perturbation
 `B +ᵥ S.generator` small against the resolvent as soon as `lambda > omega + M ‖B‖`. The Neumann

@@ -15,6 +15,8 @@ public import Mathlib.LinearAlgebra.PerfectPairing.Basic
 /-!
 # The dot product on `ι → R` is a perfect pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Dual)
+
 Mathlib's `dotProductEquiv` identifies `ι → R`, for `ι` finite, with its own dual under the dot
 product. This file records the symmetry and perfectness of this pairing, so that the dot product
 may be used directly as the pairing of a `RootPairing` or a `RootDatum` on `ι → R`.

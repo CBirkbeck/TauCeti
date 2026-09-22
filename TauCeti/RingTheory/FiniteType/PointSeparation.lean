@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Idempotents
 /-!
 # Separation by algebraically closed points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.FiniteType.PointSeparation)
+
 Let `A` be a commutative algebra of finite type over a field `k`, and let `K` be an
 algebraically closed extension of `k`. An element of `A` vanishes under every `k`-algebra
 homomorphism `A →ₐ[k] K` exactly when it is nilpotent. In particular, when `A` is reduced,

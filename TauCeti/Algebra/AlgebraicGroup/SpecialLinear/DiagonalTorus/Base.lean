@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.RootDat
 /-!
 # The simple roots of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.Base)
+
 The roots `ε_i - ε_(i+1)` form the Bourbaki-numbered base of the diagonal root datum of
 `SL_{r+1}`. Its Cartan matrix is `CartanMatrix.A r`, and its positive roots are precisely
 `ε_a - ε_b` with `a < b`. This fixes the choice of positive roots corresponding to upper

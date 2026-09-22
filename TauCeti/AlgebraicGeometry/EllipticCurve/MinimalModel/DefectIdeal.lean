@@ -15,6 +15,8 @@ import TauCeti.RingTheory.DedekindDomain.Factorization
 /-!
 # The defect ideal of an integral Weierstrass equation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.DefectIdeal)
+
 Let `O` be a Dedekind domain with fraction field `K`, and let `W` be an integral elliptic
 Weierstrass equation over `O`. Its local obstruction exponents
 

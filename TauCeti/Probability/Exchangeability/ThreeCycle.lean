@@ -18,6 +18,8 @@ import TauCeti.Probability.Exchangeability.MixedIID.Implications
 /-!
 # A stationary process that is not exchangeable: the deterministic 3-cycle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ThreeCycle)
+
 This file discharges a worked example of the Exchangeability roadmap
 (`TauCetiRoadmap/Exchangeability/README.md`, "Worked examples"):
 

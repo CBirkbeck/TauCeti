@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Matrix.BaseChange
 /-!
 # Scalar extension of matrix Lie algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Matrix.BaseChange)
+
 The associative matrix-algebra base-change equivalence also identifies Mathlib's scalar extension
 of the matrix Lie algebra with the matrix Lie algebra over the target ring. The explicit Lie
 equivalence is needed because the scalar-extension bracket and the associative commutator bracket

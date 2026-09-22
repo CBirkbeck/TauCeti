@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # The Steinberg relation for quaternion algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.Steinberg)
+
 For any `a` in a commutative ring, this file constructs the Steinberg matrix representation.
 When `2`, `a`, and `1 - a` are invertible, it gives the explicit splitting
 

@@ -11,6 +11,8 @@ import TauCeti.Probability.Exchangeability.PermutationExtension
 /-!
 # Monotonicity of finite exchangeability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ExchangeableAtMonotone)
+
 This file records the implication-lattice API for `ExchangeableAt`: if the first `n`
 coordinates have permutation-invariant law, then so do the first `m` coordinates for every
 `m ≤ n`. The proof is the finite-dimensional marginal argument: extend a permutation of

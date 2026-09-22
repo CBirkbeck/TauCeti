@@ -17,6 +17,8 @@ import TauCeti.Probability.Exchangeability.MixedIID.Mixture
 /-!
 # The coding representation of a separately exchangeable array
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Coding)
+
 De Finetti's theorem turns an exchangeable sequence into a fixed measurable function of its
 directing measure and independent uniform noise (`deFinetti_coding`). This file does the same for
 the rows of a **separately exchangeable array**: an array `X : ℕ × ℕ → Ω → α` over a nonempty

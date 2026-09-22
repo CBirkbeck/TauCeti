@@ -17,6 +17,8 @@ import Mathlib.Topology.MetricSpace.Thickening
 /-!
 # Normal families: equicontinuity of a locally bounded family of holomorphic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.NormalFamilies)
+
 A family of holomorphic functions on an open set `U ⊆ ℂ` that is *locally bounded* — uniformly
 bounded on every compact subset of `U` — is automatically equicontinuous on `U`.  This is the
 analytic heart of Montel's normal-families theorem: combined with Arzelà--Ascoli and an

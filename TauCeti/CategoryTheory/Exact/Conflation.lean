@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.ObjectProperty.Equivalence
 /-!
 # The category of conflations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Conflation)
+
 For a fixed conflation class `E`, a conflation is not merely a proposition about a short complex:
 conflations and commutative diagrams between them form a category. This file realizes that
 category as the full subcategory of `ShortComplex C` on the distinguished kernel--cokernel pairs.

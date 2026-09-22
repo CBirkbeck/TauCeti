@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Valuation.Polynomial
 /-!
 # The zeros of a function of an algebraic function field are few
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Zeros)
+
 A nonzero element `x` of a function field `F / k` has, at every place `P`, an order `ord_P x`,
 and the places where that order is nonzero are the zeros and the poles of `x`. This file proves
 that a function has only finitely many of each, and quantifies the statement: the zeros of `x`,

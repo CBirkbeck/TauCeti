@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Prime
 /-!
 # Dixon prime data for the quaternion group of order eight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Quaternion)
+
 The executable Dixon--Schneider algorithm receives a certified prime rather than searching for
 one noncomputably.  This file certifies `5` for `QuaternionGroup 2`, together with `2` as a
 primitive fourth root of unity modulo `5`.

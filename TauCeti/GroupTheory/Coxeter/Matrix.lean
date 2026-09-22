@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Coxeter.Matrix
 /-!
 # Elementary facts about Coxeter matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.Matrix)
+
 This file gives convenient equations for entries of Mathlib's type-`A` Coxeter matrix.
 -/
 

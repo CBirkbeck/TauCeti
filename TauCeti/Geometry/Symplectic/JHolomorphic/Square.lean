@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Symplectic.JHolomorphic.Basic
 /-!
 # A genuinely nonlinear constant-structure `J`-holomorphic map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.Square)
+
 The whole `IsConstStructureJHolomorphic*` family is so far only ever instantiated at the identity,
 the constants, and continuous real-linear maps. This file records an acceptance example that the
 predicate is not vacuous on its intended nonlinear content: the complex squaring map `z ↦ z²`,

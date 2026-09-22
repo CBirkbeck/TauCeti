@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PositiveDefinite.Basic
 /-!
 # Pullbacks of positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Pullback)
+
 This file adds the pullback API for `TauCeti.IsPositiveDefinite`, the positive-definite
 function predicate on an involutive additive monoid. A star-preserving additive homomorphism
 `φ : N → M` pulls a positive-definite function `F : M → ℂ` back to the positive-definite

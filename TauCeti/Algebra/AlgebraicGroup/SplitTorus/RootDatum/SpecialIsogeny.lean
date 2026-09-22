@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Isogeny.Special
 /-!
 # Special root-datum isogenies on split tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.RootDatum.SpecialIsogeny)
+
 The special isogenies of the pinned `B₂`, `G₂`, and `F₄` root data induce endomorphisms of
 their split maximal tori. Their action on scheme-valued points is given by the Laurent monomials
 specified by the special-isogeny matrices, and their squares are the coordinatewise power maps of

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.EffectiveBounds.SimpleGenerators
 /-!
 # An explicit count of number fields of bounded discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EffectiveBounds.HermiteCount.Basic)
+
 Mathlib's `NumberField.finite_of_discr_bdd` is the qualitative summit of geometry of numbers:
 inside a fixed extension `A / ℚ`, the number fields `K` with `|discr K| ≤ N` form a *finite* set.
 Its proof bounds the degree of such a `K` (`rank_le_rankOfDiscrBdd`), bounds the conjugates of a

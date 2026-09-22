@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.Measurability
 /-!
 # Maps of conditionally i.i.d. families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Map)
+
 Two ways of moving `ConditionallyIID` along a map. Applying a measurable map to the *values* of
 every coordinate gives another conditionally i.i.d. family, whose directing measure is the
 pushforward of the original one; and the canonical process on path space carries

@@ -10,6 +10,8 @@ public import Mathlib.Probability.Independence.Basic
 /-!
 # Independence from disjoint blocks of an independent family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Independence.DisjointBlocks)
+
 Mathlib's `ProbabilityTheory.iIndepFun.indepFun_finset` splits an independent family along two
 disjoint **finite** index sets. The statement is true for arbitrary index sets, and that is what a
 random object built from a countably infinite block of independent noise needs: the two objects are

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Root.IntegralLattice
 /-!
 # The root--simple-coroot basis of an integral root--coroot lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Root.IntegralBasis)
+
 For a base `b` of the root system, the integral root--coroot span of an `IsSl2System` has the
 expected basis: one root vector for every nonzero root and one coroot for every member of
 `b.support`. The index is therefore `H.root ⊕ b.support`. A Chevalley Lie lattice receives the

@@ -11,6 +11,8 @@ import TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution
 /-!
 # The ring of two-sided restricted series `A⟨X, X⁻¹⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.TwoSidedSeries.Ring)
+
 `TauCeti.Huber.twoSidedRestrictedSubmodule A A` is the `A`-module of coefficient families
 underlying Wedhorn's `A⟨X, X⁻¹⟩` (Example 6.39). This module equips it with the convolution
 product `(fg)ₙ = ∑_{i + j = n} aᵢ bⱼ`, making it a ring, and a commutative `A`-algebra when `A` is

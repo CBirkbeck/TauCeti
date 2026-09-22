@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.StructureConstant.Symmetry
 /-!
 # Opposite structure constants multiply to `-(p + 1)²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.StructureConstant.Opposite)
+
 Let `x` be an `IsSl2System` in a finite-dimensional Lie algebra with non-degenerate Killing form
 over a field of characteristic zero, so that `⁅x α, x (-α)⁆ = α∨`, and let `γ = α + β` be a root.
 Writing

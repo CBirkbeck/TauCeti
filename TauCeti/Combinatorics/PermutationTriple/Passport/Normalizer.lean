@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.PermutationTriple.Passport.Class
 /-!
 # Generating triples of a passport and the normalizer action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Passport.Normalizer)
+
 A connected permutation triple lies in a passport when its monodromy subgroup is *conjugate* to
 the reference subgroup `P.G` and its ordered full cycle partitions are the ones recorded by `P`.
 Relabeling the sheets can always move the monodromy subgroup onto `P.G` itself, and this file

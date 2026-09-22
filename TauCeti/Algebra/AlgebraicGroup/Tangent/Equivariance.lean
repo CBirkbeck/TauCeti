@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.DerivationMap
 /-!
 # Equivariance of the differential for the adjoint action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Equivariance)
+
 A morphism of affine group schemes intertwines conjugation. Differentiating at the identity says
 that its differential intertwines the corresponding adjoint actions. In coordinate rings, a
 bialgebra morphism `φ : A' →ₐc[R] A` acts on both points and tangent derivations by precomposition,

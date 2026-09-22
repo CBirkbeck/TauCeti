@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.FiniteType
 /-!
 # Affine group schemes of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.MultiplicativeType)
+
 This file transports the coordinate-Hopf-algebra definition of a group of multiplicative type to
 finite-type affine group schemes over a field. A group scheme is of multiplicative type when its
 coordinate Hopf algebra becomes diagonalizable after extension to an algebraic closure.

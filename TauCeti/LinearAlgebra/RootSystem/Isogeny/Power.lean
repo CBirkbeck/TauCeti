@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Isogeny.Basic
 /-!
 # Powers of an isogeny of a root pairing with itself
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Isogeny.Power)
+
 An isogeny of a root pairing with itself can be composed with itself, and the Suzuki and Ree
 groups are cut out by the *odd powers* of a special isogeny rather than by the isogeny itself.
 This file gives the isogenies of a fixed root pairing with itself their monoid structure under

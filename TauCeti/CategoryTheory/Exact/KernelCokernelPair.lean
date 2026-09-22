@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Opposites.Kernels
 /-!
 # Kernel–cokernel pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.KernelCokernelPair)
+
 A *kernel–cokernel pair* in a category with zero morphisms is a pair of composable morphisms
 `X ⟶ Y ⟶ Z` with zero composite in which the first morphism is a kernel of the second **and**
 the second is a cokernel of the first. Following Bühler, the first morphism of such a pair is

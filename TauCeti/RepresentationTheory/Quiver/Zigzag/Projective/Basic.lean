@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.PrimitiveIdempotent
 /-!
 # Vertex projectives of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Projective.Basic)
+
 For a finite simple graph without isolated vertices, this file constructs the left projective
 module at a vertex `i` as the principal left ideal `Z e_i` in the zigzag relation quotient.  Right
 multiplication by `e_i` is a projection from the regular module onto this ideal, so the module is

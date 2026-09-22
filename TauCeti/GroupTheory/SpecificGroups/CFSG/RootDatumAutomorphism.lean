@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.DiagramA
 /-!
 # The root-datum graph automorphism of a graph-twisted index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.RootDatumAutomorphism)
+
 The graph part of the Steinberg endomorphism of a graph-twisted finite group of Lie type is the
 automorphism of the pinned Chevalley--Demazure group scheme which the isomorphism theorem for pinned
 groups produces from an automorphism of its root datum. This file supplies that root-datum

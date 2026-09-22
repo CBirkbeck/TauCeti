@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.Discriminant.Basic
 /-!
 # Localization of the relative discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Discriminant.Localization)
+
 Let `B / A` be a finite torsion-free extension of Dedekind domains with separable extension of
 fraction fields, and let `M` be a submonoid of `A`. If `Aₘ` is the localization of `A` at `M`
 and `Bₘ` is the localization of `B` at the image of `M`, then the relative discriminant of

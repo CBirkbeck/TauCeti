@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.TraceForm
 /-!
 # Identities for the trace form of a Lie module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.TraceForm)
+
 Let `M` be a representation of a Lie algebra `L` over a commutative ring `R`. Its trace form
 `B = LieModule.traceForm R L M` is symmetric and invariant, `B ⁅a, b⁆ c = B a ⁅b, c⁆`. Together
 with the Leibniz rule those two properties give an identity in four elements,

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Calculus.DSlope
 /-!
 # Elementary facts about `dslope`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.DSlope.Basic)
+
 Divided-slope facts that need no differentiability, collected for the Schwarz-lemma consumers.
 Away from its base point `dslope` is the plain difference quotient, so these are statements about
 a normed field and its norm, with no calculus in them.

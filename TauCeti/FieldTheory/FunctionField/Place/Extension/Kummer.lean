@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Existence
 /-!
 # Kummer's theorem: places over a place, from a factorization modulo that place
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Kummer)
+
 Let `P` be a place of an algebraic function field `F / k`, let `F' / k'` be a finite extension of
 `F / k`, and let `y : F'` be integral over the valuation ring `𝒪_P`, say `φ (y) = 0` for a monic
 `φ ∈ 𝒪_P[X]` whose image in `F[X]` is the minimal polynomial of `y`.  Reducing `φ` modulo the

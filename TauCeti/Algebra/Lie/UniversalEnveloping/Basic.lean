@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.UniversalEnveloping
 /-!
 # Basic results on universal enveloping algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Basic)
+
 This file records general results about universal enveloping algebras that do not depend on
 additional structures such as filtrations, bialgebras, or antipodes.
 

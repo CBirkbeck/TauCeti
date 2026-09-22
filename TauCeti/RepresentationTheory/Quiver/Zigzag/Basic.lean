@@ -14,6 +14,8 @@ public import TauCeti.Combinatorics.Quiver.Prefunctor
 /-!
 # Doubled quivers of simple graphs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Basic)
+
 The doubled quiver of a simple graph has the graph's vertices and one arrow in each direction over
 every edge. Since adjacency in a simple graph is a proposition, this quiver is thin: it has no
 loops or parallel arrows. Its canonical arrow reversal comes from symmetry of adjacency.

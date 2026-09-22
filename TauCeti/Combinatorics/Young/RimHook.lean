@@ -13,6 +13,8 @@ public import TauCeti.Combinatorics.Young.Corner
 /-!
 # Rim hooks of a Young diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.RimHook)
+
 A **rim hook** (border strip, ribbon) of a Young diagram `μ` is a skew shape `μ / ν` that is
 edge-connected and contains no `2 × 2` block.  Removing rim hooks is the recursion behind the
 Murnaghan--Nakayama rule for the characters of the symmetric group, and the same move read on

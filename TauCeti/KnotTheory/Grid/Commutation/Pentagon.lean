@@ -12,6 +12,8 @@ import TauCeti.KnotTheory.Grid.Rectangle.Swap
 /-!
 # Pentagons of a column commutation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Pentagon)
+
 Let `G` be a grid diagram and let `b = finRotate n a` be the column following column `a`. The
 column commutation `G' = G.swapColumns a b` is compared with `G` by drawing both diagrams on one
 torus: the vertical grid line `β` between columns `a` and `b` (the line with index `b`) is

@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.FixedSubgroup
 /-!
 # The candidate simple group attached to an endomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.FixedPointCandidate)
+
 For an endomorphism `F` of a group `G` this file composes the two constructions of
 `TauCeti.GroupTheory.FixedSubgroup` and `TauCeti.GroupTheory.DerivedCentralQuotient` into
 

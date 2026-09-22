@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Rational
 /-!
 # Diagram automorphisms of the pinned simply connected root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.DiagramAutomorphism)
+
 A symmetry of the Bourbaki-numbered Dynkin diagram of a valid `TauCeti.DynkinType` is a permutation
 `σ` of `Fin t.rank` preserving the Cartan matrix. This file turns each such permutation into an
 automorphism of the pinned simply connected root datum

@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.DirichletCharacter.Basic
 /-!
 # Factoring a Dirichlet character through a divisor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.DirichletCharacter.Basic)
+
 Facts about when a Dirichlet character `χ` mod `N` factors through a divisor of `N`, stated for
 characters valued in any `CommMonoidWithZero`, which is the generality of
 `DirichletCharacter.factorsThrough_iff_ker_unitsMap` and of the conductor.

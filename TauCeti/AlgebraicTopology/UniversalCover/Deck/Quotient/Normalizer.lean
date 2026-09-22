@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.QuotientGroup.KerEquiv
 /-!
 # The deck group of an intermediate quotient is a normalizer quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Quotient.Normalizer)
+
 Let `p : E → X` be a quotient covering map for a group `Γ` acting on `E`, let `H ≤ Γ`, and let
 `q : E → F` present `F` as the quotient of `E` by `H`, so that `p` factors as `r ∘ q` for a
 covering map `r : F → X`. This file computes the deck transformation group of the intermediate

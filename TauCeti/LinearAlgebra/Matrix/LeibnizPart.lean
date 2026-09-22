@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.Permanent
 /-!
 # The even and odd parts of the Leibniz expansion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.LeibnizPart)
+
 The Leibniz formula writes the determinant of a square matrix as a signed sum over permutations.
 Grouping its terms by the sign of the permutation gives two sums, `P` over the even and `N` over
 the odd permutations, with `det M = P - N` and `permanent M = P + N`. A permutation of the rows or

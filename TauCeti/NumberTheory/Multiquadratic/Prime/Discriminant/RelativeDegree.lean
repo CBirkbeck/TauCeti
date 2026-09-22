@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.Multiquadratic.RelativeDegree
 /-!
 # The relative degree of the prime-discriminant compositum over its quadratic base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.RelativeDegree)
+
 The genus-field layer builds the candidate genus field of `ℚ(√d)` as the compositum
 `M = ℚ(√(radicand P) : P)` of the quadratic fields attached to the prime discriminants `P`
 dividing the discriminant of `ℚ(√d)`. `Prime/Discriminant/Independence` records its **absolute**

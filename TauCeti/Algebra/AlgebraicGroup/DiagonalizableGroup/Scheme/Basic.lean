@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.FiniteType
 /-!
 # Diagonalizable group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.Basic)
+
 For a commutative ring `R` and a finitely generated commutative group `G`, the group algebra
 `R[G]` is a finite-type commutative Hopf algebra. Applying relative spectrum gives the affine
 group scheme

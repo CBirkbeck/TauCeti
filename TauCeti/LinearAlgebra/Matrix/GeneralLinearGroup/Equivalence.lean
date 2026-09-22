@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.Reindex
 /-!
 # Two-sided invertible equivalence of matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Equivalence)
+
 Matrices related by `L * A * R` with `L` and `R` invertible. Rows and columns are transformed
 independently, so the two index types are separate, and nothing here needs more than a
 semiring.

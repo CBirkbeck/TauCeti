@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 /-!
 # `U(n) = Circle · SU(n)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.UnitaryGroup)
+
 The determinant of a complex unitary matrix has modulus one, and every point of the circle has a
 `card n`-th root there, so a unitary matrix can be rescaled by a scalar of modulus one until its
 determinant is one: the unitary group is the product of the scalars of modulus one with the special

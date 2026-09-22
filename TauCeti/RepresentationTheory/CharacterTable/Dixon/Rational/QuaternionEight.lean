@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Solver
 /-!
 # The rational Dixon computation for the quaternion group of order eight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.QuaternionEight)
+
 This file runs the rational stage of the Dixon--Schneider character-table algorithm for
 `QuaternionGroup 2`.  Its five numbered conjugacy classes have sizes `[1, 1, 2, 2, 2]`.
 Reducing modulo the certified good prime `5`, the simultaneous eigenrow search returns exactly

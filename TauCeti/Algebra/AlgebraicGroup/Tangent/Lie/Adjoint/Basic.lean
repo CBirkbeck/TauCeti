@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Basic
 /-!
 # The adjoint action respects the Lie bracket
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Adjoint.Basic)
+
 `Derivation.adDerivation` conjugates a tangent vector by a point of the Hopf algebra.
 `Tangent.Adjoint` shows that this is an action by linear automorphisms; this file adds the
 one statement that needs the Lie structure of `Tangent.Lie.Basic`, namely that each `Ad g` is

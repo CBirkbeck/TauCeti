@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Disjoint
 /-!
 # Disjoint domains in the grid commutation map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Disjoint)
+
 The chain-map equation for a grid column commutation compares a rectangle followed by a
 pentagon with a pentagon followed by a rectangle. When their pairs of vertical sides are
 disjoint, the two moves commute. This file constructs that reordering and records how it

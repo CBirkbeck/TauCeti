@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 /-!
 # The Cesàro limit of an observable is its conditional expectation given the process tail
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.Cesaro.ToCondExp)
+
 Layer 3 of the Exchangeability roadmap produces the Cesàro limit of an observable of a contractable
 process twice over: `weighted_sums_converge_L1_of_memLp` gives it as an abstract `L¹` limit, and
 `Contractable.exists_tailProcess_measurable_cesaro_limit_of_memLp` places it on the process tail

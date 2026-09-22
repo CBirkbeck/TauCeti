@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Basic
 /-!
 # The diagonal torus of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.Basic)
+
 The determinant-one diagonal matrices of `SL_{r+1}` form a split torus of rank `r`. This file
 parametrizes it in fundamental-weight coordinates: a point `s = (s₀, …, s_{r-1})` of the split
 torus goes to

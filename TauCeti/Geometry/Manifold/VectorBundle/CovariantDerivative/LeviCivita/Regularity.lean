@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.VectorField.Regularity
 /-!
 # Regularity of the Levi-Civita connection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita.Regularity)
+
 On a `C^m` manifold carrying a `C^k` Riemannian metric, Mathlib's Levi-Civita connection
 `CovariantDerivative.leviCivitaConnection` is `C^n` once `n + 2 ≤ m` and `n + 1 ≤ k`: it sends a
 `C^(n+1)` section of the tangent bundle to a `C^n` section of `Hom(TM, TM)`. This file proves

@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.EssentiallySmall
 /-!
 # Actions on an essentially small category are essentially small
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.EssentiallySmall)
+
 An object of `CategoryTheory.Action V G` is an object of `V` together with an action of `G` on it,
 so the objects of `Action V G` form a type one universe above `V` even when `V` itself is only
 essentially small. This file records that the size does not really grow: if `V` is equivalent to a

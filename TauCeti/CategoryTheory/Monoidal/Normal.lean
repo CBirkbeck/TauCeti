@@ -11,6 +11,8 @@ import Mathlib.Tactic.Group
 /-!
 # Conjugation actions on internal normal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.Normal)
+
 Let `φ : H ⟶ G` be a normal subgroup object in a cartesian monoidal category. Mathlib's
 `CategoryTheory.IsMonHom.Normal` says that conjugation in `G` factors through `φ`. Since `φ` is
 monic, that factor is unique. This file names it as `normalConjugation φ` and proves the action

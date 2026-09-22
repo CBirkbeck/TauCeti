@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 /-!
 # The trivial affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Trivial)
+
 This file records the functor-of-points calculation for the trivial affine group scheme. Its
 coordinate Hopf algebra is the base ring `R`, with Mathlib's canonical Hopf algebra structure
 on `R` over itself. For every commutative `R`-algebra `A`, there is exactly one `R`-algebra

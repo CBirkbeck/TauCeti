@@ -15,6 +15,8 @@ public import TauCeti.Analysis.Contour.RegularityConditions
 /-!
 # Discharging the HW conditions into the per-pole hypotheses
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ConditionDischarge)
+
 The polar-part principal-value theorem (`Contour.PolarPartDecomposition.hasCauchyPVAt_polarPart`)
 takes raw per-crossing hypotheses: interiority of the crossings, flatness at each surviving
 coefficient's order, and the tangent-power sector equation. This file discharges them from the

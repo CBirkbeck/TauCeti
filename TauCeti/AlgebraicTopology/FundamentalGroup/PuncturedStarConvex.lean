@@ -15,6 +15,8 @@ public import TauCeti.Topology.JordanCurve.Basic
 /-!
 # The fundamental group of a punctured star-convex set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroup.PuncturedStarConvex)
+
 Let `V` be star-convex about `p` in a real normed space, and let `sphere p r ⊆ V` with `r > 0`.
 Since the inclusion of the sphere into `V \ {p}` is a homotopy equivalence
 (`StarConvex.sphereHomotopyEquiv`), it induces an isomorphism of fundamental groups at every

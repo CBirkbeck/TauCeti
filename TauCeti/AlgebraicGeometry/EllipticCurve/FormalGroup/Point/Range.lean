@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.AdicComp
 /-!
 # The range of the formal parametrisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Range)
+
 `Point/AdicCompletion.lean` maps the formal-group parameters of the maximal ideal of `𝒪_v`
 injectively into the points of the curve over the completion `K_v`. This file computes the image
 of that map: a point is parametrised exactly when it is the point at infinity, or its

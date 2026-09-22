@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.SeparablyGenerated
 /-!
 # Separating elements in transcendence degree one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Separable.TranscendenceDegreeOne)
+
 A finitely generated extension of a perfect field admits a finite separating transcendence
 basis.  When the extension has transcendence degree one, that basis consists of one element.
 Thus there is a transcendental `x` such that the extension is separable algebraic over the

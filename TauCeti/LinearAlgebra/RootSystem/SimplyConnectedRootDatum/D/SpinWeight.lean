@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Spin.Weight
 /-!
 # Type `D` spin weights in the simply connected character lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.D.SpinWeight)
+
 The spinor module has weights `1 / 2 * (±e₀ ± ⋯ ± e_{n-1})` in the usual orthonormal
 coordinates. The simply connected type `Dₙ` datum instead writes its character lattice in the
 fundamental-weight basis, so a weight is recorded by its pairings with the simple coroots

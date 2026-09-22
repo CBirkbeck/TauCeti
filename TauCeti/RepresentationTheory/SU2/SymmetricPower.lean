@@ -13,6 +13,8 @@ import TauCeti.RingTheory.MvPolynomial.Symmetric.Complete
 /-!
 # The symmetric powers of the standard representation of `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.SymmetricPower)
+
 The candidate irreducible representations of `SU(2)` are the symmetric powers `Symᵈ(ℂ²)` of the
 standard representation, of dimension `d + 1`.  This file builds them, as the restriction of the
 symmetric powers of the standard representation of `GL₂(ℂ)` along the inclusion of `SU(2)`, and

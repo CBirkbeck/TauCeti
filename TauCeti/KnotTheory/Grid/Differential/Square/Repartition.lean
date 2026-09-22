@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Unblocked
 /-!
 # Repartitions of two-step grid rectangle domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Repartition)
+
 Two two-step grid rectangle decompositions are repartitions when the rectangles in each
 decomposition cover disjoint sets of squares and the unions of those sets agree. This is the
 domain relation used by the juxtaposition proof of `∂⁻ ∘ ∂⁻ = 0`: it transports multiplicative

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeRel
 /-!
 # The completion of an extension of Dedekind domains is a valuative extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeExtension)
+
 Let `R ⊆ B` be Dedekind domains with fraction fields `K ⊆ L`, and let `w` be a height-one prime
 of `B` lying over the height-one prime `v` of `R`. The completions `K_v` and `L_w` carry the
 valuative relations induced by their adic valuations, and the canonical continuous extension

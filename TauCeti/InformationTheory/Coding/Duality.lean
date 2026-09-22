@@ -14,6 +14,8 @@ public import TauCeti.InformationTheory.Coding.Puncture
 /-!
 # Euclidean duals of derived codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Duality)
+
 This file computes the Euclidean dual of the codes obtained from a linear code by the elementary
 constructions: puncturing, shortening, direct sums, reindexing, and monomial transformations.
 

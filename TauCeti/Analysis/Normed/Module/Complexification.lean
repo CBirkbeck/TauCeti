@@ -13,6 +13,8 @@ public import Mathlib.Tactic.Module
 /-!
 # The complexification of a real normed space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Complexification)
+
 For a real normed space `X`, the complexification `X_ℂ = X ⊕ i X` is the complex vector space of
 formal sums `x + i y` with `x y : X`, where `(a + b i) • (x + i y) = (a x - b y) + i (b x + a y)`.
 It is the standard device for applying complex-analytic spectral theory to operators on a real

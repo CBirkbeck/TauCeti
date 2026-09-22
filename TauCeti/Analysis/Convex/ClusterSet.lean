@@ -11,6 +11,8 @@ public import TauCeti.Topology.ClusterSet
 /-!
 # The cluster set of a map on a convex domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Convex.ClusterSet)
+
 `TauCeti.isPreconnected_clusterSetOn` makes the cluster set of a map connected as soon as the
 approach regions `U ∩ t` are connected along a neighbourhood basis of the approach point. On a
 **convex** domain that hypothesis is automatic, at every point of the ambient space: the

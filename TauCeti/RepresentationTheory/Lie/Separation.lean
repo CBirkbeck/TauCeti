@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Prod
 /-!
 # Separating a finite-dimensional Lie algebra by representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Lie.Separation)
+
 A family of representations separates a Lie algebra when every nonzero element acts nontrivially
 in at least one member. For a finite-dimensional Lie algebra, pointwise separation already gives a
 single faithful finite-dimensional representation.

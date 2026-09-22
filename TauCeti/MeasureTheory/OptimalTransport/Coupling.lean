@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Measure.Coupling.Basic
 /-!
 # Couplings of two measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Coupling)
+
 A *coupling*, or *transport plan*, of a measure `μ` on `X` and a measure `ν` on `Y` is a measure
 `π` on `X × Y` whose two marginals are `μ` and `ν`. It is the primitive object of optimal
 transport: the primal transport problem minimises a cost over the couplings of two fixed

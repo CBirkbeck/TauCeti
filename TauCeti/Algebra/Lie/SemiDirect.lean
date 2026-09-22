@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.SemiDirect
 /-!
 # Recognising a semidirect sum from an ideal and a complementary subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SemiDirect)
+
 Mathlib's `LieAlgebra.SemiDirectSum K L ψ`, written `K ⋊⁅ψ⁆ L`, is the *external* semidirect sum
 of two Lie algebras twisted by a Lie homomorphism `ψ : L →ₗ⁅R⁆ LieDerivation R K K`.  A Lie
 algebra `L` is presented *internally* as a semidirect sum by an ideal `S`, a Lie subalgebra `H`,

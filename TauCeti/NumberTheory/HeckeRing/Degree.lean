@@ -11,6 +11,8 @@ public import Mathlib.Data.Finsupp.Weight
 /-!
 # Hecke rings: the degree homomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Degree)
+
 The degree of a double coset `HgH = ⊔ᵢ σᵢgH` is the number of left cosets in its
 decomposition, `deg(HgH) = [H : H ∩ gHg⁻¹]`. Extended linearly it gives the degree
 homomorphism `deg : 𝕋 Δ H R →+* R` of the Hecke ring (Proposition 3.3 of

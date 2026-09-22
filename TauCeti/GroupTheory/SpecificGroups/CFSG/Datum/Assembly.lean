@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.HalfFrobenius
 /-!
 # The root-datum Steinberg map of an arbitrary valid Lie-type index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Datum.Assembly)
+
 The classification list splits its Lie-type families in two according to the shape of their
 Steinberg endomorphism. Thirteen of the seventeen constructors take `γ ∘ Frob_q`, the field
 Frobenius composed with a pinned diagram automorphism, and the remaining four -- the Suzuki, Ree
@@ -113,7 +115,10 @@ noncomputable section
 `TauCeti.SuzukiReeIndex.datumSteinberg` on the Suzuki, Ree and Tits indices, and the composite
 `γ ∘ Frob_q` of `TauCeti.GraphTwistedIndex.datumSteinberg` on the other thirteen constructors. The
 selecting predicate `TauCeti.LieTypeIndex.UsesHalfFrobenius` is exactly the one whose two subtypes
-are the domains of those constructions, so no map is invented on either branch. -/
+are the domains of those constructions, so no map is invented on either branch.
+
+Tested by: 4 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValidLieTypeIndex.datumSteinberg) -/
 def datumSteinberg :
     RootPairingIsogeny (d.dynkinType.simplyConnectedRootDatum d.dynkinType_valid)
       (d.dynkinType.simplyConnectedRootDatum d.dynkinType_valid) :=

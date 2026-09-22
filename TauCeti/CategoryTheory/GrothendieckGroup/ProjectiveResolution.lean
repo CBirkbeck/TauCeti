@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Resolution
 /-!
 # The Euler class of a finite projective resolution, and the resolution theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.ProjectiveResolution)
+
 Let `E` be an exact structure on an additive category `C` and let `P` be a property of objects
 consisting of `E`-projectives, containing a zero object and closed under binary biproducts. Then
 `P` is extension closed, so the full subcategory on `P` carries an induced exact structure — in

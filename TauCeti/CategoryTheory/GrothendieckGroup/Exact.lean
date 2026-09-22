@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Split
 /-!
 # Exact `K₀` of a Quillen exact category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Exact)
+
 The exact Grothendieck group `TauCeti.ExactK0 E` of an essentially small additive category `C`
 equipped with a Quillen exact structure `E` is the free abelian group on the isomorphism classes
 of objects modulo the relations `[X₂] = [X₁] + [X₃]`, one for each `E`-conflation

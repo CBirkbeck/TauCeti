@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Commutator
 /-!
 # Derived words and solvable groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Solvable)
+
 The `n`th derived word evaluates a perfect binary argument tree of depth `n` by balanced
 commutators: the zeroth word is one group element, and the successor word is the commutator of two
 copies of the preceding word. This file proves that its values generate the `n`th derived subgroup.

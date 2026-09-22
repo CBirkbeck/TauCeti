@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Decomposi
 /-!
 # Dimension of the componentwise zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Dimension)
+
 The public zigzag algebra of a finite simple graph is a product over connected components.  A
 component containing an edge uses the path-algebra quotient, whose vertex--arrow--volume basis is
 already available, while an isolated vertex uses the dual numbers.  Both cases have dimension

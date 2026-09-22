@@ -12,6 +12,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Gram forms and matrix reflection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Gram)
+
 This file records the basic symmetry and quadratic-form preservation identities for the bilinear
 and quadratic forms attached to a symmetric matrix.
 

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Lattice
 /-!
 # Finite subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Finite)
+
 This file proves that, when the coalgebra is free as a module over a commutative
 semiring, every element of a right comodule is contained in a finitely generated
 subcomodule. It also packages the order-theoretic consequences: finite subcomodules

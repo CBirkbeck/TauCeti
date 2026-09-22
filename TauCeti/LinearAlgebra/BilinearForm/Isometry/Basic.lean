@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Isometry
 /-!
 # Isometric endomorphisms of a bilinear form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.Isometry.Basic)
+
 This file defines the predicate that an endomorphism preserves a bilinear form and provides its
 elementary API, including the bridge to Mathlib's bundled isometric maps. The isometry group and
 the determinant, base-change, and orthogonal-complement API are developed in

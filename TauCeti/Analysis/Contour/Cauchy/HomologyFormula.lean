@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Cycle.Residue
 /-!
 # Cauchy's integral formula in homology form, for all derivatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cauchy.HomologyFormula)
+
 For `f` holomorphic on an open `U`, a closed piecewise-`C¹` curve `γ` in `U` that is
 **null-homologous** there, and a point `z ∈ U` off the curve,
 

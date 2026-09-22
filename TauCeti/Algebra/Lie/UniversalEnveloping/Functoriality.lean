@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Basic
 /-!
 # Functoriality of universal enveloping algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Functoriality)
+
 A homomorphism of Lie algebras induces an algebra homomorphism of their universal enveloping
 algebras. This file constructs that map directly from Mathlib's universal property and proves its
 characteristic equation on the canonical Lie generators, its identity and composition laws, and

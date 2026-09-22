@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Unique
 /-!
 # Tensor products of matrix algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.TensorProduct)
+
 This file records the finite-index form of the Kronecker equivalence for tensor products of
 matrix algebras.
 

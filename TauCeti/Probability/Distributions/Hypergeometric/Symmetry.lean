@@ -10,6 +10,8 @@ public import TauCeti.Probability.Distributions.Hypergeometric.Basic
 /-!
 # Symmetry of the hypergeometric distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Hypergeometric.Symmetry)
+
 The hypergeometric law is unchanged when the number of marked population elements and the sample
 size are exchanged. Combinatorially, both descriptions count the size of the intersection of a
 fixed `K`-element subset and a uniformly chosen `n`-element subset of an `N`-element population.

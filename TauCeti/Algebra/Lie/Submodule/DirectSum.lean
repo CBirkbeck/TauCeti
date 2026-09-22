@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Projection
 /-!
 # An internal direct sum of Lie submodules is an external one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Submodule.DirectSum)
+
 A family `N : ι → LieSubmodule R L M` whose underlying submodules decompose `M`
 (`DirectSum.IsInternal`) presents `M` as the external direct sum `⨁ i, N i`, which carries
 Mathlib's Lie module structure on a direct sum. This file records the comparison: the sum map

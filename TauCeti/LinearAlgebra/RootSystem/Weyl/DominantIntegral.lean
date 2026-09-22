@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Numerator
 /-!
 # The Weyl orbit and the Weyl numerator of a dominant integral weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.DominantIntegral)
+
 A weight `λ` of a root pairing is *dominant integral* for a base `b` when every simple coroot
 takes a natural value on it. This file proves, **without any order on the coefficient ring**, the
 two facts about such a weight that the Weyl character formula needs about the Weyl numerator

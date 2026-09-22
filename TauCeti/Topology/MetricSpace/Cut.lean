@@ -12,6 +12,8 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
 /-!
 # Cutting a set by a sphere
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.Cut)
+
 Removing the sphere `sphere x ρ` from a set `s` leaves two pieces: the *near side*
 `s ∩ ball x ρ`, of the points of `s` closer to `x` than `ρ`, and the *far side*
 `s \ closedBall x ρ`, of those further away. This file records that they cover `s \ sphere x ρ`,

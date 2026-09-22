@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.CoordinateRota
 /-!
 # Irreducibility of the special orthogonal standard comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Irreducible)
+
 Over a field of characteristic different from two, the standard representation of `SOₙ` is
 irreducible in dimension at least three. Coordinate half-turns isolate a chosen coordinate of a
 vector in an invariant subspace, and coordinate rotations then carry that standard basis vector to

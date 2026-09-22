@@ -14,6 +14,8 @@ import Mathlib.Order.SuccPred.IntervalSucc
 /-!
 # Separation of Schwarz--Christoffel sides from the closing side
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.ClosingSide)
+
 With the total exponent `-2`, the two unbounded pieces of the Schwarz--Christoffel boundary both
 run in the positive real direction (`schwarzChristoffelBoundary_lt_vertexAtInfinity` and
 `schwarzChristoffelVertexAtInfinity_lt_boundary`): the last finite vertex, the vertex at infinity

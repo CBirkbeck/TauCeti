@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.LinearHomComplex.Composition
 /-!
 # Cochain complexes enriched in their linear Hom complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.LinearHomComplex.Enrichment)
+
 Let `C` be an `R`-linear preadditive category.  This file enriches
 `CochainComplex C ℤ` in `CochainComplex (ModuleCat R) ℤ`.  The enriched Hom object from `F` to
 `G` is `TauCeti.linearHomComplex R F G`, and the enriched identity is the degree-zero cocycle

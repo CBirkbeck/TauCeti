@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 /-!
 # The closed and open arcs of the circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Circle.Arc)
+
 Mathlib's `Circle.exp` parametrizes the circle by angles. This file reads a *closed arc*
 `Circle.exp '' Set.Icc a b` off a subset of the circle and identifies its complement: a nonempty
 closed preconnected proper subset of the circle is such an arc, and the complement of a closed arc

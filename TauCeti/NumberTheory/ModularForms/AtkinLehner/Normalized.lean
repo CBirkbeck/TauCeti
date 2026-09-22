@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.AtkinLehner.Operator
 /-!
 # The normalized Atkin–Lehner operators `𝒲_Q`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.AtkinLehner.Normalized)
+
 The raw Atkin–Lehner slash `W_Q` of
 `TauCeti/NumberTheory/ModularForms/AtkinLehner/Operator.lean` squares to `Q ^ (k - 2)`, so it is
 not an involution. Multiplying it by `atkinLehnerNormalizer Q k = (√Q) ^ (2 - k)` removes that

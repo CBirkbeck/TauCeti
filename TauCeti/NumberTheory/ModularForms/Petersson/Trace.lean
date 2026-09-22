@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.Petersson.Unitary
 /-!
 # The Petersson adjoint of the trace and of the double coset operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Trace)
+
 For a subgroup `Γ' ≤ Γ` of finite index in `SL₂(ℤ)`, Mathlib's `CuspForm.trace` sends a cusp form
 `h` for `Γ'` to the cusp form `∑ᵢ h ∣[k] γᵢ` for `Γ`, the sum running over representatives `γᵢ`
 of the right cosets `Γ' \ Γ`. For the un-normalised Petersson products

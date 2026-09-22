@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.HighestWeight.Basic
 /-!
 # Highest-weight vectors from a Lie algebra basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Basis)
+
 This file connects a `LieAlgebra.Basis` to the positive-system definition of a highest-weight
 vector. The positive-nilradical and Borel bridge is developed in
 `TauCeti.Algebra.Lie.Basis.Borel`; here it reduces the highest-weight-vector condition to

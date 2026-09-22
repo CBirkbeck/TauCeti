@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.FiniteField
 /-!
 # The good-prime structure theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Structure)
+
 The Burnside--Dixon--Schneider algorithm computes over `ZMod p` instead of over `ℂ`, and the
 theorem that licenses the substitution is this one: at a good Dixon prime the centre of
 `ZMod p [G]` looks exactly like the centre of `ℂ[G]`, namely a product of `r` copies of the

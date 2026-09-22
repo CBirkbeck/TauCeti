@@ -11,6 +11,8 @@ public import TauCeti.Analysis.InnerProductSpace.HilbertBasis.Basic
 /-!
 # Spectral decompositions of self-adjoint operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Spectrum)
+
 Mathlib's spectral theorem for a compact self-adjoint operator `T` on a Hilbert space `E` says
 that the eigenspaces of `T` have trivial mutual orthogonal complement
 (`ContinuousLinearMap.orthogonalComplement_iSup_eigenspaces_eq_bot`) and that the eigenspaces at

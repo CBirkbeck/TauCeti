@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Index
 /-!
 # Counting residues by a condition on their reduction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ZMod.Count)
+
 A condition on `x : ZMod n` that only reads the reduction of `x` modulo a divisor of `n` can be
 counted after reducing. This file records the two counting laws that result.
 

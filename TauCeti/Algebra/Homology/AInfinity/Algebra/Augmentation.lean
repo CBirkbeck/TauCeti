@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Algebra.Unit
 /-!
 # Augmented `A∞` algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.Augmentation)
+
 An augmentation of a strictly unital `A∞` algebra is a strict `A∞` map to the ground ring in
 degree zero.  Concretely, it is a degree-zero linear functional which sends the strict unit to
 one, intertwines the binary operation with multiplication, and annihilates every operation of

@@ -11,6 +11,8 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 /-!
 # Truncating powers of distances by tails about a basepoint
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.DisplacementTail)
+
 In a pseudometric space a displacement larger than `2 R` forces one of its two endpoints to lie at
 distance at least `R` from a basepoint `x`, and then the displacement is at most twice that
 distance. Consequently the `q`-th power of a displacement is at most its truncation at `2 R` plus

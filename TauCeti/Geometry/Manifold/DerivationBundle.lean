@@ -16,6 +16,8 @@ import TauCeti.Analysis.Calculus.Hadamard
 /-!
 # Tangent vectors as point derivations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.DerivationBundle)
+
 A tangent vector acts on smooth scalar-valued functions by directional differentiation. This gives
 a canonical linear map from the ordinary tangent space to the algebraic point derivations.
 

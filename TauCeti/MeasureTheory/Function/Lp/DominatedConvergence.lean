@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.DominatedConvergence
 /-!
 # Dominated convergence in `Lᵖ` for eventually equal approximations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.DominatedConvergence)
+
 For a finite nonzero exponent `q`, if the functions `f n` eventually agree with `g` at almost
 every point and the errors `‖f n - g‖` are eventually dominated by a fixed multiple of `‖g‖`,
 where `g ∈ Lᵖ`, then `f n → g` in the `Lᵖ` seminorm.  This is the shape produced by truncating a

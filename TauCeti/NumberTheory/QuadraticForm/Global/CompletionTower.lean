@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.QuadraticForm.Global.Localization
 /-!
 # Quadratic forms in towers of number-field completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.CompletionTower)
+
 For an extension of number fields `L/K` and finite places `w` above `v`, localization commutes
 with scalar extension from `K` to `L`.  The comparison uses the canonical completion map
 `K_v → L_w`, and identifies both iterated tensor-product spaces with `L_w ⊗[K] V`.

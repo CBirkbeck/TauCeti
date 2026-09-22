@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.Fricke.CharacterSpace
 /-!
 # The normalized Fricke operator `𝒲_N`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.Normalized)
+
 The raw Fricke slash `f ↦ f ∣[k] W`, `W = !![0, -1; N, 0]`, is not an involution: it squares to
 the scalar `frickeScalar N k = (-1) ^ k * N ^ (k - 2)`
 (`TauCeti.frickeOperator_frickeOperator`). Dividing it by `(√N) ^ (k - 2)` removes the `N`-power

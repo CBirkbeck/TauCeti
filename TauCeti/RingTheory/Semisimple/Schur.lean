@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.AlgebraRepresentation.Basic
 /-!
 # Schur's lemma for simple modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.Schur)
+
 This file packages the two forms of Schur's lemma used by the semisimple-algebra development.
 
 For simple modules over an arbitrary ring, Mathlib proves that a linear map is either bijective or

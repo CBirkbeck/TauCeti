@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DiagramPermutations
 /-!
 # Numbered data for the Suzuki--Ree isogenies
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.SuzukiRee)
+
 The exceptional isogenies used to construct the Suzuki and Ree groups exchange long and short
 simple roots. Their action on a simple root subgroup also raises its parameter to an exponent:
 the exponent is `1` on a long simple root and the defining characteristic on a short simple root.

@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.QuadraticForm.SpecialOrthogonal.Stabilizer
 /-!
 # The lower-rank subgroup of a compact real Spin group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Real.Stabilizer)
+
 Splitting the last positive coordinate identifies the quadratic space of `Spin(n + 1)` with the
 orthogonal sum of the space of `Spin(n)` and a positive line. Functoriality of the Spin group gives
 an injective homomorphism `Spin(n) → Spin(n + 1)`. Its image fixes the last coordinate vector, so it

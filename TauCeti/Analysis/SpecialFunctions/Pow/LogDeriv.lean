@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # The logarithmic derivative of a principal complex power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Pow.LogDeriv)
+
 Raising a holomorphic function to a fixed complex exponent multiplies its logarithmic derivative
 by that exponent, exactly as for an integer exponent
 (`logDeriv_fun_zpow`).  The principal power `f ^ c` is holomorphic where `f` avoids the branch

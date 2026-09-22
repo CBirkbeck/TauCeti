@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # The graph-twisted family `²E₆(q)` on the doubled minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TwistedE6)
+
 The classification list carries two families on the `E₆` diagram: the untwisted `E₆(q)`, whose
 Steinberg map is the `q`-power Frobenius, and the graph-twisted `²E₆(q)`, whose Steinberg map is
 that Frobenius composed with the order-two symmetry `γ₂` of the diagram. The twisted construction

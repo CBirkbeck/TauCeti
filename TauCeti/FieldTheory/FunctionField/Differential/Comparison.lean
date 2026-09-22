@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Differential.RatFunc
 /-!
 # Comparing Kähler and Weil differentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Differential.Comparison)
+
 Let `F / k` be an algebraic function field and let `x ∈ F` be a separating element.  The
 embedding `k(X) → F` which sends `X` to `x` carries the normalized Weil differential `dX` of
 `k(X)` to a nonzero differential of `F` by cotrace.  This differential, written

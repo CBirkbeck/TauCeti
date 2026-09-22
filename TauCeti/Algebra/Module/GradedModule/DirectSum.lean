@@ -11,6 +11,8 @@ public import TauCeti.Algebra.DirectSum.Internal
 /-!
 # Direct sums of internally graded modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.DirectSum)
+
 This file equips an external direct sum of internally graded modules with its canonical internal
 grading.  Its degree-`p` piece is the direct sum of the componentwise degree-`p` pieces, included
 in the ambient direct sum, so membership is characterized componentwise.

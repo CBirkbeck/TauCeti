@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.ClassGroup
 /-!
 # Finite ideles and ideals away from a finite set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Adeles.Away)
+
 The finite-idele valuation `adicOrd` records the multiplicity of every finite place in the
 fractional ideal attached to a finite idele.  This file makes that dictionary available at the
 prime-to carriers used by ray classes: vanishing of the orders on a finite set is exactly

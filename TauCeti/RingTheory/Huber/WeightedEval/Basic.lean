@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
 /-!
 # Evaluating a weighted restricted power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Basic)
+
 Wedhorn's universal property of `A⟨X₁, …, Xₖ⟩_T` (Proposition 5.50) sends a `T`-restricted series
 to the sum of its terms at a chosen tuple `b`. Before there is a map to speak of, that sum has to
 exist, and this file supplies exactly that: the family of terms is summable.

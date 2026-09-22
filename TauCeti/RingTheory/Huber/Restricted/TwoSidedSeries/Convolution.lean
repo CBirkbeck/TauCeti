@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.DiscreteConvolution
 /-!
 # Convolution of two-sided restricted series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.TwoSidedSeries.Convolution)
+
 The coefficient family underlying a two-sided restricted series is closed under additive
 convolution.  For restricted families `f g : ℤ → A`, the coefficient at `n` is
 

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Algebraic.Basic
 /-!
 # Linear independence from transcendence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Algebraic.LinearIndependent)
+
 The powers of a transcendental element of an algebra are linearly independent over the base ring.
 
 ## Main results

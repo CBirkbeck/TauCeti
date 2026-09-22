@@ -13,6 +13,8 @@ public import TauCeti.Topology.Algebra.Matrix.ProjectiveSpecialLinearGroup
 /-!
 # Proper action of `PSL(2, ℝ)` on the upper half-plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.ProperAction)
+
 The Möbius action of `PSL(2, ℝ)` on the upper half-plane is continuous, transitive, isometric
 for the hyperbolic metric, and proper. Each of these is descended from the corresponding
 property of Mathlib's `SL(2, ℝ)` action using the surjective quotient map

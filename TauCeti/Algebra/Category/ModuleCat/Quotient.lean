@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Quotient.Basic
 /-!
 # Maps induced on presented quotients in `ModuleCat`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Quotient)
+
 An object `A` of `ModuleCat R` is frequently *presented* as a quotient `X ⧸ p`, by an isomorphism
 `e : A ≅ ModuleCat.of R (X ⧸ p)` together with a projection `π : ModuleCat.of R X ⟶ A` playing
 the role of `Submodule.mkQ`, in the sense that `π ≫ e.hom = ModuleCat.ofHom p.mkQ`. A linear map

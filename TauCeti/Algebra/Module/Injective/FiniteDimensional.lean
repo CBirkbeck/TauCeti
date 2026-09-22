@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Dual.Cogenerator
 /-!
 # Finite-dimensional injective modules over a self-injective algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Injective.FiniteDimensional)
+
 Let `A` be a finite-dimensional algebra over a field `k`, and write `D = Hom_k(-, k)`. The dual
 `D(A_A)` of the right regular module is a left `A`-module, by `(a · φ) x = φ (x * a)`. This file
 proves that when `A` is **right self-injective** (its regular right module is injective), every

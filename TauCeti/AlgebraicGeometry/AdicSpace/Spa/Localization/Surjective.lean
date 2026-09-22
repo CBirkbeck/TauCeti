@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Valuation
 /-!
 # The adic spectrum of a rational localisation covers the rational subset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Surjective)
+
 For a rational subset `R(T/s)` of `Spa(A, A⁺)`, this file shows that the continuous map
 
 ```text

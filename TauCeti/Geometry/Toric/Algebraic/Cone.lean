@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Convex.Cone.Face.Finite
 /-!
 # Toric cones in a real vector space with a lattice map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Cone)
+
 A *toric cone* is the combinatorial datum from which an affine toric variety is built. Following
 the convention that the ambient convex geometry stays on Mathlib's carriers, a toric cone here is
 a **predicate** on a Mathlib `PointedCone ℝ V`, taken relative to a lattice map `i : N →+ V`: the

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Bialgebra.GroupLike.Map
 /-!
 # Functoriality of geometric character groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.CharacterLattice.Functoriality)
+
 A morphism of commutative Hopf algebras sends group-like elements to group-like elements after
 extension to an algebraic closure. This gives a morphism between geometric character groups. The
 map is equivariant for the absolute-Galois actions because scalar extension applies the Hopf map

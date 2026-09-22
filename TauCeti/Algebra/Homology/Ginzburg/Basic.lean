@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Preprojective.Grading
 /-!
 # The two-dimensional Ginzburg differential graded algebra of a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Ginzburg.Basic)
+
 Let `Q` be a finite quiver.  The **Ginzburg quiver** `TauCeti.GinzburgQuiver Q` has the vertices of
 `Q`, the arrows of the doubled quiver `Quiver.Symmetrify Q`, and one further loop `t_i` at every
 vertex `i`.  Its path algebra carries two gradings: a cohomological one in which doubled arrows have

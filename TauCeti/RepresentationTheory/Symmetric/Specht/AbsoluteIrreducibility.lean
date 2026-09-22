@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Dominance
 /-!
 # Absolute irreducibility of rational Specht modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.AbsoluteIrreducibility)
+
 Every endomorphism of a rational Specht module that commutes with the symmetric-group action is
 scalar.  Equivalently, the endomorphism algebra of `S^mu` is `ℚ`.  This is the Schur-index-one
 statement needed to pass from the rational Specht classification to irreducible complex

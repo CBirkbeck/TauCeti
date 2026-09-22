@@ -20,6 +20,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 /-!
 # The Laplace distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Laplace)
+
 The Laplace law with location `μ` and scale `b` is the two-sided exponential law: its density is
 `(2 * b)⁻¹ * exp (-|x - μ| / b)`. This file defines it, proves it is a probability measure for
 `0 < b`, identifies it as a `MeasureTheory.HasPDF` law with that density, and computes the cdf,

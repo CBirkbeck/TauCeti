@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Brauer.Relabel
 /-!
 # Composing Brauer diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Brauer.Compose)
+
 Two Brauer diagrams on `k` strands are composed by **vertical stacking**: place `D₁` above `D₂`,
 identify the bottom boundary of `D₁` with the top boundary of `D₂`, and read off the matching
 induced on the outer boundary. A strand of the composite starts at an outer point, follows an

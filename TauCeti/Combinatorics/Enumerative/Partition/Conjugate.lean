@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.Partitions
 /-!
 # Conjugate partitions and dominance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.Partition.Conjugate)
+
 This file defines the conjugate of a natural-number partition by transposing its Young diagram.
 It proves that conjugation is an involution and reverses the dominance order.
 

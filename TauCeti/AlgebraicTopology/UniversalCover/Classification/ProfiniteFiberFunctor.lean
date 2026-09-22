@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Action.ProfiniteCompletion
 /-!
 # The profinite fundamental group of the finite-cover fibre functor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.ProfiniteFiberFunctor)
+
 Let `X` be path connected, locally path connected and semilocally simply connected, and fix a
 basepoint `x₀`. Finite covering spaces of `X` form a Galois category with fibre functor
 `TauCeti.FiniteCoveringSpace.fiberFunctor x₀`. Its fundamental group is the profinite completion

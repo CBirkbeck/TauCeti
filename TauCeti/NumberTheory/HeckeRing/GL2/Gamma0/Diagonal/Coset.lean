@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.HeckeRing.Normalizer
 /-!
 # The `Γ₀(N)`-double coset of a diagonal matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Coset)
+
 `diag(a₁, a₂)` lies in `Δ₀(N)` as soon as `a₁` is coprime to the level — the lower-left entry
 vanishes, so the only condition beyond integrality and positive determinant is that the
 upper-left entry be a unit modulo `N`. That gives the `Γ₀(N)`-level

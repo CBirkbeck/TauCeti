@@ -13,6 +13,8 @@ import TauCeti.Analysis.Holder.Lp
 /-!
 # Morrey's embedding into the Hölder Banach space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.W1p.HolderEmbedding)
+
 This file packages the continuous representative supplied by Morrey's inequality as a bounded
 linear map from `W^{1,p}(ℝⁿ)` to the global Hölder space of exponent `1 - n / p` when
 `n < p < ∞`.  The supremum part of the Hölder norm is controlled by averaging on unit balls:

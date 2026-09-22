@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Idempotents.Connected.Spectrum
 /-!
 # Torsion in a character group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.Torsion)
+
 The group algebra of a group with torsion cannot be both reduced and connected over a field.
 For torsion of order equal to the characteristic, the group algebra contains the familiar
 nonzero nilpotent `g - 1`. For torsion of order prime to the characteristic, averaging over the

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.RootSystem.RootPositive
 /-!
 # The invariant form on the weights of a Killing Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.InvariantForm)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero and let `H` be a splitting Cartan subalgebra. The Killing form restricts to a
 non-degenerate form on `H`, which Mathlib packages as the linear equivalence

@@ -12,6 +12,8 @@ import Mathlib.RingTheory.TensorProduct.MvPolynomial
 /-!
 # The upper-unitriangular group is geometrically connected
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Connected)
+
 The coordinate ring of the upper-unitriangular group `U_m` is the polynomial algebra on the
 strictly upper-triangular matrix entries. After every field extension it remains a polynomial
 algebra over a field, hence a domain. Its prime spectrum is therefore connected.

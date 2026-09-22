@@ -14,6 +14,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Permuting the branch points of a permutation triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.BranchPoints)
+
 A permutation triple `t = (a, b, c) = (σ0, σ1, σinf)`, with `c * b * a = 1`, records the monodromy
 of a cover of the sphere branched over the three ordered points `0, 1, ∞`. Reordering the three
 branch points gives a new triple, whose components are the old ones in a new order, each up to

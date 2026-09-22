@@ -13,6 +13,8 @@ import TauCeti.Probability.Distributions.Dirac
 /-!
 # The negative-binomial cumulative distribution function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.NegativeBinomial.Cdf)
+
 For a positive real shape `r` and a success probability `p` in `(0, 1]`, the cumulative mass of
 the negative-binomial law through `k` is the regularized incomplete beta value `I_p(r, k + 1)`.
 This is the discrete counterpart of the beta integral: it identifies the lower tail of a

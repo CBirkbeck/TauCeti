@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.OrthogonalGroup
 /-!
 # Determinant square classes of orthogonal transformations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.DetSquareClass)
+
 The determinant of an orthogonal transformation of a finite-dimensional space is a unit. Reducing
 that unit modulo squares gives a homomorphism from the orthogonal group to the square-class group.
 This construction only uses the orthogonal group and does not require a characteristic assumption.

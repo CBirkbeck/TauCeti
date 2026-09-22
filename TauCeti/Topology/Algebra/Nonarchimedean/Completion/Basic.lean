@@ -15,6 +15,8 @@ public import TauCeti.Topology.Algebra.Ring.Subring
 /-!
 # Completions of nonarchimedean groups and rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Completion.Basic)
+
 Three facts about the Hausdorff completion that need only the additive, resp. ring, structure:
 the closure of the image of an open additive subgroup is open, the kernel of the completion map
 is the closure of the zero ideal, and integral closedness of an open subring survives completion.

@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.Law.Basic
 /-!
 # Contractable laws on path space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.ContractableLaw)
+
 This file adds the path-law formulation of contractability, also called spreadability:
 a measure on `ℕ → α` is invariant under every strictly increasing reindexing of time.
 The process-level predicate `Contractable μ X` remains the main stochastic-process API;

@@ -14,6 +14,8 @@ public import Mathlib.MeasureTheory.Measure.Haar.Unique
 /-!
 # Lipschitz-parametrizable sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.LipschitzParametrizable)
+
 A set is Lipschitz parametrizable in dimension `d` when finitely many Lipschitz images of the
 unit `d`-cube cover it.  This is the boundary regularity condition used in lattice-point counting:
 a codimension-one parametrization gives quantitative control on how many lattice cells can meet a

@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.SquareClassGroup.Basic
 /-!
 # Square classes of real numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.SquareClassGroup.Real)
+
 A nonzero real number is a square exactly when it is positive, so the square-class group of `ℝ`
 has two elements: the trivial class and the class of `-1`.  This file records that description in
 the form used to read signs off square-class invariants such as the discriminant of a quadratic

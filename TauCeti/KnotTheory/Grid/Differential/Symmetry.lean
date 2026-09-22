@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Chain.Basic
 /-!
 # Symmetries of the fully blocked grid differential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Symmetry)
+
 The grid-combinatorial lane already records how the diagonal reflection and the `O`/`X` marking
 swap of a grid diagram act on the Maslov and Alexander gradings (`Gradings.lean`,
 `GradingInteger.lean`): the diagonal reflection leaves both gradings unchanged, while the marking

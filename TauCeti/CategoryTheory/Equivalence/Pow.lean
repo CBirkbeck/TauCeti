@@ -12,6 +12,8 @@ public import Mathlib.Tactic.Ring
 /-!
 # Additivity of the integer powers of an autoequivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Equivalence.Pow)
+
 Mathlib defines the integer powers `e ^ j` of an autoequivalence `e : C ≌ C` by recursion and
 records `e ^ 0`, `e ^ 1` and `e ^ (-1)`, but leaves the comparison of `e ^ (a + b)` with the
 composite `e ^ a ⋙ e ^ b` as an explicit TODO.  This file supplies that comparison as an

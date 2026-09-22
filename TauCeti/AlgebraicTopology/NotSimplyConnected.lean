@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Convex.Contractible
 /-!
 # Consequences of a space not being simply connected
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.NotSimplyConnected)
+
 A space whose fundamental group at some basepoint is nontrivial is not simply connected, and a
 non-simply-connected space inherits the standard topological obstructions: it is not
 contractible, and it is not homeomorphic to any simply connected space — in particular not to

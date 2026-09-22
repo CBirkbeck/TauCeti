@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Symplectic.SymplecticTransport
 /-!
 # A compatible almost complex structure on a cotangent space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Cotangent.Compatible)
+
 A finite-dimensional real inner product space `V` is canonically identified with its algebraic
 dual by the Riesz map `v ↦ ⟪v, ·⟫`. Applying this identification to the second factor transports
 the standard compatible triple on `V × V` to the linear cotangent space

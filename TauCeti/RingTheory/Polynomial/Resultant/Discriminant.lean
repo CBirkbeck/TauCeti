@@ -22,6 +22,8 @@ import TauCeti.RingTheory.Polynomial.Roots
 /-!
 # The discriminant of a polynomial as a product over pairs of roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Resultant.Discriminant)
+
 Mathlib defines `Polynomial.discr f` as the determinant of `f.sylvesterDeriv`, corrected by the
 sign `(-1) ^ (n * (n - 1) / 2)` with `n = f.natDegree`. The division-free relation is that the
 resultant of `f` and `f.derivative` equals this sign times `f.leadingCoeff * f.discr`

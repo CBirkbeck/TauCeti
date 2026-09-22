@@ -16,6 +16,8 @@ import Mathlib.MeasureTheory.Integral.CircleIntegral
 /-!
 # The boundary contour of the standard fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic)
+
 The raw five-segment path family `fdBoundary H`, parameterized over `[0, 5]` at a height
 parameter `H`: the right vertical from `1/2 + H·i` through `ρ + 1`, the unit-circle arcs
 from `ρ + 1` to `i` and from `i` to `ρ`, the left vertical from `ρ` through `-1/2 + H·i`,

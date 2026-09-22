@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Separable
 /-!
 # Root sets: numbering the roots, and the roots of a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Roots)
+
 This file records two facts about the root set `f.rootSet E` of a polynomial `f` after base
 change to a domain `E`.
 

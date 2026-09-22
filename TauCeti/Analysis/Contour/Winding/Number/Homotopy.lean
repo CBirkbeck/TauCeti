@@ -17,6 +17,8 @@ import Mathlib.Analysis.SpecialFunctions.Bernstein
 /-!
 # Homotopy invariance of the winding number
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Homotopy)
+
 Two piecewise-`C¹` paths with the same endpoints, joined by an arbitrary continuous fixed-endpoint
 homotopy through `ℂ \ {w}`, have the same winding number about `w`. The proof regularizes finitely
 many horizontal slices of the homotopy by endpoint-preserving smooth approximations, then chains

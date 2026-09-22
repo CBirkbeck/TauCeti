@@ -13,6 +13,8 @@ import Mathlib.Algebra.GroupWithZero.Units.Fintype
 /-!
 # Character orthogonality for finite commutative groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality)
+
 For a finite commutative group `G` and a domain `M` with enough roots of unity, the characters
 of `G` are the monoid homomorphisms `G →* Mˣ`. This file records the *column* orthogonality
 relation — the one summed over the character group — in both its punctured and its normal form.

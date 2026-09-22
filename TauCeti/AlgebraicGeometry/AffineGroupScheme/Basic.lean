@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Group.Affine
 /-!
 # The category of affine group schemes over `Spec S`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Basic)
+
 This file introduces the category of affine group schemes over `Spec S` for a
 commutative ring `S` — the full subcategory of group objects in schemes over `Spec S`
 whose underlying scheme is affine — together with the `Γ`-direction endpoint of the

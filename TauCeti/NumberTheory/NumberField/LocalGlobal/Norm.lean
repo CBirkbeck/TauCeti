@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Norm
 /-!
 # Products of normalized absolute values over finite completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Norm)
+
 For an extension of number fields `L/K`, the canonical map `K_v → L_w` raises normalized
 absolute values to the local degree `[L_w : K_v]`. Taking the product over `w ∣ v` raises
 the norm to the global degree `[L : K]`. This is the finite-place input to the idele norm

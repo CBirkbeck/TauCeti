@@ -14,6 +14,8 @@ import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
 /-!
 # Summing the coefficients of a multivariate power series along a ray
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.DiagonalSum)
+
 Fix an exponent `d` and read the coefficients of `u` along the rays `ν, ν + d, ν + 2d, …`. Two
 convergence statements need only a nonarchimedean coefficient group: if the coefficients of `u`
 tend to zero along the cofinite filter, then so do the ray sums, and so do the coefficients along

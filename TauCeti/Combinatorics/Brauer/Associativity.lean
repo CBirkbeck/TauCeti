@@ -11,6 +11,8 @@ public import TauCeti.Logic.Function.Iterate
 /-!
 # Stacking Brauer diagrams is associative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Brauer.Associativity)
+
 Vertical stacking of Brauer diagrams, `TauCeti.composeDiagram`, is associative: stacking `D₁`
 above `D₂` and the result above `D₃` gives the same matching of the outer boundary as stacking
 `D₂` above `D₃` and `D₁` above that. This is the underlying-matching half of the associativity

@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Constructions.ProjectiveFamilyContent
 /-!
 # Approximation of product-space events by measurable cylinders
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Constructions.CylinderApproximation)
+
 Under a finite measure on a product space `∀ i, α i`, every measurable event is approximated in
 measure by a measurable cylinder over finitely many coordinates. This is Mathlib's density theorem
 for a generating set ring, `exists_measure_symmDiff_lt_of_generateFrom_isSetRing`, applied to the

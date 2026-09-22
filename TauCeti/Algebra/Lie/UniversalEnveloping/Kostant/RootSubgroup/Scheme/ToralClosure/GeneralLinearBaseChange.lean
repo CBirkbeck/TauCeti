@@ -16,6 +16,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The base-changed toral Kostant closure inside the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.GeneralLinearBaseChange)
+
 The toral Kostant closure over `ℤ` is the closed subgroup scheme of `GLₙ` generated jointly by
 represented root subgroups and a represented split torus. Base change first presents it inside
 the scalar extension `A ⊗[ℤ] O(GLₙ/ℤ)`. This file transports that presentation across the

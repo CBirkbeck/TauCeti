@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.Semisimple
 /-!
 # Semisimple point actions on monoid-algebra comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MonoidAlgebra.Semisimple)
+
 The weight-space decomposition of a comodule over a monoid algebra diagonalizes the endomorphism
 induced by any algebra map from the monoid algebra to a commutative ring. This file proves the
 corresponding eigenspace spanning result and, when the target is a field, semisimplicity of the

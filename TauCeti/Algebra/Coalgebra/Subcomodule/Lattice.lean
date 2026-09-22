@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Basic
 /-!
 # Joins of subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Lattice)
+
 This file adds suprema to the lightweight `Subcomodule` structure. The supremum of a family
 of subcomodules has underlying submodule the supremum of the underlying submodules; the
 coaction is stable because each summand lies in the inverse image under `ρ` of the tensor

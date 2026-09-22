@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.FiniteOrder
 /-!
 # Dissociated exchangeable graph laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Dissociated)
+
 An exchangeable graph law is **dissociated** when the random graph restricted to two disjoint
 windows of labels consists of two independent pieces: the level-`(k + l)` marginal, pushed to the
 pair of graphs it induces on the first `k` and on the last `l` labels, is the product of the

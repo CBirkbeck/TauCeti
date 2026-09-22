@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.Monoidal.TensorDifferential
 /-!
 # Composition in differential graded right-module Hom complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Composition)
+
 Homogeneous right-module cochains are closed under composition.  If `g` has degree `p` and `f`
 has degree `q`, their composite has degree `p + q`, and the graded-commutator differential obeys
 

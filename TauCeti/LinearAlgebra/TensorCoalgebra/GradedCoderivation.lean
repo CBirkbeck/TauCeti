@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Graded.LinearMap
 /-!
 # Graded coderivations of the reduced tensor coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.GradedCoderivation)
+
 Let `M` carry an internal integer grading `G`, and let `T = ⨁_{n ≥ 1} M^{⊗ n}` be the reduced
 tensor coalgebra of `TauCeti.ReducedTensorWords`.  The ungraded correspondence of
 `TauCeti.ReducedTensorWords.coderivEquivTaylor` matches coderivations with their Taylor components,

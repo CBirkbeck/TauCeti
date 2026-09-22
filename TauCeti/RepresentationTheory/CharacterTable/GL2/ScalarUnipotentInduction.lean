@@ -27,6 +27,8 @@ import TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality
 /-!
 # Induction from the scalar--unipotent subgroup of `GL₂(𝔽_q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.ScalarUnipotentInduction)
+
 Let `F` be a finite field with `q` elements and let `Z U = TauCeti.GL2ScalarUnipotent F` be the
 product of the centre of `GL₂(F)` with the unipotent radical of the Borel subgroup: the matrices
 `!![x, y; 0, x]`, a copy of `Fˣ × (F, +)`.  This file computes the induced class function

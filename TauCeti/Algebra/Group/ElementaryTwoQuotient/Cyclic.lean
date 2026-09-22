@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.ElementaryTwoQuotient.FreeModule
 /-!
 # The maximal elementary-2 quotient of a cyclic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.ElementaryTwoQuotient.Cyclic)
+
 For a cyclic group `G`, the maximal elementary-2 quotient `G / G²` of
 `TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic` has cardinality `gcd |G| 2`, where `|G|` is
 read via `Nat.card` (so `|G| = 0` for an infinite cyclic group). This unifies the parities: a

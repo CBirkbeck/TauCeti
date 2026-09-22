@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.Boundary.Model
 /-!
 # The product collar of a Euclidean half-space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Collar.Basic)
+
 This file identifies the standard `(n + 1)`-dimensional Euclidean half-space with the product of
 its `n`-dimensional boundary model and the one-dimensional Euclidean half-space.  It is the model
 calculation behind collar charts: the last factor is the inward normal coordinate, and its zero

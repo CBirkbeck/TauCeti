@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.ResidueDegree
 /-!
 # Rational points of a scheme over a base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.RationalPoint.Basic)
+
 A `k`-rational point of a scheme `X` over a field `k` is a morphism `Spec k ⟶ X` over `Spec k`,
 that is, a *section* of the structure morphism `f : X ⟶ Spec k`. This file records what such a
 section gives at the level of points and residue fields. Everything is stated for a section `s`

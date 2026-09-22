@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Basic
 /-!
 # Class data for the dihedral groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Dihedral)
+
 `TauCeti.ClassData` needs a concrete enumeration of the group to start from, since `Finset.toList`
 is noncomputable; `TauCeti.dihedralElements` is that enumeration for `DihedralGroup n`. This file
 feeds it to `TauCeti.ClassData.ofList` and works the dihedral groups of orders `6` and `8` as closed

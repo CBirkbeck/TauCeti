@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Dimension.Finite
 /-!
 # The dimension of a Lie submodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Submodule.Finrank)
+
 A Lie submodule and its carrier submodule have the same underlying type, so they have the same
 dimension; the same holds for a Lie subalgebra and the Lie submodule it becomes over itself. This
 file states those definitional equalities once, as the bridges that dimension counts over Lie

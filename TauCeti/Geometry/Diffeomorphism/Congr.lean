@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Homeomorph.Congr
 /-!
 # Transporting the self-diffeomorphism group along a diffeomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Diffeomorphism.Congr)
+
 A diffeomorphism `e : M ≃ₘ^n⟮I, J⟯ N` conjugates self-diffeomorphisms of `M` into
 self-diffeomorphisms of `N` by `φ ↦ e ∘ φ ∘ e⁻¹`. Because this preserves composition, it is a
 group isomorphism `Diff I M n ≃* Diff J N n` between the self-diffeomorphism groups built in

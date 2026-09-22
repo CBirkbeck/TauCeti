@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Basic
 /-!
 # The differential on derivations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.DerivationMap)
+
 A morphism `φ : A' →ₐc[R] A` of bialgebras sends a counit-valued derivation of `A` to
 one of `A'` by precomposition. The construction splits the transport into the two halves
 Mathlib provides: restricting the domain along `φ` (`Derivation.compAlgebraMap`, over

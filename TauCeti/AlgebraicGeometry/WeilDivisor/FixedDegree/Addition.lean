@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Basic
 /-!
 # Addition of fixed-degree effective Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Addition)
+
 This file records the degree-indexed addition operation on effective Weil divisors of fixed
 degree.  Adding an effective divisor of degree `d` to one of degree `e` gives an effective
 divisor of degree `d + e`; under the equivalence with Mathlib's symmetric powers, this is

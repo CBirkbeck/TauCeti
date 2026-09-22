@@ -15,6 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Strong connectivity of the directed graph of a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Connected)
+
 A square matrix `A` with entries in a partially ordered type determines a directed graph on its
 index set, with an edge from `i` to a distinct `j` when `0 < A i j`. When the off-diagonal
 entries are nonnegative, strong connectivity of this directed graph is the same as the absence of

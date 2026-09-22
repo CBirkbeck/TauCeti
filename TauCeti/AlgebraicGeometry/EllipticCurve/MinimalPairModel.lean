@@ -16,6 +16,8 @@ import TauCeti.Data.Rat.NumDenDvd
 /-!
 # The minimal-pair short equation of an elliptic curve over `ℚ`, and its naïve height
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalPairModel)
+
 An elliptic curve `E` over `ℚ` has infinitely many short Weierstrass equations
 `y² = x³ + Ax + B`: the scaling `x = u²x'`, `y = u³y'` replaces `(A, B)` by `(u⁻⁴A, u⁻⁶B)` for
 every `u ∈ ℚˣ`. Among the equations with `A, B ∈ ℤ` exactly one is a **minimal pair**, meaning

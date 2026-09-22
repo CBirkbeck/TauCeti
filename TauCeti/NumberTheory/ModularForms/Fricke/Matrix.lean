@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # The Fricke matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.Matrix)
+
 The Fricke matrix `W = !![0, -1; N, 0]`, as an element of `GL (Fin 2) K` for a field `K` in
 which `N` is invertible. Its determinant is `N`, which is nonzero exactly under the standing
 `[NeZero (N : K)]` hypothesis, so `W` is a unit.

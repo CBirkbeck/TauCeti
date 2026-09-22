@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.SymplecticGroup
 /-!
 # The standard representation of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Symplectic)
+
 This file restricts the standard representation of the general linear group to the symplectic
 group. It defines the standard alternating form from `Matrix.J`, proves that the standard action
 preserves it, and packages the resulting equivariant self-duality.

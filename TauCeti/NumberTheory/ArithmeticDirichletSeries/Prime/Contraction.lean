@@ -12,6 +12,8 @@ import TauCeti.Analysis.SpecialFunctions.Log.OneDivSub
 /-!
 # Contracting prime sums and Dirichlet densities along a fibre count
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.Contraction)
+
 Let `K` and `E` be number fields, `T` a set of height-one primes of `𝓞 E` and `S` one of `𝓞 K`,
 and let `π` send each prime of `E` to a prime of `K`. Suppose that `π` maps `T` into `S`, that it
 preserves absolute norms on `T`, and that every `𝔭 ∈ S` has exactly `c ≠ 0` preimages in `T`.

@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Realization
 /-!
 # Contractible two-dimensional simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Zeeman)
+
 This file supplies the predicate used in the statement of Zeeman's collapsibility conjecture.
 An abstract simplicial complex is a **contractible 2-complex** when it has finitely many faces,
 dimension at most two, and contractible geometric realization.  The finiteness condition records

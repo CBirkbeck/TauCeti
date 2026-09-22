@@ -13,6 +13,8 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.Braided
 /-!
 # The differential of a tensor product of cochain complexes of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Monoidal.TensorDifferential)
+
 Mathlib's `HomologicalComplex.monoidalCategory`, instantiated at `ComplexShape.up ℤ`, totalizes
 the degreewise tensor product of cochain complexes, with the tensor signs `ε₁ = 1` and
 `ε₂ (p, q) = (-1)^p`.  This file records the resulting differential on a homogeneous summand,

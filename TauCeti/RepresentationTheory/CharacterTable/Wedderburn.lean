@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.SimpleModule.IsAlgClosed
 /-!
 # The Wedderburn blocks of a finite group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Wedderburn)
+
 Over an algebraically closed field `k` whose characteristic does not divide the order of a finite
 group `G`, Maschke's theorem makes `k[G]` semisimple and Artin--Wedderburn presents it as a finite
 product of matrix algebras `∏ᵢ Matₙᵢ(k)`. This file reads the two classical numerical invariants

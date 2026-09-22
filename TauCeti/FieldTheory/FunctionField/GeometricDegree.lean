@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.Minpoly.IsIntegrallyClosedIn
 /-!
 # The geometric degree of an extension of function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.GeometricDegree)
+
 Let `F' / k'` be a finite extension of an algebraic function field `F / k`, so that `k'` is the
 constant field upstairs and `k` the constant field downstairs.  The two degrees `[F' : F]` and
 `[k' : k]` are related through the **compositum** `F · k'`, formed inside `F'`: the tower

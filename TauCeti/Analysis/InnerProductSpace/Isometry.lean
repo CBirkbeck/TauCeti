@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 /-!
 # A distance-preserving map fixing the origin preserves the inner product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Isometry)
+
 Mathlib knows that a *linear* isometry preserves the inner product
 (`LinearIsometry.inner_map_map`), and, through the Mazur--Ulam theorem
 (`IsometryEquiv.toRealLinearIsometryEquivOfMapZero`), that a *surjective* isometry of normed spaces

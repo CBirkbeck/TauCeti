@@ -13,6 +13,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The pinned coordinate model of the roots of type `Bₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.Model)
+
 This file records the roots of type `Bₙ` in the two lattices pinned by the Bourbaki numbering: the
 character lattice `Fin n → ℤ` written in the fundamental-weight basis, and the cocharacter lattice
 `Fin n → ℤ` written in the simple-coroot basis. It stops just short of assembling a `RootDatum`,

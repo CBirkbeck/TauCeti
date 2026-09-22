@@ -14,6 +14,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
 /-!
 # Induction from a covering family of subgroups spans the class functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Spanning)
+
 Let `𝒮` be a family of subgroups of a finite group `G` that **covers `G` up to conjugacy**: every
 element of `G` has a conjugate lying in some member of `𝒮`.  Over a field `k` in which `|G|` is
 invertible, induction from `𝒮` is then surjective on class functions: the class functions

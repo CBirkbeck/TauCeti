@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 /-!
 # Completely multiplicative ideal weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Weight)
+
 The completely multiplicative specializations of `TauCeti.IdealArithmeticFunction`: the two
 carriers on which every Euler product, Hecke character and character-family argument of this
 development is stated.

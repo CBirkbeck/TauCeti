@@ -19,6 +19,8 @@ import TauCeti.LinearAlgebra.QuadraticForm.OrthogonalBasis
 /-!
 # Splitting a Clifford algebra along a central odd square root of one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.OddSplitting)
+
 An element `ω` of `CliffordAlgebra Q` which is **central**, **odd**, and squares to `1` splits the
 algebra in two. The elements
 

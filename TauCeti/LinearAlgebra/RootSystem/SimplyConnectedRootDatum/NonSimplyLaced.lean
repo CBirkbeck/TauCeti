@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # Reducedness of the non-simply-laced pinned root data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.NonSimplyLaced)
+
 The pinned simply connected root data of types `B`, `C`, `F₄`, and `G₂` are reduced. For `B`,
 `C`, and `F₄`, the proof uses a criterion tailored to crystallographic root data over `ℤ`: if
 every Cartan integer has absolute value at most two, then two dependent roots have equal or

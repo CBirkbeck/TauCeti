@@ -14,6 +14,8 @@ public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 /-!
 # The bounded perturbation theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generation.BoundedPerturbation)
+
 Adding a bounded operator `B` to the generator `A` of a C₀-semigroup leaves the generator
 property intact: the domain does not move, so the perturbed operator is `B +ᵥ A`, and the growth
 exponent increases by at most `M ‖B‖` when the original growth constant is `M`.

@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.CliffordExteriorSquare
 /-!
 # Exterior bivectors and the standard orthogonal Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.StandardBivector)
+
 For the standard sum-of-squares quadratic form on `Fin n → R`, the second exterior power is
 canonically the matrix orthogonal Lie algebra. The forward map sends `u ∧ v` to the skew matrix
 with entries `2 * (u i * v j - v i * u j)`; the factor of two matches the polar form of the

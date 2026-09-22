@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Module.Submodule.Equiv
 /-!
 # Evaluating multiplication by a unit of the base ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Equiv.Basic)
+
 Mathlib's `LinearEquiv.smulOfUnit` packages multiplication by a unit `u` of the base ring as a
 linear equivalence, but records no lemma evaluating it at a vector. This file supplies that
 evaluation lemma, in the `simp`-normal form that rewrites an application of

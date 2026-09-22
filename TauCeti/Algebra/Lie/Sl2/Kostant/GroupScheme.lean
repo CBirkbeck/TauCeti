@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The full-weight rank-one Kostant carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Kostant.GroupScheme)
+
 The standard two-dimensional `sl₂` module has weights `1` and `-1`.  In particular, unlike the
 adjoint representation with weights `0`, `2`, and `-2`, its weights generate the full rank-one
 weight lattice rather than only the root lattice.  This file feeds that admissible integral

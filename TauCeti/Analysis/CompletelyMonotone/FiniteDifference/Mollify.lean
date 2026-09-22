@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Smoothing a finite-difference completely monotone function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.FiniteDifference.Mollify)
+
 `TauCeti.IsDifferenceCompletelyMonotone.isCompletelyMonotone` upgrades the finite-difference sign
 condition to genuine complete monotonicity, but only for a function that is already `C^∞`. This
 file supplies the missing smoothing step without imposing any regularity beyond the difference

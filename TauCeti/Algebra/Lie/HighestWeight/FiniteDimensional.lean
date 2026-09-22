@@ -17,6 +17,8 @@ import TauCeti.Algebra.Lie.Submodule.Atom
 /-!
 # Finite-dimensionality of dominant irreducible highest weight modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.FiniteDimensional)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero. An irreducible highest weight `L`-module is
 finite-dimensional exactly when its highest weight is dominant integral.

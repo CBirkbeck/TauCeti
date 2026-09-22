@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Weights.RootSystem
 /-!
 # Killing pairings of root spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Killing)
+
 This file records consequences of the non-degeneracy of the Killing form for the root spaces of a
 splitting Cartan subalgebra, and the vanishing of brackets inside the Cartan subalgebra itself.
 

@@ -14,6 +14,8 @@ import Mathlib.Data.Nat.Prime.Basic
 /-!
 # The sign indicator of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Index.Indicator)
+
 For a subgroup `H` of a group `G`, its sign indicator is the function which is `1` on `H` and
 `-1` off `H`.  This function is multiplicative exactly when the index of `H` divides two.  For a
 finite quotient, this is the familiar criterion that the index is at most two.

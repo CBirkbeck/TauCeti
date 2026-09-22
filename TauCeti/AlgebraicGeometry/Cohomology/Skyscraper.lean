@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.ResidueDegree
 /-!
 # Cohomology of skyscraper sheaves of residue fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Cohomology.Skyscraper)
+
 For a point `x` of a scheme `X` over a field `k`, the zeroth cohomology of the skyscraper sheaf
 `κ(x)ₓ` is its residue field `κ(x)`. Its dimension over `k` is therefore the residue degree
 `[κ(x) : k]`. Since `κ(x)ₓ` is flasque, its higher cohomology vanishes. Consequently all of its

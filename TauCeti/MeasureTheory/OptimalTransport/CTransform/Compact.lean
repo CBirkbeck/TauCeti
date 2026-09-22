@@ -11,6 +11,8 @@ public import TauCeti.Topology.Semicontinuity.CompactInfimum
 /-!
 # The infimal `c`-transform in the compact lower semicontinuous regime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.CTransform.Compact)
+
 `TauCeti.cTransform c φ y = ⨅ x, (c (x, y) - φ x)` is an infimum over the source, so its
 regularity in `y` splits into two halves needing opposite hypotheses. An infimum of upper
 semicontinuous functions is upper semicontinuous with no hypothesis on the source at all, which is

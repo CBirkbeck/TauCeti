@@ -19,6 +19,8 @@ import TauCeti.MeasureTheory.Measure.ZeroOne
 /-!
 # The Hewitt–Savage zero-one law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.HewittSavage)
+
 For an i.i.d. sequence, the exchangeable (symmetric) σ-algebra on path space is trivial:
 every exchangeable event has probability `0` or `1` (`hewittSavage_trivial_of_iIndep`).
 

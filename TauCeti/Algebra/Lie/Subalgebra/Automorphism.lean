@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Subalgebra
 /-!
 # Invariant Lie subalgebras under automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Subalgebra.Automorphism)
+
 An automorphism `σ` of a Lie algebra `L` *normalises* a Lie subalgebra `H` when
 `H.map σ = H`. This file records that the inverse normalises `H` too, and identifies the
 inverse of Mathlib's `LieEquiv.ofSubalgebras` restriction with the corresponding restriction of

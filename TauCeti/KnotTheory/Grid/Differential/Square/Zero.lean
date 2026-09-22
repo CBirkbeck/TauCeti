@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.SimplyBlocked
 /-!
 # The grid differentials square to zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Zero)
+
 The square of the unblocked grid differential `∂⁻` of `Unblocked.lean` is a sum over pairs of
 composable rectangles which are empty and cover no `X`-marking. This file completes the
 juxtaposition argument that the sum vanishes in characteristic two. That is the square-zero

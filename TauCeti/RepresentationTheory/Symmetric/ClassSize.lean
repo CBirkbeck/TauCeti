@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Partitions
 /-!
 # Conjugacy class sizes in the symmetric group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.ClassSize)
+
 The conjugacy classes of `Equiv.Perm α` are indexed by partitions of `Fintype.card α` through
 `Equiv.Perm.partition`.  This file computes the size of each class.  The weight attached to a
 partition `μ` is

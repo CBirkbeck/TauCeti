@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.EuclideanDual
 /-!
 # Character sums over linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.CharacterSum)
+
 Let `ψ` be a primitive additive character of a finite commutative ring `R`, with values in a
 domain. For a linear code `C ≤ ι → R`, the character `c ↦ ψ (c ⬝ᵥ y)` of `C` is trivial exactly
 when `y` lies in the Euclidean dual of `C`, so

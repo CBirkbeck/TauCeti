@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.StdBasis
 /-!
 # The standard split even-dimensional polarization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.Split.Even)
+
 For a commutative ring `K`, the hyperbolic quadratic space on a finite free module `M` is
 `M* × M` with quadratic form `(f, x) ↦ f x`. This file gives the coordinate instance
 `M = Fin n → K` its canonical polarization: the two coordinate axes are the isotropic summands,

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Hom.BaseChange
 /-!
 # Base change of the endomorphism ring of an abelian variety
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.End.BaseChange)
+
 Extending the base field along `K → L` sends an endomorphism of an abelian variety `A` over `K`
 to an endomorphism of `A.baseChange L`. This assignment is a ring homomorphism
 `AbelianVariety.End.baseChange : End A →+* End (A.baseChange L)`: it is additive because base

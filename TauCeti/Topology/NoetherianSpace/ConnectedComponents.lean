@@ -12,6 +12,8 @@ public import TauCeti.Topology.ConnectedComponents
 /-!
 # Connected components of Noetherian spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.NoetherianSpace.ConnectedComponents)
+
 A Noetherian topological space has only finitely many connected components. Indeed, it has
 finitely many irreducible components, every irreducible set lies in one connected component,
 and the irreducible components cover the space. Consequently the quotient by connected

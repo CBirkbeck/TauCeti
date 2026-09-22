@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Functoriality
 /-!
 # Characters, cocharacters, and their pairing for the diagonalizable group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Cocharacter)
+
 `TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Basic` computes the functor of points of the
 diagonalizable group `D(M) = Spec R[M]`, and
 `TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Functoriality` records its contravariant

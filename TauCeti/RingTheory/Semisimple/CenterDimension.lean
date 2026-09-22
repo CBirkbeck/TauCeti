@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Semisimple.RegularIsotypicComponent
 /-!
 # The center bounds the number of simple modules of a semisimple algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.CenterDimension)
+
 A semisimple ring `R` has finitely many isomorphism classes of simple modules, indexed by the
 isotypic components of the regular module (`TauCeti.simpleSubmoduleClassesEquiv`). When `R` is an
 algebra over a field `k`, this file bounds that number by the dimension of the center:

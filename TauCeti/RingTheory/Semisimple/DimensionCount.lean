@@ -20,6 +20,8 @@ import TauCeti.RingTheory.Semisimple.Schur
 /-!
 # The Wedderburn dimension count over an algebraically closed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.DimensionCount)
+
 Artin--Wedderburn presents a finite-dimensional semisimple algebra `A` over a field `K` as a finite
 product of matrix algebras `∏ᵢ Matₙᵢ(Dᵢ)` over division algebras, and
 `TauCeti.finrank_eq_sum_sq_finrank` reads

@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCiv
 /-!
 # The Koszul formula for Levi-Civita connections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita.Basic)
+
 A covariant derivative `∇` on the tangent bundle of a Riemannian manifold is a *Levi-Civita
 connection*, or *Riemannian connection*, if it is torsion free and compatible with the metric.
 Mathlib states this as `CovariantDerivative.IsLeviCivitaConnection`, constructs such a connection,

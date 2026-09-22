@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Binomial
 /-!
 # The Kostant integral form is stable under the antipode
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Antipode)
+
 Let `L` be a Lie algebra over `ℚ`, let `e : ι → L` be root vectors and `h : κ → L` Cartan vectors,
 and let `kostantForm e h` be the subring of `UniversalEnvelopingAlgebra ℚ L` they generate in the
 sense of `TauCeti.UniversalEnvelopingAlgebra.kostantForm`. This file proves that the antipode maps

@@ -13,6 +13,8 @@ import TauCeti.Probability.Exchangeability.MixedIID.Implications
 /-!
 # Basic implications from conditional i.i.d.-ness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Implications)
+
 The symmetry consequences of the conditional predicate: a conditionally i.i.d. sequence is
 exchangeable, and it is contractable.
 

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Diagona
 /-!
 # Weyl elements in the standard symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Weyl)
+
 For distinct coordinate indices `i` and `j`, this file constructs the standard representative
 
 ```text

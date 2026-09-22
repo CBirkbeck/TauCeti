@@ -17,6 +17,8 @@ import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # The field factors of `K[X] ⧸ (f)` and its square classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.AdjoinRoot.Factors)
+
 For `f` a nonzero squarefree polynomial over a field `K`, the Chinese Remainder Theorem identifies
 `K[X] ⧸ (f)` with the product of the fields `K[X] ⧸ (p)` over the distinct monic irreducible
 factors `p` of `f` (`Polynomial.Factors f`). This file records that decomposition, the

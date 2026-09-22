@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.ClassSum.Basis
 /-!
 # A finite field containing the roots of unity splits the centre of the group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FiniteField)
+
 Let `G` be a finite group and `K` a finite field whose characteristic does not divide `|G|` and
 whose multiplicative order kills `G`, that is `g ^ |K| = g` for every `g : G` -- equivalently, the
 exponent of `G` divides `|K| - 1`, so that `K` already contains the roots of unity that the

@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Divisor.ProductFormula
 /-!
 # The affine-model bridge at divisor level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.AffineModel)
+
 An *affine model* of `F / k` is a Dedekind `k`-subalgebra `R` of `F` whose fraction field is `F`.
 `TauCeti/FieldTheory/FunctionField/AffineModel/Prime.lean` identifies the places of `F / k` finite
 on `R` with the height one primes of `R`, place by place.  This file carries that dictionary up to

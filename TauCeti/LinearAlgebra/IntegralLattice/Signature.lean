@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Signature
 /-!
 # Signature and definiteness of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Signature)
+
 This file defines the radical and signature `(n₊, n₀, n₋)` of an integral symmetric lattice and
 the standard definiteness predicates. The indices of inertia are Mathlib's `sigPos`
 and `sigNeg`; the null index is the dimension of the kernel of the bilinear form.

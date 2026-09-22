@@ -16,6 +16,8 @@ public import Mathlib.Topology.Order.IntermediateValue
 /-!
 # Arc-length reparametrization of regular Riemannian curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.ArcLength)
+
 Every regular `C¹` curve on an open parameter set admits a unit-speed forward
 reparametrization on each compact subinterval. The new parameter is the accumulated Riemannian
 speed

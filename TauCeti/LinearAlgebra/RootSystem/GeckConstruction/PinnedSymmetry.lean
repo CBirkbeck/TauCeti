@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # Diagram symmetries of the pinned Geck lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.GeckConstruction.PinnedSymmetry)
+
 A symmetry of a Dynkin diagram permutes both the roots of the pinned simply connected root datum
 and the Bourbaki-numbered simple roots. Geck's construction turns those two permutations into a
 coordinate permutation of its defining module. This file specializes that construction to the

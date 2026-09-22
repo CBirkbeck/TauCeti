@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Dual.BaseChange
 /-!
 # Matrix coefficients under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.BaseChange)
+
 Extending a finite free comodule and its coefficient coalgebra along the same scalar morphism
 extends every entry of its coefficient matrix. This is the coordinate calculation needed to
 transport faithful representations across field extensions.

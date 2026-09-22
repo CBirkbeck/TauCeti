@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Complex.UnitDisc.Basic
 /-!
 # The pseudo-hyperbolic expression on the unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.PseudoHyperbolic)
+
 This file records the scalar pseudo-hyperbolic expression `‖(z - w) / (1 - conj w * z)‖`, on
 which the Schwarz--Pick lemma and the hyperbolic distance on the disc are built.  The main API
 proves that the denominator is nonzero on the open unit disc — hence of positive norm

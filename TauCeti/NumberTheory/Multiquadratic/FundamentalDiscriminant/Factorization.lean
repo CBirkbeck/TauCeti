@@ -11,6 +11,8 @@ import Mathlib.Data.Int.NatAbs
 /-!
 # Prime-discriminant factorization of a fundamental discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Factorization)
+
 `FundamentalDiscriminant/Basic` supplies the *synthesis* half of the prime-discriminant/
 fundamental-discriminant correspondence: a product of distinct prime discriminants with at most
 one even value is a fundamental discriminant. This file supplies the **analysis** half, the

@@ -11,6 +11,8 @@ public import TauCeti.Probability.Recurrent
 /-!
 # Recurrent prefixes adapted to finite successor reindexings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.LastExit)
+
 This file supplies the recurrence step that produces the last-exit condition. A family
 `π : α → Equiv.Perm ℕ` of row permutations that moves only finitely many positions on rows attained
 by a recurrent path eventually has every such position below the last visit to its row.

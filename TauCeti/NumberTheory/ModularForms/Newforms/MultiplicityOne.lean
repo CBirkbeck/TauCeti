@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.EigenvectorVanishing
 /-!
 # Multiplicity one on the new part of `S_k(N, χ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.MultiplicityOne)
+
 A cusp form in the new part of `S_k(N, χ)` that is an eigenvector of the Hecke ring at every
 prime not dividing `N` is determined, up to a scalar, by those eigenvalues. Equivalently: each
 simultaneous eigenspace of the good Hecke operators inside `S_k(N, χ)ⁿᵉʷ` is at most

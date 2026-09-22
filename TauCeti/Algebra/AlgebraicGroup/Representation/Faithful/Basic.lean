@@ -13,6 +13,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.PointSeparation
 /-!
 # Faithful representations and matrix coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Faithful.Basic)
+
 Let `M` be a finite free comodule over a commutative Hopf algebra `H`. A basis of `M` gives a
 coordinate morphism
 

@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.Restrict
 /-!
 # Splitting a measure along a finite partition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.RestrictPartition)
+
 A measure is the sum of its restrictions to the pieces of a finite measurable partition. Scaling
 each restriction by a factor `s i ≤ 1` splits it further into a scaled part and a remainder, which
 is the form in which mass is matched cell by cell in transport-plan constructions.

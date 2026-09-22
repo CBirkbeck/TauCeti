@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.Quaternion
 /-!
 # The Frobenius-Schur indicator of the two-dimensional representation of `Q₈`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.Quaternion)
+
 The cyclic subgroup formed by the elements `a i` has index two in `QuaternionGroup 2`.  Every
 element outside it acts by inversion, and the square of `xa 0` is the central rotation `a 2`.
 Consequently

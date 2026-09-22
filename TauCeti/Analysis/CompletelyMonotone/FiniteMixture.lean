@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Finite mixtures of completely monotone exponential functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.FiniteMixture)
+
 The extreme rays of the cone of completely monotone functions are the exponential functions
 `t ↦ exp (-p * t)` with `p ≥ 0`. This file develops their finite positive mixtures. It packages
 a finite mixture both as an explicit sum and as the Laplace transform of the corresponding

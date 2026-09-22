@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 /-!
 # The exchangeable graph law of a graph parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Representability.ParamLaw)
+
 A graph parameter `f` satisfying the four structural conditions of the Lovász–Szegedy
 representability theorem — isomorphism invariance, multiplicativity, normalization and reflection
 positivity — defines a random graph: its level-`n` law gives each graph `H` on `Fin n` the Möbius

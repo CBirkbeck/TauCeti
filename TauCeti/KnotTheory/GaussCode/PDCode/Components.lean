@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.Perm.OrbitCount.FinRotate
 /-!
 # Component traversal of the PD-code of a Gauss code
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.GaussCode.PDCode.Components)
+
 The outgoing half-edges of a converted Gauss code are canonically its visits. Under this
 identification, PD component traversal is cyclic rotation of the visits. Consequently the
 conversion produces a single crossing-bearing component when there are crossings; in the

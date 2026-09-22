@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Unipotent.Solvable
 /-!
 # Solvability of geometrically unipotent affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Solvable)
+
 A finite-type affine group admits a faithful finite-dimensional comodule. If all its geometric
 points are unipotent, their induced operators on this comodule are unipotent. Kolchin's theorem
 then embeds the geometric point group in an upper-unitriangular matrix group, proving that it is

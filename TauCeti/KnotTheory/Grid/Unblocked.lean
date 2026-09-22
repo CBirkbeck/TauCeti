@@ -16,6 +16,8 @@ import TauCeti.KnotTheory.Grid.Rectangle.Swap
 /-!
 # The unblocked grid complex `GC⁻`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Unblocked)
+
 The fully blocked differential `TauCeti.GridDiagram.fullyBlockedDifferential` counts only
 rectangles that avoid every marking,
 so it forgets the `O`-markings entirely. The *unblocked* complex `GC⁻` remembers them:

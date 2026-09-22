@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Ideal.Operations
 /-!
 # Stabilization of the powers of an ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.PowerStabilization)
+
 Two facts about when the powers of an ideal `I` become constant.
 
 The first is general: if `I ^ (n + 1) = I ^ n`, then `I ^ k = I ^ n` for every `k ≥ n`. Nothing

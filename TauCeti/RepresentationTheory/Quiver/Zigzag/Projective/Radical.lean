@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Socle
 /-!
 # Radical layers of vertex projectives over a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Projective.Radical)
+
 For a finite simple graph without isolated vertices, the vertex projective `P_i = Z e_i` has
 Loewy length three.  Its first radical power is spanned by the arrows leaving `i` together with
 the volume at `i`; its second radical power is the volume line; and its third radical power is

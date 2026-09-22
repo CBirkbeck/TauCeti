@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.Presentation.GroupPresentation
 /-!
 # A transcribed presentation of the first Conway group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.Conway.One)
+
 This file carries the `Co₁` row of the sporadic presentation data required by milestone S1 of
 `TauCetiRoadmap/CFSGStatement/README.md`. It records presentation `GPLTable.Co1.1` from Roderik
 Lindenbergh's Group Presentations Library as a `TauCeti.GroupPresentation`, together with the exact

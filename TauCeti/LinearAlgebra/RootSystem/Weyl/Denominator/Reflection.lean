@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Sign
 /-!
 # Reflections of the Weyl denominator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Denominator.Reflection)
+
 The Weyl denominator
 `Δ = ∏_{α > 0} (1 - e^{-α})` is alternating under the dot action of the Weyl group. This file
 establishes the simple-reflection case, the cancellation step behind the Weyl denominator identity

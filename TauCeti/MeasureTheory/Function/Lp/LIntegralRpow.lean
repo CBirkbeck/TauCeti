@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 /-!
 # `Lᵖ` seminorm bounds out of bounds between the integrals `∫⁻ ‖·‖ₑ ^ p`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.LIntegralRpow)
+
 For `0 < p < ∞` the `Lᵖ` seminorm of `v` is by definition the `p`-th root of
 `∫⁻ ‖v x‖ₑ ^ p ∂μ`, so a bound `∫⁻ ‖v‖ₑ ^ p ≤ c ^ p * ∫⁻ ‖w‖ₑ ^ p` between those integrals is the
 same statement as `‖v‖_p ≤ c * ‖w‖_p` between the seminorms. This file records the passage from

@@ -13,6 +13,8 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 /-!
 # The character attached to a prime discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Character)
+
 Genus theory attaches to a prime discriminant `P` the primitive real character modulo `|P|`
 cutting out the quadratic field `ℚ(√P)`. Mathlib has no Kronecker symbol, so this file assembles
 that character from the pieces Mathlib does have: it is `ZMod.χ₄`, `ZMod.χ₈` and `ZMod.χ₈'` at the

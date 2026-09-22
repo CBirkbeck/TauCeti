@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Dimension.Finrank
 /-!
 # Transporting and decomposing the center of an algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Subalgebra.Center)
+
 Constructions on `Subalgebra.center` that Mathlib states only for `Subring.center`, or only
 as an equality of subalgebras, and that are needed whenever a structure theorem presents an algebra
 up to an algebra equivalence, together with the criterion for a commutative algebra to be central.

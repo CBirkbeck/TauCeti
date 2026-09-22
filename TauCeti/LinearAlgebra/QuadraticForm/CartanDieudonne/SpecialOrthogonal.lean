@@ -11,6 +11,8 @@ import Mathlib.GroupTheory.OrderOfElement
 /-!
 # Generation of the special orthogonal group by pairs of reflections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.CartanDieudonne.SpecialOrthogonal)
+
 For a finite-dimensional nondegenerate quadratic space in characteristic different from two,
 the special orthogonal group is generated, even as a monoid, by products of two reflections.
 This is the determinant-one form of the Cartan--Dieudonné theorem. It reduces questions about

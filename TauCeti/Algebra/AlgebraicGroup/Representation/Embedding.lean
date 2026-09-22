@@ -15,6 +15,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Embedding a finite-type affine group in a general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Embedding)
+
 Let `H` be a commutative Hopf algebra of finite type over a field `k`. The fundamental theorem
 of coalgebras places a finite set of algebra generators of `H` in a finite-dimensional
 subcomodule `M` of the regular comodule. The matrix coefficients of `M` then generate `H` as a

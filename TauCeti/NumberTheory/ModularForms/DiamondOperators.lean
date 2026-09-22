@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 /-!
 # Diamond operators and modular forms with character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.DiamondOperators)
+
 The diamond operators `⟨d⟩` on modular and cusp forms for `Γ₁(N)`, and the nebentypus
 character spaces `M_k(Γ₁(N), χ)` and `S_k(Γ₁(N), χ)` they cut out.
 

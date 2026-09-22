@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.Graphon.Pullback
 /-!
 # Graphons given by a matrix on a countable carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Graphon.OfMatrix)
+
 On a countable discrete probability carrier there is nothing to a graphon beyond a symmetric
 `[0, 1]`-valued matrix: measurability is automatic.  `Graphon.ofMatrix` packages such a matrix as a
 graphon, with the vertex weights carried by the measure and the edge weights by the matrix.  When

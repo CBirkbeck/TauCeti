@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.Matrix
 /-!
 # Row operations on generator matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.RowOperations)
+
 Left multiplication changes the rows of a generator matrix by linear combinations and therefore
 cannot enlarge its generated code. If the left factor is invertible, this operation preserves the
 code. This file records that fact through the exact image formula for the generated code, so it can

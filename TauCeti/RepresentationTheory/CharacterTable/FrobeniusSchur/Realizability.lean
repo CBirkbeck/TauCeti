@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.InvariantForm.StructureMap
 /-!
 # Frobenius-Schur indicator `1` means realizable over the reals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.Realizability)
+
 `TauCeti/RepresentationTheory/CharacterTable/FrobeniusSchur/RealForm.lean` proves that an
 irreducible complex representation with a real form has Frobenius-Schur indicator `1`.  This file
 proves the converse, completing the orthogonality criterion: **an irreducible representation of a

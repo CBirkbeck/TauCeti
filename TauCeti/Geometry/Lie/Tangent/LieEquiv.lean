@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Lie.Tangent.LeftInvariantDerivation
 /-!
 # The Lie equivalence between derivations and the identity tangent space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Tangent.LieEquiv)
+
 For a finite-dimensional smooth real Lie group whose identity is an interior point, the canonical
 linear equivalence between left-invariant derivations and the tangent space at the identity is an
 equivalence of Lie algebras. This supplies the bracket-compatible dictionary needed to transport the

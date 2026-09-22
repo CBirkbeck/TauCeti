@@ -14,6 +14,8 @@ public import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Classification
 /-!
 # The Galois group of a quartic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Quartic)
+
 An irreducible separable quartic has transitive Galois image in `Equiv.Perm (Fin 4)`, so it
 carries exactly one of the five labels `4T1`, …, `4T5`, the cyclic, Klein four, dihedral,
 alternating and symmetric groups. Away from characteristic `2` two tests read that label off the

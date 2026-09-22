@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Coderivation
 /-!
 # Nonunital A-infinity algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra)
+
 An uncurved nonunital `A∞` algebra on an internally `ℤ`-graded module consists of operations
 `m n` of degree `2 - n`, with `m 0 = 0`, whose suspended Taylor map extends to a square-zero
 degree-one coderivation of the reduced tensor coalgebra.  This file packages that definition and

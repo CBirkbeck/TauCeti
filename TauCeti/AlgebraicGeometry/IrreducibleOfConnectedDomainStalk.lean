@@ -11,6 +11,8 @@ public import Mathlib.AlgebraicGeometry.Noetherian
 /-!
 # Irreducibility of connected schemes with domain stalks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.IrreducibleOfConnectedDomainStalk)
+
 This file supplies a prerequisite for the **Standing hypotheses** target of the
 Jacobian challenge roadmap (proving that a regular connected scheme is irreducible,
 as regular stalks are integral domains).

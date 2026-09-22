@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Witt.Cancellation
 /-!
 # Witt's chain theorem for diagonal quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Diagonal.WittChain)
+
 Witt's chain theorem connects two isometric diagonal forms by finitely many changes of two
 coefficients at a time. This file proves the converse to `TauCeti.DiagonalChain.equivalent` for
 forms of rank at least two. The key intermediate result says that a represented unit can be made

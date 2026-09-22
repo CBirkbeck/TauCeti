@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Polynomial.Hermite.Basic
 /-!
 # Derivatives, recurrence, and parity of the probabilists' Hermite polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Hermite.Derivative)
+
 Mathlib's `Mathlib/RingTheory/Polynomial/Hermite/Basic.lean` defines `Polynomial.hermite` by the
 one-step recursion `hermite (n + 1) = X * hermite n - derivative (hermite n)` and develops its
 coefficient API, but it records nothing about the *derivative* of a Hermite polynomial in closed

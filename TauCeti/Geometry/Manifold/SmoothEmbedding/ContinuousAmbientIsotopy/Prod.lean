@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Isotopy.Prod
 /-!
 # Products of continuously ambient-isotopic smooth embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SmoothEmbedding.ContinuousAmbientIsotopy.Prod)
+
 The geometric-topology roadmap treats the geometric presentation of a knot or link as a smooth
 embedding and asks that ambient isotopy be defined generally, then specialised to those
 presentations. `TauCeti.Topology.Homotopy.Isotopy.Prod` proves product closure for the general

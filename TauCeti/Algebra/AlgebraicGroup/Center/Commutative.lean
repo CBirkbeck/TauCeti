@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Central
 /-!
 # The center is commutative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.Commutative)
+
 The center of an affine group scheme is a commutative group scheme. On coordinate Hopf algebras,
 this says that the quotient by `centerDefiningIdeal` is cocommutative. The result follows from the
 more general fact that the coordinate Hopf algebra of every central closed subgroup is

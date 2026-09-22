@@ -19,6 +19,8 @@ import TauCeti.RingTheory.Valuation.RestrictToConvex
 /-!
 # The valuative criterion for integrality, by continuous valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Continuous.ValuativeCriterion)
+
 `TauCeti.isIntegral_of_forall_valuation_le_one` tests integrality against *every* valuation.
 Wedhorn's Proposition 7.18(1) tests it against the **continuous** ones only, and that
 strengthening is what a point of `Spa` can actually supply.

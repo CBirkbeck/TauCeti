@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.Riemannian.Basic
 /-!
 # Smooth paths with prescribed Riemannian path length
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.PathELength)
+
 For a `C¹` path on `[0, 1]`, there exists a globally `C¹` path that is constant near both
 endpoints, has the same endpoints, and has exactly the same `Manifold.pathELength`. For two `C¹`
 paths with a common endpoint, there likewise exists a globally `C¹` path between their outer

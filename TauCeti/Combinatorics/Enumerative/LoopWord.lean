@@ -15,6 +15,8 @@ public import TauCeti.Combinatorics.Enumerative.TransitionCount
 /-!
 # Loops at a base point and their excursions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.LoopWord)
+
 A finite word that starts at a letter `a₀` and returns to it splits at its visits to `a₀` into
 **excursions**: the (possibly empty) stretches of letters strictly between consecutive visits.
 Conversely a list `bs : List (List α)` of excursions spells out a word

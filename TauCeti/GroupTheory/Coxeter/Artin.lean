@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Coxeter.Basic
 /-!
 # Artin-Tits groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.Artin)
+
 A Coxeter matrix `M` presents two different groups on the same generating set `B`. The Coxeter
 group `M.Group` imposes the relations `(s i * s i') ^ M i i' = 1`; equivalently, that each
 generator is an involution and that the two alternating words of length `M i i'` in `i` and `i'`

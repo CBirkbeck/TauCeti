@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Hodge.SubquotientModel
 /-!
 # Polarizations on rational Hodge substructures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.InducedPolarization)
+
 A rational Hodge substructure inherits a pure Hodge structure on its rational and complex
 base-change models. If the ambient structure is polarized, restricting the integral form to the
 integral vectors in the rational subspace polarizes this induced structure.

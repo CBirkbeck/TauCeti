@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Complex.Periodic
 /-!
 # The order of a `q`-expansion under period rescaling
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.QExpansion.Order)
+
 The order of the `q`-expansion of a periodic, bounded, holomorphic function on the upper
 half-plane equals the analytic order of its `cuspFunction` at `0`; consequently, passing
 from period `h` to period `m * h` multiplies the order by `m`. This is the vanishing-order

@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.Matrix.Diagonal
 /-!
 # The centralizer of the symplectic diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Diagonal.Centralizer)
+
 The diagonal symplectic matrices are exactly the image of the paired diagonal homomorphism.
 Over a domain with a unit different from its inverse, this image is its own centralizer, hence
 maximal among commutative subgroups. In particular these conclusions hold over every infinite

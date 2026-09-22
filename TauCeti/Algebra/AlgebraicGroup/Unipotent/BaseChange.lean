@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Geometric unipotence under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.BaseChange)
+
 Let `H` be the coordinate Hopf algebra of a smooth unipotent affine group over a field `k`.
 For every field extension `K / k`, the scalar extension `K ⊗[k] H` is again smooth unipotent.
 

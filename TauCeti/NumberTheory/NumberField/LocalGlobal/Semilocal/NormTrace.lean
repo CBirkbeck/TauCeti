@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.NormTrace.BaseChange
 /-!
 # Norm and trace in the semilocal decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Semilocal.NormTrace)
+
 The semilocal decomposition transports the norm and trace of a number-field extension to the
 finite family of completed extensions above a finite place.  The generic determinant, trace, and
 finite-product calculations live in `TauCeti.RingTheory.NormTrace.Pi`.  The scalar-extension

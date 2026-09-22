@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Symplectic.StandardCarrier.AlternatingForm
 /-!
 # The integral matrices of the numbered root generators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.IntegralMatrix)
+
 Each numbered root generator of the full-weight type-`C` carrier squares to zero in the standard
 representation, so its divided-power exponential is `1 + u X` for `X` the integral matrix
 `TauCeti.SpStd.rootIntMatrix` of the generator. This file writes that matrix out in the enumerated

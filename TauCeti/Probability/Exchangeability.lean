@@ -19,6 +19,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.Law.Bridge
 /-!
 # Exchangeability: the symmetry layer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability)
+
 The reusable symmetry API — predicates, their basic implications, reindexing, closure under
 coordinate maps, and the path-law bridges — without de Finetti's theorem.
 

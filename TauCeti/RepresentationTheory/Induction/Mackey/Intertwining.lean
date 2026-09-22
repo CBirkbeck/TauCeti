@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.Basic
 /-!
 # The intertwining-number formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Intertwining)
+
 Let `H` and `K` be subgroups of a finite group `G`.  Frobenius reciprocity moves a pairing of two
 induced class functions down to `H`, and the Mackey decomposition then splits the restriction to
 `H` of the function induced from `K` into a sum over the double cosets `H \ G / K`.  Applying

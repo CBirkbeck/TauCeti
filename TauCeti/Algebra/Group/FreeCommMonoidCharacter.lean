@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.TypeTags.Hom
 /-!
 # Characters of a free commutative monoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.FreeCommMonoidCharacter)
+
 The free commutative monoid on an index type `σ` is modelled as `Multiplicative (σ →₀ ℕ)`: its
 underlying additive monoid `σ →₀ ℕ` is the free `ℕ`-module on `σ`. This file records its
 universal property in the form most useful for the functor of points of an affine semigroup: a

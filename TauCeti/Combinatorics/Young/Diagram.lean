@@ -15,6 +15,8 @@ public import Mathlib.Data.Multiset.Sort
 /-!
 # Counting the cells of a Young diagram by rows
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Diagram)
+
 Mathlib's `YoungDiagram.rowLens` records the lengths of the rows of a Young diagram.  This file
 counts the cells of a diagram row by row: the row lengths sum to the number of cells, and the
 first `k` row lengths sum to the number of cells lying in the first `k` rows, whether those

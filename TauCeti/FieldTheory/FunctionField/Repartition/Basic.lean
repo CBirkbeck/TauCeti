@@ -13,6 +13,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Basic
 /-!
 # Repartitions of an algebraic function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Repartition.Basic)
+
 A **repartition** (Chevalley's name; Stichtenoth says *adele*) of an algebraic function field
 `F / k` is a family `a : Place k F → F` of elements of `F` itself — no completions are taken —
 that is integral at all but finitely many places.  They form the repartition space

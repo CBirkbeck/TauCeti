@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Hodge.WeightOne.Basic
 /-!
 # Weight-one Hodge structures from complex structures on integral modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.WeightOne.Lattice)
+
 Let `V` be an integral module and let `J` be an almost complex structure on its realification
 `Vℝ = ℝ ⊗[ℤ] V`.  Extending `J` to `ℂ` and transporting it to any chosen abstract
 complexification `Vℂ` of `V` gives complementary `i`- and `-i`-eigenspaces.  They define an

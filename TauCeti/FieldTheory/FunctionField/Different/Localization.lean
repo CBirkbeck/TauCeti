@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Localization.Integral
 /-!
 # Reading the different exponent on an arbitrary affine model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Different.Localization)
+
 The different exponent `d(P' ∣ P)` of a place `P'` of `F' / k'` is defined on the local model
 `𝒪_P ⊆ 𝒪'_P` at `P = P'.restrict k F`.  This file shows that it may be read on *any* affine model
 of `F` on which `P'` is finite: if `B` is such a model and `C` is its integral closure in `F'`,

@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Polynomial.Hermite.Real
 /-!
 # Hermite functions in Schwartz space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Schwartz)
+
 This file packages the real Hermite functions as Schwartz functions.  The construction first
 shows directly that the Gaussian `x ↦ exp (-x² / 2)` is rapidly decreasing, using Mathlib's
 formula for all of its derivatives in terms of Hermite polynomials.  Multiplication by the

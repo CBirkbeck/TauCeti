@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Preprojective.Basic
 /-!
 # Gauge independence of the additive preprojective algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.Gauge)
+
 The additive preprojective relator of a finite quiver `Q` is `ρ = ∑_a (a a* - a* a)`, one signed
 commutator for each arrow `a` of `Q`. The choice of sign is a choice of orientation: an arrow and
 its formal reverse enter `ρ` with opposite signs, and reversing the orientation of `a` exchanges

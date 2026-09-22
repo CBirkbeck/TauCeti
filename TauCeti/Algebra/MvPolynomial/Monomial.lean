@@ -11,6 +11,8 @@ public import Mathlib.Data.Finsupp.Multiset
 /-!
 # A monomial as a product of variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MvPolynomial.Monomial)
+
 Multiplying together a multiset of variables, one factor per element, gives the monomial whose
 exponent vector is the multiplicity function of the multiset: `TauCeti.prod_map_X_eq_monomial`.
 Mathlib's `MvPolynomial.prod_X_pow_eq_monomial` says the same thing for a product indexed by the

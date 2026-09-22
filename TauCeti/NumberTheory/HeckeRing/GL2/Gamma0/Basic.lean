@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The Hecke triple of `Γ₀(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic)
+
 The image of `Γ₀(N)` in `GL₂(ℚ)` forms a Hecke triple with the submonoid `Δ₀(N)`. This is the
 setting of Shimura §3.3: the Hecke ring `R(Γ₀(N), Δ₀(N))` whose operators act on
 `M_k(Γ₀(N))`.

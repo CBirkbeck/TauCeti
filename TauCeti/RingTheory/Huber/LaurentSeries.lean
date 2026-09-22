@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.Basic
 /-!
 # The formal Laurent series field is a Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LaurentSeries)
+
 For a field `K` the formal Laurent series `K⸨X⸩`, with the `X`-adic topology of Mathlib's
 `LaurentSeries.valued` instance, are a Tate ring: the power series are an open subring, the
 ideal `(X)` is a finitely generated ideal of definition, and `X` itself is a pseudouniformiser.

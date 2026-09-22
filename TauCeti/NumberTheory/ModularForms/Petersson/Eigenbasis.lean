@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.SturmBound
 /-!
 # A simultaneous eigenbasis for the good Hecke operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Eigenbasis)
+
 On a fixed nebentypus space `S_k(N, χ)`, the good prime Hecke operators commute and are
 normal for the Petersson product.  This file applies the finite-dimensional spectral theorem to
 obtain a Petersson-orthonormal basis whose vectors are good Hecke eigenforms.

@@ -12,6 +12,8 @@ import Mathlib.Tactic.NthRewrite
 /-!
 # A subgroup of index two inverted by one outside element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Index.Two)
+
 Let `N` be a subgroup of index two in a group `G`, and suppose a single element `s` outside `N`
 conjugates `N` by inversion, `s * x * s⁻¹ = x⁻¹`. Conjugation by `s` then reverses products while
 being an automorphism, so `N` is abelian, and every other element outside `N` is `s * n` with

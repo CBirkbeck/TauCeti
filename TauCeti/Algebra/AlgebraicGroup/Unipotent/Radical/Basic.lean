@@ -17,6 +17,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Basic
 /-!
 # Candidates for the unipotent radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Basic)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A candidate
 for its unipotent radical is a connected normal smooth unipotent closed subgroup. In Hopf
 coordinates this is a normal Hopf ideal `I` whose quotient `H/I` is geometrically connected,

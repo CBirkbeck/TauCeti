@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Dual
 /-!
 # The integral roots of type E8
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Basic)
+
 This file enumerates the 240 roots of type `E8` in the lattices used by the pinned simply connected
 root datum, which is built from these tables in
 `TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Datum`; that the enumeration below

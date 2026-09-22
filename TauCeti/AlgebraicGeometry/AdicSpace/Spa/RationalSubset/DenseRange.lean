@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Huber.OpenIdeal
 /-!
 # Rational subsets descend along dense maps of Huber rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.DenseRange)
+
 **A generalization of the rational half of Wedhorn, *Adic Spaces* (arXiv:1910.05934v1),
 Proposition 7.48.** Wedhorn states that for an affinoid ring `A` the canonical map
 `Spa Â → Spa A` is a homeomorphism which maps rational subsets to rational subsets. This file

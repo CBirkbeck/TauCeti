@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Basic
 /-!
 # Elementary grid stabilization moves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Stabilization.Basic)
+
 A grid stabilization inserts one row and one column near a marking. In the resulting local
 `2 × 2` block, the chosen marking is split across two opposite corners and one marking of the
 other type occupies a third corner. Deleting the new row and column recovers the original

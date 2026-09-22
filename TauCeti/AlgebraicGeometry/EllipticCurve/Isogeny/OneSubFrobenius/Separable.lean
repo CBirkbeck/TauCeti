@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Ba
 /-!
 # The isogeny `1 − π` is separable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Separable)
+
 Over a finite field, the Frobenius isogeny `π` pulls the invariant differential `ω` back to `0`, so
 the isogeny `1 − π` pulls it back to `ω` itself; by the differential criterion, `1 − π` is
 separable (Silverman III.5.5). This is the step through which the number of rational points,

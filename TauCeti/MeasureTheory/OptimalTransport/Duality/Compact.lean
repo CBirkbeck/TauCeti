@@ -16,6 +16,8 @@ import TauCeti.MeasureTheory.Integral.Prod
 /-!
 # Strong Kantorovich duality for continuous costs on compact spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Duality.Compact)
+
 For probability measures `μ` and `ν` on two compact pseudometric spaces whose open sets are
 measurable, and a continuous nonnegative cost `c` on their product, the transport problem and its
 dual have the same value:

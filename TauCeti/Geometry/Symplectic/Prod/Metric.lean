@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Symplectic.TameMetric
 /-!
 # Metrics of direct sums of tame and compatible pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Prod.Metric)
+
 `TauCeti.Geometry.Symplectic.Prod.Basic` records that direct sums preserve tameness and
 compatibility. This file records the matching normal forms: the symmetrized bilinear form of a
 direct sum is the sum of the factor symmetrized forms, the symmetric metric of a tame direct sum is

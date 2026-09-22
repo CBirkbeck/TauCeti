@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeExtension
 /-!
 # Canonical maps between number-field completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Completion)
+
 Let `L/K` be an extension of number fields, and let `w` be a finite place of `L` above a finite
 place `v` of `K`. The embedding `K → L` extends uniquely to a continuous map `K_v → L_w`.
 This file packages that map as the algebra homomorphism `completionAlgHom`, provides the algebra

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Index.Basic
 /-!
 # Profinite index in a subgroup tower
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Index.Tower)
+
 This file proves multiplicativity of supernatural index in a tower `H ≤ K ≤ G`, where `K` is a
 closed subgroup of a profinite group. The relative factor is the profinite index of `H`, regarded
 as a subgroup of `K`. The subgroup `H` need not be closed because profinite index only sees its

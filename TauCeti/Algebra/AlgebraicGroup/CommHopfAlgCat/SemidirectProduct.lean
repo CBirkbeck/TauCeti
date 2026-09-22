@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Basic
 /-!
 # Coordinate Hopf algebras of semidirect products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.SemidirectProduct)
+
 An internal action between the group objects represented by commutative Hopf algebras equips the
 product of their underlying affine schemes with a semidirect-product group law. This file carries
 that group object back across Mathlib's commutative-Hopf-algebra/cogroup equivalence, records the

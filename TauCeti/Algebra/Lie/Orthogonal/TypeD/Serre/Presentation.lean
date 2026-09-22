@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Presentation.Serre
 /-!
 # The matrix realization of the type-D Serre presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.Serre.Presentation)
+
 The standard split orthogonal Lie algebra has explicit Bourbaki-numbered raising, lowering, and
 Cartan generators in `TauCeti.TypeDStd`. This file packages their bracket relations as a
 `TauCeti.IsSerreSystem` and names the resulting homomorphism from the type-`D` Serre presentation.

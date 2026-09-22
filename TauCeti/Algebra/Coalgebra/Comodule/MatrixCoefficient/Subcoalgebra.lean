@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Subcoalgebra.Basic
 /-!
 # The coefficient subcoalgebra of a finite free comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Subcoalgebra)
+
 Expanding the comultiplication of a matrix coefficient in a finite basis `(eᵢ)` gives
 
 ```text

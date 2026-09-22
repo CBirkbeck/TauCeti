@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.QuadraticForm.Global.Predicates
 /-!
 # Approximating a global value of one summand of an orthogonal sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.ApproximateValue)
+
 Let `U` and `W` be quadratic forms over a number field `K`, with `W` regular. Suppose that `W` is
 anisotropic at only finitely many finite places, and that at every finite or real place `v` where
 `W_v` is anisotropic there are local vectors `x_v` of `U_v` and `y_v` of `W_v` with

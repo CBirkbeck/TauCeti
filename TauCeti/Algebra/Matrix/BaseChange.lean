@@ -19,6 +19,8 @@ public import TauCeti.Algebra.TensorProduct.BaseChange
 /-!
 # Base change of a matrix algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Matrix.BaseChange)
+
 Extending scalars along an algebra map `R → S` of commutative semirings turns matrices over `R`
 into matrices over `S`, entrywise:
 `TauCeti.Algebra.matrixBaseChangeAlgEquiv : S ⊗[R] Matrix n n R ≃ₐ[S] Matrix n n S`.

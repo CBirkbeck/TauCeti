@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.ElementaryDivisors
 /-!
 # Atkin–Lehner matrices and the `Γ₀(N)` double cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.AtkinLehner.DoubleCoset)
+
 An Atkin–Lehner matrix `W` for a divisor `Q` of `N`, read in `GL(2, ℚ)`, normalizes the image of
 `Γ₀(N)`. This file shows that conjugation by `W` moreover fixes every double coset
 `Γ₀(N) α Γ₀(N)` with `α ∈ Δ₀(N)` of determinant coprime to `Q`:

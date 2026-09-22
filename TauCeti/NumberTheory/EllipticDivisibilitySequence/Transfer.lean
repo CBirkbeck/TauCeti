@@ -14,6 +14,8 @@ import Mathlib.Data.Int.ModEq
 /-!
 # Index bookkeeping for the descent on the elliptic relator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer)
+
 Mathlib's `IsEllipticNet.atomRel_avg_sub` transfers the four-index relator from a quadruple
 `a, b, c, d` to the quadruple obtained by subtracting each index from the average
 `m = (a + b + c + d) / 2`, in reverse order:

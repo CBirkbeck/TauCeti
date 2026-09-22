@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Preprojective.Signless
 /-!
 # The opposite of a preprojective algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.Opposite)
+
 Reversing every path of the doubled quiver preserves each of the two backtracks attached to an
 original arrow. It therefore preserves every gauged preprojective relator `ρ_ε`, whatever the
 labelling `ε`, and descends to an isomorphism from the gauged preprojective algebra to its

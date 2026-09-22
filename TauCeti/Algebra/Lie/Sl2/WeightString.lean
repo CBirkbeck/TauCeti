@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Sl2.Basic
 /-!
 # The weight string of a primitive vector for an `sl₂` triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.WeightString)
+
 Fix an `sl₂` triple `t : IsSl2Triple h e f` in a Lie algebra `L` over a commutative ring `K`, and a
 primitive vector `m` of weight `μ` in an `L`-module `M`. Mathlib supplies the ladder calculus for
 the vectors `fⁱ • m`: their `h`-eigenvalues (`lie_h_pow_toEnd_f`), the effect of the

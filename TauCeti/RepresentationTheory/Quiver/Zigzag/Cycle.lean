@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.VertexFixing
 /-!
 # The skew-zigzag algebras of the cycles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Cycle)
+
 A skew-zigzag parameter labels each ordered pair of incident edges of a simple graph by the
 unit-valued ratio between the two backtracks they carry, and gauge equivalent parameters present
 isomorphic algebras.  This file settles the cycles, the invariant detecting that a parameter is

@@ -13,6 +13,8 @@ public import Mathlib.Topology.Algebra.ConstMulAction
 /-!
 # Transfer instances for restricted and properly discontinuous actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.ConstMulAction)
+
 This file records generic instances for actions on a topological space that typeclass search
 cannot otherwise reach. A submonoid, and hence a subgroup, inherits `ContinuousConstSMul` from
 an ambient scalar action; and a properly discontinuous action has `Finite` point stabilisers.

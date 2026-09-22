@@ -12,6 +12,8 @@ import Mathlib.Combinatorics.Enumerative.IncidenceAlgebra
 /-!
 # Artin's induction theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Artin.Basic)
+
 For a finite group `G`, the sharp Artin identity and the projection formula show that
 `|G| • χ` is induced from virtual characters of cyclic subgroups for every virtual character `χ`.
 The target is the canonical subgroup

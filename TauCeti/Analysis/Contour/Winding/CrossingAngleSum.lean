@@ -19,6 +19,8 @@ import TauCeti.Analysis.Contour.Winding.EndpointRatio
 /-!
 # The crossing angles of a closed immersion, modulo an integer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.CrossingAngleSum)
+
 Hungerbühler–Wasem Proposition 2.2 decomposes a closed piecewise-`C¹` immersion `Λ` meeting a
 point `s` at the finitely many parameters `t₁, …, tₙ` as
 `Λ = \tilde{\Lambda} + Γ₁ + ⋯ + Γₙ`, with `\tilde{\Lambda}` avoiding `s` and each `Γ_ℓ`

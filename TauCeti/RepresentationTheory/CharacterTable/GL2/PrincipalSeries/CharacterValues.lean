@@ -22,6 +22,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Bruhat
 /-!
 # The character of the principal series of `GL₂(𝔽_q)` on the four families of conjugacy classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.PrincipalSeries.CharacterValues)
+
 The conjugacy classes of `GL₂(𝔽_q)` fall into four families
 (`TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/ConjugacyClasses.lean`), with representatives
 the **central** scalar `diag(a, a)`, the **split semisimple** `diag(a, b)` with `a ≠ b`, the

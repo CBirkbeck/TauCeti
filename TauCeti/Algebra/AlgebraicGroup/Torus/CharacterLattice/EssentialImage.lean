@@ -13,6 +13,8 @@ import TauCeti.RepresentationTheory.GaloisLattice.SeparableActionField
 /-!
 # Every Galois lattice is the character lattice of a torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.CharacterLattice.EssentialImage)
+
 A continuous finite free integral representation of the absolute Galois group factors
 through a finite Galois extension. Descending the group algebra along that extension
 produces a torus. Its geometric characters recover the given representation, including

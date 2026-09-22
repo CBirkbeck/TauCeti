@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Basic
 /-!
 # The two-dimensional special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.FinTwo)
+
 Over a commutative ring containing an element `i` with `i ^ 2 = -1` and a chosen half, the
 special orthogonal group of the standard form in dimension two is the unit group. The
 equivalence sends

@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Cont
 /-!
 # On-curve capture of the boundary zeros
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.OnCurveCapture)
+
 Every zero of a nonzero level-one modular form on the boundary contour lands in one of the
 two singular sets: arc points (including the corners) in the arc singular set, vertical
 points in the vertical singular set — the left vertical through the translation onto the

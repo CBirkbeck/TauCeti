@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.ContractableLaw
 /-!
 # Exchangeable path laws are contractable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Exchangeable.ToContractable)
+
 This file records the path-space form of the Layer 0 bridge from exchangeability to
 contractability: an exchangeable finite measure on one-sided path space is invariant under
 every strictly increasing reindexing of time. The process-level theorem remains available in

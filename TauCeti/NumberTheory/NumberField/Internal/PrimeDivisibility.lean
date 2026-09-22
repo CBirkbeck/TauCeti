@@ -12,6 +12,8 @@ public import Mathlib.Basic.Logic.Basic
 /-!
 # Prime divisibility helpers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Internal.PrimeDivisibility)
+
 This file collects internal NumberField bookkeeping about rational primes and
 integer divisibility. The lemmas here support coprimality side conditions in
 splitting computations without exposing those proof details from the main

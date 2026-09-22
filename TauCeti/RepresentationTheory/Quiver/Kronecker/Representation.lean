@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.PathCategory.MorphismProperty
 /-!
 # Representations of the generalized Kronecker quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.Representation)
+
 A representation of the generalized Kronecker quiver is a pair of vector spaces together with one
 linear map between them for each arrow: no two arrows compose, so the only paths are the identities
 and the arrows themselves. This file builds such a representation from that datum, as

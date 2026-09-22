@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.Spectrum.Prime.Topology
 /-!
 # The trivial abelian variety
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.Trivial)
+
 The base `Spec K` itself, with its unique group-scheme structure, is an abelian variety over `K`.
 This file constructs it as `AbelianVariety.trivial K` and identifies it as the zero object of the
 category of abelian varieties over `K`.
@@ -107,7 +109,10 @@ itself.
 It is carried by the monoidal unit `𝟙_ (Over (Spec K))`, which is a group object because it is
 terminal, and whose structure morphism is proper and geometrically integral by
 `isProperTensorUnit` and `geometricallyIntegralTensorUnit`. Those are exactly the hypotheses of
-`AbelianVariety.ofGeometricallyIntegral`, which assembles them. -/
+`AbelianVariety.ofGeometricallyIntegral`, which assembles them.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.AlgebraicGeometry.AbelianVariety.trivial) -/
 def trivial : AbelianVariety K :=
   letI := isProperTensorUnit K
   letI := geometricallyIntegralTensorUnit K

@@ -14,6 +14,8 @@ public import TauCeti.Combinatorics.Young.SemistandardTableau
 /-!
 # Kostka numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Kostka)
+
 The *content* of a semistandard Young tableau records how often each natural number is used as an
 entry, and the *Kostka number* `K_{μ w}` counts the semistandard tableaux of shape `μ` and content
 `w`.  This file defines both, proves that the tableaux of a given content are finite, and

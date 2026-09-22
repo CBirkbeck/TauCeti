@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Flat.Basic
 /-!
 # Geometric properties of affine group images
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Properties)
+
 Let `f : H ⟶ K` be a morphism of commutative Hopf algebras over a field. Contravariantly,
 `f` represents a homomorphism `Spec K ⟶ Spec H`, whose scheme-theoretic image has coordinate
 Hopf algebra `CommHopfAlgCat.image f = H / ker f`. The canonical map from this image algebra to

@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Subrepresentation
 /-!
 # The augmentation subrepresentation of a permutation representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Augmentation)
+
 A permutation representation `k[X]` of a group `G` on a `G`-set `X` always carries two canonical
 subrepresentations, visible before anything is known about `G`: the **invariant line** spanned by
 the sum of the standard basis, and the **augmentation subrepresentation** cut out by the vanishing

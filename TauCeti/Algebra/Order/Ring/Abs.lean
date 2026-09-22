@@ -11,6 +11,8 @@ import Mathlib.Tactic.Linarith
 /-!
 # Products of nearby reals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.Ring.Abs)
+
 If `x` and `y` are each within `e` of a nonnegative `q`, their product is within
 `e (2q + e)` of `q²`: the quantitative form of continuity of multiplication used when a measure is
 compared with its own square. Stated for any linearly ordered commutative ring.

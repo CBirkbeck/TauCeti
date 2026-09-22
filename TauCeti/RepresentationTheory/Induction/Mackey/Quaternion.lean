@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.LinearCharacter
 /-!
 # Inducing a linear character from a quaternion rotation subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Quaternion)
+
 The cyclic subgroup formed by the elements `a i` has index two in `QuaternionGroup n`, and every
 element outside it acts by inversion.  The Mackey criterion for an inverted subgroup of index two,
 `TauCeti.simple_indFDRep_ofLinearCharacter_iff_of_conj_eq_inv`, therefore says that a linear

@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Valuation.ValuativeRel.BigOperators
 /-!
 # Standard rational refinements of covers of the adic spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Refinement)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.54**, which is Huber's Lemma 2.6.
 
 A finite set `S` generating the unit ideal gives the *standard rational cover* `(R(S/f))_{f ∈ S}` of

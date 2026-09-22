@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 /-!
 # The upper-triangular part of the Hecke operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum)
+
 The classical `T_p` contains a sum of slashes by the representatives `!![1, b; 0, p]` for
 `b < p`, together with one further, diamond-twisted term when `p ∤ N`. This file defines the
 triangular sum `heckeSlashUpperTri` and records its `ℂ`-linearity in `f`: zero, addition and

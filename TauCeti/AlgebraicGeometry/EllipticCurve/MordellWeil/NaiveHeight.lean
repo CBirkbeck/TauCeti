@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.AddSubMap
 /-!
 # The naïve height on an elliptic curve, and the approximate parallelogram law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.NaiveHeight)
+
 For an affine point `P` of a Weierstrass curve over a field `K` with a theory of heights, the
 *naïve height* is `h(P) = logHeight (x(P))`, the logarithmic height of the projective
 `x`-coordinate `P.xRep`. The main result is the **approximate parallelogram law**,

@@ -12,6 +12,8 @@ import Mathlib.Analysis.Meromorphic.NormalForm
 /-!
 # Cauchy–Goursat for a pole-free meromorphic function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cauchy.Goursat)
+
 If `A` is meromorphic on a closed disc `C(c, R)` (`R ≥ 0`) and has non-negative meromorphic order at
 every point of the disc, then the contour integral of `A` around the boundary circle vanishes:
 `∮_{C(c,R)} A = 0`.

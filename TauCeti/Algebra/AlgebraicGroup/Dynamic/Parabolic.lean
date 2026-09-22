@@ -13,6 +13,8 @@ import Mathlib.Algebra.Group.End
 /-!
 # The dynamic parabolic, unipotent and Levi subgroups of a cocharacter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Dynamic.Parabolic)
+
 Let `H` be a Hopf algebra over `R`, so that `Spec H` is an affine group scheme `G`, and let
 `l : H →ₐc[R] R[T;T⁻¹]` be a **cocharacter**, that is, a homomorphism of group schemes `𝔾ₘ → G`
 written contravariantly on coordinate rings. The *dynamic method* attaches to `l` three subgroups

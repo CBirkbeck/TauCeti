@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.Source.FullyFaithfu
 /-!
 # Reflecting an indecomposable representation at a source
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Source.Indecomposable)
+
 The Bernstein--Gelfand--Ponomarev reflection at a source `i` replaces the vertex space `Mᵢ` by the
 cokernel of the map `TauCeti.outgoingMap` collecting the arrows out of `i`. It acts on dimension
 vectors by the simple reflection `sᵢ`, and preserves indecomposability, whenever that map is

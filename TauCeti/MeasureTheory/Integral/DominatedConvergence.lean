@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # Dominated convergence away from one point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.DominatedConvergence)
+
 This file packages the common application of dominated convergence in which a continuously
 parameterized family is controlled and converges pointwise away from one exceptional point. When
 singletons have measure zero, the pointwise hypotheses supply the almost-everywhere hypotheses of

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.Defs
 /-!
 # Morphisms of differential graded right modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Hom)
+
 A morphism of differential graded right modules is an `Aᵐᵒᵖ`-linear map which preserves every
 homogeneous degree and commutes with the differentials.  This file bundles these maps and supplies
 their pointwise module structure, extensionality, identity, and composition API. They form the

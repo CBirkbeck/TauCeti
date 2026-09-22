@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Weights.RootSystem
 /-!
 # Reflections of the root system of a Cartan subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Reflection)
+
 For a finite-dimensional Lie algebra `L` with non-degenerate Killing form over a field of
 characteristic zero, and a splitting Cartan subalgebra `H`, Mathlib packages the roots of `H` as a
 root system `LieAlgebra.IsKilling.rootSystem H` inside the dual `Module.Dual K H`. This file reads

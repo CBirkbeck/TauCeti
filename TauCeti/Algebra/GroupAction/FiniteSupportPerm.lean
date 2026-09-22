@@ -21,6 +21,8 @@ import Mathlib.Logic.Equiv.List
 /-!
 # Finitely supported permutations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupAction.FiniteSupportPerm)
+
 This file records small bridges for Mathlib's finite-support predicate for permutations,
 `(MulAction.fixedBy ι π)ᶜ.Finite`, and packages the permutations satisfying it as the **finitary
 symmetric group** `Equiv.Perm.finitary ι`, a subgroup of `Equiv.Perm ι`.

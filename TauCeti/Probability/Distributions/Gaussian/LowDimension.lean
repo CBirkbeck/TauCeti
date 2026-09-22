@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Gaussian.Conditional
 /-!
 # Multivariate Gaussian laws in one and two dimensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.LowDimension)
+
 A multivariate Gaussian law over a one-element index type is a real Gaussian law read on the
 single coordinate.  Splitting a two-element index type into two singleton blocks turns the
 conditional-law formulas of `TauCeti/Probability/Distributions/Gaussian/Conditional.lean` into

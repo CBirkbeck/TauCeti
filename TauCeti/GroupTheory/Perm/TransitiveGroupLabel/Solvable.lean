@@ -13,6 +13,8 @@ import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Classification
 /-!
 # Solvable transitive subgroups of the symmetric group on five points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Solvable)
+
 The solvable transitive subgroups of `Equiv.Perm (Fin 5)` are precisely the subgroups conjugate
 into the Frobenius group `5T3` of order twenty.  The forward implication uses the classification
 of transitive subgroups: `5T1`, `5T2`, and `5T3` lie in `5T3`, while `5T4 = A₅` and

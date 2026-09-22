@@ -11,6 +11,8 @@ import TauCeti.MeasureTheory.OptimalTransport.Existence
 /-!
 # Kantorovich duality for lower-semicontinuous costs on compact spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Duality.LowerSemicontinuous)
+
 This file extends compact Kantorovich duality from continuous finite costs to arbitrary
 lower-semicontinuous costs `c : X × Y → ℝ≥0∞`. In particular, the cost may be unbounded or take
 the value `∞`, so the common primal and dual value is retained in `ℝ≥0∞`.

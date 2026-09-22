@@ -17,6 +17,8 @@ import TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Frobenius
 /-!
 # The genus-field isomorphism on Artin symbols
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Artin.Basic)
+
 For a squarefree nonsquare integer \(d\), the candidate genus field is an unramified abelian
 extension of its embedded quadratic base \(K = \mathbb{Q}(\sqrt d)\). The isomorphism
 

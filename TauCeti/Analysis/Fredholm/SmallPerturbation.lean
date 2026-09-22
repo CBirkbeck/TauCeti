@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 /-!
 # Stability of Fredholm operators under small perturbations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.SmallPerturbation)
+
 This file proves that Fredholm operators from a Banach space to a normed space form an open set
 in the operator norm topology and that their index is locally constant. Equivalently, every
 Fredholm operator `T` has an `ε > 0` such that any operator `S` with `‖S - T‖ < ε` is Fredholm

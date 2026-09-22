@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 /-!
 # Irreducibility of the cyclotomic polynomial from the degree of a cyclotomic extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Cyclotomic.Irreducible)
+
 Mathlib proves `[L : K] = φ n` for an `n`-th cyclotomic extension `L / K` once `Φ_n` is known to be
 irreducible over `K` (`IsCyclotomicExtension.finrank`). This file records the converse: the degree
 of `L / K` is always at most `φ n`, and as soon as it is at least `φ n` the polynomial `Φ_n` is

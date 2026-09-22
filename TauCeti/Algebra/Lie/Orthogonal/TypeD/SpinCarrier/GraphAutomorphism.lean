@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.GraphAutomorp
 /-!
 # The graph automorphism of the full-weight type-D spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.SpinCarrier.GraphAutomorphism)
+
 For `4 ≤ n`, `TauCeti.TypeDSpinCarrier.groupScheme` is the explicit full-weight Chevalley carrier
 of type `Dₙ`, cut out inside `GL_(2^n)` over `ℤ` by the split spin representation and its exterior
 coordinate lattice. The Dynkin diagram `Dₙ` carries the involution exchanging its two fork nodes,

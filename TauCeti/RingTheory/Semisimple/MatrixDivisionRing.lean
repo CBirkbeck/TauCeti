@@ -19,6 +19,8 @@ import TauCeti.RingTheory.Semisimple.SimpleArtinian
 /-!
 # The degree and the division ring of a matrix presentation are invariants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.MatrixDivisionRing)
+
 Artin--Wedderburn presents a simple Artinian ring as a matrix ring `Matᵢ(D)` over a division ring,
 and a semisimple ring as a finite product of such blocks.  Mathlib supplies the presentation but
 says nothing about how much of it is determined by the ring: `TauCeti.card_blocks_eq` shows the

@@ -15,6 +15,8 @@ public import TauCeti.KnotTheory.Grid.Homology.Unblocked
 /-!
 # The exact sequence relating unblocked and simply blocked grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Homology.ExactSequence)
+
 Blocking the `O`-marking of a column `i` of a grid diagram sets the variable `V_i` to zero. On
 chains this is the coefficientwise specialization `TauCeti.simplyBlockedSpecialization`, which is
 surjective with kernel the multiples of `V_i`, and multiplication by `V_i` is injective on `GC⁻`.

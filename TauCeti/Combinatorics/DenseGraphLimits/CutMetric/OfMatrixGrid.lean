@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.FiniteMeasure
 /-!
 # Rounding the weights of a finite weighted graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.OfMatrixGrid)
+
 A finite weighted graph is a symmetric `[0, 1]`-valued matrix together with vertex weights, read as
 a graphon by `Graphon.ofMatrix`.  This file rounds both weightings onto a grid at a controlled cost
 in cut distance, so that only finitely many candidates remain on a fixed vertex set.

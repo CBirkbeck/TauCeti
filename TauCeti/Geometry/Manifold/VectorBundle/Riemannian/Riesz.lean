@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.Riemannian.ChartGram
 /-!
 # Smoothness of the fibrewise Riesz dual
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.Riemannian.Riesz)
+
 This file proves that the inverse of the fibrewise Fréchet–Riesz equivalence of a smooth
 finite-dimensional Riemannian bundle carries smoothly varying covectors to a smooth section.
 In a chart-local frame, its coefficients are obtained by multiplying the covector evaluations by

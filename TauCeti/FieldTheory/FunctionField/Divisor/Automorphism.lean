@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Galois
 /-!
 # The automorphism group acting on the divisors of a function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.Automorphism)
+
 An `F`-automorphism `σ` of `F'` permutes the places of `F' / k`
 (`TauCeti.Place.instMulActionAlgEquiv`), hence permutes the divisors of `F' / k`. Taking the
 middle field to be `k` itself, this is the action of `Aut(F'/k)` on the divisor group of

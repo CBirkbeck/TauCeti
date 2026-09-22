@@ -15,6 +15,8 @@ public import Mathlib.RepresentationTheory.Basic
 /-!
 # The points action of a comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.PointsAction)
+
 A right comodule `V` over a bialgebra `H` makes the `A`-points of `H` — those of the
 corresponding affine monoid scheme, when `H` is commutative — act on the scalar
 extension `A ⊗[R] V`: a point `g : H →ₐ[R] A` acts by

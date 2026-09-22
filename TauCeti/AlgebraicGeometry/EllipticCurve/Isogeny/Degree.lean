@@ -15,6 +15,8 @@ import TauCeti.FieldTheory.IntermediateField.FieldRange
 /-!
 # The degree of an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree)
+
 The degree of an isogeny `φ : W₁ → W₂` of affine Weierstrass curves over a field `F` is the
 dimension of `W₁.FunctionField` over the image of the function-field pullback `φ.fieldPullback`
 — the pulled-back copy of `W₂.FunctionField`, which that pullback embeds isomorphically. No

@@ -12,6 +12,8 @@ import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 /-!
 # Frobenius actions on multiquadratic generators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Frobenius)
+
 Let `K = ℚ(√d₁, …, √dₙ)` be a number field generated over `ℚ` by square roots `r i` of
 integers `d i`, and let `p` be an odd prime dividing none of the `d i`. The multiquadratic
 roadmap's Layer 1 states the splitting law in two forms: `p` splits completely iff every `d i`

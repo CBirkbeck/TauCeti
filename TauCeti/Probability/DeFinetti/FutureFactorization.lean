@@ -19,6 +19,8 @@ import TauCeti.Probability.DeFinetti.CondExpConvergence
 /-!
 # Future-level factorization for the de Finetti martingale route
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.FutureFactorization)
+
 For a contractable process `X`, this file builds the finite-level product factorization of the
 block-indicator conditional expectation given the future σ-algebra `tailFamily X (m+1)`. Everything
 is phrased through Mathlib's `ProbabilityTheory.CondIndep`.

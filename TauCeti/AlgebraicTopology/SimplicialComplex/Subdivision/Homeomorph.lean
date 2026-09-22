@@ -12,6 +12,8 @@ import Mathlib.Data.Fin.Tuple.Sort
 /-!
 # The realization homeomorphism for barycentric subdivision
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Homeomorph)
+
 The canonical map from the realization of the barycentric subdivision of a simplicial complex to
 the realization of the original complex is a homeomorphism. The forward map sends a face-vertex to
 the barycenter of that face and extends affinely over subdivision simplices.

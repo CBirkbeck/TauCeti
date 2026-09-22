@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.SymplecticMultiplier
 /-!
 # The discriminant of a matrix pencil realised over every prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.PencilDiscriminant)
+
 Let `q` and `t` be integers. `TauCeti.Matrix.eq_quadratic_form_of_det_det_one_sub` shows that an
 integer realised, modulo every prime `ℓ` other than one exceptional `p`, as the determinant of the
 pencil `r • M - s • 1` of a `2 × 2` matrix `M` with `M.det = q` and `(1 - M).det = q + 1 - t` is

@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Sum
 /-!
 # Disjoint sums of graphs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.Sum)
+
 Three gaps in Mathlib's `SimpleGraph.sum` API.
 
 `SimpleGraph.sum` has no `DecidableRel` instance in Mathlib. Consequently, even when adjacency in

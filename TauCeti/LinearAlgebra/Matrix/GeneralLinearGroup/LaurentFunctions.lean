@@ -16,6 +16,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.PolynomialFunction
 /-!
 # Restricting a rational function on `GL n R` to the diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.LaurentFunctions)
+
 A rational function on `GL n R` restricts along the diagonal embedding `TauCeti.diagGL` to a
 Laurent function on the torus (`TauCeti.comp_diagGL_mem_laurentFunctions`). The determinant becomes
 the product of the coordinates, hence a character, so inverting a power of it stays inside the

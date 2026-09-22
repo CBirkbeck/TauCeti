@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Bialgebra.Hom
 /-!
 # Ring homomorphisms underlying bialgebra morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.Hom)
+
 `BialgHom.id_toRingHom` identifies the direct ring-homomorphism coercion of the identity.
 It complements Mathlib's `BialgHom.id_toAlgHom`, which concerns the algebra-homomorphism
 coercion.

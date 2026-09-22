@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.L2.Covariance
 /-!
 # Two-window L² bounds for block averages of a contractable sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.BlockAverages)
+
 This file continues the Layer 3 (L²) lane of the Exchangeability roadmap
 (`TauCetiRoadmap/Exchangeability/README.md`, "Layer 3: L² averaging library and the
 standard-Borel de Finetti route"), building the "two-window L² bounds for block averages"

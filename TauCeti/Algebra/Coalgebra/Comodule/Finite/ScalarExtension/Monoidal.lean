@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.ScalarExtension.Basic
 /-!
 # Monoidal scalar extension of finite comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.ScalarExtension.Monoidal)
+
 For a commutative `R`-algebra `A`, scalar extension from finitely generated comodules to
 `A`-semimodules is a strong monoidal functor. Its tensorator is inverse base-change
 distributivity and its unit comparison is `A ≃ A ⊗[R] R`.

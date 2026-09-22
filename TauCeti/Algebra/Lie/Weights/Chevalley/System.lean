@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.StructureConstant.Normalization
 /-!
 # Root vectors compatible with a Chevalley involution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Chevalley.System)
+
 Let `L` be a finite-dimensional Lie algebra with nondegenerate Killing form over a field of
 characteristic zero, and let `H` be a splitting Cartan subalgebra. A normalized root-vector system
 `x` satisfies

@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 /-!
 # Solutions of a Weierstrass equation are its degree-one affine places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Place)
+
 For an affine Weierstrass curve `W` over a field whose coordinate ring is a Dedekind domain, the
 ideal `⟨X - x, Y - y⟩ = XYIdeal W x (C y)` of a solution `(x, y)` of `W.Equation` is maximal and
 nonzero. It is therefore a point of `IsDedekindDomain.HeightOneSpectrum W.CoordinateRing`, which

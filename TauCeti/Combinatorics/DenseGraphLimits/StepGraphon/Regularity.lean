@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.MeasurableSpace.Finpartition
 /-!
 # Frieze--Kannan weak regularity for graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Regularity)
+
 This file proves the weak regularity lemma for strict graphons.  Starting from the indiscrete
 finite partition, a cut-norm witness for the current block-average defect cuts every part along
 two measurable sets.  The common refinement has at most four times as many parts, while the

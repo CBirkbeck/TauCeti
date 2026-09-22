@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Even
 /-!
 # Discriminant quadratic modules of even integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Quadratic)
+
 For an even nondegenerate integral lattice `L`, the half-norm of a dual vector descends to its
 discriminant group:
 

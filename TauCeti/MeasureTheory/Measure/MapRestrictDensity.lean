@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
 /-!
 # The density of a set upstairs, seen on the base of a measure-preserving map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.MapRestrictDensity)
+
 Let `f : Ω' → Ω` push a measure `ν` forward to a σ-finite measure `μ`, and let `s ⊆ Ω'` be a
 set upstairs.
 The part of `ν` carried by `s` pushes forward to a measure `≤ μ`, so it has a Radon–Nikodym

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.InvariantForm.StructureMap
 /-!
 # The Frobenius-Schur indicator as a structure map, for a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.FrobeniusSchur.StructureMap)
+
 `TauCeti/RepresentationTheory/Compact/FrobeniusSchur/InvariantForm.lean` reads the three values of
 the Frobenius-Schur indicator of an irreducible unitary representation of a compact group off
 invariant bilinear forms, and stops there: an invariant *symmetric* form is strictly weaker than a

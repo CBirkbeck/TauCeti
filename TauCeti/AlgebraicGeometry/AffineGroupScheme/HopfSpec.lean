@@ -16,6 +16,8 @@ public import TauCeti.Algebra.Coalgebra.Convolution
 /-!
 # Infrastructure for Hopf spectra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec)
+
 This file computes the underlying scheme maps of Mathlib's `AlgebraicGeometry.hopfSpec` on an
 arbitrary same-universe commutative Hopf algebra.  It identifies the underlying scheme with the
 ordinary spectrum, the structural morphism with the algebra structure map, the multiplication

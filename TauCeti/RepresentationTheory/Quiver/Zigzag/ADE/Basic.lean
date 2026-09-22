@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Dimension
 /-!
 # Named ADE graphs and their zigzag algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.ADE.Basic)
+
 This file constructs the `A₂`, `D₄`, `E₈`, and affine `E₈` graphs used as named zigzag examples
 from Tau Ceti's standard Cartan-matrix and affine-diagram APIs. The finite graphs are the diagrams
 of the Bourbaki-numbered Cartan matrices, while affine `E₈` is the already constructed tree

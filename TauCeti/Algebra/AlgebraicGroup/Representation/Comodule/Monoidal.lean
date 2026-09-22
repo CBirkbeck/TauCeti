@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Rigid
 /-!
 # The monoidal point-representation--comodule equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Monoidal)
+
 The category of finite natural point representations of an affine group has the same tensor and
 dual structures as the category of finite comodules over its coordinate Hopf algebra. This file
 transports the established monoidal structure on finite comodules across the categorical

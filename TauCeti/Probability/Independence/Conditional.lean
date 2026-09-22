@@ -16,6 +16,8 @@ import Mathlib.MeasureTheory.Integral.IntegrableOn
 /-!
 # Conditional independence and the indicator conditional-expectation projection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Independence.Conditional)
+
 The two directions relating Mathlib's `ProbabilityTheory.CondIndep` to the "drop-information"
 identity `μ[𝟙_H | mF ⊔ mG] =ᵐ μ[𝟙_H | mG]` on conditional expectations of indicators, together with
 the generic contraction-independence identity that feeds them:

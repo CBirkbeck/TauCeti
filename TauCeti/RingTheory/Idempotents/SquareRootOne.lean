@@ -14,6 +14,8 @@ import Mathlib.Tactic.Abel
 /-!
 # The idempotents cut out by a square root of one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.SquareRootOne)
+
 Let `A` be an algebra over a commutative ring `R` in which `2` is invertible, and let `ω : A`. The
 element
 

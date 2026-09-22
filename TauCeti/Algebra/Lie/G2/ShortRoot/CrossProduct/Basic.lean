@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Alternating
 /-!
 # The type-G2 cross product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.CrossProduct.Basic)
+
 The seven-dimensional module of type `G₂` carries an invariant alternating multiplication, the
 *cross product*, together with an invariant symmetric bilinear form. This file writes down the
 cross product and the invariant form of the dual module in the weight basis of

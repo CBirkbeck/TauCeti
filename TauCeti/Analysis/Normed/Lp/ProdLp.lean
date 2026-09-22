@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Lp.ProdLp
 /-!
 # The triangle bound for the `ℓ^p` product norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Lp.ProdLp)
+
 Mathlib bounds each factor of `WithLp p (α × β)` by the whole (`WithLp.norm_fst_le` and
 `WithLp.norm_snd_le`) and computes the norm exactly for `p = 1` and `p = 2`.  This file records
 the opposite bound, valid for every exponent `1 ≤ p ≤ ∞`: the `ℓ^p` norm of a pair is at most the

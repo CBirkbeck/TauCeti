@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Lie.Exponential.LocalInverse
 /-!
 # Derivatives involving the local Lie logarithm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Derivative.Log)
+
 This file records first-order interactions between the local logarithm, the exponential, and
 group multiplication.
 

@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
 /-!
 # Removing the closure from Henkel's approximation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.OpenMapping.Complete)
+
 The Baire step of Henkel's open mapping theorem produces a point of `closure (f '' U)`, not of
 `f '' U`, and every step after it inherits that closure. This file removes it: over a complete
 source with a basis of open subgroups at zero, a point of `closure (f '' V 0)` really is the

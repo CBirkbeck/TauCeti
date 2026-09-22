@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Signature
 /-!
 # Quotienting an integral lattice by its radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RadicalQuotient)
+
 The rational bilinear form of a possibly degenerate integral lattice descends to the quotient of
 its ambient space by its radical. The image of the integral carrier is again a full integral
 lattice, and the descended form is nondegenerate. This lets later discriminant-group constructions,

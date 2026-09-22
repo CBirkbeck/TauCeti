@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
 /-!
 # Comparing two sums when one index set dominates the other
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.BigOperators.Sum.LtSum)
+
 Two finite sets of the same size, one of which carries a strictly larger weight at every point
 than the other, have strictly ordered sums (`TauCeti.sum_lt_sum_of_forall_lt`): the sizes agreeing
 is what makes the comparison work without any pointwise pairing of the two sets, since any

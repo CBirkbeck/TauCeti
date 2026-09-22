@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # The component group of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.Basic)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over an algebraically closed
 field. Its identity component is a normal closed subgroup, so the fppf quotient construction
 defines the component group sheaf `π₀(H) = H / H⁰`.

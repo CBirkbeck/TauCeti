@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Localization.NumDen
 /-!
 # What the reduced denominator of a fraction measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Localization.NumDen)
+
 Over a unique factorization domain `R` with fraction field `K`, Mathlib's `IsFractionRing.num` and
 `IsFractionRing.den` write `x : K` as a fraction in lowest terms. This file records what `den`
 measures: it is exactly the obstruction to `x` being integral, in the sense that scaling `x` by

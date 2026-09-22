@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.Dimension.DirectSum
 /-!
 # Every finite-dimensional `sl₂`-module is a direct sum of the `V(n)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Decomposition)
+
 `TauCeti/Algebra/Lie/Sl2/CompleteReducibility.lean` proves complete reducibility in its
 complement form: every Lie submodule of a finite-dimensional module over a Lie algebra generated
 by an `sl₂` triple has a complement. `TauCeti/Algebra/Lie/Sl2/Classification.lean` proves that the

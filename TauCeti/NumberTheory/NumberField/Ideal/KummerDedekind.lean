@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.Index.Exponent
 /-!
 # Counting the primes above a rational prime by Kummer–Dedekind
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Ideal.KummerDedekind)
+
 Mathlib's number-field Kummer–Dedekind theorem
 (`NumberField.Ideal.primesOverSpanEquivMonicFactorsMod`) is a bijection between the primes of
 `𝓞 K` above a rational prime `p` and the monic irreducible factors of `minpoly ℤ θ` modulo `p`,

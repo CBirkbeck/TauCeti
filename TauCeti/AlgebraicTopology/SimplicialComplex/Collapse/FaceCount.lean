@@ -11,6 +11,8 @@ public import Mathlib.Data.Set.Card
 /-!
 # Face counts under simplicial collapse
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Collapse.FaceCount)
+
 An elementary simplicial collapse removes exactly its free face and unique coface.  This file
 turns that description into cardinality control: every elementary collapse removes two faces,
 while an arbitrary collapse can only decrease the face cardinality.  For finite complexes this

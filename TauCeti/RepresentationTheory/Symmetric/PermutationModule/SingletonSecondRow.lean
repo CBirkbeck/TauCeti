@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.PermutationModule.Basic
 /-!
 # The Young permutation module of the shape `(n-1, 1)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.PermutationModule.SingletonSecondRow)
+
 Among the Young permutation modules `M^μ` of the symmetric group, the shape `μ = (n-1, 1)` is
 the one whose tabloids carry no information beyond a single label: a tabloid of that shape is a
 splitting of the `n` labels into a row of `n-1` and a row of `1`, so it is named by the label sent

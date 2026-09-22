@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Exponential.OneParameter
 /-!
 # Compatibility between abstract and Banach-algebra exponentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Units.Compatibility)
+
 The abstract Lie-group exponential recovers the Banach-algebra exponential on `Rˣ`. Under the
 canonical identification of its Lie algebra with `R`, the abstract one-parameter subgroup is
 `TauCeti.expUnitHom`, and its time-one value is `TauCeti.expUnit`.

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 /-!
 # Restricting a valuation to a convex subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.RestrictToConvex)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.2.**
 
 Given a valuation `v` and a convex subgroup `H` of the units of its value monoid, the

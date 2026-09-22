@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Square
 /-!
 # Transporting exact structures along equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Equivalence)
+
 An additive equivalence transports a Quillen exact structure to its target. A short complex in
 the target is distinguished precisely when its image under the inverse equivalence is
 distinguished. This file verifies all six exact-category axioms for that transported class and

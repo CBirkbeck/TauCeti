@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Weight
 /-!
 # The ideal von Mangoldt function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.VonMangoldt)
+
 The von Mangoldt function of a nonzero ideal `A` of the ring of integers of a number field is
 `log N(P)` when `A` is a positive power of a prime ideal `P`, and zero otherwise.  This file
 packages that function as an `IdealArithmeticFunction` and defines its pointwise product with an
@@ -80,7 +82,11 @@ open Classical in
 /-- The **ideal von Mangoldt function**.  It takes the value `log N(P)` on every positive power of
 a prime ideal `P`, and vanishes on ideals which are not prime powers.
 
-The codomain is `ℂ`, matching `IdealArithmeticFunction`, although every value is real. -/
+The codomain is `ℂ`, matching `IdealArithmeticFunction`, although every value is real.
+
+Reviewed-by: 1 person and 1 AI agent
+Tested by: 4 key results
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.IdealArithmeticFunction.vonMangoldt) -/
 noncomputable def vonMangoldt : IdealArithmeticFunction K := fun A ↦
   if h : IsPrimePow (A : Ideal (𝓞 K)) then
     (Real.log (Ideal.absNorm h.choose) : ℂ)

@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Basis.VectorSpace
 /-!
 # Source reflection preserves indecomposability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Source.FullyFaithful)
+
 The Bernstein--Gelfand--Ponomarev reflection `C⁻ᵢ` at a source `i` replaces `Mᵢ` by the
 cokernel of the outgoing map
 

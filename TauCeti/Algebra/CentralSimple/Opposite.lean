@@ -28,6 +28,8 @@ import Mathlib.LinearAlgebra.FreeModule.Finite.Matrix
 /-!
 # The opposite isomorphism `A ⊗[K] Aᵐᵒᵖ ≃ₐ[K] Mₙ(K)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Opposite)
+
 Let `A` be a finite-dimensional central simple algebra over a field `K`, of dimension `n` over `K`.
 This file proves that the **Azumaya map**
 

@@ -11,6 +11,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # Global collar data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Collar.Global)
+
 This file records the global object supplied by a collar theorem.  Local collar charts are useful
 for proving the theorem, but gluing constructions need one map on the whole boundary.  The
 definition is deliberately topological and independent of a choice of manifold model; smooth and

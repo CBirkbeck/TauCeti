@@ -11,6 +11,8 @@ public import Mathlib.Probability.Distributions.Binomial
 /-!
 # The binomial tail in closed form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Binomial.Tail)
+
 For `m ≤ n` the mass a binomial law `Bin(n, p)` puts on `{k | m ≤ k}` is a single value of the
 regularized incomplete beta function,
 

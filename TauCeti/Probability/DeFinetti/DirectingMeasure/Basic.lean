@@ -12,6 +12,8 @@ public import Mathlib.Probability.Kernel.CondDistrib
 /-!
 # The de Finetti directing measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.DirectingMeasure.Basic)
+
 For a process `X : ℕ → Ω → α` valued in a standard Borel space `α`, `directingMeasure μ X ω` is the
 conditional law of the initial coordinate `X 0` given the process tail σ-algebra `tailProcess X`,
 realised as Mathlib's regular conditional distribution `condDistrib` of `X 0`, conditioning on

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.TateCohomology.Coinduced
 /-!
 # Dimension shifting in Tate cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.DimensionShift)
+
 For a finite group `G`, the connecting maps of the canonical sequences
 
 `0 ⟶ A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A ⟶ 0` and

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Formula.VariableCha
 /-!
 # The isomorphism of point groups induced by a change of variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.VariableChange)
+
 Mathlib's affine `Point` API has `WeierstrassCurve.Affine.Point.map`, the group homomorphism
 induced by a map of the base field for a *fixed* curve, but nothing for the isomorphism between
 the point groups of two *different* curves related by an admissible change of variables. This file

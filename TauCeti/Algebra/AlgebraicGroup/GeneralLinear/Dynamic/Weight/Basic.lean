@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Block
 /-!
 # Dynamic subgroups of the general linear group from weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Basic)
+
 An integer weight `w i` on each coordinate of `GL_N` defines the cocharacter
 
 ```text

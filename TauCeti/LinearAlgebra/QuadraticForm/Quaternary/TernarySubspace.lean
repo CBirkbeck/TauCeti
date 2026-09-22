@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Quaternary.Basic
 /-!
 # Ternary subspaces of quaternary quadratic spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Quaternary.TernarySubspace)
+
 This file proves that, over a field in which two is invertible, a subspace of dimension at least
 three in a regular four-dimensional isotropic quadratic space with square discriminant is
 isotropic. The ambient hypotheses first force the space to be the orthogonal sum of two

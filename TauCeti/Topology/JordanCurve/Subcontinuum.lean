@@ -11,6 +11,8 @@ public import TauCeti.Topology.JordanCurve.Basic
 /-!
 # A proper subcontinuum of a Jordan curve is an arc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.JordanCurve.Subcontinuum)
+
 `TauCeti/Topology/JordanCurve/Separation.lean` cuts a Jordan curve at one or two *given* points.
 This file describes the pieces from the other side: it classifies the compact connected subsets of
 a Jordan curve. Every one of them other than the curve itself is a point or an **arc** — the range

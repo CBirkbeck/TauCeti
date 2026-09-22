@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion
 /-!
 # The valuative relation on an adic completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeRel)
+
 Let `R` be a Dedekind domain with fraction field `K` and let `v` be a height-one prime of `R`. The
 completion `K_v` already carries the adic valuation `Valued.v`, with values in `ℤᵐ⁰`. This file
 equips `K_v` with the valuative relation that valuation induces, checks that its existing topology

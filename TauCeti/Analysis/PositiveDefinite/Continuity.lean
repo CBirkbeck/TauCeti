@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Normed.Group.Basic
 /-!
 # Continuity of positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Continuity)
+
 This file records the standard continuity upgrade for positive-definite functions on a seminormed
 additive group with the negation involution. A positive-definite function that is continuous at
 the origin is uniformly continuous. The file also records the local estimates

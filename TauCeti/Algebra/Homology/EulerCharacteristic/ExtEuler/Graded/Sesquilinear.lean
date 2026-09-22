@@ -15,6 +15,8 @@ public import Mathlib.LinearAlgebra.BilinearMap
 /-!
 # The q-Euler form on graded Grothendieck groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Sesquilinear)
+
 Let `P` and `Q` be extension-closed, shift-stable full subcategories of a graded abelian category.
 The preliminary exact-`K₀` descent `TauCeti.gradedExtEulerPairing` makes the graded Ext-Euler
 characteristic biadditive on their induced exact Grothendieck groups.  The shift identities say

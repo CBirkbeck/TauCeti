@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Closed root subgroups of the tripled type-D4 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.ClosedRootSubgroup)
+
 Each of the eight numbered root-subgroup maps into the tripled type-`D₄` carrier is a closed
 immersion over `ℤ`. Its image is therefore a closed subgroup scheme canonically isomorphic to
 the additive group scheme, as required for the root subgroups in a pinning.

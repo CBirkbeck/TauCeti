@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 /-!
 # A strict form of the Schwarz lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Schwarz)
+
 Schwarz's lemma bounds the derivative at the centre of a ball by `R₂ / R₁` when a holomorphic
 map into a strictly convex complex normed space sends `ball c R₁` into `closedBall (g c) R₂`.
 This file records the **strict** form: the bound is attained only by an injective map, so a

@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Infinity
 /-!
 # The combinatorial polygon of Schwarz--Christoffel boundary values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Basic)
+
 A finite indexed family of Schwarz--Christoffel prevertices supplies a list of complex boundary
 values.  This file appends the common boundary value at infinity and packages the resulting cyclic
 list as Mathlib's `Polygon`.  The indexing here is purely combinatorial: no ordering or distinctness

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.Lattice
 /-!
 # Integral symmetric lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Basic)
+
 An integral symmetric lattice in a rational vector space consists of a full finitely generated
 `ℤ`-submodule together with a symmetric `ℚ`-bilinear form whose values on the lattice are
 integers.  The integrality condition is expressed using Mathlib's

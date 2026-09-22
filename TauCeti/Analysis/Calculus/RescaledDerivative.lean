@@ -11,6 +11,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 /-!
 # Rescaled derivative limits
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.RescaledDerivative)
+
 This file records the normed-space limit obtained by sampling a differentiable map at `t / n`
 and multiplying its value by `n`. The scalar field has characteristic zero and continuous
 nonnegative-rational scalar multiplication, so `t / n` tends to zero. These assumptions hold

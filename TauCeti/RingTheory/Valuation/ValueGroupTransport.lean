@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Valuation.Basic
 /-!
 # Transporting the value group along an equivalence of valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.ValueGroupTransport)
+
 Mathlib's `Valuation.IsEquiv.orderMonoidIso` is an isomorphism of the value monoids *with
 zero*, `ValueGroup₀ (.ofClass v) ≃*o ValueGroup₀ (.ofClass w)`. Consumers that work with the
 value **group** — for instance any convex subgroup of it — need the corresponding

@@ -14,6 +14,8 @@ import TauCeti.Algebra.AlgebraicGroup.Smooth.GeometricallyReduced
 /-!
 # The upper-triangular closed subgroup scheme of `SL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Borel.Basic)
+
 The lower-left coordinate in `O(SL₂)` generates a Hopf ideal. Its quotient represents the
 upper-triangular determinant-one matrices: over every commutative algebra `A`, the points cut
 out by this ideal identify with the existing subgroup `TauCeti.SL2Borel A`.

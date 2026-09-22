@@ -14,6 +14,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The splitting criterion for quaternion algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.SplittingCriterion)
+
 Over a field `K` in which `2` is invertible, a quaternion algebra `ℍ[K,a,b]` with `a, b ∈ Kˣ` is
 either a division algebra or isomorphic to the matrix algebra `M₂(K)`, and which case occurs is
 decided by quadratic forms. This file proves the classical criterion: the following are equivalent.

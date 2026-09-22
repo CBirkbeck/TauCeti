@@ -13,6 +13,8 @@ import TauCeti.Algebra.Coalgebra.Cocommutative
 /-!
 # Tori over a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Basic)
+
 A finite-type affine group over a field is a torus when it becomes a finite-rank split torus
 after extending scalars to an algebraic closure. On coordinate Hopf algebras, the rank-`n` split
 torus has coordinate ring

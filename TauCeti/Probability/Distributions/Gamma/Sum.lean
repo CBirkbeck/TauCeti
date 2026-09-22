@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Gamma.Basic
 /-!
 # Finite sums of independent gamma variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Sum)
+
 The gamma family is closed under sums of independent variables sharing a rate: adding two of them
 adds their shapes, which is `TauCeti.Probability.gammaMeasure_conv_gammaMeasure`.  This file
 iterates that

@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 /-!
 # Low-degree group cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupCohomology.LowDegree)
+
 For a trivial representation `A` of a group `G`, Mathlib identifies `H¹(G, A)` with the group of
 additive homomorphisms `G →+ A`. This file records the consequence that `H¹(G, A)` vanishes when
 `G` is finite and `A` has no additive torsion, since a homomorphism from a finite group into a

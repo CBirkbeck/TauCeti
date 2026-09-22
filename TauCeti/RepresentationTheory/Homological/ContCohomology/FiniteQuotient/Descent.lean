@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.OpenNormalSubgroup
 /-!
 # Descent of continuous functions to finite quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.FiniteQuotient.Descent)
+
 A continuous function from a profinite group to a discrete module factors through a sufficiently
 deep finite quotient, with values in the fixed points at that level. The quotient may be chosen
 below any prescribed open normal subgroup.

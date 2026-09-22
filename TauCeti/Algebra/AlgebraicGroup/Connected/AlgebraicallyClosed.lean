@@ -17,6 +17,8 @@ import TauCeti.RingTheory.Idempotents.Connected.ScalarExtension
 /-!
 # Testing geometric connectedness over algebraically closed fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.AlgebraicallyClosed)
+
 For a commutative Hopf algebra `H` over a field `k`, geometric connectedness may be tested only
 after algebraically closed extensions of `k`. For an arbitrary extension `K / k`, its algebraic
 closure `Ω` is again a `k`-algebra. The map

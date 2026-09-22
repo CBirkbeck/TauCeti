@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Cube.Weight.Recursion
 /-!
 # Plumbing-lattice cube generators and their faces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.Generator)
+
 This file packages the cubical generators used in Némethi's lattice homology. A cube generator is
 the pair of a lattice base point `x : V → ℤ` and a finite set `S : Finset V` of basis directions.
 Its codimension-one faces in a direction `v ∈ S` are the lower face `(x, S.erase v)` and the

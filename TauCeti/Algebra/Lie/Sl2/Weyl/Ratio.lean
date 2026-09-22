@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Sl2.Weyl.Automorphism
 /-!
 # The scaled Weyl elements and their Weyl ratios
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Weyl.Ratio)
+
 Let `t : IsSl2Triple H E F` be an `sl₂` triple in an associative algebra `A`, with `E` and `F`
 nilpotent, and let `A` also be an algebra over a commutative ring `R`. For a unit `c` of `R` the
 rescaled elements `c • E` and `c⁻¹ • F` form an `sl₂` triple with the same Cartan element

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Isogeny.Power
 /-!
 # The odd half-Frobenius power of a Suzuki--Ree index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.HalfFrobenius)
+
 The Steinberg endomorphism of a Suzuki, Ree or Tits group is not a Frobenius but an *odd power of
 a half-Frobenius*: the exceptional isogeny `τ` of the pinned ambient group, which squares to the
 prime-field Frobenius, raised to the odd exponent `2 * m + 1`. This file takes that odd power on
@@ -170,7 +172,10 @@ theorem halfExponent_eq_zero_iff (e : SuzukiReeIndex) :
 
 /-- **The Steinberg map of a Suzuki--Ree index on its pinned simply connected root datum**: the
 odd power `τ ^ (2 * m + 1)` of the special isogeny selected by the index, written as its
-`fieldExponent`-th power. On the Tits index the exponent is `1` and the map is `τ` itself. -/
+`fieldExponent`-th power. On the Tits index the exponent is `1` and the map is `τ` itself.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.SuzukiReeIndex.datumSteinberg) -/
 noncomputable def datumSteinberg (e : SuzukiReeIndex) :
     RootPairingIsogeny (e.1.dynkinType.simplyConnectedRootDatum e.1.dynkinType_valid)
       (e.1.dynkinType.simplyConnectedRootDatum e.1.dynkinType_valid) :=

@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Idempotents.Connected.Spectrum
 /-!
 # Group-like elements of monoid algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.MonoidAlgebra.GroupLike)
+
 The standard basis elements of a monoid algebra over a commutative semiring are group-like and
 span the whole algebra. Over a commutative ring with connected prime spectrum, these are exactly
 the group-like elements. The proof of the classification compares coefficients in the group-like

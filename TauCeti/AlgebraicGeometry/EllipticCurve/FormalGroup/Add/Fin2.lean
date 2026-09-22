@@ -12,6 +12,8 @@ import TauCeti.RingTheory.MvPowerSeries.Rename
 /-!
 # The addition series presented over `Fin 2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Fin2)
+
 `formalAdd` is indexed by `Unit ⊕ Unit`, one variable per chord parameter, which is the shape every
 series-level lemma about it is stated in. Mathlib's `FormalGroup`, by contrast, carries a power
 series in `MvPowerSeries (Fin 2) R`. This file transports the two linear coefficients along the

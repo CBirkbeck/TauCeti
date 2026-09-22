@@ -12,6 +12,8 @@ import TauCeti.Topology.Algebra.Nonarchimedean.SubmodulesBasis
 /-!
 # The `ϖⁿ • M₀` submodules basis, and the `A`-module topology it induces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.PowSmulBasis)
+
 Let `A` be a Tate ring, `A₀` a ring of definition, `ϖ ∈ A₀` a pseudouniformiser, and `M₀` an
 `A₀`-submodule of an `A`-module `M` with `A · M₀ = M`. This file exhibits the family `ϖⁿ • M₀`
 as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family into a topology;

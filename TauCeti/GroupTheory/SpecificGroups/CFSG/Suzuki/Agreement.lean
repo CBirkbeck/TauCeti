@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Two.Agreement
 /-!
 # The Suzuki special isogeny in the pinned symplectic model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.Agreement)
+
 This file extends the shared rank-two `B₂` carrier comparison with the data specific to a
 `TauCeti.SuzukiLieIndex`. On the standard symplectic matrix group it uses the existing
 characteristic-two special isogeny, defines its odd power, and transports both maps independently

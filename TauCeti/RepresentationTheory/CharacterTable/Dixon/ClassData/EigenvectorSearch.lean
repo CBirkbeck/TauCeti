@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Basic
 /-!
 # Searching for modular central-character rows
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.EigenvectorSearch)
+
 The Dixon--Schneider algorithm applies simultaneous left-eigenvector search to the class-
 multiplication matrices.  This file makes that specialization executable for
 `TauCeti.ClassData`: `TauCeti.ClassData.centralCharacterSearch` searches the transposed numbered

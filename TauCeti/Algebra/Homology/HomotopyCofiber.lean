@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Homology.OneObject
 /-!
 # The mapping cone of a split monomorphism of complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.HomotopyCofiber)
+
 Let `0 ⟶ X₁ ⟶ X₂ ⟶ X₃ ⟶ 0` be a short complex of homological complexes which is split in the
 category of complexes: the retraction `r : X₂ ⟶ X₁` of `f` and the section `s : X₃ ⟶ X₂` of `g`
 are chain maps. Then the mapping cone `homotopyCofiber f` of `f` is homotopy equivalent to the

@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 /-!
 # The chord construction computes the group law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint)
+
 Over a field, a point of a Weierstrass curve `W` away from the origin can be written in the
 `(z, w)`-chart of `WeierstrassCurve.formalW` as `(z / w, -1 / w)`, coming from the substitution
 `x = z / w`, `y = -1 / w`. This file proves that such a point is nonsingular, and that the chord

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Trivial
 /-!
 # Trivial point representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Trivial)
+
 This file synchronizes the trivial operations across the fixed-object correspondence between
 point representations of an affine group and comodules over its commutative Hopf algebra.
 

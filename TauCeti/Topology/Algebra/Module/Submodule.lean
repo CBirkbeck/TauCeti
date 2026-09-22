@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Module.Basic
 /-!
 # A submodule of a topological module is a topological module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Module.Submodule)
+
 A submodule carries the subspace topology. Of the three continuity classes that make that
 topology a module topology, Mathlib supplies **one outright** and **one under extra hypotheses**:
 

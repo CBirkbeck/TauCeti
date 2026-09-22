@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.Basic
 /-!
 # Character lattices of split tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.CharacterLattice)
+
 The intrinsic character lattice of a split torus is its defining finite-rank free abelian group,
 and its absolute-Galois action is trivial.
 

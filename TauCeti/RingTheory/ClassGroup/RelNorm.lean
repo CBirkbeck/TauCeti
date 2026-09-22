@@ -13,6 +13,8 @@ import Mathlib.GroupTheory.Congruence.Basic
 /-!
 # The relative norm on ideal class groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.ClassGroup.RelNorm)
+
 For a finite extension `S / R` of Dedekind domains, Mathlib's relative ideal norm
 `Ideal.relNorm R : Ideal S →*₀ Ideal R` is multiplicative and sends principal ideals to
 principal ideals (`Ideal.relNorm_singleton`), so it descends to a group homomorphism

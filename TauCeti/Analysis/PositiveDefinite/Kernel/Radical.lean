@@ -11,6 +11,8 @@ import TauCeti.Analysis.Matrix.PosSemidef
 /-!
 # The kernel of a positive-definite kernel Gram form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Kernel.Radical)
+
 This file records the next algebraic step in the GNS/Kolmogorov construction for a
 positive-definite kernel. The finitely supported Gram form from
 `TauCeti.Analysis.PositiveDefinite.Kernel.Finsupp` is bundled there as a sesquilinear form; here

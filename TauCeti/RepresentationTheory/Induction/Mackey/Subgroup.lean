@@ -15,6 +15,8 @@ public import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # The Mackey subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Subgroup)
+
 For subgroups `H` and `K` of a group `G` and an element `s : G`, the *Mackey subgroup*
 
 `mackeySubgroup s H K = K ⊓ sHs⁻¹`

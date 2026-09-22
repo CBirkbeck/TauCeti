@@ -17,6 +17,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Add
 /-!
 # Nondegenerate critical points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.Basic)
+
 A critical point of a real-valued function `f` on a normed space is *nondegenerate* when the
 second derivative `fderiv ℝ (fderiv ℝ f) x`, read as a continuous linear map from `E` to its
 dual, is a linear homeomorphism. In finite dimensions this is the classical requirement that the

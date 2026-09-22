@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Basic
 /-!
 # The automorphism group acting on Riemann–Roch spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.RiemannRoch.Automorphism)
+
 An `F`-automorphism `σ` of `F'` permutes the places of `F' / k`, and hence the divisors of
 `F' / k`. Because `σ` moves the valuation at a place to the valuation at the moved place, it
 carries the Riemann–Roch space `L(D)` onto `L(σ • D)`. The two spaces are therefore isomorphic

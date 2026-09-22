@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.Weyl.Group
 /-!
 # The weight cone below a weight is finite once it is stable under the simple reflections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.DominantCone)
+
 Fix a base `b` of a finite crystallographic root system `P` and a weight `lam`. The set of weights
 lying **below** `lam`, that is those `mu` with `lam - mu` in the positive root cone `Q⁺`, is
 infinite: it is a whole translated cone. This file proves that two further conditions cut it down

@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.ValuationOfNeZero
 /-!
 # Extension of adic completions along an extension of Dedekind domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicCompletionExtension)
+
 Let `R` be a Dedekind domain with fraction field `K`, let `L/K` be an extension and `B` a
 Dedekind domain with fraction field `L` extending `R`, and let `w` be a height-one prime of `B`
 lying over the height-one prime `v` of `R`. Completing at `v` and at `w` gives fields `K_v` and

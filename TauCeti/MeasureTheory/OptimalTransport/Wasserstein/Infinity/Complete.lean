@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Complete
 /-!
 # Completeness at the infinite Wasserstein exponent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Infinity.Complete)
+
 On a complete separable metric space, every anchored finite-`W_∞` component is complete. The
 measure-level result `TauCeti.exists_isProbabilityMeasure_wassersteinEDist_top_le_tsum` gives the
 quantitative core: if consecutive probability laws are at `W_∞`-distance at most `b n` and

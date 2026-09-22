@@ -11,6 +11,8 @@ public import TauCeti.Algebra.CharP.Frobenius.TensorProduct
 /-!
 # The Frobenius endomorphism of a commutative bialgebra over a finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CharP.Frobenius.Bialgebra)
+
 Let `S` be a commutative bialgebra over a finite field `K`. Its algebra map is injective, so the
 `#K`-power map is a ring endomorphism of `S` and of its tensor square. On the tensor square that
 endomorphism is the tensor square of the one on `S`, so it respects comultiplication, and the

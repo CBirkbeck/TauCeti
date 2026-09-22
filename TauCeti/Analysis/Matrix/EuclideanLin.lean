@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.Rank
 /-!
 # The map of a matrix on Euclidean space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.EuclideanLin)
+
 Two ingredients of a linear change of variables on `EuclideanSpace 𝕜 ι`.
 
 Pulling the quadratic form `x ↦ ⟪x, B x⟫` of a square matrix `B` back along the linear map of a

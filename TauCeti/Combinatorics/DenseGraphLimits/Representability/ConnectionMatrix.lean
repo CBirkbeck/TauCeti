@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Matrix.PosDef
 /-!
 # Graph parameters, connection matrices and reflection positivity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Representability.ConnectionMatrix)
+
 A graph parameter assigns a real number to every finite simple graph.  Its connection matrices are
 the matrices of its values on the gluings of a finite family of `k`-labeled graphs; a parameter is
 reflection positive when all of them are positive semidefinite.  Together with multiplicativity

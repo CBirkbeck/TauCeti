@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Six
 /-!
 # The reduced invariant of a normalised EDS
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.ReducedInvariant)
+
 For a normalised EDS `normEDS b c d`, the invariant of `IsEllipticNet` at `s = 1` carries a factor
 that is constant in the index: `IsEllipticNet.invarNum` is divisible by `b = W 2`. This file names
 the quotient `reducedInvarNum` and **proves** that cancellation.

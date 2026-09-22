@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Realization
 /-!
 # The realization of a simplex boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.BoundarySphere)
+
 This file proves that the geometric realization of the boundary of the standard
 `(n + 1)`-simplex is homeomorphic to the unit `n`-sphere.  It completes the
 "realization round-trips" acceptance check in layer 11 of the geometric-topology roadmap.

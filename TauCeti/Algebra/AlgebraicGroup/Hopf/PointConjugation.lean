@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.Map
 /-!
 # Conjugation by a rational point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.PointConjugation)
+
 A rational point `g` of an affine group scheme acts on the group by the inner automorphism
 `x ↦ g * x * g⁻¹`. Contravariantly, this file constructs the corresponding automorphism of
 the coordinate Hopf algebra. Its characteristic lemma describes precomposition on points, and

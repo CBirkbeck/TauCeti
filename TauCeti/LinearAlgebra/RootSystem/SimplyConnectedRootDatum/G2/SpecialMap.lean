@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Lengt
 /-!
 # The special length-exchanging map of the pinned type `G₂` root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.SpecialMap)
+
 In characteristic three, the Ree construction uses a special isogeny of the simply connected group
 of type `G₂`. At the root-datum level its character-lattice map exchanges the two Bourbaki nodes
 and multiplies in the long-root direction. In the fundamental-weight coordinates of

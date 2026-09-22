@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Hom.BaseChange
 /-!
 # Isogenies of abelian varieties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.Isogeny)
+
 An isogeny of abelian varieties is a homomorphism whose underlying scheme morphism is finite and
 surjective. This definition works over an arbitrary field: it does not impose separability, so it
 includes inseparable isogenies in positive characteristic.

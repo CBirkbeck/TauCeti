@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.Morse.Basic
 /-!
 # The Morse index on a smooth manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Morse.Index)
+
 This file defines the preferred-extended-chart Morse index by applying `TauCeti.morseIndex` to a
 function's coordinate expression in the preferred extended chart.
 

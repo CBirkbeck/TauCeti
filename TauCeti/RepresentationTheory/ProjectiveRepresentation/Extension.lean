@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.ProjectiveRepresentation.Basic
 /-!
 # A projective representation is a linear representation of the central extension of its factor set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ProjectiveRepresentation.Extension)
+
 A projective representation `ρ : G → (V ≃ₗ[k] V)` with factor set `α` is multiplicative only up to
 the scalars `α`, so it is not a homomorphism. Enlarging `G` by those scalars repairs this: the
 central extension `1 → kˣ → E_α → G → 1` built from `α` in

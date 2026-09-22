@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.InfinitePlace.Basic
 /-!
 # The candidate genus field of an imaginary quadratic field is totally complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.InfinitePlace)
+
 For squarefree `d < 0`, the embedded base `ℚ(√d)` inside `candidateGenusField hd` contains a square
 root of the negative rational `d`, so it is totally complex — a special case of
 `NumberField.isTotallyComplex_of_sq_ratCast_of_neg`. The candidate genus field, being an

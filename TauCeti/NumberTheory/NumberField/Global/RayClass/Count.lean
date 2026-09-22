@@ -12,6 +12,8 @@ public import TauCeti.Order.Northcott
 /-!
 # Counting the integral ideals of a ray class
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Count)
+
 Let `𝔪` be a modulus of a number field `K` and `c` a ray class of `𝔪`.  This file introduces
 `rayClassIdealCountingFunction 𝔪 c x`, the number of nonzero integral ideals prime to the finite
 part of `𝔪` that lie in the class `c` and have norm at most `x`, and proves the two facts that

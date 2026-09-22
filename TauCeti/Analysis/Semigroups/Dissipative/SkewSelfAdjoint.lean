@@ -13,6 +13,8 @@ import TauCeti.Analysis.Semigroups.Dissipative.Hilbert
 /-!
 # Skew multiples of self-adjoint operators are m-dissipative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Dissipative.SkewSelfAdjoint)
+
 Multiplication by a nonzero purely imaginary scalar `c` turns a self-adjoint partial linear map
 `A` on a complex Hilbert space into an m-dissipative real partial linear map: the quadratic form
 of `c • A` is purely imaginary, so its real restriction is dissipative, and the range condition,

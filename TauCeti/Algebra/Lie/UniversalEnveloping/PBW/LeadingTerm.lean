@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Functoriality
 /-!
 # Permuting PBW words modulo lower filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.PBW.LeadingTerm)
+
 This file proves the first consequence of the defining relation of a universal enveloping algebra
 for its associated graded. If two words in the canonical generators differ only by a permutation,
 then their difference has filtration degree strictly below their common word length. In particular,

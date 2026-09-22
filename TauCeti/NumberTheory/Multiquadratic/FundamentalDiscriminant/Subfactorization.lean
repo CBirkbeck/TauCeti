@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.OfSqua
 /-!
 # Comparing two prime-discriminant factorizations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Subfactorization)
+
 Let `a` and `d` be integers and write `A = fundamentalDiscriminant a`,
 `D = fundamentalDiscriminant d`. Suppose `A = ∏ P ∈ u, P` and `D = ∏ P ∈ s, P` are factorizations
 into prime discriminants, at most one member of each being even

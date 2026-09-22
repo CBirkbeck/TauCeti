@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Subfield.Degree
 /-!
 # Relative degrees in the multiquadratic subfield lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.RelativeDegree)
+
 For square roots `root i` of radicands `d i` over a field `K` with `2 ≠ 0`, square-class
 independence makes `M = K(rootᵢ : i)` Galois with group `(ℤ/2)ⁿ`, and the order-reversing
 bijection `TauCeti.Multiquadratic.intermediateFieldEquivSubmodule` matches each intermediate field

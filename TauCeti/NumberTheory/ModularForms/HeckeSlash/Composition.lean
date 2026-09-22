@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Ring
 /-!
 # Composing the slash sums of two double cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Composition)
+
 `HeckeSlash/Basic.lean` attaches to a double coset `Γ₁ δ Γ₂ = ⊔ᵥ Γ₁ aᵥ` the slash sum
 `f ∣[Γ₁ δ Γ₂]ₖ = ∑ᵥ f ∣[k] aᵥ`, and `HeckeSlash/Invariance.lean` shows the result is
 `Γ₂`-invariant, so a second double coset `Γ₂ δ₂ Γ₃` may be applied to it. This file computes that

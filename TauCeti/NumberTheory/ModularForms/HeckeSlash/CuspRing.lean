@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Associativity
 /-!
 # The Hecke ring acting on cusp forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.CuspRing)
+
 `heckeSlashGamma1CuspFormEnd` attaches a `ℂ`-linear endomorphism of `S_k(Γ₁(N))` to a single
 double coset. This file extends that assignment `ℤ`-linearly to the whole Hecke ring
 `𝕋 Δ₀(N) Γ₁(N) ℤ`, so that the abstract ring acts on the space of cusp forms.

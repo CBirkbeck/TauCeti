@@ -11,6 +11,8 @@ public import TauCeti.Algebra.BigOperators.Finset.Pairs
 /-!
 # Minors on a pair of rows and a pair of columns
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Minor)
+
 A `2 × 2` minor of a matrix is the determinant of the submatrix on an ordered pair of rows and an
 ordered pair of columns. `Matrix.pairMinor` names it, so that a family of such minors can be
 indexed by pairs rather than by `Fin 2`-valued reindexing functions, and

@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.Multiquadratic.Quadratic.Ramification
 /-!
 # Genus characters at a split prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.SplitPrime)
+
 Let `K = ℚ(√d)` with `d` squarefree, and let `D = ∏ P ∈ s, P` be a factorization of its
 discriminant into prime discriminants. At an odd prime `q` the genus character of the whole
 factorization is the splitting symbol of `K`,

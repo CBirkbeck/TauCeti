@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.Singular.Subdivision.Homotopy
 /-!
 # Subdivision and its homotopy on small singular chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.Small.Homotopy)
+
 Barycentric subdivision and its prism operator preserve chains subordinate to any family of
 subsets: every simplex they produce factors through the original singular simplex. This file
 restricts both operators to the small-chain complex and proves the homotopy formula there.

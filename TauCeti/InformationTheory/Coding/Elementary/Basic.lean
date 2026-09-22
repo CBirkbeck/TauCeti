@@ -10,6 +10,8 @@ public import TauCeti.InformationTheory.Coding.EuclideanDual
 /-!
 # Repetition and single-parity-check codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Elementary.Basic)
+
 The repetition code consists of constant words, and the single-parity-check code consists of
 words whose coordinate sum is zero. They are Euclidean duals. A positive-length repetition
 code has as many words as its alphabet; at length zero it has only one word.

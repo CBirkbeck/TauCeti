@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.FractionalIdeal
 /-!
 # The index of one ideal lattice in another
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.CanonicalEmbedding.IdealLattice)
+
 An invertible fractional ideal `I` of a number field `K` is a full `ℤ`-lattice in `K`, and its
 image `mixedEmbedding.idealLattice K I` is a full lattice in the mixed space.  If `J ≤ I` are two
 such ideals, the index of `J` in `I` is the ratio of their absolute norms.  This is the

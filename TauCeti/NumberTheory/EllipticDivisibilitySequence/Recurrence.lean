@@ -11,6 +11,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The doubling relations of an elliptic sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence)
+
 `IsEllipticSequence W` says that `IsEllipticNet.rel W p q r 0` vanishes for all `p, q, r`.
 Mathlib's `IsEllipticNet.rel_odd` and `rel_even` evaluate that relator at the two instances
 relating a doubled index to its neighbours, but they give the relator's *value* rather than the

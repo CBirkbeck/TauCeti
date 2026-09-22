@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.Continuous.Basic
 /-!
 # The canonical valuation of a valued ring is continuous
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Continuous.Valued)
+
 A `Valued R Γ₀` structure carries the topology defined by its valuation, and `Valued.isOpen_ball`
 gives that every ball `{a | v a < γ}` is open. In particular the sets `{a | v a < v b}` cut out by
 the *attained* values are open, which is exactly `Valuation.IsContinuous` for `Valued.v`.

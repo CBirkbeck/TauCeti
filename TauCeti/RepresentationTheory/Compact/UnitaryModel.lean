@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Continuous.Representative
 /-!
 # The unitary model of a finite-dimensional representation of a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.UnitaryModel)
+
 Weyl's unitarian trick, in `TauCeti/RepresentationTheory/Compact/Unitarizable.lean`, averages the
 inner product of a continuous representation `π` of a compact group over Haar measure and records
 the averaged form through its Gram operator `S`, a positive-definite self-adjoint operator with

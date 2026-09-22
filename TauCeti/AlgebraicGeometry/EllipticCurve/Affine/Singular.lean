@@ -13,6 +13,8 @@ import Mathlib.Algebra.CharP.Two
 /-!
 # The singular points of a Weierstrass model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Singular)
+
 A Weierstrass model has at most one singular point. This file introduces the predicate for it and
 proves that uniqueness, over any reduced commutative ring.
 

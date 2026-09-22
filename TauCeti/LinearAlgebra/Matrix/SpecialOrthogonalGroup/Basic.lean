@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 /-!
 # Entrywise maps of special orthogonal matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Basic)
+
 A ring homomorphism maps a special orthogonal matrix entrywise to a special orthogonal matrix.
 This expresses the functoriality of special orthogonal groups under coefficient-ring maps and
 supports their base-change constructions.

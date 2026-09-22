@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Valuation.ValuativeRel.Comap
 /-!
 # The valuative criterion for integrality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.IntegralOfValuationLeOne)
+
 If every valuation of `R` that is bounded by `1` on a subring `B` is also bounded by `1` at
 `x`, then `x` is integral over `B`.
 

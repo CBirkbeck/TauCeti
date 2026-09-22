@@ -11,6 +11,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Extend
 /-!
 # One-sided derivatives from one-sided derivative limits
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.OneSidedDerivLimit)
+
 A function continuous at `t₀`, differentiable on a one-sided punctured neighbourhood, whose
 derivative tends to `L` from that side, has one-sided derivative `L` at `t₀`. Mathlib's
 `hasDerivWithinAt_Ici_of_tendsto_deriv` states this over a set containing a right neighbourhood;

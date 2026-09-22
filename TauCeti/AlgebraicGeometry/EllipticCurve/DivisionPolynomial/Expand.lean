@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Polynomial.Expand
 /-!
 # Division polynomials in characteristic `p` are `p`-th power substitutions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Expand)
+
 In characteristic `p` the low division polynomials of a Weierstrass curve lie in the image of
 `Polynomial.expand R p`, that is, they are polynomials in `Xᵖ`. This is the base case of the
 factorisation of the `p`-power isogeny through Frobenius (Silverman III.6.2): the terms that

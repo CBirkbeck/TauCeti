@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Weight.Vector
 /-!
 # Building upper-triangular bases from weight vectors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Flag.Triangular)
+
 Suppose every nonzero finite-dimensional comodule over a coalgebra has a nonzero weight vector
 with weight drawn from a prescribed set `S`, that is, a vector `v` with coaction `v ↦ v ⊗ c` for
 some `c ∈ S`. Repeatedly choose such a vector and pass to the quotient by its span. Induction on

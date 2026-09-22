@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Basic
 /-!
 # Bases of zigzag component algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Basis)
+
 Each connected-component factor has a vertex--arrow--volume basis. On a component with an edge
 this is the basis of the relation quotient. On a singleton component the vertex and volume
 vectors are the unit and infinitesimal generator of the dual numbers. In particular the index

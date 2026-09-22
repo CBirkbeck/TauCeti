@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Basic
 /-!
 # Conjugating deck transformations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Conjugation)
+
 An isomorphism of maps over the same base transports deck transformations by conjugation.
 This file packages that transport as a multiplicative equivalence of deck groups, so that
 covers identified up to isomorphism over the base have their deck groups identified by

@@ -15,6 +15,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # The admissible integral lattice in a standard `sl₂`-module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.IntegralLattice)
+
 The standard irreducible `sl₂`-module `TauCeti.Sl2Std ℚ n` has its coordinate lattice
 
 ```text

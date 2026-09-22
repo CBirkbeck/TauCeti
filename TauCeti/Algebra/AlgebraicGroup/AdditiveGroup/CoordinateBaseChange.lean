@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.BaseChange
 /-!
 # Base change of the bundled coordinate Hopf algebra of `𝔾ₐ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.CoordinateBaseChange)
+
 `TauCeti.AdditiveGroup.gaScalarTensorBialgEquiv` identifies `K ⊗[k] O(𝔾ₐ)` with the coordinate
 bialgebra of `𝔾ₐ` over `K`. This file bundles that equivalence as an isomorphism in
 `CommHopfAlgCat K`, so that the base change of `𝔾ₐ` over `k` *is* `𝔾ₐ` over `K` as a commutative

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.E8Coordinates
 /-!
 # The spinor glue lattice `D₈⁺` is the `E₈` root lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RootLattice.D8Plus.Isometry)
+
 The lattice `D₈⁺ = D₈ ∪ (s + D₈)` built by gluing the rank-eight checkerboard lattice along its
 spinor class is even and unimodular.  This file proves the sharper statement that it *is* the
 root lattice of type `E₈`, by exhibiting an explicit isometry

@@ -14,6 +14,8 @@ import TauCeti.RingTheory.DedekindDomain.Ideal
 /-!
 # Arithmetic functions on nonzero ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Basic)
+
 For the intended number-field applications, an ideal-indexed Dirichlet series should not assign an
 arithmetic coefficient to the zero ideal. Excluding it ensures that ideal convolution never
 considers factorizations through the zero ideal. This file introduces the carrier used throughout

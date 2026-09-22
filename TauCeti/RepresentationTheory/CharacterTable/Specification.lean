@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Eigenrow
 /-!
 # The specification a character table satisfies, and the labeled uniqueness it forces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Specification)
+
 Let `G` be a finite group. Its complex character table `TauCeti.characterTable ℂ G` is a square
 matrix whose rows are indexed by an arbitrary enumeration of the irreducible characters and whose
 columns are labeled by the conjugacy classes themselves. This file writes down a property

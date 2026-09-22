@@ -10,6 +10,8 @@ public import TauCeti.Analysis.SpecialFunctions.Gamma
 /-!
 # The multivariate Gamma function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.MultivariateGamma.Basic)
+
 The multivariate Gamma function of dimension `p` is
 
 `Γ_p(a) = π ^ (p * (p - 1) / 4) * ∏_{i < p} Γ(a - i / 2)`.

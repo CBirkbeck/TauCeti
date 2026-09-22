@@ -14,6 +14,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Chains of `(-2)`-indices of arbitrary length
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Chain)
+
 A `(-2)`-index of a numerical type is a component `i` with `gᵢ = 0` and `aᵢᵢ = -2wᵢ`. The
 configurations that a set of `(-2)`-indices can form inside a numerical type with strictly more
 components are of Dynkin-diagram shape, and

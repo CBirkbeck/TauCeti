@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Finite
 /-!
 # The ray class number formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.ClassNumber)
+
 Let `𝔪` be a modulus of a number field `K`, and write
 `A 𝔪 = (𝓞 K ⧸ 𝔪.finitePart)ˣ × (𝔪.infinitePart → ℤˣ)` for its residue units and prescribed signs.
 The exact sequence constructed in `TauCeti.NumberTheory.NumberField.Global.RayClass.Exact` is

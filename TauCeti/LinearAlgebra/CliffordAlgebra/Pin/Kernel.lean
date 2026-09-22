@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Kernel
 /-!
 # The kernel of the Pin action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Pin.Kernel)
+
 For a positive-dimensional finite nondegenerate quadratic space over a field where `2` is
 invertible, the kernel of the Pin action is canonically the cyclic group of order two. The proof
 identifies a Pin element acting trivially with an even element, then reuses the Spin-kernel

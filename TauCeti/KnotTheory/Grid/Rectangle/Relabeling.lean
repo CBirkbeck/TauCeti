@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Squares
 /-!
 # Relabeling oriented grid rectangles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Relabeling)
+
 An oriented rectangle between two grid states only records where the two states exchange rows,
 so it survives an arbitrary relabeling of the rows or of the columns: relabeling the rows keeps
 its side columns, while relabeling the columns renames them. This file packages these two

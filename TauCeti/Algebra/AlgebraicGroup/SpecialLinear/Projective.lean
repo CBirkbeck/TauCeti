@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Projective
 /-!
 # The projective special linear point functor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Projective)
+
 For positive `n`, the represented center of `SLₙ` maps isomorphically onto the ordinary center
 of its group of points. Consequently, its pointwise center quotient is Mathlib's projective
 special linear group `PSL(Fin n, A)` over every commutative value algebra `A`. This file proves

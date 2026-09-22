@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Map
 /-!
 # Base-point change for higher homotopy groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.BasepointChange)
+
 A path `γ` from `x` to `y` induces an isomorphism `π_n(X, x) ≃* π_n(X, y)`. This file proves
 it, in the form
 `TauCeti.homotopyGroupMulEquivOfPath : HomotopyGroup N X x ≃* HomotopyGroup N X y` for a finite

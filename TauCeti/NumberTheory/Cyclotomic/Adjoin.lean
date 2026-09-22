@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.Cyclotomic.Basic
 /-!
 # Adjoining roots of unity as an intermediate field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Cyclotomic.Adjoin)
+
 Adjoining one primitive `m`-th root of unity to `K` inside `M` gives the same intermediate field as
 adjoining all the `m`-th roots of unity.
 

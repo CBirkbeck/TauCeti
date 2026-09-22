@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Basic
 /-!
 # Joins of abstract simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Join)
+
 The join of complexes `K` and `L` has the disjoint sum of their vertex types as vertices. Its
 faces are the nonempty disjoint unions of a face of `K` and a face of `L`, allowing either side to
 be empty. This file constructs the join first for `PreAbstractSimplicialComplex` and then for

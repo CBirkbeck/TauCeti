@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Hom
 /-!
 # The projective q-Hom form of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.QHom)
+
 For a finite simple graph without isolated vertices, this file packages the homogeneous
 homomorphisms between zigzag vertex projectives into Laurent polynomials.  With the internal
 shift convention `M{d}_p = M_{p-d}`, the value

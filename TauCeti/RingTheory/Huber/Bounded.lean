@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Ring.Subring.Basic
 /-!
 # Bounded subsets of a topological ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Bounded)
+
 A subset `S` of a topological monoid with zero is *bounded* when every neighbourhood `U` of zero
 absorbs `S`: there is a neighbourhood `V` of zero with `V * S ⊆ U`. This is the notion of
 boundedness underlying Huber's theory of adic spaces (Wedhorn, *Adic Spaces*, Definition 5.27),

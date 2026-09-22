@@ -19,6 +19,8 @@ import TauCeti.Algebra.DualNumber.Basic
 /-!
 # `Extⁿ` over the dual numbers is free of rank one in every degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Ext.DualNumbers)
+
 Let `k` be a commutative ring, let `A = k[ε]` be the dual numbers `k[ε]/(ε²)`, and let `S = A/(ε)`
 be the residue module of `A` -- its residue field when `k` is a field -- viewed as an `A`-module
 through `TrivSqZeroExt.fstHom`. The multiplications

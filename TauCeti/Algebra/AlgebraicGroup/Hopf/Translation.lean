@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.Augmentation
 /-!
 # Translations of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.Translation)
+
 A `k`-point of an affine group acts on its coordinate algebra by translation. For a
 commutative Hopf algebra `H` over `k`, a point `g : H →ₐ[k] k` defines the algebra endomorphism
 

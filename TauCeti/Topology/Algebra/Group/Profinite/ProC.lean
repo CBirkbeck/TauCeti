@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.MaximalProP
 /-!
 # Pro-`C` groups and the pro-`C` completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProC)
+
 Let `C` be a class of finite groups, in the sense of `TauCeti.FiniteGroupClass`. A topological
 group is **pro-`C`** when each of its quotients by an open normal subgroup is a finite group in
 `C`. The **`C`-kernel** `proCKernel C G` is the intersection of the open normal subgroups whose

@@ -16,6 +16,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Principal
 /-!
 # The product formula for algebraic function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.ProductFormula)
+
 This file proves that the principal divisor of every nonzero function has degree zero.  More
 precisely, for a function `z` transcendental over `k`, both its zero divisor and its pole divisor
 have degree `[F : k(z)]`.  This is Stichtenoth, *Algebraic Function Fields and Codes*, 2nd ed.,

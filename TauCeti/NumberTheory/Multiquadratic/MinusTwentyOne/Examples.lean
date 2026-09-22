@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.GaloisGroup
 /-!
 # The `ℚ(√-21)` genus-field worked example
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusTwentyOne.Examples)
+
 The multiquadratic roadmap's genus-field worked example identifies the genus field of `ℚ(√-21)`
 as `ℚ(√-1, √-3, √-7)`, attached to the prime-discriminant list `[-4, -3, -7]` (recorded, with its
 arithmetic witnesses, in `TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Examples.Lists`).

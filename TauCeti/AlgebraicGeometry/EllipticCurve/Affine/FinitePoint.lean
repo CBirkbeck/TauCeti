@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 /-!
 # The affine points of a Weierstrass curve over a finite ring form a finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FinitePoint)
+
 `E(𝔽_q)` is finite. Mathlib does not have this, and it is needed before the count `#E(𝔽_q)` means
 anything: `Nat.card` reads `0` on an infinite type, so a statement like the Hasse bound is only the
 honest count when accompanied by finiteness.

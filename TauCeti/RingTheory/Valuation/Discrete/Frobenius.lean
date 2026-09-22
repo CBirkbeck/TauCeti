@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.Discrete.Order
 /-!
 # Orders of Frobenius powers under a discrete valuation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Discrete.Frobenius)
+
 Let `F` be a field of exponential characteristic `p`, and let `v : Valuation F ℤᵐ⁰`. Every
 element in the image of the `n`-fold Frobenius has order under `v` divisible by `p ^ n`: if
 `z = y ^ (p ^ n)`, then

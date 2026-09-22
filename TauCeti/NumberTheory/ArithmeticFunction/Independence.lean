@@ -12,6 +12,8 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 /-!
 # Multiplicative functions with a common prime-power recurrence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticFunction.Independence)
+
 A Hecke eigensystem is multiplicative and satisfies, at every prime `p`, the recurrence
 
 ```text

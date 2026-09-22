@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Basis.DiagonalTorus.Basic
 /-!
 # Weights of the split torus as characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.Weight)
+
 The character lattice of the rank-`σ` split torus is `σ →₀ ℤ`, while a weight of a
 representation written in a basis is an exponent vector `μ : σ → ℤ`, the datum
 `TauCeti.torusCharacter` evaluates at a point. For finite `σ` these are the same thing, and this

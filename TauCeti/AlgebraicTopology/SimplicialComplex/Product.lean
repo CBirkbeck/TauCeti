@@ -17,6 +17,8 @@ import Mathlib.Data.Set.Finite.Lattice
 /-!
 # Ordered products of abstract simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Product)
+
 The ordered product of two simplicial complexes is the standard staircase triangulation of their
 product. Its vertices are pairs of vertices. A finite set of pairs is a face when both coordinate
 projections are faces and the pairs form a chain for the coordinatewise order. The chain condition

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Representation
 /-!
 # The adjoint action on the cotangent-dual Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Adjoint.Cotangent)
+
 For a Hopf algebra with finite projective cotangent space, the adjoint point representation acts
 on scalar extensions of the cotangent dual. After the scalar-extension comparison, this action is
 convolution conjugation, so it preserves the Lie bracket.

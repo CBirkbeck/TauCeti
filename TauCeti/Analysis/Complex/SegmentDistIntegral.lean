@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 /-!
 # Negative powers of the distance to a point, integrated along a segment
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.SegmentDistIntegral)
+
 A function with an algebraic singularity at a point `p` is still integrable along a segment
 passing arbitrarily close to `p`, provided the exponent is larger than `-1`. This file proves
 the quantitative form of that statement in `ℂ`, for use in the Schwarz--Christoffel boundary

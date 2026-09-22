@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 /-!
 # Quadratic and matrix orthogonal groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.OrthogonalGroup.QuadraticForm)
+
 When multiplication by two is injective in the base ring, a linear automorphism preserves the
 standard quadratic form exactly when its matrix is orthogonal. Adding determinant one
 identifies the two special orthogonal groups. These criteria transfer quadratic-space results

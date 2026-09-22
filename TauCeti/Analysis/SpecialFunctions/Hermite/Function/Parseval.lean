@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Function.HilbertBasis
 /-!
 # Parseval and coordinates for the Hermite basis of `L²(ℝ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Parseval)
+
 `TauCeti.hermiteHilbertBasis` exhibits the Hermite functions as a Hilbert basis of `L²(ℝ; 𝕜)`.
 This file states the expansion identities that basis was built for, phrased in terms of the
 explicit vectors `TauCeti.hermiteFunctionLp` rather than the bundled basis, so that a consumer

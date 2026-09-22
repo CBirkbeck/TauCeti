@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 /-!
 # Absorption of fixed elements in a nonarchimedean ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Absorption)
+
 In a nonarchimedean ring multiplication by a fixed element `a` is continuous, so every
 neighbourhood `V` of zero absorbs `a`: some open additive subgroup `Z` satisfies `a * Z ⊆ V`.
 That single-element fact is Mathlib's `NonarchimedeanRing.left_mul_subset`. This file adds the

@@ -11,6 +11,8 @@ import Mathlib.Geometry.Manifold.VectorBundle.Tangent
 /-!
 # Regularity of tangent-bundle-valued maps and directional derivatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorField.Regularity)
+
 This file records reusable regularity facts for maps into a tangent bundle and for applying the
 manifold differential of a function to tangent vectors whose base point varies.
 

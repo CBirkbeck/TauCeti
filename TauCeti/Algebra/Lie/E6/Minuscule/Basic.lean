@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E6.Minus
 /-!
 # A 27-dimensional representation of the type-E6 Serre presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.Minuscule.Basic)
+
 This file constructs a 27-dimensional representation of the type-`E₆` Serre presentation. The
 coordinate basis is indexed by the Weyl orbit of the first fundamental weight enumerated by
 `TauCeti.DynkinType.e6MinusculeWeight`.

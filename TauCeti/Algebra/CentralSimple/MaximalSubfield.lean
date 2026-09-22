@@ -24,6 +24,8 @@ import TauCeti.Algebra.CentralSimple.Centralizer
 /-!
 # Maximal subfields of a central division algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.MaximalSubfield)
+
 Let `K` be a field and `D` a finite-dimensional central division algebra over `K`.
 `TauCeti/Algebra/CentralSimple/Subfield.lean` proves that a subfield of `D` has degree at most
 `TauCeti.Algebra.deg K D`, and that a subfield attaining that bound splits `D`; what it leaves

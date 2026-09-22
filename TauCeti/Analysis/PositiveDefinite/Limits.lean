@@ -14,6 +14,8 @@ import Mathlib.Topology.Order.OrderClosed
 /-!
 # Limits of positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Limits)
+
 This file derives pointwise- and locally-uniform-limit closure for
 `TauCeti.IsPositiveDefinite`, the positive-definite function predicate on an involutive additive
 monoid, from Mathlib's closedness theorem for the cone of positive-semidefinite matrices.

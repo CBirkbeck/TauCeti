@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.LocalizationAtPrime
 /-!
 # Global and semi-global minimal Weierstrass equations over a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.GlobalMinimalModel)
+
 Mathlib's `WeierstrassCurve.IsMinimal R W` minimises a Weierstrass equation over one discrete
 valuation ring `R` at a time. Over the fraction field `K` of a Dedekind domain `O` — a number field
 and its ring of integers being the case that matters — the local rings are the localisations

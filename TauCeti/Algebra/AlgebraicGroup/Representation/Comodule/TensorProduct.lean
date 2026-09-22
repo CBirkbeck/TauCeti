@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.TensorProduct
 /-!
 # Tensor products of point representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.TensorProduct)
+
 This file synchronizes tensor-product operations across the fixed-object correspondence between
 point representations of an affine group and comodules over its commutative Hopf algebra.
 

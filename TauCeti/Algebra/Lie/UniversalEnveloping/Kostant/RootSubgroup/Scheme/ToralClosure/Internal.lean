@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Internal generator family for Kostant toral closures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.Internal)
+
 This module contains the shared implementation of the coordinate-map family used to construct
 both the full Kostant toral closure and its selected-root subsystems. It is internal plumbing;
 public users should use the characterized defining ideals and factorization maps instead.

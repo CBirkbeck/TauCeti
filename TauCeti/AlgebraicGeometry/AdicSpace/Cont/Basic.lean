@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Valuation.Continuous.Basic
 /-!
 # The space `Cont A` of continuous valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.7 and Remark 7.9.**
 
 `Cont A` is the subspace of `Spv A` cut out by continuity. Wedhorn defines it in one line —

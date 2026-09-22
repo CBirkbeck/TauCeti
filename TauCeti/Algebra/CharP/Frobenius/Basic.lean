@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.Units.Hom
 /-!
 # Iterated Frobenius on units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CharP.Frobenius.Basic)
+
 Let `A` be a commutative semiring of exponential characteristic `p`. The `p ^ n`-power Frobenius
 `iterateFrobenius A p n` is a ring homomorphism, so it acts on the units of `A` through
 `Units.map`, and that action is the `p ^ n`-th power map. This file records that, pointwise and

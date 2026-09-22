@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Convex.ConvexSpace.Barycenter
 /-!
 # Barycenters of faces under maps of vertices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.ConvexSpace.Barycenter)
+
 Mathlib's `Convexity.StdSimplex.subBarycenter S hS` is the barycenter of the face of a standard
 simplex spanned by a nonempty finite set `S` of vertices. This file records that an injective map
 of vertices, acting on the standard simplex by `Convexity.StdSimplex.map`, sends the barycenter of

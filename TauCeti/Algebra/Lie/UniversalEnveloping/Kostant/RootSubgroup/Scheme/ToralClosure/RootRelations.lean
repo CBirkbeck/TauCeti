@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Chevalley relations in the toral Kostant group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.RootRelations)
+
 The represented root subgroups first generate a closed group scheme inside `GLₙ`, and that
 root-generated carrier includes as a closed subgroup of the larger carrier generated jointly by
 the root subgroups and the represented weight torus. This file transports the intrinsic Chevalley

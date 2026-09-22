@@ -14,6 +14,8 @@ import TauCeti.FieldTheory.Galois.FixedField
 /-!
 # The fixed field of a finite group of translations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Translation.FixedField)
+
 The point group of an elliptic curve `W` over `F` acts faithfully on the function field `F(W)` by
 the pullbacks `τ_P^*` of the translations `τ_P : Q ↦ Q + P`. This file develops the Galois theory
 of that action: a subgroup `Φ` of points gives a group `translationSubgroup` of `F`-algebra

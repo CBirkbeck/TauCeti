@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Complex.Basic
 /-!
 # Reparametrization invariance of the contour integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.Reparam)
+
 A contour integral `∫ t in a..b, deriv γ t • f (γ t)` is unchanged when the curve `γ` is
 precomposed with a `C¹` change of parameter `φ`, the parameter interval `[[a, b]]` being replaced
 by `[[φ a, φ b]]`. This file proves that invariance, together with the chain rule for the

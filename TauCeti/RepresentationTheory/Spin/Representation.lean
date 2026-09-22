@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.ExteriorAlgebra.End
 /-!
 # The Spin-group representation on the exterior model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Representation)
+
 This file restricts the Fock action of a Clifford algebra to its Spin group and to its even
 subalgebra, and proves, when the first isotropic summand is finite free, that the underlying
 Clifford action generates every endomorphism of the exterior model.

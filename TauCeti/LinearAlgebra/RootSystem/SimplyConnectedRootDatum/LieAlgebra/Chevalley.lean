@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgeb
 /-!
 # Chevalley systems for the pinned rational Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgebra.Chevalley)
+
 The signed Geck involution exchanges the simple raising and lowering generators of the pinned
 Lie-algebra basis. The generic base-square propagation theorem therefore constructs a Chevalley
 system over `ℚ` itself; no extension to an algebraic closure is needed for this choice. This does

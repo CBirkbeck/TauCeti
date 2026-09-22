@@ -12,6 +12,8 @@ import TauCeti.Algebra.Coalgebra.Basic
 /-!
 # The additive group is not linearly reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.LinearlyReductive)
+
 Over any field the additive group `𝔾ₐ` is unipotent in the strong sense that every nonzero
 comodule over its coordinate algebra `k[x]` contains a nonzero fixed vector
 (`TauCeti.AdditiveGroup.exists_ne_zero_coact_eq_tmul_one`, Kolchin's theorem for `𝔾ₐ`, which needs

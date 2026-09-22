@@ -15,6 +15,8 @@ import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Algebraically closed points of faithfully flat algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.FiniteType.FaithfullyFlatPoints)
+
 Let `K` be an algebraically closed field over a commutative ring `k`, and let `f : A →ₐ[k] B`
 be faithfully flat and of finite type. Every `K`-point of `A` lifts to a `K`-point of `B`.
 

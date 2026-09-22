@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Index
 /-!
 # Finiteness of the double-coset quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Finite)
+
 A double coset `HgK` is a union of left cosets of `K`, so the double cosets `H \ G / K` are a
 quotient of `G ⧸ K`: the map `gK ↦ HgK` is well defined and surjective
 (`TauCeti.doubleCosetMk_out_mk` is the well-definedness, in the form the surjection uses).

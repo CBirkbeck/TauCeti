@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.ObjectProperty.Retract
 /-!
 # Relative projectives in an exact category, and the horseshoe lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Projective)
+
 Let `E` be a Quillen exact structure on an additive category `C`. An object `Q` is
 *`E`-projective* when every morphism out of `Q` lifts along every deflation of `E`. This is the
 relative notion Bühler uses: it depends on the exact structure, not just on the category. For

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.End.Prod
 /-!
 # Products of multiplicative Jordan decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.JordanChevalley.Prod)
+
 Semisimple and unipotent linear automorphisms are preserved by componentwise products.  On
 finite-dimensional modules over a perfect field, the multiplicative Jordan decomposition of a
 product automorphism is therefore computed componentwise.

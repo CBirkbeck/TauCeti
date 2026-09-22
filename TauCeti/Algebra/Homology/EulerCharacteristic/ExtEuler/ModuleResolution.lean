@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Resolution
 /-!
 # Ext-Euler admissibility from module resolutions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.ModuleResolution)
+
 This file specializes the finite-projective-resolution criterion for Ext-Euler admissibility to
 finitely generated modules over a finite-dimensional algebra.
 

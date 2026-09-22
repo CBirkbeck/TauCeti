@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.SU2.Weyl.Basic
 /-!
 # Every element of `SU(2)` is conjugate into the maximal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.TorusConjugacy)
+
 The maximal torus `T` of `SU(2)` built in `TauCeti/RepresentationTheory/SU2/Basic.lean` meets
 every conjugacy class: for every `g : SU(2)` there is `u : SU(2)` with `u g u⁻¹ ∈ T`. This is the
 torus-conjugacy input the compact-group roadmap asks for before the classification of the

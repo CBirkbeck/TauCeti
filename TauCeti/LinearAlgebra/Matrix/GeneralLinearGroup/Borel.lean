@@ -24,6 +24,8 @@ import Mathlib.Algebra.GroupWithZero.Units.Fintype
 /-!
 # The Borel subgroup of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Borel)
+
 The **Borel subgroup** `B` of `GL₂` is the `Fin 2` specialization of
 `TauCeti.upperTriangularGroup`, the subgroup of invertible upper-triangular matrices. It is the
 standard minimal parabolic: over a finite field it is the subgroup from which the principal

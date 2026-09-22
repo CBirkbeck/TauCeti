@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Reduced
 /-!
 # Unipotence of affine group images
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Unipotent)
+
 For a morphism `f : H ⟶ K` of commutative Hopf algebras, its scheme-theoretic image has coordinate
 algebra
 `CommHopfAlgCat.image f = H / ker f`; finite type of `K` makes the canonical inclusion

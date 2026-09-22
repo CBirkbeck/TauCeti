@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Complex.Basic
 /-!
 # Estimates near an isolated zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.IsolatedZero)
+
 A lower bound on a circle around a point at whose centre the function has its only zero, and two
 ways of concluding that the analytic order at a point is finite.
 

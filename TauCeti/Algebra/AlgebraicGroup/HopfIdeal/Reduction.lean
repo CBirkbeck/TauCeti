@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Reduction
 /-!
 # The reduced quotient of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Reduction)
+
 This file packages the quotient by the generic nilradical Hopf ideal from
 `TauCeti.Algebra.HopfAlgebra.HopfIdeal.Reduction` as a commutative Hopf-algebra object and records
 that its underlying coordinate ring is reduced.

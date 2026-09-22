@@ -22,6 +22,8 @@ import TauCeti.Algebra.Lie.Weights.Basic
 /-!
 # The formal character of a finite-dimensional Lie module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.FormalCharacter)
+
 Let `L` be a nilpotent Lie algebra over a field `K` acting on a finite-dimensional module `M` with
 linear weights. The **formal character** of `M` is the multiplicity function `χ ↦ dim Mχ`, recorded
 as an element of the integral group algebra `ℤ[Module.Dual K L]` of the dual of `L`: it is the

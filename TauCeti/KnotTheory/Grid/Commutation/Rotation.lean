@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Rotation
 /-!
 # Rotation and grid commutation arcs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Rotation)
+
 This file records how the row and column arcs used in grid commutation hypotheses transform
 under the half-turn rotation of a grid diagram. The commutation API in
 `TauCeti.KnotTheory.Grid.Commutation.Basic` defines the oriented vertical and horizontal arcs from

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Comap
 /-!
 # Conjugation of closed subgroup schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Conjugation)
+
 A rational point of an affine group conjugates its closed subgroup schemes. In Hopf coordinates,
 closed subgroups are represented contravariantly by Hopf ideals, so conjugating an ideal means
 taking its inverse image under the coordinate automorphism of point conjugation.

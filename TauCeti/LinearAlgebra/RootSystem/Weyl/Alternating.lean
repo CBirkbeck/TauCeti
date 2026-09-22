@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Numerator
 /-!
 # Alternating elements of the group algebra of a weight space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Alternating)
+
 An element `f` of the integral group algebra `ℤ[M]` of the weight space of a root pairing is
 **alternating** for the dot action when its coefficients transform by the sign character,
 

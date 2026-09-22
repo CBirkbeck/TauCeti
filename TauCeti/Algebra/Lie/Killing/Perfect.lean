@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # A Lie algebra with nondegenerate Killing form is perfect
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Killing.Perfect)
+
 A finite-dimensional Lie algebra `L` whose Killing form `κ` is nondegenerate satisfies
 `⁅L, L⁆ = L`. The proof is a two-line use of the invariance `κ ⁅x, y⁆ z = κ x ⁅y, z⁆`: a linear
 form vanishing on the derived ideal is `κ x` for a unique `x`, and then `κ ⁅x, y⁆ z = κ x ⁅y, z⁆`

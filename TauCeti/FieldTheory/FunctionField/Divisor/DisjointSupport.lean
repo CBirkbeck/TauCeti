@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Divisor.Principal
 /-!
 # Moving a divisor within its class to avoid finitely many places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.DisjointSupport)
+
 Every divisor class of an algebraic function field contains a representative whose support misses
 any prescribed finite set of places:
 

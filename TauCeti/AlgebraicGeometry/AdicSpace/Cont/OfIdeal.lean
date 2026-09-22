@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 /-!
 # Continuous points in `Spv (A, I)`: Wedhorn's Theorem 7.10 and Corollary 7.12
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Cont.OfIdeal)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Theorem 7.10 and Corollary 7.12.**
 
 Theorem 7.10 identifies `Cont A` inside `Spv (A, IA)` for a pair of definition `(A₀, I)`, as the

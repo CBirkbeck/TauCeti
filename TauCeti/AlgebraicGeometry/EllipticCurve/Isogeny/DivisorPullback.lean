@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.Divisor.Conorm
 /-!
 # Pulling a divisor back along an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.DivisorPullback)
+
 An isogeny embeds `F(W₂)` in `F(W₁)` as a finite extension, and the conorm of that extension is
 the pullback of divisors: the coefficient of `φ* D` at a place `P'` is `e(P' ∣ P)` times the
 coefficient of `D` at the place below it. Nothing about curves enters beyond the embedding being

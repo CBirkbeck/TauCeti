@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Deriv
 /-!
 # Regularity of solutions to first-order ODEs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.ODE.Regularity)
+
 This file contains the basic regularity theorem that a solution of a first-order equation gains one
 derivative over a right-hand side that is already differentiable on its range.
 -/

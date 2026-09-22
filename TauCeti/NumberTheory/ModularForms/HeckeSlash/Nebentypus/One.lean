@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.CharRing
 /-!
 # The identity double coset acts as the identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.One)
+
 `Nebentypus/CharRing.lean` extends the twisted slash sum `ℤ`-linearly over the Hecke ring, giving
 `twistedHeckeSlashRingCharLinearMap`. This file evaluates that extension at `1`.
 

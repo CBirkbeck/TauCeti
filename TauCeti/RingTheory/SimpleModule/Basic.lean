@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.SimpleModule.Basic
 /-!
 # Semisimple modules: binary products and endomorphisms between elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.SimpleModule.Basic)
+
 Mathlib closes `IsSemisimpleModule` under submodules, quotients, `Finsupp`, and finite dependent
 products `Π i, M i`. The dependent product covers a binary product only when both factors lie in
 the same universe, since the family `M : ι → Type u` is universe-monomorphic; this file supplies

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Holder.Basic
 /-!
 # The Banach space of global Hölder functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Holder.Normed)
+
 This file equips bounded continuous Hölder functions with the norm
 
 `‖f‖_[C^α] = ‖f‖_∞ + [f]_α`

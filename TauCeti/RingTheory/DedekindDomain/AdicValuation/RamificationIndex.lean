@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeExtension
 /-!
 # The local ramification index of a completion is the global one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.RamificationIndex)
+
 Let `R ⊆ B` be Dedekind domains with fraction fields `K ⊆ L`, and let `w` be a height-one prime
 of `B` lying over the height-one prime `v` of `R`, both with finite residue fields. The
 completions `K_v` and `L_w` are nonarchimedean local fields, and the canonical continuous map

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # Cofree comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Cofree)
+
 For an `R`-coalgebra `C` and an `R`-module `M`, the tensor product `M ⊗[R] C` carries a right
 `C`-comodule structure whose coaction is `id ⊗ Δ` followed by reassociation,
 `m ⊗ c ↦ ∑ (m ⊗ c₁) ⊗ c₂`. This is the **cofree** (or coinduced) right comodule on `M`: it is

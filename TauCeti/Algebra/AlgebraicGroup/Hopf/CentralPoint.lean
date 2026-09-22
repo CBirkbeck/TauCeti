@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Convolution
 /-!
 # Central points of an affine group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.CentralPoint)
+
 Let `H` be a commutative bialgebra over `R`, so that `A ↦ (H →ₐ[R] A)` is the functor of points
 of the affine monoid scheme `Spec H`, a group functor when `H` is a Hopf algebra. A point
 `g : H →ₐ[R] A` is **central** when its image in `G(B)` commutes with *every* `B`-point of `G`,

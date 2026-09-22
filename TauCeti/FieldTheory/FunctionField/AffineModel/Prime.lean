@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.HolomorphyRing.Basic
 /-!
 # Affine models: the place of a height one prime, and the two-way correspondence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.AffineModel.Prime)
+
 An *affine model* of `F / k` is a Dedekind `k`-subalgebra `R` of `F` whose fraction field is `F`.
 `TauCeti/FieldTheory/FunctionField/AffineModel/Place.lean` sends a place of `F / k` that is finite
 on `R` to a height one prime of `R`, its centre. This file supplies the other direction: the

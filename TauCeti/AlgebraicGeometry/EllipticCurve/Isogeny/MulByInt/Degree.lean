@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfin
 /-!
 # The degree of multiplication by `n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Degree)
+
 **`deg [n] = n²`.** The degree of an isogeny is the degree of `F(W)` over the image of its
 function-field pullback — the pulled-back copy of the *target* function field. For `[n]` the
 target is `F(W)` again, and the pullback carries the affine coordinate `x` to `Φₙ / ΨSqₙ`. That

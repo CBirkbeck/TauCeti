@@ -12,6 +12,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Summing a product after transposing two indices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finset.Swap)
+
 `TauCeti.sum_mul_swap` compares `∑ k ∈ s, f k * g (Equiv.swap x y k)` with `∑ k ∈ s, f k * g k`:
 away from `x` and `y` the two sums agree termwise, so they differ only in that the terms
 `f x * g x` and `f y * g y` are replaced by `f x * g y` and `f y * g x`. The comparison is stated

@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Flat.Pi
 /-!
 # Faithful flatness of a finite product of ring homomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RingHom.FaithfullyFlat)
+
 A finite family of flat ring homomorphisms `f i : R →+* S i` combines into a faithfully flat ring
 homomorphism `RingHom.pi f : R →+* ∀ i, S i` as soon as every maximal ideal of `R` stays proper
 under some `f i`.

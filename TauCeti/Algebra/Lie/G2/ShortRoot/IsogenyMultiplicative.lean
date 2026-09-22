@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.G2.ShortRoot.SpecialIsogeny
 /-!
 # Multiplicativity of the type-G2 special isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.IsogenyMultiplicative)
+
 The `(i, j)` entry of `Matrix.g2SpecialIsogeny g` is a fixed linear functional applied to the
 congruence transform `g W gᵀ` of a fixed alternating matrix. Multiplicativity of the minor formula
 therefore asks that the seven alternating matrices `isogenySource` and the seven functionals

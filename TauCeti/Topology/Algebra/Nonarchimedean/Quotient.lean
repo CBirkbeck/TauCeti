@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Ring.Ideal
 /-!
 # A quotient of a nonarchimedean group is nonarchimedean
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Quotient)
+
 `NonarchimedeanGroup G` asks that every neighbourhood of `1` contain an *open subgroup*. That
 property passes to `G ⧸ N`, and the proof is the one-line reason it should: the quotient map is
 open, so it carries an open subgroup at `1` to one downstairs.

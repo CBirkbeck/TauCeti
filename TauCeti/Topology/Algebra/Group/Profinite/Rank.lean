@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Generation
 /-!
 # The topological generator rank of a profinite group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Rank)
+
 The **topological generator rank** `topologicalGeneratorRank G` of a topological group `G` is the
 least cardinality of a subset that converges to `1` and generates a dense subgroup. Convergence to
 `1` is not decoration: without it the invariant is the least cardinality of a dense subgroup, which

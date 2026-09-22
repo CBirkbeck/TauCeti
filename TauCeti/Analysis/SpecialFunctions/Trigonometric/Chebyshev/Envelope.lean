@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Function.BoundedSupportExponential
 /-!
 # The Chebyshev envelope functions as a Hilbert basis of `L²((-1, 1])`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Envelope)
+
 `TauCeti.chebyshevTHilbertBasis` carries the Chebyshev weight `(1-x²)^{-1/2}` in the *measure*: the
 bare normalized polynomials `Tₙ/√cₙ` are an orthonormal basis of `L²(measureT)`. This file supplies
 the other normalization, with the weight in the *function*: the envelope functions

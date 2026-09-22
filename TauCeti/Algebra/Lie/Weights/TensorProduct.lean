@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # Weight spaces of a tensor product of Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.TensorProduct)
+
 Let `L` be a nilpotent Lie algebra acting on two modules `M` and `N`. Then `L` acts on `M ⊗ N`, and
 this file computes the generalized weight spaces of that action: the `χ`-weight space of `M ⊗ N` is
 spanned by the pure tensors `m ⊗ₜ n` with `m` of weight `μ`, `n` of weight `ν` and `μ + ν = χ`.

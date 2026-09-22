@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicTopology.SimplicialSet.TopAdj
 /-!
 # Barycentric subdivision of singular chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.Basic)
+
 The barycentric subdivision of the standard `n`-simplex `Δⁿ` has one `n`-simplex for each
 permutation `π` of the vertices `{0, …, n}`: the affine simplex
 `StdSimplex.continuousAffineMapMk (BarycentricSubdivision.vertex π)` whose `k`-th vertex is the

@@ -12,6 +12,8 @@ import TauCeti.Analysis.Calculus.DSlope.Basic
 /-!
 # Rigidity in the Schwarz--Pick theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzPick.Rigidity)
+
 The Schwarz--Pick theorem (`TauCeti.pseudoHyperbolicExpr_map_le`) says a holomorphic self-map
 `f` of the open unit disc contracts the pseudo-hyperbolic expression
 `pseudoHyperbolicExpr z w = ‖(z - w) / (1 - conj w * z)‖`.  This file proves the **equality

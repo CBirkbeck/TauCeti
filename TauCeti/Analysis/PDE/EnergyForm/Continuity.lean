@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.EnergyForm.Linearity
 /-!
 # Continuity of pointwise PDE energy integrands in the coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Continuity)
+
 The finite-dimensional weak-form integrand
 `energyIntegrand A b c` is linear in the principal, drift, and mass coefficients.  This file
 bundles that linearity as continuous linear maps from coefficient spaces to spaces of

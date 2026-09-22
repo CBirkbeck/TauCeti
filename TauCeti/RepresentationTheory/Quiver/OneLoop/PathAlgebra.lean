@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # The path algebra of the one-loop quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.OneLoop.PathAlgebra)
+
 This file identifies the path algebra of the quiver `TauCeti.Quiver.OneLoop` with one vertex and
 one loop with the additive monoid algebra on `ℕ`, equivalently the polynomial algebra in one
 variable. It also shows that this path algebra is infinite-dimensional over a division ring.

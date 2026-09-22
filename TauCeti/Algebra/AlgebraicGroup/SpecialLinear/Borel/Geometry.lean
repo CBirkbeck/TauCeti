@@ -15,6 +15,8 @@ import TauCeti.Algebra.AlgebraicGroup.Solvable.Basic
 /-!
 # Geometry of the standard Borel subgroup of `SL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Borel.Geometry)
+
 The upper-triangular determinant-one subgroup of `SL₂` is smooth, geometrically connected, and
 geometrically solvable. Its coordinate algebra has the explicit presentation
 

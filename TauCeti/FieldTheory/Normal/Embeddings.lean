@@ -11,6 +11,8 @@ public import TauCeti.Algebra.GroupAction.AlgHom
 /-!
 # Embeddings into a normal extension, and the action on them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Normal.Embeddings)
+
 For fields `L` and `M` over a base `F`, the group `M ≃ₐ[F] M` acts on the embeddings
 `L →ₐ[F] M` by postcomposition (`TauCeti/Algebra/GroupAction/AlgHom.lean`). This file records
 the three facts that make that action a dictionary for the subfields of `L`.

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.RootSystem.GeckConstruction.Basic
 /-!
 # The Chevalley involution of Geck's Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.GeckConstruction.ChevalleyInvolution)
+
 Geck's construction realizes a reduced crystallographic root system as an explicit matrix Lie
 algebra. Mathlib supplies an involutive conjugation exchanging its simple raising and lowering
 generators, but that conjugation has the unsigned formulas `eᵢ ↦ fᵢ` and `fᵢ ↦ eᵢ`.

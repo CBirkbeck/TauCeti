@@ -13,6 +13,8 @@ import Mathlib.Algebra.Group.End
 /-!
 # Conjugation in Hopf-algebra coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.Conjugation)
+
 For a commutative Hopf algebra `H` over a commutative semiring `R`, this file constructs the
 algebra morphism `H →ₐ[R] H ⊗[R] H` representing the left conjugation action
 `(g, x) ↦ g * x * g⁻¹`. The first tensor factor is the conjugating variable and the second is

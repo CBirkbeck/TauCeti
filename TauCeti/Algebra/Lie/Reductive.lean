@@ -14,6 +14,8 @@ import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
 /-!
 # Reductive Lie algebras: the centre and the derived ideal span
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Reductive)
+
 A finite-dimensional Lie algebra `L` over a field of characteristic zero is **reductive** when its
 solvable radical is its centre, Mathlib's `LieAlgebra.HasCentralRadical`. This file proves that a
 reductive Lie algebra is spanned by its centre and its derived ideal,

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.Multiquadratic.Quadratic.Ramification
 /-!
 # The ordinary `2`-rank of a real quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.OrdinaryTwoRank)
+
 Let `K = ℚ(√d)` with `d > 0` squarefree, and let `D = ∏ P ∈ s, P` be the factorization of its
 fundamental discriminant into prime discriminants, so that `t = #s` rational primes ramify in `K`.
 Genus theory gives the narrow `2`-rank `2-rank Cl⁺(K) = t - 1`

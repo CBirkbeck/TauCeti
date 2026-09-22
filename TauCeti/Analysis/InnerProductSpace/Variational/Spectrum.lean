@@ -11,6 +11,8 @@ public import TauCeti.Analysis.InnerProductSpace.Variational.Fredholm
 /-!
 # The spectrum of a coercive variational problem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Variational.Spectrum)
+
 Let `B` be a bounded coercive bilinear form on a real Hilbert space `V` and let `J : V →L[ℝ] H`
 be a continuous linear map into a second real Hilbert space.  The **variational eigenvalue
 problem** attached to this pair asks for `κ : ℝ` and `u ≠ 0` with

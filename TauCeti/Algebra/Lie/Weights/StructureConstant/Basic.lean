@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Sl2System
 /-!
 # Structure constants of a normalised root-vector system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.StructureConstant.Basic)
+
 Let `x` be an `IsSl2System` in a finite-dimensional Lie algebra with non-degenerate Killing form.
 Thus `x α` is a root vector of `α`, and opposite root vectors are normalised by
 

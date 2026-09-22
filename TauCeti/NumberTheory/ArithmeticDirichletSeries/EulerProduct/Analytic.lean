@@ -15,6 +15,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # The analytic Euler product of an ideal arithmetic function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Analytic)
+
 `TauCeti.EulerProductData.normCoeff_eq_eulerProduct` identifies the norm coefficients of bundled
 Euler-product data with a formal Euler product, coefficient by coefficient. This file supplies the
 analytic statement it does not: where the Dirichlet series indexed by the nonzero ideals converges

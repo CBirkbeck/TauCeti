@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Constructions.Pi
 /-!
 # The almost-everywhere view of a graphon
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.AEEqFun)
+
 A graphon is carried as a *strict* function `W : Ω → Ω → ℝ`, symmetric and `[0, 1]`-valued at every
 point.  This file is the single place where the almost-everywhere picture enters: it sends a
 graphon to its class `Graphon.toAEEqFun W : (Ω × Ω) →ₘ[μ ⊗ μ] ℝ` in Mathlib's `AEEqFun`, proves

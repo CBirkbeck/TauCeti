@@ -30,6 +30,8 @@ public import TauCeti.LinearAlgebra.Matrix.TensorProduct
 /-!
 # Brauer equivalence: bundling central simple algebras, matrices, and the tensor product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.Basic)
+
 Two finite-dimensional central simple `K`-algebras are **Brauer equivalent** when they become
 isomorphic after passing to matrix algebras over them: `IsBrauerEquivalent A B` is Mathlib's
 `∃ n m ≠ 0, Mₙ(A) ≃ₐ[K] Mₘ(B)`. Mathlib defines this relation, checks that it is an equivalence
@@ -122,7 +124,10 @@ namespace CSA
 Mathlib's `CSA K` carries its algebra as an `AlgCat K` together with three instance fields; this
 is the constructor turning the unbundled hypotheses used everywhere else into that bundling. It is
 an `abbrev` so that the carrier of `TauCeti.CSA.of K A` is reducibly `A`, and instances stated for
-`A` are found for it. -/
+`A` are found for it.
+
+Tested by: 5 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.CSA.of) -/
 abbrev of (A : Type v) [Ring A] [Algebra K A] [Algebra.IsCentral K A] [IsSimpleRing A]
     [FiniteDimensional K A] : CSA.{u, v} K where
   toAlgCat := AlgCat.of K A

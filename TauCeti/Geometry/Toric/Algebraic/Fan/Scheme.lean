@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Toric.Algebraic.FaceLocalization
 /-!
 # The toric scheme of a regular fan
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Fan.Scheme)
+
 The affine toric schemes of the cones of a fan form a diagram indexed by the cones ordered by
 inclusion: an inclusion `τ ≤ σ` of cones of a fan is a face inclusion, and it acts by the face
 morphism from the affine toric scheme of `τ` to that of `σ`. When the fan is regular every face

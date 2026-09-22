@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.IndexNormal
 /-!
 # Inducing a linear character from an inverted subgroup of index two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.IndexTwo)
+
 Let `N` be a subgroup of index two in a finite group `G` -- so `N` is normal -- and suppose a
 single element `s` outside `N` conjugates `N` by inversion, `s * x * s⁻¹ = x⁻¹`.  That hypothesis
 already forces every element outside `N` to conjugate by inversion as well

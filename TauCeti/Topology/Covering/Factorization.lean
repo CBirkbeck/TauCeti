@@ -11,6 +11,8 @@ public import Mathlib.Topology.Covering.Basic
 /-!
 # A map of covering spaces with locally connected target is a covering map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Factorization)
+
 Let `p : E → X` and `q : F → X` be covering maps and let `g : E → F` be a continuous map over
 `X`, that is, `q ∘ g = p`. This file proves that `g` is itself a covering map as soon as `F` is
 locally connected.

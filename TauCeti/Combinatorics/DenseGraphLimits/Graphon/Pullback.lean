@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.Graphon.Basic
 /-!
 # Reading a graphon on another carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Graphon.Pullback)
+
 A graphon on `(Ω, μ)` may be read on any other probability space through a measurable map
 `f : Ω' → Ω`, by evaluating it at the images of both arguments:
 `W.comap f hf μ' x y = W (f x) (f y)`. Symmetry, measurability and the `[0, 1]` range all survive,

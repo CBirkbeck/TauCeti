@@ -12,6 +12,8 @@ import TauCeti.Algebra.Group.Units.Basic
 /-!
 # Square-class independence as `ZMod 2`-linear independence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.SquareClass.Independence)
+
 The multiquadratic degree theorem `TauCeti.Multiquadratic.finrank_adjoin_range` takes the
 **square-class independence** hypothesis in the elaboration-friendly *Finset form*: no nonempty
 subset product `∏_{i ∈ S} d i` of the radicands is a square in `K`. The Galois-theoretic

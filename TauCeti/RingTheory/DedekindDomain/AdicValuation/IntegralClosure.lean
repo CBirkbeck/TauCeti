@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeExtension
 /-!
 # The completed integer rings are an integral closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.IntegralClosure)
+
 Let `R ⊆ B` be Dedekind domains with fraction fields `K ⊆ L`, and let `w` be a height-one prime of
 `B` lying over the height-one prime `v` of `R`, both with finite residue fields. The completions
 `K_v` and `L_w` are then nonarchimedean local fields and the canonical map `K_v → L_w` makes `L_w`

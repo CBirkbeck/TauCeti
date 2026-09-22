@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.IntegralModel
 /-!
 # Local obstruction exponents of Weierstrass equations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.ObstructionExponent)
+
 Let `O` be a Dedekind domain with fraction field `K`, let `v` be a height-one prime of `O`, and
 let `W` be an elliptic Weierstrass equation over `K`. The **local obstruction exponent** is
 

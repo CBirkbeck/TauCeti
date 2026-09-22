@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 /-!
 # Dirac measures and their pushforwards
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Dirac)
+
 Mathlib's `MeasureTheory.Measure.map_dirac'` computes `(Measure.dirac x).map T = Measure.dirac
 (T x)` for a measurable `T`. A Dirac measure leaves a map no room to be modified on a null set:
 its only null sets avoid `x`, so a `Measure.dirac x`-a.e. measurable map already agrees at `x`

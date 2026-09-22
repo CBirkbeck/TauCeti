@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.DoubleCoset
 /-!
 # Generation from two double cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Generation)
+
 If every element outside a subgroup `B` lies in one double coset `B w B`, then `B` and `w`
 generate the ambient group. When that group is nonsolvable, every solvable subgroup containing
 `B` is therefore equal to `B`.

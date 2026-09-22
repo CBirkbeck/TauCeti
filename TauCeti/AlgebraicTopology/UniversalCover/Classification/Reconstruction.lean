@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.Monodromy.Basic
 /-!
 # Reconstructing a connected cover from a fundamental-group action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Reconstruction)
+
 Let `A` be a `π₁(X, x₀)`-set and choose `a : A`. The stabilizer of `a` is a subgroup of the
 fundamental group, so the universal-cover quotient by that stabilizer is a connected covering
 space of `X`. Its fibre over `x₀` is equivariantly equivalent to the orbit of `a`, hence to `A`

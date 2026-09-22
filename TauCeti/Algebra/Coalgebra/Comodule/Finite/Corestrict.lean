@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Basic
 /-!
 # Corestriction of finitely generated comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Corestrict)
+
 This file lifts corestriction along a coalgebra morphism from all right comodules to the full
 subcategory of finitely generated right comodules. Since corestriction changes only the target
 coalgebra of the coaction and leaves the underlying module unchanged, finite generation is

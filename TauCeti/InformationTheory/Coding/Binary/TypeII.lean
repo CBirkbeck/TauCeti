@@ -12,6 +12,8 @@ import Mathlib.RingTheory.RootsOfUnity.Complex
 /-!
 # Type II binary codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.TypeII)
+
 A Type II binary code is a doubly-even Euclidean self-dual code. Its length is divisible
 by eight. The two weight-enumerator symmetries underlying this restriction are the
 MacWilliams substitution and invariance under multiplying the second variable by `I`.

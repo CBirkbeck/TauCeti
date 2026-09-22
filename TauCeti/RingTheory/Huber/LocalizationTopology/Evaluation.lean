@@ -21,6 +21,8 @@ import TauCeti.Topology.Algebra.GroupCompletion
 /-!
 # Evaluating `A⟨X₁, …, Xₖ⟩` at the fractions of a rational localisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Evaluation)
+
 For numerators `t₁, …, tₖ` drawn from `T`, this file constructs the continuous `A`-algebra map
 
 ```text

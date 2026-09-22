@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Rep.OfMulAction
 /-!
 # Induction and coinduction from the trivial subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.TrivialSubgroup)
+
 For a group `G` and a `k`-module `X`, the representation coinduced from the trivial subgroup,
 `coindBot k G X = Coind_⊥^G X`, is the module of functions `G → X` with `G` acting by right
 translation, `(g • f) h = f (h * g)`, and the representation induced from the trivial subgroup,

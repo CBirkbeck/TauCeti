@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.Group.Conjugation
 /-!
 # Precomposition with inversion on `Lp` of a group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.Inversion)
+
 A measure on a type with involutive inversion that is invariant under inversion — normalized Haar
 measure on a compact group, for instance — makes `g ↦ g⁻¹` measure preserving, so precomposition
 with it is a linear isometric equivalence of `Lp E p μ`. Inversion is an involution, so this

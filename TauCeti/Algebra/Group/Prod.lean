@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Group.Prod
 /-!
 # Homomorphisms out of a product of monoids
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Prod)
+
 A product of two monoids is their coproduct in commutative monoids: a homomorphism
 `M × N →* P` with `P` commutative is the same data as a pair of homomorphisms `M →* P` and
 `N →* P`, recovered by restricting along the two inclusions. Mathlib has the two directions

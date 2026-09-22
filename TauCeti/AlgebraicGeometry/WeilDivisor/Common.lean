@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Subtraction
 /-!
 # Common parts of fixed-degree effective Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Common)
+
 This file packages the pointwise minimum of two effective fixed-degree Weil divisors as their
 common effective part.  If `D` and `E` are effective divisors, `D ⊓ E` is the largest divisor
 lying below both.  Removing it from `D` and from `E` gives two residual effective divisors with

@@ -14,6 +14,8 @@ public import Mathlib.Tactic.NoncommRing
 /-!
 # Polynomials from a list of coefficients, and division by a monic polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.CoeffList)
+
 `Polynomial` is a `Finsupp`, so none of its arithmetic reduces in the kernel.  A polynomial
 presented instead by the list of its coefficients does compute, and this file sets up the
 translation, together with the one algorithm a computation on such lists needs: division by a

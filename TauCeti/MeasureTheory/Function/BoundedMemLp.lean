@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
 /-!
 # `Lᵖ` membership of a bounded observable of an a.e.-measurable map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.BoundedMemLp)
+
 On a finite measure space, a bounded measurable observable of an a.e.-measurable map lies in every
 `Lᵖ`.  This is the pointwise composition fact underlying the bounded-observable entry point to the
 L² lane of the Exchangeability roadmap; it carries no probabilistic content and applies to a single

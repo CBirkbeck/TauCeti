@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Binomial
 /-!
 # Polynomial evaluation across a semiconjugacy relation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Semiconj)
+
 If `a * x = x * (a + c)` and `c` commutes with `x`, then moving a polynomial in `a` past
 `x ^ n` shifts its argument by `n • c`:
 

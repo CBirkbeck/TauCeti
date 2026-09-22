@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.FiniteOrder
 /-!
 # Graphon mixtures of exchangeable graph laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Mixture)
+
 A probability measure `P` on graphon space describes a two-stage random graph: first draw a graphon
 class `⟦W⟧ ∼ P`, then sample `G(k, W)`. This file makes that construction precise and packages
 its marginals as an exchangeable graph law, the *object direction* of the Diaconis–Janson

@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.GroupAction.Transitive
 /-!
 # Point stabilizers of the Galois action on the roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Stabilizer)
+
 Let `p` be a polynomial over a field `F` and let `L = p.SplittingField`. The Galois group
 `Polynomial.Gal p` acts on `p.rootSet L`, and this file identifies the stabilizer of a root `x`
 with a relative Galois group: it is the subgroup of `p.Gal` fixing the simple extension `F⟮x⟯`

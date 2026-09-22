@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Algebra.Spectrum.Basic
 /-!
 # `1 + a * b` is a unit exactly when `1 + b * a` is
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Ring.Units)
+
 In a ring, possibly noncommutative, the two products `a * b` and `b * a` are generally unrelated,
 but `1 + a * b` and `1 + b * a` are invertible together. This is the elementwise shadow of the
 fact that `a * b` and `b * a` have the same spectrum away from `0`, and it is the mechanism behind

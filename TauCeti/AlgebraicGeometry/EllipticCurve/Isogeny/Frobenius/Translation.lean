@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.GenericPoint
 /-!
 # Translation moves the tautological point of Frobenius by the translating point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Translation)
+
 Translating by a rational point `P` sends the generic point `g` to `g + P`. The tautological point
 of the Frobenius isogeny is `g` pushed along the `q`-power map, and that map commutes with
 translation and fixes `P`, whose coordinates lie in the base field. So the tautological point of

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Norm.Basic
 /-!
 # Quadratic conjugation acts on the class group by inversion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.ClassGroup)
+
 For a quadratic number field `K = ℚ(√d)`, `NumberField.ringOfIntegersQuadraticConj` is the
 ring automorphism `σ : 𝓞 K ≃+* 𝓞 K` restricting field conjugation. This file records that its
 induced action on the class group `Cl(𝓞 K)` is an involution, sharpens that to **inversion** (the

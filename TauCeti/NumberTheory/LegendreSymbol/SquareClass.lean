@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 /-!
 # Legendre symbols and square-class changes of radicand
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LegendreSymbol.SquareClass)
+
 Replacing an integer `a` by `a * u ^ 2`, with `p ∤ u`, changes neither whether `p` divides it
 nor its Legendre symbol modulo `p`. This file records that elementary single-variable API:
 the positive divisibility equivalence `dvd_mul_sq_iff` and its negation `not_dvd_mul_sq_iff`,

@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Module.Normalize
 /-!
 # Local separation from a closed subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Subgroup.LocalSeparation)
+
 Let `K` be a closed subgroup of a finite-dimensional Lie group, and let `M` be a linear subspace
 of its Lie algebra which is disjoint from `lieSubalgebraOfSubgroup K`. Then the only sufficiently
 small `X ∈ M` whose exponential lies in `K` is `0`.

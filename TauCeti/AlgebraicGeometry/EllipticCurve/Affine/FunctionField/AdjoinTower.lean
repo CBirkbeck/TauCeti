@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.IntermediateField.ExtendRight
 /-!
 # The tower `K⟮g⟯ ⊆ K(x) ⊆ K(W)` over an arbitrary generator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.AdjoinTower)
+
 For a rational function `g`, the subfield `K⟮g⟯` of `K(x)` has a copy inside the function field
 `K(W)` of a Weierstrass curve. This file computes the two degrees of the resulting tower in terms
 of the single input `[K(x) : K⟮g⟯]`: the inner storey contributes that degree, the outer storey

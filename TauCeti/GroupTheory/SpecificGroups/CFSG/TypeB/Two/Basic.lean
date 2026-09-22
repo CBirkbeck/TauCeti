@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.RootLength
 /-!
 # The two families on the rank-two diagram `B₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Two.Basic)
+
 Two classification-list families are built on the rank-two diagram `B₂`: the untwisted `B₂(q)` and
 the Suzuki family `²B₂(2^(2m+1))`. They share a diagram, so they share a carrier, and
 `TauCeti.RankTwoBLieIndex` is the subtype that collects exactly them. This file supplies, for every

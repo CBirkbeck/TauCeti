@@ -17,6 +17,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 /-!
 # The coordinate pullback of multiplication by `n`, for every nonzero `n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Basic)
+
 `Isogeny/Basic.lean` gives the identity coordinate pullback and `Isogeny/Frobenius/Basic.lean` gives
 the Frobenius one. This file gives `[n]`: multiplication by `n` pulls back to a map
 `W.CoordinateRing →ₐ[F] W.FunctionField` wherever `ψₙ` does not vanish at the generic point.

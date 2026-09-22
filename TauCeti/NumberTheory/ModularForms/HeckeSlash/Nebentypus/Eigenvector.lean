@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
 /-!
 # Fourier coefficients of a Hecke-ring eigenvector at the good primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Eigenvector)
+
 Let `F ∈ M_k(N, χ)` (or `S_k(N, χ)`) be an eigenvector of the `Γ₀(N)` Hecke-ring generator at a
 prime `p ∤ N`, acting through `heckeRingHomCharSpace` (`heckeRingHomCuspCharSpace`), with
 eigenvalue `c`. Through the identification of that generator with the classical `T_p`

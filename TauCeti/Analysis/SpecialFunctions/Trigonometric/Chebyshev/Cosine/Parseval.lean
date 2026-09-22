@@ -12,6 +12,8 @@ public import TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Parseval
 /-!
 # Parseval and expansions for the Chebyshev cosine Hilbert basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Cosine.Parseval)
+
 `TauCeti.chebyshevCosineHilbertBasis` exhibits the normalized cosines
 `cos (nθ) / √cₙ` (where `c₀ = π` and `cₙ = π / 2` for `n ≠ 0`) as a Hilbert basis of
 `L²((0, π]; dθ)` on the angular interval `TauCeti.chebyshevAngleMeasure`, obtained by transporting

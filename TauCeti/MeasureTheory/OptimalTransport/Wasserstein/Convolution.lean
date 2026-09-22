@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # The Wasserstein distance under convolution and translation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Convolution)
+
 Convolving two laws with a common probability law does not increase their Wasserstein distance:
 on an additive monoid whose extended distance is invariant under right addition,
 

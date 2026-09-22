@@ -15,6 +15,8 @@ import Mathlib.Algebra.Order.Floor.Ring
 /-!
 # Finite weight vectors in `ℝ≥0∞`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ENNReal.Weights)
+
 A *weight vector* on a `Finset s` is a function `f : X → ℝ≥0∞` with `∑ x ∈ s, f x = 1`; the
 weights of a probability measure on its finite carrier are the motivating example.  This file
 records the arithmetic of comparing two weight vectors, and of rounding one onto a grid.

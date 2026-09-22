@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Balanced
 /-!
 # Irreducible morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.IrreducibleMorphism)
+
 A morphism `f : X ⟶ Y` is **irreducible** when it is neither a split monomorphism nor a split
 epimorphism, and every factorization `f = g ≫ h` has `g` a split mono or `h` a split epi. So `f`
 admits no "genuine" intermediate object: any object `Z` it factors through contains `X` as a

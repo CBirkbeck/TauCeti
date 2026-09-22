@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.TensorProduct.Finite
 /-!
 # Tensor products of multiplicative Jordan decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.JordanChevalley.TensorProduct)
+
 Over a perfect field, the multiplicative Jordan decomposition of a tensor product of linear
 automorphisms is obtained by tensoring their semisimple factors and their unipotent factors.
 

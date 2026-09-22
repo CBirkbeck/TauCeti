@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Natura
 /-!
 # Restriction preserves explicit low-degree cup products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Restriction)
+
 Restriction along a subgroup preserves each of the six cup products on explicit continuous
 cohomology:
 

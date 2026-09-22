@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Category.ModuleCat.Simple
 /-!
 # The vertex simple representations of a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Simple)
+
 For a vertex `i` of a quiver `Q`, the *vertex simple* representation `Sᵢ` is the base field `k` at
 `i` and the zero module at every other vertex, every arrow acting by zero. This file constructs
 `Sᵢ`, proves that it is a simple object of the category of representations, and proves that over an

@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 /-!
 # Rotations in real Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Rotation)
+
 An orthonormal pair `x, y` determines elements of the Spin group parametrized by an angle `t`.
 The element is the product of the Clifford generators of `x` and
 `cos(t) x + sin(t) y`. The rotating vector has norm one, so this product belongs to Spin; at

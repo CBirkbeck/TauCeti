@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.EnergyLowerBounds
 /-!
 # Energy-integrand estimates from uniform ellipticity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.Ellipticity.Energy)
+
 `TauCeti.Analysis.PDE.EnergyForm.Basic` and `TauCeti.Analysis.PDE.EnergyLowerBounds` prove the
 pointwise estimates for divergence-form energy integrands from raw coefficient bounds.
 This file packages the same estimates for callers that hold the roadmap's named principal

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Real.Sqrt
 /-!
 # Rescaling by a square root
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Real.Sqrt)
+
 For `0 ≤ a`, multiplying by `(√a)⁻¹` and squaring divides the square by `a`:
 `((√a)⁻¹ * x) ^ 2 = x ^ 2 / a`. This is the change of variables `x ↦ (√a)⁻¹ * x` that turns the
 kernel `1 + x ^ 2 / a` into `1 + y ^ 2`.

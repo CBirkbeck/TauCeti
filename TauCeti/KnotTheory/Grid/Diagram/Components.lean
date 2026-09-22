@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Rotation
 /-!
 # Link components of a grid diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Diagram.Components)
+
 The `O`- and `X`-markings of a grid diagram determine an oriented link combinatorially. Starting
 at the `O`-marking in column `c`, follow its horizontal segment to the `X`-marking in the same
 row, then follow the vertical segment to the `O`-marking in that column. On column labels this is

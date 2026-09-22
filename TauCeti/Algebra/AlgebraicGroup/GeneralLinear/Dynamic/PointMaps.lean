@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.FunctorOfPoints
 /-!
 # Polynomial point maps for the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.PointMaps)
+
 This file compares the generic polynomial point maps used in the dynamic-subgroup construction
 with the matrix description of general-linear points. Inclusion into Laurent polynomials and
 evaluation at zero both act entrywise on the corresponding invertible matrix.

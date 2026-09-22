@@ -13,6 +13,8 @@ public import TauCeti.Topology.Homotopy.AmbientIsotopic.Naturality
 /-!
 # Ambient isotopy of smooth link presentations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.SmoothLink.AmbientIsotopy)
+
 A smooth link is a finite labelled family of embedded oriented circles. Its geometric
 equivalence moves every component by one smooth ambient isotopy: a single `Diffeotopy` of the
 ambient manifold carries all corresponding components at time one. Allowing a separate witness

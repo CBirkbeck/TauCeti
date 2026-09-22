@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Adeles.Basic
 /-!
 # A number field is discrete in its adele ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Adeles.Discrete)
+
 Let `K` be a number field with adele ring `𝔸[K] = K∞ × 𝔸ᶠ[K]`.  The diagonal copy of `K`, which is
 Mathlib's `NumberField.AdeleRing.principalSubgroup (𝓞 K) K`, is a discrete and closed additive
 subgroup of `𝔸[K]`, and the quotient `𝔸[K] / K` is Hausdorff.  An explicit neighbourhood of zero

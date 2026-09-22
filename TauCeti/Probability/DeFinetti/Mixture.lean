@@ -13,6 +13,8 @@ public import TauCeti.Probability.DeFinetti.DirectingMeasure.Basic
 /-!
 # The de Finetti measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.Mixture)
+
 The law of the canonical directing measure, as a probability measure on `ProbabilityMeasure α`,
 together with the specialization of the mixture representation to it.
 
@@ -80,7 +82,10 @@ back to `Measure` for the `bind` representation. No measurability is required at
 time: `Measure.map` of a non-measurable function is a Dirac mass, so the pushforward of a
 probability measure is always a probability measure. The identification of this measure with the
 mixing law instead uses a `MixedIIDWith` witness, which includes coordinatewise a.e.
-measurability. -/
+measurability.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Probability.deFinettiMeasure) -/
 def deFinettiMeasure (μ : Measure Ω) [IsProbabilityMeasure μ] (X : ℕ → Ω → α) :
     ProbabilityMeasure (ProbabilityMeasure α) :=
   ProbabilityMeasure.map (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω)

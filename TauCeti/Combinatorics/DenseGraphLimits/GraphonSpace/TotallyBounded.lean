@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.GraphonSpace.Density
 /-!
 # Graphon space is totally bounded
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.GraphonSpace.TotallyBounded)
+
 On the canonical carrier `(I, volume)` the space of graphons is **totally bounded**: for every `ε`
 there are finitely many graphons within `ε` in cut distance of every graphon.
 

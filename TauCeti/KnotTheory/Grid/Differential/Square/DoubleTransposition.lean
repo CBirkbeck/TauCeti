@@ -13,6 +13,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.SideOverlap
 /-!
 # Disjoint double-transposition terms vanish
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.DoubleTransposition)
+
 The square of a grid differential is a sum over pairs of composable rectangles, and the
 juxtaposition argument for `∂ ∘ ∂ = 0` splits those pairs according to how many side columns the
 two rectangles have in common. Both columns in common is the annular case of `Annulus.lean`, where

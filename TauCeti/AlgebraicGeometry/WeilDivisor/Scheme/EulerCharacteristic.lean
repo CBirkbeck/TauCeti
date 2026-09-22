@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.RiemannRoch.Space
 /-!
 # The Euler characteristic of `𝒪_X(D)` and the degree of a line bundle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.EulerCharacteristic)
+
 Let `X` be a Noetherian integral scheme over a field `k` whose codimension-one local rings are
 discrete valuation rings, and whose codimension-one points are closed with finite residue fields
 over `k`. Adding a point `y` to a Weil divisor `D` changes the Euler characteristic by the residue

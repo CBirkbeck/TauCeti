@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.Antipode
 /-!
 # Duals of finite projective comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Dual)
+
 For a finite projective right comodule `M` over a Hopf algebra `H`, this file constructs the
 right-comodule structure on the linear dual `Module.Dual R M`. Its coaction is characterized
 basis-freely by

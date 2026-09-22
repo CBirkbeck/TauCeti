@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.Congr
 /-!
 # Mixed i.i.d.-ness under almost-everywhere changes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedIID.Congr)
+
 `MixedIIDWith μ X ν` is a family of identities between measures built from `X` and `ν` by
 `Measure.map` and `Measure.bind`, so it sees both arguments only modulo `μ`-a.e. equality. This file
 records the two resulting congruences: the process may be changed coordinatewise a.e., and the

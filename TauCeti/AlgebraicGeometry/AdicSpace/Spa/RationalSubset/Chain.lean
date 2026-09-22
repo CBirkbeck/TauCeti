@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
 /-!
 # Wedhorn's chain of rational subsets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Chain)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Remark 7.55.**
 
 Wedhorn refines a rational subset `U = R(T/s)` into a descending chain of rational subsets

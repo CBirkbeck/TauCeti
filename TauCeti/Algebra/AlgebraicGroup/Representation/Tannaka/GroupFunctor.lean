@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Equivalence
 /-!
 # The tensor-automorphism group functor and natural Tannakian reconstruction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.GroupFunctor)
+
 Let `H` be a bialgebra over a commutative ring `R`. Sending a commutative `R`-algebra `A` to
 the group of tensor automorphisms of scalar extension on the finite `H`-comodules is a functor
 

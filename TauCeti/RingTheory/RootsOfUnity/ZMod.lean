@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 /-!
 # The `k`-th roots of unity of a domain, as `ℤ/k`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.ZMod)
+
 A primitive `k`-th root of unity generates the group of all `k`-th roots of unity, so Mathlib's
 `IsPrimitiveRoot.zmodEquivZPowers`, which identifies `ℤ/k` with the powers of a chosen primitive
 root, identifies it with the whole of `μ_k`.

@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Symplectic.Complex.Module.Basic
 /-!
 # The Hermitian inner product of a compatible pair
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Hermitian)
+
 A symplectic form `ω` compatible with an almost complex structure `J` packages the real metric
 `g(v, w) = ω(v, J w)` and the symplectic form into a single complex Hermitian inner product
 ```

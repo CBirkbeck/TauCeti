@@ -12,6 +12,8 @@ public import Mathlib.GroupTheory.FreeGroup.CyclicallyReduced
 /-!
 # Auditable relator expressions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Presentation.Relator)
+
 Finite group presentations in print use expressions such as powers and commutators, while
 `FreeGroup` consumes flat words. This file provides a small expression language for transcribing
 those published relators and compiles it to Mathlib's canonical signed-word representation

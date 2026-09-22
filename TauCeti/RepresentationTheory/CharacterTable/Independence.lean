@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Dimension.Finite
 /-!
 # Irreducible characters are linearly independent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Independence)
+
 Let `G` be a finite group and `k` an algebraically closed field in which `|G|` is invertible.
 The characters of pairwise inequivalent irreducible representations of `G` are orthonormal for
 `TauCeti.ClassFunction.characterPairing`, by Mathlib's first orthogonality relation. A family

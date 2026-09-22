@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Base
 /-!
 # Height and integral relations among roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Height)
+
 The height of a root relative to a base of a root pairing is the sum of the coefficients of its
 expansion in the simple roots. This file records that height respects every integral relation
 among the roots: a vanishing integral combination of roots has a vanishing combination of heights,

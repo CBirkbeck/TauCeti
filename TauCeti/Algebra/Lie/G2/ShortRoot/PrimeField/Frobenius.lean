@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Frobenius
 /-!
 # Frobenius on the short-root type-G2 prime-field carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.PrimeField.Frobenius)
+
 This file defines the Frobenius endomorphisms of the carrier's matrix-valued points. The
 finite-field Frobenius algebra homomorphism exists for every `ZMod 3`-algebra, including the zero
 ring, so the coefficient formula and all functor laws need no separate characteristic hypothesis.

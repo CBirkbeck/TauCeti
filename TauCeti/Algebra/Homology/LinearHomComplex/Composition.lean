@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.Monoidal.Braiding
 /-!
 # Composition of cochains as a morphism of `R`-linear Hom complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.LinearHomComplex.Composition)
+
 Composition of cochains is `R`-bilinear and satisfies the Leibniz rule
 
 `δ (z₁.comp z₂) = z₁.comp (δ z₂) + (-1)^{|z₂|} • (δ z₁).comp z₂`

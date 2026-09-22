@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.DoubleCoset
 /-!
 # The classical `Tₚ` on `M_k(Γ₁(N))` and `S_k(Γ₁(N))`, at every prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Prime)
+
 `HeckeSlash/UpperTri/DoubleCoset.lean` identifies the Hecke operator of the double coset
 `Γ₁(N) · diag(1, p) · Γ₁(N)` with the upper-triangular sum `∑_{b < p} f ∣[k] !![1, b; 0, p]`,
 but only for `p ∣ N`, because only there do the `p` upper-triangular matrices exhaust the coset.

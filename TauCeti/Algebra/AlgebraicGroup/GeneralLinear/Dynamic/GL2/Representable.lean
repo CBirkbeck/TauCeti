@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Parabo
 /-!
 # Representability of the dynamic subgroups of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.GL2.Representable)
+
 For the cocharacter `t ↦ diag(t, 1)`, the dynamic parabolic, Levi, and unipotent subgroup
 functors are represented by the standard upper-triangular Borel, diagonal torus, and positive
 root subgroup. This upgrades the pointwise calculations in

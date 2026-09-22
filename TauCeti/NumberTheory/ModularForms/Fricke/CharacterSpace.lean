@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.Fricke.Involution
 /-!
 # The Fricke operator on nebentypus character spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.CharacterSpace)
+
 The Fricke operator `W_N` of `TauCeti/NumberTheory/ModularForms/Fricke/Operator.lean` shifts the
 diamond label by an inverse, `W_N ∘ ⟨d⟩ = ⟨d⁻¹⟩ ∘ W_N` (`frickeOperator_diamondOp`). Reading that
 on a joint eigenspace of the diamond operators turns it into a statement about nebentypus: `W_N`

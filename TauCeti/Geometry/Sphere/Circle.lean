@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Sphere.LinearIsometry
 /-!
 # Identification of the unit circle in two-dimensional Euclidean space with the complex circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Sphere.Circle)
+
 The unit sphere `sphere (0 : EuclideanSpace ℝ (Fin 2)) 1` is isometric to Mathlib's complex unit
 circle `Circle = {z : ℂ | ‖z‖ = 1}` via the standard orthonormal basis isometry
 `Complex.orthonormalBasisOneI`.

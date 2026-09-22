@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # Cusp forms whose `q`-expansion is supported on multiples of `d`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.QSupport)
+
 A power series is *supported on multiples of `d`* when every coefficient at an index not
 divisible by `d` vanishes. This is the coefficient condition behind the Atkin–Lehner description
 of the old subspace, and this file bundles it on cusp forms: the forms of level `Γ₁(N)` whose

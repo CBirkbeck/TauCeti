@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Basic
 /-!
 # Morphisms of point representations and comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Morphism)
+
 This file characterizes the morphisms of comodules and natural point representations of the
 affine group represented by a commutative Hopf algebra. A linear map is colinear exactly when
 every scalar extension intertwines the actions of every algebra-valued point. Explicit comodules

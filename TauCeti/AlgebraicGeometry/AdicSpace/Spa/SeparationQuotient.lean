@@ -13,6 +13,8 @@ public import Mathlib.Topology.Algebra.UniformRing
 /-!
 # The analytic locus and the separated quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.SeparationQuotient)
+
 For a topological ring `A`, every continuous valuation kills the closure of zero. Consequently,
 pullback along
 

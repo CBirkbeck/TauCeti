@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # Generators of a quadratic extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension)
+
 Mathlib's `Algebra.IsQuadraticExtension K L` records that `L/K` has degree two but says nothing
 about the elements realising that degree. This file first supplies a non-scalar element, then
 shows how to *choose* and *change* a generator when the base is a field:

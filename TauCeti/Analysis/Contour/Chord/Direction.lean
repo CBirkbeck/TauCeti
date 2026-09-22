@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.AffineSpace.Slope
 /-!
 # The direction of a chord at a point the curve passes through
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Chord.Direction)
+
 Let `γ t₀ = z₀`, so the chord `γ t - z₀` vanishes at `t₀`. If the one-sided slope
 `(γ t - γ t₀) / (t - t₀)` converges to a non-zero `L`, then although the chord shrinks to zero
 its *direction* still converges: to the normalisation of `L` from the right, and to its negative

@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Lie.Exponential.Basic
 /-!
 # Parameter dependence of invariant integral curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.ParameterDependence)
+
 This file begins the analytic parameter-dependence theory for the invariant integral curves that
 define the Lie-group exponential. In the identity chart, the tangent vector and group coordinate
 form an autonomous ODE on the product model space. Picard--Lindelöf then supplies a single local

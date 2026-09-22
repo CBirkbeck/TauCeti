@@ -17,6 +17,8 @@ import TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.BaseChange
 /-!
 # The radical is contained in every Borel subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Borel.Radical)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A Borel
 candidate is a smooth, geometrically connected, geometrically solvable closed subgroup. A maximal
 Borel candidate is a Borel subgroup over an algebraically closed field; over an arbitrary field,

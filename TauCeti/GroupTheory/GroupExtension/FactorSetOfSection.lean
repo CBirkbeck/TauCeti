@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.GroupExtension.Of.FactorSet
 /-!
 # The factor set of a group extension with abelian kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupExtension.FactorSetOfSection)
+
 `TauCeti.FactorSet.groupExtension` builds a group extension `1 → M → E_α → G → 1` out of a factor
 set `α`. This file runs the construction backwards: an extension `S : GroupExtension M E G` with
 abelian kernel, together with a set-theoretic section `σ` of its projection normalized by

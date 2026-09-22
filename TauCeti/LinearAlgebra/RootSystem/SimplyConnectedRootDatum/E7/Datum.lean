@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.Gram
 /-!
 # The simply connected root datum of type `E₇`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.Datum)
+
 This file builds the pinned integral root datum of type `E₇` on the character and cocharacter
 lattices `Fin 7 → ℤ`. The character lattice is written in the fundamental-weight basis and the
 cocharacter lattice in the simple-coroot basis. Thus the `i`-th simple root is the `i`-th row of

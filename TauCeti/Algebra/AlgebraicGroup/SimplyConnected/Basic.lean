@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Isomorphism
 /-!
 # Simply connected semisimple affine groups in Hopf coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SimplyConnected.Basic)
+
 A semisimple affine group over a field is **simply connected** when every central isogeny onto
 it is an isomorphism. In coordinate Hopf algebras the arrows reverse: a central isogeny onto the
 group represented by `H` is a finite faithfully flat morphism `H ⟶ K`, and simple connectivity

@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.CondExp
 /-!
 # Indicator form of the conditional law of a contractable coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.CondExpConvergence)
+
 `TauCeti.Probability.Exchangeability.CondExp` shows that for a contractable process `X` the
 conditional expectations of `f ∘ X j` and `f ∘ X k` given the future — or given the process tail —
 agree, for an arbitrary measurable real observable `f`. This file records the indicator

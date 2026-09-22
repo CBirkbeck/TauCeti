@@ -12,6 +12,8 @@ public import Mathlib.Topology.Homotopy.Equiv
 /-!
 # A punctured star-convex set retracts onto a sphere about the puncture
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.PuncturedStarConvex)
+
 Let `V` be a subset of a real normed space which is star-convex about a point `p`, and let the
 sphere `sphere p r` of some radius `r > 0` lie in `V`. Then `V \ {p}` deformation retracts onto
 that sphere. The retraction is the radial projection `z ↦ p + (r / ‖z - p‖) • (z - p)`, and the

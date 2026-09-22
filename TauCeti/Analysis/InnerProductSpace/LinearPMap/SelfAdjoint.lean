@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.LinearPMap.Basic
 /-!
 # Formally self-adjoint partial linear maps and their shifts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.LinearPMap.SelfAdjoint)
+
 For a formally self-adjoint partial linear map `A` on an inner-product space over an `RCLike`
 field `𝕜` (Mathlib's `LinearPMap.IsFormalAdjoint A A`, the symmetric operators), the quadratic
 form `⟪x, A x⟫` is real, so for a scalar `c` the shift `x ↦ c • x - A x` satisfies

@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.ZeroOne
 /-!
 # Images of measure atoms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Atom)
+
 A positive finite-mass measurable atom is a measurable set whose measurable subsets have either
 zero or full mass. Every almost-everywhere measurable map sends such an atom to one point of a
 standard Borel target: the image of the measure restricted to the atom is a scalar multiple of a

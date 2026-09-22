@@ -13,6 +13,8 @@ import TauCeti.RepresentationTheory.CharacterTable.Galois
 /-!
 # Artin's fixed-point corollary for rational representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Artin.Corollary)
+
 A rational representation of a finite group is determined by the dimensions of its fixed spaces
 under cyclic subgroups. In character language the invariant attached to `C ≤ G` is the raw sum
 

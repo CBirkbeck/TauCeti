@@ -19,6 +19,8 @@ import TauCeti.Geometry.Manifold.Riemannian.MetricBridge
 /-!
 # The total variation of a curve is its Riemannian path length
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.EVariationComparison)
+
 The total variation `eVariationOn γ (Set.Icc a b)` of a curve in a Riemannian manifold is the
 supremum of the sums of the ambient distances along finite monotone partitions of `[a, b]`. For a
 `C¹` curve it equals `Manifold.pathELength I γ a b`, the integral of the norm of the velocity.

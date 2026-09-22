@@ -18,6 +18,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.Evaluation
 /-!
 # The points action of a comodule, by automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.PointsAction)
+
 Over a Hopf algebra the points form a group under convolution — the points of the
 corresponding affine group scheme, when `H` is commutative — so the points action of
 a comodule (`TauCeti.Comodule.endOfPoint`,

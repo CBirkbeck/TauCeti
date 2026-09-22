@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Fredholm.Adjoint
 /-!
 # Self-adjoint Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.SelfAdjoint)
+
 This file proves that a self-adjoint Fredholm operator on a Hilbert space has index zero. More
 generally, the same conclusion holds whenever an operator and its adjoint have the same kernel.
 The closed range of a Fredholm operator has orthogonal complement equal to the kernel of its

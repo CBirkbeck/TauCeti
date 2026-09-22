@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Basic
 /-!
 # Geometric realization of an abstract simplicial complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Realization)
+
 This file realizes an abstract simplicial complex in the real vector space of finitely supported
 functions on its vertices. A vertex `v` is represented by the coordinate vector
 `Finsupp.single v 1`; the realization is the union of the convex hulls of the images of the faces.

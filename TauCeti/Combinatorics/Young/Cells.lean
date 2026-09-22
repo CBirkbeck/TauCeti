@@ -13,6 +13,8 @@ public import Mathlib.Order.Monotone.Defs
 /-!
 # Finite sets of cells, closed in the row direction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Cells)
+
 A finite set `D : Finset (ι × κ)` of **cells** has its rows indexed by `ι` and its columns indexed
 by `κ`. This file counts the cells of `D` one row at a time (`TauCeti.CellDiagram.rowLen`), imposes
 closure in the row direction (`TauCeti.CellDiagram.IsRowLowerSet`: with every cell, `D` contains the

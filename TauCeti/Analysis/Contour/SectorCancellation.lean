@@ -11,6 +11,8 @@ import TauCeti.Analysis.Contour.HigherOrder.Asymptotics
 /-!
 # Sector-even cancellation at a flat crossing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.SectorCancellation)
+
 For a curve crossing a pole `s` of the Laurent term `c / (z - s)^k` (`k ≥ 2`), the two branch
 contributions to the principal value cancel when the one-sided tangent directions satisfy the
 power identity `(L₊ / ‖L₊‖)^(k-1) = (-L₋ / ‖L₋‖)^(k-1)` — condition (B) of Hungerbühler–Wasem,

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Petersson.Unitary
 /-!
 # The Fricke and Atkin–Lehner operators are Petersson-unitary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.AtkinLehner)
+
 The Fricke matrix `W_N = !![0, -1; N, 0]` normalises `Γ₁(N)`, and an Atkin–Lehner matrix `W_Q`
 for an exact divisor `Q ∥ N` normalises `Γ₀(N)`. Their determinants are `N`, respectively `Q`,
 so for `N ≠ 1`, respectively `Q ≠ 1`, they do not lie in `SL₂(ℤ)`. Slashing both arguments of

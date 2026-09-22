@@ -11,6 +11,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Polarization
 /-!
 # The coordinate weight of a plumbing-lattice cube vertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.VertexWeight)
+
 Némethi's lattice-homology cube weight `characteristicCubeWeight k x S` is the maximum of the
 point weights `χ_k` over the `2 ^ |S|` vertices `cubeVertex x T`, `T ⊆ S`, of the cube with base
 point `x` and directions `S` (`CubeWeight.lean`). Computing such a cube weight on a concrete

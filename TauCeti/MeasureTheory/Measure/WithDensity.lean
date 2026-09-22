@@ -14,6 +14,8 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 /-!
 # Pushing a weighted measure forward
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.WithDensity)
+
 A weight travels with the measure it weights: along a measurable equivalence `e`, the image of
 `μ.withDensity f` is the image of `μ` weighted by `f ∘ e.symm`. Mathlib has this only for the
 special case of a Radon–Nikodym derivative, in

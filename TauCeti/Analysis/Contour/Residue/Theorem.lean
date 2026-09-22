@@ -13,6 +13,8 @@ import Mathlib.Analysis.Meromorphic.NormalForm
 /-!
 # The classical residue theorem on a circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.Theorem)
+
 For `f` meromorphic on a closed disc `C(c, R)` (`R > 0`) whose poles are contained in a finite set
 `S` inside the open disc, the contour integral of `f` around the boundary circle is `2πi` times the
 sum of the residues over `S`:

@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.OpenIdeal
 /-!
 # The localisation topology: construction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Basic)
+
 We construct the non-archimedean ring topology on a localisation `S` of `A` away from an element
 `s`, following Proposition and Definition 5.51, §5.6, of Wedhorn's *Adic Spaces*, and show that
 `Aₛ` under it is a Huber ring. The carrier is an arbitrary `IsLocalization.Away s S` rather than

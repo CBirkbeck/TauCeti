@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Group.Quotient
 /-!
 # The quotient of a topological ring by an ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Ring.Ideal)
+
 Two things about `R ⧸ I` that its algebraic theory does not record. It is `T1` exactly when `I` is
 closed, and hence `T0`; and when `f : R →+* S` presents `S` as a topological quotient of `R`, the
 first isomorphism theorem `R ⧸ ker f ≃+* S` is a homeomorphism, so `S` carries the quotient

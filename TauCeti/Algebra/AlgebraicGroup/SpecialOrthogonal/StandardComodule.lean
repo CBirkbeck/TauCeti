@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Basic
 /-!
 # The standard representation of the special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.StandardComodule)
+
 The standard representation of the special orthogonal group scheme `SOₙ` is obtained by
 corestricting the standard `O(GLₙ)`-comodule along the quotient coordinate morphism
 

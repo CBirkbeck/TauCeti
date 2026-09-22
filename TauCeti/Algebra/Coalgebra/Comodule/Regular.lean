@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Trivial
 /-!
 # The regular comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Regular)
+
 This file packages the regular right comodule of a coalgebra as a bundled object of
 `ComoduleCat`, and, when the coalgebra is finitely generated as a module, as an object of
 `FGComoduleCat`. It also records the canonical morphism from the group-like comodule on

@@ -14,6 +14,8 @@ public import TauCeti.Geometry.Hodge.Projection
 /-!
 # Rational Hodge substructures as categorical retracts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Retract)
+
 A rational Hodge substructure of a polarizable pure Hodge structure is itself a polarizable
 object. Its rational and complex carriers are the corresponding subspaces, while its integral
 lattice consists of the integral vectors that land in the rational subspace.

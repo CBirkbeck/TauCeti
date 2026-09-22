@@ -17,6 +17,8 @@ import TauCeti.Topology.Algebra.Group.Profinite.ProP.Burnside
 /-!
 # Maximal open subgroups of pro-`p` groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.MaximalSubgroup)
+
 In a compact pro-`p` group every maximal subgroup that is open is normal of index `p`. Such a
 subgroup `M` contains an open normal subgroup `U`, and it is the preimage of a maximal subgroup
 of the finite `p`-group `G ⧸ U`; a maximal subgroup of a finite `p`-group is normal of index `p`

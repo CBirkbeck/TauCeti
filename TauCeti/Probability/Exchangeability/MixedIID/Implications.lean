@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.MixedIID.Basic
 /-!
 # Basic implications from mixed i.i.d.-ness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedIID.Implications)
+
 This file records the first implication out of the Layer 0 mixed-i.i.d. API:
 mixed i.i.d. processes are exchangeable.  The definition
 `MixedIIDWith μ X ν` already states that every injective finite coordinate selection

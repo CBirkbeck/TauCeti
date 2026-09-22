@@ -14,6 +14,8 @@ import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # The symmetric power of a topological space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Sym.Basic)
+
 The `n`-th symmetric power `Sym α n` of a type is the type of unordered `n`-tuples of points of
 `α`. It is the quotient of the space `Fin n → α` of ordered tuples by the permutation action, and
 this file gives it the corresponding quotient topology, together with the API that a quotient

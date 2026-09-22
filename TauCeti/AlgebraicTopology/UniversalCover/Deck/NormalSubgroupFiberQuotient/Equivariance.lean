@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.NormalizerQuotient.F
 /-!
 # Equivariance for normal deck-subgroup fibre quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.NormalSubgroupFiberQuotient.Equivariance)
+
 For a normal subgroup `H ≤ deck p`, the existing free-transitive fibre-action equivalence
 identifies the quotient of a fibre by `H` with the normalizer quotient `N(H) / H`. This file
 records how that identification, and its regular preconnected-cover specialization, interacts

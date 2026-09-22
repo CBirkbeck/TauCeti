@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.ConstMulAction
 /-!
 # Balls separated from their translates outside the stabilizer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.ProperlyDiscontinuous)
+
 For a properly discontinuous action on a locally compact metric space, every point `x` lies in a
 ball which meets none of its translates by group elements outside the stabilizer of `x`: a group
 element moving that ball to meet itself already fixes `x`.

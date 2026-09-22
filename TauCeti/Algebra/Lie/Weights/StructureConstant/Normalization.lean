@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.StructureConstant.Symmetry
 /-!
 # The square of a Chevalley structure constant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.StructureConstant.Normalization)
+
 Let `x` be an `IsSl2System`, so its opposite root vectors are normalized by
 
 ```text

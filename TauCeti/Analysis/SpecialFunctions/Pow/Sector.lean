@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Principal complex powers on a sector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Pow.Sector)
+
 This file records pointwise facts about symmetric angular sectors and principal complex powers.
 A closed symmetric sector can be described by a continuous linear inequality, the principal
 inverse power maps the corresponding open sector to the right half-plane, and raising that root

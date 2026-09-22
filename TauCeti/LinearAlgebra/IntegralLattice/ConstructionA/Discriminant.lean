@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.IntegralLattice.StandardCoordinates
 /-!
 # The discriminant of a Construction A lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.Discriminant)
+
 This file computes the index and discriminant of the rational Construction A lattice attached to
 an additive code over `ZMod m`.  Reduction modulo `m` identifies the quotient of the carrier of a
 code `C` by the zero-code carrier with `C` itself.  Thus adjoining the codewords enlarges the

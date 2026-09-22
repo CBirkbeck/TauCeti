@@ -18,6 +18,8 @@ import TauCeti.Topology.MetricSpace.Cut
 /-!
 # One image piece of a crosscut lies inside a compact enclosing set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.Inside)
+
 For a holomorphic injection of an open set `U`, one of the two image pieces — the near
 side `U ∩ ball ζ ρ` or the far side `U \ closedBall ζ ρ` — lies in the filled hull of a
 closed bounded set `K` through the image crosscut. The hypotheses are:

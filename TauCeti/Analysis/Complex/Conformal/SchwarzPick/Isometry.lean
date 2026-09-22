@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Basic
 /-!
 # Disc automorphisms are pseudo-hyperbolic isometries
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzPick.Isometry)
+
 The Schwarz--Pick contraction estimate `pseudoHyperbolicExpr_map_le` says a holomorphic
 self-map of the unit disc does not increase the pseudo-hyperbolic expression
 `pseudoHyperbolicExpr z w = ‖(z - w) / (1 - conj w * z)‖`.  A holomorphic self-map that

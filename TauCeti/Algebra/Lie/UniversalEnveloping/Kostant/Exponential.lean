@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.Exp
 /-!
 # Root subgroup elements of a Kostant integral form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Exponential)
+
 Let `L` be a Lie algebra over `ℚ` with distinguished root vectors `e : ι → L` and Cartan vectors
 `h : κ → L`, and let `U_ℤ = kostantForm e h` be the integral form they generate inside
 `UniversalEnvelopingAlgebra ℚ L`. A root vector `eᵢ` need not be nilpotent in the enveloping

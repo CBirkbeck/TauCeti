@@ -11,6 +11,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Regularity
 /-!
 # Higher metric product rules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Metric)
+
 This module records the twice-differentiated product rule for a metric-compatible covariant
 derivative. It supplies the second-derivative calculation used to establish curvature
 skew-adjointness and can be reused in other calculations with metric-compatible connections.

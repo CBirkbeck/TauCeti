@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Chain.Basic
 /-!
 # Row and column relabelings of grid chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Chain.Relabeling)
+
 Grid moves relabel the cyclic row or column labels of a grid diagram.  The diagram API already
 has the corresponding operations on grid states, but the free chain module also needs the induced
 linear equivalences on generators.  This file supplies those equivalences for arbitrary

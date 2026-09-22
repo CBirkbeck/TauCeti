@@ -13,6 +13,8 @@ import TauCeti.Analysis.Complex.Conformal.Reflection.Injective
 /-!
 # Straightening a conformal corner
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Corner.Straightening)
+
 Suppose that, after translation, a conformal map takes the upper half of a neighbourhood of a
 real point into a sector of opening `βπ`, centred on the positive real axis.  The principal power
 `(f - w) ^ (1 / β)` maps that sector into the right half-plane, and multiplication by `I` maps it

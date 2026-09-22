@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.Submatrix
 /-!
 # Automorphisms of a Serre presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Presentation.Serre.Automorphism)
+
 Two families of automorphisms of `Matrix.ToLieAlgebra R CM` are visible in Serre's presentation
 itself, and both are constructed here from the universal property in
 `TauCeti/Algebra/Lie/Presentation/Serre.lean`.

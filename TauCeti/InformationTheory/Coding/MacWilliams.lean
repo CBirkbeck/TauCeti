@@ -12,6 +12,8 @@ public import TauCeti.InformationTheory.Hamming
 /-!
 # The MacWilliams identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.MacWilliams)
+
 For a linear code `C` of length `n` over a finite field `F` with `q` elements, the MacWilliams
 identity expresses the homogeneous weight enumerator of the Euclidean dual through that of `C`:
 

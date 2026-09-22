@@ -16,6 +16,8 @@ public import TauCeti.Analysis.Calculus.ContDiffZPow
 /-!
 # Mixed monomial maps between mixed charts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Analytic.MixedMonomial)
+
 A *mixed chart* is a product `ℂ ^ k × (ℂ ^ *) ^ l`, the model on which the affine analytic chart
 of a regular `k`-dimensional cone in a rank-`(k + l)` lattice is built. The transition maps
 between two such charts, and the maps induced by a morphism of fans, are *mixed monomial maps*:

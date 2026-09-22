@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Convex.Polyhedron
 /-!
 # Piecewise-linear maps between real topological vector spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.PL.Map)
+
 A map is *piecewise linear* — PL, and piecewise *affine* would be the more honest word — when it
 is affine on each cell of a polyhedral decomposition of its domain. This file builds that
 predicate in the shape the PL structure groupoid needs, and proves the closure properties which

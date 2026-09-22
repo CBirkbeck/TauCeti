@@ -13,6 +13,8 @@ public import TauCeti.Algebra.WordFiltration.Basic
 /-!
 # Homogeneous submodules of a symmetric algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.Homogeneous)
+
 For a module `M` over a commutative semiring `R`, this file defines the degree-`n` piece of
 `SymmetricAlgebra R M` to be the `n`-th power of the range of the canonical generator map,
 identifies it with the span of the products of exactly `n` generators, and records that degrees add

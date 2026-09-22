@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 /-!
 # The boundary contour is a piecewise-`C¹` immersion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Immersion)
+
 Away from the three genuine corners every piece of the boundary contour has a nonvanishing
 tangent: the verticals and the horizontal move with constant nonzero chords (the height
 differing from the corner row keeps the verticals nondegenerate), and the unified arc moves at

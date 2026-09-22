@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Edge
 /-!
 # The Schwarz--Christoffel integrand at a prevertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Asymptotic)
+
 Near a real prevertex `p`, all factors of the Schwarz--Christoffel integrand based away from
 `p` tend to nonzero limits.  The factors based at `p` combine into the single power
 `(z - p) ^ t`, where `t` is the sum of their exponents.  This file identifies the remaining

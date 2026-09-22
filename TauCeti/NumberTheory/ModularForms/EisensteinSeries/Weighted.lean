@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.Basic
 /-!
 # Eisenstein series weighted by a function of residues
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.EisensteinSeries.Weighted)
+
 For a level `N`, a weight `k` and a function `W : (Fin 2 → ZMod N) → ℂ`, the series
 `∑_{v ∈ ℤ²} W(v mod N) · (v₀ z + v₁)^(-k)`.
 

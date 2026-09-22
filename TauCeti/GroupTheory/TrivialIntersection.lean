@@ -16,6 +16,8 @@ public import Mathlib.Tactic.Group
 /-!
 # Trivial-intersection subgroups and Frobenius complements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TrivialIntersection)
+
 A subgroup `H` of `G` is a **trivial-intersection subgroup** when it meets each of its distinct
 conjugates trivially: `H ⊓ g H g⁻¹ = ⊥` whenever `g ∉ H`.  Equivalently `H` is *malnormal*: a
 nonidentity element of `H` is conjugated out of `H` by every `g ∉ H`.  A **Frobenius complement**

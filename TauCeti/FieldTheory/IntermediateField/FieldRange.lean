@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.SeparableDegree
 /-!
 # The degree above the range of a field embedding
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.FieldRange)
+
 An `F`-algebra map `f : K →ₐ[F] L` of fields is injective, so it identifies `K` with the
 intermediate field `f.fieldRange`. This file records that the two therefore support the same
 degree: `[L : f.fieldRange] = [L : K]`, whenever `L` is a `K`-algebra through `f`.

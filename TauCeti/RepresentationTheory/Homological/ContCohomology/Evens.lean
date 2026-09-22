@@ -19,6 +19,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The two-point graph cochain of the Evens norm at index two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Evens)
+
 Let `U` be a subgroup of index two of a topological group `G`, let `s` be an element outside `U`,
 and let `α : U →* Multiplicative (ZMod 2)` be a continuous homomorphism, that is a continuous
 `1`-cocycle of `U` with trivial `𝔽₂` coefficients. The multiplicative transfer (Evens norm)
@@ -200,12 +202,18 @@ open scoped Classical in
 /-- The first Shapiro component `b₁ γ = α γ` for `γ ∈ U` and `b₁ γ = α (γ s)` otherwise.
 
 It is a cochain and **not** a cocycle, so it has no class of its own; only the sum
-`TauCeti.ContCohomology.evensCorCochain` of the two components is a homomorphism. -/
+`TauCeti.ContCohomology.evensCorCochain` of the two components is a homomorphism.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContCohomology.evensB1) -/
 noncomputable def evensB1 : G → ZMod 2 :=
   fun γ => if γ ∈ U then evensExtend U α γ else evensExtend U α (γ * s)
 
 /-- The second Shapiro component `b_s γ = b₁ (s⁻¹ γ)`. A cochain, for the same reason as
-`TauCeti.ContCohomology.evensB1`. -/
+`TauCeti.ContCohomology.evensB1`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContCohomology.evensBs) -/
 noncomputable def evensBs : G → ZMod 2 :=
   fun γ => evensB1 U s α (s⁻¹ * γ)
 
@@ -213,7 +221,10 @@ noncomputable def evensBs : G → ZMod 2 :=
 For `U` of index two and `s ∉ U` it is, unlike either summand, a homomorphism, by
 `TauCeti.ContCohomology.evensCorCochain_mul`, and it is continuous whenever `U` is open and `α`
 is continuous, by `TauCeti.ContCohomology.continuous_evensCorCochain`; it is then the shape the
-degree-one corestriction of `α` over the transversal `{1, s}` takes. -/
+degree-one corestriction of `α` over the transversal `{1, s}` takes.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContCohomology.evensCorCochain) -/
 noncomputable def evensCorCochain : G → ZMod 2 :=
   fun γ => evensB1 U s α γ + evensBs U s α γ
 

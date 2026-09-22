@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Exponential.Units.Compatibility
 /-!
 # The differential of the exponential on a finite-dimensional algebra's units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.BanachDexp.Units)
+
 After coercing the units-valued Lie exponential to the ambient algebra, its Fréchet derivative
 is left multiplication by the exponential composed with the regularized commutator factor and
 the canonical identification of the abstract Lie algebra with the ambient algebra.

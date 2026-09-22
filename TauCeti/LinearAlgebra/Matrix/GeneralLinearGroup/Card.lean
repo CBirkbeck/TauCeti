@@ -14,6 +14,8 @@ import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
 /-!
 # The order of `GL₂` over a finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Card)
+
 Mathlib's `Matrix.card_GL_field` gives `|GL n 𝔽_q| = ∏ i, (qⁿ - qⁱ)`, which in size two reads
 `(q² - 1)(q² - q)`. That form is a product of differences, and every index computation in `GL₂`
 divides it by the order of a subgroup, so what is wanted is the factored form

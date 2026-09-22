@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.LocalFunctio
 /-!
 # The unit law for Tannakian local functionals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Unit)
+
 Let `H` be a commutative Hopf algebra over a field `k`, and let `A` be a commutative
 `k`-algebra. A tensor automorphism of scalar extension on the finite-dimensional
 `H`-comodules determines compatible linear functionals on the finite subcomodules of the

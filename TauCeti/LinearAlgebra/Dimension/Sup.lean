@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # Two submodules meeting in zero inside a third
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dimension.Sup)
+
 Mathlib's `Submodule.finrank_add_finrank_le_of_disjoint` bounds the dimensions of two disjoint
 submodules by the dimension of the *ambient* module. `TauCeti.finrank_add_finrank_le_of_inf_eq_bot`
 is the relative form: the bound holds inside any submodule containing them both, which is what a

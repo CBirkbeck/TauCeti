@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CharacterSpace
 /-!
 # The coprime filter descends one prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Descent)
+
 Let `f ∈ S_k(Γ₁(N), χ)` vanish at every index coprime to `p * L`, for a prime `p ∣ N` with `χ`
 the pull-back of a character `χ₀` modulo `N / p`, and a squarefree
 `L` coprime to `p` whose primes divide `N`. The coprime filter of `f`

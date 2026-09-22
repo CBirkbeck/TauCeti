@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.PurelyInseparable.Basic
 /-!
 # The Frobenius over a finite base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.Frobenius)
+
 Let `K` be a finite field with `q` elements. Over any `K`-algebra `A` the `q`-power map is the
 algebra endomorphism `FiniteField.frobeniusAlgHom K A`; its iterates raise every element to a
 `q ^ n`-th power, and the elements they fix form a `K`-subalgebra. Both statements hold for every

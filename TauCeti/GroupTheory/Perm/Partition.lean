@@ -11,6 +11,8 @@ import Mathlib.Logic.Equiv.Fin.Rotate
 /-!
 # Cycle types that count fixed points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.Partition)
+
 `Equiv.Perm.cycleType σ` lists the lengths of the cycles of `σ` that are at least two, so it
 forgets the fixed points and is a partition of `σ.support.card` rather than of the ambient
 cardinality. The factorization type of a polynomial modulo a prime is, by contrast, a partition
@@ -89,7 +91,10 @@ variable {α β : Type*} [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq
 /-- The cycle lengths of `σ`, including one part for each fixed point.
 
 Unlike `Equiv.Perm.cycleType`, this is a partition of the cardinality of the whole carrier. It
-is the permutation-side cycle invariant used to compare a Galois action with factor degrees. -/
+is the permutation-side cycle invariant used to compare a Galois action with factor degrees.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=Equiv.Perm.fullCycleType) -/
 def _root_.Equiv.Perm.fullCycleType (σ : Equiv.Perm α) : Multiset ℕ :=
   σ.cycleType + Multiset.replicate (Fintype.card α - σ.support.card) 1
 

@@ -11,6 +11,8 @@ import Mathlib.Dynamics.FixedPoints.Basic
 /-!
 # Path-space reindexing and iterates of the one-sided shift
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Shift)
+
 This file records the elementary path-space API for iterating the one-sided shift
 `TauCeti.Probability.shift`.  The Layer 2 exchangeability roadmap uses these lemmas before
 building shift-invariant sigma algebras and before comparing finite-dimensional path laws after

@@ -11,6 +11,8 @@ import TauCeti.NumberTheory.ArithmeticDirichletSeries.Estimates
 /-!
 # Convergence of the ideal- and prime-indexed Dirichlet series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence)
+
 The nonzero integral ideals of `𝓞 K` carry the Dirichlet series `∑ N(I) ^ (-s)`, whose abscissa
 of absolute convergence is exactly `1`: that is `TauCeti.summable_idealTerm_one_iff`, read off
 from the two-sided linear ideal counts.  Distinct height-one primes are distinct nonzero

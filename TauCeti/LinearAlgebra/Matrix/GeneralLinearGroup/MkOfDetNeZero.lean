@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Transvection
 /-!
 # Packaging nonsingular matrices in the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.MkOfDetNeZero)
+
 Over a field, `Matrix.GeneralLinearGroup.mkOfDetNeZero` packages a matrix with nonzero
 determinant as an element of `GL`. This file records how that packaging interacts with matrix
 multiplication, existing general-linear elements, and transvections.

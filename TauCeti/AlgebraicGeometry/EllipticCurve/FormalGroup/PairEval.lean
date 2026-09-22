@@ -23,6 +23,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Assoc
 /-!
 # Evaluating the chord construction at a pair of parameters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.PairEval)
+
 The chord construction of `FormalGroup/Chord.lean` and the addition series of
 `FormalGroup/Add/Series.lean` are two-variable power series. This file evaluates them at a pair
 of parameters, as `FormalGroup/Eval.lean` evaluates the one-variable series at a single one, and

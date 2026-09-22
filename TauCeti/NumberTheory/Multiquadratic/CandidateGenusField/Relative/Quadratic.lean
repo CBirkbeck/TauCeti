@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.IntegralSqrt
 /-!
 # The quadratic base of the candidate genus field, as a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Quadratic)
+
 For a squarefree integer `d`, `candidateGenusFieldBase hd` is the copy of `ℚ(√d)` cut out inside
 `candidateGenusField hd` by the chosen square root `candidateGenusFieldBaseRoot hd` of `d`. The
 quadratic-field API of `TauCeti.NumberTheory.NumberField.Quadratic` and of

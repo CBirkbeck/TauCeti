@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.GroupAction.Stabilizer
 /-!
 # Regular triples and normal subgroups of triangle groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TriangleGroup.Regular)
+
 A permutation triple `t` of degree `n` whose components have orders dividing `a`, `b`, `c` is a
 permutation representation `TauCeti.TriangleGroup.toPerm t : Δ(a, b, c) →* Equiv.Perm (Fin n)`.
 The preimage of the stabilizer of a sheet `i` is the point stabilizer of this action.

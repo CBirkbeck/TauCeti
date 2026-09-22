@@ -13,6 +13,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Function.MemLp
 /-!
 # Hermite functions as Fourier eigenfunctions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Fourier.Basic)
+
 Mathlib's Fourier transform uses the character `exp (-2πixξ)`, whereas the Hermite functions
 `TauCeti.hermiteFunction` use the angular-frequency normalization. This file introduces the
 unitarily rescaled family

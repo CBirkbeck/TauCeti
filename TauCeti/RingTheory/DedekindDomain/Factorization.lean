@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.DedekindDomain.Factorization
 /-!
 # Complements on Dedekind-domain factorization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Factorization)
+
 Facts about `Associates.count` and `FractionalIdeal.count` that Mathlib does not carry, together
 with unit-level factorization of invertible fractional ideals.
 

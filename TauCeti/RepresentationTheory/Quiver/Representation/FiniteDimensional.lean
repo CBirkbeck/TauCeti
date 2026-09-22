@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Basic
 /-!
 # Finite-dimensional quiver representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.FiniteDimensional)
+
 A representation of a quiver is **pointwise finite-dimensional** when the vector space it puts at
 every vertex is finite-dimensional. This file defines that property, `TauCeti.IsFinDim`, and proves
 that it transports along an isomorphism of representations.

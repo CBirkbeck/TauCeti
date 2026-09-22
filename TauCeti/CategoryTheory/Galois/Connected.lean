@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Galois.Basic
 /-!
 # Connected objects are invariant under equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Galois.Connected)
+
 `CategoryTheory.PreGaloisCategory.IsConnected` is defined by conditions on initial objects,
 monomorphisms and isomorphisms alone, and an equivalence of categories preserves and reflects all
 three. This file records the resulting transport statements: connectedness is invariant under

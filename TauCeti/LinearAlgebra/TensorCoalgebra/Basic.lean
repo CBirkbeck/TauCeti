@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.TensorPower.Basic
 /-!
 # Reduced tensor words and deconcatenation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Basic)
+
 For an `R`-module `M`, reduced tensor words are the direct sum of its positive tensor powers.  This
 file constructs that module, `TauCeti.ReducedTensorWords`, and its reduced deconcatenation map,
 which cuts a positive word at every nontrivial position.  It also defines blocks of consecutive

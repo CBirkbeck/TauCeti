@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Trivial
 /-!
 # Linear ideal counts and the exact abscissa of the trivial ideal weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Estimates)
+
 Mathlib's `NumberField.Ideal.tendsto_norm_le_div_atTop₀` says that the number of nonzero integral
 ideals of `𝓞 K` of absolute norm at most `x` is asymptotic to `ρ x`, with `ρ` the positive residue
 of the Dedekind zeta function.  This file turns that single asymptotic into the *two-sided* linear

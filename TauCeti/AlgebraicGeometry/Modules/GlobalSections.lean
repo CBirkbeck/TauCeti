@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 /-!
 # Global-functions actions on sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Modules.GlobalSections)
+
 This file constructs the canonical action of the ring of global functions on a sheaf of modules
 on a scheme. It also records the restriction of this action to the base ring for a scheme over a
 commutative ring.

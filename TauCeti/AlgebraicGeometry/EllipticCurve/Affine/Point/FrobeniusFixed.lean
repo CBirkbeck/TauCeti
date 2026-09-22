@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Finite.FrobeniusFixed
 /-!
 # The points of a Weierstrass curve fixed by the `q`-power map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.FrobeniusFixed)
+
 For a finite field `K` with `q` elements and a field extension `L`, Mathlib's
 `WeierstrassCurve.Affine.Point.map` carries the `q`-power `K`-algebra map
 `FiniteField.frobeniusAlgHom K L` to an endomorphism of the `L`-points of a Weierstrass curve `W`

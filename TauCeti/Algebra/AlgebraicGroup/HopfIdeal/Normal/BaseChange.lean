@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Basic
 /-!
 # Normal closed subgroups under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.BaseChange)
+
 Let `J` be the Hopf ideal cutting out a normal closed subgroup of the affine group represented
 by a commutative Hopf algebra `H`. This file proves that the extended Hopf ideal in
 `K ⊗[k] H` again cuts out a normal subgroup after an arbitrary extension of commutative base

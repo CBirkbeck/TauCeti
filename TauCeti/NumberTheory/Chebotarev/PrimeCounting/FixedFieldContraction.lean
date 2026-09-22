@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.Chebotarev.PrimeCounting.Discard
 /-!
 # Contracting Frobenius `ϑ` and `ψ` from a cyclic fixed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.PrimeCounting.FixedFieldContraction)
+
 Let `L / K` be a finite Galois extension of number fields, let `C` be a conjugacy class of
 `Gal(L/K)`, choose `sigma ∈ C`, and put `E = L ^ <sigma>`.  This file proves the exact identity
 

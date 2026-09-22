@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.StandardBasis
 /-!
 # The hook-length formula for the degrees of the irreducible representations of `Sₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.HookLength)
+
 The Specht modules `S^μ` are the irreducible rational representations of `Sₙ`, and the standard
 polytabloids are a basis of `S^μ`, so `dim_ℚ S^μ` is the number `f^μ` of standard Young tableaux
 of shape `μ` (`TauCeti.finrank_spechtModule`).  The hook-length formula

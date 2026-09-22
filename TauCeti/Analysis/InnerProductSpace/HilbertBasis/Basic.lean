@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.l2Space
 /-!
 # Hilbert bases
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.HilbertBasis.Basic)
+
 This file transfers orthogonality to every vector of a subspace from orthogonality to each
 element of a Hilbert basis of that subspace.  In particular, this lets Hilbert bases of mutually
 orthogonal eigenspaces be assembled into a spectral basis of the ambient space.

@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 /-!
 # Real finrank of a compatible complex module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Complex.Finrank)
+
 This file records the tower-law dimension formula for a complex module whose real scalar
 structure is the ambient one. It is the linear-algebra input for almost-complex even-dimensionality
 results, but has no symplectic hypotheses.

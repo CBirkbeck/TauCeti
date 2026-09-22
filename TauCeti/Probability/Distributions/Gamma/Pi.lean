@@ -16,6 +16,8 @@ import TauCeti.Probability.Distributions.PDFInstances
 /-!
 # Finite products of Gamma distributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Pi)
+
 This file collects what a finite product of Gamma measures looks like from the outside: the
 almost-sure positivity of its coordinates, and the laws of the partial sums of those
 coordinates.

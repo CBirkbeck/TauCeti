@@ -16,6 +16,8 @@ import TauCeti.MeasureTheory.Measure.LocallyNull
 /-!
 # The outermost stratum, and the Morse--Sard theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Sard.OutermostStratum)
+
 The critical values of a sufficiently smooth map between finite-dimensional real normed spaces
 form a set of additive Haar measure zero, and its regular values are therefore dense. A point is
 critical when the Fréchet derivative there fails to be surjective. The conclusion is recorded here

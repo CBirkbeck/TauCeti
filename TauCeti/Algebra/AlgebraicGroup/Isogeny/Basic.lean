@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Coordinate
 /-!
 # Isogenies of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Isogeny.Basic)
+
 A morphism `f : H ⟶ K` of commutative Hopf algebras represents, contravariantly, a
 morphism `Spec K ⟶ Spec H` of affine group schemes. We call this morphism an isogeny when
 its coordinate map is finite and faithfully flat. These two conditions respectively say that

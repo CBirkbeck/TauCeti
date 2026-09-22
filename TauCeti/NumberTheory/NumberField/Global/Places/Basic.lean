@@ -11,6 +11,8 @@ public import TauCeti.Algebra.BigOperators.Finprod
 /-!
 # Places of a number field and their normalized absolute values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Places.Basic)
+
 Mathlib indexes the two kinds of place of a number field `K` by two unrelated types: the finite
 places by `IsDedekindDomain.HeightOneSpectrum (𝓞 K)` and the infinite places by
 `NumberField.InfinitePlace K`.  Both carry an absolute value, but with different normalizations,

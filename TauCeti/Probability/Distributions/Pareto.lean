@@ -14,6 +14,8 @@ import TauCeti.Probability.Moments.IntegrableExpMul
 /-!
 # Elementary theory of the Pareto distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Pareto)
+
 This file completes the elementary API for Mathlib's Pareto measure.  For positive threshold
 `t` and shape `r`, it proves the exact real-power moment criterion and formula, then derives the
 mean, variance, and the matching non-integrability statements at the sharp thresholds.  It also

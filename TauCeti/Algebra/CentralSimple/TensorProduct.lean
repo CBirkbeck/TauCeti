@@ -33,6 +33,8 @@ import Mathlib.RingTheory.TwoSidedIdeal.Operations
 /-!
 # Central simple algebras are closed under tensor product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.TensorProduct)
+
 Let `K` be a field, let `A` be a central simple `K`-algebra and let `B` be a simple `K`-algebra.
 This file proves that `A ⊗[K] B` is again simple, in both orientations. Together with
 `TauCeti.Algebra.IsCentral.tensorProduct` of `TauCeti/Algebra/Central/TensorProduct.lean`, which

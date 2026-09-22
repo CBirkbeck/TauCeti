@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.SubmoduleTheorem
 /-!
 # Dominance triangularity for maps out of a Specht module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Dominance)
+
 A nonzero map of representations from the Specht module `S^{lam}` to the Young permutation module
 `M^μ` forces the shape of `lam` to dominate `μ`
 (`TauCeti.dominates_of_intertwiningMap_ne_zero`).  Equivalently, `Hom(S^{lam}, M^μ)` vanishes

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 /-!
 # The descent of a level-raise
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelRaise.Basic)
+
 For a prime `p ∣ N` and `g` slash-invariant of level `Γ₁(N / p)`, every member of the descent
 family `descendMatrix p N` slashes the level-raise `V_p g = p^(1-k) • (g ∣[k] scaleGL p)` (a form
 of level `Γ₁(N)`) back to `p⁻¹ • g`: the upper-triangular members `!![1, b; 0, p]` because

@@ -12,6 +12,8 @@ import TauCeti.Probability.Exchangeability.Arrays.Extreme
 /-!
 # Global-free Aldous--Hoover codings are dissociated
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.AldousHoover.Dissociated)
+
 Coding through a function that ignores its global variable gives the **ergodic form** of the
 Aldous--Hoover representation, and the arrays it produces are dissociated as well as exchangeable:
 two blocks over disjoint row sets and disjoint column sets read disjoint sets of noise coordinates

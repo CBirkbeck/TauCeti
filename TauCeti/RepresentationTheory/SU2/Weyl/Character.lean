@@ -12,6 +12,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # The Weyl character formula for `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Weyl.Character)
+
 `TauCeti/RepresentationTheory/SU2/SymmetricPower.lean` computes the character of the symmetric
 power `Symᵈ(ℂ²)` of the standard representation of `SU(2)` on the maximal torus as the weight
 string

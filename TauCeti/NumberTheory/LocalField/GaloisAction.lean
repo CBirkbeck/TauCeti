@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Valuation.ValuativeRel.Extension
 /-!
 # Automorphisms of finite extensions acting on integral and residue data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.GaloisAction)
+
 An automorphism of a finite extension of a nonarchimedean local field preserves the unique
 extended valuation. Consequently it restricts to the ring of integers and its maximal ideal,
 and descends to the residue field. This file constructs those three actions and records their

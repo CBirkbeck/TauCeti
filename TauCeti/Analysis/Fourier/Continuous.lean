@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 /-!
 # Continuity of the Fourier transform of an integrable function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.Continuous)
+
 On a finite-dimensional real inner-product space, the Fourier transform `𝓕 F` of an integrable
 `F` is continuous, and so is the inverse transform `𝓕⁻ F = 𝓕 F ∘ (-·)`. These are Mathlib's
 `VectorFourier.fourierIntegral_continuous` specialized to the inner-product pairing, packaged so

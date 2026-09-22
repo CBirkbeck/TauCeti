@@ -15,6 +15,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Basic
 /-!
 # Rectangles in grid diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Basic)
+
 This file adds the first rectangle API for the grid-combinatorial lane of the Heegaard Floer
 roadmap. The grid lives on a torus, so the basic one-dimensional ingredient is the circular
 interval in `Fin n`. A grid rectangle carries two finite coordinate sets built from such intervals:

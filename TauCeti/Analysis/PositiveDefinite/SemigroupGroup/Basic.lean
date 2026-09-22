@@ -12,6 +12,8 @@ public import Mathlib.Basic.NNReal.Basic
 /-!
 # Positive-definite functions on `[0, ∞) × V`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Basic)
+
 This file records the Berg--Christensen--Ressel semigroup-group positive-definiteness predicate
 for functions on `ℝ≥0 × V`. For an additive group `V`, the intended involution is
 `(t, v) ↦ (t, -v)`, so the finite quadratic forms use the entries

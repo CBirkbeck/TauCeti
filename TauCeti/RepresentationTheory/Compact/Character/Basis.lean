@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Compact.PeterWeyl
 /-!
 # The irreducible characters are a Hilbert basis of the class functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Character.Basis)
+
 Peter-Weyl (`TauCeti/RepresentationTheory/Compact/PeterWeyl.lean`) makes the normalized matrix
 coefficients of a skeleton of the unitary dual a Hilbert basis of `L²(G)`. This file cuts that
 basis down to the closed subspace `TauCeti.classFunctionLp` of class functions and finds the

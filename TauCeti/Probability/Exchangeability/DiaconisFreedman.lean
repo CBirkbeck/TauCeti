@@ -14,6 +14,8 @@ public import TauCeti.Probability.Exchangeability.SuccessorArray
 /-!
 # From a row exchangeable successor array back to a mixture of Markov chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.DiaconisFreedman)
+
 Diaconis and Freedman represent a recurrent Markov exchangeable process as a mixture of Markov
 chains by passing to its **successor array**: the array whose `(a, k)`-entry is the state the
 process moves to right after its `k`-th visit to `a`. Their argument has two halves. One half

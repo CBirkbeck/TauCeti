@@ -17,6 +17,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Map
 /-!
 # Weight Levi and unipotent subgroups inside weight parabolics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Normal)
+
 For an integer weight `w` on the standard representation, the weight-unipotent subgroup is a
 closed normal subgroup of the corresponding weight parabolic. On coordinate rings, the
 parabolic defining Hopf ideal is contained in the unipotent defining Hopf ideal. Mapping the

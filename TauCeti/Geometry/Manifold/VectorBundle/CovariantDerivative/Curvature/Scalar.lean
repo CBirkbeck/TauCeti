@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvatu
 /-!
 # Scalar curvature of a smooth connection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Scalar)
+
 The scalar curvature of a connection on a Riemannian tangent bundle is the metric trace of its
 Ricci tensor. The definition is basis-free; in an orthonormal basis it is the sum of the diagonal
 Ricci curvatures. Applying it to the Levi-Civita connection gives the scalar curvature of a

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.Basic
 /-!
 # The exceptional affine Dynkin diagrams as stars
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.AffineDynkinType.Star)
+
 The exceptional simply-laced affine Dynkin diagrams are three-armed stars. This file identifies
 the arm-coordinate numbering of `TauCeti.AffineDynkinType.graph` with the canonical star indices
 used by `TauCeti.starCartanMatrix`:

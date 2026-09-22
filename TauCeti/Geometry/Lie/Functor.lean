@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.Algebra.Monoid
 /-!
 # The Lie functor on smooth homomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Functor)
+
 The differential at the identity of a smooth Lie-group homomorphism induces a Lie-algebra
 homomorphism between left-invariant derivations. Smooth homomorphisms carry their differentiability
 proof in `ContMDiffMonoidMorphism`; identity and composition complete that bundled morphism API.

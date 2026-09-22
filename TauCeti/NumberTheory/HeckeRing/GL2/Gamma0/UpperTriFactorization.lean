@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The upper-triangular coset factorisation at `Γ₀`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperTriFactorization)
+
 Write `γ = !![a, b; c, d] ∈ SL(2, ℤ)`. Matching entries in
 `!![1, j; 0, p] · γ = γ' · !![1, j'; 0, p]` forces `γ' = !![a + jc, b'; pc, d - cj']` and
 `p b' = b + jd - (a + jc) j'`, so the offset `j'` must solve

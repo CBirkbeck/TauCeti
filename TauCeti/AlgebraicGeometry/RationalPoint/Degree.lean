@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Degree
 /-!
 # Divisor degrees at a rational point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.RationalPoint.Degree)
+
 `TauCeti.AlgebraicGeometry.RationalPoint.Basic` shows that a section `s` of a morphism of schemes
 `f : X ⟶ S` has residue degree one at every point of the base — for `S = Spec k` the statement
 `[κ(x₀) : k] = 1` at a `k`-rational point `x₀`. This file draws the consequences for the relative

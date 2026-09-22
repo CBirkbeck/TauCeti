@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Group
 /-!
 # The Weyl group of the diagonal torus of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.DiagonalTorus.WeylGroup)
+
 The Weyl group of the type `Cₘ` root datum `TauCeti.Symplectic.diagonalRootDatum` of `Sp₂ₘ` is the
 hyperoctahedral group `Sym(Bool) ≀ Sym(m)` of signed permutations of the coordinates. This file
 constructs that identification integrally, for every rank `m` including `m = 0`.

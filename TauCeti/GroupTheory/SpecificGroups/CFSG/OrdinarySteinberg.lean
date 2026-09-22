@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The ordinary Steinberg map of a Lie-type index on the Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.OrdinarySteinberg)
+
 Thirteen of the seventeen Lie-type constructors take an *ordinary* Steinberg endomorphism, the
 field Frobenius composed with a graph automorphism of the pinned ambient group; the remaining four
 take an odd power of a half-Frobenius instead. `TauCeti.GraphTwistedIndex` is exactly the subtype

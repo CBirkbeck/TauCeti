@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Rank
 /-!
 # Full-rank congruences of positive-definite matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.PosDef.Rank)
+
 For a rectangular matrix `B`, congruence sends a positive-definite matrix `A` to
 `B * A * Bᴴ`.  The result is positive definite exactly when the rows of `B` are independent,
 or equivalently when `B` has full row rank.  This file records those equivalences in the form

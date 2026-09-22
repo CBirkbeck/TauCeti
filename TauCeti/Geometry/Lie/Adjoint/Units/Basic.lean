@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Lie.Exponential.Units.Compatibility
 /-!
 # The adjoint action on units of a normed algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Units.Basic)
+
 For the Lie group of units of a complete real normed algebra, the tangent adjoint action is
 ordinary algebra conjugation. In finite dimensions, the same formula describes the adjoint on
 left-invariant derivations under the canonical identification with the ambient algebra. We obtain

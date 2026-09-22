@@ -14,6 +14,8 @@ import Mathlib.Algebra.CharP.Two
 /-!
 # The lattice-homology differential over `𝔽₂[U]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Differential)
+
 This file constructs the first chain complex in the plumbing-lattice lane. For a plumbing graph
 `P` and a characteristic covector `k`, the chain module is freely generated over `𝔽₂[U]` by
 plumbing cubes `(x, S)`. Its differential has two terms for every direction `v ∈ S`: the lower

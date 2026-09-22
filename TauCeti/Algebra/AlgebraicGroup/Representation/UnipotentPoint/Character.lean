@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.Basic
 /-!
 # Unipotent points and algebraic characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.Character)
+
 A group-like element of a coordinate Hopf algebra is the coordinate-ring incarnation of an
 algebraic character. Its associated rank-one comodule lets a point act by evaluation at that
 group-like element. Consequently a unipotent point valued in a reduced ring evaluates every

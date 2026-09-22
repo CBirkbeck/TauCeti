@@ -15,6 +15,8 @@ import TauCeti.Topology.Frontier
 /-!
 # Counting the lattice points of a dilated body, with a boundary-order error
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.GeometryOfNumbers.LatticePointCount)
+
 Let `L` be a `ℤ`-lattice in an `n`-dimensional real normed space `E`, let `μ` be an additive Haar
 measure on `E`, and let `D` be a bounded set whose frontier is Lipschitz parametrizable in
 dimension `n - 1`.  When `0 < n`, the resulting error is power-saving. Dilating `D` by `c`

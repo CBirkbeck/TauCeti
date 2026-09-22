@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.ObjectProperty
 /-!
 # Morphisms factoring through a class of objects
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.ObjectProperty.FactorsThrough)
+
 Given an object property `P` in a category, this file defines `P.FactorsThrough f`: the
 morphism `f` admits a `CategoryTheory.Factorisation` whose midpoint satisfies `P`. It
 records the closure properties of this predicate — enlarging `P`, composing on either side, and,

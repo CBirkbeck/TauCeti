@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.l2Space
 /-!
 # Transporting Hilbert bases by linear isometric equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.HilbertBasis.Map)
+
 This file adds the Hilbert-basis analogue of `Basis.map`: a Hilbert basis of a Hilbert space
 can be transported across a linear isometric equivalence. It also follows Mathlib's
 `OrthonormalBasis.map` API for transporting orthonormal bases. The construction is the Part 0

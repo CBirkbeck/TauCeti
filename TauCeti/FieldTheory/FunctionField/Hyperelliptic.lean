@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Separable.Quadratic
 /-!
 # Hyperelliptic function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Hyperelliptic)
+
 An algebraic function field `F / k` is *hyperelliptic* when it has genus at least two and
 contains a rational subfield `k(x)` of index two over which it is separable.  Separability is
 part of the definition rather than a consequence of it: over a constant field of characteristic

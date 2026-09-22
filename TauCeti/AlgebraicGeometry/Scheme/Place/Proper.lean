@@ -11,6 +11,8 @@ public import Mathlib.AlgebraicGeometry.ValuativeCriterion
 /-!
 # Places have unique centers on proper curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.Place.Proper)
+
 Let `X` be an integral scheme of dimension at most one over a field whose structure morphism
 satisfies the existence part of the valuative criterion, a proper curve for instance. If the
 local ring at every codimension-one point is a discrete valuation ring, then every normalized

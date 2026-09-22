@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.Equiv.Basic
 /-!
 # Invertible matrices of linear automorphisms in a basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Basis)
+
 Mathlib identifies `GL ι k` with the general linear group `LinearMap.GeneralLinearGroup k V` of a
 module with a finite basis (`Matrix.GeneralLinearGroup.toLin'`), and that group with the linear
 automorphisms `V ≃ₗ[k] V` (`LinearMap.GeneralLinearGroup.generalLinearEquiv`).  This file records

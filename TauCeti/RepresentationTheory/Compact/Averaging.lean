@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 /-!
 # Averaging over compact groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Averaging)
+
 This file bundles integration against normalized Haar measure as a continuous linear map on
 continuous vector-valued functions. It records the norm bound, constants, and invariance under left
 and right translation needed for averaging representations.

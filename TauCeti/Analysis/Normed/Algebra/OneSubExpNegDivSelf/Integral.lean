@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # An integral formula for the filled exponential quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.OneSubExpNegDivSelf.Integral)
+
 This file identifies the filled quotient `(1 - exp (-a)) / a` with the integral of the
 exponential along the line segment from `0` to `-a`. The formula remains valid when `a` is not
 invertible.

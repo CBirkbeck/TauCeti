@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.TitsSystem.Bruhat.Basic
 /-!
 # Subword expansion of products of Bruhat cells
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TitsSystem.Bruhat.Subword)
+
 For a Tits system, inversion carries the Bruhat cell indexed by `w` to the cell indexed by
 `w⁻¹`. Consequently the left-handed rank-one multiplication law also holds on the right: if `s`
 is simple, then `(B w B)(B s B)` is either `B (w s) B` or its union with `B w B`.

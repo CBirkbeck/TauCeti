@@ -17,6 +17,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # The sign group as a line over `ZMod 2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ZMod.IntUnitsPower)
+
 Mathlib makes the two-element group `ℤˣ = {±1}`, written additively, a module over `ZMod 2`
 (`Mathlib.Data.ZMod.IntUnitsPower`). This file records that it *is* the line `ZMod 2`: the map
 sending `-1` to `1` is a `ZMod 2`-linear equivalence, so in particular the dimension is `1`. This

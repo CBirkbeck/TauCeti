@@ -24,6 +24,8 @@ import Mathlib.Data.Sym.Card
 /-!
 # Grid diagrams and grid states
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Diagram.Basic)
+
 This file starts the grid-combinatorial lane of the Heegaard Floer roadmap. A grid state of
 grid number `n` is a wrapper around a permutation of `Fin n`, sending each column to the
 unique row occupied by the state in that column. A grid diagram is encoded by two such

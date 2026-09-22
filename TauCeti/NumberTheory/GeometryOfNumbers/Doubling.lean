@@ -14,6 +14,8 @@ public import Mathlib.Data.Int.Interval
 /-!
 # A measure-free lattice-point packing and doubling engine
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.GeometryOfNumbers.Doubling)
+
 This is the Layer-0 geometry-of-numbers engine of the effective-bounds roadmap: the two
 *measure-free* cardinality estimates for an additive subgroup `Λ ≤ (ι → ℂ)` (`ι` finite)
 inside the per-coordinate polydiscs `box r c = {x | ∀ i, ‖x i‖ ≤ c · r i}`. Both are proved

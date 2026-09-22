@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Polynomial.Hermite.Real
 /-!
 # `L²` membership of the Hermite polynomials against a Gaussian measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Hermite.MemLp)
+
 This file specializes the generic Gaussian/polynomial `L²` membership of
 `TauCeti.Probability.Distributions.Gaussian.PolynomialMemLp` to the probabilists' Hermite
 polynomials `Polynomial.hermite n`.  The Hermite statement `memLp_hermite_gaussianReal` is target

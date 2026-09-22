@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Integral.Gamma
 /-!
 # The Weibull distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Weibull.Basic)
+
 The Weibull law with shape `k` and scale `lam` has density
 `(k / lam) * (x / lam) ^ (k - 1) * exp (-(x / lam) ^ k)` on the positive
 half-line. This file defines the law, proves that it is a probability measure exactly when both

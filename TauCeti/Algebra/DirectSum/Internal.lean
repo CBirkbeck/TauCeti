@@ -12,6 +12,8 @@ import TauCeti.Order.CompactlyGenerated
 /-!
 # Internal direct sums from explicit equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.DirectSum.Internal)
+
 This file provides reusable infrastructure for direct sums of submodules.  The generic
 `DirectSum.piInclusion`, `DirectSum.piSubmodule`, and `DirectSum.piSubmoduleEquiv` declarations
 describe their componentwise inclusion and range, while `DirectSum.isInternal_of_lof` gives a

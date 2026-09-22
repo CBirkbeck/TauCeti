@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.LinearCharacter
 /-!
 # Inducing a linear character from the rotation subgroup of a dihedral group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Dihedral)
+
 The dihedral group `DihedralGroup n` has a rotation subgroup of index `2`, cyclic and so
 commutative by `TauCeti.dihedralRotationsMulEquiv`, and every representation induced from it has
 twice the dimension it was induced from. Inducing a **linear** character `ψ` of the rotations

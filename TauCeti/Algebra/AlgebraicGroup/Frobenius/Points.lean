@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 /-!
 # Frobenius on convolution points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Frobenius.Points)
+
 Let `H` be a bialgebra over `ℤ` and let `A` be a commutative ring of exponential
 characteristic `p`. Post-composition with Mathlib's `iterateFrobenius A p n` sends an `A`-valued
 point `f : H →ₐ[ℤ] A` to the point `h ↦ f(h) ^ (p ^ n)`. Functoriality of convolution makes this

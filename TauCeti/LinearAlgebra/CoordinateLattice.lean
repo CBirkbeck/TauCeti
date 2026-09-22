@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.Binomial
 /-!
 # The integral lattice in a rational coordinate space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CoordinateLattice)
+
 For a finite index type `ι`, this file packages the standard integral lattice in `ι → ℚ`: the
 `ℤ`-span of the coordinate vectors. It records its coordinatewise membership criterion and its
 canonical basis. These declarations are shared by the standard Chevalley carriers and the Geck

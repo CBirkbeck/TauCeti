@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
 /-!
 # Ideals of points of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.XYIdealMaximal)
+
 For a point `(x, y)` on an affine Weierstrass curve `W` over a field, Mathlib's
 `CoordinateRing.XYIdeal W x (C y)` is the ideal `⟨X - x, Y - y⟩` of the coordinate ring, and
 `CoordinateRing.quotientXYIdealEquiv` identifies the quotient by it with the base field. This file

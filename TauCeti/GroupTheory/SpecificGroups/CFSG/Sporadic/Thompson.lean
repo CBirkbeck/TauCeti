@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.Presentation.GroupPresentation
 /-!
 # A transcribed presentation of the Thompson sporadic simple group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.Thompson)
+
 This file carries one row of the sporadic presentation manifest: the finite presentation of the
 Thompson group `Th` on eight generators determined by Havas, Soicher and Wilson, transcribed into
 the auditable format of `TauCeti.GroupPresentation`. The row records the generator names, the

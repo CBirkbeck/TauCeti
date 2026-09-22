@@ -15,6 +15,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 /-!
 # A moving-chart formula for covariant differentiation along a curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCurve.Basic)
+
 This file constructs a moving-chart candidate for the covariant derivative of a tangent field
 along a curve.  At a parameter `t`, both the curve and the field are read in the tangent-bundle
 trivialization coming from the chart centred at the current point `γ t`.  If `u` and `v` are those

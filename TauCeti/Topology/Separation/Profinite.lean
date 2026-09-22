@@ -14,6 +14,8 @@ import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # Continuous extension from a closed subspace of a profinite space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Separation.Profinite)
+
 Let `X` be a profinite space — compact, Hausdorff and totally disconnected — and let `Y` be a
 discrete space. This file proves that a continuous map into `Y` defined on a *closed* subspace
 `s ⊆ X` extends to a continuous map on all of `X`, as soon as one of `s` and `Y` is nonempty;

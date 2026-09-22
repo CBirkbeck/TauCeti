@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Realizatio
 /-!
 # Surjectivity of the barycentric-subdivision realization map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Surjective)
+
 The canonical realization map sends a vertex of the barycentric subdivision to the barycenter of
 the face it represents. This file proves that the map is onto. The proof gives the classical
 inverse coordinates explicitly: order the nonzero barycentric coordinates of a point decreasingly,

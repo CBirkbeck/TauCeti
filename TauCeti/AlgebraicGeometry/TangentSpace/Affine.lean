@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Ideal.Cotangent.Localization
 /-!
 # The Zariski cotangent space at an augmentation point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.TangentSpace.Affine)
+
 For an augmented commutative algebra `f : H →ₐ[k] k`, the augmentation determines a `k`-rational
 point of `Spec H`. Its prime ideal is `ker f`. The stalk of `Spec H` at this point is the
 localization of `H` at `ker f`, so localization of cotangent spaces gives a canonical equivalence

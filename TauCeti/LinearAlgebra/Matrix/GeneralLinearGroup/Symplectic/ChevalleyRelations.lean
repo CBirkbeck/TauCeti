@@ -11,6 +11,8 @@ import TauCeti.GroupTheory.Commutator
 /-!
 # Chevalley commutator relations in the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.ChevalleyRelations)
+
 This file proves the rank-two, multiply-laced commutator relations among the explicit root
 subgroups of `TauCeti.GLSymplecticFin`. For distinct `i` and `j`, the roots
 `eᵢ - eⱼ`, `2eⱼ`, `eᵢ + eⱼ`, and `2eᵢ` form a type-`C₂` root string, and the chosen

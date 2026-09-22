@@ -18,6 +18,8 @@ public import Mathlib.LinearAlgebra.Complex.Module
 /-!
 # The two embeddings of `ℂ` in the quaternions are conjugate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.ComplexSubfield)
+
 Complex conjugation on the copy of `ℂ` inside the real quaternions is conjugation by `j`:
 
 `ofComplex (conj z) = j * ofComplex z * j⁻¹`.

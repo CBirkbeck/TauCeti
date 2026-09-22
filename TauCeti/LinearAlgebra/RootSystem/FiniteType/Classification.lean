@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.RootSystem.Isomorphism
 /-!
 # The Cartan-Killing classification of finite-type Cartan matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Classification)
+
 This file proves the central theorem of Layer 5 of the root systems roadmap: every nonempty
 connected finite-type Cartan matrix reindexes to the standard Cartan matrix of a **unique valid**
 `DynkinType`, and every base of an irreducible reduced crystallographic finite root system has a

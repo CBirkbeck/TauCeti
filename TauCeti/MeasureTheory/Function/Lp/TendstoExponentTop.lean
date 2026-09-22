@@ -12,6 +12,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 /-!
 # The `L^∞` seminorm as the limit of the `Lᵖ` seminorms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.TendstoExponentTop)
+
 For an almost everywhere strongly measurable function `f`, the essential supremum of `‖f‖ₑ` is
 recovered from the finite-exponent seminorms as `p → ∞`:
 

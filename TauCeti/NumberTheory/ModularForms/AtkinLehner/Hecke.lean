@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.ModularForms.HeckeSlash.Conjugation
 /-!
 # Atkin–Lehner operators commute with Γ₀ double-coset slash operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.AtkinLehner.Hecke)
+
 For an exact divisor `Q` of `N`, the Atkin–Lehner operator `W_Q` on `M_k(Γ₀(N))` commutes with
 the Hecke operator `[Γ₀(N) α Γ₀(N)]` of every double coset whose determinant is coprime to `Q`,
 and so does its normalization `𝒲_Q`; likewise on `S_k(Γ₀(N))`. These results are strictly

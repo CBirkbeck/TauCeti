@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.Cocharacter
 /-!
 # The finite-rank split torus as a group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.Scheme)
+
 For a finite index type `sigma`, the split torus with character lattice `sigma →₀ ℤ` is
 the diagonalizable group scheme
 `D(Multiplicative (sigma →₀ ℤ))`. This file synchronizes that scheme presentation with

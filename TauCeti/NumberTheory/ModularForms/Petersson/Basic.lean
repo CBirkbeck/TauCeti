@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.Basic
 /-!
 # The Petersson inner product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Basic)
+
 The **Petersson inner product**
 $$\langle f, g \rangle = \int_D \overline{f(\tau)} \, g(\tau) \, (\operatorname{Im}\tau)^k
 \, d\mu(\tau)$$

@@ -20,6 +20,8 @@ import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 /-!
 # Fundamental theorem of calculus for a logarithmic-derivative integrand
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.LogDerivFTC)
+
 For a function `f : ℝ → ℂ` continuous on `[a, b]`, differentiable off a countable set `P`, and
 staying in `Complex.slitPlane` on `[a, b]`, the principal `Complex.log ∘ f` is a single-valued
 antiderivative of the logarithmic-derivative integrand `f' t / f t`, so

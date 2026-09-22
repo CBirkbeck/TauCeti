@@ -12,6 +12,8 @@ import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 /-!
 # Character orthogonality for the ideal weight of a Galois character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Orthogonality)
+
 For a finite **abelian** Galois extension `L / K` of number fields, summing `(χ σ)⁻¹` against the
 ideal weight `MonoidHom.galoisCharacterWeight χ` over all characters `χ : Gal(L/K) →* ℂˣ` selects
 one Frobenius fibre: at a height-one prime `𝔭` unramified in `L` the sum is `#Gal(L/K)` when the

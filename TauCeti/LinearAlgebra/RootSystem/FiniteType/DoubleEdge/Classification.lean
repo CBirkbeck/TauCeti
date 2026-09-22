@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.FiniteType.Dynkin
 /-!
 # Classification of finite double-edge chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.DoubleEdge.Classification)
+
 The double-edge bound in
 `TauCeti.LinearAlgebra.RootSystem.FiniteType.DoubleEdge.Basic` leaves exactly three possible shapes
 for two nonempty chains joined by a double edge: one chain has one vertex, giving the families

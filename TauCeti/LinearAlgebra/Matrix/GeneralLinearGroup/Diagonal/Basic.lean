@@ -26,6 +26,8 @@ import TauCeti.LinearAlgebra.Matrix.Diagonal
 /-!
 # Diagonal elements of the general linear group, and the diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Basic)
+
 A family of units indexed by a finite type `ι` is the diagonal of an invertible diagonal matrix,
 and this assignment is a group homomorphism `TauCeti.diagGL : (ι → kˣ) →* GL ι k`. Its entries,
 its determinant and its injectivity are recorded here, together with the fact that invertibility

@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.TypeA.Basic
 /-!
 # The type-A carrier in the standard special linear model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeA.Agreement)
+
 The type-A families are constructed on the explicit full-weight carrier. Their pinned reference
 group is the group of algebraic-closure-valued points of the special linear group scheme over
 `ℤ`. This file records the comparison together with all of the pinned data used in the

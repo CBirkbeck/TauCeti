@@ -10,6 +10,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Map
 /-!
 # Homotopy of generalized loops
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.Homotopy)
+
 Mathlib defines `GenLoop.Homotopic`, homotopy of generalized loops relative to the cube
 boundary, and separately topologises `Ω^ N X x` with the compact-open topology, but does not
 relate the two. This file proves that they agree: two generalized loops are homotopic relative

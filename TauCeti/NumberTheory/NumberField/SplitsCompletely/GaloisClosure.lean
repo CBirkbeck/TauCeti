@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.RamificationInertia.Splitting
 /-!
 # Complete splitting and unramifiedness in composita and Galois closures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.SplitsCompletely.GaloisClosure)
+
 Let `M / K` be a finite Galois extension of number fields with group `G`, let `E` be an
 intermediate field, and let `𝔭` be a prime of `𝓞 K`. Say that `𝔭` *splits completely* in `E`
 when it has `[E : K]` primes above it in `𝓞 E`. This file proves

@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Inversions.Length
 /-!
 # The deletion condition and the subword property
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Inversions.Subword)
+
 A word in the simple reflections whose length exceeds the number of inversions of the element it
 spells is wasteful, and the strong exchange condition says exactly where the waste is: two of its
 letters can be deleted without changing the element. Iterating the deletion until no waste is left

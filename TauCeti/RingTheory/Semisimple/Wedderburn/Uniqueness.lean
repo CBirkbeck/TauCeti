@@ -11,6 +11,8 @@ import TauCeti.RingTheory.Semisimple.BlockCount
 /-!
 # Uniqueness of Wedderburn blocks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.Wedderburn.Uniqueness)
+
 Artin--Wedderburn presents a semisimple ring as a finite product of matrix rings over division
 rings.  `TauCeti.card_blocks_eq` proves that two such presentations have equally many blocks, and
 `TauCeti.wedderburn_data_unique` proves that the size and coefficient division ring of a *single*

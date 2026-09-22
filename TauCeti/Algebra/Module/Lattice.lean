@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.IsTensorProduct
 /-!
 # Full submodule lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Lattice)
+
 This file provides generic results about full submodules over fraction fields. It relates bases and
 ranks of full submodules to their ambient spaces. It also extends integral linear equivalences
 between full submodules to rational linear equivalences of their ambient spaces, and proves that

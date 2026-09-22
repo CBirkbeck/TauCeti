@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FiniteSum
 /-!
 # Effective Weil divisors of fixed degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Basic)
+
 This file packages the fixed-degree part of the effective Weil-divisor monoid.  For a type of
 points `X`, the type `EffectiveDivisorOfDegree X d` consists of effective formal divisors of
 degree `d`.  It is equivalent to Mathlib's symmetric power `Sym X d`, by reading a multiset as

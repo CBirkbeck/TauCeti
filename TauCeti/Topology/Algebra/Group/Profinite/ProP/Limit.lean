@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Subgroup
 /-!
 # Inverse limits of pro-p groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Limit)
+
 The class of pro-`p` groups is stable under inverse limits: a limit of a diagram of pro-`p`
 profinite groups, formed in `ProfiniteGrp`, is again pro-`p`. With stability under subgroups,
 quotients and products this completes the closure API for `IsProP`.

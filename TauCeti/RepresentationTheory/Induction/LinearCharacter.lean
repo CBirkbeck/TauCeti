@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.LinearCharacter
 /-!
 # Inducing a linear character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.LinearCharacter)
+
 Two facts about `Ind_N^G` applied to a linear character, both independent of any irreducibility
 question and so of the Mackey theory that the worked examples go on to use.
 

@@ -13,6 +13,8 @@ import TauCeti.GroupTheory.DoubleCoset.Normalizer
 /-!
 # Conjugating a double-coset slash sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Conjugation)
+
 Let `g` normalize `Γ₁` and `Γ₂`, and suppose that conjugation by `g` carries the double coset
 `Γ₁ δ Γ₂` into itself, i.e. `g⁻¹ δ g ∈ Γ₁ δ Γ₂`. Then conjugation by `g` permutes the right cosets
 `Γ₁ aᵥ` that `Γ₁ δ Γ₂` decomposes into, `Γ₁ aᵥ ↦ Γ₁ (g⁻¹ aᵥ g)`, and so for a `Γ₁`-invariant `f`

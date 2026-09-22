@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 /-!
 # Recovering a function from one of its exponentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.ExpRecovery)
+
 `Real.exp` is a smooth bijection onto `(0, ∞)` whose inverse `Real.log` is smooth there, so a
 real-valued function `g` is exactly as regular as any single exponential `t ↦ e^{c g(t)}` built
 from it with `c ≠ 0`.  Mathlib supplies the easy direction (`ContDiffOn.exp`, `Continuous.exp`);

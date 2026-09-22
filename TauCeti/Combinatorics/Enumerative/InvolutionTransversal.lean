@@ -11,6 +11,8 @@ public import Mathlib.Data.Set.Card
 /-!
 # Transversals of a fixed-point-free involution on a finite set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.InvolutionTransversal)
+
 Let `f : α → α` map a finite set `S` to itself, involutively and without fixed points, so that
 `S` is partitioned into the two-element orbits `{a, f a}`. A *transversal* of `f` on `S` is a
 subset `T ⊆ S` meeting each orbit exactly once; equivalently, `a ∈ T ↔ f a ∉ T` for every

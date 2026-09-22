@@ -12,6 +12,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.Section.Extension
 /-!
 # The first Bianchi identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Bianchi)
+
 For a torsion-free smooth connection on the tangent bundle, curvature satisfies
 `R(X,Y)Z + R(Y,Z)X + R(Z,X)Y = 0`.
 

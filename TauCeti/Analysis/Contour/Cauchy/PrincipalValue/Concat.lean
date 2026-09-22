@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On
 /-!
 # Concatenating set-level Cauchy principal values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Concat)
+
 `HasCauchyPV` binds its finite excision set **existentially**, which is the right interface for
 consumers but is too weak to concatenate: two principal values along adjacent subcurves may be
 witnessed by *different* excision sets, and passing to their union changes the excised integrand.

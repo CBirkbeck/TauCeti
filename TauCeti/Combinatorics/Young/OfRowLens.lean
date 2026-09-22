@@ -13,6 +13,8 @@ public import TauCeti.Combinatorics.Young.Diagram
 /-!
 # Young diagrams from a bounded family of row lengths
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.OfRowLens)
+
 Mathlib builds a Young diagram from a weakly decreasing `List ℕ` of row lengths
 (`YoungDiagram.ofRowLens`) and reads that list back off a diagram (`YoungDiagram.rowLens`); the
 two are inverse only after the *positive* entries are singled out, since `rowLens` never records

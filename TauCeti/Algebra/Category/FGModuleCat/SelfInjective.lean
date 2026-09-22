@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.Injective.SelfInjective
 /-!
 # Projectives over a self-injective ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.FGModuleCat.SelfInjective)
+
 This file relates module-theoretic self-injectivity to projective and injective objects in the
 category `FGModuleCat R` of finitely generated modules.
 

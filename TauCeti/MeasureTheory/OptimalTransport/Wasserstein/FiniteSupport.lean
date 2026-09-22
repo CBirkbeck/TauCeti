@@ -11,6 +11,8 @@ import TauCeti.Data.ENNReal.Weights
 /-!
 # Approximation of a finite-moment law by a finitely supported one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.FiniteSupport)
+
 On a separable ground space every probability measure with finite `p`-moment can be pushed within
 any prescribed Wasserstein accuracy by a quantizer, for every finite exponent `1 ≤ p < ∞`. When
 singletons are measurable, these pushforwards are measures carried by finite sets. This file also

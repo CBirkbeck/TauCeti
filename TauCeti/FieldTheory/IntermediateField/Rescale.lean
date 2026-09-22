@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 /-!
 # Rescaling generators by the base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.Rescale)
+
 Multiplying each generator of an intermediate field by a nonzero scalar from the base field does
 not change the field it generates: the base scalars and their inverses are already there. This is
 the field-theoretic content of "generators matter only up to their square class" arguments, where

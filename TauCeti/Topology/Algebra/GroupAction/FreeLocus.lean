@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.ConstMulAction
 /-!
 # The free locus of a properly discontinuous group action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupAction.FreeLocus)
+
 For a group acting on a space, the free locus consists of the points with trivial stabilizer.
 It is naturally an invariant subspace. If the action is properly discontinuous on a locally
 compact Hausdorff space, this subspace is open: a sufficiently small neighbourhood of a free

@@ -12,6 +12,8 @@ import TauCeti.RingTheory.DedekindDomain.AdicValuation.ValuativeRel
 /-!
 # Compactness of the additive adele quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Adeles.CompactQuotient)
+
 For a number field `K`, the diagonal copy of `K` is cocompact in its adele ring.  Equivalently,
 the additive quotient `𝔸[K] / K` is compact.
 

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Equivalence
 /-!
 # Linearly reductive affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.LinearlyReductive)
+
 This file transports linear reductivity from commutative Hopf algebras to affine group schemes
 over a field. The coordinate-ring predicate tests finite-dimensional comodules whose carriers
 lie in `Type u`, the universe of the base field and coordinate ring; transport to a finite

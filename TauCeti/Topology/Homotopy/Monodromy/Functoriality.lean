@@ -11,6 +11,8 @@ public import TauCeti.Logic.Function.Fiber
 /-!
 # Functoriality of covering-space monodromy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Monodromy.Functoriality)
+
 A continuous map between two covering spaces over the same base carries lifts of a path to
 lifts of that path. Consequently it intertwines transport between fibres and induces a natural
 transformation between the two monodromy functors. An isomorphism of covers induces a natural

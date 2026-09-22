@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.IntegralModel
 /-!
 # The Weierstrass class of an elliptic curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.Class)
+
 Let `O` be a Dedekind domain with fraction field `K`. An integral elliptic Weierstrass equation
 `W` has a defect ideal `𝔍_W`, whose exponent at a height-one prime is the local obstruction to
 minimality. Under an admissible change of variables `C`, two integral equations satisfy

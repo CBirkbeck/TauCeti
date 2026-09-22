@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.StdBasis
 /-!
 # The algebra homomorphisms out of a finite power of the base ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Algebra.Pi)
+
 Let `R` be a nontrivial commutative semiring without zero divisors and `ι` a finite index type.
 Mathlib's `AlgHom.eq_piEvalAlgHom` says that every `R`-algebra homomorphism `(ι → R) →ₐ[R] R` is a
 coordinate evaluation `Pi.evalAlgHom R _ s`. Distinct coordinates give distinct evaluations, since

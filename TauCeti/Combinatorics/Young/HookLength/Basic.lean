@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Young.Corner
 /-!
 # Hooks and hook lengths of a Young diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.HookLength.Basic)
+
 The *hook* of a cell `c` of a Young diagram `μ` consists of `c` itself, the cells of `μ` strictly to
 the right of `c` in its row (its *arm*), and the cells of `μ` strictly below `c` in its column (its
 *leg*).  Its cardinality is the *hook length* `hookLength μ c`, the quantity appearing in the

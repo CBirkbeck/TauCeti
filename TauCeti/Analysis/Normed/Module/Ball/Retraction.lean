@@ -11,6 +11,8 @@ public import Mathlib.Topology.MetricSpace.Lipschitz
 /-!
 # The radial retraction onto a closed ball
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Ball.Retraction)
+
 In a real normed space, `TauCeti.radialRetraction r` scales a vector `x` by
 `min 1 (r / ‖x‖)`. When `0 ≤ r`, it fixes the closed ball of radius `r` and pushes everything
 outside it to the sphere of radius `r` along the ray through the origin. It is the standard device

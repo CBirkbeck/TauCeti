@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Algebra.Subalgebra.Lattice
 /-!
 # What `Algebra.botEquivOfInjective` does to an element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Algebra.Subalgebra.Lattice)
+
 For an injective `algebraMap R A`, `Algebra.botEquivOfInjective` identifies the bottom subalgebra
 `⊥` of `A` with `R`. Mathlib states it without `@[simps]` — unlike `Algebra.botEquiv`, which
 carries `@[simps! symm_apply]` — so nothing names its value on an element. This file supplies the

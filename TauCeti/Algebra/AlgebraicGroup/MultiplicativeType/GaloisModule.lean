@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.Cocharacter
 /-!
 # Continuous Galois modules attached to a group of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.GaloisModule)
+
 The character and cocharacter groups of a group of multiplicative type carry mutually
 contragredient actions of the absolute Galois group. The character action is already known to be
 continuous for the Krull topology and the discrete topology on the group. This file proves the

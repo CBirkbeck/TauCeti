@@ -15,6 +15,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Endomorphisms of tensor products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.End.TensorProduct)
+
 This file establishes semisimplicity and nilpotence properties of tensor-product endomorphisms.
 After embedding an unchanged projective factor as a direct summand of a free module, the tensor
 product is a direct summand of a direct sum of copies of the original module, and the corresponding

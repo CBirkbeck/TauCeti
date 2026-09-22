@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Character
 /-!
 # Tensor powers of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Tensor.Power)
+
 This file equips the tensor power of a representation with its diagonal action. The action on a
 pure tensor applies the original action in every factor. This construction is used by the
 classical-groups roadmap to form tensor powers of the standard representation.

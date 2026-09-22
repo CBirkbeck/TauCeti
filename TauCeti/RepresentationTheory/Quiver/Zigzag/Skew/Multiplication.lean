@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basis
 /-!
 # The multiplication table of a skew-zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Multiplication)
+
 The skew-zigzag relation quotient `TauCeti.skewZigzagQuotient` of a finite simple graph is spanned
 by the vertex idempotents `e_i`, the oriented edges `a_d`, and the volume classes
 `TauCeti.skewZigzagVolume`, each taken relative to a chosen incident edge. This file computes the

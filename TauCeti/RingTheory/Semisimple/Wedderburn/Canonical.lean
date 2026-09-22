@@ -24,6 +24,8 @@ import TauCeti.RingTheory.Semisimple.Wedderburn.Uniqueness
 /-!
 # The intrinsic data of a Wedderburn block
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.Wedderburn.Canonical)
+
 Artin--Wedderburn presents a semisimple ring `R` as a finite product of matrix rings over division
 rings, `R ≃+* ∏ᵢ Matₙᵢ(Dᵢ)`, and `TauCeti.wedderburn_blocks_unique` says that two presentations
 differ only by a permutation of the blocks.  That is uniqueness *between* presentations; it does

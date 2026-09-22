@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.OpenAddSubgroupBasis
 /-!
 # Cofinite convergence in a nonarchimedean group is a finiteness condition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter)
+
 In a nonarchimedean additive group the open subgroups form a basis of neighbourhoods of zero, so
 a family converges to zero along the cofinite filter exactly when each open subgroup omits only
 finitely many of its members.

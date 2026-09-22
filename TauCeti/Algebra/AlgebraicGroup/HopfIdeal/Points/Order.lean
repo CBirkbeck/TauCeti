@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Naturality
 /-!
 # Order of Hopf-ideal quotient point subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Order)
+
 A Hopf ideal `I` cuts out, on every value algebra `A`, the subgroup of ambient points
 `H(A)` which vanish on `I`. This file records the elementary order behavior of this
 construction: if `I ≤ J`, then every point which kills `J` also kills `I`, so the subgroup

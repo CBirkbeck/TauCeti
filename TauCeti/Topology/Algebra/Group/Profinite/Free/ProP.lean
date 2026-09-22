@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Free.ProC
 /-!
 # Free pro-`p` groups on a type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Free.ProP)
+
 The free pro-`p` group on `X` is defined directly as the maximal pro-`p` quotient of the free
 profinite group on `X`. A map from `X` to a pro-`p` profinite group in the same universe extends
 uniquely to a continuous homomorphism. Extensionality for homomorphisms out of the free pro-`p`

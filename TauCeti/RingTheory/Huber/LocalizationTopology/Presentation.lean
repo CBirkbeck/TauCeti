@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
 /-!
 # Comparing two presentations of a rational localisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Presentation)
+
 A rational subset `U = R(T/s)` of `Spa(A,A⁺)` has many presentations `(T,s)`, so the completed
 localisations they give must be compared by canonical isomorphisms, compatible for three
 presentations. This file supplies the conditional half: *given* comparison maps compatible with the

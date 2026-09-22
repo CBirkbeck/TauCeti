@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.RatFunc.PowerTower
 /-!
 # The `q`-th powers in a rational function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.RatFunc.Frobenius)
+
 For a finite field `K` with `q` elements, the `q`-power map is a `K`-algebra endomorphism of the
 rational function field `K(X)` (Mathlib's `FiniteField.frobeniusAlgHom`). Its image is the
 subfield `K(X^q)`, and `K(X)` has degree exactly `q` over it.

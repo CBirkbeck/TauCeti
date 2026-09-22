@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Semigroups.GrowthBound
 /-!
 # Exponential shifts of strongly continuous semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.ExponentialShift)
+
 This file defines the exponentially shifted C₀-semigroup
 `t ↦ exp (-lambda t) • S(t)`.  Shifting is the standard way to move a growth bound
 `(ω, M)` to `(ω - lambda, M)`, and in particular to turn a semigroup with bound

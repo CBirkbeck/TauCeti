@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.TensorPower.Basic
 /-!
 # Basic operations on tensor powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorPower.Basic)
+
 Mathlib's `TensorPower.mulEquiv` identifies `⨂[R]^k M ⊗[R] ⨂[R]^m M` with `⨂[R]^(k + m) M`.  This
 file records the inverse operation: `TensorPower.splitAt` cuts a tensor power of length `n` after
 its first `k` factors, landing in `⨂[R]^k M ⊗[R] ⨂[R]^(n - k) M`, together with its value on pure

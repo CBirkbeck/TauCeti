@@ -13,6 +13,8 @@ import Mathlib.NumberTheory.Padics.ProperSpace
 /-!
 # Compact modules underlying abelian pro-p groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.CompactModule)
+
 The canonical `ℤ_[p]`-module structure on an abelian pro-`p` group has the same finite
 generation theory as the underlying topological group. A finite topological generating set spans
 the module because its `ℤ_[p]`-span is closed. Conversely, an algebraic module generating set

@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Contraction
 /-!
 # The spinor module of a polarized quadratic space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.CliffordAction)
+
 A polarization of a quadratic space `(V, Q)` splits it as `W ⊕ W' ⊕ L`, with `W` and `W'`
 isotropic and in perfect `QuadraticMap.polar`-pairing and `L` an orthogonal remainder carried by a
 scalar coordinate. This file turns the exterior algebra `⋀·W` into a module over the Clifford

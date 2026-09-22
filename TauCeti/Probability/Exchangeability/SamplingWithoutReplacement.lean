@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Measure.Typeclasses.Finite
 /-!
 # Finite exchangeability as sampling without replacement
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.SamplingWithoutReplacement)
+
 This file identifies every shorter marginal of a finite exchangeable process with sampling
 without replacement from its observed finite population. Given a population law
 `ρ : Measure (κ → α)`, `sampleWithoutReplacement ρ` first draws `x ∼ ρ`, independently

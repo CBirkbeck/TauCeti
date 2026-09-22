@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence
 /-!
 # Good Hecke eigenforms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Eigenform)
+
 A cusp form is a *good Hecke eigenform* when it is a simultaneous eigenvector of the Hecke
 operators `T_n` for every `n` coprime to the level. This file names that condition as
 `IsEigenformAwayFromLevel` and records the one fact that makes it usable: for such a form, the

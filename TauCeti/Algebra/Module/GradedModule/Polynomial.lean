@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.GradedModule.Internal
 /-!
 # Graded modules over a polynomial ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.Polynomial)
+
 This file records the basic behavior of the action of `k[X]` on an internally `ℤ`-graded module on
 which `X` lowers degree by a fixed `d`, and equips `k[X]` itself with the internal grading that
 places `X ^ n` in degree `-n`.

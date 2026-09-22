@@ -11,6 +11,8 @@ import all TauCeti.Topology.Category.TopCat.Cech.Diagram
 /-!
 # Refinements of topological Čech diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopCat.Cech.Refinement)
+
 A map of indexing types `r : ι → κ` induces a functor between Čech index categories, sending a
 nonempty finite set to its image. If `U i ⊆ V (r i)` for all `i`, the inclusions of each finite
 intersection for `U` into the intersection for the image of its indices form a natural

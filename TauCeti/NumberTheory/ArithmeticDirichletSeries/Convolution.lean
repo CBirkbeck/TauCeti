@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Ideal.Operations
 /-!
 # Ideal convolution of ideal arithmetic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Convolution)
+
 The Dirichlet convolution of two arithmetic functions on the nonzero ideals of the ring of integers
 of a number field `K` sums over the factorizations `B * C = A` of a nonzero ideal `A`. This file
 constructs that index set, defines the convolution, and proves that it makes

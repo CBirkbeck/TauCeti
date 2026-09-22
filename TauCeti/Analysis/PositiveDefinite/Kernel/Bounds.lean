@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Matrix.PosSemidef
 /-!
 # Bounds for positive-definite subtraction kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Kernel.Bounds)
+
 This file specializes the scalar Cauchy--Schwarz estimates from
 `TauCeti.Analysis.Matrix.PosSemidef` to subtraction kernels `(a, b) ↦ ψ (a - b)`. It records the
 reality and nonnegativity of `ψ 0`, conjugate symmetry under negation, and the uniform norm bound

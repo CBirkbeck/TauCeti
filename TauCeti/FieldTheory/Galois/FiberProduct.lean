@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Galois.Restriction
 /-!
 # Galois groups of composita as fibre products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Galois.FiberProduct)
+
 Let `E/F` be a finite Galois extension and let `K₁`, `K₂` be normal subextensions. Restricting
 automorphisms of `E` gives a homomorphism `Gal(E/F) → Gal(K₁/F) × Gal(K₂/F)`. This file
 identifies its image: a pair `(σ₁, σ₂)` comes from an automorphism of `E` exactly when `σ₁` and

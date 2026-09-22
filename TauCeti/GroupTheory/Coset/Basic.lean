@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Coset.Basic
 /-!
 # Evaluating the decomposition of a group into cosets and a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coset.Basic)
+
 For a subgroup `s` of a group `α`, Mathlib's `Subgroup.groupEquivQuotientProdSubgroup` identifies
 `α` with `(α ⧸ s) × s`, using the chosen representatives `Quotient.out` of the left cosets. It is
 built as a composite of equivalences through a `Sigma` type, one step of which is a cast along the

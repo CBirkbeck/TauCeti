@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.PathAlgebra
 /-!
 # The zigzag relations and their quadratic presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Relations)
+
 The zigzag algebra of a simple graph `G` is the path algebra of the doubled quiver
 `TauCeti.DoubledQuiver G` modulo the *uniform* relation family: every length-two path whose
 endpoints differ, the difference of any two length-two backtracks based at one vertex, and every

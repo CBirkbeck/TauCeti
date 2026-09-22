@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Normalized Haar measure on compact groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Haar)
+
 This file normalizes Mathlib's Haar measure on a compact topological group to a probability
 measure, and records its left, right, and inversion invariance.
 

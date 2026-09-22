@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Normal.Basic
 /-!
 # Finiteness of the normal-subgroup joint-weight action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Normal.Finite)
+
 In a finite-dimensional representation, the characters of a normal subgroup with nonzero joint
 weight space form a finite type by `finite_nonzeroJointWeights`. The ambient group therefore acts
 on a finite set of nonzero joint weights, so the kernel of this permutation action has finite

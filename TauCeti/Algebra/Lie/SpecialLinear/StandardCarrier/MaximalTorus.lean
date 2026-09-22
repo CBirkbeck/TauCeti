@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.Diagonal
 /-!
 # The type A weight torus and its maximality on field-valued points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.MaximalTorus)
+
 Over any commutative ring, the standard carrier's weight-torus points are precisely the
 determinant-one diagonal matrices. Over an infinite field, their centralizer is exactly that
 diagonal subgroup, so they form a maximal commutative subgroup of the carrier points.

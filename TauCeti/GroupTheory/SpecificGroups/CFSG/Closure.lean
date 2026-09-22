@@ -12,6 +12,8 @@ public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 /-!
 # Algebraic closures for finite groups of Lie type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Closure)
+
 This file attaches to every valid Lie-type index the algebraically closed field over which its
 ambient pinned algebraic group will be evaluated. The field is Mathlib's algebraic closure of the
 prime field in the characteristic recorded by the index. Consequently its field, algebraic-closure,

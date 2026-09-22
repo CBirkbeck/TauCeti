@@ -12,6 +12,8 @@ import Mathlib.Data.Nat.Find
 /-!
 # Lifting a convergent family along a surjection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.LiftTendstoCofinite)
+
 A family `g : ι → N` converges to `n₀` along the cofinite filter when all but finitely many of its
 members lie in any given neighbourhood of `n₀`. This file shows that a surjection which carries the
 neighbourhood filter of `m₀` into that of `n₀` lifts such a family to one converging to `m₀`: the

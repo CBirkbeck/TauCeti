@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Multiplication
 /-!
 # The centre of a skew-zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Center)
+
 For a finite connected simple graph without isolated vertices, the centre of every skew-zigzag
 relation quotient is spanned by the unit and one volume class at each vertex. Thus, over a
 nontrivial coefficient ring, its dimension is independent of the skew parameter and equals the

@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.Boundary.Collar.Chart
 /-!
 # The manifold structure of collar coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Collar.Manifold)
+
 The collar charts of `Boundary.Collar.Chart` express a manifold modeled on the Euclidean
 half-space in tangential and inward-normal coordinates. This file proves that those charts have
 `C^k` transition maps. Consequently, the charted space `TauCeti.collarChartedSpace n M` is a

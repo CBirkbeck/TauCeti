@@ -16,6 +16,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Transvection
 /-!
 # The symplectic group as a subgroup of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Basic)
+
 For a commutative ring `R` and a finite index type `l`, the matrices `M` with `M J Mᵀ = J` form
 Mathlib's `Matrix.symplecticGroup l R`, a `Submonoid` of the matrix monoid whose elements happen
 to be invertible: its inverse is a separate `Inv` instance, and its `Group` structure is built by

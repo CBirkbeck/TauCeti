@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.TateCohomology.Functorial
 /-!
 # Range comparisons for finite-layer Tate cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.Tate.Basic)
+
 For a restriction of finite normal layers `K/E` inside `K/F`, the Galois group of `K/E` is
 identified with the image of its inclusion into the Galois group of `K/F`. This file transports
 Tate cohomology of the smaller layer along that identification, both with formation coefficients

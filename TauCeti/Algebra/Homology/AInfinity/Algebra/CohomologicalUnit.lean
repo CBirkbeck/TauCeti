@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Algebra.Unit
 /-!
 # Cohomological units for `A∞` algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.CohomologicalUnit)
+
 A cohomological unit is a degree-zero cycle whose left and right binary products act as the
 identity modulo boundaries.  Unlike a strict unit, its unit equations therefore hold only after
 passing to the cohomology of the unary operation, and it places no restriction on higher

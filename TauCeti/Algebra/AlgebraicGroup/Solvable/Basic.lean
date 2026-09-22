@@ -15,6 +15,8 @@ public import TauCeti.GroupTheory.Solvable
 /-!
 # Geometric solvability of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Basic)
+
 For a commutative Hopf algebra `H` over a field `k`, this file records the geometric-points
 solvability condition: the convolution group of `AlgebraicClosure k`-valued points of `H` is a
 solvable abstract group. Smoothness and finite type are deliberately not built into this property;

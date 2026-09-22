@@ -13,6 +13,8 @@ import TauCeti.Geometry.Manifold.ContMDiff.Prod
 /-!
 # Derivative of the Lie-group exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Derivative.Basic)
+
 Let `center = extChartAt I 1 1` and let `F` be the tangent-space exponential written in the
 extended chart at the identity. Smoothness of the exponential makes `F` differentiable at zero.
 Along each line `t ↦ t • v`, the scaling law identifies `F` with the coordinate expression of

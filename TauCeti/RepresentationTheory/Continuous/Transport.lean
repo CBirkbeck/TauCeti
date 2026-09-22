@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Irreducible
 /-!
 # Transporting a continuous representation along a continuous linear equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Transport)
+
 A continuous linear equivalence `e : V ≃L[𝕜] W` carries a continuous representation on `V` to one
 on `W` by conjugating every action operator, `π g ↦ e ∘ π g ∘ e⁻¹`, that is, by applying Mathlib's
 continuous algebra equivalence `ContinuousLinearEquiv.conjContinuousAlgEquiv`. This file builds

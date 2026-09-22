@@ -11,6 +11,8 @@ import Mathlib.Analysis.Complex.AbsMax
 /-!
 # Nonnegative trigonometric combinations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.NonnegCombination)
+
 This file packages finite trigonometric combinations that are nonnegative on the complex unit
 circle. It also transfers their pointwise nonnegativity to the closed unit disk and the Taylor
 series of `-log (1 - z)`, giving a reusable logarithmic inequality.

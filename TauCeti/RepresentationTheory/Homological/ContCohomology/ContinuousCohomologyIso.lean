@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.SmoothDisc
 /-!
 # The explicit model against the canonical object, in degree zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.ContinuousCohomologyIso)
+
 The explicit low-degree complex presents `H⁰(G, M)` as the invariant subgroup `M^G` of a discrete
 `G`-module, while the canonical object is Mathlib's `continuousCohomology 0 X` for `X` a
 topological representation. This file identifies the two in degree zero, for `X` the image

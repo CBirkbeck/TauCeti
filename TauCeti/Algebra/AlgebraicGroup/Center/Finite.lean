@@ -14,6 +14,8 @@ import TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.TrivialIdentity
 /-!
 # Finiteness of a center from its reduction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.Finite)
+
 Let `H` be a finite-type commutative Hopf algebra over a field. Assuming
 that the tensor square of the reduced center coordinate algebra is reduced, this file shows that
 the center is finite once its reduction is finite. The quotient map from the center to its

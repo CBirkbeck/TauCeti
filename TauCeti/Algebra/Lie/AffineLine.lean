@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Nilradical
 /-!
 # The two-dimensional nonabelian Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.AffineLine)
+
 `TauCeti.LieAlgebra.AffineLine K` is the Lie algebra of the group of affine transformations
 `t ↦ a * t + b` of the line: the free `K`-module on a dilation `x` and a translation `y`, with
 `⁅x, y⁆ = y`.  Over a field it is, up to isomorphism, the only nonabelian two-dimensional Lie

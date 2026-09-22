@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Coset
 /-!
 # The diagonal elements of the `Γ₀(N)` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.Elem)
+
 `Gamma0/Diagonal/Coset.lean` builds the double coset `Γ₀(N)·diag(a)·Γ₀(N)` as a `HeckeCoset`.
 This file turns it into an element of the Hecke ring `𝕋 (Δ₀(N)) (Γ₀(N))` — the level-`N`
 analogue of `diagElem` — with the coprimality guard applied once so that the vanishing case is

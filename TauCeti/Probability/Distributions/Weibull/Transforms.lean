@@ -16,6 +16,8 @@ import TauCeti.Probability.Moments.IntegrableExpMul
 /-!
 # Exponential moments of the Weibull distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Weibull.Transforms)
+
 The exponential moments of a Weibull law exhibit three different regimes according to its shape
 `k`. They are finite at every real argument when `1 < k`, finite precisely below the reciprocal
 scale when `k = 1`, and finite precisely at nonpositive arguments when `0 < k < 1`.

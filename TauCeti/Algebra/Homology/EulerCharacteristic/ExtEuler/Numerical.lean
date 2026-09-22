@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.SesquilinearForm.NumericalQuotient.Basic
 /-!
 # Numerical quotients of the Ext-Euler pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Numerical)
+
 The Ext-Euler characteristic descends to a biadditive pairing on the exact Grothendieck groups of
 two extension-closed subcategories. This file views that pairing as an integer-bilinear map and
 applies the separate left and right numerical-quotient construction to it.

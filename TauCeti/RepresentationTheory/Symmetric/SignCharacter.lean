@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Perm.Sign
 /-!
 # The sign character of a symmetric group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.SignCharacter)
+
 Mathlib's `Equiv.Perm.sign` is valued in `ℤˣ`. Representation theory wants the *linear character*
 it induces over a coefficient ring: the homomorphism `Equiv.Perm α →* kˣ` obtained by pushing the
 sign forward along `ℤ → k`. That is `TauCeti.signLinearCharacter`, and it is the `sgn` of the

@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Semisimple.Multiplicity
 /-!
 # The constituents of a restriction to a normal subgroup share one hom-space dimension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Multiplicity)
+
 Let `N` be a normal subgroup of `G` and let `ρ` be an irreducible representation of `G` on `V`.
 Restricting `ρ` to `N` breaks it into irreducible constituents, and
 `TauCeti/RepresentationTheory/Induction/Clifford/Orbit/Basic.lean` identifies *which* constituents

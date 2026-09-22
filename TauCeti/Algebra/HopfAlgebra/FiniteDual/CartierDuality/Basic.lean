@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.InvolutiveDual
 /-!
 # Cartier duality for finite locally free Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.FiniteDual.CartierDuality.Basic)
+
 A commutative finite locally free group scheme over an affine base is represented by a finite
 projective Hopf algebra whose multiplication and comultiplication are both commutative. The linear
 dual preserves this bicommutative condition, reverses morphisms, and is involutive by evaluation.

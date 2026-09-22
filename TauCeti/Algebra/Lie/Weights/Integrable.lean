@@ -15,6 +15,8 @@ public import Mathlib.Algebra.Lie.Weights.Killing
 /-!
 # The weights of an integrable module are stable under the root reflections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Integrable)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra and let `α` be a root. A module
 `M` is **integrable along `α`** when every vector of `M` lies in a finitely generated subspace

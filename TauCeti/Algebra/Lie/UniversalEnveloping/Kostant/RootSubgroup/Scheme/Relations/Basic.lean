@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Chevalley relations for Kostant root-subgroup scheme morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Relations.Basic)
+
 The divided-power construction represents a root action by an affine group-scheme morphism
 `𝔾ₐ → GLₙ`. This file proves the commuting and class-two Chevalley relations on the
 scheme-valued points of those actual morphisms. It transports the universe-polymorphic matrix

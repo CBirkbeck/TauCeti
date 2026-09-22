@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries
 /-!
 # Maximal ideals of complete linearly topologized rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.MaximalIdeals)
+
 In a complete linearly topologized commutative ring, topologically nilpotent elements lie in
 every maximal ideal: if `a ∉ 𝔪` then `1 = r·a + m` with `m ∈ 𝔪`, and `m = 1 - r·a` is a unit by
 the geometric series (Proposition 5.38), contradicting properness. Consequently, as soon as the

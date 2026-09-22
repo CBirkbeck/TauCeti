@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.RootSpace
 /-!
 # Adjoint root spaces of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Adjoint.RootSpace)
+
 For `GL_n` over a field, restrict the adjoint representation to its diagonal split torus.  The
 matrix unit `E_ij` is a weight vector of character `e_i - e_j`: conjugation by
 `diag(t_0, ..., t_{n-1})` multiplies it by `t_i t_j⁻¹`.  This file turns the pointwise matrix

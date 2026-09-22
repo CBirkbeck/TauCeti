@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Basic
 /-!
 # Topologically finitely generated profinite groups are Hopfian
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Hopfian)
+
 A group is *Hopfian* when every surjective endomorphism of it is injective. A profinite group
 that is topologically finitely generated is Hopfian in the continuous sense: a continuous
 surjective `f : G →* G` is automatically a topological automorphism.

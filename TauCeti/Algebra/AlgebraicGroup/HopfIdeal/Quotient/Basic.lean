@@ -15,6 +15,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Map
 /-!
 # Hopf-ideal quotients of finite-type commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Basic)
+
 This file packages the quotient of a finite-type commutative Hopf algebra by a Hopf ideal
 as another object of `FiniteTypeCommHopfAlgCat`. The Hopf algebra structure and quotient
 bialgebra morphism are supplied by Mathlib's quotient instances and morphisms; the only extra

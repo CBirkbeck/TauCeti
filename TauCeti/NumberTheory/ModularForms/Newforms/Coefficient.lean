@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 /-!
 # The Fourier coefficients of a good Hecke eigenform, and of a newform
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Coefficient)
+
 For an `EigenformAwayFromLevel` the coefficients are the eigenvalues *scaled by* `a₁`; when
 `a₁ = 1` they are the eigenvalues themselves, as for a `Newform` (via `Newform.isNorm`).
 

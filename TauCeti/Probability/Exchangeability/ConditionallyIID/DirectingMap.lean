@@ -15,6 +15,8 @@ import TauCeti.Probability.Exchangeability.ConditionallyIID.Congr
 /-!
 # Compatibility of directing measures with measurable maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.DirectingMap)
+
 A directing measure is functorial in the state space. If `X` is conditionally i.i.d. with
 directing measure `ν`, then applying a measurable map `g` to every coordinate gives the
 pushforward directing measure `ν.map g`. If the mapped process is also presented with another

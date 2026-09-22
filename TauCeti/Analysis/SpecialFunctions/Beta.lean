@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 /-!
 # Euler's beta integrals, in real-valued form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Beta)
+
 Mathlib defines Euler's beta function `ProbabilityTheory.beta` by the Gamma quotient, and proves
 that it is the value of `Complex.betaIntegral`, the complex-valued interval integral of
 `t ^ (a - 1) * (1 - t) ^ (b - 1)` over `[0, 1]`. This file records the real-variable facts about

@@ -14,6 +14,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Two.Basic
 /-!
 # The Steinberg endomorphism and candidate group of the Suzuki family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.Basic)
+
 The Steinberg endomorphism of `²B₂(2^(2m+1))` is not a Frobenius but an odd power of a
 half-Frobenius: the exceptional isogeny `τ` of the ambient group, which squares to the prime-field
 Frobenius, raised to the odd exponent `2m+1`. This file forms that map on the ambient group of a

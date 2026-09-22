@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Continuous.Subrepresentation
 /-!
 # Unitary continuous representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Unitary.Basic)
+
 This file defines when a continuous representation preserves a real or complex inner product. It
 characterizes unitarity through norm preservation, isometries, and Mathlib's `unitary` submonoid of
 continuous linear operators, and records the basic inner-product identities, the coefficient bound,
@@ -48,7 +50,10 @@ section Monoid
 variable {𝕜 G V : Type*} [RCLike 𝕜] [Monoid G] [NormedAddCommGroup V] [InnerProductSpace 𝕜 V]
 
 /-- A continuous representation is unitary when every action operator preserves the inner
-product. -/
+product.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContRepresentation.IsUnitary) -/
 def IsUnitary (π : ContRepresentation 𝕜 G V) : Prop :=
   ∀ g v w, ⟪π g v, π g w⟫_𝕜 = ⟪v, w⟫_𝕜
 

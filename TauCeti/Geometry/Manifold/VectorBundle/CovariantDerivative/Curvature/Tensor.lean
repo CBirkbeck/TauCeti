@@ -11,6 +11,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.Section.Extension
 /-!
 # Pointwise curvature tensors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Tensor)
+
 The curvature of a smooth connection on a finite-rank real vector bundle is a trilinear
 map on each fibre. `CovariantDerivative.curvatureTensor` bundles this map, with two
 tangent-vector arguments and one bundle-vector argument. On the tangent bundle it is

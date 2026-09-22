@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Exact.Projective
 /-!
 # Resolving subcategories of exact categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Resolving)
+
 Let `E` be an exact structure on an additive category `C`. An object property `P` is resolving
 for `E` when it contains a zero object, is closed under binary direct sums and extensions, is
 closed under kernels of deflations between `P`-objects, and every object of `C` admits a finite

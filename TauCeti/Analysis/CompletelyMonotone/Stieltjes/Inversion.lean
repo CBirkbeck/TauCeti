@@ -11,6 +11,8 @@ public import TauCeti.Analysis.CompletelyMonotone.Stieltjes.CompleteBernstein
 /-!
 # Inversion of the parameter of Stieltjes and complete Bernstein functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Stieltjes.Inversion)
+
 The substitution `t ↦ t⁻¹` exchanges the two ends of `(0, ∞)`, and the Stieltjes class is
 stable under the normalized substitution `f ↦ (t ↦ f(t⁻¹) / t)`.  On representing data it acts by
 exchanging the singular coefficient `a` of `a / t` with the constant coefficient `b`, and by the

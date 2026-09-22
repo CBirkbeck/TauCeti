@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.ContDiff.Deriv
 /-!
 # Piecewise `C¹` immersions on an interval
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PwC1ImmersionOn)
+
 The on-cycle Layer 4 targets of the contour-integration roadmap — the Hungerbühler–Wasem
 generalized residue theorem and its half-residue specialisation — are stated for a **piecewise
 `C¹` immersion**: a piecewise-`C¹` curve whose within-piece derivative is non-vanishing on every

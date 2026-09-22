@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.MacWilliams
 /-!
 # Weight-enumerator symmetries of binary codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.WeightEnumerator)
+
 The weight enumerator of a doubly-even code is invariant under multiplying its second argument
 by a fourth root of unity. For a self-dual binary code, the MacWilliams substitution gives
 `W_C(X + Y, X - Y) = 2^(n/2) W_C(X, Y)` in `ℤ[X, Y]`. Together these symmetries give the

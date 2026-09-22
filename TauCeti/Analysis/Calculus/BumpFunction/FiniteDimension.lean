@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 /-!
 # Extending finite-dimensional smooth germs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.BumpFunction.FiniteDimension)
+
 A function which is smooth, of finite or infinite order, on a neighbourhood of a point of a
 finite-dimensional real normed space agrees near that point with a globally smooth function of
 the same order. A smooth bump function performs the extension while preserving the original

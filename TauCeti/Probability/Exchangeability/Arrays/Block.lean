@@ -15,6 +15,8 @@ import Mathlib.Probability.Process.FiniteDimensionalLaws
 /-!
 # Rectangular blocks of an exchangeable array
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Block)
+
 Joint exchangeability alone guarantees only invariance under the diagonal reindexing
 `(i, j) ↦ (σ i, σ j)`, so the rows of a jointly exchangeable array need not be exchangeable and the
 separately exchangeable theory does not apply to it in general. This file supplies the standard

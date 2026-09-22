@@ -11,6 +11,8 @@ public import Mathlib.Algebra.GroupWithZero.Action.Defs
 /-!
 # A distributive action on the additive type tag
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupAction.TypeTags)
+
 `Mathlib/Algebra/Group/Action/TypeTags.lean` transports an action along the type tags on the
 *acting* monoid: `Additive.addAction` turns a `MulAction α β` into an `AddAction (Additive α) β`.
 This file is the missing counterpart on the side that is acted **on**: a monoid `M` acting on a

@@ -15,6 +15,8 @@ public import TauCeti.CategoryTheory.Subobject.FactorThru
 /-!
 # Closed subgroup schemes and Hopf ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Classification)
+
 For a commutative Hopf algebra `H` over a commutative ring `R`, this file classifies the closed
 subgroup subobjects of the affine group scheme `Spec H`. A closed subgroup scheme is an ordinary
 categorical subobject whose representative arrow is a closed immersion on underlying schemes.

@@ -16,6 +16,8 @@ import Mathlib.Topology.MetricSpace.Bounded
 /-!
 # Hopf's boundary-point lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Laplacian.HopfLemma)
+
 The weak maximum principle of `TauCeti.Analysis.InnerProductSpace.Laplacian.WeakMaximumPrinciple`
 bounds a subharmonic function on a compact set by its frontier values.  This file proves the
 complementary *local* statement at a point where such a bound is attained: **Hopf's

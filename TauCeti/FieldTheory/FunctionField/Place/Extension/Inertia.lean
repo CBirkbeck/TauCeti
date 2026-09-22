@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Decomposition
 /-!
 # The inertia group of a place, and the residue action of the decomposition group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Inertia)
+
 Let `F' / F` be a finite Galois extension of fields, `k` a subfield of `F`, and `P` a place of
 `F' / k`.  An automorphism in the decomposition group of `P` preserves the valuation ring `𝒪_P`
 and hence its maximal ideal, so it descends to an automorphism of the residue field `F'_P`; since

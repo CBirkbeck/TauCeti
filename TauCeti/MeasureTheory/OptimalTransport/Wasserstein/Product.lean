@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Basic
 /-!
 # Tensorization of the Wasserstein distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Product)
+
 The `p`-Wasserstein distance of two product laws is computed by the two factors:
 
 `W_p (μ₁ ⊗ μ₂, ν₁ ⊗ ν₂) ^ p = W_p (μ₁, ν₁) ^ p + W_p (μ₂, ν₂) ^ p`.

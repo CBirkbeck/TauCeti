@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Normed.Module.Ray
 /-!
 # Membership in a segment with an endpoint at the origin
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Convex.Segment)
+
 Mathlib describes membership in a segment through the ray predicate `SameRay` by
 `mem_segment_iff_sameRay`: `x ∈ [y -[𝕜] z] ↔ SameRay 𝕜 (x - y) (z - x)`. That form is symmetric in
 the two endpoints, and the differences `x - y`, `z - x` are exactly what a *metric* consumer does

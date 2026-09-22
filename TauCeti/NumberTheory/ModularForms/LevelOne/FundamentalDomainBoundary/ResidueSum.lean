@@ -17,6 +17,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 /-!
 # The residue sum along the boundary contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ResidueSum)
+
 The Hungerbühler–Wasem residue sum, instantiated on the boundary contour of the truncated
 fundamental domain: for a function with a polar-part decomposition whose poles all lie in
 the open truncated domain, the principal value of the contour integral is `-2πi` times the

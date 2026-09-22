@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Quotient.Basic
 /-!
 # Quotients by products of submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Quotient.Prod)
+
 The quotient by a product submodule is the product of the two quotients:
 
 `(M × N) ⧸ p.prod q ≃ₗ (M ⧸ p) × (N ⧸ q)`.

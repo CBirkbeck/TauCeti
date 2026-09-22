@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 /-!
 # The additive Haar measure of the standard basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Haar.OfBasis)
+
 The additive Haar measure attached to a basis gives measure one to the parallelepiped the basis
 spans. For the standard basis of `ι → ℝ` that parallelepiped is the unit cube, so the measure is
 product Lebesgue measure.

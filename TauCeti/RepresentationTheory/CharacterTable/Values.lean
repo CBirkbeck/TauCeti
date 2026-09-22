@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 /-!
 # The arithmetic of character values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Values)
+
 If `g` is an element of finite order `n` in a group and `ρ` is a finite-dimensional
 representation, then `ρ g` satisfies `X ^ n - 1`, so every root of its characteristic polynomial
 is an `n`-th root of unity. As soon as that characteristic polynomial splits, over an

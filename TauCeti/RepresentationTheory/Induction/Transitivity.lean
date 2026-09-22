@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Induction.Restriction
 /-!
 # Transitivity of induction and coinduction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Transitivity)
+
 This file records restriction and coinduction in stages for representations along composable monoid
 homomorphisms, and induction in stages along composable group homomorphisms. It obtains the natural
 isomorphisms from the equality of restriction functors `TauCeti.resFunctor_comp` and

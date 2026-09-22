@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Nilpotent.Lemmas
 /-!
 # Solvability of faithful unipotent representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Unipotent.Solvable)
+
 Kolchin's common fixed-vector theorem constructs a complete invariant flag for a
 finite-dimensional representation whose every operator is unipotent. Relative to a basis adapted
 to this flag, every representing matrix is upper unitriangular. Consequently a group admitting a

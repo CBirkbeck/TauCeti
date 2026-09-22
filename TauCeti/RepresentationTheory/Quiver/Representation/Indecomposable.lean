@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Projective.Acyc
 /-!
 # The vertex representations of an acyclic quiver: indecomposability and distinctness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Indecomposable)
+
 Three representations are attached to a vertex `i` of a quiver `Q`: the simple `Sᵢ`, the projective
 `Pᵢ` and the injective `Iᵢ`. The names `TauCeti.indecProjRep` and `TauCeti.indecInjRep` record the
 expectation that the last two are indecomposable, but neither file proves it. This file does, for

@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Basic
 /-!
 # The orthogonal Lie algebra of the standard quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Standard)
+
 Mathlib's standard quadratic form on `n → R` is
 `QuadraticMap.weightedSumSquares R (1 : n → R)`. When `2` is invertible, its polar bilinear form
 is twice the identity-matrix form. Scaling a bilinear form by an invertible scalar does not change

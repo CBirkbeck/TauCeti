@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Localization.FractionRing
 /-!
 # The denominator ideal of an element of an algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Localization.DenIdeal)
+
 For `x` in an `R`-algebra `K`, the denominator ideal `Algebra.denIdeal K x` is the colon ideal
 `(R : x) = {r : R | r • x ∈ R}` — the `r` that clear the denominator of `x`. When `K` is the
 localization of `R` at its non-zero-divisors it is nonzero (`Algebra.denIdeal_ne_bot`), because

@@ -17,6 +17,8 @@ import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 /-!
 # Regrouping ideal arithmetic functions by absolute norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.NormCoeff)
+
 This file defines `TauCeti.normCoeff`, the ordinary arithmetic function obtained by summing an
 `IdealArithmeticFunction` over each fibre of the absolute norm.  These fibres are finite by
 `Ideal.finite_setOfPred_absNorm_eq`, so the coefficients are honest finite sums.  The resulting

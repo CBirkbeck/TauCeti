@@ -12,6 +12,8 @@ public import TauCeti.Analysis.InnerProductSpace.Laplacian.MaximumPrinciple
 /-!
 # The weak maximum principle for subharmonic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Laplacian.WeakMaximumPrinciple)
+
 `TauCeti.Analysis.InnerProductSpace.Laplacian.MaximumPrinciple` proves the *strict* boundary
 maximum principle: a `C²` function with `0 < Δ f` on the interior of a compact set attains its
 maximum on the frontier. That strict hypothesis is only a warm-up; the theorem PDE theory

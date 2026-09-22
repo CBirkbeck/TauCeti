@@ -13,6 +13,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Point differences generate the degree-zero divisor group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Degree.ZeroGenerators)
+
 For a fixed base point `x₀`, this file proves that the degree-zero Weil divisors are exactly the
 integer combinations of the point differences `[x] - [x₀]`, and records the underlying closed
 form: every divisor `D` satisfies

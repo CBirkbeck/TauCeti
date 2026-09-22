@@ -11,6 +11,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # Adjoining a pendant vertex to a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.AdjoinPendant)
+
 This file defines the matrix obtained by adjoining one further vertex, joined by a single edge to a
 chosen vertex of an integer matrix. The construction is independent of finite type and is used to
 assemble Cartan matrices of diagrams with a pendant vertex.

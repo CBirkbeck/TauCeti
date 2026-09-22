@@ -28,6 +28,8 @@ import TauCeti.Algebra.Central.Quaternion
 /-!
 # Splitting fields of a central simple algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Splitting)
+
 A field extension `L / K` **splits** a `K`-algebra `A` when the scalar extension `L ⊗[K] A` is a
 full matrix algebra over `L`. This file defines that predicate, `TauCeti.Algebra.IsSplittingField`,
 gives it its basic API, and settles the two cases that need no additional field theory: a
@@ -113,7 +115,10 @@ full matrix algebra over `L`.
 
 The matrix size is existentially quantified so that the predicate makes sense for an arbitrary
 `K`-algebra. For a finite-dimensional central simple `A` it is not a choice: it is forced to be
-`TauCeti.Algebra.deg K A` by `TauCeti.Algebra.IsSplittingField.nonempty_algEquiv_matrix_deg`. -/
+`TauCeti.Algebra.deg K A` by `TauCeti.Algebra.IsSplittingField.nonempty_algEquiv_matrix_deg`.
+
+Tested by: 4 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Algebra.IsSplittingField) -/
 def IsSplittingField (K A L : Type*) [Field K] [Ring A] [Algebra K A] [Field L] [Algebra K L] :
     Prop :=
   ∃ n : ℕ, Nonempty (L ⊗[K] A ≃ₐ[L] Matrix (Fin n) (Fin n) L)

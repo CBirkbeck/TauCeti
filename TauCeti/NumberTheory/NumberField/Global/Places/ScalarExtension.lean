@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.FinitePlace
 /-!
 # Scalar extension at places of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Places.ScalarExtension)
+
 This file defines the scalar extension of a vector space over a number field to a finite
 completion, to `ℝ` through a real place, and to `ℂ` through a chosen infinite-place embedding.
 

@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Reductive
 /-!
 # Torus affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Torus)
+
 This file transports the coordinate-Hopf-algebra definition of a torus to finite-type affine
 group schemes over a field. A group scheme is a torus when its coordinate Hopf algebra becomes a
 finite-rank split-torus coordinate ring after extension to an algebraic closure.

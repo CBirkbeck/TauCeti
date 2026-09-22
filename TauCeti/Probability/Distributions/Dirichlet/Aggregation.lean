@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Dirichlet.Basic
 /-!
 # Aggregation of Dirichlet coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirichlet.Aggregation)
+
 Merging the coordinates of a Dirichlet vector along a surjection `f : ι → κ`, by replacing the
 coordinates in each fibre of `f` by their total, again gives a Dirichlet vector: the
 concentration parameters are merged the same way.  Surjectivity is what keeps every merged

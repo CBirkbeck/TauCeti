@@ -16,6 +16,8 @@ public import TauCeti.RepresentationTheory.Tensor.PermRange
 /-!
 # The Weyl construction: a Young symmetrizer cuts out a `GL n k`-subrepresentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.WeylModule.Basic)
+
 Weyl's construction produces representations of `GL n k` from representations of the symmetric
 group: a Young symmetrizer `c_t ∈ ℚ[S_d]` acts on the tensor power `(kⁿ)^{⊗d}` by permuting
 tensor factors, and, because that action commutes with the diagonal action of `GL n k`, its

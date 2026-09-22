@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 /-!
 # Elementary symmetric polynomials in small finite alphabets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Elementary)
+
 This file gives explicit formulas for elementary symmetric polynomials in small finite alphabets.
 Such expansions support explicit computations of symmetric orbit products. In particular, the
 four-variable formula is used to express the quartic `D₄` resolvent's orbit product in elementary

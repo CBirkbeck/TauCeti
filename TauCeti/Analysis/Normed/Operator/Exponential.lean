@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 /-!
 # Exponentials in normed algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Exponential)
+
 This file records basic facts about the exponential in normed algebras, including the
 specialization to continuous linear endomorphisms of a real normed space: the norm bound
 `‖exp x‖ ≤ Real.exp ‖x‖`, exponential bounds for power-bounded operators, the exponential of a

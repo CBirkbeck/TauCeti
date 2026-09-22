@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Symplectic.Basic
 /-!
 # Scheme-valued points of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.Scheme)
+
 This file identifies scheme-valued points of `Sp₂ₘ` with the standard symplectic matrix group.
 This interface lets group-scheme morphisms and identities, including root-subgroup and torus
 actions, be computed as explicit symplectic matrix equations.

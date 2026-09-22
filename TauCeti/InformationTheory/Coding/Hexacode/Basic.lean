@@ -15,6 +15,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # The hexacode and its Hermitian dual
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Hexacode.Basic)
+
 The hexacode is the row space of the systematic matrix with final block
 `![![1, ω, ω], ![ω, 1, ω], ![ω, ω, 1]]`, where `ω² + ω + 1 = 0`
 in a field of four elements. Its three information coordinates identify its message space,

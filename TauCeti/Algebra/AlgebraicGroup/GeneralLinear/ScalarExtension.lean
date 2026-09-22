@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.End.ScalarExtension
 /-!
 # Automorphisms of scalar extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.ScalarExtension)
+
 For a module `V` over a commutative ring `R`, this file packages
 
 `A ↦ Autₐ(A ⊗[R] V)`

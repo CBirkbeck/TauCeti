@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Lie.Weights.Killing
 /-!
 # A Cartan subalgebra contains a generic element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Rank)
+
 Let `L` be a finite-dimensional Lie algebra over an infinite field, and let `H` be a Cartan
 subalgebra whose action on `L` is triangularizable with linear weights. This file chooses an
 element `h : H` on which no root vanishes and proves that its Engel subalgebra is exactly `H`.

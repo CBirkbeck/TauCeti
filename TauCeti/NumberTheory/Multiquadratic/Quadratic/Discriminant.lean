@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.IntegralSqrt
 /-!
 # The discriminant of a quadratic field is its fundamental discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.Discriminant)
+
 For a quadratic number field `K = ℚ(√d)` — presented by an algebraic integer `θ : 𝓞 K` with
 `minpoly ℤ θ = X² - d` and `Algebra.adjoin ℚ {θ} = ⊤` — with `d` squarefree, the field
 discriminant equals the fundamental discriminant of `d`:

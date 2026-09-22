@@ -10,6 +10,8 @@ public import TauCeti.Topology.Homotopy.Cube.Radius
 /-!
 # Transporting a generalized loop along a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.Collar)
+
 Let `γ : Path x y` and let `f : Ω^ N X x` be a generalized loop based at `x`. This file
 constructs the generalized loop `TauCeti.GenLoop.transport γ f : Ω^ N X y` obtained by shrinking
 `f` into the half-size cube and running `γ` outwards along the resulting collar, together with

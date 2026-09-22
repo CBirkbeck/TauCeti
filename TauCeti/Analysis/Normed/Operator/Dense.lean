@@ -11,6 +11,8 @@ public import Mathlib.Topology.UniformSpace.UniformConvergence
 /-!
 # Extending bounded-operator convergence from dense subsets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Dense)
+
 This file records two standard density arguments for uniformly bounded families of continuous
 linear maps. Pointwise convergence on a dense subset extends to pointwise convergence everywhere,
 and uniform Cauchy convergence on a parameter set does likewise. Both rest on the same estimate

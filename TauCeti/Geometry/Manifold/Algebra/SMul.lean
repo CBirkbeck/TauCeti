@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.Algebra.SMul
 /-!
 # Smooth translations and diffeomorphisms from group actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Algebra.SMul)
+
 This file packages the action of an element of a group with a `ContMDiffConstSMul` instance as a
 self-diffeomorphism. Unlike `Diffeomorph.smul`, this construction does not require a manifold
 structure on the acting group or joint smoothness of the action. Smooth multiplication supplies

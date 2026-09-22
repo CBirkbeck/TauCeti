@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Short
 /-!
 # Indexing the short-root representation of type F4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.ShortRootWeight.Index)
+
 The twenty-six coordinates of the short-root representation consist of the twenty-four short-root
 weight spaces and two zero-weight coordinates. This file identifies their index type with the sum
 of the short-root indices in the explicit type-`F₄` root table and `Fin 2`.

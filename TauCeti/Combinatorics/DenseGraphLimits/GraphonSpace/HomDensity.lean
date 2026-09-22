@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.GraphonSpace.Basic
 /-!
 # Homomorphism densities on graphon space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.GraphonSpace.HomDensity)
+
 Homomorphism density is invariant under zero cut distance, so it descends from strict graphon
 representatives to `GraphonSpace`.  The descended observable retains the quantitative counting
 bound: for a finite graph `F`, it is Lipschitz with constant equal to the number of edges of `F`.

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.AdditiveFrobeniusKernel.Basic
 /-!
 # `αₚ` is the kernel of the Frobenius endomorphism of the additive group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveFrobeniusKernel.Kernel)
+
 Over a base ring `R` of prime characteristic `p`, the additive group `𝔾ₐ = Spec R[x]` (here
 `x = ι R R 1` in `SymmetricAlgebra R R`) carries the **Frobenius endomorphism** `F : 𝔾ₐ → 𝔾ₐ`
 (`TauCeti.AdditiveGroup.frobeniusEnd`, of

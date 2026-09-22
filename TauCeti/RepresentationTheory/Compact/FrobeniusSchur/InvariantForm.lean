@@ -14,6 +14,8 @@ import Mathlib.Analysis.Complex.Polynomial.Basic
 /-!
 # The Frobenius-Schur trichotomy of a compact group, read off invariant forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.FrobeniusSchur.InvariantForm)
+
 `ContRepresentation.frobeniusSchurIndicator_trichotomy` says that the indicator of an irreducible
 unitary representation of a compact group is `1`, `0` or `-1`, and pins which value occurs by the
 invariants of the symmetric and of the exterior square. This file replaces those two invariant

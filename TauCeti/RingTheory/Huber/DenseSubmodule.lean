@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.RingOfDefinition
 /-!
 # Dense submodules of a module-finite complete Tate-module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.DenseSubmodule)
+
 A dense submodule of a module-finite, complete, metrisable module over a complete Tate ring is
 the whole module. This is Bosch–Güntzer–Remmert §3.7.2/1 in its intrinsic form, and it is the
 step that makes finitely generated submodules closed on the route to Wedhorn 6.17/6.18.

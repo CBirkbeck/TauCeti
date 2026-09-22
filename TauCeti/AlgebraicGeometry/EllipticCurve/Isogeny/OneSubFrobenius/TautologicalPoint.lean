@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Ba
 /-!
 # The tautological point of `1 − π`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.TautologicalPoint)
+
 The tautological point is additive on morphisms, and the identity's is the generic point, so the
 tautological point of `1 − π_q` is the generic point minus that of Frobenius.
 

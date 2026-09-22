@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.Hom
 /-!
 # The category of differential graded right modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Category)
+
 `DGRightModuleCat h` bundles internally graded right modules over the DG algebra `h`.
 Its morphisms are the existing `DGRightModuleHom`: degree-preserving module maps commuting
 with differentials, equivalently the closed degree-zero elements of the Hom complex.

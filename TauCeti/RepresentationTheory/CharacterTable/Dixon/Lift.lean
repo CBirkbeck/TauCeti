@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Cyclotomic.Lift
 /-!
 # The cyclotomic lift at a Dixon prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Lift)
+
 `TauCeti.Cyclotomic.lift` reconstructs an exact cyclotomic integer from its residues at the
 conjugate roots, and it returns the element it came from as soon as the coordinates of that element
 lie inside the residue window `2 * |c| < p`.  A `TauCeti.DixonPrimeData` for a finite group `G`

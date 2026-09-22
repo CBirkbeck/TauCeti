@@ -11,6 +11,8 @@ public import Mathlib.Tactic.LinearCombination
 /-!
 # A form that is both symmetric and alternating
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.Basic)
+
 Away from characteristic two a bilinear form cannot be both symmetric and alternating without
 being zero: symmetry and alternation give `B x y = B y x` and `B x y = -B y x`, so `2 * B x y = 0`,
 and cancelling the `2` leaves `B x y = 0`.

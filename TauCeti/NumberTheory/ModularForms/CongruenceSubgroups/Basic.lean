@@ -16,6 +16,8 @@ import TauCeti.Data.ZMod.Divisibility
 /-!
 # Congruence subgroups: the pair `Γ₁(N) ⊴ Γ₀(N)`, the index of `Γ₀(pᵏ)`, and the level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic)
+
 Foundational results about the pair `Γ₁(N) ≤ Γ₀(N)` beyond Mathlib's
 `Mathlib.NumberTheory.ModularForms.CongruenceSubgroups`: `Γ₀(N)` normalizes `Γ₁(N)` (also
 after mapping to `GL₂(S)`, over any commutative ring `S`), the ratio of two `Γ₀(N)`-elements

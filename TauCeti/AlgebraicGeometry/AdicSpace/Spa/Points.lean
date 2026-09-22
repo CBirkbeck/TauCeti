@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Basic
 /-!
 # Points of the adic spectrum with prescribed support
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Points)
+
 Wedhorn Proposition 7.51, for open prime ideals: an open prime ideal `𝔭` of `A` is the support
 of a point of `Spa(A, A⁺)`, namely the point of its trivial valuation, `trivialSection ⟨𝔭, ‹_›⟩`
 (Wedhorn, Remark 4.6) — it is continuous because the only value sets to check are `∅` and `𝔭`,

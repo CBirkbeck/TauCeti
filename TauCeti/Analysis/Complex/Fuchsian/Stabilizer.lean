@@ -12,6 +12,8 @@ import TauCeti.Topology.Algebra.ConstMulAction
 /-!
 # Point stabilizers of Fuchsian groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Stabilizer)
+
 A discrete subgroup `Γ ≤ PSL(2, ℝ)` acts properly discontinuously on the upper half-plane, so its
 point stabilizers are finite, and a finite point stabilizer of a subgroup of `PSL(2, ℝ)` is
 cyclic (`Subgroup.isCyclic_stabilizer`). Hence the point stabilizers of a Fuchsian

@@ -10,6 +10,8 @@ public import Mathlib.Data.Nat.Factorization.Basic
 /-!
 # Splitting a gcd at a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.Factorization.GcdSplit)
+
 Write two natural numbers as `p ^ a * m'` and `p ^ b * n'` with `p` dividing neither `m'` nor
 `n'`. Their gcd then splits into the gcd of the `p`-free parts times `p` to the smaller of the
 two exponents:

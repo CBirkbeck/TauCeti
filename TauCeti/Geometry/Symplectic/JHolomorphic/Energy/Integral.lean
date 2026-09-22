@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 /-!
 # Integrated energy for maps from the standard complex line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.Energy.Integral)
+
 This file integrates the pointwise energy density from
 `TauCeti.Geometry.Symplectic.JHolomorphic.Energy.Basic`.  Given a measurable source `X`, a
 measure `μ`, and a field

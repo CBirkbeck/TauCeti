@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.Modules.RationalFunctions
 /-!
 # Rational functions represented by generically free rank-one module sections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Modules.RationalEmbedding)
+
 A sheaf of modules on an irreducible scheme that is free of rank one on a dense open subset has a
 rational trivialization. A chosen basis there maps every local section to a rational
 function and hence gives a morphism from the sheaf of modules to the sheaf of rational functions.

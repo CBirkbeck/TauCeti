@@ -14,6 +14,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Basic
 /-!
 # Borel subgroups in Hopf coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Borel.Basic)
+
 A closed subgroup of a finite-type affine group over a field is encoded contravariantly by a
 Hopf ideal in its coordinate algebra. This file defines a Borel subgroup to be a smooth,
 geometrically connected, geometrically solvable closed subgroup whose base change to an

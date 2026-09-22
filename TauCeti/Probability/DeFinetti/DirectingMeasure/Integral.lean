@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Integral.ENNRealProd
 /-!
 # Integrating finite products of directing-measure evaluations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.DirectingMeasure.Integral)
+
 Two facts about `∏ i, directingMeasure μ X ω (B i)`, read as a function of `ω`, that the de Finetti
 rectangle arguments need: it is integrable in its real form, and its real integral agrees with its
 `ℝ≥0∞` integral.

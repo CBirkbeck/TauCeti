@@ -17,6 +17,8 @@ import Mathlib.Analysis.Complex.CauchyIntegral
 /-!
 # The Poincaré metric is the length metric of its density
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Hyperbolic.Length)
+
 `Hyperbolic/Distance.lean` defines the hyperbolic distance on the complex open unit disc by the
 closed formula `hyperbolicDist z w = Real.artanh (pseudoHyperbolicExpr z w)`, and
 `Hyperbolic/Density.lean` shows that its infinitesimal density is `(1 - ‖z‖ ^ 2)⁻¹` and that the

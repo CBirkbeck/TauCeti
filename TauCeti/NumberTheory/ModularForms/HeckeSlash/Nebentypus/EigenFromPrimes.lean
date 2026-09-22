@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Recu
 /-!
 # Eigen at the primes is eigen at the composite indices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.EigenFromPrimes)
+
 A cusp form of nebentypus `χ` that is an eigenvector of the `Γ₀(N)` Hecke ring at the generator
 `T_p` of every prime `p ∤ N` is an eigenvector at `heckeTCompositeGamma0 N n` for *every* `n`
 coprime to `N`. Eigen-ness away from the level is therefore determined by the good primes alone,

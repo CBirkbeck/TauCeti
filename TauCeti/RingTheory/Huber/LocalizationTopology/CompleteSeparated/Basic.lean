@@ -11,6 +11,8 @@ public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Basic
 /-!
 # `A⟨T/s⟩` is a complete separated topological ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.Basic)
+
 The adic structure presheaf (roadmap Layer 3.3) assigns `A⟨T/s⟩` to the rational subset
 `R(T/s)`, and its values are required to be *complete separated* topological rings (*Adic Spaces*,
 arXiv:1910.05934v1, §8.1–§8.2). This module supplies the categorical packaging that assignment

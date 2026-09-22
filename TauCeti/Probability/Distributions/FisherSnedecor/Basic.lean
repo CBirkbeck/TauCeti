@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.WithDensity
 /-!
 # Fisher's F distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.FisherSnedecor.Basic)
+
 ## Main definitions
 
 * `fisherSnedecorMeasure` — the Fisher--Snedecor probability measure.

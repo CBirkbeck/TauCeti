@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.PerWindow.HigherOrder
 /-!
 # The classical residue theorem for an arbitrary null-homologous cycle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.Cycle)
+
 For `f` differentiable on `U ∖ S` and meromorphic at each point of the finite set `S` lying in
 `U`, and a **closed, null-homologous** piecewise-`C¹` curve `γ` in `U` that **avoids** `S`,
 

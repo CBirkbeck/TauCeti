@@ -16,6 +16,8 @@ public import Mathlib.LinearAlgebra.DirectSum.Finsupp
 /-!
 # Local isomorphisms of presheaves of modules are stable under tensor products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Presheaf.IsMonoidalW)
+
 Let `R` be a presheaf of commutative rings on a small site `(C, J)`. A morphism `f` of presheaves
 of `R`-modules is a *local isomorphism* when its underlying morphism of presheaves of abelian
 groups lies in `J.W`, i.e. becomes an isomorphism after sheafification. This file proves that the

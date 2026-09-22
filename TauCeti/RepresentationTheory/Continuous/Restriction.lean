@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Continuous.TopRep
 /-!
 # Restriction of continuous representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Restriction)
+
 This file records basic compatibility results between continuous representations and restriction
 along monoid homomorphisms.
 

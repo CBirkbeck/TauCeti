@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.RootsOfUnity.Action
 /-!
 # The multiplicative coefficient modules of Galois cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisCohomology.Coefficients)
+
 Galois cohomology takes its coefficients in discrete modules over `G_K = AbsoluteGaloisGroup K`,
 the automorphism group of a separable closure `Kˢ`. This file fixes the two multiplicative
 coefficient modules once and for all, written additively through `Additive` as Mathlib's

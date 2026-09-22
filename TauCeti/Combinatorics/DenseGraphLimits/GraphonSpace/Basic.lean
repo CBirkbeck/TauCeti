@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Constructions.UnitInterval
 /-!
 # The metric space of graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.GraphonSpace.Basic)
+
 The coupling cut distance is a pseudometric on graphons over a fixed probability carrier.  This
 file forms the separation quotient of that pseudometric, identifying two representatives exactly
 when their cut distance is zero.  The quotient carries the resulting genuine metric.

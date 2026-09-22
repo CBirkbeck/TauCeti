@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.E7.Minuscule.PointsFunctor
 /-!
 # The Frobenius of the full-weight type-E7 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.Frobenius)
+
 `TauCeti.E7Minuscule.groupScheme` is the explicit full-weight type-`E₇` Chevalley carrier over
 `ℤ`, the Kostant toral closure built from the `56`-dimensional minuscule representation and its
 admissible lattice, and `TauCeti.E7Minuscule.points A` realizes its `A`-valued points as a

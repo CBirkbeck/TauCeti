@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Continuous.Character
 /-!
 # The Hom representation of two continuous representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.LinHom)
+
 Given continuous representations `π` on `V` and `ρ` on `W` of a group `G`, the operators
 `V →L[𝕜] W` carry the conjugation action `T ↦ ρ g ∘ T ∘ π g⁻¹`. This file builds it as a
 `ContRepresentation` on the operator space, the continuous counterpart of Mathlib's

@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Frobenius
 /-!
 # Finite-field coordinates for groups of Lie type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.FieldCoordinates)
+
 The fixed-point constructions of finite groups of Lie type use matrices over algebraic closures
 of prime fields, while concrete finite matrix groups are naturally written over Mathlib's
 `GaloisField p e`. This file supplies the coordinate bridge between those realizations of the

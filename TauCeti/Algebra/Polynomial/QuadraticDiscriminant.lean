@@ -13,6 +13,8 @@ import Mathlib.Algebra.Polynomial.SpecificDegree
 /-!
 # Separability and splitting criteria for quadratic polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.QuadraticDiscriminant)
+
 Mathlib's `Mathlib/Algebra/QuadraticDiscriminant.lean` works with the *equation*
 `a x² + b x + c = 0` and relates its solutions to `discrim a b c = b² - 4 a c`. This file reads
 those facts back as statements about the *polynomial* `C a * X ^ 2 + C b * X + C c`. Wherever a

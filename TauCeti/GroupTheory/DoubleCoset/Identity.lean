@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.DoubleCoset
 /-!
 # The identity double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Identity)
+
 Two elements have the same class in `H \ G / K` exactly when one lies in the double coset of the
 other (`TauCeti.doubleCosetMk_eq_mk_iff_mem`).  Among those classes the class of `1` is
 distinguished: its double coset is the set `H * K` (`TauCeti.doubleCoset_one_eq_mul`), so a double

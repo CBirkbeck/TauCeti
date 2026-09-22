@@ -14,6 +14,8 @@ import Mathlib.Geometry.Manifold.PartitionOfUnity
 /-!
 # Smooth cutoffs for compact subsets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.BumpFunction.Cutoff)
+
 This module provides smooth, compactly supported cutoffs for compact subsets of a
 finite-dimensional real normed space. The cutoff is equal to one on a neighborhood of the compact
 set and has topological support in a prescribed open set, which is the localization step used for

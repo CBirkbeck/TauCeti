@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Commutation.Pentagon
 /-!
 # Rectangle--pentagon decompositions for grid commutation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Decomposition)
+
 The chain-map equation for the pentagon map of a column commutation compares two kinds of
 two-step domain. In one order, a rectangle in the original diagram is followed by a pentagon;
 in the other, a pentagon is followed by a rectangle in the commuted diagram. This file packages

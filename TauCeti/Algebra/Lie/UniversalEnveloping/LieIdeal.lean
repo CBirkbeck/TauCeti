@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.Ideal
 /-!
 # Lie ideals in universal enveloping algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.LieIdeal)
+
 A Lie ideal `I` of `L` generates a two-sided ideal of the universal enveloping algebra `U(L)`.
 Although `Ideal.span (ι '' I)` is initially only a left ideal, the commutator relation
 `ι x * ι y = ι [x, y] + ι y * ι x` and the Lie-ideal property show that it is also

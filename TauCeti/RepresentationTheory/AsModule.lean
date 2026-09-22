@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Subrepresentation
 /-!
 # Isomorphism of representations and of the modules they carry
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.AsModule)
+
 Mathlib's `Representation.IntertwiningMap.equivLinearMapAsModule` identifies the intertwining maps
 `ρ → σ` with the `k[G]`-linear maps `ρ.asModule → σ.asModule`, but not the *isomorphisms* with the
 *isomorphisms*: an equivalence of representations is a bijective intertwining map, while a linear

@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.OrderComplex
 /-!
 # Barycentric subdivision of abstract simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Basic)
+
 The vertices of the first barycentric subdivision of a simplicial complex `K` are its faces, which
 are always nonempty: `PreAbstractSimplicialComplex` requires its face collection to be a lower set
 relative to `Finset.Nonempty`, so the empty face never occurs. A collection of these new vertices

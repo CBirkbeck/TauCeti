@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 /-!
 # The absolute ideal norm under a ring isomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.Norm.AbsNorm)
+
 Identifying two rings along an isomorphism identifies their ideals, and the absolute norm is
 insensitive to that identification.
 

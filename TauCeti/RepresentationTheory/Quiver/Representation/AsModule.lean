@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Module.Shrink
 /-!
 # The module over the path algebra carried by a representation of a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.AsModule)
+
 `TauCeti.RepresentationTheory.Quiver.Representation.OfModule` turns a left module over the path
 algebra `kQ` of a finite quiver into a representation of `Q`, and proves that functor **fully
 faithful**.  This file supplies the other half: the `kQ`-module `TauCeti.QuiverRep.asModule`

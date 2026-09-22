@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.Ideal
 /-!
 # Adic valuations and completions transport along an isomorphism of Dedekind domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.Transport)
+
 An isomorphism `e : R ≃+* R'` of Dedekind domains induces an isomorphism
 `σ = IsFractionRing.ringEquivOfRingEquiv e : K ≃+* K'` of their fraction fields, and carries a
 height one prime `v` of `R` to the height one prime of `R'` with underlying ideal

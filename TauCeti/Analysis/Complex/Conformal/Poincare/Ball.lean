@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.Poincare.MetricSpace
 /-!
 # Hyperbolic balls of the Poincaré disc are Euclidean discs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.Ball)
+
 The hyperbolic (Poincaré) metric `TauCeti.hyperbolicDist` on the open unit disc is
 `Real.artanh` of the pseudo-hyperbolic expression
 `p (z, a) = ‖(z - a) / (1 - conj a * z)‖`, and both are visibly non-Euclidean: the metric blows

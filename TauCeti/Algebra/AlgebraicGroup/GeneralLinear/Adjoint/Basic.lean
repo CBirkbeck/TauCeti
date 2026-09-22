@@ -19,6 +19,8 @@ import TauCeti.LinearAlgebra.Matrix.Diagonal
 /-!
 # The adjoint representation of the general linear group is matrix conjugation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Adjoint.Basic)
+
 The tangent space at the identity of `GLₙ` is the full matrix algebra
 (`TauCeti.GeneralLinear.tangentLinearEquivMatrix`), and a point of `GLₙ` acts on it by the
 convolution conjugation `Ad g d = g ⋆ d ⋆ g⁻¹` (`Derivation.adDerivation`). This file computes

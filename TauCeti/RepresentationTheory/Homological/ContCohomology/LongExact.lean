@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.ShortExact
 /-!
 # The explicit long exact sequence in low degrees
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.LongExact)
+
 A short exact sequence `0 → A → B → C → 0` of discrete modules over a topological group `G`
 induces the exact sequence
 

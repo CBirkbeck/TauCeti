@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Bruhat
 /-!
 # The upper-triangular Borel subgroup scheme of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Borel)
+
 For a commutative ring `R`, the lower-left coordinate `X₁₀` in the coordinate Hopf algebra of
 `GL₂` generates a Hopf ideal. Its quotient represents the closed subgroup scheme of invertible
 upper-triangular matrices. On every commutative `R`-algebra `A`, its points are naturally the

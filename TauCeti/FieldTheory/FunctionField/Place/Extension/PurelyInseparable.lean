@@ -14,6 +14,8 @@ public import TauCeti.FieldTheory.RatFunc.PowerTower
 /-!
 # Places in a purely inseparable extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.PurelyInseparable)
+
 Let `F' / k'` be an extension of the field extension `F / k` in which `F' / F` is purely
 inseparable: every `z ∈ F'` has a power `z ^ q ^ n` in `F`, where `q` is the exponential
 characteristic. Such an extension is invisible to places in the following sense.

@@ -15,6 +15,8 @@ import TauCeti.Probability.Distributions.Bernoulli
 /-!
 # Elementary theory of the binomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Binomial.Basic)
+
 This file develops the moments, transforms, convolution law, and independent-sum
 characterization of Mathlib's binomial measure.  The native law remains
 `ProbabilityTheory.binomial n p` on `ℕ`; real-valued moments and transforms use its cast pushforward

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Basic
 /-!
 # The point-representation--comodule equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Equivalence)
+
 Let `H` be a commutative Hopf algebra over a commutative ring `R`. A point representation of the
 affine group represented by `H` is a natural action of every group of algebra-valued points on the
 corresponding scalar extension of a fixed `R`-module. The objects and their value-algebra category

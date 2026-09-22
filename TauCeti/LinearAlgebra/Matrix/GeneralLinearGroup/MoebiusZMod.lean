@@ -14,6 +14,8 @@ public import TauCeti.Topology.Compactification.OnePoint.ProjectiveLine
 /-!
 # The Möbius permutation of `Fin p` attached to an integer matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.MoebiusZMod)
+
 An integer matrix `M` whose determinant is a unit mod `p` permutes `Fin p` by the Möbius rule
 
 `b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`   **where the denominator is nonzero**,

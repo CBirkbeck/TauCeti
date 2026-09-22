@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Valuation.Approximation
 /-!
 # Weak approximation at finite and infinite places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Approximation.Weak)
+
 This file proves Artin--Whaples weak approximation for a number field in a finite product that
 contains both nonarchimedean and archimedean completions.  The finite factors are Mathlib's
 `HeightOneSpectrum.adicCompletion`, and the infinite factors are

@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # The triality-twisted family `³D₄(q)` on the tripled carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TrialityD4)
+
 The classification list carries three families on the `D₄` diagram: the untwisted `D₄(q)`, the
 graph-twisted `²D₄(q)`, and the triality-twisted `³D₄(q)`, whose Steinberg map is the `q`-power
 Frobenius composed with the order-three symmetry `γ₃` of the diagram. The first two are built on
@@ -368,7 +370,10 @@ Steinberg fixed points, modulo the centre of that derived subgroup, formed on th
 No finiteness or simplicity assertion is part of this definition, nor any assertion that the
 carrier is the pinned simply connected group scheme of type `D₄`; it is the candidate group of
 `³D₄(q)` on that pinned carrier only along an identification of the kind described in the module
-docstring. -/
+docstring.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.TypeTrialityD4LieIndex.Group) -/
 abbrev Group : Type :=
   FixedPointCandidate d.steinberg
 

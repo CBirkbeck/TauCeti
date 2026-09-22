@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.CartanMatrix
 /-!
 # The zigzag algebra of `A₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.ADE.A2)
+
 The one-edge graph `A₂` is one of the two low-rank exceptions of zigzag theory. Its doubled quiver
 has two vertices and one arrow in each direction, so it has no length-two path with distinct
 endpoints and only one backtrack at each vertex: every quadratic zigzag relator vanishes. The

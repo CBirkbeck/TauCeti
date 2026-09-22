@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.TwistedFrobenius
 /-!
 # The type-A Steinberg maps on every root subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.AllRootSubgroups.Steinberg)
+
 The Frobenius, the pinned graph automorphism, and their composite are explicitly constructed maps of
 the full-weight type-`A_r` carrier, already pinned against its `2 * r` numbered simple root
 subgroups: on those the equations recorded so far carry the parameter across unchanged. This file

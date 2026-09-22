@@ -22,6 +22,8 @@ import TauCeti.GroupTheory.Index.Basic
 /-!
 # The Jordan normal form of `GL₂` and its centralizing subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.ScalarUnipotent)
+
 Alongside the scalars, the split torus and the non-split torus, the fourth family of conjugacy
 classes of `GL₂(𝔽_q)` is the **non-semisimple** one, represented by a single Jordan block
 `!![a, 1; 0, a]` with a repeated eigenvalue. This file names that normal form,

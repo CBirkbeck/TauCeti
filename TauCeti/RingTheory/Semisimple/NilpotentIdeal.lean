@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.SimpleModule.Basic
 /-!
 # Square-zero left ideals of a semisimple ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.NilpotentIdeal)
+
 A semisimple ring has no nonzero left ideal `I` with `I * I = 0`.  This is the standard way a
 semisimple ring is used to rule out a degenerate case: one produces a left ideal on which
 multiplication vanishes identically and concludes that the ideal was zero all along.

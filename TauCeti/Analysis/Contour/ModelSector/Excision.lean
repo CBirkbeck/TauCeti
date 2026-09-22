@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.ModelSector.Closed
 /-!
 # Excising the corner of a model sector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ModelSector.Excision)
+
 `TauCeti.Contour.exciseCrossing` deletes a parameter window from a curve and caps it with a
 circular arc, and `TauCeti.Contour.windingNumber_eq_exciseCrossing_add` accounts exactly for the
 winding number that the surgery moves. This file runs that surgery on the one crossing whose

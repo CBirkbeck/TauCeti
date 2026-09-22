@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Charpoly.BaseChange
 /-!
 # Norm and trace under scalar extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.NormTrace.BaseChange)
+
 This file records the compatibility of algebra norms and traces with scalar extension on pure
 tensors.
 -/

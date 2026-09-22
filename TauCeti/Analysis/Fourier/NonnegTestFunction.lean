@@ -16,6 +16,8 @@ import TauCeti.Analysis.Bochner.Fourier.Nonneg
 /-!
 # A smooth compactly supported function with nonnegative Fourier transform
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.NonnegTestFunction)
+
 On a finite-dimensional real inner-product space there is a smooth, compactly supported function
 `psi` whose Fourier transform is real and nonnegative everywhere and strictly positive at the
 origin. Such a test function turns a limit statement about a Fourier-weighted sum with nonnegative

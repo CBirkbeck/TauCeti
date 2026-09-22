@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.AdditiveFrobeniusKernel.Basic
 /-!
 # Points of `αₚ` over reduced algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveFrobeniusKernel.ReducedPoints)
+
 The Frobenius kernel `αₚ` has nontrivial points only on algebras with nilpotents.  More
 precisely, its points on a commutative algebra `A` are the elements whose `p`-th power
 vanishes.  If `A` is reduced, such an element is zero, so the `p`-nilpotent subgroup is

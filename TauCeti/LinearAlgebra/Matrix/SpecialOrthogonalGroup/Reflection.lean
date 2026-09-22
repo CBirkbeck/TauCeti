@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Basic
 /-!
 # Reflection matrices for the standard symmetric form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Reflection)
+
 The reflection of `Rⁿ` in the hyperplane orthogonal to a vector `v` has the matrix
 `1 - c • vecMulVec v v`, where the scalar `c` satisfies `c * (v ⬝ᵥ v) = 2`. Carrying the scalar
 as data rather than as `2 * ⅟(v ⬝ᵥ v)` makes the construction available over any commutative

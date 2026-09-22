@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.DominantCone
 /-!
 # The Weyl denominator identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Denominator.Identity)
+
 The **Weyl denominator identity** is the equality
 
 `∏_{α > 0} (1 - e^{-α}) = ∑_{w ∈ W} sgn(w) e^{w ⬝ 0}`

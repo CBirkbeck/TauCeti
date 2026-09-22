@@ -12,6 +12,8 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 /-!
 # Finite sampling from a graphon
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Finite)
+
 The `W`-random graph on `Fin n` is obtained in two stages: first sample `n` independent points
 from the graphon's probability space, then include each unordered pair independently with
 probability given by the value of `W` at its two sampled points. This file integrates out both

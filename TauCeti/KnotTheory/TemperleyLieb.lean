@@ -12,6 +12,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The Jones representation of the braid group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.TemperleyLieb)
+
 For a unit `a : Rˣ`, set the Temperley-Lieb loop value to
 `δ = -(a ^ 2 + a⁻¹ ^ 2)`. The Kauffman-bracket assignment
 

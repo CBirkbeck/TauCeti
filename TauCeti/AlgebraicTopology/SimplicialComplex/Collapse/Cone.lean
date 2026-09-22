@@ -13,6 +13,8 @@ import Mathlib.Order.Preorder.Finite
 /-!
 # A finite cone collapses to its apex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Collapse.Cone)
+
 A simplicial complex is a *cone with apex `v`* when `v` is one of its vertices and adjoining
 `v` to any face gives a face again.  The basic collapsing theorem of piecewise-linear topology
 (Rourke--Sanderson, *Introduction to Piecewise-Linear Topology*, Chapter 3) says that a finite

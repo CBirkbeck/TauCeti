@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Gener
 /-!
 # The function field along a homomorphism of the base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Map)
+
 Mathlib carries a Weierstrass curve along a ring homomorphism `f : R →+* S` (`WeierstrassCurve.map`)
 and carries its coordinate ring along with it (`CoordinateRing.map`, injective when `f` is). This
 file carries the *function* field: for `f : F →+* K` a homomorphism of fields, `F(W)` embeds into

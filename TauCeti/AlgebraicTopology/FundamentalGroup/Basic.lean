@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 /-!
 # Basic results on fundamental groupoids and fundamental groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroup.Basic)
+
 This file records a basic connectedness result for fundamental groupoids and when a map induced
 on fundamental groups is trivial: a characterization of trivial range loop by loop, and the basic
 consequences of triviality of the *source* fundamental group.

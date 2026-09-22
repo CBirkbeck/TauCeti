@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Gaussian.Basic
 /-!
 # The standard Gaussian measure on a finite product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Pi)
+
 The product measure `γ^ι = Measure.pi (fun _ : ι => gaussianReal 0 1)` is Lebesgue measure on
 `ℝ^ι` weighted by the joint density `x ↦ ∏ i, gaussianPDFReal 0 1 (x i)`. That identification is
 what lets a weight-in-the-measure statement about `γ^ι` be read as a weight-in-the-function

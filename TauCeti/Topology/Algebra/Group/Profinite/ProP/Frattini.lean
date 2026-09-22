@@ -14,6 +14,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Basic
 /-!
 # The pro-`p` Frattini subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Frattini)
+
 The **pro-`p` Frattini subgroup** `proPFrattini p G` of a topological group `G` is the
 intersection of its open normal subgroups of index `p`. For a prime `p` and a *profinite* `G` it
 is the smallest closed normal subgroup with elementary abelian quotient, so that

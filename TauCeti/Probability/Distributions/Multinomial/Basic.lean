@@ -14,6 +14,8 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 /-!
 # The multinomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Multinomial.Basic)
+
 For a natural number `n` and a probability vector `p`, the multinomial distribution assigns to
 a count vector `k` of total size `n` the mass
 

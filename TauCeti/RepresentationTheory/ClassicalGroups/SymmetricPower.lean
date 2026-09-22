@@ -14,6 +14,8 @@ import TauCeti.RingTheory.MvPolynomial.Symmetric.Complete
 /-!
 # Symmetric powers of the standard representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.SymmetricPower)
+
 This file specializes symmetric powers of representations to the standard representation of the
 general linear group. The resulting action applies a matrix to every factor of a pure symmetric
 tensor.

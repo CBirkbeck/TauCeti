@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Measure.Prokhorov
 /-!
 # Bernstein's theorem: existence of a representing measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.Theorem)
+
 A completely monotone function on `[0, ∞)` is the Laplace transform of a finite positive measure
 on `ℝ≥0`.
 

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.Different
 /-!
 # The different exponent of a tame or wild place
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Different.Tame)
+
 Let `F' / k'` be an extension of the algebraic function field `F / k` with `F' / F` finite and
 separable, and let `P'` be a place of `F' / k'` over `P = P'.restrict k F`.  Dedekind's different
 theorem (Stichtenoth, Theorem 3.5.1) says that `d(P' ∣ P) ≥ e(P' ∣ P) - 1` always, with equality

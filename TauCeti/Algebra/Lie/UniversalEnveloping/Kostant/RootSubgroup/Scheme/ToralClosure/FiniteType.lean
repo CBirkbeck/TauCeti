@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.BaseChange.Basic
 /-!
 # The toral Kostant carrier as a finite-type group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.FiniteType)
+
 The toral Kostant closure is presented as a quotient of the coordinate Hopf algebra of a general
 linear group. This file records the finite-type structure of that quotient and of all its base
 changes. In particular, it supplies the finite-type commutative Hopf algebra on which the

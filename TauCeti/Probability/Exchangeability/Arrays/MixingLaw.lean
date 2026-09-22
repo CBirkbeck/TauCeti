@@ -12,6 +12,8 @@ import TauCeti.Probability.Exchangeability.MixedIID.Mixture
 /-!
 # Mixing laws of separately exchangeable arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.MixingLaw)
+
 Applying de Finetti's theorem to the rows of a separately exchangeable array gives a random
 probability measure on row paths. The remaining column symmetry does not generally make this
 random measure exchangeable almost surely. For example, if every row equals one common i.i.d.

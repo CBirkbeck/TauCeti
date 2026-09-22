@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.SingleObj
 /-!
 # A connected groupoid is equivalent to its vertex group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Groupoid.SingleObj)
+
 Let `C` be a groupoid and `x₀ : C` a *weakly initial* object, that is, one which admits a morphism
 to every object. This file proves that the one-object category `SingleObj (End x₀)` of the vertex
 group at `x₀` is equivalent to `C`, through the functor sending the unique object to `x₀` and an

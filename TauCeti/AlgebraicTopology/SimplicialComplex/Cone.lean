@@ -14,6 +14,8 @@ import Mathlib.Data.Set.Finite.Basic
 /-!
 # Cones of simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Cone)
+
 The cone on a simplicial complex `K` is its join with a single vertex.  Its vertex type is
 `α ⊕ PUnit`: the left summand contains the original vertices and `Sum.inr PUnit.unit` is the
 apex.  A face is therefore either an original face, tagged into the left summand, or an original

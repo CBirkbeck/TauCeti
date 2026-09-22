@@ -15,6 +15,8 @@ public import TauCeti.Algebra.Category.CommAlgCat.RestrictScalars
 /-!
 # Base change of commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.BaseChange)
+
 This file packages the scalar extension `K ⊗[k] H` of a commutative Hopf `k`-algebra as a
 commutative Hopf `K`-algebra, functorially in the bundled commutative Hopf algebra. It also
 records the corresponding base-change equivalence on functors of points.

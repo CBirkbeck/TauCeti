@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Powe
 /-!
 # The Fourier coefficient of `T_n F` at an index coprime to `n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Composite)
+
 The composite element `heckeTCompositeGamma0 N n` of the `Γ₀(N)` Hecke ring is the ordered
 product of the prime-power blocks `heckeTGeneratorRecGamma0 N p (v_p n)` over the primes of `n`
 (`HeckeRing/GL2/Gamma0/Diagonal/Composite.lean`), and each block reads the coefficient at

@@ -16,6 +16,8 @@ import Mathlib.FieldTheory.AlgebraicClosure
 /-!
 # The inertia subgroups generate the Galois group of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Inertia)
+
 Let `K` be a number field that is Galois over `ℚ`, with Galois group `G` acting on the ring of
 integers `𝓞 K`. Each maximal ideal `P` of `𝓞 K` carries an inertia subgroup `P.inertia G`, the
 elements of `G` acting trivially on `𝓞 K ⧸ P`, and its cardinality is the ramification index of

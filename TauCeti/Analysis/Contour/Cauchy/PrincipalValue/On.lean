@@ -15,6 +15,8 @@ import Mathlib.Topology.Order.LeftRightNhds
 /-!
 # The Cauchy principal value of a contour integral on a set (Hungerbühler–Wasem)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On)
+
 For a curve `γ : ℝ → ℂ` on `[a, b]` and an integrand `f : ℂ → ℂ`, this file defines the **Cauchy
 principal value** of the contour integral `∮_γ f` *excising a symmetric `ε`-ball about each point of
 a finite singular set simultaneously*: `HasCauchyPV γ a b f v` says there is a finite set `S ⊆ ℂ`

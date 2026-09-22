@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Cyclotomic.Frobenius
 /-!
 # Frobenius fibres in a cyclotomic compositum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.Crossing.CompositumFrobenius)
+
 Let `L / K` be a Galois extension of number fields and let `M = L(μ_m)`, with `M / K` Galois. An
 automorphism `ρ` of `M / K` is determined by two coordinates: its restriction to `L`, and its
 cyclotomic character `IsPrimitiveRoot.autToPow`, which records how it moves the `m`-th roots of

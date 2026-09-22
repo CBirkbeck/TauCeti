@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Polynomial.Hermite.Derivative
 /-!
 # Basic Hermite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Basic)
+
 This file starts the object API for the Hermite functions used by the
 `OrthogonalL2Bases` roadmap.  The `n`th function is the normalized
 probabilists' Hermite polynomial evaluated at `x * sqrt 2`, multiplied by the

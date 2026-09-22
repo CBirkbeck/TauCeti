@@ -13,6 +13,8 @@ import Mathlib.Topology.UniformSpace.HeineCantor
 /-!
 # Two nearby points cut a small arc off a Jordan curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.JordanCurve.SmallArc)
+
 `TauCeti/Topology/JordanCurve/Separation.lean` cuts a Jordan curve at two of its points into two
 arcs. That cutting is purely qualitative: it says nothing about the *size* of the two pieces. This
 file adds the quantitative statement, for a Jordan curve in a metric space: **as the two cut points

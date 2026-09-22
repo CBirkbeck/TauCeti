@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Trace.QuotientPow
 /-!
 # Dedekind's different theorem: tame and wild primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Different)
+
 Let `B` be a Dedekind domain, module-finite over a Dedekind domain `A` with `Frac B / Frac A`
 separable, let `p` be a maximal ideal of `A` and `P` a maximal ideal of `B` over it with
 ramification index `e = e(P ∣ p)`.  Mathlib's `pow_sub_one_dvd_differentIdeal` gives the universal

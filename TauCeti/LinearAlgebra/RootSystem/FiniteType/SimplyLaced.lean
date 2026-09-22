@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Dynkin
 /-!
 # Simply-laced Cartan matrices are positive definite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.SimplyLaced)
+
 `TauCeti.IsFiniteType` carries a positive definite symmetrization, but behind an existential over
 the symmetrizer, so it says nothing directly about the matrix itself.  For a simply-laced Cartan
 matrix the constant-one vector is a symmetrizer, and its symmetrization is the matrix itself read

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Fredholm.Criteria
 /-!
 # The index under finite-rank perturbations of Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.FiniteRank)
+
 That a finite-rank perturbation of a Fredholm operator is again Fredholm is Mathlib's
 `ContinuousLinearMap.IsFredholm.add_hasFiniteRange`. This file records the corresponding index
 statement, which follows by restricting both operators to the kernel of the perturbation.

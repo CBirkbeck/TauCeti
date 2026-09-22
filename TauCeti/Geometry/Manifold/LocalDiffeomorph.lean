@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Calculus.InverseFunctionTheorem
 /-!
 # The inverse function theorem for manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.LocalDiffeomorph)
+
 Mathlib knows that a `C^n` local diffeomorphism has invertible differentials
 (`IsLocalDiffeomorphAt.mfderivToContinuousLinearEquiv`) and lists the converse as a TODO in
 `Mathlib/Geometry/Manifold/LocalDiffeomorph.lean`. This file proves that converse at interior

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.Scheme
 /-!
 # Relabelling the coordinates of a split torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.Relabel)
+
 A permutation `τ` of the index set of the rank-`sigma` split torus permutes its coordinates, hence
 acts on its character lattice `sigma →₀ ℤ`, on its coordinate Hopf algebra, and on the group scheme
 itself. This file records that action at all three levels, together with its two structural

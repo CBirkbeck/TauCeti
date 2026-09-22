@@ -16,6 +16,8 @@ import Mathlib.MeasureTheory.Constructions.Projective
 /-!
 # Edge coordinates of an infinite simple graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Coordinates)
+
 An infinite simple graph is equivalently a Boolean assignment to the unordered, non-diagonal
 pairs of natural numbers.  This file makes that equivalence measurable and records its
 equivariance under relabelling.  It is the carrier-level bridge between laws on infinite simple

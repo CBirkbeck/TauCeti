@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Symmetrify
 /-!
 # The path algebra of a quiver as a retract of the doubled path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.Symmetrify)
+
 The doubled quiver `Quiver.Symmetrify Q` contains `Q` through the prefunctor `Quiver.Symmetrify.of`,
 which is the identity on vertices, so `TauCeti.PathAlgebra.mapAlgHom` includes the path algebra
 `kQ` in the doubled path algebra `kQ^sym` (the path algebra of `Quiver.Symmetrify Q`). This file

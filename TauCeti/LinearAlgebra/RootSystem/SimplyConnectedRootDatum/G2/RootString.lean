@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Lengt
 /-!
 # Root strings in the pinned `G₂` root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.RootString)
+
 This file records the root-string calculations that distinguish the short-root span in
 characteristic three.  For the pinned datum `TauCeti.DynkinType.g2SimplyConnectedRootDatum` they
 say:

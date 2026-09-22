@@ -12,6 +12,8 @@ public import TauCeti.InformationTheory.Hamming
 /-!
 # Monomial and permutation equivalences of linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Equivalence)
+
 A *monomial* transformation of the coordinate space `ι → R` rescales each coordinate by a unit
 of `R` and then relabels the coordinates along an equivalence of index types; a *permutation*
 transformation only relabels. Two linear codes — unbundled submodules of coordinate spaces — are

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Semisimple.Basic
 /-!
 # Adjoint semisimple affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Adjoint)
+
 A semisimple affine group scheme over a field is **adjoint** when its scheme-theoretic center is
 trivial.  This file transports the Hopf-coordinate property
 `adjointSemisimpleCommHopfAlgProperty` across the anti-equivalence between semisimple finite-type

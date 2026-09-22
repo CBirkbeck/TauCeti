@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.FixedSubgroup
 /-!
 # Frobenius-fixed points are the points over the fixed subring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Frobenius.FixedPoints)
+
 Let `H` be a Hopf algebra over `ℤ` and let `A` be a commutative ring of exponential
 characteristic `p`. The `p ^ n`-power Frobenius acts on the convolution group of `A`-valued
 points of `H` by `TauCeti.Bialgebra.iterateFrobeniusPoints`, and a point is fixed by it exactly

@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Fredholm.SmallPerturbation
 /-!
 # Continuous families of Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.ContinuousFamily)
+
 The Fredholm index is locally constant in a continuous family of Fredholm operators. Consequently,
 it is constant when the parameter space is preconnected, and in particular at the endpoints of a
 path of Fredholm operators.

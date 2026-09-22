@@ -19,6 +19,8 @@ import TauCeti.RepresentationTheory.CharacterTable.Independence
 /-!
 # The complex Specht modules classify the irreducible complex representations of `Sₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Complex)
+
 The Specht module `S^μ` is defined over `ℚ`, and this file extends its scalars to `ℂ`:
 `TauCeti.spechtModuleℂ μ` is `ℂ ⊗_ℚ S^μ`, an object of `FDRep ℂ Sₙ`. The point of the file is that
 nothing is lost and nothing is gained in the passage — the complex Specht modules are again

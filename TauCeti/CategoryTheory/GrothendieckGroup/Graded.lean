@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Triangulated
 /-!
 # The grading shift on the Grothendieck groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Graded)
+
 The grading shift `{1}` of a graded exact category `TauCeti.GradedExactStructure` is an
 autoequivalence whose functor and inverse are both conflation-exact, so it induces an
 *automorphism* `TauCeti.GradedExactStructure.shiftEquiv` of the exact Grothendieck group,

@@ -13,6 +13,8 @@ import Mathlib.CategoryTheory.Limits.Constructions.FiniteProductsOfBinaryProduct
 /-!
 # Products of mixed Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Mixed.Prod)
+
 The product of two mixed Hodge structures has componentwise weight and Hodge filtrations.
 The product of their Deligne bigradings witnesses purity on the weight-graded pieces.
 The two inclusions and projections are mixed Hodge morphisms; their rational maps are the

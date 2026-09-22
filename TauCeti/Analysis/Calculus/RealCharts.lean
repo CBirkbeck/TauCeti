@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 /-!
 # Elementary real charts for one-dimensional changes of variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.RealCharts)
+
 This file records reusable calculus facts about elementary real charts that recur in density and
 special-function computations.
 

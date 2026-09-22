@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.ClassSum.Eigenrow
 /-!
 # Recovering the character of an irreducible representation from its central character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Recovery)
+
 The central character `ωᵪ : Z(k[G]) →ₐ[k] k` of an irreducible representation is what the
 Burnside--Dixon--Schneider algorithm computes: its row of values on the class sums,
 `TauCeti.classSumRow`, is a normalized common left eigenrow of the class-multiplication matrices.

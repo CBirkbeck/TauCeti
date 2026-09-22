@@ -12,6 +12,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The invariant of an elliptic net
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic)
+
 For an elliptic net `W : ℤ → R` and each `s`, the two quantities
 
 * `IsEllipticNet.invarNum W s n

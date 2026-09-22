@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 /-!
 # Finite bilinear modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Basic)
+
 A finite abelian group equipped with a symmetric biadditive pairing into `ℚ/ℤ`.  The pairing
 is stored as its adjoint into Mathlib's `CharacterModule`; nondegeneracy asserts that this
 adjoint is bijective.

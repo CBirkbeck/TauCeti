@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Basic
 /-!
 # Good Hecke eigenforms and newforms, as bundled forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Newform)
+
 A **good Hecke eigenform** of level `Γ₁(N)` and weight `k` is a nonzero cusp form with a
 nebentypus `χ` that is a simultaneous eigenvector of the `Γ₀(N)` Hecke ring acting on
 `cuspFormCharSpace k χ` (`heckeRingHomCuspCharSpace`), at every index coprime to the level.

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Invariants
 /-!
 # Inflation and the inflation-restriction sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Inflation)
+
 Inflation is the third named instance of the compatible-pair pullback on the explicit low-degree
 complex: for a normal subgroup `N` of a topological group `G` it is the pullback along the
 quotient homomorphism `G → G ⧸ N` paired with the inclusion `M ^ N ↪ M` of the invariants, which

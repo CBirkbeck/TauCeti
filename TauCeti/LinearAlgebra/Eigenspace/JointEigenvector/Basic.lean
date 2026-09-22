@@ -13,6 +13,8 @@ import TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality
 /-!
 # Joint eigenvectors of commuting semisimple families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Basic)
+
 The eigenvalue function of a joint eigenvector of a monoid-hom representation
 `ρ : G →* Module.End K V` is a character: it maps `1` to `1`, is multiplicative, and, for
 a group, valued in units, assembling into `unitHomOfJointEigenvector : G →* Kˣ`. This much

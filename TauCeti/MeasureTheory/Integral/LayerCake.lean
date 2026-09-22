@@ -11,6 +11,8 @@ public import Mathlib.Data.Set.SymmDiff
 /-!
 # A layer-cake formula for the distance between real functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.LayerCake)
+
 This file expresses the `L¹` distance between two almost everywhere measurable real functions as
 the integral, over all levels, of the measure of the symmetric difference of their sublevel sets.
 -/

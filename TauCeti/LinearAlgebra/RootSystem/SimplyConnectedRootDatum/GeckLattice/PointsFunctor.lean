@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # Presented points of the pinned Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.PointsFunctor)
+
 `TauCeti.DynkinType.geckPointsPresentation` presents the matrix points of the pinned Geck
 carrier by its integral defining Hopf ideal. The shared
 `GeneralLinear.IntegralPointsPresentation` API supplies maps of value rings, their functoriality,

@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.Perm.SumCongr
 /-!
 # Algebraic clasp insertion in PD-codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.PDCode.ClaspInsertion)
+
 The code-level tangle replacement underlying the second Reidemeister move creates two crossings
 at which the same strand is over. On a PD-code with `n` crossings,
 `TauCeti.PDCode.insertClasp D p q b hqp hqe` performs this algebraic clasp insertion on two

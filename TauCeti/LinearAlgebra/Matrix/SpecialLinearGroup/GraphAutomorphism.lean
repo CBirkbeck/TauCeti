@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.GraphAutomorphism
 /-!
 # The type-A graph automorphism on the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.GraphAutomorphism)
+
 The signed reverse-inverse-transpose automorphism of `GL_{r+1}` preserves determinant one. This
 file restricts it to an involutive automorphism of `SL_{r+1}`. Its matrix formula is inherited
 from `TauCeti.typeAGraphAutomorphism`, so the conjugating signs still make the action on the

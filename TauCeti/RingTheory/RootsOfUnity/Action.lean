@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Basic
 /-!
 # The roots of unity are preserved by an action by monoid endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.Action)
+
 A monoid `G` acting on `Mˣ` by monoid endomorphisms preserves `ζ ^ n = 1`, so the subgroup
 `rootsOfUnity n M` is `G`-stable and inherits the action. This file records that stability and
 installs the inherited `MulDistribMulAction`.

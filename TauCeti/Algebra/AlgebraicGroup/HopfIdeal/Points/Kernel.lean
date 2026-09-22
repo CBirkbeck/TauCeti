@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.Basic
 /-!
 # Points of the kernel of an affine group-scheme morphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Kernel)
+
 For a morphism `f : H ⟶ K` of commutative Hopf algebras, the kernel closed subgroup
 scheme `TauCeti.CommHopfAlgCat.kernelSpec f` is cut out by the kernel Hopf ideal. This
 file records its kernel semantics on functors of points: for every commutative

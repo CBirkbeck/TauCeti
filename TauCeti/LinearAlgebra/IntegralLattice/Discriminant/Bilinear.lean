@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Group
 /-!
 # Discriminant bilinear modules of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Bilinear)
+
 For a nondegenerate integral lattice `L`, this file equips its finite discriminant group
 `Lᵛ / L` with the pairing
 

@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Subgroup.Centralizer
 /-!
 # Normality from elementwise commutation with a generating subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Subgroup.Normalizer)
+
 A subgroup is normal as soon as its normalizer is everything, and the normalizer contains both the
 subgroup itself and anything centralising it. So a subgroup `C` that is centralised elementwise by
 a subgroup `P` with `C ⊔ P = ⊤` is normal. Mathlib has each ingredient

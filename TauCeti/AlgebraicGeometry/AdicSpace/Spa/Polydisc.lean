@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Hom
 /-!
 # The closed polydisc and its classical points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Polydisc)
+
 The *closed polydisc* of dimension `k` over a nonarchimedean ring `A` is the adic spectrum
 `Spa (A⟨T₁, …, Tₖ⟩, A⟨T₁, …, Tₖ⟩°)` of the restricted power series ring with its power-bounded
 subring as plus ring. For a complete nonarchimedean field this is the closed unit polydisc of rigid

@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Space
 /-!
 # Completeness of the Wasserstein space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Complete)
+
 Over a complete separable pseudometric ground space carrying its Borel structure, and for a finite
 exponent `1 ≤ p < ∞`, the `p`-Wasserstein distance is a complete pseudometric: on the finite-moment
 laws `P_p (X)` of `TauCeti.WassersteinSpace` and, more generally, on every anchored

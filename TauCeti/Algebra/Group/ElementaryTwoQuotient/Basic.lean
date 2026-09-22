@@ -17,6 +17,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # The maximal elementary-2 quotient `G / G²` of a commutative group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic)
+
 For a commutative group `G`, the quotient by its subgroup of squares, `G / G²`, has every element
 of order dividing `2`, so it is a vector space over `𝔽₂ = ZMod 2`. When `G` is finite its dimension
 is the **2-rank** of `G`. This file develops that construction at the level of an arbitrary

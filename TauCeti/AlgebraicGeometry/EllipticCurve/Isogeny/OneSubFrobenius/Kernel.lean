@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.PointCount
 /-!
 # Every rational point lies in the kernel of `1 − π`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Kernel)
+
 Over a finite field the isogeny `1 − π_q` kills every `F`-rational point, so its kernel is all of
 them. The reason is the one behind the classical count: `π_q` fixes the rational points, so
 `(1 − π_q)(X + P) = (1 − π_q)(X)` for rational `P`, and a function pulled back along `1 − π_q` is

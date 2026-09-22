@@ -13,6 +13,8 @@ import Mathlib.GroupTheory.IndexNormal
 /-!
 # Inducing a linear character from a normal subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.LinearCharacter)
+
 Let `N` be a normal subgroup of a finite group `G` and let `χ : N →* kˣ` be a linear character,
 carried by the one-dimensional representation `FDRep.ofLinearCharacter χ`.  The Mackey
 irreducibility criterion for a normal subgroup, `TauCeti.simple_indFDRep_iff_of_normal`, asks that

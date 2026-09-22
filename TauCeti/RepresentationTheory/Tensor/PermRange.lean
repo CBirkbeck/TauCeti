@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Tensor.Power
 /-!
 # The image of a group-algebra element acting on a tensor power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Tensor.PermRange)
+
 Permuting the tensor factors of `⨂[R]^d M` commutes with the diagonal action of a representation
 `ρ` on `M`, so an element `a` of the group algebra `R[S_d]` acts on the tensor power by an
 intertwining map of `ρ.tensorPower d` with itself.  Its image is therefore a subrepresentation of

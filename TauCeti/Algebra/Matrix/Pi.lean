@@ -20,6 +20,8 @@ import Mathlib.LinearAlgebra.Dimension.Finite
 /-!
 # Finite products of matrix algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Matrix.Pi)
+
 The dimension and the center of a product `Π i, Matₙᵢ(k)` of matrix algebras over a field, both
 read off the sizes `nᵢ` alone, together with the dimensions that an algebra equivalence
 `A ≃ₐ[k] ∏ᵢ Matₙᵢ(Dᵢ)` onto such a product — over an arbitrary family of coefficient algebras

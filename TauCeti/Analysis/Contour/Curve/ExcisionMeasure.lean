@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Complex.Basic
 /-!
 # The excised parameter set shrinks to nothing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.ExcisionMeasure)
+
 An `ε`-excision deletes from the parameter interval every time at which the curve comes within
 `ε` of one of finitely many centres. This file records that the deleted set carries no length in
 the limit: the integral of the excision's indicator over `[a, b]` tends to `b - a` as `ε → 0⁺`.

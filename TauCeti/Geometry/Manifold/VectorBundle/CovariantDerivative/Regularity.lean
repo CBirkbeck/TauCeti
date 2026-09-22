@@ -11,6 +11,8 @@ import Mathlib.Geometry.Manifold.VectorBundle.Hom
 /-!
 # Regularity of covariant derivatives along vector fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Regularity)
+
 This file records the regularity of evaluating a smooth covariant derivative on a smooth vector
 field.  It turns the hom-bundle-valued regularity supplied by
 `CovariantDerivative.ContMDiffCovariantDerivative` into regularity of the resulting section.

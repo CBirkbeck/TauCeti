@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.StandardTableau.Basic
 /-!
 # Reading order, the superstandard tableaux, and the shapes with a unique standard tableau
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.StandardTableau.Reading)
+
 Numbering the cells of a Young diagram `μ` in *reading order* -- left to right along the first
 row, then left to right along the second, and so on -- labels the cell `(i, j)` by
 `YoungDiagram.readingIndex μ (i, j) = μ.rowLen 0 + ⋯ + μ.rowLen (i - 1) + j`.  Reading

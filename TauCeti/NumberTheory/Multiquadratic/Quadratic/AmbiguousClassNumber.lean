@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.InfinitePlace
 /-!
 # The ambiguous class number formula for a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.AmbiguousClassNumber)
+
 Let `K = ℚ(√d)` with `d` squarefree, and let `t` be the number of rational primes that ramify in
 `K`. An ideal class is *ambiguous* when it is fixed by the quadratic conjugation `σ`;
 since `σ` acts on `Cl(K)` by inversion, the ambiguous classes are exactly the `2`-torsion classes

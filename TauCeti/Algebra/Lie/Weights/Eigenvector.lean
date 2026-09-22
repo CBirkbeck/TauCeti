@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Weights.Killing
 /-!
 # Simultaneous eigenvectors of a subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Eigenvector)
+
 Let `H` be a subalgebra of a Lie algebra `L` acting on a module `M`. A vector `v` on which every
 element of `H` acts by a scalar is a **simultaneous eigenvector**, its eigenvalue being the
 function `chi : H → R` that records those scalars. This file collects two facts about such a vector.

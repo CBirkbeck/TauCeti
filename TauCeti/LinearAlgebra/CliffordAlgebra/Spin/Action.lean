@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.CliffordAlgebra.SpinGroup
 /-!
 # The spin group acting on its quadratic space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Action)
+
 Mathlib defines `spinGroup Q` inside `CliffordAlgebra Q` and proves that its conjugation action
 preserves the range of the generating map `CliffordAlgebra.ι Q`. This file transports that action
 through `CliffordAlgebra.ιRangeEquiv`, proves that it preserves `Q`, and packages the result

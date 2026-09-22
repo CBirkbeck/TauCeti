@@ -16,6 +16,8 @@ import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Connectedness of the derived subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Derived.Connected)
+
 The derived closed subgroup of a connected affine group of finite type over an algebraically
 closed field is geometrically connected. Neither smoothness nor reducedness is needed.
 This supplies the connectedness input for induction on the derived series in Lie--Kolchin.

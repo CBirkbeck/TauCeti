@@ -22,6 +22,8 @@ import TauCeti.RingTheory.Polynomial.Resultant.AdjoinRoot
 /-!
 # The `x - T` map of an elliptic curve into its étale algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.XSubT)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`, and let `A := K[X]⧸⟨f⟩` be the étale algebra of `f`. The **descent map**,
 or `x - T` map, sends a point of `W` to the square class of `x - T` in `A`, where `T` is the

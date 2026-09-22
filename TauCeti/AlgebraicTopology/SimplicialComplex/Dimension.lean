@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Basic
 /-!
 # The dimension of an abstract simplicial complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Dimension)
+
 The dimension of a simplicial complex is the supremum of the dimensions of its faces, where a
 face with `k + 1` vertices has dimension `k`. This file defines that dimension for
 `PreAbstractSimplicialComplex` (Mathlib's downward-closed collection of nonempty finite faces,

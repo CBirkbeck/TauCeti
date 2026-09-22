@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Monoidal.Mon
 /-!
 # Commutative monoid objects
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.Mon)
+
 This file provides general-purpose facts about commutative monoid objects.
 
 ## Main declarations

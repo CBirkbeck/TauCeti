@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.SymmetricAlgebra.Homogeneous
 /-!
 # The grading of a symmetric algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.Grading)
+
 Let `M` be a module over a commutative semiring. The powers of the image of `M` in its symmetric
 algebra are not merely a spanning family: they form an internal direct sum. Thus every element of
 the symmetric algebra has a unique finite decomposition into homogeneous terms.

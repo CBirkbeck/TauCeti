@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.TraceForm
 /-!
 # An ad-nilpotent element of a Killing Lie algebra is a bracket with itself
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Killing.AdNilpotent)
+
 Let `L` be a finite-dimensional Lie algebra over a field whose Killing form `κ` is nondegenerate,
 and let `x : L` be an element whose adjoint action `ad x` is nilpotent.  Then there is a `t : L`
 with

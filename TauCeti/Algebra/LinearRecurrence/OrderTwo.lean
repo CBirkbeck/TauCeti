@@ -11,6 +11,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Products in a second-order linear recurrence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.LinearRecurrence.OrderTwo)
+
 Fix a ring `R`, not necessarily commutative, two elements `D S : R`, and a sequence
 `d : ℕ → R` obeying the
 second-order recurrence

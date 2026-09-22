@@ -11,6 +11,8 @@ public import TauCeti.LowDimTopology.Plumbing.Filtration.Colimit
 /-!
 # The lattice-homology weight filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Filtration.Homology)
+
 The characteristic-weight sublevel complexes form a filtered diagram whose colimit is the full
 lattice chain complex. This file passes that presentation through homology: in every cubical degree,
 the homology of the full complex is the filtered colimit of the sublevel homology modules. When the

@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Limits.Preserves.SigmaConst
 /-!
 # The simplicial chain complex preserves colimits
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialSet.Homology.Coproduct)
+
 In degree `n` the chain complex of a simplicial set `X` with coefficients in an object `R` is the
 coproduct of copies of `R` indexed by the `n`-simplices of `X`.  Evaluating a simplicial set in a
 fixed degree preserves colimits, because colimits of presheaves are computed pointwise, and

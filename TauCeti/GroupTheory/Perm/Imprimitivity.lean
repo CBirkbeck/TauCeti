@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Perm.WreathProduct
 /-!
 # Imprimitivity gives a wreath product embedding
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.Imprimitivity)
+
 Let `G` act transitively on `α`, and let `B` be a nonempty block. The translates `g • B` form the
 block system `MulAction.orbit G B`, a partition of `α` on which `G` acts. Choosing, for each
 translate `C`, an element of `G` carrying `B` onto `C` identifies `α` with the grid

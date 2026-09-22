@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Basic
 /-!
 # The monoid-algebra action of a representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.AsAlgebraHom)
+
 General facts about `Representation.asAlgebraHom`, the extension of a representation `ρ` of a
 monoid `G` to the monoid algebra `k[G]`.
 

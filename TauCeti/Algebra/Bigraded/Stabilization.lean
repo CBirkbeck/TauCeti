@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Bigraded.Basic
 /-!
 # Bigraded vector spaces up to `⊗ W`-stabilization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bigraded.Stabilization)
+
 Grid homology comes in a family of flavors whose blocked versions depend on the size of the
 grid rather than on the link alone: the fully blocked homology of an `n × n` grid diagram
 presenting an `ℓ`-component link `L` is the simply blocked grid homology of `L` tensored with

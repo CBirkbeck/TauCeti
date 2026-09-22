@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.ProperAction
 /-!
 # Properly discontinuous actions of Fuchsian groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.ProperAction)
+
 Every discrete subgroup of `PSL(2, ℝ)` acts properly discontinuously on the upper half-plane,
 as a consequence of the proper projective action constructed in
 `TauCeti.Analysis.Complex.UpperHalfPlane.ProperAction`.

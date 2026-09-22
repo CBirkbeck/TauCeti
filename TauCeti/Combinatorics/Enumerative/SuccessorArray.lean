@@ -11,6 +11,8 @@ public import TauCeti.Data.Nat.Nth
 /-!
 # The successor array of a sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.SuccessorArray)
+
 For a sequence `x : ℕ → α`, its successor array records, for each value `a`, the values that
 follow successive visits to `a`. Together with `x 0`, this array determines the original sequence.
 The reconstruction is total: entries after the last genuine visit use the junk value supplied by

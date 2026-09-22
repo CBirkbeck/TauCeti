@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.Winding.Number.Basic
 /-!
 # Finite partitions of contour winding numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Partition)
+
 This file upgrades the two-interval additivity of `Contour.windingNumber` to a finite partition
 `t 0, ..., t n` of the parameter interval.  No monotonicity of `t` is needed: oriented interval
 integrals, and hence their Cauchy principal values, telescope over arbitrary adjacent endpoints.

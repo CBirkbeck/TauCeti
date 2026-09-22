@@ -14,6 +14,8 @@ import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # The ternary tetracode
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Tetracode)
+
 The tetracode is the row space over `ZMod 3` of the matrix with rows `(1,0,1,1)` and
 `(0,1,1,-1)`. It is a Euclidean self-dual code of length four and dimension two, and all
 eight nonzero words have weight three. Its homogeneous weight enumerator is

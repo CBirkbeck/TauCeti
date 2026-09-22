@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.Residue.Basic
 /-!
 # Canonical Laurent data of a meromorphic function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.MeromorphicLaurent)
+
 For `f` meromorphic at `s`, this file extracts its **canonical Laurent data**: the polar order
 `meromorphicPolarOrderAt` — computed from `meromorphicOrderAt`, not chosen — together with Laurent
 coefficients, the finite polar part, and the analytic part, satisfying

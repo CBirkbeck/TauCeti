@@ -14,6 +14,8 @@ import TauCeti.RingTheory.FiniteType.Tensor.Product
 /-!
 # Smoothness of the derived subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Derived.Smooth)
+
 Over an algebraically closed field, the derived closed subgroup of a reduced finite-type
 affine group is reduced, and hence smooth. This supplies the smooth subgroup needed when
 applying representation-theoretic induction to the derived subgroup of a solvable group.

@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.Resolution
 /-!
 # Shapiro's isomorphism is restriction followed by evaluation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupCohomology.Shapiro)
+
 For a subgroup `S ≤ G` and an `S`-representation `A`, Mathlib's Shapiro isomorphism
 `groupCohomology.coindIso A n : Hⁿ(G, Coind_S^G A) ≅ Hⁿ(S, A)` is constructed through `Ext`: it
 compares the bar resolution of `S` with the restriction to `S` of the bar resolution of `G`. This

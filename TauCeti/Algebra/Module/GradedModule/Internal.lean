@@ -15,6 +15,8 @@ import TauCeti.Algebra.DirectSum.Internal
 /-!
 # Internally graded modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.Internal)
+
 This file packages a `ℤ`-graded module as a total module together with an internal direct-sum
 decomposition. The total-module presentation is convenient for DG and `A∞` operations, while
 `DirectSum.IsInternal` ensures that every element is a finite, uniquely determined sum of

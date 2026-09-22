@@ -10,6 +10,8 @@ public import Mathlib.Data.Set.SymmDiff
 /-!
 # Symmetric differences of intersections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Set.SymmDiff)
+
 The symmetric difference of an intersection with a set lies in the union of the symmetric
 differences: the intersection member of Mathlib's `Set.union_symmDiff_subset` family, obtained
 from the union member by complementation.

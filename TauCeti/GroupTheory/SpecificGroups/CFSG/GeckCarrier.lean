@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The Geck carrier of a Lie-type index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.GeckCarrier)
+
 Every valid Lie-type index names a valid Dynkin type through `TauCeti.ValidLieTypeIndex.dynkinType`
 and `dynkinType_valid`, and the root-systems roadmap attaches to such a type the pinned Geck group
 scheme `TauCeti.DynkinType.geckGroupScheme`: an explicit closed subgroup scheme of `GLₙ` over `ℤ`

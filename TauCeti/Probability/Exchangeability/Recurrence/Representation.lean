@@ -13,6 +13,8 @@ import TauCeti.Probability.Exchangeability.MixedIID.Mixture
 /-!
 # A recurrent Markov exchangeable process is a mixture of processes with i.i.d. excursions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.Representation)
+
 `Recurrence.Reconstruction` establishes that the path law of a recurrent process is the image of
 its excursion law under concatenation.  This file supplies the other half: for a **Markov
 exchangeable** process the excursion process is exchangeable, hence conditionally i.i.d., so that

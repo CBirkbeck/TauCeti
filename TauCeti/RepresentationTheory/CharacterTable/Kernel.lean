@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.End.FiniteOrder
 /-!
 # The kernel of a complex character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Kernel)
+
 A representation `ρ` of a group has a kernel, the subgroup `ρ.ker` of the elements acting as the
 identity, and it is normal because it is the kernel of a homomorphism. The character sees that
 kernel: for a finite-dimensional complex representation and an element `g` of **finite order**,

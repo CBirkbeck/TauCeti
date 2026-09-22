@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Unipot
 /-!
 # Unipotence of represented weight-cocharacter subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Unipotent.Pointwise)
+
 Let `w : Fin N → ℤ` and let `λ_w` be the corresponding diagonal cocharacter of `GL_N`.
 The dynamic subgroup `U(λ_w)(A)` consists of the matrices which are block triangular for the
 weight filtration and induce the identity on its associated graded. The coordinate Hopf algebra

@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Int.Basic
 /-!
 # Square-class independence of prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Independence)
+
 The genus-field layer of the multiquadratic roadmap builds the genus field of `ℚ(√d)` as the
 compositum of the quadratic fields `ℚ(√D*)` over the **prime discriminants** `D*` dividing the
 discriminant of `ℚ(√d)`. To know this compositum is multiquadratic of full degree `2ᵗ` (and so

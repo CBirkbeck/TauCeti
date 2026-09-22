@@ -13,6 +13,8 @@ public import TauCeti.MeasureTheory.Integral.Prod
 /-!
 # Pointwise products of `L²` functions on a product measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.L2.Product)
+
 For an `L²(μ)` function `f` and an `L²(ν)` function `g` on s-finite measures, the pointwise
 product `(x, y) ↦ f x * g y` belongs to `L²(μ ⊗ ν)`, and the assignment factors the inner product
 as a tensor:

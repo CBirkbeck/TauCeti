@@ -14,6 +14,8 @@ public import Mathlib.Topology.MetricSpace.Ultra.Basic
 /-!
 # Congruence and continuity properties of the truncations of a `p`-adic integer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Padics.RingHoms)
+
 Mathlib's `PadicInt.appr x n` is the natural number below `p ^ n` congruent to `x` modulo
 `p ^ n`, and `PadicInt.toZModPow n` is the induced ring homomorphism to `ZMod (p ^ n)`. This
 file records the arithmetic dictionary between the two, the congruences that make `appr`

@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.LowerSemicontinuous
 /-!
 # The Wasserstein spaces are Borel spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Borel)
+
 The finite-moment space `TauCeti.WassersteinSpace p X` and the anchored components
 `TauCeti.WassersteinComponent p μ₀` carry two structures of different origin: the measurable
 structure inherited from the Giry σ-algebra on `ProbabilityMeasure X`, and the topology of the

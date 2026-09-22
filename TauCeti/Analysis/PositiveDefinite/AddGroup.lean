@@ -14,6 +14,8 @@ public import TauCeti.Analysis.PositiveDefinite.Normalize
 /-!
 # Positive-definite functions on an additive commutative group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.AddGroup)
+
 On an additive commutative group `G` the classical positive-definiteness condition for
 `F : G → ℂ` reads `∑_{i,j} cᵢ · conj(cⱼ) · F(aᵢ - aⱼ) ≥ 0`: the involution is negation, so the
 kernel is the translation-invariant `K(a, b) = F(a - b)`. Mathlib's `star` on a real vector space

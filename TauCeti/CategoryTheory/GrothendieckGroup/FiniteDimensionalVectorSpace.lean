@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Category.FGModuleCat.EssentiallySmall
 /-!
 # Grothendieck groups of finite-dimensional vector spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.FiniteDimensionalVectorSpace)
+
 For a division ring `k`, `FGModuleCat k` is Mathlib's category of finite-dimensional left
 `k`-vector spaces.
 Every object is projective, so every short exact sequence in this category splits. Dimension is

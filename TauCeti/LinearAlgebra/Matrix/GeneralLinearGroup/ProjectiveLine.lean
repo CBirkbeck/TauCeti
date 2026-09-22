@@ -28,6 +28,8 @@ public import Mathlib.Data.Set.Card
 /-!
 # The cosets of the Borel subgroup of `GL₂` are the projective line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.ProjectiveLine)
+
 The coset space `GL₂(F) ⧸ B` of the Borel subgroup of invertible upper-triangular matrices is the
 **projective line** over `F`: a coset `g B` remembers exactly the line spanned by the first column
 of `g`, because right multiplication by an upper-triangular matrix rescales that column. Mathlib

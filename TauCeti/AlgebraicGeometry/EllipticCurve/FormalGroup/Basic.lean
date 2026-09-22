@@ -13,6 +13,8 @@ import TauCeti.RingTheory.MvPowerSeries.Rename
 /-!
 # The formal group law of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Basic)
+
 The chord construction at the point at infinity gives an addition series `formalAdd W`. This file
 packages that series as Mathlib's one-dimensional `FormalGroup`: the two variables are reindexed
 from the named sum `Unit ⊕ Unit` to `Fin 2`, and the previously established constant, linear, and

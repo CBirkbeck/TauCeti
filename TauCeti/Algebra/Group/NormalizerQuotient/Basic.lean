@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 /-!
 # The normalizer quotient of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.NormalizerQuotient.Basic)
+
 This file packages the algebraic quotient `N(H) / H`, where `N(H)` is the normalizer of a
 subgroup `H ≤ G`. This is the group that occurs in the universal-covers roadmap when the
 deck group of the connected cover associated to `H ≤ π₁(X, x₀)` is identified with

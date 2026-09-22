@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Naturality
 /-!
 # Representability of dynamic weight Levis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Levi.Basic)
+
 The weight-Levi subgroup scheme of `GL_N` represents the dynamic Levi attached to the
 cocharacter `t ↦ diag(t ^ w i)`. On points, both descriptions say exactly that the `(i,j)`
 entry vanishes whenever `w i ≠ w j`.

@@ -15,6 +15,8 @@ import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients.Norm
 /-!
 # Canonical local factors and formal Euler products for ideal arithmetic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Basic)
+
 This file develops the Euler-product layer for arithmetic functions on nonzero ideals. It builds
 the canonical formal power series at each height-one prime and sends that series into Mathlib's
 `ArithmeticFunction.ofPowerSeries` API. The resulting local arithmetic factor has the prescribed

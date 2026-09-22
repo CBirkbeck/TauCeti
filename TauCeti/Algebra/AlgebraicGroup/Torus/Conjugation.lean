@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.Maximal
 /-!
 # Conjugation of maximal tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Conjugation)
+
 Conjugation by a rational point is an automorphism of the ambient affine group, so it preserves
 maximal tori. This file records that invariance for the Hopf-ideal definition of a maximal torus.
 

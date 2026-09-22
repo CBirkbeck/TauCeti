@@ -12,6 +12,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Nilpotence of upper-unitriangular matrix groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular.Nilpotent)
+
 For a ring `R`, filter `U_n(R)` by requiring the entries on the first `r - 1`
 superdiagonals to vanish. Multiplication of matrices supported at least `r` and `s`
 superdiagonals above the diagonal is supported at least `r + s` superdiagonals above it. This

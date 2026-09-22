@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The category of covering spaces over a fixed base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Category)
+
 For a topological space `X`, this file defines `TauCeti.CoveringSpace X`, whose objects are
 covering maps to `X` and whose morphisms are continuous maps over `X`. It is constructed as the
 full subcategory of `TopCat / X` cut out by `IsCoveringMap`, so its category structure and the

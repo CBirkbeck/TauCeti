@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.PurelyInseparable.Basic
 /-!
 # A quadratic extension away from characteristic two is separable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Separable.Quadratic)
+
 An extension of fields of degree `2` is separable unless `2 = 0` in the base field. Indeed the
 separable degree divides the degree, so it is `1` or `2`; the value `2` is separability itself,
 while the value `1` makes the extension purely inseparable, hence of degree a power of the

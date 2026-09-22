@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Module.Normalize
 /-!
 # Radial projection to the unit sphere
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Normalize)
+
 This file packages pointwise normalization of a continuous nowhere-zero map as a continuous map
 to the unit sphere.
 -/

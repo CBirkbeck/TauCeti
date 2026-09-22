@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Dimension.Constructions
 /-!
 # The dimension of an internal direct sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dimension.DirectSum)
+
 A vector space that is the internal direct sum of a finite family of finite-dimensional subspaces
 has the sum of their dimensions, `TauCeti.finrank_eq_sum_finrank_of_isInternal`. Finiteness is
 asked of the summands rather than of the ambient space: the two are equivalent here, and the

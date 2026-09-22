@@ -12,6 +12,8 @@ public import TauCeti.Data.Sym.Basic
 /-!
 # Splitting an unordered tuple along a pairwise disjoint family of sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Sym.Family)
+
 This file concatenates unordered tuples along a finite family `U : ι → Set α` of pairwise disjoint
 sets: a family of
 unordered tuples, the `i`-th of them an `m i`-tuple of points of `U i`, concatenates into an

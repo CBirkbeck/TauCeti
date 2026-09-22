@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Complex.UnitDisc.Basic
 /-!
 # The isometries of the Poincaré disc are the disc automorphisms and their conjugates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.Isometry.Classification)
+
 The two objects layer **L2** of the conformal-mapping roadmap
 (`TauCetiRoadmap/ConformalMapping/README.md`) asks for — "the **hyperbolic / Poincaré metric** on
 `𝔻`" and "the disc automorphism group `Aut(𝔻) = {e^{iθ}(z−a)/(1−āz)}`" — are already on `main`,

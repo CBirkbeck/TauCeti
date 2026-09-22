@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Basic
 /-!
 # Tensor products with trivial invertible sheaves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.TensorProduct.Basic)
+
 For a sheaf of commutative rings `R` on a site, the free sheaf of `R`-modules on one generator
 is canonically isomorphic to the tensor unit by `SheafOfModules.freePUnitIsoUnit`, defined in
 `TauCeti/Algebra/Category/ModuleCat/Sheaf/Free.lean`. This file uses that comparison to show that

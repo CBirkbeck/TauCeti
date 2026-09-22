@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Symmetric.TableauSubgroupConjugacy
 /-!
 # Polytabloids and the Specht module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Module)
+
 The Young permutation module `M^μ` is the rational representation of `Sₙ` on the `μ`-tabloids,
 which are the left cosets of the Young subgroup of the shape of `μ`.  A `μ`-tableau `t` names one
 of them, its **tabloid** `{t}`, and antisymmetrizing that tabloid over the column group of `t`

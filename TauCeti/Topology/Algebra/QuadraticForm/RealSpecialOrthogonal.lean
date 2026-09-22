@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.QuadraticForm.Standard
 /-!
 # Compactness of positive-definite real special orthogonal groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.QuadraticForm.RealSpecialOrthogonal)
+
 The standard real sum-of-squares form has a special orthogonal group which is the continuous image
 of the compact real special orthogonal matrix group. This gives the construction for any finite
 coordinate type. Specializing to the positive-definite form `realCliffordForm n 0` supplies the

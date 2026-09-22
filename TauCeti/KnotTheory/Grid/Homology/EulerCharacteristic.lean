@@ -17,6 +17,8 @@ import TauCeti.Algebra.Homology.EulerCharacteristic.FiniteDimensional
 /-!
 # The Euler characteristic of fully blocked grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Homology.EulerCharacteristic)
+
 The fully blocked grid differential preserves the Alexander grading and lowers the Maslov grading.
 For a fixed Alexander degree, this file regards its graded complex as a bounded complex of
 finite-dimensional `ZMod 2`-vector spaces. Reindexing Maslov degree `m` as cohomological degree

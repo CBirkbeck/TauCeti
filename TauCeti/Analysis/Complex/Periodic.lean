@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Complex
 /-!
 # The local parameter under translation, period rescaling, and differentiation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Periodic)
+
 Identities for the local parameter `𝕢 h z = exp (2 π I z / h)` at a cusp: translating
 the argument multiplies by an exponential, the `m`-th power of the local parameter at
 period `m * h` is the local parameter at period `h`, the values at the integer offsets

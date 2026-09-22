@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Order.Hom.Monoid
 /-!
 # Degree and the divisor order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Order)
+
 This file records the monotonicity of the formal Weil-divisor degree maps with respect to the
 coefficientwise order.  If `D ≤ E`, then the effective difference `E - D` has nonnegative
 weighted degree whenever the weights are nonnegative, so `weightedDegree w D ≤ weightedDegree w E`.

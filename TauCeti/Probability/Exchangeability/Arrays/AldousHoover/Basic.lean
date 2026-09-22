@@ -13,6 +13,8 @@ public import Mathlib.Probability.Independence.InfinitePi
 /-!
 # Aldous--Hoover array codings are exchangeable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.AldousHoover.Basic)
+
 The functional forms in the Aldous--Hoover representation use four independent kinds of uniform
 randomness.  A separately exchangeable array is coded from a global variable, one variable for
 each row, one for each column, and one for each cell:

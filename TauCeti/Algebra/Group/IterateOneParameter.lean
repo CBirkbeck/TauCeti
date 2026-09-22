@@ -11,6 +11,8 @@ public import Mathlib.Logic.Function.Iterate
 /-!
 # Iterates of a self-map on one-parameter maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.IterateOneParameter)
+
 A *one-parameter map* into a type `G`, with parameters in a monoid `A`, is a map `x : A → G`, and
 a self-map `f` of `G` *raises its parameter to the `p`-th power* when
 

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Artinian.Ring
 /-!
 # The Jacobson radical of a finite-dimensional algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Jacobson.FiniteDimensional)
+
 This file packages the standard Artinian-ring API for finite-dimensional algebras over a field.
 For such an algebra `A`, its Jacobson radical is nilpotent, the quotient by the radical is
 semisimple, and `A` itself is semisimple exactly when the radical vanishes.

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Solver
 /-!
 # The rational Dixon computation for the cyclic group of order two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.CyclicTwo)
+
 This file runs the rational stage of the Dixon--Schneider character-table algorithm for
 `Multiplicative (ZMod 2)`.  The two conjugacy classes are the identity singleton and the singleton
 containing the nontrivial element, in that order, as numbered by `TauCeti.cyclicClassData 2`.

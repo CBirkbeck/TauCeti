@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
 /-!
 # The Hecke triple of `Γ₁(N)·{±I}`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.WithCenter)
+
 `Gamma1/Basic.lean` puts `Γ₁(N)` into a Hecke triple `Γ₁(N) ≤ Δ₀(N) ≤ commensurator(Γ₁(N))`.
 This file does the same for `Γ₁(N)·{±I}`, the subgroup `(Gamma1 N).withCenter` obtained by
 adjoining the centre of `SL₂(ℤ)`.

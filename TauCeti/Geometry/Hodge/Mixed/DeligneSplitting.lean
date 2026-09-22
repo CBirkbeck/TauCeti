@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Hodge.Mixed.Morphism
 /-!
 # Deligne's bigrading of a mixed Hodge structure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Mixed.DeligneSplitting)
+
 Deligne's canonical bigrading of a mixed Hodge structure is the family of complex subspaces
 
 `I^{p,q} = (F^p ∩ W_{p+q}) ∩ (conj F^q ∩ W_{p+q} + ∑_{j ≥ 2} conj F^{q-j+1} ∩ W_{p+q-j})`,

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.CharacterSpace
 /-!
 # The squarefree decomposition of a form with vanishing coprime coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.SquarefreeDecomposition)
+
 Miyake's Lemma 4.6.7: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose `q`-expansion vanishes at every index
 coprime to a squarefree `l` is, coefficient by coefficient, a sum `∑_{q ∈ l.primeFactors} V_q F_q`
 over the **primes** `q` dividing `l`, of

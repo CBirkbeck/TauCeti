@@ -12,6 +12,8 @@ public import TauCeti.Analysis.InnerProductSpace.Laplacian.Basic
 /-!
 # Dilation invariance of the Laplacian and harmonic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Harmonic.Dilation)
+
 `TauCeti.Analysis.InnerProductSpace.Laplacian.Basic` records invariance under rigid motions and the
 Laplacian scaling law under affine homotheties. This file transports the homothety bookkeeping to
 harmonicity: under the right-composition `AffineMap.homothety a c`, harmonicity is preserved and

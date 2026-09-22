@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.Basic
 /-!
 # The character lattice of a torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.CharacterLattice.Basic)
+
 The geometric characters of a torus are the group-like elements of its coordinate algebra after
 extension to an algebraic closure. The generic construction and its absolute-Galois action are in
 `TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.CharacterLattice.Basic`.

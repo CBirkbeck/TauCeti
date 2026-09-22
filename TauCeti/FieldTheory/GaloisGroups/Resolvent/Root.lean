@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Polynomial.Roots
 /-!
 # Roots of a resolvent in the base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Root)
+
 A resolvent specification `TauCeti.ResolventSpec n` carries an invariant `Φ` in `n` formal roots
 whose stabilizer under renaming the variables is exactly its subgroup `H ≤ Equiv.Perm (Fin n)`.
 Specializing it at a monic separable `f : F[X]` of degree `n` gives

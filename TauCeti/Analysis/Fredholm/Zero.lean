@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Fredholm.Index
 /-!
 # The zero Fredholm operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Zero)
+
 This file characterizes when the zero continuous linear map is Fredholm. Its kernel is the whole
 domain and its cokernel is the whole codomain, so it is Fredholm exactly when both spaces are
 finite dimensional. In that case its index is `dim E - dim F`.

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.GradedModule.Opposite
 /-!
 # The Koszul-signed opposite of an internally graded algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.GradedAlgebra.Opposite)
+
 For an internally `ℤ`-graded algebra `A`, its graded opposite has the same underlying graded
 module and the multiplication
 

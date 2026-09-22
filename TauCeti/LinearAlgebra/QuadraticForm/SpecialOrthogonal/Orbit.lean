@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.CartanDieudonne.Basic
 /-!
 # Orbits of nondegenerate special orthogonal groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.SpecialOrthogonal.Orbit)
+
 A special orthogonal transformation carries any vector of a fixed nonzero norm to any other,
 provided the nondegenerate quadratic space has dimension at least two. This is the linear-algebra
 input for transitive actions on nonzero quadratic levels; see Lawson--Michelsohn, *Spin Geometry*,

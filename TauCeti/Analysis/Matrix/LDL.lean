@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # The diagonals of the LDL decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.LDL)
+
 Mathlib's LDL decomposition writes a positive-definite matrix `S` as `L * D * Lᴴ` with `L` lower
 triangular and `D` diagonal, but records nothing about the individual diagonal entries. This file
 supplies them: the diagonal of `D` is positive, and both `LDL.lowerInv` and `LDL.lower` carry `1`

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LocallyPrincipal
 /-!
 # The Cartier divisor of a locally principal Weil divisor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Cartier.Basic)
+
 Let `X` be a locally Noetherian integral scheme of dimension at most one whose codimension-one
 local rings are discrete valuation rings. A Weil divisor `D` on `X` which is locally principal
 is described near every point by one nonzero rational function, its *local equation* there.

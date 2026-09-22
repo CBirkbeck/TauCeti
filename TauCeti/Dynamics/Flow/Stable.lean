@@ -12,6 +12,8 @@ public import TauCeti.Dynamics.Flow.Conjugacy
 /-!
 # Stable and unstable sets of a flow
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Dynamics.Flow.Stable)
+
 For a real flow `φ`, the stable set of `x` consists of the points whose trajectories converge to
 `x` as time tends to `+∞`; the unstable set uses time tending to `-∞`.  These are the underlying
 sets which the stable-manifold theorem identifies locally as smooth manifolds near a hyperbolic

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Degree
 /-!
 # The character table of a finite group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Table)
+
 Let `G` be a finite group and `k` an algebraically closed field in which `|G|` is invertible. The
 characters of the irreducible representations of `G` over `k` form a finite set
 `TauCeti.irreducibleCharacters k G` of functions `G → k`, of size the number of conjugacy classes of

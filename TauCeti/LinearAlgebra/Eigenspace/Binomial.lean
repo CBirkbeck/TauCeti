@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Binomial
 /-!
 # Generalized binomial coefficients of an endomorphism at an eigenvector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.Binomial)
+
 An endomorphism `f` of a rational vector space is an element of the `ℚ`-algebra
 `Module.End ℚ V`, which is a binomial ring, so the generalized binomial coefficients
 `Ring.choose f n = f (f - 1) ⋯ (f - n + 1) / n !` are again endomorphisms. This file records that

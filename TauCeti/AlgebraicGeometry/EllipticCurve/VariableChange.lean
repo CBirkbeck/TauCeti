@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 /-!
 # Complements on admissible changes of variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.VariableChange)
+
 Material complementing `Mathlib/AlgebraicGeometry/EllipticCurve/VariableChange.lean`: the
 negation automorphism `[-1]` of a Weierstrass curve as an admissible change of variables, with
 its involution API, together with the compatibility of the action with base change

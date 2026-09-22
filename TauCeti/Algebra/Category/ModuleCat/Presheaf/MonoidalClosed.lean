@@ -14,6 +14,8 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.Basic
 /-!
 # The closed monoidal category of presheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Presheaf.MonoidalClosed)
+
 Let `R₀` be a presheaf of commutative rings on a small category. This file makes presheaves of
 `R₀`-modules into a closed monoidal category. Tensoring presheaves of modules preserves small
 colimits, and the free modules on representables form a small separating family, so the special

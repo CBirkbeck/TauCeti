@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Groupoid.Subgroupoid
 /-!
 # Basic results on fundamental groupoids
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroupoid.Basic)
+
 This file records basic facts about fundamental groupoids used when comparing the fundamental
 groupoid of a space with those of its subspaces: the functor induced by an injective continuous
 map is injective on objects (as `CategoryTheory.Subgroupoid.im` requires), membership of a

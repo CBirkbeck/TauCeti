@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Bialgebra.TensorProduct
 /-!
 # Base change of symmetric bialgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.SymmetricAlgebra.BaseChange)
+
 For a commutative semiring extension `k → K` and a `k`-module `M`, scalar extension of the
 symmetric bialgebra on `M` is canonically the symmetric bialgebra on the scalar extension of `M`:
 

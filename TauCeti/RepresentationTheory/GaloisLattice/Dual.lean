@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.GaloisLattice.Basic
 /-!
 # Duals of integral Galois lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GaloisLattice.Dual)
+
 The contragredient representation on the integral dual of a Galois lattice is again a Galois
 lattice. Continuity is proved using a finite basis: the pointwise stabilizer of that basis is an
 open subgroup, and it fixes every linear functional under the contragredient action.

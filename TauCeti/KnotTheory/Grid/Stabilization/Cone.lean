@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.Stabilization.Unblocked
 /-!
 # The unblocked complex of a stabilized grid as a mapping cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Stabilization.Cone)
+
 Let `G` be a grid diagram of size `n`, let `s` be a column, and let
 `G' = G.stabilizeX s.castSucc (G.X s).castSucc s` be the stabilization splitting the `X`-marking
 of column `s`, whose new `2 × 2` block is centered at the grid point `c = (s.succ, (G.X s).succ)`

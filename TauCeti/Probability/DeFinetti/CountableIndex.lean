@@ -12,6 +12,8 @@ import Mathlib.Basic.Denumerable
 /-!
 # De Finetti's theorem for countable index types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.CountableIndex)
+
 De Finetti's theorem is independent of the particular enumeration of a countably infinite index
 type. This file transports the sequence theorem along an equivalence with `ℕ`.
 

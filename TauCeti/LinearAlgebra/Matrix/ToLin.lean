@@ -15,6 +15,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 /-!
 # The endomorphism algebra of a finite-dimensional vector space, as matrices of a known size
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.ToLin)
+
 Mathlib's `algEquivMatrix` turns `Module.End K M` into matrices indexed by the index type of a
 chosen basis of `M`. This file records the form of it that is wanted when the *dimension* of `M` is
 known but no particular basis is: for `Module.finrank K M = n`, an isomorphism

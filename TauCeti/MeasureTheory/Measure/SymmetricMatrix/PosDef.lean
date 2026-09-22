@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.PosDef
 /-!
 # The positive-definite cone is open and measurable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.PosDef)
+
 On the symmetric subspace, positive definiteness cuts out an open subset: the Hermitian
 condition holds identically there, so the cone is the preimage of the open set of matrices with
 positive quadratic form, `TauCeti.isOpen_setOfPred_dotProduct_mulVec_pos`.

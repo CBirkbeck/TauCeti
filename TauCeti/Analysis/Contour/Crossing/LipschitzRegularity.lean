@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.ContDiff.RCLike
 /-!
 # The `C^{1,1}` crossing-regularity hypothesis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.LipschitzRegularity)
+
 This file defines `HasLipschitzDerivOnEachSideAt`, the one-sided-Lipschitz-derivative regularity
 condition a crossing needs for the real winding integrand to stay bounded there
 (`Winding.RealIntegral.OnCurve`), and its introduction/elimination API. The predicate itself

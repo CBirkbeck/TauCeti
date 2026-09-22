@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Prod
 /-!
 # Products of Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Prod)
+
 Mathlib gives the product of two Lie *algebras* its Lie ring structure
 (`Mathlib/Algebra/Lie/Prod.lean`) and the direct sum of a *family* of Lie modules its Lie module
 structure (`Mathlib/Algebra/Lie/DirectSum.lean`), but not the binary product of two Lie modules over

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.FiniteDual.Basic
 /-!
 # Functoriality and reflexivity of the finite Hopf dual
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.FiniteDual.Functoriality)
+
 Dualizing a bialgebra morphism between finite projective bialgebras gives a morphism in the
 opposite direction between their convolution duals. Evaluation identifies a finite projective
 bialgebra with its double convolution dual, compatibly with multiplication, comultiplication,

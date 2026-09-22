@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.Singular.Empty
 /-!
 # Singular homology as a homology pretheory
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.HomologyPretheory)
+
 This file packages relative singular homology with coefficients in an object `R` of an abelian
 category as a `TopPair.HomologyPretheory` indexed by `ComplexShape.down ℕ`: the relative homology
 functors are `TopPair.singularHomologyFunctor R n`, the absolute ones are Mathlib's singular

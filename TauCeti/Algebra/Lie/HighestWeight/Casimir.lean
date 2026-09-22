@@ -15,6 +15,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Module
 /-!
 # The Casimir eigenvalue on a highest weight module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Casimir)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, `H` a splitting Cartan subalgebra, and `base` a base of its root system. The
 Casimir element `Ω = ∑ᵢ xᵢ yᵢ ∈ U(L)` is central (`TauCeti.casimirElement_mem_center`), so it acts

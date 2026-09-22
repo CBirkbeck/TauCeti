@@ -19,6 +19,8 @@ public import TauCeti.RepresentationTheory.Tensor.Power
 /-!
 # Tensor-square decompositions of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Tensor.Square)
+
 When `2` is invertible, the tensor square of a representation splits into its symmetric and
 exterior squares. This file lifts the natural linear decomposition to representations. It also
 proves the two trace identities that this splitting is measured by, over every field, including

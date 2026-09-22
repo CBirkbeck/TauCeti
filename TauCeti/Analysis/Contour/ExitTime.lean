@@ -14,6 +14,8 @@ import Mathlib.Topology.Algebra.Group.Basic
 /-!
 # Exit times of a curve from small balls around a crossed point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ExitTime)
+
 For a curve `γ : ℝ → E` with `γ t₀ = s`, the **first exit time at radius `ε`** on the right is
 the first parameter `t ≥ t₀` in a window `[t₀, t₀ + δ]` with `‖γ t - s‖ = ε`; symmetrically on
 the left. This file constructs the exit times as `sInf`/`sSup` of the closed set of

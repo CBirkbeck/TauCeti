@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Action
 /-!
 # The Pin group acting on its quadratic space by twisted conjugation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Pin.Action)
+
 The Pin group of a quadratic form acts on the underlying quadratic space by *twisted* conjugation,
 `v ↦ involute x * ι v * x⁻¹`, and this is the map whose kernel and image make `Pin(Q) → O(Q)` a
 double cover. The twist by the grade involution `CliffordAlgebra.involute` is what makes a single

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # The path algebra of the `D₄` quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.D4.PathAlgebra)
+
 The `D₄` quiver has seven paths: the four trivial ones and the three arrows. So its path algebra
 is seven-dimensional. Finite-dimensionality needs nothing specific to this quiver: it is acyclic,
 so `TauCeti.finiteDimensional_pathAlgebra_of_isAcyclic` applies to it as it stands, via

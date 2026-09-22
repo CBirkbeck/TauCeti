@@ -12,6 +12,8 @@ public import Mathlib.Data.Fintype.Sum
 /-!
 # `k`-labeled graphs and their gluing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Representability.LabeledGraph)
+
 A `k`-labeled graph is a finite simple graph together with an ordered `k`-tuple of *distinct*
 vertices.  Gluing two of them identifies corresponding labeled vertices and takes the union of the
 edge sets; the identified vertices keep their labels, so the result is again a `k`-labeled graph and

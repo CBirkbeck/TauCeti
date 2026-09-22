@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.G2.ShortRoot.PrimeField.PointsFunctor
 /-!
 # Tensor invariance for the short-root type-G2 carrier over the prime field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.PrimeField.PreservesTensors)
+
 The four numbered simple root subgroups and the weight torus of the short-root type-`G₂` carrier
 over `𝔽₃` preserve the type-`G₂` cross product and fix the invariant dual form by congruence.
 Both statements are equations between matrices, so they pass from the generators to the whole

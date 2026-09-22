@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Module
 /-!
 # Isotypic Lie modules through the universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Isotypic)
+
 This file transports Mathlib's isotypic-module interface across the universal-enveloping-algebra
 dictionary. For an irreducible target type, semisimplicity enters only in the characterization of
 an isotypic module by its unique component.

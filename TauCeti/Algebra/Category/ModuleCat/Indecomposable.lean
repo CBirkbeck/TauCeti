@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Indecomposable
 /-!
 # Indecomposable modules are the indecomposable objects of `ModuleCat`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Indecomposable)
+
 `TauCeti.IsIndecomposableModule A M` says that `M` is nonzero and is not the internal direct sum of
 two nonzero submodules; `CategoryTheory.Indecomposable X` says that `X` is not a zero object and
 that in every decomposition `X ≅ Y ⊞ Z` one of `Y`, `Z` is zero. This file identifies the two for

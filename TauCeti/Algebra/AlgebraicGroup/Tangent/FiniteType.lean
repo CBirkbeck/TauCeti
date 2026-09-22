@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Ideal.Cotangent.Basic
 /-!
 # Finiteness of the tangent space of a finite-type affine monoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.FiniteType)
+
 The counit of a commutative bialgebra of finite type over a noetherian base has finite cotangent
 space at the identity. Over a field it is consequently finite-dimensional and projective, which
 is the finiteness input for the scalar-extension description of the tangent space and the adjoint

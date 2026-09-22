@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.Deriv.Shift
 /-!
 # Boundedness of the real winding integrand at `C^{1,1}` crossings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.LipschitzBoundedIntegrand)
+
 `Winding/BoundedIntegrand.lean` proves the real winding integrand stays bounded near a crossing
 where the curve is `C²`. This file weakens that regularity to merely `C^{1,1}` on each side of the
 crossing: `derivWithin γ (Icc c d)` Lipschitz on a one-sided closed piece `[c, d]` ending or

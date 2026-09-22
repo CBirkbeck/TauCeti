@@ -15,6 +15,8 @@ import Mathlib.GroupTheory.Index
 /-!
 # `[n]` carries `E[n ²]` onto `E[n]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.TorsionSurjective)
+
 Multiplication by `n` sends an `n ²`-torsion point to an `n`-torsion point, and over an
 algebraically closed field in which `n` is invertible that map is **onto**: every `n`-torsion point
 is `n` times an `n ²`-torsion point.

@@ -16,6 +16,8 @@ import TauCeti.RingTheory.LocalRing.Basic
 /-!
 # Recognizing indecomposable objects from their endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.Indecomposable)
+
 Mathlib defines `CategoryTheory.Indecomposable X` as the conjunction "`X` is not a zero object,
 and in every decomposition `X ≅ Y ⊞ Z` one of `Y`, `Z` is zero", and proves exactly one criterion
 for it: a simple object is indecomposable (`CategoryTheory.indecomposable_of_simple`). That

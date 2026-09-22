@@ -12,6 +12,8 @@ import TauCeti.Topology.Algebra.Group.LocallyConstant
 /-!
 # Descent of continuous two-cocycles to finite quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.FiniteQuotient.DegreeTwoDescent)
+
 For a profinite group `G` and a discrete continuous `G`-module `M`, every continuous
 `2`-cocycle on `G` is inflated from a finite quotient. The descent is strict: no coboundary is
 subtracted from the cocycle.

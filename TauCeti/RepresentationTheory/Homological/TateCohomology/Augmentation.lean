@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.TateCohomology.Coinduced
 /-!
 # The Tate dimension shift along the augmentation sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.Augmentation)
+
 For a group `G`, the augmentation sequence `0 ⟶ I_G ⟶ k[G] ⟶ k ⟶ 0` (built in
 `TauCeti.RepresentationTheory.Homological.Augmentation`) has a middle term whose Tate cohomology
 vanishes for every finite subgroup, because the left regular representation is Tate-acyclic. Its

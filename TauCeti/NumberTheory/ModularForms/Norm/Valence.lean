@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Order.SubgroupOrbits
 /-!
 # The valence formula at general level, transported along the norm map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Norm.Valence)
+
 For a finite-index subgroup `Γ ≤ SL(2, ℤ)`, the norm `ModularForm.norm 𝒮ℒ f = ∏_{γ ∈ SL(2, ℤ) / Γ}
 f ∣[k] γ` of a weight-`k` form on `Γ` is a level-one form of weight `k · [SL(2, ℤ) : Γ]`, and its
 divisor is the `Γ`-divisor of `f` pushed forward. This file carries out that push-forward on the

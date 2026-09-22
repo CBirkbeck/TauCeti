@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.EqToHom
 /-!
 # Transporting categorical morphisms along object equalities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.EqToHom)
+
 This file provides general lemmas for removing and rearranging the conjugations by `eqToHom` that
 arise when categorical objects are identified propositionally. They apply in an arbitrary category
 and avoid exposing the definitional equality of the objects being transported.

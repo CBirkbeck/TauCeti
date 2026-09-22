@@ -11,6 +11,8 @@ public import Mathlib.Analysis.InnerProductSpace.Laplacian
 /-!
 # Necessity of the zeroth-order sign condition in the maximum principle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Laplacian.SignCondition)
+
 The weak maximum principle for `-Δ + c` in
 `TauCeti.Analysis.InnerProductSpace.Laplacian.ZerothOrderMaximumPrinciple` assumes that the
 zeroth-order coefficient is nonnegative. This file records that the assumption is essential.

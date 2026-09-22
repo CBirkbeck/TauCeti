@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.ZModStandard
 /-!
 # Codes over `ℤ/m` as subgroups of a discriminant module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Discriminant)
+
 Words over `ℤ/m` are elements of the coordinate power of the standard alphabet
 `TauCeti.FiniteBilinearModule.zmodStandard`, whose pairing is `xy / m`.  Summing that pairing
 over the coordinates gives

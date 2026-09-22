@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.HighestWeight.Decomposition
 /-!
 # Tensor multiplicities of irreducible modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Tensor)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, `H` a Cartan subalgebra and `b` a base of its root system.
 The **tensor multiplicity** `TauCeti.tensorMultiplicity b lam mu nu` is the dimension of the space

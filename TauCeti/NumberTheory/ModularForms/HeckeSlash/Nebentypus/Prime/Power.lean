@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.HeckeSlash.LevelSupported
 /-!
 # Fourier coefficients of the Hecke operators at a prime power on `M_k(N, χ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Power)
+
 The `Γ₀(N)` Hecke ring acts on `M_k(N, χ)` through `heckeRingHomCharSpace`; at a prime `p`
 the generator acts as the classical `Tₚ` (`HeckeSlash/Nebentypus/Prime/Basic.lean`), whose Fourier
 coefficients are `a_m(Tₚ F) = a_{pm}(F) + χ(p) p^{k−1} a_{m/p}(F)`

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Localization.Integral
 /-!
 # Integral closures of localizations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Localization.Integral)
+
 If `Rₘ` is a localization of `R` at a submonoid `M`, and `S`, `Sₘ` are integral closures of `R`,
 `Rₘ` in the same commutative ring `L`, then `Sₘ` is the localization of `S` at the image of `M`.
 

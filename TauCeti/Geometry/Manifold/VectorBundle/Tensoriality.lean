@@ -12,6 +12,8 @@ import Mathlib.Geometry.Manifold.VectorBundle.LocalFrame
 /-!
 # Tensoriality of globally smooth operations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.Tensoriality)
+
 This file complements Mathlib's pointwise tensoriality API with a criterion for operations whose
 locality, additivity, and smooth-function linearity laws are available for globally smooth sections.
 The criterion applies to finite-rank smooth real vector bundles over finite-dimensional Hausdorff

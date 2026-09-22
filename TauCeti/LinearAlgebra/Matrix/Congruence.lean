@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Matrix.SchurComplement
 /-!
 # Traces and determinant pencils under rectangular congruence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Congruence)
+
 For a rectangular matrix `M`, congruence `A ↦ M * A * Mᵀ` can be moved across a trace pairing
 or a determinant pencil `det (1 + c • (B * _))` by congruating the test matrix `B` with the
 transpose instead. These identities transport Wishart trace transforms along congruence.

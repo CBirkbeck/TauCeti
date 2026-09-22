@@ -14,6 +14,8 @@ import Mathlib.Order.ConditionallyCompleteLattice.Finset
 /-!
 # The extremes of an independent identically distributed family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Relations)
+
 Let `X : ι → Ω → ℝ` be an independent family over a nonempty finite index type, all of whose
 members have the same law `μ`. This file computes the law of the two extremes of the family: the
 maximum `Finset.univ.sup' Finset.univ_nonempty fun i => X i ω` and the minimum

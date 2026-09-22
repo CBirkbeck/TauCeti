@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Parity
 /-!
 # Eisenstein series with character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.EisensteinSeries.Character)
+
 For Dirichlet characters `ψ` modulo `u` and `φ` modulo `v` and a weight `k ≥ 3`, the Eisenstein
 series of Diamond–Shurman §4.5,
 `G_k^{ψ,φ}(z) = ∑_{c mod u} ∑_{d mod v} ∑_{e mod u} ψ(c) φ⁻¹(d) G_k^{(cv, d + ev)}(z)`,

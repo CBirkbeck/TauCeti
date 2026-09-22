@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgeb
 /-!
 # The Killing form of the pinned Dynkin-type Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgebra.Killing)
+
 For a valid Dynkin type `t`, `TauCeti.DynkinType.lieAlgebra t ht` is the explicit rational
 matrix Lie algebra obtained by applying Geck's construction to
 `TauCeti.DynkinType.simplyConnectedRootDatum t ht`. This file proves that its Killing form is

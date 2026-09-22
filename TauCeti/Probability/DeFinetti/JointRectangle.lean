@@ -25,6 +25,8 @@ import TauCeti.MeasureTheory.Measure.FiniteMeasure
 /-!
 # The conditional summit from contractability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.JointRectangle)
+
 A contractable process valued in a nonempty standard Borel space is **conditionally i.i.d.**: there
 is a directing measure given which every finite distinct block is i.i.d., as a joint-law
 disintegration.

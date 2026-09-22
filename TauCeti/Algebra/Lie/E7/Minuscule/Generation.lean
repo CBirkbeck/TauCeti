@@ -11,6 +11,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Torus.Coroot
 /-!
 # Generation of the E₇ minuscule weight torus by root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.Generation)
+
 The type-`E₇` minuscule carrier is defined using both its fourteen numbered simple root
 subgroups and its rank-seven weight torus. This file proves that, on the underlying
 base-changed lattice over any commutative ring, the torus is already contained in the elementary

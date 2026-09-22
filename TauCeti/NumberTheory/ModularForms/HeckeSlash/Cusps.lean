@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 /-!
 # The Hecke slash sum vanishes, and is bounded, at the cusps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Cusps)
+
 `heckeSlashSum` is a finite sum of slashes, so its behaviour at a cusp follows from that of its
 summands. A slash is zero at `c` exactly when the original function is zero at `g • c`
 (`OnePoint.IsZeroAt.smul_iff`), and `g • c` is again a cusp because the representatives are

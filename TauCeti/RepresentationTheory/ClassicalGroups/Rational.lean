@@ -20,6 +20,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.TensorPower
 /-!
 # Rational and polynomial representations of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Rational)
+
 A representation of `GL n ℂ` is **polynomial** when, in some basis of the carrier, every matrix
 entry of `ρ g` is a polynomial in the entries `gᵢⱼ`, and **rational** when every entry is such a
 polynomial divided by a power of `det g`.  The distinction is the one that separates the

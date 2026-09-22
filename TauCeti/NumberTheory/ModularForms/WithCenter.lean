@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.Modular
 /-!
 # Adjoining the centre to a subgroup of `SL(2, ℤ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.WithCenter)
+
 `Subgroup.withCenter` adjoins the centre of the ambient group. For `Γ ≤ SL(2, ℤ)` that centre is
 `{±I}`, by `Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one`, so the general
 characterisation `Subgroup.mem_withCenter_iff` — an element of `Γ·Z(G)` is one of `Γ` times a

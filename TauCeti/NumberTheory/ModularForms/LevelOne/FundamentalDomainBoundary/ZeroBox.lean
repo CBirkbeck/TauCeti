@@ -15,6 +15,8 @@ import Mathlib.Analysis.Complex.ReImTopology
 /-!
 # The open box around the truncated fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ZeroBox)
+
 The open coordinate box `(-1, 1) ×ℂ (1/2, M)`: it is open, it lies inside the upper
 half-plane, and it contains the standard fundamental domain truncated at any height below `M`.
 A function analytic on the upper half-plane and nonzero somewhere has finitely many zeros in

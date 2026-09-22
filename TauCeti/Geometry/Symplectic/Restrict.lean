@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Symplectic.SymplecticTransport
 /-!
 # Restricting a symplectic form to a subspace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Restrict)
+
 A symplectic form restricts to a subspace on which it stays nondegenerate. A subspace `L`
 complementary to its symplectic complement `L^ω` is automatically of that kind, as is `L^ω`, and
 then `ω` is the product of the two restrictions under the linear equivalence supplied by the

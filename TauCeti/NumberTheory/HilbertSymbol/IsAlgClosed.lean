@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HilbertSymbol.Basic
 /-!
 # The Hilbert symbol over algebraically closed fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HilbertSymbol.IsAlgClosed)
+
 This file computes the norm-equation Hilbert symbol `TauCeti.hilbertSymbol` over algebraically
 closed fields. Every element is a square, so the symbol is always `1`.
 

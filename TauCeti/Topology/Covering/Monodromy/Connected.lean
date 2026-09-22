@@ -12,6 +12,8 @@ public import TauCeti.Topology.IsLocalHomeomorph
 /-!
 # Monodromy of connected covering spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Monodromy.Connected)
+
 For a locally path-connected base `X`, the monodromy functor of a connected covering space is
 pretransitive on every fibre: any two points over the same basepoint differ by transport along a
 loop. This file packages that condition as a full subcategory of fundamental-groupoid actions and

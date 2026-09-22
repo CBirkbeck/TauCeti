@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Hom.Basic
 /-!
 # The group of homomorphisms of abelian varieties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.MorphismGroup)
+
 For abelian varieties `A B : AbelianVariety K`, the homomorphisms `A ⟶ B` form a commutative
 group under the pointwise group law of the target: since the group scheme underlying `B` is
 commutative, the pointwise product `f * g := lift f g ≫ μ[B]` of two homomorphisms is again a

@@ -13,6 +13,8 @@ import TauCeti.Topology.Algebra.OpenMapping.Complete
 /-!
 # An open map out of a nonarchimedean group stays open, and an open surjection stays surjective
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Completion.Surjective)
+
 For a continuous **open** homomorphism `f : G → H` from a first-countable nonarchimedean additive
 group to a uniform additive group, the induced map on separated completions is again open; if `f`
 is moreover surjective then so is that map. Openness is what the statements turn on: a continuous

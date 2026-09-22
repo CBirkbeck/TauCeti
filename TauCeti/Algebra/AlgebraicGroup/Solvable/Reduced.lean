@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Geometric solvability, dense morphisms, and base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Reduced)
+
 An injective morphism `f : H ⟶ K` of coordinate Hopf algebras represents a schematically
 dense homomorphism `Spec K ⟶ Spec H` of affine groups. If `K` is smooth over the field `k`,
 then it is finite type, and solvability of the geometric points of `K` descends to `H`.

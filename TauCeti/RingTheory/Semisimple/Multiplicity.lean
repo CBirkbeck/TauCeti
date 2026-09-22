@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Semisimple.RegularIsotypicComponent
 /-!
 # The multiplicity of a simple module, as the dimension of a hom space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.Multiplicity)
+
 Let `A` be an algebra over a field `k` and let `S` be a simple `A`-module, finite-dimensional over
 `k`. If a module `M` is written as a finite direct sum of simple
 modules, the number of summands isomorphic to `S` is the **multiplicity** of `S` in `M`.  Written

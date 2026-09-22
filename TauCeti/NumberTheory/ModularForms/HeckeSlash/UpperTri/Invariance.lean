@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 /-!
 # Equivariance of the upper-triangular Hecke sum at level-supported indices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Invariance)
+
 `UpperTri/Sum.lean` defines `heckeSlashUpperTri k p f = ∑_{b < p} f ∣[k] !![1, b; 0, p]`, and
 `UpperTri/Periodic.lean` shows it preserves invariance under the single matrix `T`. That is far
 short of an operator: to act on `M_k(Γ₁(N))` the sum has to preserve invariance under the whole

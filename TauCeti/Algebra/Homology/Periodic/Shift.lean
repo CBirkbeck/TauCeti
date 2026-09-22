@@ -11,6 +11,8 @@ public import Mathlib.Tactic.Ring
 /-!
 # The shift on periodic complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Periodic.Shift)
+
 An `n`-periodic complex in a preadditive category `C` is a family of objects `Xⁱ` indexed by
 `i : ZMod n` with differentials `Xⁱ ⟶ Xⁱ⁺¹` whose consecutive composites vanish. We use Mathlib's
 homological complexes for the shape `ComplexShape.up (ZMod n)`, so that the category, its

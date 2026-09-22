@@ -12,6 +12,8 @@ import TauCeti.Analysis.SpecialFunctions.Gamma
 /-!
 # Parameter measurability of Fisher's F distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.FisherSnedecor.Measurability)
+
 This file proves that the Fisher--Snedecor law is a measurable function of its two degrees of
 freedom. Consequently, measurable numerator and denominator parameters can be used to form a
 probability kernel whenever they lie in the positive range.

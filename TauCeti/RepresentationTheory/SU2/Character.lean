@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.SU2.ConjugacyClasses
 /-!
 # Characters of `SU(2)` are even on the maximal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Character)
+
 The Weyl group of `SU(2)` computed in `TauCeti/RepresentationTheory/SU2/Weyl/Basic.lean` inverts the
 maximal torus: the quarter turn `w = !![0, -1; 1, 0]` conjugates `diag (z, z⁻¹)` to
 `diag (z⁻¹, z)`. Characters are conjugation invariant, so the character of a continuous

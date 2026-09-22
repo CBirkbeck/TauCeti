@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.ScalarExtension.Basic
 /-!
 # Point automorphisms of scalar extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.ScalarExtension)
+
 Let `H` be a Hopf algebra over a commutative semiring `R`, and let `A` be a commutative
 `R`-algebra. Scalar extension of the underlying-module functor is constructed for all comodules
 in `TauCeti.Algebra.Coalgebra.Comodule.ScalarExtension` and restricted to finitely generated

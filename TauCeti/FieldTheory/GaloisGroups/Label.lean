@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Basic
 /-!
 # The transitive-group label of a polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Label)
+
 A separable polynomial `f` of degree `n` over a field `F` has `n` distinct roots in its splitting
 field, and its Galois group acts faithfully on them. Choosing a numbering
 `e : f.rootSet f.SplittingField ≃ Fin n` turns the image of that action into a subgroup of

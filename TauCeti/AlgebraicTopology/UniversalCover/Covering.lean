@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Basic
 /-!
 # Universal cover: covering map, simple connectedness, universal property
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Covering)
+
 Building on the sheet decomposition in
 `TauCeti.AlgebraicTopology.UniversalCover.Basic`, this file shows that the endpoint projection
 `UniversalCover.proj` is a covering map, and derives path-connectedness, simple connectedness,

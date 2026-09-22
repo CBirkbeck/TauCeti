@@ -12,6 +12,8 @@ import Mathlib.RingTheory.DedekindDomain.Factorization
 /-!
 # Complements on ideals of a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Ideal)
+
 This file collects general facts about ideals and height-one primes of a Dedekind domain,
 complementing `Mathlib/RingTheory/DedekindDomain/Ideal/Lemmas.lean`. In particular, it develops
 the predicate `Ideal.IsPrimeTo I S`, saying that `I` is nonzero and divisible by no prime in `S`,

@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Ideal.LiesOver
 /-!
 # Frobenius elements of Galois number fields and their action on square roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius)
+
 For a finite Galois extension `L/K` of number fields and a nonzero prime `Q` of `𝓞 L`, an
 arithmetic Frobenius at `Q` is a `σ ∈ Gal(L/K)` with
 `σ x ≡ x ^ #(𝓞 K ⧸ Q ∩ 𝓞 K) (mod Q)` for all `x : 𝓞 L`. The exponent is the cardinality of the

@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.LocalizationAtPrime
 /-!
 # The valuation of the local minimal discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.Valuation)
+
 Let `R` be a discrete valuation ring with fraction field `K`, and let `W` be an elliptic
 Weierstrass curve over `K`. The local minimal discriminant ideal is a nonzero power of the maximal
 ideal of `R`. This file defines its exponent as

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.Weights.Integrality
 /-!
 # Highest weight vectors and dominant integral weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Basic)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, let `H` be a splitting Cartan subalgebra and let `b` be a base of the root
 system `LieAlgebra.IsKilling.rootSystem H`, so that the nilradicals and the Borel subalgebra of

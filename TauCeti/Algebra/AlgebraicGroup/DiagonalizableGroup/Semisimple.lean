@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MonoidAlgebra.Semisimple
 /-!
 # Points of diagonalizable groups are semisimple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Semisimple)
+
 A representation of a diagonalizable group `D(G) = Spec R[G]` decomposes into weight submodules
 (the internal direct sum of character spaces). Consequently, every point of `D(G)` acts on each
 representation by scalar multiplication on each weight space, making the underlying linear

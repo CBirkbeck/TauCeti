@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.D4.Tripled.GroupScheme
 /-!
 # Torus characters of the tripled type-D4 carrier in its named root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.RootDatum)
+
 `TauCeti.D4Tripled.groupScheme` is the full-weight Chevalley carrier obtained from the
 twenty-four-dimensional representation `V(ϖ₁) ⊕ V(ϖ₃) ⊕ V(ϖ₄)` of the type-`D₄` Serre
 presentation. Its eight numbered simple-root subgroups and rank-four split weight torus are

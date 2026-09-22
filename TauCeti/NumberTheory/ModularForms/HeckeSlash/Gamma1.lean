@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.ModularForm
 /-!
 # The Hecke operators of level `Γ₁(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma1)
+
 `HeckeSlash/ModularForm.lean` builds, for a subgroup `G ≤ SL(2, ℤ)` and a double coset of a Hecke
 triple whose two flanks are `G.map (mapGL ℚ)`, the `ℂ`-linear endomorphisms of
 `ModularForm (G.map (mapGL ℝ)) k` and `CuspForm (G.map (mapGL ℝ)) k` that the coset induces. This

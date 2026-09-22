@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.LinearlyReductive
 /-!
 # Linearly reductive commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.LinearlyReductive)
+
 An affine group over a field is linearly reductive when its finite-dimensional rational
 representations are completely reducible. This file packages the existing comodule formulation
 as an isomorphism-invariant object property on commutative Hopf algebras. The property tests

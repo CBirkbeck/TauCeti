@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.SymmetricPower.Lift
 /-!
 # A basis of a symmetric tensor power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricPower.Basis)
+
 A basis `b : Basis κ R M` induces a basis of every symmetric tensor power `Sym[R]^n M`, indexed by
 the **unordered** `n`-tuples `Sym κ n` of basis indices: the basis vector at `s` is the pure
 symmetric tensor of the basis vectors listed by `s`. This is the symmetric counterpart of

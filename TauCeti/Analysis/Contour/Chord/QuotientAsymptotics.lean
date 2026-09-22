@@ -13,6 +13,8 @@ import Mathlib.Topology.Order.LeftRightNhds
 /-!
 # Chord-quotient asymptotics at a transverse crossing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Chord.QuotientAsymptotics)
+
 For a curve `γ : ℝ → ℂ` through a pole `s = γ t₀` with non-vanishing one-sided derivative `L`,
 the chord quotient `(γ t - s) / (t - t₀)` tends to `L`, so on a small one-sided interval the
 normalized chord `(γ t - s) / (L (t - t₀))` is close to `1`. Two consequences feed the

@@ -12,6 +12,8 @@ public import Mathlib.Order.SupIndep
 /-!
 # Finite families of submodules under a linear map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Submodule.Map)
+
 `Submodule.map` preserves arbitrary suprema (`Submodule.map_iSup`), and along an injective map it
 also preserves infima (`Submodule.map_inf`) and hence disjointness (`Submodule.disjoint_map`).  This
 file records what those facts say about a family of submodules indexed by a `Finset`: pushing it

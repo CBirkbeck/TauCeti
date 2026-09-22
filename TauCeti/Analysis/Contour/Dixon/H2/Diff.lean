@@ -14,6 +14,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Measurable
 /-!
 # Holomorphy of Dixon's `h₂` off the curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Dixon.H2.Diff)
+
 Dixon's `h₂` integral `dixonH2 f γ a b w = ∫ t in a..b, f (γ t) / (γ t - w) * deriv γ t` is
 holomorphic in the point `w`, at every `w` off the curve. This is the Cauchy-type half of the
 analyticity of Dixon's glued function.

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Lie.InvariantVectorField.Basic
 /-!
 # Integral curves of invariant vector fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.IntegralCurve)
+
 Left-invariant vector fields on real Lie groups modeled on complete spaces are complete. Local
 integral curves around the identity can be translated to give a uniform existence interval around
 every point, after which Mathlib's uniform-time theorem produces global integral curves.

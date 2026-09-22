@@ -16,6 +16,8 @@ import TauCeti.Data.Finset.Basic
 /-!
 # The weights of the spinor module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Weight)
+
 A polarization of a quadratic space `(V, Q)` splits it as `W ⊕ W' ⊕ L` with `W` and `W'`
 isotropic and in perfect `QuadraticMap.polar`-pairing, and `TauCeti.spinAction` makes the exterior
 algebra `S = ⋀·W` a module over `CliffordAlgebra Q`. This file diagonalizes `S`.

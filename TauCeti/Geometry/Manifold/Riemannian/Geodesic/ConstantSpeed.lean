@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCu
 /-!
 # Constant speed of geodesics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.ConstantSpeed)
+
 A geodesic has constant speed on every preconnected parameter set. We first prove that the inner
 product of its within-set velocity with itself is constant, by differentiating it with the
 within-set metric-product rule and using the geodesic equation. Taking square roots gives the usual

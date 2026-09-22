@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # Numbers of roots of Dynkin types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.NumberOfRoots)
+
 This file records the number of roots in each irreducible crystallographic Dynkin type. The value
 `TauCeti.DynkinType.numRoots` fixes `Fin t.numRoots` as the root-index type intended for the
 pinned simply connected root datum, which is not constructed here: unlike an abstract finite index

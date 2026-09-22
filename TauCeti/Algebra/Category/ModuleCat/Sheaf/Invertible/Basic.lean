@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Category.ModuleCat.Sheaf.LocallyFree
 /-!
 # Invertible sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.Basic)
+
 Mathlib's `SheafOfModules.IsLocallyFree` remembers local generating families but deliberately
 allows their ranks to vary. This file refines that local data by requiring each local generating
 type to have exactly one element, which is the site-level content of being locally free of rank

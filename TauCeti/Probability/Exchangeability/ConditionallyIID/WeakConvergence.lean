@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Measure.Portmanteau
 /-!
 # The empirical measures of a conditionally i.i.d. process converge weakly
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.WeakConvergence)
+
 The conditional strong law gives, for each *fixed* measurable set, almost-sure convergence of the
 empirical frequencies of a conditionally i.i.d. process to the mass the directing measure gives
 that set. This file makes the limit a statement about the empirical measures themselves: almost

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Torsion.Ba
 /-!
 # The Picard group under contraction of a `(-1)`-index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Contraction)
+
 Let `e` be a `(-1)`-index of a numerical type `T` and let `T'` be the contracted numerical type
 `TauCeti.NumericalType.contract`, with components those of `T` other than `e`, weights `w'ᵢ` and
 intersection numbers `a'ᵢⱼ = aᵢⱼ + aᵢₑaⱼₑ / wₑ`. The map of multidegrees

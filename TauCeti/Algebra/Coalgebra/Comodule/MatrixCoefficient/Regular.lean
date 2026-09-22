@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Induced
 /-!
 # Matrix coefficients of the regular comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Regular)
+
 This file records that the regular right comodule has enough matrix coefficients to recover
 the whole coalgebra, and likewise that the coefficients of its restriction to a subcoalgebra
 recover that subcoalgebra. The key coefficient is the counit: for the regular comodule, the

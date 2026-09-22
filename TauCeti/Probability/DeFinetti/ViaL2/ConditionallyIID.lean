@@ -14,6 +14,8 @@ import TauCeti.Probability.DeFinetti.DirectingMeasure.BlockCylinder
 /-!
 # Conditional i.i.d.-ness of a contractable process, via `L²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaL2.ConditionallyIID)
+
 A contractable process on a standard Borel state space is conditionally i.i.d. with
 `directingProbabilityMeasure μ X` as its directing measure:
 

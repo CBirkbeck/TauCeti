@@ -18,6 +18,8 @@ import Mathlib.FieldTheory.Separable
 /-!
 # Simple roots depend analytically on the coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Polynomial.SimpleRoots.Basic)
+
 `TauCeti.Sym.coeffEquiv` presents the `n`-th symmetric power of an algebraically closed field as
 the affine space `Fin n → K` of coefficient tuples, and
 `TauCeti/Analysis/Polynomial/SymmetricPower.lean` proves that presentation a *homeomorphism*: the

@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.TensorProduct.Basic
 /-!
 # Lie homomorphisms from products to tensor products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.TensorProduct)
+
 Two Lie homomorphisms into associative algebras induce a Lie homomorphism from the product of
 their domains to the tensor product of their codomains. The two images commute because they lie
 in separate tensor factors.

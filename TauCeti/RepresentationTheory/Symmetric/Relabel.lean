@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Ideal.Basic
 /-!
 # Relabeling a Young tableau conjugates its Young symmetrizer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Relabel)
+
 A Young symmetrizer, and with it the left ideal `ℚ[Sₙ] c_t` it generates, is built from a
 `μ`-tableau `t`, while the Specht module it presents is meant to depend only on the shape `μ`.
 This file supplies that independence.

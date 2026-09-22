@@ -11,6 +11,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 /-!
 # The short Weierstrass curve `y² = x³ + Ax + B`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.ShortWeierstrass)
+
 Mathlib carries short Weierstrass form as a *predicate*, `WeierstrassCurve.IsShortNF`, asserting
 `a₁ = a₂ = a₃ = 0` of a curve one already has, together with the invariants that follow from it
 (`Δ_of_isShortNF`, `j_of_isShortNF`, and the `b`- and `c`-families). What it does not carry is the

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Functoriality
 /-!
 # Universal enveloping algebras of products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Prod)
+
 The universal enveloping algebra of a product of Lie algebras is the tensor product of their
 universal enveloping algebras. The equivalence sends a canonical generator `(x, y)` to
 `ι(x) ⊗ 1 + 1 ⊗ ι(y)`. Its inverse sends a pure tensor to the product of the two canonical

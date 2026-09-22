@@ -34,6 +34,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.Thompson
 /-!
 # Presentations of the sporadic groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.Presentation)
+
 This file assembles the twenty-six independently transcribed sporadic-group presentations into the
 total function `TauCeti.SporadicName.presentation`. Each branch is the explicit, cited
 `TauCeti.GroupPresentation` defined in its group-specific module. The theorem

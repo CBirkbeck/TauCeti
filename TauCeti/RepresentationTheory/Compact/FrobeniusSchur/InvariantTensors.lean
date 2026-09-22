@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Compact.Invariants
 /-!
 # The Frobenius-Schur indicator counts invariant tensors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.FrobeniusSchur.InvariantTensors)
+
 For a finite-dimensional continuous representation `π` of a compact group `G`, the Frobenius-Schur
 indicator `ν₂(π) = ∫_G χ_π(g²) dμ` of
 `TauCeti/RepresentationTheory/Compact/FrobeniusSchur/Basic.lean` is the **signed count of invariant

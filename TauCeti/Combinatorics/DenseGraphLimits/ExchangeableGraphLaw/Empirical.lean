@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Empirical mixing measures of an exchangeable graph law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Empirical)
+
 Every exchangeable graph law `L` produces a sequence of candidate mixing measures on the graphon
 space over the unit interval: sample an `n`-vertex graph from the level-`n` marginal of `L` and
 take the graphon class of its step graphon. This is the *empirical mixing measure*

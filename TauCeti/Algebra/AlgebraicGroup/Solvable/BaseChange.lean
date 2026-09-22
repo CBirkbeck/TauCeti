@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Reduced
 /-!
 # Geometric solvability under field extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.BaseChange)
+
 Let `H` be a finite-type commutative Hopf algebra over a field `k`, and let `K / k` be any field
 extension. Geometric solvability of the affine group represented by `H` is equivalent to geometric
 solvability after extending scalars to `K`.

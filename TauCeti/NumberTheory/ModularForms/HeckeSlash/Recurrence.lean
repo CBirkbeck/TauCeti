@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # The Fourier-coefficient recurrence for `Tₚ`, at every prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Recurrence)
+
 `HeckeSlash/Prime.lean` writes the Hecke operator of the double coset `Γ₁(N) · diag(1, p) · Γ₁(N)`
 as a sum of slashes,
 

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Multiplicati
 /-!
 # Reconstructing algebra-valued points from tensor automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Reconstruction)
+
 Let `H` be a commutative Hopf algebra over a field `k`, and let `A` be a commutative
 `k`-algebra. A tensor automorphism of scalar extension on the finite-dimensional
 `H`-comodules determines a linear functional `H → A`. Tensor compatibility makes this

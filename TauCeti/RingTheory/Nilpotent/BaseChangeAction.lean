@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 /-!
 # Base change of integral nilpotent exponentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Nilpotent.BaseChangeAction)
+
 Let `V` be an `A`-module for a `ℚ`-algebra `A`, let `M ≤ V` be an additive subgroup, and suppose
 that every divided power of an element `x : A` preserves `M`. Restricting those divided powers gives
 integral endomorphisms of `M`. After extension of scalars to any commutative ring `R`, the finite

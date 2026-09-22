@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # Homomorphism densities of the smallest graphs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.SmallGraphs)
+
 The two homomorphism densities that the rest of the theory quotes by name:
 
 ```text

@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.FiniteType.TwoDoubleEdges
 /-!
 # A finite-type component with a double edge has no branch vertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.DoubleEdge.NoBranch)
+
 The double-edge branch of the Cartan--Killing classification is already classified once its
 diagram is known to be a path.  This file supplies the missing global extraction: a connected
 finite-type diagram containing a double edge has maximum degree two.

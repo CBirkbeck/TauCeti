@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Integral powers of a `C^n` function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ContDiffZPow)
+
 Mathlib provides `ContDiffAt.pow` for natural powers and `ContDiffAt.inv` for the inverse of a
 nonvanishing function, but no lemma for an integral power. This file supplies the missing
 combination: an integral power of `f` is as smooth as `f` is, either away from a zero of `f` or

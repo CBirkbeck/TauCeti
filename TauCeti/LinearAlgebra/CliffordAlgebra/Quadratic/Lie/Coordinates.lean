@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.Representation
 /-!
 # Coordinate formulas for quadratic Clifford lifts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.Coordinates)
+
 The quadratic realization of a skew-adjoint endomorphism has a simple expression after choosing
 a basis: it is half the sum of the bivectors formed from the images of the basis vectors and the
 dual basis for the polar form. This file proves that formula without unfolding the exterior-square

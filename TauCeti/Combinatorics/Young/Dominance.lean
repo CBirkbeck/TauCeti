@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Young.Tableau
 /-!
 # The dominance lemma for tableaux
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Dominance)
+
 Two tableaux of different shapes can be compared by asking how the rows of one meet the columns
 of the other.  The **dominance lemma** says that if the labels of each row of a `μ`-tableau `s`
 land in pairwise distinct columns of a `ν`-tableau `t`, then `ν` dominates `μ`.

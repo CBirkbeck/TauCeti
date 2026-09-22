@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Topology
 /-!
 # The Schwarz--Christoffel vertex at infinity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Infinity)
+
 The real axis is only part of the boundary of the upper half-plane: the prevertices divide it into
 finitely many bounded intervals and two unbounded ones, and the two unbounded ones are a single
 boundary arc through the point at infinity.  The polygon a Schwarz--Christoffel map is meant to

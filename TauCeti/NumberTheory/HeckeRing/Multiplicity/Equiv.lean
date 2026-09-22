@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.HeckeRing.StabConjugation
 /-!
 # Transporting Hecke multiplicities along group equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Multiplicity.Equiv)
+
 The double-coset multiplicity is unchanged when the ambient group, its three subgroups, and
 the three elements are transported along a group equivalence. This is the naturality needed
 when a concrete Hecke action presents the structure constants after applying an automorphism of

@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.RamificationInertia.Tower
 /-!
 # The residue degree of a height-one prime over `ℚ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.ResidueDegree)
+
 A height-one prime `𝔭` of `𝓞 K` lies over a unique rational prime `p`, and its absolute norm is
 `p ^ f` for `f` the residue degree `Ideal.inertiaDeg 𝔭.asIdeal ℤ`.  This file names the two
 objects that description involves and records their elementary theory.

@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Nilpotent.Exp
 /-!
 # The Weyl automorphism of an `sl₂` triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Weyl.Automorphism)
+
 Let `t : IsSl2Triple h e f` be an `sl₂` triple in a Lie algebra `L` whose raising and lowering
 elements act nilpotently. Its **Weyl automorphism** is the inner automorphism
 

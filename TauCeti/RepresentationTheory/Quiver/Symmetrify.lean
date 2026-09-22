@@ -12,6 +12,8 @@ public import Mathlib.Data.Fintype.Sum
 /-!
 # Symmetrified quivers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Symmetrify)
+
 This file supplies general infrastructure for Mathlib's `Quiver.Symmetrify` construction.
 
 ## Main results

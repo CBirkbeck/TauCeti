@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # The three families on a type-`D` diagram, and the candidate groups of `Dₙ(q)` and `²Dₙ(q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeD)
+
 Three classification-list families are built on the diagram `Dₙ`: the untwisted `Dₙ(q)`, the
 graph-twisted `²Dₙ(q)`, and, at rank four, the triality-twisted `³D₄(q)`. They share a diagram, and
 `TauCeti.TypeDDiagramLieIndex` is the subtype that collects exactly them.

@@ -13,6 +13,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Orthogonality
 /-!
 # Orthonormality of the Hermite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Orthonormal)
+
 This file proves that the Hermite functions
 `ψₙ(x) = Hₙ(x√2) exp(-x²/2) / √(n!√π)` (`TauCeti.hermiteFunction`) form an orthonormal system in
 `L²(ℝ)`, the roadmap milestones **A2** (pointwise) and **A3** (the `Lp` orthonormality the

@@ -11,6 +11,8 @@ import Mathlib.Algebra.Group.AddChar
 /-!
 # Powers of an additively indexed family of endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.End)
+
 A family `f : ℕ → M →* M` of endomorphisms of a monoid indexed additively, so that `f 0` is the
 identity and `f (a + b)` is the composite of `f a` and `f b`, is an additive character
 `AddChar ℕ (Monoid.End M)`, and so turns multiplication of indices into powers in the

@@ -15,6 +15,8 @@ public import Mathlib.NumberTheory.LSeries.Convergence
 /-!
 # The entire-continuation predicate for L-series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.EntireExtension)
+
 The entire-continuation obligation of Hecke theory, as a predicate on a coefficient
 sequence `a : ℕ → ℂ`: `LSeries.HasEntireExtension a` says the abscissa of absolute
 convergence is finite and some entire function agrees with `LSeries a` on the (nonempty)

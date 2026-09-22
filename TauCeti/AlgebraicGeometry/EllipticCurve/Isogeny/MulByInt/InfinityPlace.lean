@@ -13,6 +13,8 @@ import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 /-!
 # The place at infinity on the coordinates of `[n]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.InfinityPlace)
+
 `Affine/FunctionField/InfinityPlace/Basic.lean` computes the valuation at infinity of the
 coordinate functions: `v_∞ x = exp 2` and `v_∞ y = exp 3`, i.e. `x` has a double pole at `O`
 and `y` a triple one. This file does the same for `x ∘ [n]`, the `x`-coordinate of `[n]` at the

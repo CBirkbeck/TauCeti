@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Overlattice.Naturality
 /-!
 # Duality for intermediate carriers of an integral lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Overlattice.Dual)
+
 Let `L` be an integral lattice and let `L ≤ M ≤ Lᵛ` be an intermediate carrier. Its dual
 submodule `Mᵛ = L.form.dualSubmodule M` is again intermediate: it is contained in `Lᵛ` because
 `L ≤ M`, and it contains `L` because `M ≤ Lᵛ` and the form is symmetric. Passing to the dual is

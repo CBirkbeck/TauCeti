@@ -17,6 +17,8 @@ import TauCeti.Algebra.Lie.GeneralLinear.Basic
 /-!
 # The trace-form Casimir element of `gl n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Casimir)
+
 For the general linear Lie algebra `gl n R = Matrix n n R`, the invariant nondegenerate form
 used by highest-weight theory is the trace form
 

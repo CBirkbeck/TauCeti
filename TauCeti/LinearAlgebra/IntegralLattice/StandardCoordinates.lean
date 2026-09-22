@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Dual.Basic
 /-!
 # Gram-matrix lattices on the standard rational coordinate space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.StandardCoordinates)
+
 An integral symmetric matrix `G` indexed by a finite type `ι` presents an integral lattice on
 `ι → ℚ`, namely `ofGramMatrix (Pi.basisFun ℚ ι) G hG`, whose carrier is the standard integral
 lattice `ι → ℤ`

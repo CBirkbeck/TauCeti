@@ -15,6 +15,8 @@ import TauCeti.Analysis.Calculus.PeriodicDeriv
 /-!
 # The boundary contour integral of a level-one logarithmic derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Assembly)
+
 The four boundary pieces assemble: the two verticals cancel by periodicity, the arc
 collapses to its weight term, and the ceiling evaluates through the `q`-circle to the
 cusp order — so the whole boundary contour integral of the logarithmic derivative is

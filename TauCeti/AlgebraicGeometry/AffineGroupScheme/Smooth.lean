@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.FiniteType
 /-!
 # Smooth affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Smooth)
+
 This file records smoothness of affine group schemes as an object property and compares it with
 smoothness of their coordinate Hopf algebras. On the coordinate side, smoothness is
 `Algebra.Smooth R H`. On the scheme side, it is smoothness of the structural morphism

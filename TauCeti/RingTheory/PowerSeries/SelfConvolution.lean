@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 /-!
 # Self-convolution coefficients of a formal power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.SelfConvolution)
+
 `PowerSeries.coeff_mul` gives the coefficients of a product as a sum over `Finset.antidiagonal`.
 For a recursion that reads off one coefficient from strictly earlier ones the equivalent sum over
 `Finset.range` is what is wanted, so this file names the two shapes that occur, for a square and

@@ -12,6 +12,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The Alexander polynomial of a Seifert matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Alexander)
+
 A Seifert surface of a knot carries a bilinear linking form, and a basis of its first homology
 turns that form into a square integer matrix `V`, the *Seifert matrix* of the surface. The
 Alexander polynomial of the knot is read off `V` as the determinant of `t^(1/2) V - t^(-1/2) Vᵀ`.

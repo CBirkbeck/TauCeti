@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Jacobson.Radical
 /-!
 # The radical of a module is the radical of its submodule lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Jacobson.Module)
+
 `Module.jacobson R M` is defined as the infimum of the maximal submodules of `M`, and
 `Order.radical` of a lattice is defined as the infimum of its coatoms. For the lattice
 `Submodule R M` these are the same infimum, but Mathlib defines the two independently and states no

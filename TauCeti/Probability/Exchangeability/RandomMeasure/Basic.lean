@@ -19,6 +19,8 @@ import TauCeti.Probability.Exchangeability.Map
 /-!
 # Coordinate marginals of an invariant random path measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.RandomMeasure.Basic)
+
 A random probability measure `P` on path space need not be exchangeable almost surely even when
 its law is invariant under coordinate permutations.  The distinction is essential for separately
 exchangeable arrays: their row-directing measure transforms equivariantly under column

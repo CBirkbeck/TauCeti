@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup.FinTwo
 /-!
 # Möbius transformations of the projective line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Compactification.OnePoint.ProjectiveLine)
+
 Mathlib's `OnePoint.smul_some_eq_ite` and `OnePoint.smul_infty_eq_ite` give the *value* of the
 `GL (Fin 2) K` action on `OnePoint K`. This file adds the companion *criterion* for the
 exceptional case — when an affine point is carried to `∞` — which Mathlib does not state.

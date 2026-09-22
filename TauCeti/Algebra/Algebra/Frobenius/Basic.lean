@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Dual.RightAction
 /-!
 # Frobenius functionals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Algebra.Frobenius.Basic)
+
 Let `A` be an algebra over a commutative ring `k`. A linear functional `φ : A →ₗ[k] k` is a
 **Frobenius functional** when the bilinear form `(a, b) ↦ φ (a * b)` is nondegenerate, and a
 **symmetric Frobenius functional** when moreover `φ (a * b) = φ (b * a)`. A finite-dimensional

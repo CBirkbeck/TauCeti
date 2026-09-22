@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic
 /-!
 # The maximal pro-`p` quotient of a profinite group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.MaximalProP)
+
 The **pro-`p` kernel** `proPKernel p G` of a topological group `G` is the intersection of the
 open normal subgroups whose quotient is a `p`-group, and the **maximal pro-`p` quotient** is
 `maximalProPQuotient p G = G ⧸ proPKernel p G`. For a profinite `G` this quotient is the

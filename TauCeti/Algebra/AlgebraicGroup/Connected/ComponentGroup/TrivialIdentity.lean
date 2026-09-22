@@ -12,6 +12,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Basic
 /-!
 # Finite groups with trivial identity component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.TrivialIdentity)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over an algebraically
 closed field. If its identity component is the trivial subgroup scheme, then the canonical
 component morphism identifies the group with the finite constant group of connected components.

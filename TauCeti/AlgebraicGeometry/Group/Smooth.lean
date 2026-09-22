@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Group.Smooth
 /-!
 # Smoothness of group schemes over algebraically closed fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Group.Smooth)
+
 A reduced group scheme locally of finite type over an algebraically closed field is smooth.
 This upgrades a ring-theoretic reducedness hypothesis to geometric smoothness at the level of
 group schemes, and supplies the scheme-theoretic input for coordinate-ring consequences such as

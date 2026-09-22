@@ -10,6 +10,8 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 /-!
 # Marginals of a probability mass function on a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.ProbabilityMassFunction.Marginal)
+
 This file records the two marginals of a probability mass function on an arbitrary product as the
 infinite row and column sums of its matrix of point masses, together with the resulting
 characterizations of a prescribed marginal.

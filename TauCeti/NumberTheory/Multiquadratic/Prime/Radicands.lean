@@ -14,6 +14,8 @@ public import Mathlib.Data.Nat.Squarefree
 /-!
 # Multiquadratic fields with prime radicands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Radicands)
+
 The field-generic degree theorem `TauCeti.Multiquadratic.finrank_adjoin_range` says that a
 multiquadratic field has degree `2ⁿ` once the radicands are **square-class independent**: no
 nonempty subset product of them is a square. This file supplies that hypothesis for the most

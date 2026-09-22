@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # Transporting comodules across linear equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Transport)
+
 This file records that a right comodule structure can be transported along an `R`-linear
 equivalence. This is a small but useful structural prerequisite for the reductive-groups
 roadmap's Layer 1 representation-category work: tensor products, unitors, associators, and

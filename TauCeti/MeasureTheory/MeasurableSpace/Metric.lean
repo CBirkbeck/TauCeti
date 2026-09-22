@@ -12,6 +12,8 @@ public import Mathlib.Topology.UniformSpace.Cauchy
 /-!
 # Measurable discretization of totally bounded pseudometric spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.Metric)
+
 This file provides a finite measurable approximation of a totally bounded pseudometric space whose
 open sets are measurable.
 

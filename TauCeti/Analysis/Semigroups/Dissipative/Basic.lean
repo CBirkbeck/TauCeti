@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Normed.Operator.LinearPMap.SmulSub
 /-!
 # Dissipative operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Dissipative.Basic)
+
 This file introduces dissipativity for a (possibly unbounded) operator `A : X →ₗ.[ℝ] X` on a
 real Banach space, in the *resolvent-range* form
 

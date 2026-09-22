@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Index.Basic
 /-!
 # Transitivity of profinite index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Index.Transitivity)
+
 This file proves that supernatural index is multiplicative in a subgroup tower whose
 intermediate subgroup is closed, allowing profinite indices to be decomposed through a closed
 intermediate subgroup.

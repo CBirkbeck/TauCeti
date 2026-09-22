@@ -28,6 +28,8 @@ import TauCeti.RingTheory.Semisimple.MatrixDivisionRing
 /-!
 # A Brauer-trivial algebra is split
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.Splitting)
+
 `TauCeti/Algebra/BrauerGroup/Trivial.lean` proves that an algebra **split** by its own base field
 -- one isomorphic to a full matrix algebra `Mₙ(K)` -- has the identity Brauer class, and leaves the
 converse open: nothing there rules out an algebra that becomes a matrix algebra only after passing

@@ -11,6 +11,8 @@ import TauCeti.Algebra.Lie.Submodule.Atom
 /-!
 # The maximal submodule of a highest weight module, and its irreducible quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Maximal)
+
 A highest weight module has a *greatest* proper submodule, namely the sum of all the submodules
 that meet its top weight space trivially, and therefore a unique irreducible quotient. This file
 builds that submodule, `TauCeti.maximalSubmodule`, and proves both statements.

@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.AffineModel.Prime
 /-!
 # Places attached to points with discrete valuation ring stalks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.Place.Basic)
+
 Let `X` be an integral scheme over a field `k`. When the local ring at a point `x` is a discrete
 valuation ring, its normalized valuation on the function field of `X` is a place of
 `X.functionField / k`. This file constructs that place and identifies its valuation ring, residue

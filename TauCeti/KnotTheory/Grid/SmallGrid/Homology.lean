@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Homology.Basic
 /-!
 # An explicit basis for small-grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.SmallGrid.Homology)
+
 The fully blocked differential vanishes on grids of size at most two. Consequently every grid
 state gives a cycle, no nonzero cycle is a boundary, and the corresponding homology classes form
 a basis. This file makes those generators explicit.

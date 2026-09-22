@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.Matrix.PosSemidef
 /-!
 # Analytic bounds for positive-semidefinite matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.PosSemidef)
+
 This file supplements the foundational API in `TauCeti.LinearAlgebra.Matrix.PosSemidef` with
 scalar Cauchy--Schwarz and vanishing bounds for `RCLike`-valued positive-semidefinite matrices,
 together with the resulting estimate for *Hankel* matrices: a sequence bounded above whose Hankel

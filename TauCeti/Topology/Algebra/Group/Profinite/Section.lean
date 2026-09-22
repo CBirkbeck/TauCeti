@@ -17,6 +17,8 @@ import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # Continuous sections of profinite quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Section)
+
 Let `G` be a profinite group — compact, totally disconnected, and topological, in the unbundled
 classes — and let `H` be a *closed* subgroup. This module proves that the quotient map
 `G → G ⧸ H` admits a continuous section normalized at the identity coset, and deduces the same

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # The `q`-expansion of a rational diagonal slash
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Diagonal.QExpansion)
+
 The coprime-prime Hecke operator has, besides its upper-triangular sum, a term obtained by
 slashing by the rational matrix `diag(d, 1)`. The same real matrix already defines the
 level-raising degeneracy map `V_d`; this file identifies the two constructions and transfers the

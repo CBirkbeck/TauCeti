@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DoubleCoset
 /-!
 # Comparing the `Γ₀(N)` and level-one double cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CosetMap)
+
 **Shimura, Propositions 3.30 and 3.31.** Since `Γ₀(N) ≤ SL₂(ℤ)` and `Δ₀(N) ≤ Δ`, sending
 `Γ₀(N) α Γ₀(N)` to `SL₂(ℤ) α SL₂(ℤ)` is well defined on double cosets:
 

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
 /-!
 # Scalar multiplication in the `GL_n` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.ScalarMul)
+
 One row of the multiplication table of the integral Hecke ring of the arithmetic Hecke
 triple (Shimura, Proposition 3.17): the scalar double coset `T(c, …, c)` has degree `1`, so
 multiplying by it merely rescales diagonal cosets,

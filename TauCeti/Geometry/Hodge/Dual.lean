@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Hodge.Structure
 /-!
 # The dual of a pure Hodge structure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Dual)
+
 The dual `V^*` of a pure Hodge structure of weight `n` is a pure Hodge structure of weight `-n`
 on the complex dual space: its filtration step at index `p` is the annihilator of the filtration
 step of index `1 - p` of the original structure, and its conjugation is the twisted transpose of

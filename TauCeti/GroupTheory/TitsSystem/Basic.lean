@@ -13,6 +13,8 @@ import Mathlib.Algebra.Group.Subgroup.Map
 /-!
 # Tits systems
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TitsSystem.Basic)
+
 A **Tits system**, or **BN-pair**, in a group `G` consists of two subgroups `B` and `N` and a
 set of simple reflections in `W = N / (B ∩ N)`.  The subgroups generate `G`, the intersection
 `B ∩ N` is normal in `N`, the simple reflections generate `W` and are involutions, and the

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.ScalarExtension
 /-!
 # Restricting additive automorphisms to invariant subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.GeneralLinearGroup.InvariantRestrict)
+
 An additive automorphism of an abelian group which preserves an additive subgroup restricts to an
 integral linear automorphism of that subgroup. Base change gives an automorphism of every scalar
 extension of the subgroup, compatibly with further scalar extension.

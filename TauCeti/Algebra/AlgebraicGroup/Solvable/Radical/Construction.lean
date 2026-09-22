@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Construction
 /-!
 # The solvable radical of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Construction)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A connected
 normal smooth solvable closed subgroup is represented contravariantly by a normal Hopf ideal `I`
 whose quotient `H/I` is geometrically connected, smooth, and has a solvable group of geometric

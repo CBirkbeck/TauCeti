@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Finsupp.Pi
 /-!
 # Lattice homology over `𝔽₂[U]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Homology)
+
 This file packages the characteristic-two plumbing-lattice differential as a short complex and
 defines its homology. For a plumbing graph `P` and characteristic covector `k`, the same weighted
 differential occurs on both sides of the short complex

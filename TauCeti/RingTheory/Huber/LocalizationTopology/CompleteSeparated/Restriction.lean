@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 /-!
 # Restriction maps as morphisms of complete separated rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.Restriction)
+
 `LocalizationTopology.Restriction` builds the restriction map `A⟨T/s⟩ → A⟨T''/s''⟩` of a
 refinement as a continuous ring homomorphism, and `LocalizationTopology.CompleteSeparated.Basic`
 exhibits `A⟨T/s⟩` as an object of `CompleteSeparatedTopCommRingCat`. This module joins the two:

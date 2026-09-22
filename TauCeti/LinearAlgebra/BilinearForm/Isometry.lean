@@ -17,6 +17,8 @@ public import TauCeti.LinearAlgebra.GeneralLinearGroup.Congr
 /-!
 # The isometry group of a bilinear form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.Isometry)
+
 An endomorphism `f` of a module `M` is an *isometry* of a bilinear form `B` when
 `B (f x) (f y) = B x y`. Starting from the predicate `TauCeti.BilinForm.IsIsometry` defined in the
 dependency-light module `TauCeti.LinearAlgebra.BilinearForm.Isometry.Basic`, this file builds the

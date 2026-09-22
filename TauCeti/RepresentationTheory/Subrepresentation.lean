@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.SimpleModule.Basic
 /-!
 # The underlying module of a subrepresentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Subrepresentation)
+
 Mathlib's `Subrepresentation` API records how `toSubmodule` interacts with the lattice
 operations — `Subrepresentation.toSubmodule_sup` and `Subrepresentation.toSubmodule_inf`, both
 `@[simp]` and both true by `rfl` — but not how it interacts with the bounded-lattice structure,

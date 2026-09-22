@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 /-!
 # Resultant lemmas
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Resultant.Basic)
+
 Mathlib evaluates the resultant against the linear polynomial `X - C x` on either side
 (`Polynomial.resultant_X_sub_C_left`, `Polynomial.resultant_X_sub_C_right`). This file records the
 companion for the *reversed* polynomial `C x - X`, which is the shape that arises as `x - θ` in

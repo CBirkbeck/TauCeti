@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.l2Space
 /-!
 # Parseval's identity in norm-square form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Parseval)
+
 Mathlib states Parseval's identity in polarized, `𝕜`-valued form:
 `HilbertBasis.hasSum_inner_mul_inner` gives `∑' i, ⟪x, b i⟫ * ⟪b i, y⟫ = ⟪x, y⟫`. This file states
 the diagonal, real-valued form `‖x‖² = ∑' i, ‖⟪b i, x⟫‖²`. The two differ in the type of their

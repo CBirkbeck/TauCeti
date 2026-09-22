@@ -12,6 +12,8 @@ public import Mathlib.Topology.Homotopy.LocallyContractible
 /-!
 # Locally convex spaces are strongly locally contractible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Module.LocallyConvex)
+
 A real locally convex topological vector space has a basis of convex neighbourhoods at each point,
 and a nonempty convex set is contractible (`Convex.contractibleSpace`). Hence every point has a
 basis of contractible neighbourhoods: the space is strongly locally contractible.

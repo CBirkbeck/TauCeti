@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # Change of scalars on general linear groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map)
+
 `Matrix.GeneralLinearGroup.map f : GL n R →* GL n S` applies a ring hom `f : R →+* S` entrywise.
 Mathlib gives its functoriality (`map_id`, `map_comp`, `map_comp_apply`) but says nothing about
 injectivity, nor about how the map interacts with the positive-determinant subgroup — both of

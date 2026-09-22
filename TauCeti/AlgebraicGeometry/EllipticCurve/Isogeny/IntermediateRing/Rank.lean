@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.RamificationInertia.Tower
 /-!
 # The intermediate ring of an isogeny has rank the degree, and its fibres count it
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Rank)
+
 The intermediate ring of an isogeny `φ : W₁ → W₂` — the integral closure of `W₂.CoordinateRing`
 inside `W₁.FunctionField` — is a `W₂.CoordinateRing`-module of rank exactly `φ.degree`. This is the
 arithmetic content of the roadmap's *place-free* count: the degree, defined as a dimension of

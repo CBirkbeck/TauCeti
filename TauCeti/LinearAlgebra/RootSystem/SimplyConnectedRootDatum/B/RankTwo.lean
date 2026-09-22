@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.Datum
 /-!
 # The rank-two type `B` root datum in explicit coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.RankTwo)
+
 `TauCeti.DynkinType.typeBSimplyConnectedRootDatum` is built uniformly in the rank, out of signed
 basis vectors and a rotated product enumeration, so its public interface reads off the simple roots
 and the simple coroots and nothing else. A consumer that has to check an equation on *every* root

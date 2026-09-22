@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Quotient.Basic
 /-!
 # Complementary submodules under restriction, quotients and products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Submodule.Compl)
+
 Three ways complementarity of a pair of submodules survives a construction.
 
 **Restriction to a subspace.** Mathlib's `Submodule.isCompl_comap_subtype_of_isCompl_of_le`

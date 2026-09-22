@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.PointsFunctor
 /-!
 # Frobenius on the full-weight type-A carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Frobenius)
+
 `TauCeti.SlStd.groupScheme r` is the explicit full-weight Chevalley carrier of type `A_r` built
 from the standard representation of `sl_{r+1}` and its coordinate integral lattice. For a
 commutative value ring `A` of exponential characteristic `p`, this file equips its point group

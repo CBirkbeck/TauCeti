@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Winding.LocallyConstant
 /-!
 # The Dixon function is entire
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Dixon.FunctionDiff)
+
 Dixon's glued function `dixonFunction f U γ a b` — equal to `dixonH1` on `U` and `dixonH2` off `U`
 — is complex-differentiable on all of `ℂ` when `f` is holomorphic on the open set `U` and the
 curve `γ` lives in `U`, is null-homologous there, is closed, and is differentiable off a countable

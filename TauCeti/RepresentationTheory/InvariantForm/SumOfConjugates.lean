@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.InvariantForm
 /-!
 # Summing a bilinear form over the conjugates of a representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.InvariantForm.SumOfConjugates)
+
 Summing a bilinear form over the orbit of a representation of a finite group,
 `∑_g B (σ g ·) (σ g ·)`, makes it invariant: this is the standard construction that produces
 invariant forms out of arbitrary ones.  No division by `|G|` is performed -- as in Mathlib's

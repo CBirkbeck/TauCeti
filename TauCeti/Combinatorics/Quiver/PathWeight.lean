@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.Quiver.Path.Weight
 /-!
 # Additive path weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Quiver.PathWeight)
+
 Mathlib's `Quiver.Path.addWeight w p` sums the weights `w e` of the arrows along a path `p`. This
 file records its evaluation at a constant weight: a constant weight `c` sums to `p.length • c`.
 This identifies the path-length grading of a path algebra as the grading by the constant weight

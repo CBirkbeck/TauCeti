@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.GroupAction.Transitive
 /-!
 # Transitive `G`-sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.Transitive)
+
 A `G`-set, in the categorical sense of an object of `Action (Type u) G`, is *transitive* when it
 is nonempty and `G` acts transitively on its underlying type. This file records that condition as
 an `ObjectProperty`, shows it is closed under isomorphisms, and names the resulting full

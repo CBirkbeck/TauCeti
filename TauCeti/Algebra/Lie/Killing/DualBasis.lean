@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Properties
 /-!
 # Dual bases for the Killing form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Killing.DualBasis)
+
 For a Lie algebra with nondegenerate Killing form, every basis has a Killing-dual basis. This file
 develops its coordinate equations and the canonical basis-independent contraction of a bilinear map
 against a basis and its Killing dual.

@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.TensorProduct
 /-!
 # Every line bundle on a curve is the sheaf of a Weil divisor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Picard)
+
 Let `X` be a Noetherian integral scheme of dimension at most one whose codimension-one local rings
 are discrete valuation rings. This file proves that every line bundle `L` on `X` is isomorphic to
 the sheaf `𝒪_X(D)` of a Weil divisor `D`, so that `D ↦ 𝒪_X(D)` identifies the divisor class group

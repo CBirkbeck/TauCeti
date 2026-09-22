@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Module.Ball.Pointwise
 /-!
 # A set cut by a sphere, in a normed space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Ball.Cut)
+
 `TauCeti/Topology/MetricSpace/Cut.lean` cuts an arbitrary set `s` by a sphere `sphere y ρ` into a
 *near side* `s ∩ ball y ρ` and a *far side* `s \ closedBall y ρ`. This file adds what the linear
 structure of a normed space contributes to that cut.

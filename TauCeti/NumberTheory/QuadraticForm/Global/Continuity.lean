@@ -15,6 +15,8 @@ import TauCeti.Topology.Algebra.Field.Squares
 /-!
 # Continuity of localized quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.Continuity)
+
 Finite, real, and complex localizations of a finite-dimensional quadratic form are continuous
 for the module topology on their scalar extensions. The statements accept any topology with
 `IsModuleTopology`, so they do not depend on a basis or on a chosen construction of that topology.

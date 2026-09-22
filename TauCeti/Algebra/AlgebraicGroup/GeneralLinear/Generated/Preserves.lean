@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Generated.Basic
 /-!
 # A generated subgroup scheme of `GLₙ` inside a constant-multiplication or constant-form subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Generated.Preserves)
+
 Fix a commutative ring `R`, a family of coordinate morphisms `f i : O(GLₙ/R) ⟶ K i`, and the
 closed subgroup scheme of `GLₙ` they generate. Two closed conditions on `GLₙ` are cut out by an
 explicit Hopf ideal: preserving a bilinear multiplication with constant structure matrices

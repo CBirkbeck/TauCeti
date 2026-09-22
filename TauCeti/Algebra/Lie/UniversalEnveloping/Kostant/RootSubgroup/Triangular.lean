@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular
 /-!
 # Triangularity of positive Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Triangular)
+
 Let `M` be a Kostant-stable integral lattice with a basis of Cartan weight vectors. If the basis
 is ordered so that adding a positive multiple of a root moves strictly towards the beginning,
 then every divided power of the corresponding root operator is strictly upper triangular away

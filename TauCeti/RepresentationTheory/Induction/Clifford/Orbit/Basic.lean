@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Clifford.Basic
 /-!
 # The constituents of a restriction to a normal subgroup form one orbit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Orbit.Basic)
+
 Let `N` be a normal subgroup of `G` and let `ρ` be an irreducible representation of `G` on `V`.
 Given one minimal `N`-stable subspace to start from, restricting `ρ` to `N` breaks it into
 irreducible constituents

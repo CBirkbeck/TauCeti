@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Modulus
 /-!
 # Greatest common divisors and least common multiples of moduli
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Lattice)
+
 The divisibility order on number-field moduli is componentwise: the finite ideal divides in the
 usual ideal-theoretic sense, while the set of real places grows by inclusion.  This file constructs
 the greatest common divisor and least common multiple for that order.  On finite parts these are

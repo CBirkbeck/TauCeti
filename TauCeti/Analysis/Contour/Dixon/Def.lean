@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.DSlope
 /-!
 # Dixon's `h₁` and `h₂` functions and their defining identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Dixon.Def)
+
 Dixon's proof of the homology form of Cauchy's theorem hinges on a single auxiliary function that
 is analytic on all of `ℂ`. This file records its two constituent integrals and the algebraic
 identity relating them; the analyticity, boundedness, and Liouville steps are developed downstream.

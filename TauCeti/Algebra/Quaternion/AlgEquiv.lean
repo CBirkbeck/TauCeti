@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # Algebra equivalences of quaternion algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.AlgEquiv)
+
 An algebra equivalence between two quaternion algebras is compatible with all of their
 quadratic-form structure: it commutes with quaternion conjugation, preserves the reduced trace
 and the reduced norm, maps the pure quaternions onto the pure quaternions, and therefore restricts

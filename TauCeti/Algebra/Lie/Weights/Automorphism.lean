@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Weights.Sl2System
 /-!
 # Automorphisms normalising a Cartan subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Automorphism)
+
 Let `σ` be an automorphism of a Lie algebra `L` which normalises a nilpotent subalgebra `H`, in
 the sense that `H.map σ = H`. Then Mathlib's `LieEquiv.ofSubalgebras` restricts `σ` to an
 automorphism `σ|H` of `H`, and it carries the root space of `χ : H → R` onto the root space of

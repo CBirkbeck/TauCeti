@@ -14,6 +14,8 @@ public import TauCeti.Probability.GeneratingFunction
 /-!
 # Elementary theory of the Bernoulli distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Bernoulli)
+
 This file computes the elementary moments and transforms of the real-valued Bernoulli law
 `Ber((1 : ℝ), 0, p)`, together with the probability-generating function of the native ℕ-valued law
 `Ber((1 : ℕ), 0, p)`. It uses Mathlib's convention that the value `1` has mass `p` and the value

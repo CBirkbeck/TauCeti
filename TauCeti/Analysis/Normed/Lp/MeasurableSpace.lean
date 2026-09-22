@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 /-!
 # The `ℓ^p` product distance as a measurable function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Lp.MeasurableSpace)
+
 For a finite exponent `p` the extended distance on `WithLp p (X × Y)` is the `ℓ^p` combination
 `(d₁ ^ p + d₂ ^ p) ^ (1 / p)` of the two factor distances. This file records the two facts that
 make that distance usable as the ground distance of a measure-theoretic construction on the

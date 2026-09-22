@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Algebra.Hom.Basic
 /-!
 # Components of morphisms of A-infinity algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.Hom.Component)
+
 The bar-coalgebra definition of an `A∞` morphism stores its suspended Taylor map
 `Tᶜ(sA) ⟶ sB`. This file exposes the corresponding unsuspended multilinear components
 `fₙ : Aⁿ ⟶ B`. The arity-`n` component has cohomological degree `1 - n`, and its

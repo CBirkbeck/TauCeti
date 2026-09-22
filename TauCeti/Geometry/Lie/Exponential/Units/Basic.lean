@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Normed.Algebra.Basic
 /-!
 # Banach-algebra exponentials as units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Units.Basic)
+
 The exponential of an element of a complete normed rational algebra is invertible, with inverse
 the exponential of its negation. This file packages that fact as a units-valued map
 `TauCeti.expUnit : R → Rˣ`. For real algebras, it also bundles the exponential along a line as a

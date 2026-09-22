@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.JordanChevalley.TensorProduct
 /-!
 # Jordan factors of point actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.JordanDecomposition)
+
 Let `H` be a Hopf algebra over a commutative semiring `k`, let `K` be a perfect extension field,
 and let `g : H →ₐ[k] K` be a `K`-valued point. On every finite-dimensional `H`-comodule, `g`
 acts by a linear automorphism after scalar extension to `K`. This file packages the semisimple

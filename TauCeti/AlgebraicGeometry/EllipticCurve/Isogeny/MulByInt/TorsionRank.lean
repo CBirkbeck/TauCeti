@@ -14,6 +14,8 @@ import Mathlib.FieldTheory.Finite.Basic
 /-!
 # The `ℓ`-torsion is a two-dimensional `ZMod ℓ`-vector space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.TorsionRank)
+
 For a prime `ℓ` invertible in the base field, `ker [ℓ]` is free of rank two over `ZMod ℓ` as soon
 as the geometric `ℓ`-torsion is rational. Every point of the kernel is killed by `ℓ`, which makes
 it a `ZMod ℓ`-module, and `ZMod ℓ` is a field, so the kernel is a vector space whose cardinality

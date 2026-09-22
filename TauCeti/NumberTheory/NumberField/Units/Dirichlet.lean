@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 /-!
 # Dirichlet's unit theorem in structural form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Units.Dirichlet)
+
 Mathlib's `NumberField.Units.exist_unique_eq_mul_prod` states that every unit of `𝓞 F` has a
 unique decomposition as a root of unity times a product of powers of the fundamental system.
 This file packages that unique decomposition as a multiplicative equivalence

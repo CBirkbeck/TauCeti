@@ -12,6 +12,8 @@ public import TauCeti.Probability.Distributions.Gamma.Sum
 /-!
 # Block marginals of the Dirichlet distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirichlet.Marginal)
+
 A Dirichlet vector is a vector of independent unit-rate Gamma variables divided by its own total.
 The total of a block `s` of its coordinates is therefore the total of the corresponding Gamma
 variables divided by the sum of that total and the total of the remaining, independent, Gamma

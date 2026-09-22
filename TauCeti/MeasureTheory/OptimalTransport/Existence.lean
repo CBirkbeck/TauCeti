@@ -14,6 +14,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 /-!
 # Existence of an optimal transport plan
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Existence)
+
 The primal Kantorovich problem minimises `π ↦ ∫⁻ z, c z ∂π` over the couplings of two fixed
 probability measures. This file proves that the minimum is attained for a lower semicontinuous
 cost: the infimum defining `TauCeti.transportCost` is a minimum, realised by a plan satisfying

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.InvariantForm.RootString
 /-!
 # Root strings in the pinned F₄ root system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.RootString)
+
 This file derives root-string bounds from the invariant root-length identity. The proofs use the
 abstract root-system API after the pinned length table has supplied the two possible squared
 lengths. They avoid case splits over the forty-eight root coordinates.

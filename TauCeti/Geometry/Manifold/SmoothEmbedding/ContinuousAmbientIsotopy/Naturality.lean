@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.AmbientIsotopic.Naturality
 /-!
 # Naturality of continuous ambient isotopy for smooth embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SmoothEmbedding.ContinuousAmbientIsotopy.Naturality)
+
 The geometric-topology roadmap asks that isotopy and ambient isotopy be defined once, in
 generality, and then specialised to smooth embeddings such as geometric knot presentations.
 `TauCeti.SmoothEmbedding.ContinuousAmbientIsotopic` is that continuous ambient-isotopy relation

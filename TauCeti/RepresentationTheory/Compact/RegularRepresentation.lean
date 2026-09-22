@@ -14,6 +14,8 @@ public import Mathlib.MeasureTheory.Function.LpSpace.DomAct.Continuous
 /-!
 # The right regular representation of a compact group on `L²(G)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.RegularRepresentation)
+
 A compact group `G` acts on `L²(G)` by right translation, `(π g f) x = f (x * g)`. Right
 translation preserves normalized Haar measure, so the action is unitary, and it is *strongly*
 continuous: for each fixed `f` the orbit map `g ↦ π g f` is continuous. Continuity of `g ↦ π g`

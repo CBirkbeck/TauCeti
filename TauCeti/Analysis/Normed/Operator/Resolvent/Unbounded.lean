@@ -14,6 +14,8 @@ public import Mathlib.Tactic.Module
 /-!
 # The resolvent set of an unbounded operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Resolvent.Unbounded)
+
 Mathlib's `resolventSet` and `resolvent` are Banach-algebra notions: they ask that
 `algebraMap R A r - a` be a *unit* of the algebra, which only makes sense for an element `a`
 of that algebra. The infinitesimal generator of a C₀-semigroup is not such an element — it is

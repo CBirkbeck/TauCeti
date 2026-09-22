@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Finiteness.Projective
 /-!
 # Self-injective algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Injective.SelfInjective)
+
 A ring is **self-injective** when its regular left module is injective, `Module.Injective A A`.
 This file proves the criterion producing the examples which come from a Frobenius structure: an
 algebra over a field carrying an associative perfect bilinear form is self-injective.

@@ -14,6 +14,8 @@ public import TauCeti.GroupTheory.Perm.FiberSubgroup
 /-!
 # Young subgroups of symmetric groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.YoungSubgroup)
+
 For a partition `μ` of `n`, this file defines its Young subgroup of `Equiv.Perm (Fin n)`.
 The decreasing parts of `μ` cut `Fin n` into consecutive blocks, and the Young subgroup consists
 exactly of the permutations preserving those blocks.  We identify it with the product of the

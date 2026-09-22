@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.CharpolyFinTwo
 /-!
 # Trace and norm in quadratic algebras and separable quadratic extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Norm.Quadratic)
+
 For a separable quadratic extension `L/K` the trace and norm are the two elementary symmetric
 functions of the pair `{x, σx}`, where `σ` is the nontrivial automorphism: `tr x = x + σx` and
 `N x = x · σx` (`algebraMap_trace_eq_add`, `algebraMap_norm_eq_mul`). These give the

@@ -14,6 +14,8 @@ import TauCeti.Algebra.Group.Conj
 /-!
 # The ideal-theoretic Artin map away from a finite set of primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Ideal.ArtinMap)
+
 Let `L/K` be a finite abelian extension of number fields and let `S` be a finite set of finite
 places of `K` outside which `L/K` is unramified. At a prime `v ∉ S` the Artin symbol is a
 conjugacy class in an abelian group, hence a single automorphism, and extending that assignment

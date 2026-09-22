@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Ray.Primitive
 /-!
 # Regular toric cones and regular fans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Regular)
+
 A toric cone is *regular*, or smooth, when its primitive ray generators can be completed to a
 single integral basis of the lattice. This is the combinatorial condition under which the affine
 chart of the cone is a mixed chart `ℂ ^ k × (ℂ ^ *) ^ (n - k)` rather than a singular affine toric

@@ -12,6 +12,8 @@ public import Mathlib.Topology.Sheaves.LocallySurjective
 /-!
 # Local equations for Cartier divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.CartierDivisor.LocalEquations)
+
 A Cartier divisor on an integral scheme is a section of the quotient sheaf
 `𝒦_X^× / 𝒪_X^×`. This file extracts the local-equation description from that quotient:
 every section is locally represented by a nonzero rational function, and two representatives

@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Measure.SymmetricMatrix.Lebesgue
 /-!
 # Singular symmetric matrices are Lebesgue-null
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Determinant)
+
 The determinant is a polynomial in the upper-triangular coordinates, and it is nonzero because
 the identity matrix has determinant one. The zero locus of a nonzero polynomial is
 Lebesgue-null, so the singular symmetric matrices are `TauCeti.symmetricLebesgue`-null.

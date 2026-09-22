@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Basic
 /-!
 # A grid rectangle move is a column transposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Swap)
+
 An oriented rectangle `R : GridRectangleBetween x y` records the two side columns at which the
 target state `y` differs from the source state `x`: at the initial side column `y` reads the
 row `x` uses at the terminal side, and vice versa, while the two states agree away from the two

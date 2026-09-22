@@ -30,6 +30,8 @@ import TauCeti.Analysis.PositiveDefinite.Kernel.Bounds
 /-!
 # Bochner's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.BochnerTheorem)
+
 A function `F : V → ℂ` on a finite-dimensional real inner-product space is continuous and
 positive definite if and only if it is the Fourier-convention transform
 `v ↦ ∫ q, fourierAtom v q ∂μ` of a unique finite Borel measure `μ` on `V`. This file assembles

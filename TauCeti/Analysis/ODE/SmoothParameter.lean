@@ -14,6 +14,8 @@ public import TauCeti.Analysis.Calculus.ContinuousMap
 /-!
 # Smooth parameter dependence for autonomous ODEs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.ODE.SmoothParameter)
+
 This file develops the Banach-space implicit-equation argument that makes a local solution of a
 smooth parameterized autonomous ODE depend smoothly on its parameter.
 

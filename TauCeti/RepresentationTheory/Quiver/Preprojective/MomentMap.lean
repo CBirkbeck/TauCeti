@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.AsModule
 /-!
 # The moment map of a representation of a doubled quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.MomentMap)
+
 A representation `M` of the doubled quiver `Quiver.Symmetrify Q` assigns to every arrow
 `a : i ⟶ j` of `Q` a linear map `x_a : M_i → M_j`, and to its formal reverse a linear map
 `x_{a*} : M_j → M_i`. Its **moment map** at a vertex `v` is the endomorphism

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Splitting
 /-!
 # Abel-Jacobi sums of Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Sum.Basic)
+
 This file extends the formal Layer A Abel-Jacobi API from points to arbitrary Weil divisors.
 Given an order system whose principal divisors have weighted degree zero and a weight-one base
 point `x₀`, the degree splitting

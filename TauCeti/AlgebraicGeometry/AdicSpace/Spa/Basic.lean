@@ -12,6 +12,8 @@ import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # The underlying set of the adic spectrum `Spa (A, A⁺)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Basic)
+
 **The set-level construction beneath Wedhorn, *Adic Spaces* (arXiv:1910.05934v1),
 Definition 7.23.**
 

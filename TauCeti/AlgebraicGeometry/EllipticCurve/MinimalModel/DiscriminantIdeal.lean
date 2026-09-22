@@ -14,6 +14,8 @@ import TauCeti.RingTheory.DedekindDomain.Factorization
 /-!
 # The minimal discriminant ideal of an elliptic curve over a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.DiscriminantIdeal)
+
 Let `O` be a Dedekind domain with fraction field `K` and let `W` be an elliptic Weierstrass
 equation over `K`. At each height-one prime `v` of `O` the localisation
 `Oᵥ = Localization.AtPrime v.asIdeal` is a discrete valuation ring, and

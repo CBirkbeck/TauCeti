@@ -10,6 +10,8 @@ public import Mathlib.Algebra.GroupWithZero.Divisibility
 /-!
 # `NeZero` passes to divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupWithZero.Divisibility)
+
 Mathlib's `ne_zero_of_dvd_ne_zero` says that a divisor of a nonzero element is nonzero, as the
 proposition `p ≠ 0`. Instance resolution needs the same fact as the class `NeZero p`, and a
 caller holding `[NeZero q]` together with `p ∣ q` has to repackage the conclusion by hand;

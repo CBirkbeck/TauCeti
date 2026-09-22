@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.ProjectiveResolution
 /-!
 # The Cartan map of a ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.CartanMap)
+
 For a ring `R`, the finitely generated `R`-modules and the finitely generated projective
 `R`-modules are two full subcategories of `ModuleCat R`, each extension closed for the canonical
 exact structure of the abelian category `ModuleCat R`. This file equips them with the induced

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.ZeroSequenceOfUnits
 /-!
 # A Tate ring has a zero sequence of units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.ZeroSequenceOfUnits)
+
 Henkel's open mapping theorem is stated for a topological ring carrying a *zero sequence of
 units*. That hypothesis and the absorption property it exists for are generic, and live in
 `TauCeti/Topology/Algebra/ZeroSequenceOfUnits.lean`; this file supplies the bridge from Huber

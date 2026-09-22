@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Nilpotent.Basic
 /-!
 # A monoid algebra is non-reduced in the presence of `p`-torsion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.NotReduced)
+
 This file records the failure of the monoid algebra `R[G]` of a commutative monoid `G` to be
 reduced whenever `R` has prime characteristic `p` and `G` has a nontrivial element killed by `p`.
 

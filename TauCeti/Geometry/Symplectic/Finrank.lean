@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.TotallyReal.Finrank
 /-!
 # An almost complex structure forces even real dimension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Finrank)
+
 A pointwise almost complex structure `J` on a real module `V` turns `V` into a complex vector
 space (`TauCeti.AlmostComplexStructure.complexModule`), where multiplication by `i` is `J`. Since
 `ℂ` is a degree-two extension of `ℝ`, the tower law forces the real dimension of `V` to be twice

@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.TransversalWord
 /-!
 # Continuity of the transversal word
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.TransversalWord)
+
 For a subgroup `U` of a group `G` and a map `t : G ⧸ U → G`, the transversal word
 `ℓᵗ_u(γ) = (t u)⁻¹ * γ * t (γ⁻¹ • u)` of `TauCeti.lWord` is a purely group-theoretic construction.
 This file adds the one statement about it that needs a topology: if `G` is a topological group and

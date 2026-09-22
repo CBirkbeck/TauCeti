@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Witt.Cancellation
 /-!
 # Witt decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Witt.Decomposition)
+
 Over a field in which `2` is invertible, every regular quadratic form on a finite-dimensional
 space is isometric to an orthogonal sum of hyperbolic planes and an anisotropic form, and both
 the number of planes and the anisotropic summand are determined by the isometry class. The number
@@ -217,7 +219,10 @@ theorem eq_of_nsmul_hyperbolicClass_add_eq {m m' : ℕ} {a a' : RegularFormClass
     exact ⟨h₁.symm, h₂.symm⟩
 
 /-- The **Witt index** of an isometry class of regular forms: the number of hyperbolic planes in
-its Witt decomposition. -/
+its Witt decomposition.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.RegularFormClass.wittIndex) -/
 noncomputable def RegularFormClass.wittIndex (c : RegularFormClass K) : ℕ :=
   (exists_nsmul_hyperbolicClass_add c).choose
 

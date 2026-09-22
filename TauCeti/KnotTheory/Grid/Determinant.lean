@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Grading.Parity
 /-!
 # The grid determinant formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Determinant)
+
 The alternating Alexander *state sum* of a grid diagram is
 
 `∑_{x ∈ S(G)} (-1)^{M_O(x)} T^{2 A(x)}`,

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 /-!
 # The symmetric homogeneous polynomials of a fixed degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Homogeneous)
+
 The symmetric polynomials of `Mathlib.RingTheory.MvPolynomial.Symmetric.Defs` are graded by total
 degree, each graded piece being the intersection of `MvPolynomial.symmetricSubalgebra` with the
 homogeneous polynomials `MvPolynomial.homogeneousSubmodule` of that degree.  This file names that

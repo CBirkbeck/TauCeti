@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.SemisimplePoint
 /-!
 # Naturality of Jordan decomposition for algebraic-group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.JordanDecomposition.Naturality)
+
 A bialgebra morphism `φ : H₁ →ₐc[k] H₂` between coordinate Hopf algebras represents a
 homomorphism in the opposite direction between the corresponding affine groups. On points this
 homomorphism is precomposition, `TauCeti.AlgHom.mapDomain φ`.

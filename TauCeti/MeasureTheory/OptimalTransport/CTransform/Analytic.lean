@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.CTransform.Basic
 /-!
 # Analytic measurability of the infimal `c`-transform
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.CTransform.Analytic)
+
 For Polish source and target spaces, a Borel integrand
 `(x, y) ↦ (c (x, y) : EReal) - φ x` need not have a Borel infimum over `x`. Its strict sublevel
 sets are nevertheless analytic: each is the projection of the corresponding Borel strict

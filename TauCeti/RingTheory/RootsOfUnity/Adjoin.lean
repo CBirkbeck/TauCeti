@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 /-!
 # Adjoining a primitive root of unity adjoins all of them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.Adjoin)
+
 In a field extension `K` of `F`, the `n`-th roots of unity are exactly the powers of a primitive
 one, so adjoining a single primitive `n`-th root of unity to `F` already produces an intermediate
 field containing every `n`-th root of unity of `K`.

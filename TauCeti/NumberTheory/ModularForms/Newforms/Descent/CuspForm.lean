@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cusps
 /-!
 # The descent of a cusp form to the lower level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.CuspForm)
+
 For a prime `p ∣ N` and `f ∈ S_k(Γ₁(N), χ)` whose nebentypus `χ` is the pull-back of a character
 `χ₀` modulo `N / p`, the descent slash sum `descendSlash k p N f` (`Newforms/Descent/Sum.lean`) is
 a cusp form of level `Γ₁(N / p)`, in the space of `χ₀`: it is `Γ₀(N / p)`-equivariant with

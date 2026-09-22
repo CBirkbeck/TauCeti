@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Sobolev.RellichKondrachov
 /-!
 # The Fredholm alternative for the Dirichlet problem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FredholmAlternative)
+
 Let `B` be the bounded coercive energy form of a divergence-form operator on `H¹₀(Ω)`.  Shifting
 its mass coefficient by a constant `-κ` changes the weak equation to
 

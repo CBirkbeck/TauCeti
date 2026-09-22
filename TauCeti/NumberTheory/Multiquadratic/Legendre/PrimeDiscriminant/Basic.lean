@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.LegendreSymbol.QuadraticReciprocity
 /-!
 # Legendre symbols of odd prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Basic)
+
 The genus-field layer of the multiquadratic roadmap uses the odd prime discriminant
 `p* = (-1)^((p-1)/2) p` rather than the bare prime radicand `p`. This file records the
 small Legendre-symbol API that makes that normalization usable in the prime-splitting law.

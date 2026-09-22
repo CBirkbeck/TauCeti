@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # The symplectic group is reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.Reductive)
+
 The coordinate Hopf algebra of the standard symplectic group `Sp₂ₘ` is reductive over every
 field, in every natural rank and in arbitrary characteristic.
 

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.BaseChange
 /-!
 # Base change of general-linear weight Levis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Levi.BaseChange)
+
 The weight Levi attached to `w : Fin N → ℤ` commutes with arbitrary extension of the
 commutative base ring as an affine group scheme. Its coordinate Hopf algebra is the quotient
 of `O(GL_N)` by the entries between distinct weight blocks. The general-linear base-change

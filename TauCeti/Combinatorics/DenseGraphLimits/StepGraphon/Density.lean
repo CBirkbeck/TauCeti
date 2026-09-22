@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.MeasurableSpace.Finpartition
 /-!
 # Approximating a graphon by a finite weighted graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Density)
+
 Frieze--Kannan weak regularity approximates a graphon in **cut norm** by the block averages of a
 measurable finite partition.  This file turns that into an approximation in **cut distance** by a
 finite object: the block matrix of the approximating step graphon, read as a graphon on the

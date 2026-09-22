@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Vertex
 /-!
 # Boundary values of the Schwarz--Christoffel map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Boundary)
+
 The Schwarz--Christoffel primitive has two kinds of boundary point on the real axis.  Away from
 the prevertices it continues holomorphically across a neighbourhood, while at a prevertex it still
 has a finite limit when the total exponent there is greater than `-1`.  This file packages both

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Fredholm.Basic
 /-!
 # The Fredholm index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Index)
+
 The Fredholm index of a continuous linear map is the integer `dim ker T − dim coker T`. Mathlib
 already develops the purely algebraic `LinearMap.index`; this file transfers its elementary API to
 continuous linear maps. The value is junk when the kernel or cokernel is infinite-dimensional,

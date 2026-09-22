@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Trigonometric.NonnegCombination
 /-!
 # The 3-4-1 positivity combination
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.ThreeFourOne)
+
 This file packages the elementary positivity input in the classical `3-4-1` argument for
 nonvanishing of Dirichlet series. For a phase `z` on the complex unit circle,
 

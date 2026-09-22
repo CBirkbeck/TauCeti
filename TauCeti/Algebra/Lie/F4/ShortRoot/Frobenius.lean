@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.F4.ShortRoot.PointsFunctor
 /-!
 # The Frobenius of the short-root type-F4 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.Frobenius)
+
 `TauCeti.F4ShortRoot.groupScheme` is the explicit short-root type-`F₄` Chevalley carrier over
 `ℤ`, the Kostant toral closure built from the `26`-dimensional representation with highest weight
 `ϖ₄` and its admissible lattice, and `TauCeti.F4ShortRoot.points A` realizes its `A`-valued

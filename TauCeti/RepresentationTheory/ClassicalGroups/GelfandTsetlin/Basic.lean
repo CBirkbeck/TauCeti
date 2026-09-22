@@ -12,6 +12,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Gelfand-Tsetlin patterns
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.GelfandTsetlin.Basic)
+
 A **Gelfand-Tsetlin pattern** for `GL n` is a triangular array of integers
 
 ```text

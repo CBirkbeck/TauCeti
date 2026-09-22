@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Symplectic.Scheme
 /-!
 # Root subgroups of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.RootSubgroup)
+
 For `i : Fin m`, the elementary matrices
 
 ```text

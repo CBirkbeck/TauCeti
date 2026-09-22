@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic
 /-!
 # The maximal elementary-2 quotient `Cl(R)/Cl(R)²` of a class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassGroup.ElementaryTwoQuotient)
+
 For a domain `R` (for the genus-theory application, the ring of integers `𝓞 K` of a number field,
 whose class group is finite), the **class group** `ClassGroup R` is an abelian group, and genus
 theory studies its `2`-part through the quotient by its subgroup of squares,

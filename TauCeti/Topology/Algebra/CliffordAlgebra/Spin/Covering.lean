@@ -11,6 +11,8 @@ public import Mathlib.Topology.Covering.Quotient
 /-!
 # The compact real Spin double cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Spin.Covering)
+
 The projection from the compact real Spin group to the special orthogonal group is a covering map
 whenever its domain is compact. Indeed, the projection is a continuous surjection from a compact
 space to a Hausdorff space, hence a quotient map. Its kernel is the finite image of the included

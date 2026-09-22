@@ -10,6 +10,8 @@ public import Mathlib.Data.ZMod.Basic
 /-!
 # The canonical representative of a residue modulo two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ZMod.Two)
+
 A residue modulo two is `0` or `1`, so its canonical representative `ZMod.val` is the indicator
 of being nonzero. This is the identity behind the counting arguments that read a `ℕ`-valued
 weight off a `ZMod 2`-valued vector: summing the representatives of the coordinates counts the

@@ -14,6 +14,8 @@ import TauCeti.Algebra.Ring.Commutator
 /-!
 # The inner automorphisms `exp (ad x)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.InnerAutomorphism)
+
 If `x` is an element of a Lie algebra `L` whose adjoint action `ad x` is nilpotent, then over a
 base in which the factorials are invertible the finite sum `exp (ad x) = ∑ (i !)⁻¹ • (ad x)ⁱ` is an
 automorphism of `L`. These are the generators of the group `Int L` of inner automorphisms, and they

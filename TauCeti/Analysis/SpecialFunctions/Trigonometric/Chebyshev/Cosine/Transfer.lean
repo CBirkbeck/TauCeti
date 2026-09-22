@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 /-!
 # Chebyshev `T` transfer to the cosine side
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Cosine.Transfer)
+
 This file packages the cosine-side consequences of Mathlib's change-of-variables identity
 `Polynomial.Chebyshev.integral_measureT_eq_integral_cos`. It provides the one-dimensional
 integral API, the equivalence between the Chebyshev and angular measures, and the induced

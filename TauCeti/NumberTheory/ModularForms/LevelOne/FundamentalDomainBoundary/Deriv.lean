@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Integral.CircleIntegral
 /-!
 # Derivatives of the fundamental-domain boundary contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv)
+
 Each segment of `fdBoundary` differentiates in closed form — the verticals and the
 horizontal to their constant chords, the arcs to the arc speed times the rotated tangent —
 and away from the segment-junction parameters the contour itself differentiates like its

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Basic
 /-!
 # Isometries of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Isometry)
+
 An isometry of integral lattices is a rational linear isometry of their ambient bilinear spaces
 which maps one integral carrier onto the other.  This is stronger than an additive or linear
 equivalence of the carriers: the rational form-preservation equation is part of the data.

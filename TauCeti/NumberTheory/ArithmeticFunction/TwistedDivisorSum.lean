@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.LSeries.Dirichlet
 /-!
 # Twisted divisor sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticFunction.TwistedDivisorSum)
+
 This file defines the twisted divisor sum
 
 `sigma e psi phi n = sum_{d | n} psi (n / d) * phi d * d ^ e`

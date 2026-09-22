@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.Padic.Basic
 /-!
 # The p-adic numbers are a Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Padic.Field)
+
 `ℚ_[p]` is a Tate ring, with `(ℤ_[p], (p))` as a pair of definition and `p` as a
 pseudouniformiser. Together with `TauCeti.Huber.PadicInt.not_isTateRing` this is the roadmap's
 Layer-0 example separating the two notions: the same ideal of definition makes `ℤ_[p]` Huber but

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Normal
 /-!
 # The limit morphism from a weight parabolic to its Levi subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Levi.Decomposition)
+
 Let `w : Fin N → ℤ` and let `P(w)` and `L(w)` be the represented weight parabolic and Levi
 subgroups of `GL_N`. The dynamic limit
 

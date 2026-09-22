@@ -30,6 +30,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Card
 /-!
 # The Bruhat decomposition of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Bruhat)
+
 The **Bruhat decomposition** of `GL₂` says that the Borel subgroup `B` of invertible upper
 triangular matrices has exactly two double cosets in `GL₂`: the group `GL₂` is the disjoint union
 of `B` itself and the **big cell** `B w B`, where `w = !![0, 1; 1, 0]` is the Weyl element. In the

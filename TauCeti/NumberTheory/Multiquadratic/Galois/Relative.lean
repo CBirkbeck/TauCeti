@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.RelativeDegree
 /-!
 # The relative Galois group of a multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Galois.Relative)
+
 For square roots `root i` of radicands `d i` over a field `K` with `2 ≠ 0`, square-class
 independence makes `M = K(rootᵢ : i)` an abelian Galois extension of `K` with group `(ℤ/2)ⁿ`, and
 `TauCeti.NumberTheory.Multiquadratic.Subfield.Lattice` matches each intermediate field `F` of

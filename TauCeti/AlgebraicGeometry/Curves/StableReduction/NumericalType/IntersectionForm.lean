@@ -15,6 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The intersection form of a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.IntersectionForm)
+
 The intersection matrix `A = (aᵢⱼ)` of a numerical type is symmetric, has nonnegative
 off-diagonal entries and a connected graph, and kills the positive multiplicity vector `m`. Its
 quadratic form `x ↦ xᵀ A x` is therefore negative semidefinite, and it vanishes exactly on the

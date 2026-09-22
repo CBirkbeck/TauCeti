@@ -12,6 +12,8 @@ public import TauCeti.Probability.Distributions.Gamma.Pi
 /-!
 # The Dirichlet distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirichlet.Basic)
+
 For a finite nonempty concentration vector `a`, the Dirichlet distribution is the law obtained by
 normalizing independent unit-rate Gamma variables of shapes `a i` by their sum.  This file defines
 that normalization and the resulting measure on `EuclideanSpace ℝ ι`.  The measure is

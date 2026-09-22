@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Map
 /-!
 # Functoriality of the derived subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Derived.Functoriality)
+
 A homomorphism of affine group schemes carries commutators to commutators, and therefore
 restricts to a homomorphism of their derived closed subgroup schemes. In coordinate Hopf
 algebras, a morphism `f : H ⟶ K` sends the ideal defining the derived subgroup of `Spec H`

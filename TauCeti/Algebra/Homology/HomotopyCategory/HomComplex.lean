@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplex
 /-!
 # The differential of a cochain complex as a cochain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.HomotopyCategory.HomComplex)
+
 Mathlib's `CochainComplex.HomComplex.Cochain.diff K` is the differential of a cochain complex `K`
 read as a degree `1` cochain from `K` to itself, and `CochainComplex.HomComplex.δ` is the
 differential of the Hom complex.  This file records the elementary calculus relating the two:

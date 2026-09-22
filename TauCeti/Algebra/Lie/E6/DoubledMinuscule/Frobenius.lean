@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The Frobenius of the doubled type-E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.Frobenius)
+
 `TauCeti.E6DoubledMinuscule.groupScheme` is the explicit full-weight type-`E₆` carrier over `ℤ`
 built from `V(ϖ₁) ⊕ V(ϖ₆)`, and `TauCeti.E6DoubledMinuscule.points A` realizes its `A`-valued
 points as a subgroup of `GL₅₄(A)`. Over a commutative ring `A` of exponential characteristic `p`,

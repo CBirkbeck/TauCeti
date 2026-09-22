@@ -11,6 +11,8 @@ public import Mathlib.Order.Disjoint
 /-!
 # Pairwise disjoint families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Order.Disjoint)
+
 `Pairwise.disjoint_iff_ne` characterizes disjointness in a pairwise disjoint family of non-bottom
 elements by inequality of the indices. It reduces disjointness questions for such a family to
 questions about its labels.

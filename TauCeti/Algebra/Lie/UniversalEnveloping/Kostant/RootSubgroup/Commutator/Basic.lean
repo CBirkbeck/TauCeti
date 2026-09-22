@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Nilpotent.Basic
 /-!
 # Chevalley commutator relations for Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Commutator.Basic)
+
 Let `U_ℤ = kostantForm e h` act on a rational vector space `V` through `ρ`, let `M ≤ V` be a
 `U_ℤ`-stable additive subgroup, and let `eᵢ`, `eⱼ`, `eₖ` be distinguished root vectors with
 nilpotent images. If

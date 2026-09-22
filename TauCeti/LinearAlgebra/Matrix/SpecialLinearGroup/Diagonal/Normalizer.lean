@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Diagonal.Basic
 /-!
 # The normalizer of the diagonal torus of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Diagonal.Normalizer)
+
 The diagonal torus of `SL_n(k)` is the group of determinant-one diagonal matrices, the preimage
 of the diagonal torus of `GL_n(k)`. When this torus separates every pair of coordinates, its
 normalizer in `SL_n(k)` consists of the determinant-one monomial matrices, and the normalizer

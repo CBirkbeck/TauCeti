@@ -11,6 +11,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The sixth term of a normalised elliptic divisibility sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Six)
+
 Mathlib computes the terms of `normEDS` up to the fourth (`normEDS_zero`, `normEDS_one`,
 `normEDS_two`, `normEDS_three`, `normEDS_four`) and stops. This file adds the sixth,
 

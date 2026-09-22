@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Indecomposable
 /-!
 # Primitive idempotents
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PrimitiveIdempotent)
+
 An idempotent `e` of a ring `A` is **primitive** when it is nonzero and cannot be split: there is
 no way to write `e = e₁ + e₂` with `e₁` and `e₂` nonzero orthogonal idempotents. Primitive
 idempotents are the atoms out of which a decomposition of `1` into orthogonal idempotents is

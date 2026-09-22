@@ -13,6 +13,8 @@ public import Mathlib.CategoryTheory.Abelian.ShortExact
 /-!
 # Functors between exact categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Functor)
+
 An additive functor between categories with chosen exact structures is *conflation-exact* when it
 maps every distinguished kernel--cokernel pair to a distinguished kernel--cokernel pair. The name
 distinguishes this relative notion from Mathlib's `CategoryTheory.exactFunctor`, which means

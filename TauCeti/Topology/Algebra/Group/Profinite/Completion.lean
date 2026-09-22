@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Category.ProfiniteGrp.Completion
 /-!
 # The universal property of profinite completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Completion)
+
 This file restates the categorical universal property of Mathlib's profinite completion for
 unbundled groups and continuous monoid homomorphisms. It also proves that the canonical map from
 a finite group to its profinite completion is bijective, and exposes the projections of the

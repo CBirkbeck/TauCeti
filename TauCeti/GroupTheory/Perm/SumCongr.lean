@@ -12,6 +12,8 @@ import Mathlib.Tactic.Abel
 /-!
 # The cycles of a permutation acting separately on the two halves of a sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.SumCongr)
+
 `Equiv.Perm.sumCongr σ τ` permutes `α ⊕ β` by `σ` on the left summand and by `τ` on the right
 one. Every cycle stays inside one of the two halves, so all the cycle data simply concatenates.
 

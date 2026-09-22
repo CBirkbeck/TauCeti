@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
 /-!
 # Extending left-separating subspaces by an orthogonal vector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.Orthogonal)
+
 This file records that adjoining an orthogonal vector whose self-pairing is a right non-zero-divisor
 to a left-separating subspace of a reflexive bilinear space produces a nondegenerate restriction.
 It is the structural step used when a Cartan--Dieudonne argument enlarges a fixed subspace.

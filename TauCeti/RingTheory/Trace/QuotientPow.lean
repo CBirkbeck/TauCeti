@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 /-!
 # The trace of a quotient by a power of a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Trace.QuotientPow)
+
 Let `B` be a Dedekind domain over a commutative ring `A`, let `p` be a maximal ideal of `A` with
 residue field `κ = A ⧸ p`, and let `P` be a maximal ideal of `B` with `p · B ⊆ P ^ n`, so that
 `B ⧸ P ^ n` is a `κ`-algebra.  This file computes the trace of that algebra:

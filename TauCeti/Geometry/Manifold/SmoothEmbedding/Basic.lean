@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.SmoothEmbedding
 /-!
 # Bundled smooth embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SmoothEmbedding.Basic)
+
 Mathlib provides the predicate `Manifold.IsSmoothEmbedding I J n f`, saying that a map between
 manifolds is a `C^n` immersion and a topological embedding, but it does not bundle maps satisfying
 that predicate. This file adds the small bundled type needed by the geometric-topology roadmap's

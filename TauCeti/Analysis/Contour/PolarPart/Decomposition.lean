@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Measurable
 /-!
 # Polar-part decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PolarPart.Decomposition)
+
 A **polar-part decomposition** of `f` on `U` at the finite singular set `S`: for each `s ∈ S` an
 explicit finite Laurent tail `polarPart s z = ∑ k, coeff s k / (z - s)^(k+1)`, such that `f`
 minus the total polar part extends to a function differentiable on all of `U`, and the residue at

@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Smoothness of the complemented-kernel implicit function theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ImplicitFunctionTheorem)
+
 Let `f : E → F` be a map between Banach spaces which is strictly differentiable at `a` with
 surjective derivative `f'` whose kernel is complemented. Mathlib's
 `HasStrictFDerivAt.implicitToOpenPartialHomeomorphOfComplemented` straightens `f` near `a`: it is

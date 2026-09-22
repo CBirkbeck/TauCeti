@@ -11,6 +11,8 @@ public import Mathlib.Topology.Category.TopPair
 /-!
 # Triples of topological spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopTriple)
+
 A *triple* `(X, A, B)` of topological spaces consists of subspaces `B ⊆ A ⊆ X`, recorded here as
 a pair of composable embeddings `B ⟶ A ⟶ X` in `TopCat`.  Triples carry the long exact sequence
 of a triple in relative homology, exactly as pairs carry the long exact sequence of a pair; this

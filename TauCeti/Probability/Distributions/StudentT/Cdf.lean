@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 /-!
 # The cumulative distribution function of Student's t law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.StudentT.Cdf)
+
 This file computes the cumulative distribution function of the Student t distribution defined in
 `TauCeti/Probability/Distributions/StudentT/Basic.lean`. On the positive half-line the substitution
 `w = x ^ 2 / ν` turns the tail integral into Euler's second beta integral, and the substitution

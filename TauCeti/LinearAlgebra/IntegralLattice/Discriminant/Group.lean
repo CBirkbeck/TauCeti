@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.IntegralLattice.Dual.Finiteness
 /-!
 # Discriminant groups of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Group)
+
 For a nondegenerate integral lattice `L`, its discriminant group is the finite quotient
 
 ```text

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Fricke.Conjugation
 /-!
 # The Fricke slash operator on modular and cusp forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.Operator)
+
 The Fricke matrix `W = !![0, -1; N, 0]` of `TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean`
 normalizes `Γ₁(N)`, by `frickeConjSL_mem_Gamma1` of
 `TauCeti/NumberTheory/ModularForms/Fricke/Conjugation.lean`. Read in `GL (Fin 2) ℝ` that is the

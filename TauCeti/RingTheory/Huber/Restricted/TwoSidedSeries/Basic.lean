@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 /-!
 # Two-sided restricted series `A⟨X, X⁻¹⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.TwoSidedSeries.Basic)
+
 Wedhorn's Example 6.39 introduces, for a Tate ring `A`, the ring of formal series
 `∑_{n ∈ ℤ} aₙ Xⁿ` whose coefficients satisfy a convergence condition: for every neighbourhood `U`
 of zero, all but finitely many `aₙ` lie in `U`. This module builds the underlying coefficient

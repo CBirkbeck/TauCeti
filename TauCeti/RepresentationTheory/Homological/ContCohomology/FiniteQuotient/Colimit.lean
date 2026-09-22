@@ -16,6 +16,8 @@ public import TauCeti.Topology.Algebra.Group.OpenNormalSubgroup
 /-!
 # Finite-quotient comparison in degrees zero, one and two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.FiniteQuotient.Colimit)
+
 For a profinite group `G` acting continuously on a discrete module `M`, the explicit continuous
 cohomology groups in degrees zero, one and two are colimits of the finite-level groups over the open
 normal subgroups:

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Extension.Basic
 /-!
 # Cotangent spaces of augmented algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.Cotangent.Basic)
+
 For an augmentation `f : A →ₐ[R] R`, if the augmentation ideal is finitely generated over
 `A`, then its cotangent space is finite over `R`.
 

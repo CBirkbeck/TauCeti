@@ -12,6 +12,8 @@ public import TauCeti.Topology.Covering.Quotient
 /-!
 # A regular covering is a quotient covering map for its deck group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Quotient.Covering)
+
 For a covering map `p : E → B` with preconnected total space whose deck action is regular
 (surjective, with `deck p` acting transitively on every fibre), `p` exhibits `B` as the
 quotient of `E` by the deck transformation group: `p` is a `IsQuotientCoveringMap` for

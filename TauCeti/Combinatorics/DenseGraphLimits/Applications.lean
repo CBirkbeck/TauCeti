@@ -11,6 +11,8 @@ import TauCeti.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Extremal inequalities for graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Applications)
+
 This file records the first analytic extremal consequences of the graphon API.  The main results
 are Goodman's inequality
 

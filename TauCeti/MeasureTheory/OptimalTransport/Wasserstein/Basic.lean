@@ -16,6 +16,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Gluing
 /-!
 # The Wasserstein distance of two measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Basic)
+
 For an exponent `p : ℝ≥0∞` the *`p`-Wasserstein distance* of two measures `μ` and `ν` on a common
 space carrying an extended distance is
 

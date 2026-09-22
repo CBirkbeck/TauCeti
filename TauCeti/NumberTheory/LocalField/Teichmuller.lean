@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Henselian.Teichmuller
 /-!
 # The zero-preserving Teichmüller lift of a nonarchimedean local field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.Teichmuller)
+
 For a nonarchimedean local field `K`, `TauCeti.teichmuller 𝒪[K]` is the canonical
 multiplicative section `𝓀[K]ˣ →* 𝒪[K]ˣ`. This file adds its zero-preserving extension
 `teichmullerLift K : 𝓀[K] →*₀ 𝒪[K]`, obtained from Mathlib's `Perfection.teichmuller₀`, and proves

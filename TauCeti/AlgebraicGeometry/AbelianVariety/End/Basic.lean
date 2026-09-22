@@ -14,6 +14,8 @@ import Mathlib.Data.Int.Cast.Lemmas
 /-!
 # The endomorphism ring of an abelian variety
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.End.Basic)
+
 The endomorphisms of an abelian variety `A` over a field `K` form a ring: addition is the
 pointwise group law of `A`, multiplication is composition. This file constructs that ring and the
 multiplication-by-`n` endomorphism `[n] : A ⟶ A` as the image of `n : ℤ` in it.
@@ -79,7 +81,10 @@ pointwise group law of `A` and multiplication composition.
 Since the pointwise group law on `A ⟶ A` is written multiplicatively (see
 `AbelianVariety.Hom.instCommGroup`) while a ring is written additively, this is the additive
 reindexing of the group `A ⟶ A`; use `AbelianVariety.End.toHom` and `AbelianVariety.End.ofHom` to
-pass between an element of the ring and the endomorphism it denotes. -/
+pass between an element of the ring and the endomorphism it denotes.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.AlgebraicGeometry.AbelianVariety.End) -/
 def End (A : AbelianVariety K) : Type u := Additive (A ⟶ A)
 
 namespace End

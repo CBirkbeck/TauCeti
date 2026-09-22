@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.Basic
 /-!
 # The split polarization of a hyperbolic quadratic space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.Hyperbolic)
+
 `TauCeti.SpinPolarizationData.ofNondegenerate` produces polarization data for any
 finite-dimensional nondegenerate quadratic space over a separably closed field, but it does so by
 normalizing an arbitrary form, so its two isotropic summands are not given by a formula. A consumer

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Uniqueness
 /-!
 # The Krull-Schmidt theorem for external direct sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullSchmidt.DirectSum)
+
 `TauCeti.exists_indecomposable_decomposition` and
 `TauCeti.exists_equiv_linearEquiv_of_iSupIndep` state the two halves of the Krull-Schmidt theorem
 for families of *submodules* of one fixed module. A client that starts from an external

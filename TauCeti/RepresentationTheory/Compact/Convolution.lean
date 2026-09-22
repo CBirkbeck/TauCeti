@@ -14,6 +14,8 @@ public import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 /-!
 # Convolution operators on `L²` of a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Convolution)
+
 For a continuous kernel `k : C(G, 𝕜)` on a compact group `G` and an `L²` function `f`, the
 convolution
 

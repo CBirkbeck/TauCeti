@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Character
 /-!
 # Finite-dimensional representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.FDRep)
+
 This file records how the forgetful functor `FDRep R G ⥤ Rep R G` preserves module-finiteness,
 finrank and characters. These facts let results proved for representation carriers transfer back to
 `FDRep`, in particular in `TauCeti.RepresentationTheory.Induction.FiniteDimensional.Basic`. In the

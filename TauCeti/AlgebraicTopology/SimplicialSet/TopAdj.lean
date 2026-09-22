@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Convex.ConvexSpace.Topology
 /-!
 # Naturality of singular simplices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialSet.TopAdj)
+
 The identification of singular simplices with continuous maps from standard simplices commutes
 with continuous maps, which act by postcomposition; in particular, so does the identification of
 points with singular zero-simplices. Faces of singular simplices obtained by precomposition with

@@ -14,6 +14,8 @@ public import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 /-!
 # The quadratic character cuts out the quadratic cyclotomic subfield
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Cyclotomic.QuadraticCharacter)
+
 For a fundamental discriminant `D`, its primitive quadratic character of level `|D|` defines a
 subgroup of the Galois group of the `|D|`-th cyclotomic field. This file identifies the fixed field
 of that subgroup with `ℚ(√D)`.

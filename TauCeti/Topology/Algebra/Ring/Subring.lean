@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Subrings of a topological ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Ring.Subring)
+
 Two facts about a subring `R` of a topological ring `B` that involve no further structure: the
 underlying set of `Subring.topologicalClosure` is the closure of the underlying set of `R`, and
 the integral closure of `R` in `B` is open as soon as `R` is, for which only continuity of

@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.TorusGeneratio
 /-!
 # Geometric connectedness of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.Connected)
+
 The coordinate Hopf algebra of the standard symplectic group `Sp_{2m}` is geometrically connected
 over every field. The proof uses idempotents and algebraically closed points, avoiding an explicit
 presentation of the coordinate algebra as an integral domain.

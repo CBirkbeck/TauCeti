@@ -11,6 +11,8 @@ public import TauCeti.Topology.PL.Map
 /-!
 # The PL structure groupoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.PLGroupoid)
+
 Mathlib builds a manifold out of a `StructureGroupoid` on the model space: `contDiffGroupoid n I`
 for smooth manifolds, `continuousGroupoid H` for topological ones. Between the two sits the
 piecewise-linear structure, and Mathlib has nothing for it. This file supplies it, in the same

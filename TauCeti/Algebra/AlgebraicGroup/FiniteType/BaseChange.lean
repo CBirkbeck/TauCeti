@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.FiniteStability
 /-!
 # Base change of finite-type commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.FiniteType.BaseChange)
+
 This file packages the scalar extension `K ⊗[k] H` of a finite-type commutative Hopf
 `k`-algebra as a finite-type commutative Hopf `K`-algebra. The generic bundled commutative
 Hopf-algebra base-change API is in `CommHopfAlgCatBaseChange`; this file restricts it to the

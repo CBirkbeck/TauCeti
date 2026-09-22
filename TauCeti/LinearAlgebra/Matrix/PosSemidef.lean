@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.PosDef
 /-!
 # Positive-semidefinite matrix algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.PosSemidef)
+
 This file supplements Mathlib's `Matrix.PosSemidef` API for matrices indexed by arbitrary types.
 It provides rank-one and constant matrices, finite pointwise sums and Schur products, Schur powers,
 and the quadratic-form characterization.

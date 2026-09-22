@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Basic
 /-!
 # The branching rule for Schur polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Branching)
+
 A Schur polynomial in `n + 1` variables is a polynomial in its last variable whose terms are
 Schur polynomials in the first `n`, one term for each shape that **interlaces** its own:
 

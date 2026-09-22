@@ -12,6 +12,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # The adic spectrum of `A⟨T/s⟩` is the rational subset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.CompletedHomeomorph)
+
 For a rational subset `R(T/s)` of `Spa (A, A⁺)`, pullback along the structure map
 `ρ : A → A⟨T/s⟩` is a homeomorphism
 

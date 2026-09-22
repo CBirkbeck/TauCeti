@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 /-!
 # Base change of an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.BaseChange)
+
 An isogeny is a coordinate pullback `W₂.CoordinateRing →ₐ[F] W₁.FunctionField` sending the point
 at infinity to the point at infinity. This file carries one along a homomorphism `f : F →+* K` of
 the base field, producing an isogeny `W₁.map f → W₂.map f`, and records that the construction is

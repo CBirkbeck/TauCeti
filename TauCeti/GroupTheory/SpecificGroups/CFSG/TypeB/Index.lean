@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Index
 /-!
 # The validated indices of the untwisted family `Bₙ(q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Index)
+
 The classification list carries the untwisted odd orthogonal family named `Bₙ(q)` for `n ≥ 2`,
 whose matrix name in Gorenstein--Lyons--Solomon is `Ω_{2n+1}(q)`. This file cuts that family out of
 `TauCeti.ValidLieTypeIndex`, in the shape the other families are cut out in

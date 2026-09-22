@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.FiniteType.FaithfullyFlatPoints
 /-!
 # Points of faithfully flat affine group morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.FaithfullyFlatPoints)
+
 Let `f : H ⟶ K` be a morphism of commutative Hopf algebras over a commutative ring `R`.
 Contravariantly, it represents an affine group morphism from `Spec K` to `Spec H`. If the
 underlying algebra map is faithfully flat and of finite type, this morphism is surjective on

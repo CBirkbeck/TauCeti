@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Calculus.Bilinear
 /-!
 # Square roots near the identity in a Banach algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.SquareRoot)
+
 Squaring, `a ↦ a * a`, has derivative `x ↦ 2 * x` at the identity of a Banach algebra over `ℝ`,
 and that derivative is invertible.  The inverse function theorem therefore produces a smooth
 partial inverse near `1`: every element close enough to `1` has a square root close to `1`, the

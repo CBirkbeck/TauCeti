@@ -18,6 +18,8 @@ import TauCeti.NumberTheory.NumberField.PrimeIdeal
 /-!
 # An effective count of ideals of bounded norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EffectiveBounds.IdealCount.Basic)
+
 In a number field `F` of degree `n`, the number of nonzero integral ideals of norm at most
 `X` is at most `X² · 2ⁿ`. A nonzero ideal is encoded injectively as an `n`-tuple of positive
 naturals with product `≤ absNorm I` (distributing, for each rational prime `p`, the value

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.NullHomologous
 /-!
 # Translation invariance for contour winding numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Translate)
+
 This file records the basic translation-invariance API for the generalized winding number.
 Translating both the curve and the distinguished point by the same complex number leaves the index
 principal value unchanged, so the winding number and null-homology are invariant.

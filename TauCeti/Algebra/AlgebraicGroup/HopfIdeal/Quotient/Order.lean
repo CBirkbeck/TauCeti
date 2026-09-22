@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Order
 /-!
 # Point compatibility for order maps between Hopf-ideal quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Order)
+
 If `I ≤ J` are Hopf ideals in a commutative Hopf algebra `H`, then the quotient map
 `H ⟶ H ⧸ J` kills `I`, so it factors through a coordinate morphism
 `H ⧸ I ⟶ H ⧸ J`. Contravariantly, this is the map on closed-subgroup functors induced by

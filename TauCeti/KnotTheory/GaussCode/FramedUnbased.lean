@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.GaussCode.Unbased
 /-!
 # Framed unbased Gauss codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.GaussCode.FramedUnbased)
+
 A framed unbased Gauss code forgets the traversal basepoint while retaining the integer framing.
 The underlying oriented code is already quotiented by cyclic rotation, while its Seifert-relative
 framing is an integer independent of the traversal basepoint. This is the framed refinement of

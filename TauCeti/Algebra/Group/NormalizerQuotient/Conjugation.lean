@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Group.NormalizerQuotient.Basic
 /-!
 # Transporting normalizer quotients along group isomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.NormalizerQuotient.Conjugation)
+
 The universal-covers roadmap uses the algebraic quotient `N(H) / H` as the deck group of the
 cover attached to a subgroup `H`. When subgroups are transported by a basepoint change or by
 an isomorphism of covers, the corresponding normalizer quotients have to be identified.

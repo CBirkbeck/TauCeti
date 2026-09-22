@@ -15,6 +15,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The four elements of a field of order four
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.Four)
+
 A root `ω` of `X² + X + 1` labels the four elements as `0, 1, ω, ω²`.
 The explicit enumeration supports finite calculations over this alphabet without choosing
 another model of the field. Squaring exchanges the two roots in characteristic two.

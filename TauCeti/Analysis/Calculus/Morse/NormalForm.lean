@@ -15,6 +15,8 @@ public import TauCeti.Analysis.Normed.Algebra.SquareRoot
 /-!
 # The Morse lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.NormalForm)
+
 Near a nondegenerate critical point a smooth function is, in suitable coordinates, exactly its
 Hessian quadratic form.  This file proves that, for a real-valued smooth function on a Banach
 space, in the form

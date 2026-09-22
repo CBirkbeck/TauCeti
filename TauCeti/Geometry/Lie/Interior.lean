@@ -12,6 +12,8 @@ public import Mathlib.Geometry.Manifold.IsManifold.InteriorBoundary
 /-!
 # Interior points of group manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Interior)
+
 Every point of a group manifold whose multiplication is `C^n`, for `n ≠ 0`, is an interior point;
 smooth inversion is not required. It suffices to find one interior point in a chart and transport
 it to the desired point by `C^n` left multiplication.

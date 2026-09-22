@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # Permutation representations on the cosets of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Rep.OfMulAction)
+
 For a group `G` and a subgroup `H`, the permutation representation `k[G ⧸ H]` interpolates
 between the two extremes `H = ⊤` and `H = ⊥`.  This file identifies those extremes: the cosets
 of the whole group carry the trivial representation, and the cosets of the trivial subgroup

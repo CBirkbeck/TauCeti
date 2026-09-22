@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.UniformRing
 /-!
 # Maps out of the completion of a localisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Localization.Completion)
+
 A continuous ring homomorphism out of the completion of a localisation `S` of `A` is determined by
 its restriction to `A`. This factors into two independent steps:
 

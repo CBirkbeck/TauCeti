@@ -12,6 +12,8 @@ import TauCeti.Algebra.Order.Antidiag.Pi
 /-!
 # Coordinate marginals of the multinomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Multinomial.Marginal)
+
 Each coordinate of a multinomial count vector has the binomial distribution with success
 probability equal to the corresponding cell probability.  This file proves that statement at the
 level of measures.

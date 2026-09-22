@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.Monodromy.Basic
 /-!
 # Regular connected covers and normal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Regular)
+
 A pointed connected covering recovers the image of the fundamental group of its total space in
 the fundamental group of the base. This file proves the regular-cover criterion: over a
 path-connected base, the covering is regular exactly when that recovered subgroup is normal.

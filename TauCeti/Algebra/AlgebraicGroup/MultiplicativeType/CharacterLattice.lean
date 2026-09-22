@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.Basic
 /-!
 # Character groups of groups of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.CharacterLattice)
+
 The geometric character group of a finite-type commutative Hopf algebra of multiplicative type
 is finitely generated. Indeed, the multiplicative-type hypothesis says that the group-like
 elements span the coordinate algebra after extension to an algebraic closure, and finite type

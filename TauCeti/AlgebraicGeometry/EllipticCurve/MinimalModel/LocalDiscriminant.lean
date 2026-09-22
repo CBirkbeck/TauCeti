@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.Basic
 /-!
 # The local minimal discriminant ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.LocalDiscriminant)
+
 Let `R` be a discrete valuation ring with fraction field `K`. The discriminant of an integral
 minimal Weierstrass equation over `K` belongs to `R`, and the principal ideal it generates is
 independent of the chosen minimal equation. This file packages that ideal as

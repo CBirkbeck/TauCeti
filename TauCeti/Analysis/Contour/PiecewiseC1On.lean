@@ -14,6 +14,8 @@ import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Piecewise `C¹` curves on an interval
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PiecewiseC1On)
+
 The contour-integration roadmap states its objects — the generalized winding number, the contour
 integral, and the Hungerbühler--Wasem regularity conditions — for a **piecewise `C¹`** curve
 `γ : ℝ → ℂ` on the closed interval `[[a, b]]` between two parameters (in either order): continuous

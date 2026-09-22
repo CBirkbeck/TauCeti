@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.EVariationComparison
 /-!
 # Metric variation of paths in open Riemannian submanifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.MetricVariation)
+
 For an open submanifold of an inner-product space, the restricted Riemannian metric is the
 ambient metric.  Consequently the total metric variation of a `C¹` path is exactly its
 `Manifold.pathELength`: both are the integral of the norm of the ambient derivative.  This file

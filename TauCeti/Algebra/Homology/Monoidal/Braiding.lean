@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.Monoidal.Summand
 /-!
 # The Koszul braiding on cochain complexes of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Monoidal.Braiding)
+
 Mathlib's `HomologicalComplex.monoidalCategory`, instantiated at `ComplexShape.up ℤ` and its
 `ComplexShape.TensorSigns`, makes `CochainComplex (ModuleCat R) ℤ` monoidal by totalizing the
 degreewise tensor product.  It does not make it braided: Mathlib's `GradedObject.braidedCategory`

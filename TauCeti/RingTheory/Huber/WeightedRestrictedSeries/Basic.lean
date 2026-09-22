@@ -16,6 +16,8 @@ public import Mathlib.Topology.Algebra.UniformMulAction
 /-!
 # Weighted restricted power series `A⟨X⟩_T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic)
+
 For a commutative nonarchimedean ring `A` and a family `T` of subsets of `A` indexed by the
 variables, Wedhorn defines the *weighted* restricted power series ring
 

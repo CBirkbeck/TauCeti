@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.KostantLattic
 /-!
 # The split type-`Dₙ` spinor module and its Kostant-stable lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.Split)
+
 `TauCeti.SpinPolarizationData.typeDSpinRep` turns any polarized quadratic space into a
 representation of the type-`D` Serre presentation on the exterior algebra of the exterior summand,
 and `typeDSpinRep_serreKostantForm_apply_mem_integralLattice` proves that the coordinate lattice of

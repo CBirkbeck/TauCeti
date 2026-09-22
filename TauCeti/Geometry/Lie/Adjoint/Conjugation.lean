@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Diffeomorphism.Group
 /-!
 # Smooth conjugation in a Lie group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Conjugation)
+
 This file packages conjugation by an element of a Lie group as a smooth self-diffeomorphism. The
 resulting map from the group to its group of smooth self-diffeomorphisms is a group homomorphism.
 Differentiating each conjugation diffeomorphism at the identity yields the group adjoint action

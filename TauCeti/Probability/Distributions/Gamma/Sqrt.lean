@@ -13,6 +13,8 @@ public import TauCeti.Probability.Distributions.Gamma.Basic
 /-!
 # Square roots of gamma variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Sqrt)
+
 A positive variable whose square is gamma has a density of its own: substituting `x = t ^ 2` in
 the gamma density and multiplying by the Jacobian `2 * t` turns
 `r ^ a / Γ a * x ^ (a - 1) * exp (-(r * x))` into

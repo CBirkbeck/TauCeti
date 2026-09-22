@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.Sampling.Infinite
 /-!
 # The infinite graphon sampler as an exchangeable law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.InfiniteSampling)
+
 There are two constructions of an infinite random graph associated to a graphon. The explicit
 joint sampler `infiniteSampleLaw` draws all vertex positions and edge coins on one probability
 space. Independently, the finite sampling laws form `sampleExchangeableLaw`, whose consistent

@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Independence
 /-!
 # The slash sum descends to modular forms and to cusp forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.ModularForm)
+
 `Form.lean` bundles the double coset as an endomorphism of
 `SlashInvariantForm (G.map (mapGL ℝ)) k`, and flags that this is *not* the roadmap's Layer 2(b)
 target because holomorphy and the cusp conditions are not yet carried along. This file supplies
@@ -123,7 +125,11 @@ private lemma coe_heckeSlashCuspForm (f : CuspForm (G.map (mapGL ℝ)) k) :
 
 /-- **The double coset as a `ℂ`-linear endomorphism of `ModularForm (G.map (mapGL ℝ)) k`.** This
 is the form Hecke operators are consumed in: bundling is what lets them compose and later carry a
-ring structure. At `G = Γ₁(N)` this is the roadmap's Layer 2(b) operator. -/
+ring structure. At `G = Γ₁(N)` this is the roadmap's Layer 2(b) operator.
+
+Reviewed-by: 1 person
+Tested by: 2 key results
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=HeckeRing.GL2.heckeSlashModularFormEnd) -/
 noncomputable def heckeSlashModularFormEnd :
     Module.End ℂ (ModularForm (G.map (mapGL ℝ)) k) where
   toFun := heckeSlashModularForm k D hD

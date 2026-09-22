@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.GradedCoderivation
 /-!
 # Taylor components of composites of graded Taylor expansions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.TaylorComponent)
+
 For the reduced tensor coalgebra `Tᶜ(M)`, the arity-`n` Taylor component of an endomorphism,
 `LinearMap.taylorComponent`, is its restriction to words of length `n`, followed by projection to
 words of length one.

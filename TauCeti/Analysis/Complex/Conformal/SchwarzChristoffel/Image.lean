@@ -18,6 +18,8 @@ import TauCeti.Algebra.BigOperators.Finset.Fiber
 /-!
 # The image of the Schwarz--Christoffel primitive and its boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Image)
+
 Let `F = schwarzChristoffelPrimitive a e z₀` and let `P` be the range of the compactified boundary
 map `schwarzChristoffelCompactifiedBoundary a e z₀`, the closed boundary path through all the
 finite vertices and the vertex at infinity.  For a monotone family of prevertices,

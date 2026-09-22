@@ -17,6 +17,8 @@ import TauCeti.MeasureTheory.Measure.GiryMonad
 /-!
 # Product probability-measure kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ProductKernel)
+
 This file provides the basic theory of products of probability measures, phrased directly over
 Mathlib's `ProbabilityMeasure.pi` and `Measure.infinitePi`: measurability of the product kernel —
 finite and countable — and `Measure.bind`-evaluation of the mixture the finite product induces.

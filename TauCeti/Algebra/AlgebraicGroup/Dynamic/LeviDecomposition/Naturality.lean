@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Dynamic.LeviDecomposition.Basic
 /-!
 # Naturality of the dynamic Levi decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Dynamic.LeviDecomposition.Naturality)
+
 The dynamic Levi decomposition identifies the parabolic subgroup attached to a cocharacter with
 the semidirect product of its unipotent and Levi subgroups. This file proves that the
 identification commutes with extension of the commutative value algebra.

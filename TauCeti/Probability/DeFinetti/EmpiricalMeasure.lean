@@ -14,6 +14,8 @@ import TauCeti.Probability.Exchangeability.ConditionallyIID.WeakConvergence
 /-!
 # De Finetti's theorem in empirical form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.EmpiricalMeasure)
+
 The de Finetti endpoints of the conditional strong law: for an exchangeable process on a nonempty
 standard Borel space, the directing measure's mass on each fixed measurable set is the almost-sure
 limit of the process's empirical frequencies, and — once a compatible Polish topology on the state

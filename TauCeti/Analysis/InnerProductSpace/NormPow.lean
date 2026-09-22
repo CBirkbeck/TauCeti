@@ -11,6 +11,8 @@ public import TauCeti.Analysis.InnerProductSpace.Laplacian.Basic
 /-!
 # Real powers of the norm away from the origin
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.NormPow)
+
 Mathlib computes the derivative of `x ↦ ‖x‖ ^ p` on the whole inner-product space when
 `1 < p`.  Negative powers, which occur in the Newtonian kernel, are smooth only away from the
 origin.  This file supplies the corresponding local derivative, Hessian, and Laplacian formulas

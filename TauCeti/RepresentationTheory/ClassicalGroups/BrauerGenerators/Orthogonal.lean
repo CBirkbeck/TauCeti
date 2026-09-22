@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Tensor.Power
 /-!
 # The cap, the cup, and the Brauer relations on the tensor square
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Orthogonal)
+
 The orthogonal group acts on `V = kⁿ` preserving the coordinate dot product, and the dot product
 is a map `V ⊗ V → k`: read as a diagram it is a **cap**, an arc joining the two bottom points.
 The dual copairing `k → V ⊗ V`, the **cup** `1 ↦ ∑ⱼ eⱼ ⊗ eⱼ`, is the same arc drawn at the top.

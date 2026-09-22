@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Nilpotent.Lemmas
 /-!
 # Joins of normal unipotent linear groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Unipotent.NormalJoin)
+
 Let `U` and `W` be subgroups of a group acting on a finite-dimensional vector space, with `W`
 normalizing `U`. If every element of each subgroup acts unipotently, then every element of `U ⊔ W`
 acts unipotently. The key point is that the common fixed space of `U` is invariant under `W`.

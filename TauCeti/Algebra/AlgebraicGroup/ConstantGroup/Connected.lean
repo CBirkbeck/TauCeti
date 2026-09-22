@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Idempotents.Connected.Spectrum
 /-!
 # Morphisms from connected affine groups to finite constant groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.ConstantGroup.Connected)
+
 Let `H` be the coordinate Hopf algebra of a connected affine group over a field
 `k`, and let `G` be a finite group. Every group-scheme morphism from `Spec H` to the constant
 group scheme attached to `G` is trivial. Contravariantly, every bialgebra morphism

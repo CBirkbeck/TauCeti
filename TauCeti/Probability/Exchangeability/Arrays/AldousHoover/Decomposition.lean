@@ -11,6 +11,8 @@ public import TauCeti.Probability.Kernel.Randomization
 /-!
 # Uniform mixtures of jointly dissociated array laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.AldousHoover.Decomposition)
+
 Every exchangeable probability law on arrays over a standard Borel space is a measurable mixture
 of jointly dissociated ones, with the same array symmetry as the original law and with one uniform
 variable on the unit interval as the mixing variable. This isolates the global noise in the

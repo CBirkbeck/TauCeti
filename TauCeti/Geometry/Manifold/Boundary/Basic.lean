@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.IsManifold.InteriorBoundary
 /-!
 # Chart-independent detection of manifold boundary points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Basic)
+
 This file restates Mathlib's chart-independence results for interior and boundary points against
 the range of a model with corners. This is the form used when computing the boundary of a concrete
 model.

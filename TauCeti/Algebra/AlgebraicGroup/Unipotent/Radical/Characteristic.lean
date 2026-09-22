@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Construction
 /-!
 # When the unipotent radical is the whole group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Characteristic)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. The
 unipotent radical of `H` is the whole represented group exactly when `H` itself is geometrically
 connected, smooth, and unipotent. In Hopf coordinates, the whole closed subgroup is cut out by

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.CartierDuality.FiniteL
 /-!
 # Cartier duality commutes with base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.CartierDuality.BaseChange)
+
 Pullback along `Spec S ⟶ Spec R` preserves finite local freeness and commutativity, so it acts
 on the category where Cartier duality lives, and it commutes with Cartier duality: the Cartier
 dual of a base-changed group scheme is the base change of the Cartier dual.

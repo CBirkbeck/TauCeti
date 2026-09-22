@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.SmoothEmbedding.SmoothAmbientIsotopy.Bas
 /-!
 # Smooth concordance of smooth embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SmoothEmbedding.Concordance)
+
 This file defines a globally collared smooth concordance between two smooth embeddings
 `f g : M → N`. To avoid manifolds with boundary, a concordance is a `C^n` embedding
 `F : M × ℝ → N × ℝ` which is the product `f × id` and `g × id` on uniform positive-width

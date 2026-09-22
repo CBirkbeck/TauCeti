@@ -16,6 +16,8 @@ import Mathlib.Order.SuccPred.IntervalSucc
 /-!
 # Simplicity of the convex Schwarz--Christoffel boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Injective)
+
 Strictly ordered prevertices and exponents in `(-1, 0)` summing to `-2` give an injective
 compactified Schwarz--Christoffel boundary. Nonadjacent bounded sides are disjoint, adjacent
 bounded sides meet only at their common corner, and the bounded boundary arc lies strictly above

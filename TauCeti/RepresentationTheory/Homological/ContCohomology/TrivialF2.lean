@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.SmoothDisc
 /-!
 # The trivial F₂ coefficient representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.TrivialF2)
+
 This file defines a trivial object of `TopRep ℤ G` whose carrier is a universe lift of `ZMod 2`.
 It is stable under restriction and is smooth discrete, as needed for continuous cohomology with
 trivial `𝔽₂` coefficients.

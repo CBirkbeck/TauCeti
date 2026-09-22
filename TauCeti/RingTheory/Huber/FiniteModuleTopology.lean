@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Module.Finite
 /-!
 # The canonical topology on a finite module over a Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.FiniteModuleTopology)
+
 Let `A` be a complete Hausdorff noetherian Tate ring and let `M` be a finite `A`-module. This
 file proves that Mathlib's `moduleTopology A M` is Hausdorff, the separatedness clause of
 [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition 6.18(1).

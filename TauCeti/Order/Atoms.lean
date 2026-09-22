@@ -11,6 +11,8 @@ public import Mathlib.Order.SupIndep
 /-!
 # Finite atom decompositions in a complemented modular lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Order.Atoms)
+
 In a bounded modular lattice that is complemented and satisfies the descending chain condition,
 every element is the supremum of a finite independent family of atoms: split off an atom `a` of
 the element `x`, meet a complement of `a` with `x`, which the modular law makes a complement of

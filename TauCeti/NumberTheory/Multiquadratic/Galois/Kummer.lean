@@ -15,6 +15,8 @@ import Mathlib.FieldTheory.PrimitiveElement
 /-!
 # An exponent-two Galois extension is multiquadratic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Galois.Kummer)
+
 `TauCeti/NumberTheory/Multiquadratic/Galois` shows that adjoining square roots of a square-class
 independent family gives a Galois extension (`TauCeti.Multiquadratic.isGalois`) whose group has
 exponent two (`TauCeti.Multiquadratic.aut_exponent_dvd_two`), while

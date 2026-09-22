@@ -17,6 +17,8 @@ import Mathlib.Topology.Order.Compact
 /-!
 # Proximity invariance of the winding number
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Proximity)
+
 Two closed curves that stay closer to each other than the first one stays to `w` have the same
 winding number about `w`. This is the "dog on a leash" principle: the leash from `γ₀ t` to `γ₁ t`
 is too short to reach `w`, so the two walks encircle `w` the same number of times.

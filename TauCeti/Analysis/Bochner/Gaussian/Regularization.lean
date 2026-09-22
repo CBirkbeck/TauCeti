@@ -15,6 +15,8 @@ import TauCeti.Analysis.Bochner.Gaussian.Basic
 /-!
 # Gaussian regularization of positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.Gaussian.Regularization)
+
 The Gaussian regularization `φ_ε = φ · exp (-ε‖·‖²)` of a positive-definite function `φ` on a
 real inner-product space is again positive definite (a Schur product with the Gaussian kernel)
 and converges to `φ` pointwise as `ε → 0`. On a finite-dimensional space and for `ε > 0` it is

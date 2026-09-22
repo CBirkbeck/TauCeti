@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Matrix.PosSemidef
 /-!
 # Bounded positive-definite kernels decrease along a symmetric shift
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Kernel.Shift)
+
 Let `K` be a positive-definite kernel on a type `α` and let `σ : α → α` be a *symmetric shift*,
 meaning `K (σ p) q = K p (σ q)`. If the diagonal of `K` is bounded — which by Cauchy--Schwarz is
 the same as `K` being bounded — then the shifted kernel is dominated by `K`: the difference

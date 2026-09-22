@@ -13,6 +13,8 @@ import TauCeti.Algebra.Coalgebra.Subcomodule.PointSeparation
 /-!
 # Connected affine groups preserve normal-subgroup weight spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Normal.Weights)
+
 Let a reduced connected affine group of finite type over an algebraically closed field act on a
 finite-dimensional comodule. Its rational points preserve every nonzero joint weight space for
 any normal subgroup of the rational point group. The normal subgroup need not be closed.

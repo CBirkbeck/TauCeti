@@ -17,6 +17,8 @@ import TauCeti.Analysis.Contour.InvSubCPVExistence
 /-!
 # The principal value of a polar part is the winding-weighted residue
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PolarPart.CPV)
+
 For a piecewise-`C¹` immersed **closed** curve whose crossings of a pole `s ∈ S` are interior
 and, at every surviving higher-order coefficient, flat and sector-compatible, the single-point
 Cauchy principal value of the polar part of `f` at `s` along the curve is

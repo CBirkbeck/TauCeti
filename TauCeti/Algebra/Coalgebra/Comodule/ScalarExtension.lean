@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 /-!
 # Scalar extension of comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.ScalarExtension)
+
 Let `C` be a coalgebra over a commutative semiring `R`, and let `A` be an
 `R`-algebra. This file constructs scalar extension of the underlying-module functor on all
 comodules:

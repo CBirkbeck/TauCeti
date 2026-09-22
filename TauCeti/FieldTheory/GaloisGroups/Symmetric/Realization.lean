@@ -14,6 +14,8 @@ import TauCeti.FieldTheory.GaloisGroups.Reduction
 /-!
 # Symmetric groups as Galois groups over the rationals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Symmetric.Realization)
+
 For every positive degree `n`, there is a monic integral polynomial of degree `n`, irreducible
 over `ℚ`, with full symmetric Galois group. For `n ≥ 2`, choose an irreducible reduction
 modulo `2`, factor degrees `(1, n - 1)` modulo `3`, and exactly one quadratic factor with

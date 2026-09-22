@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.GeneralLinear.Finrank
 /-!
 # Basic theory of `sl₂` triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Basic)
+
 Mathlib defines an abstract `sl₂` triple (`IsSl2Triple h e f`: the relations `⁅e, f⁆ = h`,
 `⁅h, e⁆ = 2e`, `⁅h, f⁆ = -2f`, with `h ≠ 0`) and the whole primitive-vector calculus that rests on
 it. This file adds three things Mathlib does not have.

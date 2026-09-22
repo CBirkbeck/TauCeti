@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Basic
 /-!
 # Transport costs bounded below by integrable marginal terms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.BoundedBelow)
+
 An extended-real transport cost may take negative values, so it cannot be integrated directly by
 `lintegral`. If `c : X × Y → EReal` is bounded below by a split function `a x + b y`, with `a`
 and `b` integrable against the two marginals, subtracting that lower bound leaves a nonnegative

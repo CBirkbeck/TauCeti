@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.Haar.NormedSpace
 /-!
 # Dilation scaling of the lower Lebesgue integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.Dilation)
+
 Dilating the variable of a function on a finite-dimensional real normed space `E` by a nonzero
 scalar `r` rescales its integral against an additive Haar measure by `|(r ^ n)⁻¹|`, where `n` is
 the dimension of `E`. Mathlib records this for the Bochner integral as

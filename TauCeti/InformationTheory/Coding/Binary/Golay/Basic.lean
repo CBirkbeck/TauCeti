@@ -14,6 +14,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # The extended binary Golay code
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.Golay.Basic)
+
 The extended binary Golay code is the row space of the systematic matrix `[I₁₂ | B]`,
 where `B` is the bordered reverse-circulant matrix over `ZMod 2`. The first twelve
 coordinates recover the message. The generator is also a parity-check matrix.

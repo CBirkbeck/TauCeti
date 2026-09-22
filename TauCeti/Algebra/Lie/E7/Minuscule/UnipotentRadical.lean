@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Faithful
 /-!
 # The unipotent radical obstruction for the type-E7 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.UnipotentRadical)
+
 Let `H` be the coordinate Hopf algebra of the specialized full-weight type-`E₇` minuscule
 carrier. Over an algebraically closed field, if `H` is reduced, then every normal smooth
 unipotent closed subgroup of the carrier is trivial. Consequently its unipotent radical is

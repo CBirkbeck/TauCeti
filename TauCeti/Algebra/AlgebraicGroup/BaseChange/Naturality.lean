@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.Map
 /-!
 # Naturality of base-changed points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.BaseChange.Naturality)
+
 This file records the two naturality properties of
 `TauCeti.AlgHom.baseChangePointsMulEquiv`. Base-changing a bialgebra from `k` to `K`
 identifies `K`-algebra maps out of `K ⊗[k] A` with `k`-algebra maps out of `A`; this

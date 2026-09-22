@@ -14,6 +14,8 @@ import TauCeti.RingTheory.ClassGroup.Basic
 /-!
 # The ray class group of a modulus is finite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Finite)
+
 Let `𝔪` be a modulus of a number field `K`.  This file proves that `RayClassGroup 𝔪` is finite.
 
 The argument runs along the two steps of the ray class exact sequence. The transition map to the

@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 /-!
 # The diamond operators are the Hecke operators of the `Γ₀(N)`-cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Diamond)
+
 `ModularForms/DiamondOperators.lean` builds `⟨d⟩` by hand, as slashing by any `Γ₀(N)` matrix
 with lower-right entry `d`, and shows the result is well defined on `M_k(Γ₁(N))` and on
 `S_k(Γ₁(N))`. `HeckeRing/GL2/Gamma1/DiamondCosets.lean` builds, from the same matrix, an

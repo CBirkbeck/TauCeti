@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.Kostka
 /-!
 # The Bender-Knuth involutions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.BenderKnuth)
+
 Fix a semistandard Young tableau `T` and a letter `v`.  The **Bender-Knuth involution** at `v`
 rewrites the `v`s and `(v + 1)`s of `T` so as to exchange how often the two letters occur, leaving
 every other letter untouched.  It is the combinatorial mechanism behind the symmetry of the Schur

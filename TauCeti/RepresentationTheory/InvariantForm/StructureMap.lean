@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.RealForm
 /-!
 # Structure maps and invariant bilinear forms, against a fixed invariant Hermitian form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.InvariantForm.StructureMap)
+
 An invariant *bilinear* form on an irreducible complex representation is strictly weaker than a
 structure map.  Together with a positive definite invariant *Hermitian* form `H`, however, it
 produces one: this file builds a conjugate-linear equivariant map of `V` out of the two forms, and

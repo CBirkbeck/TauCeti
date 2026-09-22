@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Pi
 /-!
 # Proper ideals on rational localisations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Proper)
+
 For a point `v` of the rational subset `R(T/s)`, the extension of `v` to the algebraic
 localisation at `s` has support containing the extension of `supp v`. The extended valuation is
 continuous for the localisation topology, so its support remains proper after passing to the

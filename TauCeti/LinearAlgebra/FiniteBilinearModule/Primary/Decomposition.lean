@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Primary.Component
 /-!
 # Primary decomposition of finite bilinear and quadratic modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Primary.Decomposition)
+
 This file upgrades the primary decomposition of the underlying finite abelian group to the
 form-theoretic decompositions used for discriminant forms. For a finite bilinear module, its
 primary components form an orthogonal product whose pairing is the sum of the restricted

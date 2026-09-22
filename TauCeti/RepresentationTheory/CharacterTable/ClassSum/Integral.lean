@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 /-!
 # Integrality of class sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.Integral)
+
 For a finite group `G`, the class sums form a finite basis of the center of the integral
 group algebra `ℤ[G]`. Consequently every element of this center, and in particular every
 class sum, is integral over `ℤ`.

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.TensorProduct
 /-!
 # Matrix coefficients of a tensor product of comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.TensorProduct)
+
 For two right comodules `M` and `N` over a bialgebra `C`, the tensor product `M ⊗[R] N`
 carries the diagonal coaction `m ⊗ n ↦ (m₀ ⊗ n₀) ⊗ m₁ n₁` of
 `TauCeti.Algebra.Coalgebra.Comodule.TensorProduct` (`Comodule.tensor`), which multiplies the

@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 /-!
 # Hecke rings: the convolution product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Multiplication)
+
 The convolution product
 `HeckeCosetModule Δ H₁ H₂ R × HeckeCosetModule Δ H₂ H₃ R → HeckeCosetModule Δ H₁ H₃ R`
 of Hecke coset modules with coefficients in a semiring `R`, following [Shimura][shimura1971],

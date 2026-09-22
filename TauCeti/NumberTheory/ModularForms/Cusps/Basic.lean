@@ -12,6 +12,8 @@ public import Mathlib.NumberTheory.ModularForms.SlashActions
 /-!
 # The integer cusp width of a finite-index subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Cusps.Basic)
+
 The image of `T = [1, 1; 0, 1]` in `GL(2, ℝ)` and its powers are the upper-triangular
 shift matrices; a subgroup `𝒢` of finite relative index in `𝒮ℒ` contains some positive
 power of `T`, and `Subgroup.integerCuspWidth 𝒢` is the least such exponent. The cosets of the

@@ -16,6 +16,8 @@ import Mathlib.MeasureTheory.Constructions.Polish.Basic
 /-!
 # The conditional strong law of large numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.StrongLaw)
+
 A conditionally i.i.d. process obeys the strong law of large numbers **conditionally**: almost
 surely, the averages of a bounded observable along the process converge to that observable's
 integral against the *directing measure*, not against a deterministic law. Taking the observable to

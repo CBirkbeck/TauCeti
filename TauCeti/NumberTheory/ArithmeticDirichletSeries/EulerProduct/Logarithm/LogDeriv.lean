@@ -13,6 +13,8 @@ import Mathlib.Analysis.Normed.Module.MultipliableUniformlyOn
 /-!
 # The logarithmic derivative of an ideal Euler product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.LogDeriv)
+
 Where the Dirichlet series indexed by the nonzero ideals converges absolutely, the `L`-series of
 the norm coefficients of a `TauCeti.EulerProductData` is the unrestricted product of its local
 Euler factors, by `TauCeti.EulerProductData.hasProd_eulerFactor`.  A *finite* product has for

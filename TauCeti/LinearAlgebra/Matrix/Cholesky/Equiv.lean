@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # The Cholesky equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Cholesky.Equiv)
+
 This file proves uniqueness of positive-diagonal lower-triangular Gram factors. Together with the
 Cholesky construction, this packages Cholesky factorization and reconstruction as an equivalence
 between positive-definite symmetric matrices and positive-diagonal lower-triangular matrices.

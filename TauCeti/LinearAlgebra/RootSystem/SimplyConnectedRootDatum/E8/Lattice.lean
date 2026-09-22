@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.E8Coordinates
 /-!
 # The listed `E₈` coroots are all the norm-two vectors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Lattice)
+
 The two hundred and forty coroots of type `E₈` are enumerated in
 `TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Basic` as coordinate vectors in the
 simple-coroot basis. This file proves that the enumeration is *complete*: a vector of

@@ -17,6 +17,8 @@ import TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Smooth
 /-!
 # Reductivity of the special orthogonal groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Reductive)
+
 Let `SOₙ` be the special orthogonal group of the standard symmetric form over a field of
 characteristic different from two. In dimension at least three, every normal smooth unipotent
 closed subgroup of `SOₙ` is trivial. Equivalently, its unipotent radical is trivial.

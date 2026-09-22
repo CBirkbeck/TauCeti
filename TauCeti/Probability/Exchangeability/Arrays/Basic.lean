@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Embedding
 /-!
 # Exchangeable arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Basic)
+
 A doubly indexed array `X : ℕ × ℕ → Ω → α` carries two symmetry notions, and they are genuinely
 different:
 

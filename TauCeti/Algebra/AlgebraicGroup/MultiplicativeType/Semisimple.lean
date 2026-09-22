@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Semisimple
 /-!
 # Semisimple points and closed subgroups of groups of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.Semisimple)
+
 A finite-type affine group over a field is of multiplicative type when its coordinate Hopf
 algebra becomes diagonalizable after extension to an algebraic closure. Every point of a
 diagonalizable group is semisimple, so the geometric fibre of a group of multiplicative type has

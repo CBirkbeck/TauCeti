@@ -18,6 +18,8 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 /-!
 # The uniform distribution on an interval
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Uniform)
+
 `uniformMeasure a b` is normalized Lebesgue measure on `Set.Ioc a b`, defined as
 `ProbabilityTheory.cond volume (Set.Ioc a b)`.
 

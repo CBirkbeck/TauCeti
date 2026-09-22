@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Measure.Haar.Unique
 /-!
 # Sard's lemma on the flat stratum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Sard.FlatStratum)
+
 This file proves the case of finite-dimensional Sard's theorem carried by the higher derivatives:
 if `f` is `C^{k+1}` and every iterated derivative of order `1 ≤ i ≤ k` vanishes on a set `s`, then
 `f '' s` is null as soon as `finrank ℝ E < (k + 1) * finrank ℝ F`. In Morse's proof of the

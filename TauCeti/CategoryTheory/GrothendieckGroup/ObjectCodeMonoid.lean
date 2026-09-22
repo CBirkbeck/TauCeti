@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 /-!
 # The monoid of isomorphism classes under the binary biproduct
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.ObjectCodeMonoid)
+
 For an essentially small category `C` with zero morphisms, a zero object and binary biproducts,
 the small type `TauCeti.ObjectCode C` of codes for the isomorphism classes of objects carries an
 additive commutative monoid structure: the sum of two classes is the class of the biproduct of

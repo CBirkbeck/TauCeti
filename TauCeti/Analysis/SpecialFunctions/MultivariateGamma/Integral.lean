@@ -14,6 +14,8 @@ public import TauCeti.MeasureTheory.Measure.SymmetricMatrix.PosDef
 /-!
 # The multivariate Gamma function as a cone integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.MultivariateGamma.Integral)
+
 The multivariate Gamma function `TauCeti.multivariateGamma p a` is the value of the integral of
 `(det A) ^ (a - (p + 1) / 2) * exp (-trace A)` over the cone of positive-definite symmetric
 `p × p` matrices, taken against `TauCeti.symmetricLebesgue p`. This file proves that identity,

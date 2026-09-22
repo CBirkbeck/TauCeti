@@ -12,6 +12,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # The radicals of `gl n K` and `sl n K`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Radical)
+
 `TauCeti/Algebra/Lie/GeneralLinear/Basic.lean` identifies the centre of `gl n R` (the scalar
 matrices) and its derived ideal (`sl n R`), and shows that the two are complementary submodules as
 soon as the size of the matrices is invertible. This file proves the reductivity criterion itself,

@@ -13,6 +13,8 @@ import Mathlib.Algebra.Ring.Hom.InjSurj
 /-!
 # Bilinear forms and base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.BaseChange)
+
 This file relates bilinear forms transported along an `IsBaseChange` equivalence to Mathlib's
 canonical base change of bilinear forms, and records how nondegeneracy behaves under that base
 change.

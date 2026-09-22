@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Norm.Valence
 /-!
 # The cusp term of the general-level valence formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Norm.Cusps)
+
 For `𝒢 ≤ GL(2, ℝ)` of finite relative index in `𝒮ℒ`, the norm
 `ModularForm.norm 𝒮ℒ f = ∏_{q ∈ 𝒮ℒ ⧸ 𝒢 ⊓ 𝒮ℒ} f ∣[k] q⁻¹` of a weight-`k` form on `𝒢` is a
 level-one form, and `TauCeti/NumberTheory/ModularForms/Norm/Valence.lean` reads the level-one

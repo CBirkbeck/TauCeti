@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # Conjugating `Γ₀(N)` and `Γ₁(N)` by the Fricke matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.Conjugation)
+
 Over a field in which `N` is invertible, and for `σ = !![a, b; c, d] ∈ Γ₀(N)`, so `N ∣ c`,
 conjugating by the Fricke matrix `W = !![0, -1; N, 0]` of
 `TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean` gives

@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.ReducedInvariant
 /-!
 # The omega family of division polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Omega)
+
 `ω n` is the bivariate polynomial that the scalar-multiplication development identifies as the
 second (Jacobian) coordinate of multiplication by `n` on a Weierstrass curve — that
 identification belongs there, not here, and is not yet in the library. This file supplies the

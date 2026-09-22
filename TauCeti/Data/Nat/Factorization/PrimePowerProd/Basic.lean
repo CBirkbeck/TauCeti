@@ -12,6 +12,8 @@ public import Mathlib.Data.Nat.Prime.Pow
 /-!
 # Ordered products over a prime factorisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.Factorization.PrimePowerProd.Basic)
+
 `n.factorization.prod f` multiplies the blocks `f p (n.factorization p)` over the primes
 dividing `n`. Being a `Finsupp.prod` it asks for a `CommMonoid`: a `Finsupp` records no order
 on its support, so the product is only well defined once the factors commute.

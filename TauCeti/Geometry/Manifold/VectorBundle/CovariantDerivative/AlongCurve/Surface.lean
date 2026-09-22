@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Coordin
 /-!
 # Covariant differentiation on a parametrized surface
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCurve.Surface)
+
 A *parametrized surface* in a manifold `M` is a map `f` of two scalar parameters, here written in
 curried form so that `f u` and `fun q ↦ f q v` are the two families of parameter curves through
 the point `f u v`.  Each family carries a velocity field: `fun r ↦ γ'(u)` for `γ = fun q ↦ f q r`

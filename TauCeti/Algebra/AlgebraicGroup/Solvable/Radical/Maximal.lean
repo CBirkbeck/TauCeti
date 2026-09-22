@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Product
 /-!
 # Maximal-dimensional solvable-radical candidates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Maximal)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A
 solvable-radical candidate is a connected normal smooth solvable closed subgroup. Such candidates
 are closed under scheme-theoretic multiplication images, so the general maximal-dimension theorem

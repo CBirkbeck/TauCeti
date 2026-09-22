@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Matrix.PosSemidef
 /-!
 # Positive-definite functions on an involutive additive monoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Basic)
+
 A complex-valued function `F` on an additive monoid `M` equipped with an involution `star`
 (an `AddMonoid` with a `StarAddMonoid` structure) is **positive definite** when, for every
 finite family `(cᵢ, aᵢ)` of scalars `cᵢ : ℂ` and points `aᵢ : M`, the Hermitian form

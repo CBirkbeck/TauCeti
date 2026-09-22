@@ -13,6 +13,8 @@ public import TauCeti.Topology.Category.TopTriple
 /-!
 # The long exact sequence of a triple in relative singular homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Triple)
+
 For a triple `B ⊆ A ⊆ X` of topological spaces the relative singular chain complexes of the
 three pairs it determines form a short exact sequence
 

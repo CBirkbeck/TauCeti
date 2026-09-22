@@ -11,6 +11,8 @@ import Mathlib.Logic.Equiv.Fin.Basic
 /-!
 # Iterated two-element sums as `Fin 2` and `Fin 3`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Fin.Sum)
+
 `Unit ⊕ Unit` and `Fin 2`, or `Unit ⊕ Unit ⊕ Unit` and `Fin 3`, are the two ways a small index
 type arises: one variable per named slot, or one variable per numeral. Translating between them
 is pure bookkeeping, needed wherever an object indexed by named slots must be presented against

@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.AffineScheme
 /-!
 # Scheme-theoretic images
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.SchemeTheoreticImage)
+
 This file contains general results about Mathlib's scheme-theoretic image construction.
 
 ## Main declarations

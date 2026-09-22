@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.ContMDiff.Basic
 /-!
 # Smoothness of maps into an open submanifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ContMDiff.Subtype)
+
 A map into an open submanifold `U ⊆ M` is `C^n` exactly when its composition with the inclusion
 `U → M` is `C^n`: the charts of `U` are restrictions of the charts of `M`, so smoothness is
 insensitive to whether the codomain is read in the submanifold or in the ambient manifold.

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.Kernel
 /-!
 # Image factorizations of commutative Hopf-algebra morphisms over a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Basic)
+
 For a morphism `f : H ⟶ K` of commutative Hopf algebras over a field, this file packages the
 canonical factorization through the quotient by its kernel Hopf ideal:
 

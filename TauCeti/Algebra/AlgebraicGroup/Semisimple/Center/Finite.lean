@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.Smooth.IdentityComponent
 /-!
 # The center of a semisimple group is finite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Semisimple.Center.Finite)
+
 The scheme-theoretic center of a semisimple affine group is finite over its ground field,
 including in positive characteristic, where it can be nonreduced. This is the finiteness
 input for the central isogeny from a semisimple group to its adjoint form.

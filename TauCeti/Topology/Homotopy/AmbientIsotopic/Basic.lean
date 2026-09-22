@@ -10,6 +10,8 @@ public import TauCeti.Topology.Homotopy.Isotopy.Basic
 /-!
 # The ambient-isotopy equivalence relation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.AmbientIsotopic.Basic)
+
 Building on `TauCeti.AmbientIsotopy` (an ambient isotopy of a space `Y`: a homotopy from the
 identity whose level-preserving total map `I × Y → I × Y` is a homeomorphism), this file makes
 ambient isotopy a relation between maps and shows it is an equivalence relation. Two maps

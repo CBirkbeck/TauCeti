@@ -19,6 +19,8 @@ import Mathlib.LinearAlgebra.TensorProduct.Pi
 /-!
 # Base change of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.BaseChange)
+
 This file extends a representation's scalars by base-changing each linear endomorphism. It also
 records the descent step needed for fixed vectors: a nonzero common fixed vector after a field
 extension yields a nonzero common fixed vector over the base field.

@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Ring
 /-!
 # The twisted slash sum preserves the character space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance)
+
 `HeckeSlash/Nebentypus/Basic.lean` defines `twistedHeckeSlashSum`, weighting each summand of a
 double-coset sum by `delta0NebentypusChar χ` of its own representative, and says twice over that
 the point of the weighting is left unproved: the sum is meant to be well defined on, and to

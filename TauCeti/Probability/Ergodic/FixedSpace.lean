@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.FixedSubmodule
 /-!
 # Fixed points of a measure-preserving transformation on `Lᵖ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Ergodic.FixedSpace)
+
 This file relates membership in Mathlib's fixed submodule for the `Lᵖ` composition isometry to
 almost-everywhere invariance of representatives. This is the closed subspace onto which the mean
 ergodic projection in the Koopman route to de Finetti's theorem will project.

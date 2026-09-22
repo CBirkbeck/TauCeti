@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.RootsOfUnity.Inclusion
 /-!
 # The roots-of-unity group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.RootsOfUnity.Scheme)
+
 For a commutative ring `R` and a natural number `n`, the roots-of-unity group scheme is the
 diagonalizable group
 

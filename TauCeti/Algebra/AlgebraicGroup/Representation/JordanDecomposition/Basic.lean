@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.Basic
 /-!
 # Jordan decomposition of algebraic-group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.JordanDecomposition.Basic)
+
 Let `H` be a commutative Hopf algebra over a field `k`, and let `K` be a perfect extension
 field. Every `K`-valued point `g` of the affine group represented by `H` acts on each
 finite-dimensional `H`-comodule. The multiplicative Jordan decompositions of these actions are

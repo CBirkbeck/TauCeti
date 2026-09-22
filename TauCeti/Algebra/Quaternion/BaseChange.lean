@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.TensorProduct.Pi
 /-!
 # Base change of quaternion algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.BaseChange)
+
 Extending scalars in a quaternion algebra amounts to applying the algebra map to its three
 parameters. The equivalence `TauCeti.QuaternionAlgebra.baseChange` identifies
 `S ⊗[R] ℍ[R,a,b,c]` with `ℍ[S,algebraMap R S a,algebraMap R S b,algebraMap R S c]`.

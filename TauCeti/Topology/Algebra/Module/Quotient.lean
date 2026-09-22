@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Module.Basic
 /-!
 # Quotients of a discrete topological module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Module.Quotient)
+
 The quotient of a discrete topological module by a submodule is discrete, since in a discrete
 module every submodule is open.
 

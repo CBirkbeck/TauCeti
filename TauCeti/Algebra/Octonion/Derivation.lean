@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Octonion.Basic
 /-!
 # Derivations of the split octonions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Octonion.Derivation)
+
 `G₂` is the derivation algebra of the split octonions, and its fundamental representation is
 supposed to be the `7`-dimensional space of imaginary octonions. Neither statement can even be made
 until one knows that a derivation of `𝕆` lands in the imaginary octonions and respects the norm

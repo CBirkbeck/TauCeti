@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Preadditive.Biproducts
 /-!
 # The split exact structure on an additive category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Split)
+
 Every additive category `C` carries a Quillen exact structure `ExactStructure.split C` whose
 conflations are the short complexes admitting a splitting, that is, the short complexes
 isomorphic to `X ⟶ X ⊞ Z ⟶ Z`.

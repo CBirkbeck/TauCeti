@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Valuation.Discrete.Basic
 /-!
 # Additive orders of discrete valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Discrete.Order)
+
 This file packages the additive order attached to a `ℤᵐ⁰`-valued valuation and develops the
 facts that do not depend on a choice of constant field.  The convention is
 `ord_v f = -log (v f)`, so a uniformizer has order one.  As `WithZero.log 0 = 0`, the order

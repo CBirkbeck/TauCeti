@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Matrix.Kronecker
 /-!
 # Block-diagonal actions of general linear Lie algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.BlockDiagonal)
+
 The block-diagonal map sends a matrix `A : Matrix ι ι R` to the matrix with one copy of `A` for
 each element of an auxiliary finite type `κ`. Restricting the standard `gl (ι × κ)` action along
 this map gives a `gl ι` action on every exterior power of `ι × κ → R`.

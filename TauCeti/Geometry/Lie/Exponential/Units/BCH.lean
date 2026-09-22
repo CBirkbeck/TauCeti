@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Exponential.Units.Compatibility
 /-!
 # The local Baker--Campbell--Hausdorff map for algebra units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Units.BCH)
+
 For a finite-dimensional real normed algebra `R`, its units `Rˣ` form a Lie group whose Lie
 algebra is canonically linearly equivalent to `R`. This file transports
 `NormedSpace.localBCH R` through that equivalence to obtain a local

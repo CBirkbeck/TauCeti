@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Etale.Kaehler
 /-!
 # Bases of Kähler differentials along a formally étale extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Kaehler.FormallyEtale)
+
 For a tower `R → S → T` with `T` formally étale over `S`, Mathlib's
 `KaehlerDifferential.tensorKaehlerEquivOfFormallyEtale` identifies `T ⊗[S] Ω[S⁄R]` with
 `Ω[T⁄R]`. This file records what that says about bases: an `S`-basis of `Ω[S⁄R]` becomes a

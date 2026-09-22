@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Measure.ProductKernel
 /-!
 # Mixed i.i.d. families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedIID.Basic)
+
 A family is *mixed i.i.d.* when there is a measurable random probability measure
 `ν : Ω → ProbabilityMeasure α` such that every finite block of **distinct** coordinates has, as
 its law, the `ν`-mixture of the corresponding product measure, and every coordinate is

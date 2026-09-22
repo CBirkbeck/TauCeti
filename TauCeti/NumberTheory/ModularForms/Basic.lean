@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.MoebiusAction
 /-!
 # Modular-forms basics: extensions of Mathlib's API
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Basic)
+
 Small generic lemmas extending `Mathlib/NumberTheory/ModularForms/Basic.lean` and its slash
 actions: the conjugation `σ` is trivial on `SL(2, ℤ)`-matrices — a special case of
 `UpperHalfPlane.σ_eq_refl_of_det_pos`, which lives with `σ` itself in

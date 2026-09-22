@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.ReeF4.Closure
 /-!
 # The ambient group of the Ree family of type `F₄`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeF4.Carrier)
+
 The Ree family `²F₄(2^(2m+1))` is built inside the group of algebraic-closure-valued points of
 the short-root type-`F₄` carrier over the prime field `𝔽₂`: the closed subgroup scheme of `GL₂₆`
 generated over `𝔽₂` by the reductions of the numbered simple root subgroups and of the weight

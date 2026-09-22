@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Realization
 /-!
 # Triangulable topological spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Triangulable)
+
 A topological space is triangulable if it is homeomorphic to the geometric realization of an
 abstract simplicial complex. This is deliberately weaker than carrying a combinatorial or PL
 manifold structure: no link condition is imposed on the witnessing complex.

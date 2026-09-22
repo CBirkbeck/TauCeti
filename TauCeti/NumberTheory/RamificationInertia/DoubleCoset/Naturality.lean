@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.RamificationInertia.DoubleCoset.Basic
 /-!
 # Naturality of the double-coset splitting law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.DoubleCoset.Naturality)
+
 Let `M / K` be a finite Galois extension, let `Q` be a prime of `𝓞 M` above a prime `p` of
 `𝓞 K`, and let `H ≤ H'` be subgroups of `Gal(M/K)`.  The inclusion reverses on fixed fields,
 so a prime of `M ^ H` contracts to a prime of `M ^ H'`.  This file proves that this contraction

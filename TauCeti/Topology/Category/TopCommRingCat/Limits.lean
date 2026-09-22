@@ -13,6 +13,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Equalizers
 /-!
 # Products and equalizers of topological commutative rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopCommRingCat.Limits)
+
 Mathlib's `TopCommRingCat` carries no limit constructions at all. This file provides the two
 shapes the sheaf condition consumes — products and equalizers — by exhibiting the explicit
 cones: the pointwise ring with the product topology, and the agreement subring with the

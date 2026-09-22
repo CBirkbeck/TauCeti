@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Weyl.
 /-!
 # The Weyl representative lies in the elementary group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Weyl.Elementary)
+
 The Weyl representative of a root pair `(eᵢ, eⱼ)` is defined in
 `TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Weyl.Basic` as the scalar extension
 of an integral automorphism of the admissible lattice, and identified there with the product of

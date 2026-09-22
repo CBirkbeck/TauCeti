@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
 /-!
 # Multi-marginal couplings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Basic)
+
 This file defines a multi-marginal coupling as a probability measure on a dependent product
 with prescribed one-coordinate marginals. It provides coordinate and pair projections,
 coordinatewise maps, reindexing, and, over a finite index type, the independent product

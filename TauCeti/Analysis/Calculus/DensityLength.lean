@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.DistLEIntegral
 /-!
 # The length of a path measured against a density
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.DensityLength)
+
 A **density** on a real normed space `F` is a function `ρ : F → ℝ`, thought of as a variable
 conversion factor between the ambient norm and the length one wishes to measure. The length of a
 path `γ : ℝ → F` over the parameter interval with endpoints `a` and `b` measured against `ρ` is

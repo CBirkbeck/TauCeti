@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Reindex
 /-!
 # The slash sum of an invariant function depends only on the double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Independence)
+
 `heckeSlashSum k D f` is a sum over the *chosen* representatives `D.out` of the double coset and
 `v.out` of its right cosets, and `HeckeSlash/Basic.lean` records that on a general `f : ℍ → ℂ`
 the value moves with those choices. This file proves that for a `Γ₁`-invariant `f` it does not:

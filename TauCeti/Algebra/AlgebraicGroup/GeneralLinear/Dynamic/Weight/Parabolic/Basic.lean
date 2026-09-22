@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Naturality
 /-!
 # Representability of dynamic weight parabolics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Parabolic.Basic)
+
 The weight-parabolic subgroup scheme of `GL_N` represents the dynamic parabolic attached to the
 cocharacter `t ↦ diag(t ^ w i)`. On points, both descriptions say exactly that the `(i,j)` entry
 vanishes whenever `w i < w j`.

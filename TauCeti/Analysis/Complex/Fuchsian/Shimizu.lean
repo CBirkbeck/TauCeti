@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 /-!
 # Shimizu's lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Shimizu)
+
 Let `Γ ≤ PSL(2, ℝ)` be a discrete subgroup containing the translation `z ↦ z + w` with `w ≠ 0`.
 Shimizu's lemma says that the lower-left entry `c` of any element of `Γ` satisfies `c = 0` or
 `|c| ≥ |w|⁻¹`: the elements of `Γ` that do not fix `∞` are bounded away from the parabolic ones.

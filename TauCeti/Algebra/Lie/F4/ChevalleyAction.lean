@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgeb
 /-!
 # Exact low-degree Chevalley action in type F₄
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ChevalleyAction)
+
 This file transports the pinned forty-eight-root indexing to the rational Killing root system and
 records the exact degree-one and degree-two adjoint actions needed for the characteristic-two
 short-root submodule.

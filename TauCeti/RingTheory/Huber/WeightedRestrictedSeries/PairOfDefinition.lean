@@ -12,6 +12,8 @@ public import Mathlib.Data.Finsupp.Weight
 /-!
 # `A⟨X⟩_T` is a Huber ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PairOfDefinition)
+
 For a Huber ring `A` with pair of definition `(A₀, I)`, the ring `A⟨X₁,…,Xₖ⟩_T` of weighted
 restricted power series is again a Huber ring, with pair of definition
 

@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Group.Action
 /-!
 # Invariant measures of a scalar multiplication
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.Action)
+
 General facts about `SMulInvariantMeasure`, Mathlib's class of measures invariant under a scalar
 multiplication, that do not concern ergodicity: the restriction of an invariant measure to an
 exactly invariant measurable set is again invariant (`SMulInvariantMeasure.restrict`).

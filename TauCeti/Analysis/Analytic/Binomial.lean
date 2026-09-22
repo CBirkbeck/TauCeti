@@ -11,6 +11,8 @@ import Mathlib.Analysis.Complex.AbelLimit
 /-!
 # Convergence of multichoose power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Analytic.Binomial)
+
 This file determines the exact unconditional summability domain of the power series with
 generalized multichoose coefficients and positive real parameter.  The result applies to both real
 and complex arguments.  These results supply the analytic criterion used to determine the exact

@@ -14,6 +14,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.Map
 /-!
 # The Frobenius endomorphism of the additive group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.Frobenius)
+
 Over a base commutative semiring `R` of exponential characteristic `p`, the additive group
 `𝔾ₐ = Spec R[x]` (here `x = ι R R 1` in `SymmetricAlgebra R R`) carries the **Frobenius
 endomorphism** `F : 𝔾ₐ → 𝔾ₐ`, which on every commutative `R`-algebra `A` raises a point to its

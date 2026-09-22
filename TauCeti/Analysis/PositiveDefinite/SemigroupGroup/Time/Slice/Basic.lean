@@ -12,6 +12,8 @@ public import Mathlib.Topology.Constructions.SumProd
 /-!
 # Time slices of semigroup-group positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Slice.Basic)
+
 A Berg--Christensen--Ressel positive-definite function on `ℝ≥0 × V` is positive definite in the
 spatial variable at every fixed time. Indeed, to test the kernel
 `(v, w) ↦ F (t, v - w)`, apply the BCR kernel to the family of points `(t / 2, v)`.

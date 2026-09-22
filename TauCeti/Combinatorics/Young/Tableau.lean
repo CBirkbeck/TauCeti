@@ -13,6 +13,8 @@ public import TauCeti.Combinatorics.Young.Diagram
 /-!
 # Young tableaux
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Tableau)
+
 A `μ`-tableau is a bijective filling `t : ↥μ.cells ≃ Fin μ.card` of the cells of a Young diagram
 `μ` by the labels `Fin μ.card`.  This file defines `YoungTableau`, the row and the column of a
 label, and identifies the labels lying in a given row, respectively column, with the cells of that

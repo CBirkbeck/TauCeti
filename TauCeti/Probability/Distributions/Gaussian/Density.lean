@@ -16,6 +16,8 @@ import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 /-!
 # The density of a multivariate Gaussian measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Density)
+
 A multivariate Gaussian law with positive-definite covariance `S` is Lebesgue measure on
 `EuclideanSpace ℝ ι` weighted by the classical density
 

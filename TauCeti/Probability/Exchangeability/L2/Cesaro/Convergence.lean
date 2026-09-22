@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Function.L2Space
 /-!
 # L¹ convergence of Cesàro averages of a contractable process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.Cesaro.Convergence)
+
 This file proves the `weighted_sums_converge_L1` milestone from Layer 3 of the Exchangeability
 roadmap. For a measurable real-valued observable `f` of a contractable process `X` with
 `f ∘ X 0` square-integrable — in particular for any bounded `f` — the block averages

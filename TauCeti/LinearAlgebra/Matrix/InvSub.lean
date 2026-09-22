@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 /-!
 # The determinant of the pencil `S⁻¹ - X`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.InvSub)
+
 For an invertible square matrix `S` over a commutative ring and any `X`, the determinant of the
 pencil `S⁻¹ - X` is expressible in `S` and `X` themselves: multiplying through by `det S` clears
 the inverse, and Sylvester's determinant identity turns what is left into `det (1 - X * S)`. The

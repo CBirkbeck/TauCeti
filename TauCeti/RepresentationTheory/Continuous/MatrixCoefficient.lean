@@ -13,6 +13,8 @@ import Mathlib.Analysis.InnerProductSpace.Continuous
 /-!
 # Matrix coefficients of continuous representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.MatrixCoefficient)
+
 This file defines the matrix coefficient
 `g ↦ ⟪π g v, w⟫` of a representation whose operator-valued action is continuous, and develops its
 algebra: sesquilinearity in the defining vectors, the matrix-multiplication identity at a product

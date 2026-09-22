@@ -11,6 +11,8 @@ public import Mathlib.Combinatorics.Additive.SubsetSum
 /-!
 # Cube weights in a plumbing lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.Weight.Basic)
+
 This file packages the finite cube weights used in Némethi's lattice homology. A cube is
 specified by a base lattice point `x : V → ℤ` and a finite set `S : Finset V` of basis
 directions. Its vertices are the points
@@ -43,7 +45,10 @@ namespace PlumbingGraph
 variable {V : Type*} [DecidableEq V]
 
 /-- The lattice point obtained from a base point `x` by adding the plumbing basis vectors in
-`T`. This is the vertex of a lattice cube indexed by the subset `T` of its directions. -/
+`T`. This is the vertex of a lattice cube indexed by the subset `T` of its directions.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PlumbingGraph.cubeVertex) -/
 noncomputable def cubeVertex (x : V → ℤ) (T : Finset V) : V → ℤ :=
   x + ∑ v ∈ T, Pi.single v (1 : ℤ)
 

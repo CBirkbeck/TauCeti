@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # Raising Eisenstein series with character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.EisensteinSeries.Raising)
+
 For Dirichlet characters `ψ` modulo `u` and `φ` modulo `v`, the Eisenstein series with raising
 parameter `t` is
 

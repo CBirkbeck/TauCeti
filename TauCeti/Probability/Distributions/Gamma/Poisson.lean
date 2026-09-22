@@ -13,6 +13,8 @@ import TauCeti.Probability.Distributions.Measurability
 /-!
 # Gamma mixtures of Poisson distributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Poisson)
+
 Mixing a Poisson rate against a Gamma law produces a negative-binomial distribution. More
 precisely, a Gamma mixing law of shape `r` and rate `p / (1 - p)` gives the negative-binomial law
 of shape `r` and success probability `p`.

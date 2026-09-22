@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # The path algebra of an acyclic quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Acyclic.PathAlgebra)
+
 A finite quiver with finitely many arrows between any two vertices has finitely many paths when it
 is acyclic, and the paths are a basis of its path algebra; so the path algebra of such a quiver is
 finite-dimensional over a division ring.

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 /-!
 # The excision leaves the arc's full length in the limit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure)
+
 The valence formula integrates over the fundamental-domain boundary with the integrand excised
 within `ε` of the elliptic points. On the arc the excised integral turns out to be a constant
 multiple of the *length* of the surviving parameter set, so its `ε → 0` limit is governed by

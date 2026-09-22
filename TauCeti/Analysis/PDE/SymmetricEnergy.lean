@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.EnergyForm.Basic
 /-!
 # Symmetric pointwise energy integrands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.SymmetricEnergy)
+
 For a divergence-form operator with no drift term, a symmetric principal coefficient
 matrix gives a symmetric pointwise jet bilinear form `energyIntegrand A 0 c`.  This file
 records that finite-dimensional bookkeeping before the energy form is integrated over a

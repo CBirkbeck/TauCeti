@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.Measurable
 /-!
 # The excised integrand is integrable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.ExcisedIntegrability)
+
 An `ε`-excision replaces the integrand by `0` wherever the curve comes within `ε` of one of
 finitely many centres. That is what makes the integrand integrable when the unexcised one is
 not: the singularities all sit at the centres, and the excision deletes a neighbourhood of each.

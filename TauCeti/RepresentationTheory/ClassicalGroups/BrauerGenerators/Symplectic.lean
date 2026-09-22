@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Tensor.Power
 /-!
 # The cap, the cup, and the Brauer relations on the symplectic tensor square
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.BrauerGenerators.Symplectic)
+
 The symplectic group acts on `V = k^{2n}` preserving the standard alternating form of
 `Matrix.J`, and that form is a map `V ⊗ V → k`: read as a diagram it is a **cap**, an arc joining
 the two bottom points. The matrix `-J`, read as a bivector `1 ↦ ∑ₓ ∑_y (-J) x y • eₓ ⊗ e_y`, is

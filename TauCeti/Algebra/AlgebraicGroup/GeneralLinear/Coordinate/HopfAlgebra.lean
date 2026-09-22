@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Coordinate.Bialgebra
 /-!
 # The general linear coordinate Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Coordinate.HopfAlgebra)
+
 For a commutative ring `R`, this file constructs the coordinate Hopf algebra of `GLₙ` as
 
 `R[Xᵢⱼ][det(X)⁻¹]`.

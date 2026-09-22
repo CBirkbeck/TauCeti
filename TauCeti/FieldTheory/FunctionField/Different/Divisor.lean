@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.IntegralBasis.Al
 /-!
 # The different divisor of a finite separable extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Different.Divisor)
+
 Let `F' / k'` be an extension of the algebraic function field `F / k` with `F' / F` finite and
 separable.  The different exponent `d(P' ∣ P)` of
 `TauCeti/FieldTheory/FunctionField/Different/Basic.lean` vanishes at all but finitely many places

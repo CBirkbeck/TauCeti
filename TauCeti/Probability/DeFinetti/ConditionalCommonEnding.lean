@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.Cylinder
 /-!
 # The conditional rectangle common ending for de Finetti
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ConditionalCommonEnding)
+
 This file supplies the joint-law companion of the mixture rectangle common ending.  To prove that
 a measurable random probability measure `ν : Ω → ProbabilityMeasure α` directs a coordinatewise
 `μ`-a.e. measurable family, it is enough to verify the expected disintegration on sets of the form

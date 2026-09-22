@@ -14,6 +14,8 @@ import Mathlib.Tactic.Group
 /-!
 # The double cosets of a point stabilizer in a symmetric group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.PointStabilizer)
+
 Let `α` be a type with at least two elements and let `x₀ : α`.  The stabilizer of `x₀` in
 `Equiv.Perm α` has exactly two double cosets: a permutation either fixes `x₀` or does not, and
 each of the two possibilities is a single class.  Fixing `x₀` is membership in the stabilizer, so

@@ -13,6 +13,8 @@ import Mathlib.Topology.Algebra.Module.FiniteDimension
 /-!
 # Coordinates on positive-diagonal lower-triangular matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Cholesky.Coordinates)
+
 A lower-triangular matrix is determined by its on-or-below-diagonal entries. Reading off these
 entries identifies the positive-diagonal lower-triangular matrices with the functions on the
 lower-triangular positions whose diagonal values are positive. This file packages that

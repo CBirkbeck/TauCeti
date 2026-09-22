@@ -12,6 +12,8 @@ import Mathlib.Tactic.Group
 /-!
 # Double cosets at a normalizing element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Normalizer)
+
 A double coset `ΓgΓ` is in general a union of several cosets on either side. When `g`
 normalizes `Γ` it is a *single* coset, and the two sides agree:
 

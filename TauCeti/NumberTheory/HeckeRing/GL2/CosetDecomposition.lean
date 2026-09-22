@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.CosetDecomposition
 /-!
 # The `T_p` coset representatives at `n = 2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.CosetDecomposition)
+
 `GLn/CosetDecomposition.lean` indexes the upper-triangular coset representatives by the bounded
 entry assignments `UpperTriEntries n a`, a dependent function on the ordered index pairs
 `{ij : Fin n × Fin n // ij.1 < ij.2}`. At `n = 2` there is exactly one such pair, `(0, 1)`, so an

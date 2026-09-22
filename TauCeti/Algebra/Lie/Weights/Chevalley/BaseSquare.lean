@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Chevalley.Twist
 /-!
 # Constructing Chevalley systems from a Lie-algebra basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Chevalley.BaseSquare)
+
 Let a Cartan-inverting automorphism act on a normalised root-vector system by
 `ω (x α) = c α • x (-α)`. If `-c α` is a square, rescaling `x α` makes the action equal to the
 signed Chevalley involution. This file reduces that square condition to the simple roots via

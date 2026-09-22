@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Valuation.SpanPow
 /-!
 # Cofinal values on a generating set make a valuation continuous
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Continuous.OfCofinal)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), the engine of Theorem 7.10's `⊇` direction.**
 
 A valuation on a Huber ring is continuous as soon as it is bounded by `1` on an ideal of

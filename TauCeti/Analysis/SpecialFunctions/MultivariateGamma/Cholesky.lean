@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Integral.Gamma
 /-!
 # The multivariate Gamma function in Cholesky coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.MultivariateGamma.Cholesky)
+
 Every positive-definite symmetric `p × p` matrix is `L * Lᵀ` for a unique lower-triangular `L`
 with positive diagonal, and reading off the on-or-below-diagonal entries of `L` turns the
 positive-definite cone into the region of `TauCeti.lowerTriangle p → ℝ` whose diagonal

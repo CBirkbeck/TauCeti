@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.GradedModule.Shift
 /-!
 # Graded modules generated in one degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.Generated)
+
 An internally graded module is generated in degree `d` when its degree-`d` homogeneous piece
 generates the underlying module.  This is the module-theoretic condition imposed on the `i`th
 projective in a linear resolution: after choosing the degree of the resolved module, its `i`th

@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.MixedIID.Basic
 /-!
 # The rectangle common ending for de Finetti
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.CommonEnding)
+
 This file provides the first shared de Finetti common-ending adapter.  If a measurable random
 probability measure `ν : Ω → ProbabilityMeasure α` has the expected rectangle factorization for
 every finite injective block of a coordinatewise `μ`-a.e. measurable family, then the family is

@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.RamificationInertia.Galois
 /-!
 # Residue correspondence for unramified local extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.ResidueCorrespondence)
+
 For a finite unramified Galois extension `L / K` of nonarchimedean local fields, reduction gives
 an isomorphism from the Galois group of `L / K` to the Galois group of the residue-field
 extension. Its inverse carries the finite-field Frobenius to the Frobenius automorphism of

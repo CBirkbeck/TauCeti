@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # Preadditive structure on comodule categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Preadditive)
+
 This file records the additive-group structure on morphisms of right comodules over a
 coalgebra over a commutative ring, and uses it to make the bundled comodule category
 preadditive.

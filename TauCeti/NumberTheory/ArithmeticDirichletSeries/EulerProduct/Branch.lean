@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.ArithmeticDirichletSeries.Deriv
 /-!
 # Holomorphic logarithms of ideal `L`-series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Branch)
+
 The exponential form of an Euler product determines a logarithm only modulo `2πi ℤ`.  It does
 not choose a branch: a branch is a single holomorphic function on a region, and choosing one needs
 the region to be simply connected as well as zero-free.

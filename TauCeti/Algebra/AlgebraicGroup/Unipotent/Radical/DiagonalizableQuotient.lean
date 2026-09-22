@@ -12,6 +12,8 @@ import TauCeti.Algebra.AlgebraicGroup.Smooth.GeometricallyReduced
 /-!
 # Unipotent radicals from geometrically semisimple quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.DiagonalizableQuotient)
+
 Let `H` represent a finite-type affine group and let a morphism from a coordinate algebra with
 geometrically semisimple points to `H` represent a quotient homomorphism from that group. If its
 kernel is connected, normal, smooth, and unipotent, then that kernel is the unipotent radical.

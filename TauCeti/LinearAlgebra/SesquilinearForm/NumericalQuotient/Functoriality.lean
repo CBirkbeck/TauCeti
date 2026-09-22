@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.SesquilinearForm.NumericalQuotient.Basic
 /-!
 # Functoriality of numerical quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SesquilinearForm.NumericalQuotient.Functoriality)
+
 A linear map between the left arguments of two sesquilinear maps descends to their left numerical
 quotients precisely after one proves that it sends the first left radical into the second.  The
 right-hand construction is independent and has the dual condition.  This file supplies those two

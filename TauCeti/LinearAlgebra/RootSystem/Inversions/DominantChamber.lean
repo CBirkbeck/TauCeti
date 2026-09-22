@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Inversions.StrongExchange
 /-!
 # Inversions of a Weyl-group element that preserves dominance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Inversions.DominantChamber)
+
 A Weyl-group element carrying a weight interior to the dominant chamber back into the closed
 dominant chamber sends no positive root to a negative root, so its inversion set is empty. Since an
 element with an empty inversion set is the identity, such an element is the identity: the Weyl

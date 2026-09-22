@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Pin.Action
 /-!
 # The three-dimensional Spin group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Exceptional.Three.Group)
+
 Over a field with `2 ≠ 0`, a three-dimensional quadratic space equipped with polarization data
 has an even Clifford algebra isomorphic to `M₂(K)`. Clifford reversal corresponds to adjugation,
 so the Spin group maps into `SL₂(K)`. Explicit lifts of the two elementary root subgroups show

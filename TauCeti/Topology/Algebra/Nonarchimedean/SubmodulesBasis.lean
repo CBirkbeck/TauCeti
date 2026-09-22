@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 /-!
 # The neighbourhood basis of a submodules basis, and when two of them agree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.SubmodulesBasis)
+
 Mathlib's `SubmodulesBasis B` turns a family `B : ι → Submodule R M` into a topology on `M`,
 `SubmodulesBasis.topology`, by routing the family through
 `SubmodulesBasis.toModuleFilterBasis`. That route leaves the neighbourhoods of `0` indexed by

@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Contour.Winding.Vanishing
 /-!
 # The winding number on the unbounded component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.UnboundedComponent)
+
 For a closed curve `γ`, the winding number is constant on every connected component of the
 complement of the curve. If such a component is unbounded, it contains a point outside the compact
 set on which the far-field vanishing theorem gives no information. At that point the winding

@@ -16,6 +16,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.Corestrict
 /-!
 # The upper-unitriangular group is unipotent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Unipotent)
+
 For a natural number `n`, corestricting the standard `O(GL_n)`-comodule along
 `O(GL_n) → O(U_n)` gives the standard comodule of `O(U_n)` on `R^n`. Its coaction is given by
 the generic upper-unitriangular matrix. Its coordinate morphism is the closed immersion

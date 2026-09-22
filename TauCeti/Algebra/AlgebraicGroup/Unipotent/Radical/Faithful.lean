@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Normal unipotent subgroups seen through a faithful representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Faithful)
+
 Let `H` be a reduced finite-type commutative Hopf algebra over an algebraically closed field `k`
 and let `M` be a finite-dimensional `H`-comodule which is completely reducible and faithful. Then
 every normal Hopf ideal of `H` whose quotient is smooth unipotent is the augmentation ideal:

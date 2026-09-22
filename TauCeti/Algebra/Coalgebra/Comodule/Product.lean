@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # Products of comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Product)
+
 This file equips the product of two right comodules over a fixed coalgebra with the direct-sum
 coaction. For comodules `M` and `N`, the coaction on `M × N` is
 `ρ(m, n) = (inl ⊗ id) (ρ m) + (inr ⊗ id) (ρ n)`.

@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Basic
 /-!
 # The adjoint action on the tangent space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Adjoint)
+
 The points of a Hopf algebra act on the counit-valued derivations — the tangent
 vectors at the identity — by convolution conjugation: `Ad g d = g ⋆ d ⋆ g⁻¹` in the
 convolution semiring of linear maps, the differential of the conjugation

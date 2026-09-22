@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar
 /-!
 # The prime-power recurrence of the Hecke ring on the character spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Recurrence)
+
 For `p` coprime to `N` the Hecke ring satisfies `T_{p^{r+2}} = Tₚ T_{p^{r+1}} − p S_p T_{p^r}`
 (`heckeTGeneratorRecGamma0_succ_succ`). The scalar coset `S_p` acts on the character space by
 `χ(p) p^{k−2}` (`heckeRingHomCharSpace_heckeTScalarGamma0`, `Nebentypus/Scalar.lean`), so `p • S_p`

@@ -13,6 +13,8 @@ import Mathlib.Dynamics.Ergodic.Conservative
 /-!
 # Recurrent processes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Recurrent)
+
 A process `X : ℕ → Ω → α` is **recurrent** when, almost surely, every state it ever visits it
 visits infinitely often:
 

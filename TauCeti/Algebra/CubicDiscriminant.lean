@@ -10,6 +10,8 @@ public import Mathlib.Algebra.CubicDiscriminant
 /-!
 # Divisors of a monic cubic and of its discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CubicDiscriminant)
+
 Two divisibility transfers for the monic cubic `f(x) = x³ + a₂x² + a₄x + a₆` over a commutative
 ring. A common divisor of `f(x)` and of the quartic `3x⁴ + 4a₂x³ + 6a₄x² + 12a₆x + (4a₂a₆ − a₄²)`
 divides `f'(x)²`; and a common divisor of `f(x)` and `f'(x)²` divides `Cubic.discr ⟨1, a₂, a₄, a₆⟩`.

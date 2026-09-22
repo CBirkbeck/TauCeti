@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 /-!
 # Measurability in the space of square matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.MeasurableSpace)
+
 Matrix inversion is not continuous: it jumps at the singular matrices, where Mathlib's totalized
 inverse takes the value `0`. It is still measurable, because Cramer's rule writes it as the
 adjugate — a polynomial in the entries — scaled by the inverse of the determinant, and inversion

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.Basic
 /-!
 # Smoothness of commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Smooth.CommHopfAlgCat)
+
 This file records smoothness of a commutative Hopf algebra over a commutative ring `R` as an
 object property. The Hopf algebra structure carries the group law, while `Algebra.Smooth R H`
 records smoothness of the coordinate ring separately.

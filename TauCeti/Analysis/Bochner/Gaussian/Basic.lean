@@ -15,6 +15,8 @@ import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
 /-!
 # The Gaussian is a positive-definite function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.Gaussian.Basic)
+
 The Gaussian `a ↦ exp (-c‖a‖²)` on a real inner-product space `V` is continuous, and its
 subtraction kernel `(a, b) ↦ exp (-c‖a - b‖²)` is positive definite, for every `c ≥ 0`. This
 supplies the positive-definiteness half of the Gaussian acceptance example requested in Part C of

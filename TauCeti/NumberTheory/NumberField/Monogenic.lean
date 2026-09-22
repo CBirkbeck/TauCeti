@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.NumberField.Quadratic.RingOfIntegers
 /-!
 # Monogenic number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Monogenic)
+
 A number field `K` is *monogenic* when its ring of integers admits a power integral basis, that
 is `𝓞 K = ℤ[θ]` for a single algebraic integer `θ`. This file defines the predicate, gives the
 two standard criteria for it — one in terms of the conductor exponent, one in terms of the index

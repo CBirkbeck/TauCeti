@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.Tangent
 /-!
 # Riemannian metrics on open submanifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Restriction)
+
 This file restricts a `C^n` Riemannian metric to an open submanifold. Mathlib models the tangent
 space of a manifold on the model vector space itself, so the restricted metric is pointwise the
 ambient metric; the content is that this family is `C^n` for the inherited manifold and tangent

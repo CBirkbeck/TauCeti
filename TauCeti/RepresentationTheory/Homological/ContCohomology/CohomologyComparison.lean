@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Functorial
 /-!
 # The explicit model against the canonical object, in degrees one and two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.CohomologyComparison)
+
 The explicit low-degree complex presents `H¹(G, M)` and `H²(G, M)` as `Z¹/B¹` and `Z²/B²`, honest
 subquotients of the continuous functions on `G` and on `G × G`, while the canonical object is
 Mathlib's `continuousCohomology n X` for `X` the image `TauCeti.ofDiscreteModule ℤ G M` of `M`

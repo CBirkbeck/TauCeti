@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.SymmetricAlgebra.Functoriality
 /-!
 # Base change of additive groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.BaseChange)
+
 The vector group attached to a `k`-module `M` is represented by the symmetric bialgebra
 `SymmetricAlgebra k M`. This file specializes the generic symmetric-bialgebra base-change
 equivalence to the rank-one additive group `𝔾ₐ`, and records the corresponding

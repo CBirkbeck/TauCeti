@@ -14,6 +14,8 @@ import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # The short-root type-F4 carrier over the prime field of characteristic two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.PrimeField.Carrier)
+
 The short-root type-`F₄` carrier over `ℤ` is the Kostant toral closure of the twenty-six-dimensional
 module `V(ϖ₄)` inside `GL₂₆`: the largest Hopf ideal of `O(GL₂₆/ℤ)` killed by the coordinate maps of
 the eight numbered simple root subgroups and of the rank-four weight torus. This file forms the

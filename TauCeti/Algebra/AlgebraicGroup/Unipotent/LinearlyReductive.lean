@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # A linearly reductive unipotent affine group is trivial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.LinearlyReductive)
+
 Let `H` be a reduced finite-type commutative Hopf algebra over an algebraically closed field `k`
 all of whose points are unipotent. Kolchin's theorem, in the form already available from
 `TauCeti.Algebra.AlgebraicGroup.Unipotent.Embedding`, gives a nonzero fixed vector in every

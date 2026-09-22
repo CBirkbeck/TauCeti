@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Dimension.BaseChange
 /-!
 # Finiteness of `MvPolynomial.map`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Basic)
+
 `MvPolynomial.map f` is a finite ring map whenever `f` is: a family generating `S` over `R`
 generates `MvPolynomial σ S` over `MvPolynomial σ R` once its members are read as constants.
 

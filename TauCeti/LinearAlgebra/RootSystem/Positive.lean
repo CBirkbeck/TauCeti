@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Height
 /-!
 # Positive and negative roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Positive)
+
 This file packages Mathlib's positivity predicate for a root-pairing base as the sets of positive
 and negative root indices. It records their partition, their exchange under root negation, and the
 fact that a simple reflection permutes the positive roots other than its own simple root.

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.IsDiag
 /-!
 # Diagonal matrices: products with matrix units, and commutation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Diagonal)
+
 This file records generic identities about diagonal matrices. Multiplying a rectangular matrix
 unit on both sides by diagonal matrices of the corresponding row and column sizes rescales its one
 nonzero entry. And a matrix commuting with a diagonal matrix has no entry away from the diagonal

@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.One
 /-!
 # The Hecke-ring action on nebentypus spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Action)
+
 The twisted slash operators give a right action, so composing the operators attached to `D₁`
 and `D₂` naturally produces the right-coset collision coefficient
 `m(D₂⁻¹, D₁⁻¹; D⁻¹)`. The multiplication of the Hecke ring instead uses

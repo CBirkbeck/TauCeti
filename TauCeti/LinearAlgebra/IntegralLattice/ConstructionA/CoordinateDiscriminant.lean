@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Quadratic
 /-!
 # The coordinate alphabet as the discriminant module of `m ℤ^ι`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.CoordinateDiscriminant)
+
 Construction A applied to the zero code produces the lattice `L₀` with carrier `m ℤ^ι` inside
 `ℚ^ι` and form `B_m (x, y) = (∑ i, xᵢ yᵢ) / m`.  Its dual carrier is the full integer coordinate
 lattice `ℤ^ι`, so its discriminant group is `ℤ^ι / m ℤ^ι`, which reduction modulo `m` identifies

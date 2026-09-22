@@ -16,6 +16,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Discriminant
 /-!
 # Integrality of torsion away from order two, under a squarefree hypothesis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Basic)
+
 The Nagell–Lutz statement is that a torsion point of an integral Weierstrass model has integral
 coordinates. **This file does not prove that.** It proves the cases a squarefree hypothesis makes
 accessible — an `n`-torsion point for odd `n` with `(n : R)` squarefree, or for even `n` with

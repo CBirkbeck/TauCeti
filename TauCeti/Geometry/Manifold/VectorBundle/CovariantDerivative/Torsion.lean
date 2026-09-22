@@ -11,6 +11,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Regularity
 /-!
 # Torsion-free covariant derivatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Torsion)
+
 This file names the pointwise torsion-free condition for a covariant derivative on the tangent
 bundle.  When the bundled torsion tensor is available, `isTorsionFree_iff_torsion_eq_zero`
 identifies this condition with its vanishing. The condition is available without finite

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Derivation.Basic
 /-!
 # Derivations and the addition law on a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Formula.Derivation)
+
 Let `W` be a Weierstrass curve over `R`, let `K` be an `R`-algebra and let `D : Derivation R K M` be
 a derivation on `K` over `R`. Writing `W_X` and `W_Y` for the partial derivatives `polynomialX` and
 `polynomialY` of the Weierstrass polynomial, this file records how `D` interacts with the points of

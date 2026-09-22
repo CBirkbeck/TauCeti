@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Induced
 /-!
 # Corestriction of subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Corestrict)
+
 Corestriction of a comodule along a coalgebra morphism preserves every subcomodule and its
 underlying submodule. When the coalgebra morphism is an equivalence, this gives an order
 isomorphism between the subcomodule lattices before and after corestriction.

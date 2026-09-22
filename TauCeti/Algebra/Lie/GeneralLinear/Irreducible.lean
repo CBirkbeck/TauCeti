@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Reductive
 /-!
 # The `sl n` ↔ `gl n` dictionary for irreducible modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Irreducible)
+
 `gl n K` is reductive (`TauCeti.hasCentralRadical_matrix`), its centre is the scalar matrices and
 its derived ideal is `sl n K` (`TauCeti.derivedSeries_one_eq_slIdeal`). Specializing the reductive
 theory of `TauCeti/Algebra/Lie/Reductive.lean` to that data gives the two halves of the transfer

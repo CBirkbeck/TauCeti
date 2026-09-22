@@ -14,6 +14,8 @@ public import Mathlib.GroupTheory.Subgroup.Simple
 /-!
 # The derived subgroup modulo its centre
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DerivedCentralQuotient)
+
 Let `G` be a group. This file studies the group
 
 ```text

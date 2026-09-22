@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.SimpleModule.WedderburnArtin
 /-!
 # Wedderburn-Artin for central simple algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Wedderburn)
+
 Mathlib's `IsSimpleRing.exists_algEquiv_matrix_divisionRing_finite` writes a finite-dimensional
 simple `K`-algebra `A` as a matrix algebra `Matrix (Fin n) (Fin n) D` over a division algebra `D`,
 but it says nothing about the centre of `D`: the theorem is about simplicity alone. For the theory

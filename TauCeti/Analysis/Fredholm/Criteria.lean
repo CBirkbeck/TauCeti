@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Fredholm.Index
 /-!
 # Injective and surjective criteria for Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Criteria)
+
 This file gives streamlined Fredholm criteria when an operator is already known to be injective
 or surjective. Between Banach spaces over an `IsRCLikeNormedField`, a surjective continuous linear
 map is Fredholm exactly when its kernel is finite dimensional. Between Banach spaces over any

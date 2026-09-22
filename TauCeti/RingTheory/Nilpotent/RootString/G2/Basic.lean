@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.RootString.Basic
 /-!
 # The Chevalley commutator relation in type `G₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Nilpotent.RootString.G2.Basic)
+
 Let `V` be a module over a `ℚ`-algebra `A`, let `M ≤ V` be an additive subgroup, and let `x`, `y`,
 `z`, `w`, `v`, `s` be elements of `A` with
 

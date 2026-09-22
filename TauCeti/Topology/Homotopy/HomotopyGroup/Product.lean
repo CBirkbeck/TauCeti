@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Map
 /-!
 # Homotopy groups of products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.Product)
+
 Generalized loops and homotopies relative to the cube boundary are computed coordinatewise.
 Consequently, the homotopy group of a binary or indexed product is the corresponding product
 of homotopy groups. This file supplies the generalized-loop constructions, their characteristic

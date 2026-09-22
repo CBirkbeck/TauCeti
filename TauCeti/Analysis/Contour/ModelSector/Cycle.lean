@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.ModelSector.Closed
 /-!
 # Model sectors as contour cycles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ModelSector.Cycle)
+
 Hungerbühler--Wasem Proposition 2.2 decomposes a closed immersed curve, as a contour cycle, into
 a cycle avoiding the distinguished point and one model-sector cycle for each crossing.  The raw
 model sector, its piecewise-`C¹` regularity, and its winding number are constructed in

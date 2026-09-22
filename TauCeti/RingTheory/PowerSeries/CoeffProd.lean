@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 /-!
 # The lowest coefficient of a product of power series without constant term
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.CoeffProd)
+
 A power series with vanishing constant coefficient is a multiple of `X`, so a product of `n` such
 series is a multiple of `X ^ n`, and its coefficient in degree `n` is the product of the linear
 coefficients of the factors. This file records that computation, with an extra factor `g` in

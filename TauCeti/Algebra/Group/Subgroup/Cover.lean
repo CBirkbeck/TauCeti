@@ -12,6 +12,8 @@ import Mathlib.Order.LatticeIntervals
 /-!
 # Covering subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Subgroup.Cover)
+
 The subgroups of `G` contained in a subgroup `K` are order-isomorphic to the subgroups of `K`
 (`Subgroup.MapSubtype.orderIso`). Under that isomorphism, a subgroup `H` covered by `K` in the
 subgroup lattice of `G` becomes a maximal subgroup of `K`.

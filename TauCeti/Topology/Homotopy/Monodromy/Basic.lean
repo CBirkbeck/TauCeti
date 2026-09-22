@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.Covering
 /-!
 # The subgroup a cover recovers from a chosen lift of the basepoint
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Monodromy.Basic)
+
 Let `p : E → X` be a covering map and let `e` be a point of the fibre over `x`. Mathlib's
 `IsCoveringMap.fundamentalGroupMulAction` makes `π₁(X, x)` act on that fibre by monodromy.
 This file identifies the stabiliser of `e` for that action with the image of `π₁(E, e)` under

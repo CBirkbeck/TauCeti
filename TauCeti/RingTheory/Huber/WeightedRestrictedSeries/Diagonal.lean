@@ -16,6 +16,8 @@ import TauCeti.Topology.Algebra.Nonarchimedean.ZeroAtFilter
 /-!
 # `A⟨X, Y⟩` modulo `1 - XY`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Diagonal)
+
 Let `A` be a nonarchimedean ring and write `j₁, j₂ : A⟨Z⟩ → A⟨X, Y⟩` for the maps of restricted
 power series sending `Z` to `X` and to `Y` (`TauCeti.Huber.weightedRename` along
 `Fin.castSuccEmb` and `Fin.succEmb 1`). In the proof of Lemma 8.33 Wedhorn considers the row

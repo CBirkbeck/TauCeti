@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LineBundle
 /-!
 # The sheaf of a sum of Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.TensorProduct)
+
 Sections of `𝒪_X(D)` and of `𝒪_X(E)` multiply inside the sheaf `𝒦_X` of rational functions, and
 their product satisfies the order bound imposed by `D + E`, because orders of vanishing add. This
 file assembles those products into a morphism from the sectionwise tensor product of `𝒪_X(D)` and

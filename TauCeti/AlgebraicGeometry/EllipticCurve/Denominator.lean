@@ -12,6 +12,8 @@ import Mathlib.RingTheory.Localization.Rat
 /-!
 # Denominators of points on a Weierstrass curve over a unique factorization domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Denominator)
+
 Let `R` be a unique factorization domain with fraction field `K` and let `W : WeierstrassCurve R`
 have coefficients in `R`. Writing a `K`-point of `W` as a pair of reduced fractions
 `x = num x / den x` and `y = num y / den y` (Mathlib's `IsFractionRing.num` and

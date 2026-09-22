@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.Representation.JordanDecomposition.Basic
 /-!
 # Detecting unipotent points in a faithful representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.Faithful)
+
 The definition of a unipotent point of an affine group quantifies over every finite-dimensional
 representation. This file proves the usable faithful-representation criterion over a perfect
 value field: if one finite-dimensional comodule defines a closed immersion into a general linear

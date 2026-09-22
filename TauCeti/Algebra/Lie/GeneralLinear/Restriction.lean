@@ -13,6 +13,8 @@ import TauCeti.Algebra.Lie.Weights.Central
 /-!
 # Restricting representations between `gl n` and `sl n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Restriction)
+
 As soon as the rank is invertible in the field of scalars, `gl n` is the sum of `sl n` and the
 scalar matrices. This file uses that decomposition in both directions needed by highest-weight
 theory: an irreducible `gl n` module stays irreducible on restriction to `sl n`, and an equivalence

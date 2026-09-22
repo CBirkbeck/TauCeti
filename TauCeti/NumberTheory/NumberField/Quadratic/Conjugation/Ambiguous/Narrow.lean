@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Ambiguous.Structur
 /-!
 # Ambiguous ideals and the narrow class group of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Ambiguous.Narrow)
+
 Let `K` be a quadratic number field with quadratic conjugation `σ`. An ideal of `𝓞 K` is *ambiguous*
 when `σI = I`. This file proves the descent step of the **narrow** ambiguous class number formula:
 a `2`-torsion class of the narrow class group `Cl⁺(K)` is the narrow class of an ambiguous ideal,

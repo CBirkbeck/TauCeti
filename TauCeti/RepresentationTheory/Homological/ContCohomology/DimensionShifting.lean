@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Shapiro
 /-!
 # Acyclicity of `Coind_1^G` and dimension shifting in low degrees
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.DimensionShifting)
+
 For a profinite group `G`, the coinduced module `Coind_1^G A` of the trivial subgroup, which is the
 group of all locally constant maps `G → A` (`TauCeti.mem_coind_bot_iff`), has vanishing
 continuous cohomology in degrees one and two. This is Shapiro's lemma at `U = ⊥`: the trivial

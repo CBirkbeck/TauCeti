@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Cyclotomic.Basic
 /-!
 # Complex conjugation on exact cyclotomic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Cyclotomic.Conjugation)
+
 For positive `e`, complex conjugation preserves `ℤ[ζ_e]` and is determined by
 `ζ_e ↦ ζ_e⁻¹ = ζ_e ^ (e - 1)`.  This file implements that substitution directly on the
 coefficient-vector type `TauCeti.Cyclotomic e`, proves that it agrees with complex conjugation

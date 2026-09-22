@@ -12,6 +12,8 @@ import TauCeti.Algebra.Algebra.Pi
 /-!
 # Rational points of finite constant groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.ConstantGroup.Points)
+
 Let `G` be a finite group and `k` a field. The `k`-valued points of the constant group attached
 to `G` are canonically `G` itself. Indeed, every `k`-algebra homomorphism from the function
 algebra `k^G` to `k` is evaluation at a unique element of `G`.

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.VectorField.CoordinateFrame
 /-!
 # Symmetry of the Christoffel symbols in a coordinate frame
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Coordinate.Frame)
+
 Torsion-freedom of a covariant derivative on the tangent bundle says that `∇_X Y - ∇_Y X` is the
 Lie bracket `[X, Y]`.  Since the vector fields of a coordinate frame commute, a torsion-free
 connection satisfies `∇_{∂ᵢ} ∂ⱼ = ∇_{∂ⱼ} ∂ᵢ`.  This is the classical symmetry

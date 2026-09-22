@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Invariance
 /-!
 # The upper-triangular Hecke operator on `M_k(Γ₁(N))` and `S_k(Γ₁(N))`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.ModularForm)
+
 The three analytic inputs for `heckeSlashUpperTri` are in place — holomorphy
 (`UpperTri/Holomorphic.lean`), boundedness and vanishing at every cusp (`UpperTri/Cusps.lean`),
 and `UpperTri/Invariance.lean` supplies the missing algebraic one: at `p ∣ N` the sum preserves

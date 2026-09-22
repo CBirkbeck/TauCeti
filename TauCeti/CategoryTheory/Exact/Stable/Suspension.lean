@@ -10,6 +10,8 @@ public import TauCeti.CategoryTheory.Exact.Stable.Presentation
 /-!
 # Suspension on a Frobenius stable category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Suspension)
+
 Let `E` be a Frobenius exact structure. For every object `X`, choose a conflation
 
 `X ⟶ I(X) ⟶ ΣX`

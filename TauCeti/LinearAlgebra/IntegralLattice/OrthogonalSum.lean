@@ -15,6 +15,8 @@ import Mathlib.LinearAlgebra.Basis.Prod
 /-!
 # Orthogonal sums of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.OrthogonalSum)
+
 The orthogonal sum has product carrier and block-diagonal form. This file constructs the lattice,
 its canonical carrier maps and product bases, and proves several invariant laws: rank is additive,
 Gram matrices are block diagonal, determinant and discriminant are multiplicative, and evenness

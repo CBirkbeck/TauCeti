@@ -14,6 +14,8 @@ import TauCeti.Analysis.Complex.Conformal.Inverse.Function
 /-!
 # Conformal equivalence of simply connected domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.RiemannMapping.Equivalence)
+
 The Riemann mapping theorem says that a simply connected open proper subset of `ℂ` is
 biholomorphic to the open unit disc. Because the disc is a single fixed model, this immediately
 classifies such domains up to biholomorphism: *any two* of them are biholomorphic to each other,

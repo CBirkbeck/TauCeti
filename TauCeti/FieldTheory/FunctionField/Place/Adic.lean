@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Basic
 /-!
 # Places attached to the height-one primes of a Dedekind model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Adic)
+
 Let `k` be a field and `R` a Dedekind domain which is a `k`-algebra, with fraction field `F`.
 Every height-one prime `p` of `R` gives a place of `F / k`: the normalized `p`-adic valuation
 is surjective onto `ℤᵐ⁰` by `IsDedekindDomain.HeightOneSpectrum.valuation_surjective`, and it is

@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Galois.Connected
 /-!
 # Connected covering spaces are the categorically connected ones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Connected)
+
 Let `X` be path connected, locally path connected and semilocally simply connected. Covering
 spaces of `X` carry two unrelated-looking notions of connectedness: the topological one, that the
 total space is a `ConnectedSpace`, and the categorical one,

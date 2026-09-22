@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.Monoidal.Rigid.Closed
 /-!
 # Finite free sheaves of modules are self-dual
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Dual)
+
 Let `R` be a sheaf of commutative rings on a small site. In the symmetric monoidal category of
 sheaves of `R`-modules, the free sheaf `free I` on a finite type `I` is dualizable, with dual
 `free I` itself. Writing `eᵢ = ιFree i` for the basis sections, the evaluation

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deri
 /-!
 # The vertical integrals of a periodic integrand cancel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.VerticalCancel)
+
 The reflection `t ↦ 4 - t` carries the right vertical of the boundary contour onto the
 left vertical through the translation `z ↦ z - 1`, reversing the orientation. For any
 integrand `φ` of period `1` — the level-one situation, where `φ` is the logarithmic

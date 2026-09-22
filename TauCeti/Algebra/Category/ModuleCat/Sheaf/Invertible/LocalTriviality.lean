@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.Basic
 /-!
 # Local trivializations of invertible sheaves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.LocalTriviality)
+
 An invertible sheaf is locally free on a one-element basis. This file turns the
 singleton-indexed free presentations in `SheafOfModules.IsInvertible` into the standard
 geometric formulation: on every member of a cover, the sheaf is isomorphic to the free sheaf

@@ -13,6 +13,8 @@ import Mathlib.Algebra.Polynomial.Monic
 /-!
 # An effective discriminant bound from a basis of algebraic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EffectiveBounds.Discriminant.Basic)
+
 For a number field `K`, the discriminant of any `ℚ`-basis consisting of algebraic integers
 is a nonzero-integer-square multiple of the field discriminant `d_K`, so it bounds `|d_K|`
 from above:

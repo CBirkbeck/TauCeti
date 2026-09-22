@@ -14,6 +14,8 @@ public import TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Slice.Basic
 /-!
 # The spatial Bochner measures of a Berg--Christensen--Ressel positive-definite function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Slice.Measure)
+
 Let `F` be a bounded continuous positive-definite function on the involutive semigroup
 `ℝ≥0 × V`, with `V` a finite-dimensional real inner-product space. Freezing the time variable
 leaves the continuous positive-definite function `F (t, ·)` on `V`, so Bochner's theorem produces

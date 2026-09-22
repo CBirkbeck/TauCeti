@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.LSeries.Deriv
 /-!
 # Continuity of an L-series on a closed half-plane of summability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.Continuity)
+
 If a Dirichlet series is summable at `s`, then at every point `z` with `s.re ≤ z.re` its terms
 have norms at most those of the terms at `s`, so the series converges uniformly on the closed
 half-plane `{z | s.re ≤ z.re}` and `LSeries a` is continuous there. On the vertical line

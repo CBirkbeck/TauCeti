@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Trace.Square
 /-!
 # Symmetric and antisymmetric tensors in a tensor square
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorProduct.Symmetric)
+
 The flip `x ⊗ y ↦ y ⊗ x` is an involution of `M ⊗[R] M`, and the tensors it fixes and the tensors
 it negates cut the tensor square into the **symmetric tensors** `TauCeti.symmetricTensors` and the
 **antisymmetric tensors** `TauCeti.antisymmetricTensors`. When `2` is invertible they are

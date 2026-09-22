@@ -13,6 +13,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 /-!
 # Formal points over a Dedekind adic completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.AdicCompletion)
+
 For a Weierstrass curve over the ring of integers `O_v` in the completion of a Dedekind domain at
 a height-one prime, the maximal ideal has enough auxiliary parameters to apply the generic formal
 point homomorphism construction. This file packages the resulting unconditional additive and

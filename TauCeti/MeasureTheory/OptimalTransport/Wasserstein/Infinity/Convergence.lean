@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Space
 /-!
 # Convergence in the infinite-exponent Wasserstein distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Infinity.Convergence)
+
 On a Polish metric space, convergence in `W_∞` is exactly convergence through couplings whose
 essential-supremum displacements tend to zero. More precisely, for a filtered family of probability
 measures `μᵢ` and a probability measure `μ`, the following are equivalent:

@@ -21,6 +21,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Monogenicity criteria for finite extensions of local rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.LocalRing.Monogenic)
+
 This file develops the local-ring steps in the monogenicity argument for finite extensions of
 discrete valuation rings. The Newton step produces an element whose polynomial value generates a
 principal maximal ideal. A residue-field generator then meets every residue class, and propagation

@@ -13,6 +13,8 @@ import TauCeti.Combinatorics.DenseGraphLimits.Kernel.Pullback
 /-!
 # The cut distance of two graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Distance)
+
 The **cut distance** of two graphons is
 
 `δ□(U, W) = inf { ‖overlayDiff U W π‖□ | π a coupling of the two carriers }`,
@@ -131,7 +133,10 @@ private theorem bddBelow_couplingCutNorms (U : Graphon Ω₁ μ₁) (W : Graphon
 norm of the overlaid difference.
 
 The two graphons may live on different probability spaces, and no standard Borel or atomless
-hypothesis is imposed on either. -/
+hypothesis is imposed on either.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.cutDist) -/
 def cutDist (U : Graphon Ω₁ μ₁) (W : Graphon Ω₂ μ₂) : ℝ := sInf (couplingCutNorms U W)
 
 /-- The cut distance is at most the overlaid cut norm along any coupling: the introduction rule

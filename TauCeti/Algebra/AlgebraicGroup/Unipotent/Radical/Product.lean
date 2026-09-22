@@ -15,6 +15,8 @@ import TauCeti.Algebra.AlgebraicGroup.Unipotent.NormalProduct
 /-!
 # Geometric properties of products of unipotent-radical candidates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Product)
+
 Let `I` and `J` cut out connected normal smooth unipotent closed subgroups of a finite-type
 affine group. Since `I` is normal, multiplication on the two subgroups is a homomorphism after
 their product is equipped with the conjugation semidirect-product law. Its scheme-theoretic image

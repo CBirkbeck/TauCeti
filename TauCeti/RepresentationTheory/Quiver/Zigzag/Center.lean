@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Multiplication
 /-!
 # The centre of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Center)
+
 The zigzag relation quotient `TauCeti.nonisolatedZigzagQuotient` of a finite simple graph `G`
 without isolated vertices has the vertex idempotents `e_i`, the oriented edges `a_d` and the volume
 classes `x_i` as a basis, and `TauCeti.zigzagMk_ofArrow_mul_ofArrow_symm` and its companions

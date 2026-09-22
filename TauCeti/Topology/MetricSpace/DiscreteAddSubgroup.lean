@@ -13,6 +13,8 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Real
 /-!
 # Counting points of a discrete additive subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.DiscreteAddSubgroup)
+
 This file gives a uniform bound on the number of points of a discrete additive subgroup in a set
 of bounded diameter.  Translating one point of the intersection to the origin embeds the
 intersection into a closed ball of the same radius.

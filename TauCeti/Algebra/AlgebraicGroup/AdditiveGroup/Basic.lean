@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.SymmetricAlgebra.Basic
 /-!
 # The additive group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.Basic)
+
 The affine scheme `Spec (SymmetricAlgebra R M)` is the **additive (vector) group** on `M`.
 Its functor of points is computed here: for a commutative `R`-algebra `A`, the
 convolution monoid of `R`-algebra maps `SymmetricAlgebra R M →ₐ[R] A` is the additive monoid

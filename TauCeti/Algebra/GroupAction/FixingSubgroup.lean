@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.GroupAction.FixingSubgroup
 /-!
 # Pointwise fixing subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupAction.FixingSubgroup)
+
 This file records small generic additions to Mathlib's `fixingSubgroup` API.
 -/
 

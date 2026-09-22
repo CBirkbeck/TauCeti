@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.Multiquadratic.Unramified.Maximality
 /-!
 # The narrow genus field of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Unramified.NarrowGenusField)
+
 This file gives the intrinsic finite-place characterization of the narrow genus field and proves
 that the prime-discriminant compositum `candidateGenusField hd` has that characterization.
 

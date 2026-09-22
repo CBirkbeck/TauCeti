@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Spin.SpecialOrthogonal
 /-!
 # Normalized reflection-pair lifts in Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.ReflectionPair)
+
 Two vectors of quadratic norm one determine a canonical element of the Spin group: the product of
 their Clifford generators. Its orthogonal action is the ordered product of the two corresponding
 reflections. This gives a concrete choice of lift for reflection products over positive-definite

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Quadratic.Discriminant
 /-!
 # Genus characters of a quadratic discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.Basic)
+
 Genus theory attaches to a fundamental discriminant `D` a family of real quadratic characters, one
 for each prime discriminant occurring in a factorization `D = P₁ ⋯ P_t`
 (`IsFundamentalDiscriminant.exists_finset_primeDiscriminant`); the products of these over subsets

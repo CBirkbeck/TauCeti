@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Recut.Mixed
 /-!
 # The recut pairing on two-step grid rectangle decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Recut.Pairing)
+
 A nondiagonal term in the square of the unblocked grid differential `∂⁻` is a pair of composable
 empty rectangles whose two pairs of side columns are disjoint or share exactly one column. In the
 second case the two rectangles meet at a corner, their union is an L-shaped hexagon, and cutting

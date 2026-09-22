@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Diagonal.Basic
 /-!
 # Chains of elementary equivalences between diagonal quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Diagonal.Chain)
+
 This file defines the elementary steps in the chain theorem for diagonal quadratic forms. A
 permutation step reorders the coefficients, while a binary step replaces two coefficients by an
 equivalent binary form and leaves all other coefficients fixed. A diagonal chain is the reflexive

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Geo
 /-!
 # The positive semidefinite solution of `A * S * A = T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.GeometricMean)
+
 The Loewner order on square matrices makes `Matrix n n 𝕜` an algebra with a continuous functional
 calculus, so `TauCeti.geometricMean` applies to it: for `S` positive definite and `T` positive
 semidefinite there is exactly one positive semidefinite `A` with `A * S * A = T`, namely

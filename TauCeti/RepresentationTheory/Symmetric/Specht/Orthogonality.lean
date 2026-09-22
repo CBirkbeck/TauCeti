@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Complex
 /-!
 # The character table of `Sₙ` is a character table, and its orthogonality relations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Orthogonality)
+
 This file identifies the integer matrix `TauCeti.symmetricCharacterTable n`, whose `(μ, ν)` entry
 is the value `χ^μ(ν)` of the character of the Specht module `S^μ` on the class of cycle type `ν`,
 with the library's complex character table `TauCeti.characterTable ℂ (Equiv.Perm (Fin n))`. It then

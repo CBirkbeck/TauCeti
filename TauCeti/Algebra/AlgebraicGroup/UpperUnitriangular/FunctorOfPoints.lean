@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Coordinate.HopfA
 /-!
 # The functor of points of the upper-unitriangular group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.FunctorOfPoints)
+
 For a commutative ring `R`, this file identifies the convolution group of algebra-valued points
 of the upper-unitriangular coordinate Hopf algebra with the existing upper-unitriangular matrix
 group. The equivalence is natural in the commutative value algebra and therefore assembles into

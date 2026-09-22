@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Basic
 /-!
 # Diagonal coset representatives for the `GL_n` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets)
+
 The double cosets `T(a₁,...,aₙ) = SL_n(ℤ) · diag(a₁,...,aₙ) · SL_n(ℤ)` attached to diagonal
 matrices with positive integer entries, and the elementary divisor theorem for the arithmetic
 Hecke triple: the map from positive divisibility chains `a₁ ∣ a₂ ∣ ⋯ ∣ aₙ` to double cosets

@@ -11,6 +11,8 @@ import Mathlib.Tactic.Group
 /-!
 # Hecke rings: the module of left cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.LeftCosetModule.Basic)
+
 The scalar operations underlying the natural representation of the Hecke ring, following
 [Shimura][shimura1971], §3.1: on the free module `LeftCosetModule Δ H R` over the left
 cosets `Δ/H`, each element of `𝕋 Δ H R` defines a scalar operation, with a double coset

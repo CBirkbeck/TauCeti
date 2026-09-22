@@ -15,6 +15,8 @@ import TauCeti.Analysis.CompletelyMonotone.Laplace.Kernel
 /-!
 # Approximating measures for Bernstein's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.Measures)
+
 The Chafaï-style approximating measures for the **non-constant part** of a completely monotone
 function in Bernstein's theorem. For a completely monotone `f` with `L = lim_{t→∞} f t`, the
 densities `ρ_n(t) = (-1)ⁿ/(n-1)! · tⁿ⁻¹ · f⁽ⁿ⁾(t)` are nonnegative on `[0, ∞)`, the positive

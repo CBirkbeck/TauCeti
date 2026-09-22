@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Induced
 /-!
 # Multiplication of regular subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Multiplication)
+
 For a bialgebra `H`, multiplication is a morphism from the tensor square of the regular
 right comodule to the regular right comodule. Consequently, if `N` and `P` are
 subcomodules of the regular comodule and a third subcomodule `Q` contains all products

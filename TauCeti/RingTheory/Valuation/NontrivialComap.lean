@@ -13,6 +13,8 @@ import Mathlib.RingTheory.IntegralClosure.IsIntegral.Basic
 /-!
 # Nontriviality survives restriction along an integral algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.NontrivialComap)
+
 A valuation of `L` restricts along `algebraMap K L` to a valuation of `K`, and this file records
 that the restriction of a nontrivial valuation is again nontrivial as soon as `L` is integral
 over `K`.

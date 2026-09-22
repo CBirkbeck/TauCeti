@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Chevalley.System
 /-!
 # What an automorphism does to a Chevalley system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Chevalley.Automorphism)
+
 Let `x` be a family of root vectors normalised against the coroots, and let `σ` be an automorphism
 of `L` normalising the splitting Cartan subalgebra `H`. Then `σ` permutes the roots, and since the
 root spaces are lines it carries `x α` to a nonzero multiple of `x (σ α)`:

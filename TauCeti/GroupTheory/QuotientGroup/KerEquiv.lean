@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 /-!
 # Evaluating the first isomorphism theorem on a class
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.QuotientGroup.KerEquiv)
+
 Mathlib packages the first isomorphism theorem for a surjective homomorphism `φ : G →* M` as
 `QuotientGroup.quotientKerEquivOfSurjective φ hφ : G ⧸ φ.ker ≃* M`. It is defined through
 `QuotientGroup.quotientKerEquivOfRightInverse` applied to a right inverse extracted from `hφ`

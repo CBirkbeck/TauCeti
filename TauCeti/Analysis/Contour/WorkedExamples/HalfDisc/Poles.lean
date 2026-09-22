@@ -17,6 +17,8 @@ import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Winding
 /-!
 # The half-disc residue theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Poles)
+
 The Hungerbühler–Wasem generalized residue theorem, run on the boundary of the upper half-disc of
 radius `R` about the origin -- the contour of `WorkedExamples/HalfDisc/Basic.lean`, which passes
 *through* the origin instead of detouring around it. With the winding numbers of

@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminants
 /-!
 # Fundamental discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Basic)
+
 A **fundamental discriminant** is an integer `D` which is either congruent to `1` modulo `4` and
 squarefree, or of the form `4 * m` with `m` squarefree and congruent to `2` or `3` modulo `4`.
 These are exactly the discriminants of quadratic fields (together with `1`, the discriminant of

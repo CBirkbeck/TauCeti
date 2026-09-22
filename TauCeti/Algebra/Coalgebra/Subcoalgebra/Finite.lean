@@ -16,6 +16,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Regular
 /-!
 # Finite subcoalgebras and directed unions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcoalgebra.Finite)
+
 This file proves the elementwise fundamental theorem of coalgebras over a principal ideal
 domain: if the coalgebra is free as a module, then each of its elements belongs to a finite
 subcoalgebra. Over a field the freeness hypothesis is automatic, so every coalgebra element

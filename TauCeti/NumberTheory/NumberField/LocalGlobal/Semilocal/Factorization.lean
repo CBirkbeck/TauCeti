@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # The factor-field construction of the semi-local decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Semilocal.Factorization)
+
 For a finite extension of number fields `L/K`, choose a primitive element `α` and factor its
 minimal polynomial over the completion `K_v`. The irreducible factors are in bijection with the
 places `w` of `L` above `v`; their quotient fields are the completions `L_w`. The Chinese

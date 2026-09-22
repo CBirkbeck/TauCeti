@@ -12,6 +12,8 @@ public import TauCeti.Topology.ConnectedComponents
 /-!
 # The algebraic topology of a path component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.PathComponent)
+
 Loops and path homotopies based in `pathComponent x₀` remain there. Consequently, when the
 ambient space is semilocally simply connected, the path component inherits semilocal simple
 connectivity, and its inclusion into the ambient space induces an isomorphism on fundamental

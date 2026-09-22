@@ -12,6 +12,8 @@ public import TauCeti.Topology.Triangulable
 /-!
 # The triangulation conjecture
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.TriangulationConjecture)
+
 The **triangulation conjecture** in dimension `n` asserts that every closed topological
 `n`-manifold is homeomorphic to the geometric realization of an abstract simplicial complex.
 Here a closed topological `n`-manifold is a compact Hausdorff space carrying charts to

@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Solver
 /-!
 # The rational Dixon computation for the dihedral group of order six
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Dihedral.Three)
+
 This file runs the rational stage of the Dixon--Schneider character-table algorithm for
 `DihedralGroup 3`, which is isomorphic to the symmetric group on three letters. The class data are
 numbered by `TauCeti.dihedralClassData 3`; its three classes have sizes `1`, `2`, and `3`,

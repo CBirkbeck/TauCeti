@@ -19,6 +19,8 @@ public import TauCeti.RingTheory.Polynomial.Hermite.Derivative
 /-!
 # The Gaussian orthogonality relation for the probabilists' Hermite polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Orthogonality)
+
 Mathlib defines the probabilists' Hermite polynomials `Polynomial.hermite : ℕ → ℤ[X]` and knows the
 Gaussian integral `∫ x, exp (-b x²) = √(π / b)`, but it records **no orthogonality relation**
 between the Hermite polynomials against the Gaussian weight. This file proves that relation, the

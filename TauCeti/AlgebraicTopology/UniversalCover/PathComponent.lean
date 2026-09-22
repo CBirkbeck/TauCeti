@@ -12,6 +12,8 @@ public import TauCeti.Topology.Covering.Clopen
 /-!
 # The universal cover of a path component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.PathComponent)
+
 The universal-cover development assumes that the base is path connected, so that the endpoint
 projection is surjective. Dropping that assumption, based paths out of `x₀` still only see the
 path component of `x₀`, so this file builds the cover of `pathComponent x₀` instead.

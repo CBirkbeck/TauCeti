@@ -11,6 +11,8 @@ import Mathlib.Data.Rat.Floor
 /-!
 # Non-negativity of a binary quadratic form and its discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.QuadraticDiscriminant)
+
 Mathlib's `discrim_le_zero` shows that a quadratic polynomial over a linearly ordered field which
 is non-negative at every point of the field has non-positive discriminant. This file supplies two
 facts about the homogeneous two-variable form `a * x ^ 2 + b * x * y + c * y ^ 2` that it does not

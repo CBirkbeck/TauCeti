@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.UniversalEnveloping
 /-!
 # The defining representation of a matrix Lie subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.MatrixRepresentation)
+
 A Lie subalgebra of square matrices acts faithfully on coordinate vectors. This file extends that
 action to the universal enveloping algebra and records its values on Lie generators. It also
 transports nilpotency of an underlying matrix to nilpotency of the resulting endomorphism.

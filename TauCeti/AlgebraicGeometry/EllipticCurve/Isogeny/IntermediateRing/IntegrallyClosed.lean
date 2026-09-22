@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 /-!
 # The intermediate ring is integrally closed
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.IntegrallyClosed)
+
 For an isogeny `φ : Isogeny W₁ W₂`, the intermediate ring — the integral closure of
 `W₂.CoordinateRing` in `W₁.FunctionField` — is itself integrally closed. With
 `Isogeny.moduleFinite_intermediateRing` this is the normality half of what the relative ideal norm

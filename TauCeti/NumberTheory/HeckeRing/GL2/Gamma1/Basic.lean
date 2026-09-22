@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
 /-!
 # The Hecke triple of `Γ₁(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.Basic)
+
 The submonoid `Δ₀(N) ⊆ GL₂(ℚ)` of integral matrices with positive determinant that are
 upper-triangular modulo `N` with unit upper-left entry, and the Hecke triple it forms with
 the image of the congruence subgroup `Γ₁(N)`. This is the level-`N` counterpart of the

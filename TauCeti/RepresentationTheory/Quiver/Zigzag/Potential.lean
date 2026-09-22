@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Gauge
 /-!
 # Transition factors of a skew-zigzag parameter and their integration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Potential)
+
 A skew-zigzag parameter records ratios between backtracks along edges incident to the same vertex.
 Choosing a reference edge at every vertex turns these ratios into local edge coordinates, and
 comparing the two ends of an edge gives a transition factor across it. Multiplying transition

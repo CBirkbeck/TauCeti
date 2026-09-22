@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.RamificationInertia.Galois
 /-!
 # Separable and inseparable residue degrees in Hilbert theory
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.SeparableDegree)
+
 For a prime `P` of a finite Galois extension lying over `p`, the quotient of the decomposition
 group by inertia acts faithfully on the residue field.  The residue extension is normal but need
 not be separable, so the order of this quotient is its separable degree rather than its full

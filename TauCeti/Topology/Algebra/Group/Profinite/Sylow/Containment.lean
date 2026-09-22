@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.QuotientGroup.Map
 /-!
 # Sylow subgroups and the poset of pro-`p` subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Sylow.Containment)
+
 Every pro-`p` subgroup of a profinite group is contained in a Sylow pro-`p` subgroup, and the
 Sylow pro-`p` subgroups are exactly the maximal ones. The containment statement is proved in the
 sharper conjugacy form: given one Sylow pro-`p` subgroup `P`, every pro-`p` subgroup `Q` lies in

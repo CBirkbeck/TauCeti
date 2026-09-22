@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Constructions.HaarToSphere
 /-!
 # Flux of the Newtonian kernel in Euclidean space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Euclidean.Flux)
+
 For every dimension `n ≠ 0` and `n ≠ 2`, this file computes the outward normal derivative of
 the normalized Newtonian kernel on a sphere. Integrating against the canonical measure on the
 unit sphere, with the radial surface Jacobian, gives total flux `-1` through every sphere
