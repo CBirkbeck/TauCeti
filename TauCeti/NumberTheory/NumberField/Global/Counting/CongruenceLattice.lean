@@ -34,9 +34,8 @@ sublattice.
 
 * `TauCeti.GlobalNumberFields.mem_congruenceLattice_iff`: its points are the images of the
   elements of `I * 𝔪₀`.
-* `TauCeti.GlobalNumberFields.coe_congruenceLattice_mk0_eq_image` and
-  `TauCeti.GlobalNumberFields.mem_congruenceLattice_mk0_iff`: for an integral ideal `𝔞`, the same
-  description over `𝔞 * 𝔪₀`, as a set equality and as a membership criterion.
+* `TauCeti.GlobalNumberFields.coe_congruenceLattice_mk0_eq_image`: for an integral ideal `𝔞`,
+  the same description over `𝔞 * 𝔪₀`.
 * `TauCeti.GlobalNumberFields.congruenceLattice_le_idealLattice`: it is a sublattice of the ideal
   lattice of `I`.
 * `TauCeti.GlobalNumberFields.relIndex_congruenceLattice`: its index in the ideal lattice of `I`
@@ -161,12 +160,5 @@ theorem coe_congruenceLattice_mk0_eq_image (𝔪 : Modulus K) (𝔞 : (Ideal (�
   ext x
   simp [mem_congruenceLattice_iff, FractionalIdeal.coe_mk0, ← FractionalIdeal.coeIdeal_mul,
     FractionalIdeal.mem_coeIdeal]
-
-/-- Membership in the congruence lattice of an integral ideal `𝔞`: a point of
-`congruenceLattice 𝔪 (mk0 𝔞)` is the image of an element of `𝔞 * 𝔪₀`. -/
-theorem mem_congruenceLattice_mk0_iff (𝔪 : Modulus K) (𝔞 : (Ideal (𝓞 K))⁰) {x : mixedSpace K} :
-    x ∈ congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞) ↔ ∃ y ∈ (𝔞 : Ideal (𝓞 K)) * 𝔪.finitePart,
-      mixedEmbedding K (y : K) = x := by
-  simpa using Set.ext_iff.mp (coe_congruenceLattice_mk0_eq_image 𝔪 𝔞) x
 
 end TauCeti.GlobalNumberFields
