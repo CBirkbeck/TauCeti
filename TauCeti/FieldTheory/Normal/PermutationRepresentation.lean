@@ -30,22 +30,26 @@ group is canonical only up to conjugacy. This is the same phenomenon as Mathlib'
 `Polynomial.Gal.galActionHom`, which acts on `p.rootSet E` rather than on `Fin p.natDegree` for
 the same reason.
 
-Two objects are provided, and the distinction is the generation hypothesis.
+Two objects are provided, and the distinction is faithfulness.
 `permutationRepresentation` is the underlying action homomorphism and needs no hypothesis; it is
-injective only when the embedded images generate `M`, and `permutationEmbedding` bundles that
-hypothesis with its proof to exhibit `Gal(M/F)` as a subgroup of `S_n` — an isomorphism onto the
-range of the representation, so the group structure is retained.
+injective exactly when the action on embeddings is faithful, and `permutationEquivRange` is then
+the isomorphism of `Gal(M/F)` with its image in `S_n`, so the group structure is retained.
+
+Faithfulness is the hypothesis the injectivity argument actually uses, so it is what these
+declarations assume. The generation hypothesis is the usual way to meet it:
+`TauCeti.FieldTheory.faithfulSMul_of_normalClosure_eq_top` turns
+`normalClosure F L M = ⊤` into the instance.
 
 ## Main results
 
 * `TauCeti.FieldTheory.permutationRepresentation`: the representation `(M ≃ₐ[F] M) →* Equiv.Perm
   (Fin n)` attached to an enumeration `e` of the embeddings.
 * `TauCeti.FieldTheory.permutationRepresentation_apply`: it acts by `i ↦ e (σ • e.symm i)`.
-* `TauCeti.FieldTheory.permutationRepresentation_injective`: it is injective when the embedded
-  images generate `M`.
-* `TauCeti.FieldTheory.permutationEmbedding`: the resulting isomorphism of `M ≃ₐ[F] M` with the
+* `TauCeti.FieldTheory.permutationRepresentation_injective`: it is injective when the action on
+  embeddings is faithful.
+* `TauCeti.FieldTheory.permutationEquivRange`: the resulting isomorphism of `M ≃ₐ[F] M` with the
   range of the representation, a subgroup of `Equiv.Perm (Fin n)`, with
-  `TauCeti.FieldTheory.permutationEmbedding_apply` identifying its values.
+  `TauCeti.FieldTheory.permutationEquivRange_apply` identifying its values.
 * `TauCeti.FieldTheory.permutationRepresentation_eq_conj`: replacing the enumeration conjugates
   the representation.
 
@@ -76,30 +80,30 @@ theorem permutationRepresentation_apply (e : (L →ₐ[F] M) ≃ Fin n) (σ : M 
     Equiv.permCongrHom_coe, Equiv.permCongr_apply, MulAction.toPermHom_apply,
     MulAction.toPerm_apply]
 
-/-- **`Gal(M/F)` embeds in `S_n`** when the embedded images of `L` generate `M`: an automorphism
+/-- **`Gal(M/F)` embeds in `S_n`** when the action on embeddings is faithful: an automorphism
 acting trivially on the enumerated embeddings fixes every embedding, hence is the identity. -/
-theorem permutationRepresentation_injective
-    (hgen : IntermediateField.normalClosure F L M = ⊤) (e : (L →ₐ[F] M) ≃ Fin n) :
+theorem permutationRepresentation_injective [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
+    (e : (L →ₐ[F] M) ≃ Fin n) :
     Function.Injective (permutationRepresentation (F := F) (L := L) (M := M) e) := by
   rw [injective_iff_map_eq_one]
   intro σ hσ
-  refine eq_one_of_forall_smul_eq hgen fun φ => ?_
+  refine FaithfulSMul.eq_of_smul_eq_smul (α := (L →ₐ[F] M)) fun φ => ?_
   -- Evaluate the trivial permutation at the index `e φ` naming `φ`.
   simpa using congrArg (fun p : Equiv.Perm (Fin n) => p (e φ)) hσ
 
-/-- **`Gal(M/F)` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the
-embeddings and a proof that the embedded images of `L` generate `M`: the representation is
-injective, so it is an isomorphism onto its range. -/
-noncomputable def permutationEmbedding
-    (hgen : IntermediateField.normalClosure F L M = ⊤) (e : (L →ₐ[F] M) ≃ Fin n) :
+/-- **`Gal(M/F)` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the embeddings
+and a faithful action on them: the representation is injective, so it is an isomorphism onto its
+range. -/
+noncomputable def permutationEquivRange [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
+    (e : (L →ₐ[F] M) ≃ Fin n) :
     (M ≃ₐ[F] M) ≃* (permutationRepresentation (F := F) (L := L) (M := M) e).range :=
-  MonoidHom.ofInjective (permutationRepresentation_injective hgen e)
+  MonoidHom.ofInjective (permutationRepresentation_injective e)
 
 /-- **The isomorphism acts as the representation.** -/
 @[simp]
-theorem permutationEmbedding_apply (hgen : IntermediateField.normalClosure F L M = ⊤)
+theorem permutationEquivRange_apply [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
     (e : (L →ₐ[F] M) ≃ Fin n) (σ : M ≃ₐ[F] M) :
-    (permutationEmbedding hgen e σ : Equiv.Perm (Fin n)) = permutationRepresentation e σ :=
+    (permutationEquivRange e σ : Equiv.Perm (Fin n)) = permutationRepresentation e σ :=
   MonoidHom.ofInjective_apply _
 
 /-- **Replacing the enumeration conjugates the representation inside `S_n`**, by the re-indexing
