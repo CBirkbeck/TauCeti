@@ -52,6 +52,7 @@ its orbits, which is what makes freeness the fact worth isolating here.
 public section
 
 open NumberField NumberField.mixedEmbedding NumberField.mixedEmbedding.fundamentalCone
+open TauCeti.NumberField.Units
 
 open scoped nonZeroDivisors
 

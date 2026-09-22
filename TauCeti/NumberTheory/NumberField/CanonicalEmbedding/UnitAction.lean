@@ -19,7 +19,9 @@ units on the mixed space.
 * `TauCeti.NumberField.Units.unitSMul_real_smul`: the unit action commutes with real
   scalar multiplication;
 * `TauCeti.NumberField.Units.measurable_unitSMul`: the action of a fixed unit is
-  measurable.
+  measurable;
+* `TauCeti.NumberField.Units.eq_one_of_unitSMul_mixedEmbedding_eq`: a unit fixing the image of a
+  nonzero algebraic integer is the identity.
 -/
 
 public section
@@ -47,5 +49,14 @@ theorem measurable_unitSMul [NumberField K] (u : (𝓞 K)ˣ) :
     Measurable fun x : mixedEmbedding.mixedSpace K ↦ u • x := by
   simpa only [mixedEmbedding.unitSMul_smul] using
     (continuous_const_mul (mixedEmbedding K (u : K))).measurable
+
+/-- **The unit action on the mixed space is faithful on nonzero integers.**  A unit fixing the
+image of a nonzero algebraic integer is the identity. -/
+theorem eq_one_of_unitSMul_mixedEmbedding_eq [NumberField K] {x : 𝓞 K} (hx : x ≠ 0)
+    {u : (𝓞 K)ˣ}
+    (h : u • mixedEmbedding K (x : 𝓞 K) = mixedEmbedding K (x : 𝓞 K)) : u = 1 := by
+  rw [mixedEmbedding.unitSMul_smul, ← map_mul, (mixedEmbedding_injective K).eq_iff, ← map_mul,
+    ← RingOfIntegers.ext_iff, mul_eq_right₀ hx, Units.val_eq_one] at h
+  exact h
 
 end TauCeti.NumberField.Units

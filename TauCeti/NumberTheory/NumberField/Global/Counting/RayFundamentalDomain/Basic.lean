@@ -289,14 +289,6 @@ theorem mem_unitsCongruenceTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
       u ∈ unitsCongruenceSubgroup 𝔪 ∧ u ∈ NumberField.Units.torsion K :=
   Iff.rfl
 
-/-- **The unit action on the mixed space is faithful on nonzero integers.**  A unit fixing the
-image of a nonzero algebraic integer is the identity, because `mixedEmbedding` is injective and a
-nonzero divisor cancels. -/
-theorem eq_one_of_unitSMul_mixedEmbedding_eq {x : 𝓞 K} (hx : x ≠ 0) {u : (𝓞 K)ˣ}
-    (h : u • mixedEmbedding K (x : 𝓞 K) = mixedEmbedding K (x : 𝓞 K)) : u = 1 := by
-  rw [unitSMul_smul, ← map_mul, (mixedEmbedding_injective K).eq_iff, ← map_mul,
-    ← RingOfIntegers.ext_iff, mul_eq_right₀ hx, Units.val_eq_one] at h
-  exact h
 
 /-- **Existence of a representative.** Every point carrying the signs prescribed by `𝔪` and of
 nonzero mixed norm is moved into the ray fundamental domain by a unit congruent to one modulo
