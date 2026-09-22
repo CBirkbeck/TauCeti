@@ -31,12 +31,10 @@ so the two coordinate rings are canonically isomorphic. That is the shape
 isomorphism *given* comparison maps both ways, and this file supplies them from an equality of
 rational subsets.
 
-In `CompleteSeparatedTopCommRingCat` the same argument is cheaper: the comparison morphisms of
-the two containments compose to the comparison morphism of a containment of a rational subset in
-itself, which is the identity, so no further uniqueness argument is needed. Since every
-restriction morphism of a refinement is a comparison morphism, it follows that a refinement
-between two presentations of the *same* rational subset is an isomorphism — the assignment
-`p ↦ A⟨p.num / p.den⟩` sees only the rational subset `R(p)`.
+The same holds in `CompleteSeparatedTopCommRingCat`, and there it takes the sharper form used by
+the structure presheaf: presentations of one rational subset have canonically isomorphic objects,
+and a refinement between two of them is an isomorphism. So the assignment
+`p ↦ A⟨p.num / p.den⟩` depends on the rational subset `R(p)` alone.
 
 All of this assumes only that `A⁺` consists of power-bounded elements, as every ring of integral
 elements of `A` does.
@@ -264,9 +262,8 @@ theorem homOfRationalSubsetSubset_comp (Aplus : Subring A)
 /-- **Presentation independence**: two presentations of the *same* rational subset have
 canonically isomorphic objects `A⟨p⟩ ≅ A⟨q⟩`.
 
-The equality of rational subsets gives a containment each way, so Wedhorn's Proposition 8.2(1)
-gives a comparison morphism each way; the two are mutually inverse because either composite is
-the comparison morphism of a containment of a rational subset in itself, hence the identity.
+Its two components are the comparison morphisms of the two containments the equality gives, so a
+consumer that already has one of those can use it directly.
 
 This is the categorical counterpart of `presentationRingEquivOfEq`: it says the assignment
 `p ↦ A⟨p.num / p.den⟩` depends on the rational subset `R(p)` alone. The body is not exported:
@@ -304,8 +301,9 @@ theorem completionLocObjIsoOfRationalSubsetEq_inv (Aplus : Subring A)
     (completionLocObjIsoOfRationalSubsetEq Aplus hAplus heq).inv =
       homOfRationalSubsetSubset Aplus hAplus heq.le := (rfl)
 
-/-- **A comparison morphism between equal rational subsets is an isomorphism**, by
-`completionLocObjIsoOfRationalSubsetEq`. -/
+/-- **A comparison morphism between equal rational subsets is an isomorphism.** This is the
+form to use when the comparison morphism is already in hand and only its invertibility is
+wanted; `completionLocObjIsoOfRationalSubsetEq` is the bundled isomorphism itself. -/
 theorem isIso_homOfRationalSubsetSubset (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) {P : PairOfDefinition A}
     {p q : Presentation P}
