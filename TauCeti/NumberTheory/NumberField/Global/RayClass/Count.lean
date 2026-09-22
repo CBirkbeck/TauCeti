@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients.Norm
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.Finite
+public import TauCeti.NumberTheory.NumberField.Global.RayClass.Basic
 public import TauCeti.Order.Northcott
 
 /-!
@@ -123,10 +123,7 @@ noncomputable def idealClassSigmaEquiv (𝔪 : Modulus K) (x : ℝ) :
   (Equiv.sigmaCongrRight fun _ ↦ (Equiv.subtypeEquivRight fun _ ↦ and_comm).trans
       (Equiv.subtypeSubtypeEquivSubtypeInter _ _).symm).trans (Equiv.sigmaFiberEquiv _)
 
-/-- The partition keeps the ideal: it only forgets which class the ideal was filed under.
-
-Tagged `@[simp]`: the left-hand side is in simp-normal form and nothing else rewrites it, verified
-with a scoped `#lint only simpNF in TauCeti` driver carrying a positive control. -/
+/-- The partition keeps the ideal: it only forgets which class the ideal was filed under. -/
 @[simp]
 theorem idealClassSigmaEquiv_apply_coe (𝔪 : Modulus K) (x : ℝ)
     (p : Σ c : RayClassGroup 𝔪, {I : integralIdealsPrimeTo 𝔪 //
