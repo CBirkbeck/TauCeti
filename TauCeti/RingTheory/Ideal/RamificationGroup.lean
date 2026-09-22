@@ -22,25 +22,17 @@ makes `ramificationGroup M P 0` the inertia group rather than the whole decompos
 The decomposition group is deliberately **not** a member of this family — it keeps its own name,
 `MulAction.stabilizer`, and is never written `G (-1)`.
 
-## Building on Mathlib's inertia subgroup
+## What the family measures
 
-Mathlib's `Ideal.inertia M I` is already `{σ | ∀ x, σ • x - x ∈ I}`, so the `i`-th ramification
-group *is* the inertia subgroup of `P ^ (i + 1)`, and that is how it is defined here. Naming the
-family is what this file adds.
+The `i`-th group is the inertia subgroup of `P ^ (i + 1)`: it records how deeply an automorphism
+acts trivially near `P`. The family is decreasing, sits inside the inertia group, and is normal
+in the decomposition group, so it filters that group by depth of triviality — each step
+identifying the automorphisms that are indistinguishable from the identity to one order further.
+Over a Noetherian domain with a faithful action the filtration is exhaustive: only the identity
+survives every stage.
 
-Two of the results are direct restatements of a Mathlib fact along that definition:
-
-| here | restates |
-|---|---|
-| `ramificationGroup_zero` | `pow_one` |
-| `ramificationGroup_smul` | `Ideal.inertia_smul` |
-
-The rest are consequences, proved from Mathlib facts together with a further argument:
-`ramificationGroup_antitone` from `Ideal.pow_le_pow_right`, `ramificationGroup_le_inertia` from
-antitonicity at `i = 0`, `ramificationGroup_le_stabilizer` by composing that with
-`Ideal.inertia_le_stabilizer`, the normality instance from `Ideal.inertia_smul` and stability of
-`P ^ (i + 1)` under the stabilizer, and `iInf_ramificationGroup_eq_bot` from
-`Ideal.iInf_pow_eq_bot_of_isDomain` together with faithfulness of the action.
+That filtration is what the exponents of the different and the discriminant are computed from,
+and the indexing above is the numbering those formulas assume.
 
 ## Main results
 
@@ -56,7 +48,7 @@ antitonicity at `i = 0`, `ramificationGroup_le_stabilizer` by composing that wit
   of `g • P`.
 * `Ideal.instNormalRamificationGroupStabilizer`: they are normal in the decomposition group.
 * `Ideal.iInf_ramificationGroup_eq_bot`: over a Noetherian domain with a faithful action, the
-  ramification groups meet in the trivial group, by Krull's intersection theorem.
+  ramification groups meet in the trivial group.
 
 ## References
 
@@ -124,9 +116,8 @@ instance (P : Ideal R) (i : ℕ) : (P.ramificationGroup (stabilizer M P) i).Norm
   exact fun g ↦ congrArg (inertia _)
     ((smul_pow' (g : M) P (i + 1)).trans (congrArg (· ^ (i + 1)) g.2))
 
-/-- **The ramification groups meet in the trivial group.** An automorphism that moves every
-element of `R` to every order fixes `R` pointwise, by Krull's intersection theorem, and a
-faithful action then forces it to be the identity. -/
+/-- **The ramification groups meet in the trivial group**, so the filtration is exhaustive: no
+automorphism but the identity acts trivially to every order. -/
 theorem iInf_ramificationGroup_eq_bot [IsNoetherianRing R] [IsDomain R] [FaithfulSMul M R]
     (P : Ideal R) (hP : P ≠ ⊤) : ⨅ i, P.ramificationGroup M i = ⊥ := by
   rw [eq_bot_iff]
