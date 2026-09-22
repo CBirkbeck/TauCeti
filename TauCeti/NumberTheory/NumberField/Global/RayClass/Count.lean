@@ -44,6 +44,12 @@ by a character reaches for; the counting statement is its `Nat.card` shadow.
 
 * `TauCeti.GlobalNumberFields.sum_rayClassIdealCountingFunction`: the class counts sum to the
   unrestricted count of nonzero integral ideals prime to `𝔪` of norm at most `x`.
+* `TauCeti.GlobalNumberFields.rayClassIdealCountingFunction_def`,
+  `TauCeti.GlobalNumberFields.idealClassSigmaEquiv_apply_coe` and
+  `TauCeti.GlobalNumberFields.idealClassSigmaEquiv_symm_apply_fst`: the characteristic lemmas of
+  the two definitions, so that a consumer never has to unfold either.  They are needed rather than
+  merely convenient: the module system does not expose these definitions, so a downstream module
+  cannot reduce them on its own.
 
 ## References
 
@@ -97,6 +103,15 @@ noncomputable def rayClassIdealCountingFunction
   Nat.card {I : integralIdealsPrimeTo 𝔪 //
     idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}
 
+/-- The counting function unfolded.  A downstream module cannot see through the definition on its
+own — the module system does not expose it — so this is the lemma that turns a count back into the
+set it counts. -/
+theorem rayClassIdealCountingFunction_def (𝔪 : Modulus K) (c : RayClassGroup 𝔪) (x : ℝ) :
+    rayClassIdealCountingFunction 𝔪 c x =
+      Nat.card {I : integralIdealsPrimeTo 𝔪 //
+        idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
+  (rfl)
+
 /-- **The ray classes partition the ideals of bounded norm.**  An ideal prime to `𝔪` of norm at
 most `x` is the same thing as a ray class together with an ideal of that class and that norm
 bound, because `idealClass 𝔪` is a function on the carrier and the summands are exactly its
@@ -107,6 +122,26 @@ noncomputable def idealClassSigmaEquiv (𝔪 : Modulus K) (x : ℝ) :
       {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} :=
   (Equiv.sigmaCongrRight fun _ ↦ (Equiv.subtypeEquivRight fun _ ↦ and_comm).trans
       (Equiv.subtypeSubtypeEquivSubtypeInter _ _).symm).trans (Equiv.sigmaFiberEquiv _)
+
+/-- The partition keeps the ideal: it only forgets which class the ideal was filed under.
+
+Not `@[simp]`, matching Mathlib's treatment of the same shape: `idealSetEquiv_apply` and
+`idealSetEquiv_symm_apply` (`CanonicalEmbedding/FundamentalCone.lean`) are plain lemmas, while the
+underlying map and first-projection versions there — `idealSetMap_apply`,
+`integerSetEquiv_apply_fst` — are the ones tagged. -/
+theorem idealClassSigmaEquiv_apply_coe (𝔪 : Modulus K) (x : ℝ)
+    (p : Σ c : RayClassGroup 𝔪, {I : integralIdealsPrimeTo 𝔪 //
+      idealClass 𝔪 I = c ∧ (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}) :
+    (idealClassSigmaEquiv 𝔪 x p : integralIdealsPrimeTo 𝔪) = p.2 :=
+  (rfl)
+
+/-- Filing an ideal under its own ray class is the inverse of forgetting it: the class component is
+`idealClass 𝔪 I` and the ideal component is `I` again.  Not `@[simp]`, for the reason given
+above. -/
+theorem idealClassSigmaEquiv_symm_apply_fst (𝔪 : Modulus K) (x : ℝ)
+    (I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x}) :
+    ((idealClassSigmaEquiv 𝔪 x).symm I).1 = idealClass 𝔪 I :=
+  (rfl)
 
 /-- **The class counts sum to the total.**  Summing `rayClassIdealCountingFunction` over the ray
 class group recovers the number of nonzero integral ideals prime to `𝔪` of norm at most `x`.
