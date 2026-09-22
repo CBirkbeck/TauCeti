@@ -52,6 +52,9 @@ and the indexing above is the numbering those formulas assume.
 
 ## References
 
+* `TauCeti/RingTheory/LocalRing/RamificationGroup.lean` formalizes this filtration for the
+  maximal ideal of a local ring, indexed by `ℤ`; the family here is the same construction for an
+  arbitrary ideal, and that file is the prior formalization this ideal-level API generalizes.
 * J-P. Serre, *Local Fields*, Chapter IV §1.
 * J. Neukirch, *Algebraic Number Theory*, Chapter II §9.
 -/
