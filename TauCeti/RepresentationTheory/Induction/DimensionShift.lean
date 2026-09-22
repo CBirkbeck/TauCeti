@@ -67,9 +67,7 @@ variable {k G : Type u} [CommRing k] [Group G]
 
 /-- The cokernel of the embedding `A ⟶ Coind_⊥^G A`, so that
 `Hⁿ⁺¹(G, dimensionShiftUp A) ≅ Hⁿ⁺²(G, A)`. -/
--- exposed so a downstream statement can name this as an endpoint of the connecting map of
--- `dimensionShiftUpSES`; `dimensionShiftUpSES_X₃` already makes the identification public.
-@[expose] def dimensionShiftUp (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
+def dimensionShiftUp (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
 
 /-- The projection from the coinduced module onto `dimensionShiftUp A`. -/
 def dimensionShiftUpπ (A : Rep k G) : coindBot k G A.V ⟶ dimensionShiftUp A :=
@@ -92,10 +90,7 @@ def dimensionShiftUpπIsCokernel (A : Rep k G) :
   cokernelIsCokernel (coindBotUnit A)
 
 /-- The short complex `A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A`. -/
--- exposed so downstream statements can name `.X₁`, `.X₂` and `.X₃` as the endpoints and middle
--- term of its connecting map; the `_def`/`_X₁`/`_X₂`/`_X₃` lemmas below already make those
--- identifications public.
-@[expose] def dimensionShiftUpSES (A : Rep k G) : ShortComplex (Rep k G) :=
+def dimensionShiftUpSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.cokernelSequence (coindBotUnit A)
 
 /-- The upward dimension-shifting short complex has maps the embedding into the coinduced module
