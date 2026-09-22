@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Group.Subgroup.Ker
 public import TauCeti.FieldTheory.Normal.Embeddings
 
 /-!
