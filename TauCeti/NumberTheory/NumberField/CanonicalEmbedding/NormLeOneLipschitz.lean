@@ -16,7 +16,7 @@ public import TauCeti.Topology.MetricSpace.LipschitzParametrizable
 
 `TauCeti.NumberTheory.GeometryOfNumbers.LatticePointCount` counts lattice points in a dilated
 region with a power-saving error, but only for regions whose frontier is Lipschitz
-parametrizable: `exists_abs_ncard_smul_inter_sub_le` takes
+parametrizable: `exists_abs_ncard_smul_inter_vadd_sub_le` takes
 `IsLipschitzParametrizable (finrank ℝ E - 1) (frontier D)` as a hypothesis. Mathlib proves that
 `frontier (normLeOne K)` is *null* (`volume_frontier_normLeOne`), which is what a rate-free limit
 needs and is strictly weaker: a null frontier does not provide a quantitative or power-saving
@@ -301,7 +301,7 @@ private theorem preimage_subset_iUnion_image_liftMap (S : Set (realSpace K)) :
 
 open scoped Classical in
 /-- **The frontier of the norm-≤-one region is Lipschitz parametrizable in codimension one.**
-This discharges the boundary hypothesis of `TauCeti.exists_abs_ncard_smul_inter_sub_le` for
+This discharges the boundary hypothesis of `TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le` for
 `normLeOne K`, whose frontier Mathlib knows only to be null (`volume_frontier_normLeOne`) — a
 null frontier supports a rate-free limit but gives no quantitative or power-saving error bound.
 
