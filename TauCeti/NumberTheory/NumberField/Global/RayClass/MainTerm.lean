@@ -27,7 +27,7 @@ over the ideals *prime to* the finite part of the modulus, and `1 - (N 𝔭)⁻�
 
 ## Main results
 
-* `TauCeti.GlobalNumberFields.rayClassIdealMainTerm_eq`: the coefficient written out.
+* `TauCeti.GlobalNumberFields.rayClassIdealMainTerm_def`: the coefficient written out.
 * `TauCeti.GlobalNumberFields.rayClassIdealMainTerm_pos`: it is positive.
 
 ## References
@@ -53,14 +53,14 @@ noncomputable def rayClassIdealMainTerm (𝔪 : Modulus K) : ℝ :=
 
 /-- **The explicit main term.**  The Dedekind-zeta residue divided by the order of the ray class
 group, times the Euler factors at the primes dividing the finite part of the modulus. -/
-theorem rayClassIdealMainTerm_eq (𝔪 : Modulus K) :
+theorem rayClassIdealMainTerm_def (𝔪 : Modulus K) :
     rayClassIdealMainTerm 𝔪 = dedekindZeta_residue K / (Nat.card (RayClassGroup 𝔪) : ℝ) *
       ∏ v ∈ 𝔪.support, (1 - (Ideal.absNorm v.asIdeal : ℝ)⁻¹) :=
   (rfl)
 
 /-- **The main term is positive.** -/
 theorem rayClassIdealMainTerm_pos (𝔪 : Modulus K) : 0 < rayClassIdealMainTerm 𝔪 := by
-  rw [rayClassIdealMainTerm_eq]
+  rw [rayClassIdealMainTerm_def]
   refine mul_pos (div_pos (dedekindZeta_residue_pos K) (mod_cast Nat.card_pos))
     (Finset.prod_pos fun v _ ↦ ?_)
   -- a height-one prime has absolute norm at least two, so its Euler factor is positive
