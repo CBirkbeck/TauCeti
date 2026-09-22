@@ -33,6 +33,8 @@ This supplies a prerequisite for Deliverable A, Layer 1 of
 * `hasFDerivAt_timeSlice`: the spatial Jacobian differentiates the corresponding fixed-parameter
   slice.
 * `fderiv_timeSlice`: the derivative of a fixed-parameter slice is its spatial Jacobian.
+* `ContDiffAt.deriv_parameterCurve_eventuallyEq_timeFDeriv`: near a point, the derivatives of the
+  parameter curves are the parameter-velocity field.
 * `hasDerivAt_spatialFDeriv`: the spatial Jacobian differentiates to the spatial derivative of the
   parameter velocity.
 * `deriv_spatialFDeriv_apply`: the parameter derivative of the spatial Jacobian equals the
@@ -155,6 +157,22 @@ private theorem hasFDerivAt_timeFDeriv_mixed {F : 𝕜 × E → F'} {t : 𝕜} {
   rw [timeFDeriv_eq]
   exact hSpatial
 
+namespace ContDiffAt
+
+/-- Near `x`, the derivative of each parameter curve is the parameter-velocity field. -/
+theorem deriv_parameterCurve_eventuallyEq_timeFDeriv {F : 𝕜 × E → F'} {t : 𝕜} {x : E}
+    (hF : ContDiffAt 𝕜 1 F (t, x)) :
+    (fun y ↦ _root_.deriv (fun s ↦ F (s, y)) t) =ᶠ[nhds x] timeFDeriv F t := by
+  obtain ⟨w, hw, hFw⟩ := hF.contDiffOn (m := 1) le_rfl (by simp)
+  have hdiff : ∀ᶠ z in nhds ((t, x) : 𝕜 × E), DifferentiableAt 𝕜 F z :=
+    (hFw.differentiableOn one_ne_zero).eventually_differentiableAt hw
+  have hsnd : ∀ᶠ y in nhds x, DifferentiableAt 𝕜 F (t, y) :=
+    (continuous_const.prodMk continuous_id).continuousAt.eventually hdiff
+  filter_upwards [hsnd] with y hy
+  exact (hasDerivAt_parameterCurve hy).deriv
+
+end ContDiffAt
+
 /-- At `t`, the spatial Jacobian has derivative the spatial derivative of the parameter velocity. -/
 theorem hasDerivAt_spatialFDeriv {F : 𝕜 × E → F'} {t : 𝕜} {x : E}
     (hF : ContDiffAt 𝕜 (minSmoothness 𝕜 2) F (t, x)) :
@@ -206,13 +224,10 @@ theorem deriv_deriv_comm {g : 𝕜 × 𝕜 → F'} {t x : 𝕜}
     (hgw.differentiableOn one_ne_zero).eventually_differentiableAt hw
   have hfst : ∀ᶠ s in 𝓝 t, DifferentiableAt 𝕜 g (s, x) :=
     (continuous_id.prodMk continuous_const).continuousAt.eventually hdiff
-  have hsnd : ∀ᶠ r in 𝓝 x, DifferentiableAt 𝕜 g (t, r) :=
-    (continuous_const.prodMk continuous_id).continuousAt.eventually hdiff
   have h₁ : (fun s => _root_.deriv (fun r => g (s, r)) x) =ᶠ[𝓝 t]
       fun s => spatialFDeriv g x s 1 := by
     filter_upwards [hfst] with s hs
     rw [← fderiv_timeSlice hs, fderiv_apply_one_eq_deriv]
-  have h₂ : (fun r => _root_.deriv (fun s => g (s, r)) t) =ᶠ[𝓝 x] timeFDeriv g t := by
-    filter_upwards [hsnd] with r hr
-    exact (hasDerivAt_parameterCurve hr).deriv
+  have h₂ := (hg.of_le (le_trans (by norm_num) le_minSmoothness))
+    |>.deriv_parameterCurve_eventuallyEq_timeFDeriv
   rw [h₁.deriv_eq, h₂.deriv_eq, deriv_spatialFDeriv_apply hg, fderiv_apply_one_eq_deriv]
