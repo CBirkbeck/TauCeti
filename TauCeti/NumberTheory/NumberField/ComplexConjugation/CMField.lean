@@ -27,12 +27,9 @@ subfield `K⁺`, then `K / K⁺` is a totally complex quadratic extension, so
 
 hence any two places give the same element
 (`complexConjugationAt_eq_complexConjugationAt`). This is what lets a CM field carry a
-place-free complex conjugation, and Mathlib's `IsCMField.complexConj` is the element it names.
-
-The identification is immediate from the characterizations on each side, and that is the point
-of stating it: `IsCMField.isConj_complexConj` says `complexConj` conjugates *every* complex
-embedding of `K`, while `eq_complexConjugationAt` says the automorphism conjugating
-`w.embedding` is unique. Nothing about CM fields is reproved here.
+place-free complex conjugation, and Mathlib's `IsCMField.complexConj` is the element it names:
+on a CM field the place index may simply be dropped, and any statement about
+`complexConjugationAt` there transfers to `complexConj`.
 
 ## Main results
 
@@ -58,19 +55,15 @@ variable (K : Type*) [Field K] [NumberField K] [NumberField.IsCMField K]
 
 local notation3 "K⁺" => NumberField.maximalRealSubfield K
 
-/-- **On a CM field every infinite place is ramified over the maximal real subfield.** `K` is
-totally complex and `K⁺` is totally real, which is exactly the two halves of `isRamified_iff`.
-So the ramification hypothesis of `complexConjugationAt` is automatic here. -/
+/-- **On a CM field every infinite place is ramified over the maximal real subfield**, so the
+ramification hypothesis of `complexConjugationAt` is automatic there. -/
 theorem isRamified_maximalRealSubfield (w : InfinitePlace K) : w.IsRamified K⁺ := by
   rw [isRamified_iff]
   exact ⟨IsTotallyComplex.isComplex w, IsTotallyReal.isReal _⟩
 
-/-- **On a CM field the conjugation at any place is `IsCMField.complexConj`.** Mathlib's
-`complexConj` conjugates every complex embedding of `K`, in particular `w.embedding`, and the
-automorphism doing that is unique.
-
-Oriented so that simp rewrites the place-dependent `complexConjugationAt` to the canonical
-`complexConj`, which is the normal form. -/
+/-- **On a CM field the conjugation at any place is `IsCMField.complexConj`.** The simp normal
+form is the canonical `complexConj`, so the place-dependent `complexConjugationAt` rewrites to
+it. -/
 @[simp ←]
 theorem complexConj_eq_complexConjugationAt (w : InfinitePlace K) :
     NumberField.IsCMField.complexConj K =
