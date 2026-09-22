@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.Module.ZLattice.Covolume
 public import TauCeti.Algebra.Module.ZLattice.Basic
 public import TauCeti.MeasureTheory.Group.Measure
-public import TauCeti.MeasureTheory.Measure.Haar.NormedSpace
 public import TauCeti.NumberTheory.GeometryOfNumbers.BoundaryCount
 public import TauCeti.Topology.MetricSpace.DiscreteAddSubgroup
 import TauCeti.Topology.Frontier
@@ -63,10 +62,7 @@ Lipschitz hypothesis is used, and the only source of the error term.
 * `TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le`: for `c ≥ 1` and *any* coset `ξ +ᵥ L`,
   `|#(c • D ∩ (ξ +ᵥ L)) - μ D / covolume L μ * c ^ n| ≤ A * c ^ (n - 1)`, with `A` independent of
   `c` **and** of `ξ`.
-* `TauCeti.exists_abs_ncard_smul_inter_sub_le`: the explicit bound
-  `|#(c • D ∩ L) - μ D / covolume L μ * c ^ n| ≤ A * c ^ (n - 1)` for `c ≥ 1`, with `A`
-  independent of `c`; the coset statement at `ξ = 0`.
-* `TauCeti.isBigO_ncard_smul_inter_sub`: the same bound as an asymptotic statement.
+* `TauCeti.isBigO_ncard_smul_inter_sub`: that bound at `ξ = 0`, as an asymptotic statement.
 ## References
 
 * S. Lang, *Algebraic Number Theory*, Chapter VI, Section 2.
@@ -276,22 +272,6 @@ theorem exists_abs_ncard_smul_inter_vadd_sub_le {D : Set E} (hDb : IsBounded D)
   exact ⟨A, hA0, fun ξ c hc ↦
     (abs_ncard_smul_inter_vadd_sub_le_aux hDb hc hF₀ hFpc hFb hFm hcov hFu hFe).trans (hA c hc)⟩
 
-/-- **Lattice points in a dilated body, with a boundary-order error.**  For a bounded set `D` whose
-frontier is Lipschitz parametrizable in dimension `n - 1`, with `n = finrank ℝ E`, the number of
-lattice points of `c • D` is `μ D / covolume L μ * c ^ n` up to `A * c ^ (n - 1)`, with `A`
-independent of `c ≥ 1`.
-
-The main term is the volume of `c • D` divided by the covolume of the lattice.  The error is the
-number of lattice cells meeting the frontier of the dilate, so its order is governed by the
-parametrization dimension of `frontier D` alone. When `0 < n`, this is power-saving relative to
-the order `c ^ n` main term; the theorem itself also covers zero-dimensional spaces. -/
-theorem exists_abs_ncard_smul_inter_sub_le {D : Set E} (hDb : IsBounded D)
-    (hDfr : IsLipschitzParametrizable (finrank ℝ E - 1) (frontier D)) :
-    ∃ A ≥ (0 : ℝ), ∀ c : ℝ, 1 ≤ c →
-      |(((c • D) ∩ (L : Set E)).ncard : ℝ) -
-          μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E| ≤ A * c ^ (finrank ℝ E - 1) := by
-  obtain ⟨A, hA0, hA⟩ := exists_abs_ncard_smul_inter_vadd_sub_le (μ := μ) (L := L) hDb hDfr
-  exact ⟨A, hA0, fun c hc ↦ by simpa using hA 0 c hc⟩
 
 /-- **Lattice points in a dilated body**, as an asymptotic statement: the count of the lattice
 points of `c • D` differs from `μ D / covolume L μ * c ^ n` by `O(c ^ (n - 1))` as `c → ∞`. -/
@@ -300,12 +280,13 @@ theorem isBigO_ncard_smul_inter_sub {D : Set E} (hDb : IsBounded D)
     (fun c : ℝ ↦ (((c • D) ∩ (L : Set E)).ncard : ℝ) -
         μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E) =O[atTop]
       fun c : ℝ ↦ c ^ (finrank ℝ E - 1) := by
-  obtain ⟨A, -, hA⟩ := exists_abs_ncard_smul_inter_sub_le (μ := μ) (L := L) hDb hDfr
+  -- the coset estimate at `ξ = 0`
+  obtain ⟨A, -, hA⟩ := exists_abs_ncard_smul_inter_vadd_sub_le (μ := μ) (L := L) hDb hDfr
   refine isBigO_iff.2 ⟨A, ?_⟩
   filter_upwards [eventually_ge_atTop (1 : ℝ)] with c hc
   rw [Real.norm_eq_abs, Real.norm_eq_abs,
     abs_of_nonneg (pow_nonneg (by linarith : (0 : ℝ) ≤ c) _)]
-  exact hA c hc
+  simpa using hA 0 c hc
 
 end Lattice
 
