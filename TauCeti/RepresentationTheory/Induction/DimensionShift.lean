@@ -66,13 +66,9 @@ variable {k G : Type u} [CommRing k] [Group G]
 /-! ### The upward dimension shift -/
 
 /-- The cokernel of the embedding `A ⟶ Coind_⊥^G A`, so that
-`Hⁿ⁺¹(G, dimensionShiftUp A) ≅ Hⁿ⁺²(G, A)`.
-
-The body is exposed, together with `dimensionShiftUpSES`, so that a downstream statement naming
-`Hⁿ(G, dimensionShiftUp A)` as an endpoint of the connecting homomorphism of that sequence
-elaborates without restating the sequence. The `dimensionShiftUpSES_X₃` lemma below already makes
-the same identification public, so no information is added to the interface.
--/
+`Hⁿ⁺¹(G, dimensionShiftUp A) ≅ Hⁿ⁺²(G, A)`. -/
+-- exposed so a downstream statement can name this as an endpoint of the connecting map of
+-- `dimensionShiftUpSES`; `dimensionShiftUpSES_X₃` already makes the identification public.
 @[expose] def dimensionShiftUp (A : Rep k G) : Rep k G := cokernel (coindBotUnit A)
 
 /-- The projection from the coinduced module onto `dimensionShiftUp A`. -/
@@ -95,11 +91,10 @@ def dimensionShiftUpπIsCokernel (A : Rep k G) :
       (coindBotUnit_comp_dimensionShiftUpπ A)) :=
   cokernelIsCokernel (coindBotUnit A)
 
-/-- The short complex `A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A`. The body is exposed so that
-downstream statements naming the endpoints of its connecting homomorphism — the dimension-shift
-isomorphisms in `TauCeti.RepresentationTheory.Homological.GroupCohomology.DimensionShift` — can see
-`.X₁` and `.X₃` without restating the sequence. Nothing extra becomes public: the
-`dimensionShiftUpSES_def`/`_X₁`/`_X₂`/`_X₃` lemmas below already expose the same information. -/
+/-- The short complex `A ⟶ Coind_⊥^G A ⟶ dimensionShiftUp A`. -/
+-- exposed so downstream statements can name `.X₁`, `.X₂` and `.X₃` as the endpoints and middle
+-- term of its connecting map; the `_def`/`_X₁`/`_X₂`/`_X₃` lemmas below already make those
+-- identifications public.
 @[expose] def dimensionShiftUpSES (A : Rep k G) : ShortComplex (Rep k G) :=
   ShortComplex.cokernelSequence (coindBotUnit A)
 

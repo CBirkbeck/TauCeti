@@ -46,6 +46,12 @@ the existing naturality of `δ` and no abstract choice of isomorphism enters.
 ## References
 
 * J. S. Milne, *Class Field Theory*, Chapter II, §1 (dimension shifting, 1.13).
+* K. S. Brown, *Cohomology of Groups*, III §7.
+* The same statements appear in `ClassFieldTheory/Cohomology/Functors/UpDown.lean` in
+  `kbuzzard/ClassFieldTheory`, commit `ccc3323c6750abca25b49b35106f54eb3a398509` (Apache-2.0), as
+  `δ_up_isIso`, `isIso_δ_up_res` and the `epi_δ_*_zero` family; they are reimplemented here on Tau
+  Ceti's `dimensionShiftUp*` API and Mathlib's `groupCohomology.δ`, with a different degree
+  indexing and without that file's separate `IsIso` declarations.
 -/
 
 public noncomputable section
