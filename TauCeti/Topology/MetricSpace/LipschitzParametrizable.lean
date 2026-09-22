@@ -48,13 +48,28 @@ That is what turns a parametrization in a given dimension into a count.
   dimensions;
 * `TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiffOn`: a unit cube's image under a
   map that is `C¹` on it is parametrized by that cube;
+* `TauCeti.IsLipschitzParametrizable.of_isBounded`: a bounded subset of a finite-dimensional real
+  normed space is parametrized in the ambient dimension;
+* `TauCeti.IsLipschitzParametrizable.of_isBounded_of_subset_ker`: a bounded subset of a hyperplane
+  is parametrized in codimension one;
 * `TauCeti.IsLipschitzParametrizable.measure_zero`: a parametrized set has
   additive Haar measure zero below the ambient dimension;
 * `LipschitzOnWith.exists_cover_image_unitCube`: a Lipschitz image of the unit `d`-cube is
   covered by `m ^ d` pieces of arbitrarily small diameter.
 
-The definition and its use in the lattice-point estimate follow Lang, *Algebraic Number Theory*,
-Chapter VI, Section 2.
+## References
+
+* S. Lang, *Algebraic Number Theory*, Chapter VI, Section 2, which the definition and its use in
+  the lattice-point estimate follow.
+* C. Birkbeck, [*AINTLIB*](https://github.com/CBirkbeck/AINTLIB) at commit
+  `db14b34cc5e3d79603e67c205dfa86b7b989000c` (Apache-2.0),
+  `projects/Chebotarev/CebotarevDensity/ForMathlib/IdealCongruenceCount.lean`, whose
+  `exists_lipschitz_cube_cover_hyperplane_slab` is the concrete precursor of
+  `of_isBounded` and `of_isBounded_of_subset_ker`: it covers a bounded slab of a coordinate
+  hyperplane of `ι → ℝ` by a single chart, through the same affine rescaling
+  `c ↦ 2 * M * c - M` of the unit cube onto the box `[-M, M]`. The two lemmas here say the
+  same thing without reference to coordinates, for any finite-dimensional real normed space
+  and any hyperplane in it.
 -/
 
 public section
@@ -221,6 +236,51 @@ theorem image_unitCube_of_contDiffOn {ι G : Type*} [Fintype ι] [NormedAddCommG
   rw [Set.image_comp]
   exact Set.image_mono fun y hy ↦ ⟨fun j ↦ y (e.symm j),
     ⟨fun j ↦ hy.1 _, fun j ↦ hy.2 _⟩, funext fun i ↦ congrArg y (e.symm_apply_apply i)⟩
+
+/-- **A bounded subset of a finite-dimensional real normed space is Lipschitz parametrizable in
+the ambient dimension.** Linear coordinates carry the set into a box, and a box is the image of
+the unit cube under an affine — hence `C¹` — map, so one chart suffices.
+
+This is the trivial bound on the dimension: it is useful only for pieces of a set that are
+genuinely lower dimensional for another reason, such as a bounded piece of a hyperplane. -/
+theorem of_isBounded {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    {S : Set E} (hS : Bornology.IsBounded S) :
+    IsLipschitzParametrizable (Module.finrank ℝ E) S := by
+  set n := Module.finrank ℝ E
+  set e : E ≃L[ℝ] (Fin n → ℝ) :=
+    ContinuousLinearEquiv.ofFinrankEq (Module.finrank_fin_fun ℝ).symm
+  -- Coordinates carry `S` into the box `[-M, M] ^ n`, with `M ≥ 1` so that `2 * M ≠ 0`.
+  obtain ⟨R, hR⟩ := isBounded_iff_forall_norm_le.mp (e.lipschitzWith.isBounded_image hS)
+  set M : ℝ := max R 1
+  have hM0 : (0 : ℝ) < M := lt_of_lt_of_le zero_lt_one (le_max_right _ _)
+  have hcd : ContDiff ℝ 1 fun t : Fin n → ℝ ↦ e.symm fun i ↦ 2 * M * t i - M := by fun_prop
+  refine .mono (.image_unitCube_of_contDiffOn (Fintype.card_fin n) hcd.contDiffOn) fun x hx ↦ ?_
+  have key : ∀ i, -M ≤ e x i ∧ e x i ≤ M := fun i ↦ abs_le.mp <| by
+    rw [← Real.norm_eq_abs]
+    exact (norm_le_pi_norm (e x) i).trans ((hR _ ⟨x, hx, rfl⟩).trans (le_max_left _ _))
+  -- The cube point is the coordinate vector of `x`, rescaled from `[-M, M]` to `[0, 1]`.
+  refine ⟨fun i ↦ (e x i + M) / (2 * M), ⟨fun i ↦ ?_, fun i ↦ ?_⟩, ?_⟩
+  · change (0 : ℝ) ≤ (e x i + M) / (2 * M)
+    exact div_nonneg (by linarith [(key i).1]) (by linarith)
+  · change (e x i + M) / (2 * M) ≤ (1 : ℝ)
+    exact (div_le_one (by linarith)).2 (by linarith [(key i).2])
+  · change e.symm _ = x
+    rw [e.symm_apply_eq]
+    funext i
+    rw [mul_div_cancel₀ _ (by positivity : (2 * M : ℝ) ≠ 0), add_sub_cancel_right]
+
+/-- **A bounded subset of a hyperplane is Lipschitz parametrizable in codimension one.** The
+hyperplane is the kernel of a nonzero linear functional, a subspace of dimension
+`finrank ℝ E - 1`; inside it the set is still bounded, because the inclusion is an isometry. -/
+theorem of_isBounded_of_subset_ker {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] {f : E →ₗ[ℝ] ℝ} (hf : f ≠ 0) {S : Set E} (hS : Bornology.IsBounded S)
+    (hSf : S ⊆ LinearMap.ker f) : IsLipschitzParametrizable (Module.finrank ℝ E - 1) S := by
+  -- Pull `S` back to the kernel, parametrize it there, and push it forward again: `S` is the
+  -- image of its own preimage exactly because it lies in the kernel.
+  have hiso : Isometry (Subtype.val : LinearMap.ker f → E) := isometry_subtype_coe
+  have h := (of_isBounded (hiso.antilipschitzWith.isBounded_preimage hS)).image hiso.lipschitzWith
+  rwa [Set.image_preimage_eq_of_subset (by rwa [Subtype.range_coe]),
+    Nat.eq_sub_of_add_eq (Module.Dual.finrank_ker_add_one_of_ne_zero hf)] at h
 
 /-- The image of a Lipschitz-parametrizable set under a locally Lipschitz map is Lipschitz
 parametrizable. -/

@@ -18,8 +18,12 @@ units on the mixed space.
 * `TauCeti.NumberField.Units.unitSMul_comm`: two unit actions commute;
 * `TauCeti.NumberField.Units.unitSMul_real_smul`: the unit action commutes with real
   scalar multiplication;
+* `TauCeti.NumberField.Units.continuous_unitSMul`: the action of a fixed unit is
+  continuous;
 * `TauCeti.NumberField.Units.measurable_unitSMul`: the action of a fixed unit is
-  measurable.
+  measurable;
+* `TauCeti.NumberField.Units.exists_lipschitzWith_unitSMul`: the action of a fixed unit is
+  Lipschitz.
 -/
 
 public section
@@ -42,10 +46,25 @@ theorem unitSMul_real_smul (u : (𝓞 K)ˣ) (c : ℝ) (x : mixedEmbedding.mixedS
   simpa only [mixedEmbedding.unitSMul_smul] using
     mul_smul_comm c (mixedEmbedding K (u : K)) x
 
+/-- The action of a fixed unit on the mixed space is continuous: it is multiplication by a fixed
+element of the mixed space. -/
+theorem continuous_unitSMul (u : (𝓞 K)ˣ) :
+    Continuous fun x : mixedEmbedding.mixedSpace K ↦ u • x := by
+  simpa only [mixedEmbedding.unitSMul_smul] using continuous_const_mul _
+
 /-- The action of a fixed unit on the mixed space is measurable. -/
 theorem measurable_unitSMul [NumberField K] (u : (𝓞 K)ˣ) :
-    Measurable fun x : mixedEmbedding.mixedSpace K ↦ u • x := by
-  simpa only [mixedEmbedding.unitSMul_smul] using
-    (continuous_const_mul (mixedEmbedding K (u : K))).measurable
+    Measurable fun x : mixedEmbedding.mixedSpace K ↦ u • x :=
+  (continuous_unitSMul u).measurable
+
+open scoped Classical in
+/-- **The action of a fixed unit on the mixed space is Lipschitz**: it is multiplication by a
+fixed element of the mixed space, hence an `ℝ`-linear map on a finite-dimensional real normed
+space. The constant depends on the unit, so it is left existentially quantified. -/
+theorem exists_lipschitzWith_unitSMul [NumberField K] (u : (𝓞 K)ˣ) :
+    ∃ C : NNReal, LipschitzWith C fun x : mixedEmbedding.mixedSpace K ↦ u • x :=
+  have hlin : IsLinearMap ℝ fun x : mixedEmbedding.mixedSpace K ↦ u • x :=
+    ⟨fun x y ↦ by simp [mixedEmbedding.unitSMul_smul, mul_add], unitSMul_real_smul u⟩
+  ⟨_, (LinearMap.toContinuousLinearMap (hlin.mk' _)).lipschitzWith⟩
 
 end TauCeti.NumberField.Units

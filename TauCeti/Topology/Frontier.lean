@@ -8,11 +8,12 @@ module
 public import Mathlib.Topology.Connected.Basic
 
 /-!
-# Four frontier lemmas: straddling, splitting a domain in two, clinging to it from inside, and
-the frontier of an image
+# Elementary frontier lemmas
 
-Four elementary facts about `frontier`, each the topological core of a step that a boundary
-argument would otherwise carry out inside a concrete space.
+Facts about `frontier` that carry no structure of their own: straddling, splitting a domain in
+two, clinging to it from inside, the frontier of an image, and the frontier of a finite union.
+Each is the topological core of a step that a boundary argument would otherwise carry out inside
+a concrete space. The list is open-ended; nothing below depends on how many entries it has.
 
 ## A connected set that straddles a set meets its frontier
 
@@ -68,18 +69,18 @@ domain-splitting argument live.
 
 ## Consumers
 
-The first three lemmas serve Carathéodory's boundary correspondence for conformal maps. The
-first does so through
-`TauCeti/Analysis/Normed/Module/DiamFrontier.lean`: a ray leaving a bounded set crosses its
-frontier, which is what makes the frontier of such a set as wide as the set itself. The second is
-the splitting step of `TauCeti/Analysis/Complex/Conformal/CutDiameter.lean`, where `s` and `t` are
-the two sides of a circular crosscut of a domain and `u` is the crosscut arc. The third is what
-lets `TauCeti/Analysis/Complex/Conformal/ClusterSet.lean` identify the boundary piece that one
-side of such a crosscut cuts off, whose description as a union of cluster sets is naturally a
-statement about a closure. The fourth is used quite differently, for a partial homeomorphism of a
-real coordinate space whose exceptional set is the single point an unbounded box direction escapes
-to. Nothing here is specific to any of those uses; no lemma mentions a metric, let alone a
-holomorphic map.
+The straddling, splitting and clinging lemmas serve Carathéodory's boundary correspondence for
+conformal maps. The first does so through `TauCeti/Analysis/Normed/Module/DiamFrontier.lean`: a
+ray leaving a bounded set crosses its frontier, which is what makes the frontier of such a set as
+wide as the set itself. The second is the splitting step of
+`TauCeti/Analysis/Complex/Conformal/CutDiameter.lean`, where `s` and `t` are the two sides of a
+circular crosscut of a domain and `u` is the crosscut arc. The third is what lets
+`TauCeti/Analysis/Complex/Conformal/ClusterSet.lean` identify the boundary piece that one side of
+such a crosscut cuts off, whose description as a union of cluster sets is naturally a statement
+about a closure. The image and finite-union lemmas are used quite differently, for a partial
+homeomorphism of a real coordinate space and for the frontier of a finite union of unit translates
+of a lattice region. Nothing here is specific to any of those uses; no lemma mentions a metric,
+let alone a holomorphic map.
 
 ## Main results
 
@@ -93,6 +94,8 @@ holomorphic map.
 * `TauCeti.frontier_image_subset_of_closure_subset` — for an open injective map whose image
   closure adds at most a set `t`, the frontier of an image lies on the image of the frontier,
   together with `t`.
+* `TauCeti.frontier_iUnion_subset` — the frontier of a union over a finite index type lies in the
+  union of the frontiers.
 -/
 
 public section
@@ -224,5 +227,24 @@ theorem frontier_image_subset_of_closure_subset (hf : IsOpenMap f) (hfi : Functi
   exact Set.union_subset_union_right _ Set.sdiff_subset
 
 end OpenInjectiveImage
+
+section FiniteUnion
+
+variable {X : Type*} [TopologicalSpace X]
+
+/-- **The frontier of a finite union lies in the union of the frontiers.** Finiteness is
+essential, not a convenience of the proof: for an infinite union the inclusion fails — the
+rationals are a countable union of singletons, each its own frontier, yet their union has
+frontier all of `ℝ`. -/
+theorem frontier_iUnion_subset {ι : Type*} [Finite ι] (A : ι → Set X) :
+    frontier (⋃ i, A i) ⊆ ⋃ i, frontier (A i) := by
+  intro x hx
+  -- Finiteness enters through `closure_iUnion_of_finite`: a point adherent to the whole union
+  -- is already adherent to one of the pieces.
+  obtain ⟨i, hi⟩ := Set.mem_iUnion.1 (closure_iUnion_of_finite A ▸ hx.1)
+  -- The interior, by contrast, only grows with the union, so `x` misses `interior (A i)` too.
+  exact Set.mem_iUnion.2 ⟨i, hi, fun hmem ↦ hx.2 (interior_mono (Set.subset_iUnion A i) hmem)⟩
+
+end FiniteUnion
 
 end TauCeti
