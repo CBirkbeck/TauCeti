@@ -71,8 +71,10 @@ noncomputable def permutationRepresentation (e : (L →ₐ[F] M) ≃ Fin n) :
 `i` names the embedding `e.symm i`, and its image names `σ • e.symm i`. -/
 @[simp]
 theorem permutationRepresentation_apply (e : (L →ₐ[F] M) ≃ Fin n) (σ : M ≃ₐ[F] M) (i : Fin n) :
-    permutationRepresentation e σ i = e (σ • e.symm i) :=
-  (rfl)
+    permutationRepresentation e σ i = e (σ • e.symm i) := by
+  simp only [permutationRepresentation, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom,
+    Equiv.permCongrHom_coe, Equiv.permCongr_apply, MulAction.toPermHom_apply,
+    MulAction.toPerm_apply]
 
 /-- **`Gal(M/F)` embeds in `S_n`** when the embedded images of `L` generate `M`: an automorphism
 acting trivially on the enumerated embeddings fixes every embedding, hence is the identity. -/
