@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.NormLeOne
+public import TauCeti.NumberTheory.NumberField.Units.Dirichlet
 public import TauCeti.Topology.Frontier
 public import TauCeti.Topology.MetricSpace.LipschitzParametrizable
 
@@ -18,7 +19,8 @@ region with a power-saving error, but only for regions whose frontier is Lipschi
 parametrizable: `exists_abs_ncard_smul_inter_sub_le` takes
 `IsLipschitzParametrizable (finrank ℝ E - 1) (frontier D)` as a hypothesis. Mathlib proves that
 `frontier (normLeOne K)` is *null* (`volume_frontier_normLeOne`), which is what a rate-free limit
-needs and is strictly weaker: a null frontier gives no error term at all.
+needs and is strictly weaker: a null frontier does not provide a quantitative or power-saving
+error bound.
 
 This file discharges that hypothesis for `normLeOne K`. Mathlib presents the region through
 `expMapBasis`, a partial homeomorphism of `realSpace K` whose image of the box
@@ -228,7 +230,8 @@ private theorem isLipschitzParametrizable_image_frontier_paramSet :
 /-- **The frontier of the box image is Lipschitz parametrizable in codimension one.** This is the
 hypothesis `TauCeti.IsLipschitzParametrizable.exists_ncard_smul_add_inter_le` needs to turn a
 lattice-point count into a count with a power-saving error term; Mathlib's
-`volume_frontier_normLeOne` gives only that the frontier is null, which carries no error term.
+`volume_frontier_normLeOne` gives only that the frontier is null, which yields a rate-free
+asymptotic but no quantitative error bound.
 
 The dimension is `rank K = #(InfinitePlace K) - 1`, one less than that of `realSpace K`. -/
 theorem isLipschitzParametrizable_frontier_image_paramSet :
@@ -296,22 +299,11 @@ private theorem preimage_subset_iUnion_image_liftMap (S : Set (realSpace K)) :
     simp only [liftMap, hnorm, hang, Complex.real_smul]
     exact Complex.norm_mul_exp_arg_mul_I _
 
-/-- The dimension the lifts produce is the codimension-one dimension of the mixed space:
-`rank K + r₂ = (r₁ + r₂ - 1) + r₂ = r₁ + 2 * r₂ - 1 = finrank ℝ (mixedSpace K) - 1`. -/
-private theorem rank_add_nrComplexPlaces_eq :
-    rank K + nrComplexPlaces K = finrank ℝ (mixedSpace K) - 1 := by
-  have h₁ := card_eq_nrRealPlaces_add_nrComplexPlaces K
-  have h₂ := card_add_two_mul_card_eq_rank K
-  -- Both subtractions are truncated, so the count of places must be known to be positive.
-  have h₃ : 0 < Fintype.card (InfinitePlace K) := Fintype.card_pos
-  simp only [mixedEmbedding.finrank, Units.rank]
-  lia
-
 open scoped Classical in
 /-- **The frontier of the norm-≤-one region is Lipschitz parametrizable in codimension one.**
 This discharges the boundary hypothesis of `TauCeti.exists_abs_ncard_smul_inter_sub_le` for
 `normLeOne K`, whose frontier Mathlib knows only to be null (`volume_frontier_normLeOne`) — a
-null frontier supports a rate-free limit but carries no error term.
+null frontier supports a rate-free limit but gives no quantitative or power-saving error bound.
 
 The frontier lies over the frontier of the box image, which is parametrizable in dimension
 `rank K`; each fibre of `normAtAllPlaces` adds the `r₂` angles at the complex places and a choice
@@ -322,7 +314,12 @@ theorem isLipschitzParametrizable_frontier_normLeOne :
       (Set.Icc (0 : {w : InfinitePlace K // IsComplex w} → ℝ) 1) := by
     simpa using TauCeti.IsLipschitzParametrizable.image_unitCube_of_contDiffOn
       (d := nrComplexPlaces K) (f := id) rfl contDiffOn_id
-  rw [← rank_add_nrComplexPlaces_eq K]
+  -- `rank K + r₂` is the codimension-one dimension: the identity is
+  -- `NumberField.rank_add_nrComplexPlaces_add_one`, transported across `mixedEmbedding.finrank`.
+  have hdim : rank K + nrComplexPlaces K = finrank ℝ (mixedSpace K) - 1 := by
+    rw [mixedEmbedding.finrank, ← rank_add_nrComplexPlaces_add_one K]
+    omega
+  rw [← hdim]
   refine .mono (.iUnion fun s ↦ .image_of_locallyLipschitz (contDiff_liftMap K s).locallyLipschitz
     ((isLipschitzParametrizable_frontier_image_paramSet K).prod hcube)) ?_
   exact (frontier_normLeOne_subset_preimage K).trans
