@@ -12,14 +12,17 @@ import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 /-!
 # The main term of the ray class ideal count
 
-The number of integral ideals of a fixed ray class with absolute norm at most `x` grows linearly
-in `x`, with a coefficient that is the same for every class of the ray class group.  This file
-defines that coefficient and proves it positive.
+This file defines the coefficient intended as the main term of the ray class ideal count, and
+proves it positive.  The counting asymptotic itself — that the number of integral ideals of a
+fixed ray class with absolute norm at most `x` is this coefficient times `x`, up to a
+power-saving error — is not proved here.
 
 The coefficient is the Dedekind-zeta residue divided by the order of the ray class group, times
-one Euler factor `1 - (N 𝔭)⁻¹` for each prime `𝔭` in the support of the modulus.  The count runs
-over the ideals *prime to* the finite part of the modulus, and `1 - (N 𝔭)⁻¹` is the value at
-`s = 1` of the Euler factor that dropping `𝔭` removes from the Dedekind zeta function.
+one Euler factor `1 - (N 𝔭)⁻¹` for each prime `𝔭` in the support of the modulus, where
+`1 - (N 𝔭)⁻¹` is the value at
+`s = 1` of the Euler factor that dropping `𝔭` removes from the Dedekind zeta function.  The
+intended count runs over the ideals prime to the finite part of the modulus, which is what makes
+those factors the right correction.
 
 ## Main definitions
 
@@ -44,15 +47,15 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- The coefficient common to every ray class: the Dedekind-zeta residue of `K`, divided by the
-order of the ray class group of `𝔪`, times one Euler factor `1 - (N 𝔭)⁻¹` for each prime `𝔭` in
-the support of `𝔪`. -/
+/-- The coefficient intended as the main term of the ray class ideal count: the Dedekind-zeta
+residue of `K`, divided by the order of the ray class group of `𝔪`, times one Euler factor
+`1 - (N 𝔭)⁻¹` for each prime `𝔭` in the support of `𝔪`. -/
 noncomputable def rayClassIdealMainTerm (𝔪 : Modulus K) : ℝ :=
   dedekindZeta_residue K / (Nat.card (RayClassGroup 𝔪) : ℝ) *
     ∏ v ∈ 𝔪.support, (1 - (Ideal.absNorm v.asIdeal : ℝ)⁻¹)
 
-/-- **The explicit main term.**  The Dedekind-zeta residue divided by the order of the ray class
-group, times the Euler factors at the primes dividing the finite part of the modulus. -/
+/-- **The coefficient, written out.**  The Dedekind-zeta residue divided by the order of the ray
+class group, times the Euler factors at the primes dividing the finite part of the modulus. -/
 theorem rayClassIdealMainTerm_eq (𝔪 : Modulus K) :
     rayClassIdealMainTerm 𝔪 = dedekindZeta_residue K / (Nat.card (RayClassGroup 𝔪) : ℝ) *
       ∏ v ∈ 𝔪.support, (1 - (Ideal.absNorm v.asIdeal : ℝ)⁻¹) :=
