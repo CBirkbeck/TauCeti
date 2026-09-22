@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.Character
+public import TauCeti.NumberTheory.NumberField.Global.RayClass.Character.Basic
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count
 
 /-!
@@ -44,15 +44,15 @@ open scoped NumberField
 variable {K : Type*} [Field K] [NumberField K]
 
 open scoped Classical in
-/-- **The partial sum of a ray class character.**  The sum of `χ` evaluated on the ray class of `I`,
-over the nonzero integral ideals `I` prime to the finite part of `𝔪` with `absNorm I ≤ x`.
+/-- **The partial sum of a ray class character.**  The sum of `χ.onIdeals` over the nonzero
+integral ideals `I` prime to the finite part of `𝔪` with `absNorm I ≤ x`.
 
-The index type is finite, so the `finsum` is an ordinary finite sum; it is written as a `finsum`
-because the carrier is a subtype rather than a `Finset`. -/
+The bounded subtype is `Finite`, but carries no installed `Fintype` instance, so a `finsum`
+avoids committing to an enumeration of it. -/
 noncomputable def rayClassCharacterPartialSum
     (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (x : ℝ) : ℂ :=
   ∑ᶠ I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x},
-    (χ (idealClass 𝔪 (I : integralIdealsPrimeTo 𝔪)) : ℂ)
+    (χ.onIdeals (I : integralIdealsPrimeTo 𝔪) : ℂ)
 
 open scoped Classical in
 /-- The partial sum unfolded.  A downstream module cannot see through the definition on its own —
@@ -61,7 +61,7 @@ it sums. -/
 theorem rayClassCharacterPartialSum_def (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (x : ℝ) :
     rayClassCharacterPartialSum 𝔪 χ x =
       ∑ᶠ I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x},
-        (χ (idealClass 𝔪 (I : integralIdealsPrimeTo 𝔪)) : ℂ) :=
+        (χ.onIdeals (I : integralIdealsPrimeTo 𝔪) : ℂ) :=
   (rfl)
 
 /-- **A character partial sum is the weighted combination of the class counts.**  The partial sum
@@ -80,7 +80,7 @@ theorem rayClassCharacterPartialSum_eq_sum (𝔪 : Modulus K) [Fintype (RayClass
     ← Equiv.sum_comp (idealClassSigmaEquiv 𝔪 x), Fintype.sum_sigma]
   refine Finset.sum_congr rfl fun c _ ↦ ?_
   -- on the fibre over `c` the character is constantly `χ c`, so the block is a multiple of it
-  simp only [idealClassSigmaEquiv_apply_coe]
+  simp only [RayClassCharacter.onIdeals_apply, idealClassSigmaEquiv_apply_coe]
   rw [Finset.sum_eq_card_nsmul fun p _ ↦ by rw [p.2.1]]
   simp [rayClassIdealCountingFunction_def, mul_comm]
 
