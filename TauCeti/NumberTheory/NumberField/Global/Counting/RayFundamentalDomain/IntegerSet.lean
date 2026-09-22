@@ -63,6 +63,8 @@ variable {K : Type*} [Field K] [NumberField K]
 def rayIntegerSet (𝔪 : Modulus K) : Set (mixedSpace K) :=
   rayFundamentalDomain 𝔪 ∩ mixedEmbedding.integerLattice K
 
+/-- Membership in `rayIntegerSet`: a point of the ray fundamental domain that is the image of an
+algebraic integer. -/
 theorem mem_rayIntegerSet {𝔪 : Modulus K} {a : mixedSpace K} :
     a ∈ rayIntegerSet 𝔪 ↔
       a ∈ rayFundamentalDomain 𝔪 ∧ ∃ x : 𝓞 K, mixedEmbedding K x = a := by
@@ -93,11 +95,15 @@ noncomputable def preimageOfMemRayIntegerSet {𝔪 : Modulus K} (a : rayIntegerS
     ne_zero_of_mem_rayIntegerSet a <| by
       simpa [h] using (mem_rayIntegerSet.mp a.prop).2.choose_spec.symm⟩
 
+/-- The preimage map is a section of `mixedEmbedding`: embedding the integer it returns recovers
+the point. -/
 @[simp]
 theorem mixedEmbedding_preimageOfMemRayIntegerSet {𝔪 : Modulus K} (a : rayIntegerSet 𝔪) :
     mixedEmbedding K (preimageOfMemRayIntegerSet a : 𝓞 K) = (a : mixedSpace K) := by
   rw [preimageOfMemRayIntegerSet, (mem_rayIntegerSet.mp a.prop).2.choose_spec]
 
+/-- The preimage map is a retraction of `mixedEmbedding`: an integer whose image lies in the
+carrier is returned unchanged. -/
 theorem preimageOfMemRayIntegerSet_mixedEmbedding {𝔪 : Modulus K} {x : 𝓞 K}
     (hx : mixedEmbedding K (x : 𝓞 K) ∈ rayIntegerSet 𝔪) :
     preimageOfMemRayIntegerSet ⟨mixedEmbedding K (x : 𝓞 K), hx⟩ = x := by
@@ -113,24 +119,14 @@ theorem rayIntegerSet_one : rayIntegerSet (Modulus.one K) = integerSet K := by
 
 /-! ### The free action of the congruence roots of unity -/
 
-/-- The roots of unity congruent to one modulo `𝔪`.  By
-`unitsCongruenceSubgroup_smul_mem_rayFundamentalDomain_iff_mem_torsion` these are exactly the
-congruence units carrying a point of the ray fundamental domain back into it. -/
-def unitsCongruenceTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :=
-  unitsCongruenceSubgroup 𝔪 ⊓ NumberField.Units.torsion K
-
-theorem mem_unitsCongruenceTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
-    u ∈ unitsCongruenceTorsion 𝔪 ↔
-      u ∈ unitsCongruenceSubgroup 𝔪 ∧ u ∈ NumberField.Units.torsion K :=
-  Iff.rfl
-
 /-- `rayIntegerSet 𝔪` is stable under the congruence roots of unity. -/
 theorem unitsCongruenceTorsion_smul_mem_rayIntegerSet {𝔪 : Modulus K} {ζ : (𝓞 K)ˣ}
     (hζ : ζ ∈ unitsCongruenceTorsion 𝔪) {a : mixedSpace K} (ha : a ∈ rayIntegerSet 𝔪) :
     ζ • a ∈ rayIntegerSet 𝔪 := by
   obtain ⟨hdom, x, rfl⟩ := mem_rayIntegerSet.mp ha
   exact mem_rayIntegerSet.mpr
-    ⟨(torsion_smul_mem_rayFundamentalDomain_iff hζ.2 hζ.1).mpr hdom, ζ * x, by simp⟩
+    ⟨(torsion_smul_mem_rayFundamentalDomain_iff (mem_unitsCongruenceTorsion.mp hζ).2
+      (mem_unitsCongruenceTorsion.mp hζ).1).mpr hdom, ζ * x, by simp⟩
 
 /-- The action of the congruence roots of unity on `rayIntegerSet 𝔪`. -/
 @[simps]
@@ -138,6 +134,8 @@ noncomputable instance rayIntegerSetTorsionSMul (𝔪 : Modulus K) :
     SMul (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
   smul := fun ⟨ζ, hζ⟩ ⟨a, ha⟩ ↦ ⟨ζ • a, unitsCongruenceTorsion_smul_mem_rayIntegerSet hζ ha⟩
 
+/-- The scalar action of the congruence roots of unity is a group action, which is what
+`stabilizer_rayIntegerSet_eq_bot` below speaks about. -/
 noncomputable instance (𝔪 : Modulus K) :
     MulAction (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
   one_smul := fun _ ↦ by
@@ -151,10 +149,9 @@ the identity, because the point is the image of a nonzero algebraic integer. -/
 theorem stabilizer_rayIntegerSet_eq_bot {𝔪 : Modulus K} (a : rayIntegerSet 𝔪) :
     MulAction.stabilizer (unitsCongruenceTorsion 𝔪) a = ⊥ := by
   refine (Subgroup.eq_bot_iff_forall _).mpr fun ζ hζ ↦ ?_
-  rwa [MulAction.mem_stabilizer_iff, Subtype.ext_iff, rayIntegerSetTorsionSMul_smul_coe,
-    unitSMul_smul, ← mixedEmbedding_preimageOfMemRayIntegerSet, ← map_mul,
-    (mixedEmbedding_injective K).eq_iff, ← map_mul, ← RingOfIntegers.ext_iff, mul_eq_right₀,
-    Units.val_eq_one, OneMemClass.coe_eq_one] at hζ
-  exact nonZeroDivisors.coe_ne_zero _
+  rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, rayIntegerSetTorsionSMul_smul_coe] at hζ
+  rw [← mixedEmbedding_preimageOfMemRayIntegerSet a] at hζ
+  exact OneMemClass.coe_eq_one.mp
+    (eq_one_of_unitSMul_mixedEmbedding_eq (nonZeroDivisors.coe_ne_zero _) hζ)
 
 end TauCeti.GlobalNumberFields
