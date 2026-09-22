@@ -58,12 +58,7 @@ theorem lift_le_lift_iff {a b : IntermediateField F E} : lift a ≤ lift b ↔ a
 
 variable (E) in
 /-- **The intermediate fields of `E / F` are the intermediate fields of `L / F` below `E`**, as an
-order isomorphism.
-
-`@[expose]` because `TauCeti/FieldTheory/Galois/SubfieldDictionary.lean` composes it with
-`OrderIso.Iic`, whose codomain matches only definitionally; the resulting application lemmas are
-provable by `rfl` and not by rewriting. -/
-@[expose]
+order isomorphism. -/
 def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
   toFun E' := ⟨lift E', lift_le E'⟩
   invFun E' := restrict E'.2
