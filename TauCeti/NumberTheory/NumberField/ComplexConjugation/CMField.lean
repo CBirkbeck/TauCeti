@@ -6,23 +6,18 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.NumberTheory.NumberField.CMField
-public import TauCeti.NumberTheory.NumberField.ComplexConjugation
-
--- Roadmap source: `TauCetiRoadmap/NumberFieldArithmetic/README.md` @ `2172af4ad0d3`, Layer 2.7,
--- whose last API bullet is "the CM specialization, where the place-dependent elements all agree
--- with `IsCMField.complexConj`". The credit sits outside the module docstring deliberately: the
--- docstring documents the mathematics.
+public import TauCeti.NumberTheory.NumberField.ComplexConjugation.Basic
 
 /-!
 # Complex conjugation on a CM field is place-independent
 
-`TauCeti/NumberTheory/NumberField/ComplexConjugation.lean` attaches a conjugation
+`TauCeti/NumberTheory/NumberField/ComplexConjugation/Basic.lean` attaches a conjugation
 `complexConjugationAt K w hw` to a complex place `w` of `L` lying above a real place of `K`. The
-place is genuinely part of the input: in a general Galois extension different ramified places
-give different elements, conjugate to one another but not equal
-(`complexConjugationAt_smul`).
+place is genuinely part of the input: in a general Galois extension the elements attached to
+different ramified places are conjugate (`complexConjugationAt_smul`), and conjugate elements
+can differ.
 
-A CM field is exactly the case where that dependence disappears. If `K` is CM, with maximal real
+A CM field is a case where that dependence disappears. If `K` is CM, with maximal real
 subfield `K⁺`, then `K / K⁺` is a totally complex quadratic extension, so
 
 * every infinite place of `K` is ramified over `K⁺` — the hypothesis `hw` is automatic
@@ -72,15 +67,18 @@ theorem isRamified_maximalRealSubfield (w : InfinitePlace K) : w.IsRamified K⁺
 
 /-- **On a CM field the conjugation at any place is `IsCMField.complexConj`.** Mathlib's
 `complexConj` conjugates every complex embedding of `K`, in particular `w.embedding`, and the
-automorphism doing that is unique. -/
+automorphism doing that is unique.
+
+Oriented so that simp rewrites the place-dependent `complexConjugationAt` to the canonical
+`complexConj`, which is the normal form. -/
+@[simp ←]
 theorem complexConj_eq_complexConjugationAt (w : InfinitePlace K) :
     NumberField.IsCMField.complexConj K =
       complexConjugationAt K⁺ w (isRamified_maximalRealSubfield K w) :=
   eq_complexConjugationAt _ _ (NumberField.IsCMField.isConj_complexConj K w.embedding)
 
-/-- **On a CM field the conjugation does not depend on the place.** This is the failure of the
-general picture: for a Galois extension that is not CM, two ramified places give conjugate but
-distinct elements. -/
+/-- **On a CM field the conjugation does not depend on the place.** In general two ramified
+places give conjugate elements, which need not be equal. -/
 theorem complexConjugationAt_eq_complexConjugationAt (w w' : InfinitePlace K) :
     complexConjugationAt K⁺ w (isRamified_maximalRealSubfield K w) =
       complexConjugationAt K⁺ w' (isRamified_maximalRealSubfield K w') := by
