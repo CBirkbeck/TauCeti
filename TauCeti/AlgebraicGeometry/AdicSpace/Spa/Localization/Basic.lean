@@ -176,12 +176,11 @@ theorem spaComapLoc_eq_comp (P : PairOfDefinition A) (Aplus : Subring A) (T : Fi
   have hrho : toCompletionLoc P T s S hden =
       UniformSpace.Completion.coeRingHom.comp (algebraMap A S) :=
     RingHom.ext (toCompletionLoc_apply P T s S hden)
-  funext v
-  refine Subtype.ext ?_
-  -- rewrite with `hrho` only once both sides are pullbacks of the point `v.1`, where the ring
-  -- homomorphism occurs non-dependently
-  rw [spaComapLoc_val, Function.comp_apply, spaComap_val, spaComap_val, hrho, comap_comp,
-    Function.comp_apply]
+  -- `spaComap_comp` is the generic contravariant functoriality. It leaves the two `spaComap`s
+  -- differing only in their ring homomorphism, which is `hrho`, and in continuity and plus-ring
+  -- arguments, which are `Prop`s; `congr` discharges both kinds.
+  rw [← spaComap_comp hloc hcpl Aplus _ _ hlocp hcplp, spaComapLoc]
+  congr 1
 
 /-- **Every point of `Spa (A_U, A_U⁺)` lies over the rational subset `R(T/s)`** — the half of
 roadmap Layer 3.1's homeomorphism `Spa (A_U, A_U⁺) ≃ R(T/s)` that the localisation supplies
