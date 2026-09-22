@@ -6,8 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Module.ZLattice.Covolume
-public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
-public import TauCeti.Algebra.Module.ZLattice.Covolume
+public import TauCeti.Algebra.Module.ZLattice.Basic
 public import TauCeti.MeasureTheory.Group.Measure
 public import TauCeti.MeasureTheory.Measure.Haar.NormedSpace
 public import TauCeti.NumberTheory.GeometryOfNumbers.BoundaryCount
@@ -61,8 +60,9 @@ Lipschitz hypothesis is used, and the only source of the error term.
 * `TauCeti.abs_ncard_inter_mul_sub_measureReal_le`: for any bounded set `X`, the count of lattice
   points of `X` times the volume of a fundamental domain `F` differs from the volume of `X` by at
   most the volume of `F` times the number of lattice points of `frontier X + -F`.
-* `TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le`: the same bound for an arbitrary coset
-  `ξ +ᵥ L`, with `A` independent of `c` **and** of `ξ`.
+* `TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le`: for `c ≥ 1` and *any* coset `ξ +ᵥ L`,
+  `|#(c • D ∩ (ξ +ᵥ L)) - μ D / covolume L μ * c ^ n| ≤ A * c ^ (n - 1)`, with `A` independent of
+  `c` **and** of `ξ`.
 * `TauCeti.exists_abs_ncard_smul_inter_sub_le`: the explicit bound
   `|#(c • D ∩ L) - μ D / covolume L μ * c ^ n| ≤ A * c ^ (n - 1)` for `c ≥ 1`, with `A`
   independent of `c`; the coset statement at `ξ = 0`.
@@ -203,8 +203,9 @@ private theorem abs_ncard_smul_inter_vadd_sub_le_aux {D F : Set E} {ξ : E} {c :
   -- translating by `v` carries the coset onto `L`, turning the count into a lattice-point count
   rw [hcov, ← Set.ncard_vadd_set v ((c • D) ∩ (ξ +ᵥ (L : Set E))), vadd_set_inter, vadd_vadd,
     hvξ, vadd_coe_set (L.neg_mem hwL)]
-  have hvol : μ.real (v +ᵥ c • D) = c ^ finrank ℝ E * μ.real D :=
-    measureReal_vadd_smul μ v hc0.le D
+  have hvol : μ.real (v +ᵥ c • D) = c ^ finrank ℝ E * μ.real D := by
+    rw [measureReal_def, measure_vadd, Measure.addHaar_smul, ENNReal.toReal_mul,
+      ENNReal.toReal_ofReal (abs_nonneg _), abs_of_nonneg (by positivity), measureReal_def]
   have hkey := abs_ncard_inter_mul_sub_measureReal_le (μ := μ) (L := L) hF₀ hFpc hFb hFm hFu hFe
     ((hDb.smul₀ c).vadd v)
   rw [hvol] at hkey
@@ -238,10 +239,8 @@ coset `ξ +ᵥ L` lying in `c • D` is `μ D / covolume L μ * c ^ n` up to `A 
 independent of both `c ≥ 1` **and** the translate `ξ`.
 
 Uniformity in `ξ` is the point, and it is not formal: the error is governed by the lattice cells
-meeting the boundary of the translated body, and a translate ranges over all of `E`, which is
-unbounded. What rescues it is that the count only depends on `ξ` modulo `L`, so `ξ` may be
-reduced into the fundamental domain before the boundary estimate is applied; the slack that the
-estimate must absorb is then `F + -F`, one fixed bounded set, rather than one depending on `ξ`.
+meeting the boundary of the translated body, while a translate ranges over all of `E`, which is
+unbounded.
 
 This is what lets a count be run over each coset of a sublattice with a single implied constant,
 as a count of ideals in a fixed ray class requires. -/
@@ -250,7 +249,27 @@ theorem exists_abs_ncard_smul_inter_vadd_sub_le {D : Set E} (hDb : IsBounded D)
     ∃ A ≥ (0 : ℝ), ∀ (ξ : E) (c : ℝ), 1 ≤ c →
       |(((c • D) ∩ (ξ +ᵥ (L : Set E))).ncard : ℝ) -
           μ.real D / ZLattice.covolume L μ * c ^ finrank ℝ E| ≤ A * c ^ (finrank ℝ E - 1) := by
-  obtain ⟨F, hF₀, hFpc, hFb, hFm, hFu, hFe, hcov⟩ := exists_fundamentalDomain L μ
+  classical
+  -- A fundamental domain for `L`, with the properties the estimate below consumes. Tiling is
+  -- taken in subtraction form, which is the idiom the count uses.
+  set b := Module.Free.chooseBasis ℤ L with hb
+  set β := b.ofZLatticeBasis ℝ L with hβ
+  set F := ZSpan.fundamentalDomain β with hF
+  have hmem : ∀ w : E, w ∈ (L : Set E) ↔ w ∈ Submodule.span ℤ (Set.range β) := fun w ↦ by
+    rw [hβ, b.ofZLatticeBasis_span ℝ]
+    exact Iff.rfl
+  have hF₀ : (0 : E) ∈ F := by simp [hF, ZSpan.mem_fundamentalDomain]
+  have hFpc : IsPreconnected F := (ZSpan.convex_fundamentalDomain β).isPreconnected
+  have hFb : IsBounded F := ZSpan.fundamentalDomain_isBounded β
+  have hFm : MeasurableSet F := ZSpan.fundamentalDomain_measurableSet β
+  have hFu : ∀ x : E, ∀ w₁ ∈ (L : Set E), ∀ w₂ ∈ (L : Set E), x - w₁ ∈ F → x - w₂ ∈ F →
+      w₁ = w₂ := fun _ w₁ h₁ w₂ h₂ k₁ k₂ ↦
+    ZSpan.eq_of_sub_mem_fundamentalDomain β ((hmem w₁).mp h₁) ((hmem w₂).mp h₂) k₁ k₂
+  have hFe : ∀ x : E, ∃ w ∈ (L : Set E), x - w ∈ F := fun x ↦
+    ⟨(ZSpan.floor β x : E), (hmem _).mpr (ZSpan.floor β x).2,
+      ZSpan.fract_mem_fundamentalDomain β x⟩
+  have hcov : ZLattice.covolume L μ = μ.real F :=
+    ZLattice.covolume_eq_measure_fundamentalDomain L μ (ZLattice.isAddFundamentalDomain b μ)
   -- The slack `F + -F` is one fixed bounded set, and is what makes `A` independent of `ξ`.
   obtain ⟨A, hA0, hA⟩ := hDfr.exists_ncard_smul_add_inter_le L.toAddSubgroup
     (isBounded_add hFb hFb.neg)
