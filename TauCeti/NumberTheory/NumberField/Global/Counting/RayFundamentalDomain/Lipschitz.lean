@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.NumberField.CanonicalEmbedding.NormLeOneLipschitz
-public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain
+public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Basic
 
 /-!
 # A Lipschitz parametrization of the frontier of the ray fundamental domain
@@ -183,11 +183,13 @@ theorem measurableSet_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) :
 
 open scoped Classical in
 /-- **The norm-≤-one section of the ray fundamental domain is bounded and measurable, and its
-frontier is Lipschitz parametrizable in codimension one.** This discharges the boundary hypothesis
-of
-`TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le` for the region counting the algebraic integers
-of a fixed ray class, exactly as `isLipschitzParametrizable_frontier_normLeOne` does for the
-trivial modulus, whose ray fundamental domain is Mathlib's fundamental cone.
+frontier is Lipschitz parametrizable in codimension one.** The first and third conclusions are
+exactly the two hypotheses `hDb` and `hDfr` of
+`TauCeti.exists_abs_ncard_smul_inter_vadd_sub_le`, the lattice-point count with a power-saving
+error, applied to the region counting the algebraic integers of a fixed ray class; the second is
+what gives that region a measure at all. This is the analogue, for an arbitrary modulus, of
+`isLipschitzParametrizable_frontier_normLeOne` for the trivial one, whose ray fundamental domain
+is Mathlib's fundamental cone.
 
 The section is `posRegion 𝔪` intersected with finitely many unit translates of `normLeOne K`.
 The translates are bounded and each has a frontier that is a Lipschitz image of

@@ -259,12 +259,15 @@ theorem of_isBounded {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [Fin
     rw [← Real.norm_eq_abs]
     exact (norm_le_pi_norm (e x) i).trans ((hR _ ⟨x, hx, rfl⟩).trans (le_max_left _ _))
   -- The cube point is the coordinate vector of `x`, rescaled from `[-M, M]` to `[0, 1]`.
-  refine ⟨fun i ↦ (e x i + M) / (2 * M), ⟨fun i ↦ ?_, fun i ↦ ?_⟩, ?_⟩
-  · change (0 : ℝ) ≤ (e x i + M) / (2 * M)
+  -- Cube membership is two pointwise inequalities: `Set.mem_Icc` splits the interval and the
+  -- order on `Fin n → ℝ` is pointwise, so `Pi.zero_apply` / `Pi.one_apply` name the endpoints.
+  refine ⟨fun i ↦ (e x i + M) / (2 * M), Set.mem_Icc.mpr ⟨fun i ↦ ?_, fun i ↦ ?_⟩, ?_⟩
+  · rw [Pi.zero_apply]
     exact div_nonneg (by linarith [(key i).1]) (by linarith)
-  · change (e x i + M) / (2 * M) ≤ (1 : ℝ)
+  · rw [Pi.one_apply]
     exact (div_le_one (by linarith)).2 (by linarith [(key i).2])
-  · change e.symm _ = x
+  · -- The parametrisation sends the cube point back through `e.symm`, so the image equation is an
+    -- equation in `E`; `e.symm_apply_eq` moves it to `Fin n → ℝ`, where it is coordinatewise.
     rw [e.symm_apply_eq]
     funext i
     rw [mul_div_cancel₀ _ (by positivity : (2 * M : ℝ) ≠ 0), add_sub_cancel_right]
