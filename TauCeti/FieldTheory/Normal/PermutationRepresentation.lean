@@ -29,9 +29,10 @@ group is canonical only up to conjugacy. This is the same phenomenon as Mathlib'
 `Polynomial.Gal.galActionHom`, which acts on `p.rootSet E` rather than on `Fin p.natDegree` for
 the same reason.
 
-The name is `permutationRepresentation`, not `permutationEmbedding`: the declaration is a monoid
-homomorphism, and it is injective only under the generation hypothesis of
-`permutationRepresentation_injective`.
+Two objects are provided, and the distinction is the generation hypothesis.
+`permutationRepresentation` is the underlying action homomorphism and needs no hypothesis; it is
+injective only when the embedded images generate `M`, and `permutationEmbedding` bundles that
+hypothesis with its proof to give the embedding `Gal(M/F) ↪ S_n` itself.
 
 ## Main results
 
@@ -39,7 +40,10 @@ homomorphism, and it is injective only under the generation hypothesis of
   (Fin n)` attached to an enumeration `e` of the embeddings.
 * `TauCeti.FieldTheory.permutationRepresentation_apply`: it acts by `i ↦ e (σ • e.symm i)`.
 * `TauCeti.FieldTheory.permutationRepresentation_injective`: it is injective when the embedded
-  images generate `M`, so `Gal(M/F)` then really does embed in `S_n`.
+  images generate `M`.
+* `TauCeti.FieldTheory.permutationEmbedding`: the resulting embedding
+  `(M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n)`, with `TauCeti.FieldTheory.permutationEmbedding_apply`
+  identifying it with the representation.
 * `TauCeti.FieldTheory.permutationRepresentation_eq_conj`: replacing the enumeration conjugates
   the representation.
 
@@ -78,6 +82,22 @@ theorem permutationRepresentation_injective
   refine eq_one_of_forall_smul_eq hgen fun φ => ?_
   -- Evaluate the trivial permutation at the index `e φ` naming `φ`.
   simpa using congrArg (fun p : Equiv.Perm (Fin n) => p (e φ)) hσ
+
+/-- **The permutation embedding `Gal(M/F) ↪ S_n`**, for an enumeration `e` of the embeddings and
+a proof that the embedded images of `L` generate `M`. Its underlying map is
+`permutationRepresentation e`, which carries the group structure; this bundles the injectivity
+that the generation hypothesis supplies. -/
+noncomputable def permutationEmbedding
+    (hgen : IntermediateField.normalClosure F L M = ⊤) (e : (L →ₐ[F] M) ≃ Fin n) :
+    (M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n) :=
+  ⟨permutationRepresentation e, permutationRepresentation_injective hgen e⟩
+
+/-- **The embedding is the representation**, bundled with its injectivity. -/
+@[simp]
+theorem permutationEmbedding_apply (hgen : IntermediateField.normalClosure F L M = ⊤)
+    (e : (L →ₐ[F] M) ≃ Fin n) (σ : M ≃ₐ[F] M) :
+    permutationEmbedding hgen e σ = permutationRepresentation e σ :=
+  (rfl)
 
 /-- **Replacing the enumeration conjugates the representation inside `S_n`**, by the re-indexing
 permutation `e.symm.trans e'`. The subgroup of `Equiv.Perm (Fin n)` is therefore well defined
