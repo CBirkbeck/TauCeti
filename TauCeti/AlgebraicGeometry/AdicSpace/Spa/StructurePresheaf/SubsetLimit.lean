@@ -17,14 +17,6 @@ Wedhorn §8.1 assigns `A⟨T/s⟩` to the rational subset `R(T/s)` and sets
 This file builds the diagram of coordinate rings on `TauCeti.ValuationSpectrum.RationalSubsetIndex`
 — the rational subsets of `V` — and identifies the two limits.
 
-Both of the modules this one builds on ask for exactly that diagram.
-`TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Cofinality` stops one step short of it:
-*"once a compatible coordinate-ring diagram on rational subsets is constructed, its limit can be
-computed over presentations without choosing a preferred presentation"*. And the gap section of
-`TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic` names the same missing piece: *"A
-coordinate-ring diagram on rational subsets and its compatibility with the presentation diagram
-still need to be constructed before these ingredients identify the two limits."*
-
 ## The diagram, and why the choice of presentation is invisible
 
 A rational subset carries no presentation, while `A⟨T/s⟩` is built from the data `(T, s)`. So the
@@ -132,15 +124,9 @@ private theorem rationalSubset_presentationIndex_eq (U : RationalSubsetIndex Apl
 
 /-! ### The diagram of coordinate rings on rational subsets -/
 
--- `@[expose]` is load-bearing in the same narrow way it is on
--- `TauCeti.Huber.PairOfDefinition.presentationFunctor`: the comparison with
--- `presentationIndexDiagram` is stated between the objects
--- `U.presentationIndex.pres.completionLocObj`, and only unfolding this functor identifies those
--- with the objects of the composite functor the cofinality machinery produces.
 /-- **The diagram the subset-indexed limit is taken over**: each rational subset of `V`
 contributes the coordinate ring of its chosen presentation, and a containment contributes the
 comparison morphism of Wedhorn's Proposition 8.2(1). -/
-@[expose]
 noncomputable def rationalSubsetIndexDiagram (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus)) :
     RationalSubsetIndex Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} where
@@ -150,42 +136,80 @@ noncomputable def rationalSubsetIndexDiagram (Aplus : Subring A)
   map_id _ := homOfRationalSubsetSubset_self Aplus hAplus _
   map_comp _ _ := (homOfRationalSubsetSubset_comp Aplus hAplus _ _).symm
 
+-- The body of `rationalSubsetIndexDiagram` is not exposed, so these two equations are the whole
+-- interface another module has to its objects and morphisms; both are `(rfl)` rather than `rfl`
+-- because an exported `rfl` theorem may not unfold an unexposed definition.
 /-- The diagram sends a rational subset to the coordinate ring of its chosen presentation. -/
 @[simp]
 theorem rationalSubsetIndexDiagram_obj (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
     (U : RationalSubsetIndex Aplus V) :
     (rationalSubsetIndexDiagram (P := P) Aplus hAplus V).obj U =
-      (U.presentationIndex (P := P)).pres.completionLocObj := rfl
+      (U.presentationIndex (P := P)).pres.completionLocObj := (rfl)
 
-/-- The diagram sends a containment to the comparison morphism of Proposition 8.2(1). -/
+/-- The diagram sends a containment to the comparison morphism of Proposition 8.2(1), between the
+coordinate rings of the two chosen presentations. -/
 @[simp]
 theorem rationalSubsetIndexDiagram_map (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
     {U W : RationalSubsetIndex Aplus V} (h : U ⟶ W) :
     (rationalSubsetIndexDiagram (P := P) Aplus hAplus V).map h =
-      homOfRationalSubsetSubset Aplus hAplus
-        (rationalSubset_presentationIndex_subset (P := P) h.le) := rfl
+      eqToHom (rationalSubsetIndexDiagram_obj Aplus hAplus V U) ≫
+        homOfRationalSubsetSubset Aplus hAplus
+          (rationalSubset_presentationIndex_subset (P := P) h.le) ≫
+        eqToHom (rationalSubsetIndexDiagram_obj Aplus hAplus V W).symm := (rfl)
 
 /-! ### The universal property of `presentationLimit`, recovered -/
+
+-- `presentationIndexCone` takes its naturality hypothesis indexed by morphisms of
+-- `PresentationIndex`; this is `presentationLimitπ_comp_restriction` in that shape, named so that
+-- the three uses below are the same term and the cone lemmas about it apply.
+private theorem presentationLimitπToPresentation_naturality (Aplus : Subring A)
+    (V : Opens ↥(spa Aplus)) :
+    ∀ {i j : PresentationIndex (P := P) Aplus V} (f : i ⟶ j),
+      presentationLimitπToPresentation Aplus V i ≫ Presentation.restrictionHom f.le =
+        presentationLimitπToPresentation Aplus V j :=
+  fun f ↦ presentationLimitπ_comp_restriction f.le
 
 -- `presentationLimit` is sealed, so downstream it is not identified with the limit of
 -- `presentationIndexDiagram`. Its projection, lift and extensionality lemmas do make it one, and
 -- that is what this cone and its universal property record.
 private noncomputable def presentationLimitCone (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    Cone (presentationIndexDiagram (P := P) Aplus V) where
-  pt := presentationLimit (P := P) Aplus V
-  π :=
-    { app := presentationLimitπ Aplus V
-      naturality := fun _ _ f ↦ (Category.id_comp _).trans
-        (presentationLimitπ_comp_map (P := P) f).symm }
+    Cone (presentationIndexDiagram (P := P) Aplus V) :=
+  presentationIndexCone Aplus V (presentationLimit (P := P) Aplus V)
+    (presentationLimitπToPresentation Aplus V)
+    (presentationLimitπToPresentation_naturality Aplus V)
+
+private theorem presentationLimitCone_pt (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+    (presentationLimitCone (P := P) Aplus V).pt = presentationLimit (P := P) Aplus V :=
+  presentationIndexCone_pt Aplus V (presentationLimit (P := P) Aplus V)
+    (presentationLimitπToPresentation Aplus V)
+    (presentationLimitπToPresentation_naturality Aplus V)
+
+private theorem presentationLimitCone_π_app (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (i : PresentationIndex (P := P) Aplus V) :
+    (presentationLimitCone (P := P) Aplus V).π.app i =
+      eqToHom (presentationLimitCone_pt (P := P) Aplus V) ≫ presentationLimitπ Aplus V i := by
+  have h : eqToHom (presentationLimitCone_pt (P := P) Aplus V).symm ≫
+      (presentationLimitCone (P := P) Aplus V).π.app i = presentationLimitπ Aplus V i := by
+    rw [← cancel_mono (eqToHom (presentationIndexDiagram_obj Aplus V i)), Category.assoc]
+    exact (presentationIndexCone_π_app Aplus V (presentationLimit (P := P) Aplus V)
+      (presentationLimitπToPresentation Aplus V)
+      (presentationLimitπToPresentation_naturality Aplus V) i).trans
+      (presentationLimitπToPresentation_eq Aplus V i)
+  rw [← h, ← Category.assoc, eqToHom_trans, eqToHom_refl, Category.id_comp]
 
 private noncomputable def presentationLimitIsLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     IsLimit (presentationLimitCone (P := P) Aplus V) where
-  lift s := presentationLimitLift Aplus V s
-  fac s i := presentationLimitLift_comp_π Aplus V s i
-  uniq s _ h := presentationLimit_hom_ext fun i ↦
-    (h i).trans (presentationLimitLift_comp_π Aplus V s i).symm
+  lift s := presentationLimitLift Aplus V s ≫
+    eqToHom (presentationLimitCone_pt (P := P) Aplus V).symm
+  fac s i := by
+    simp [presentationLimitCone_π_app]
+  uniq s m h := by
+    rw [← cancel_mono (eqToHom (presentationLimitCone_pt (P := P) Aplus V))]
+    simp only [Category.assoc, eqToHom_trans, eqToHom_refl, Category.comp_id]
+    refine presentationLimit_hom_ext fun i ↦ ?_
+    rw [Category.assoc, ← presentationLimitCone_π_app, h i, presentationLimitLift_comp_π]
 
 private theorem presentationIndexDiagram_map_eq (Aplus : Subring A) (V : Opens ↥(spa Aplus))
     {i j : PresentationIndex (P := P) Aplus V} (f : i ⟶ j) :
@@ -201,12 +225,14 @@ private noncomputable def presentationIndexDiagramIsoApp (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
     (i : PresentationIndex (P := P) Aplus V) :
     (presentationIndexDiagram (P := P) Aplus V).obj i ≅
-      (((presentationToRationalSubsetIndex Aplus V).obj i).presentationIndex
-        (P := P)).pres.completionLocObj :=
+      (presentationToRationalSubsetIndex Aplus V ⋙
+        rationalSubsetIndexDiagram (P := P) Aplus hAplus V).obj i :=
   eqToIso (presentationIndexDiagram_obj Aplus V i) ≪≫
     completionLocObjIsoOfRationalSubsetEq Aplus hAplus
       (rationalSubset_presentationIndex_eq _
-        (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).symm
+        (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).symm ≪≫
+    eqToIso (rationalSubsetIndexDiagram_obj (P := P) Aplus hAplus V
+      ((presentationToRationalSubsetIndex Aplus V).obj i)).symm
 
 private theorem presentationIndexDiagramIsoApp_naturality (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
@@ -219,7 +245,7 @@ private theorem presentationIndexDiagramIsoApp_naturality (Aplus : Subring A)
   -- every morphism in sight is a comparison morphism of Proposition 8.2(1), and those compose to
   -- the comparison morphism of the composite containment
   simp [presentationIndexDiagramIsoApp, presentationIndexDiagram_map_eq,
-    restrictionHom_eq_homOfRationalSubsetSubset Aplus hAplus, homOfRationalSubsetSubset_comp]
+    restrictionHom_eq_homOfRationalSubsetSubset Aplus hAplus]
 
 @[simps! hom_app]
 private noncomputable def presentationIndexDiagramIso (Aplus : Subring A)
@@ -235,11 +261,12 @@ private noncomputable def rationalSubsetCone (Aplus : Subring A)
     Cone (rationalSubsetIndexDiagram (P := P) Aplus hAplus V) where
   pt := presentationLimit (P := P) Aplus V
   π :=
-    { app := fun U ↦ presentationLimitπToPresentation Aplus V (U.presentationIndex (P := P))
-      naturality := fun U W h ↦ (Category.id_comp _).trans
-        (presentationLimitπ_eq_π_comp hAplus (U.presentationIndex (P := P))
+    { app := fun U ↦ presentationLimitπToPresentation Aplus V (U.presentationIndex (P := P)) ≫
+        eqToHom (rationalSubsetIndexDiagram_obj (P := P) Aplus hAplus V U).symm
+      naturality := fun U W h ↦ by
+        simp [presentationLimitπ_eq_π_comp hAplus (U.presentationIndex (P := P))
           (W.presentationIndex (P := P))
-          (rationalSubset_presentationIndex_subset (P := P) h.le)) }
+          (rationalSubset_presentationIndex_subset (P := P) h.le)] }
 
 /-- **The comparison map of the two limits**: the map to the limit over the rational subsets of
 `V` whose component at a rational subset is the projection of `presentationLimit` at the
@@ -253,14 +280,15 @@ noncomputable def presentationLimitToRationalSubsetLimit (Aplus : Subring A)
 
 /-- **The comparison map projects to the chosen presentations**: its component at a rational
 subset of `V` is the projection of `presentationLimit` at the presentation chosen for that
-subset. -/
+subset, transported to the diagram object. -/
 @[simp]
 theorem presentationLimitToRationalSubsetLimit_comp_π (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
     (U : RationalSubsetIndex Aplus V) :
     presentationLimitToRationalSubsetLimit Aplus hAplus V ≫
         limit.π (rationalSubsetIndexDiagram (P := P) Aplus hAplus V) U =
-      presentationLimitπToPresentation Aplus V (U.presentationIndex (P := P)) :=
+      presentationLimitπToPresentation Aplus V (U.presentationIndex (P := P)) ≫
+        eqToHom (rationalSubsetIndexDiagram_obj (P := P) Aplus hAplus V U).symm :=
   limit.lift_π _ _
 
 private theorem presentationLimitToRationalSubsetLimit_comp_pre (Aplus : Subring A)
@@ -268,16 +296,27 @@ private theorem presentationLimitToRationalSubsetLimit_comp_pre (Aplus : Subring
     presentationLimitToRationalSubsetLimit Aplus hAplus V ≫
         limit.pre (rationalSubsetIndexDiagram (P := P) Aplus hAplus V)
           (presentationToRationalSubsetIndex Aplus V) =
-      (IsLimit.conePointsIsoOfNatIso (presentationLimitIsLimit Aplus V) (limit.isLimit _)
-        (presentationIndexDiagramIso Aplus hAplus V)).hom := by
+      (eqToIso (presentationLimitCone_pt (P := P) Aplus V).symm ≪≫
+        IsLimit.conePointsIsoOfNatIso (presentationLimitIsLimit Aplus V) (limit.isLimit _)
+          (presentationIndexDiagramIso Aplus hAplus V)).hom := by
   refine limit.hom_ext fun i ↦ ?_
+  have key : (eqToIso (presentationLimitCone_pt (P := P) Aplus V).symm ≪≫
+      IsLimit.conePointsIsoOfNatIso (presentationLimitIsLimit Aplus V) (limit.isLimit _)
+        (presentationIndexDiagramIso Aplus hAplus V)).hom ≫
+        limit.π (presentationToRationalSubsetIndex Aplus V ⋙
+          rationalSubsetIndexDiagram (P := P) Aplus hAplus V) i =
+      eqToHom (presentationLimitCone_pt (P := P) Aplus V).symm ≫
+        (presentationLimitCone (P := P) Aplus V).π.app i ≫
+          (presentationIndexDiagramIso Aplus hAplus V).hom.app i := by
+    rw [Iso.trans_hom, eqToIso.hom, Category.assoc]
+    exact congrArg (eqToHom (presentationLimitCone_pt (P := P) Aplus V).symm ≫ ·)
+      (IsLimit.conePointsIsoOfNatIso_hom_comp (presentationLimitIsLimit Aplus V)
+        (limit.isLimit _) (presentationIndexDiagramIso Aplus hAplus V) i)
   rw [Category.assoc, limit.pre_π, presentationLimitToRationalSubsetLimit_comp_π,
     presentationLimitπ_eq_π_comp hAplus i _ (rationalSubset_presentationIndex_eq _
-      (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).le]
-  refine Eq.trans ?_ (IsLimit.conePointsIsoOfNatIso_hom_comp (presentationLimitIsLimit Aplus V)
-    (limit.isLimit _) (presentationIndexDiagramIso Aplus hAplus V) i).symm
-  simp [presentationLimitCone, presentationIndexDiagramIsoApp,
-    presentationLimitπToPresentation_eq]
+      (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).le, key,
+    presentationLimitCone_π_app]
+  simp [presentationIndexDiagramIsoApp, presentationLimitπToPresentation_eq]
 
 /-- **The two limits agree.** The comparison map from the presentation-indexed limit to the limit
 over the rational subsets of `V` is an isomorphism, when `A⁺` consists of power-bounded elements:

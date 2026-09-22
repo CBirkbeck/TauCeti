@@ -363,10 +363,11 @@ noncomputable def presentationLimitπToPresentation (Aplus : Subring A)
     presentationLimit (P := P) Aplus V ⟶ i.pres.completionLocObj :=
   presentationLimitπ Aplus V i ≫ eqToHom (presentationIndexDiagram_obj Aplus V i)
 
-/-- The transported projection is the projection followed by the transport. The body of
-`presentationLimitπToPresentation` is not exposed, so this is the defining equation a consumer
-in another module has. It is deliberately not `@[simp]`: rewriting with it would take
-`presentationLimitπ_comp_restriction` out of simp-normal form. -/
+/-- The transported projection is the projection followed by the transport. -/
+-- The body of `presentationLimitπToPresentation` is not exposed, so this is the defining equation
+-- a consumer in another module has. It is deliberately not `@[simp]`: tagging it takes
+-- `presentationLimitπ_comp_restriction` out of simp-normal form, confirmed with
+-- `scripts/lint-env.sh`.
 theorem presentationLimitπToPresentation_eq (Aplus : Subring A) (V : Opens ↥(spa Aplus))
     (i : PresentationIndex (P := P) Aplus V) :
     presentationLimitπToPresentation Aplus V i =
