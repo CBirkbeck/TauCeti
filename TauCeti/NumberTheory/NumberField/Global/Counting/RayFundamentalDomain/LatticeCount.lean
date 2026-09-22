@@ -80,19 +80,15 @@ theorem exists_abs_ncard_smul_rayFundamentalDomain_inter_vadd_sub_le (𝔪 : Mod
 and multiplies `mixedEmbedding.norm` by `c ^ [K:ℚ]`, so the dilate by `c` of the norm-≤-one
 section is the norm-≤-`c ^ [K:ℚ]` section.
 
-This is the adapter between the two gradings the count has to move between: the lattice-point
-estimate is stated for dilates of a fixed region, while ideals are counted by their absolute
-norm. -/
+It converts between the two gradings: the lattice-point estimate is stated for dilates of a
+fixed region, while ideals are counted by their absolute norm. -/
 theorem smul_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) {c : ℝ} (hc : 0 < c) :
     c • (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) =
       rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ c ^ finrank ℚ K} := by
   ext y
-  rw [Set.mem_smul_set_iff_inv_smul_mem₀ hc.ne']
-  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq,
-    smul_mem_rayFundamentalDomain_iff (inv_pos.mpr hc)]
-  refine and_congr_right fun _ ↦ ?_
-  rw [mixedEmbedding.norm_smul, abs_of_pos (inv_pos.mpr hc), inv_pow,
-    inv_mul_le_iff₀ (pow_pos hc _), mul_one]
+  simp [Set.mem_smul_set_iff_inv_smul_mem₀ hc.ne',
+    smul_mem_rayFundamentalDomain_iff (inv_pos.mpr hc), mixedEmbedding.norm_smul,
+    abs_of_pos (inv_pos.mpr hc), inv_mul_le_iff₀ (pow_pos hc _)]
 
 open scoped Classical in
 /-- **The congruence-lattice count graded by the norm, uniformly in the coset.**  For any coset
