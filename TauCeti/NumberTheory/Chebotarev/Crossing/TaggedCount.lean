@@ -5,6 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Rat.Cast.Lemmas
 public import TauCeti.GroupTheory.SpecificGroups.Cyclic.OrderCount
 
 /-!
@@ -25,7 +27,9 @@ carrier together with its membership and divisibility API.
 * `TauCeti.NumberField.Chebotarev.taggedElements_subset_of_dvd`: divisibility makes the tag carrier
   shrink.
 * `TauCeti.NumberField.Chebotarev.card_taggedElements_eq_sum_totient`: the exact cyclic count,
-  expressed as a sum of Euler totients over the allowed orders.
+  expressed as a sum of Euler totients over the allowed orders;
+* `TauCeti.NumberField.Chebotarev.le_card_taggedElements_cyclic`: a uniform lower bound for that
+  count, over `ℝ`.
 
 ## References
 
@@ -72,5 +76,22 @@ theorem card_taggedElements_eq_sum_totient {H : Type*} [Group H] [Fintype H] [Is
       ∑ d ∈ (Fintype.card H).divisors.filter (f ∣ ·), Nat.totient d := by
   unfold taggedElements
   exact IsCyclic.card_filter_dvd_orderOf_eq_sum_totient f
+
+/-- **The tagged elements of a cyclic group are a fixed proportion of it.**  When `f ^ r` divides
+the order of `H`, at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` of the elements of `H` have order
+divisible by `f`.
+
+This restates `IsCyclic.le_card_filter_dvd_orderOf` for the `taggedElements` carrier and over
+`ℝ`, which is where the density statements consuming it live.  No positivity hypothesis on `f` is
+needed: `f ^ r` divides `Nat.card H`, which is nonzero, so `f` is nonzero already. -/
+theorem le_card_taggedElements_cyclic {H : Type*} [Group H] [Fintype H] [IsCyclic H] (f r : ℕ)
+    (hrpos : 0 < r) (hf : f ^ r ∣ Nat.card H) :
+    (1 - (2 : ℝ) ^ (-(r : ℤ))) ^ f.primeFactors.card * (Nat.card H : ℝ) ≤
+      ((taggedElements (H := H) f).card : ℝ) := by
+  rw [Nat.card_eq_fintype_card] at hf ⊢
+  have hset : taggedElements f = ({τ : H | f ∣ orderOf τ} : Finset H) := Finset.ext fun τ ↦ by simp
+  have hR := (Rat.cast_le (K := ℝ)).mpr (IsCyclic.le_card_filter_dvd_orderOf hrpos hf)
+  push_cast at hR
+  rwa [hset, ← inv_zpow', zpow_natCast]
 
 end TauCeti.NumberField.Chebotarev

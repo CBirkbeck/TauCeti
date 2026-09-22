@@ -5,8 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Rat.Cast.Lemmas
 public import TauCeti.NumberTheory.Chebotarev.Crossing.TaggedCount
 
 /-!
@@ -28,8 +26,6 @@ that can raise `r` gets a bound approaching `1 / #Gal(L/K)` without revisiting t
 
 ## Main results
 
-* `TauCeti.NumberField.Chebotarev.le_card_taggedElements_cyclic`: the tagged elements of a cyclic
-  group take up at least a proportion `(1 - 2 ^ (-r)) ^ #f.primeFactors` of it.
 * `TauCeti.NumberField.Chebotarev.le_crossingConstant`: the same bound divided through by the
   order of the Galois group.
 
@@ -47,23 +43,6 @@ open Finset
 variable (K L : Type*) [Field K] [Field L] [Algebra K L]
 variable {H : Type*} [Group H] [Fintype H]
 
-/-- **The tagged elements of a cyclic group are a fixed proportion of it.**  When `f ^ r` divides
-the order of `H`, at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` of the elements of `H` have order
-divisible by `f`.
-
-This restates `IsCyclic.le_card_filter_dvd_orderOf` for the `taggedElements` carrier and over `ℝ`,
-the codomain of `crossingConstant`.  No positivity hypothesis on `f` is needed: `f ^ r` divides
-`Nat.card H`, which is nonzero, so `f` is nonzero already. -/
-theorem le_card_taggedElements_cyclic [IsCyclic H] (f r : ℕ) (hrpos : 0 < r)
-    (hf : f ^ r ∣ Nat.card H) :
-    (1 - (2 : ℝ) ^ (-(r : ℤ))) ^ f.primeFactors.card * (Nat.card H : ℝ) ≤
-      ((taggedElements (H := H) f).card : ℝ) := by
-  rw [Nat.card_eq_fintype_card] at hf ⊢
-  have hset : taggedElements f = ({τ : H | f ∣ orderOf τ} : Finset H) := Finset.ext fun τ ↦ by simp
-  have hR := (Rat.cast_le (K := ℝ)).mpr (IsCyclic.le_card_filter_dvd_orderOf hrpos hf)
-  push_cast at hR
-  rwa [hset, ← inv_zpow', zpow_natCast]
-
 /-- **The crossing constant.**  The proportion of `Gal(L/K) × H` taken up by the tagged elements
 of the auxiliary cyclic group `H`: those whose order is divisible by `f`.
 
@@ -73,8 +52,9 @@ noncomputable def crossingConstant (f : ℕ) : ℝ :=
   ((taggedElements (H := H) f).card : ℝ) /
     ((Nat.card (L ≃ₐ[K] L) : ℝ) * (Nat.card H : ℝ))
 
-/-- `crossingConstant` unfolded to the ratio defining it.  Needed because `crossingConstant` is
-not exposed outside this module, so `rw [crossingConstant]` does not fire downstream. -/
+/-- `crossingConstant` unfolded to the ratio defining it: the rewrite rule that turns the constant
+into the count it abbreviates. -/
+@[simp]
 theorem crossingConstant_def (f : ℕ) : crossingConstant K L (H := H) f =
     ((taggedElements (H := H) f).card : ℝ) /
       ((Nat.card (L ≃ₐ[K] L) : ℝ) * (Nat.card H : ℝ)) :=
