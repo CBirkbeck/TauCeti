@@ -13,17 +13,18 @@ public import TauCeti.RepresentationTheory.Homological.TateCohomology.Coinduced
 /-!
 # The Tate dimension shift along the augmentation sequence
 
-For a finite group `G`, the augmentation sequence `0 ⟶ I_G ⟶ k[G] ⟶ k ⟶ 0` (built in
+For a group `G`, the augmentation sequence `0 ⟶ I_G ⟶ k[G] ⟶ k ⟶ 0` (built in
 `TauCeti.RepresentationTheory.Homological.Augmentation`) has a middle term whose Tate cohomology
-vanishes for every subgroup, because the left regular representation is Tate-acyclic. Its
-connecting homomorphisms are therefore isomorphisms `Ĥⁿ(S, k) ≅ Ĥⁿ⁺¹(S, I_G)` in every degree
-and for every subgroup `S ≤ G`. This is the first of the two dimension shifts behind Tate's
+vanishes for every finite subgroup, because the left regular representation is Tate-acyclic. Its
+connecting homomorphisms are therefore isomorphisms `Ĥⁿ(S, k) ≅ Ĥⁿ⁺¹(S, I_G)` in every degree,
+for every finite subgroup `S ≤ G`. The ambient group need not be finite; only `S` need be, since
+only its Tate cohomology is formed. This is the first of the two dimension shifts behind Tate's
 theorem; the second is the splitting module of a two-dimensional class.
 
 ## Main definitions
 
-* `TauCeti.TateCohomology.augmentationδIso`: `Ĥⁿ(S, k) ≅ Ĥⁿ⁺¹(S, I_G)` for every subgroup `S`
-  of a finite group and every `n : ℤ`.
+* `TauCeti.TateCohomology.augmentationδIso`: `Ĥⁿ(S, k) ≅ Ĥⁿ⁺¹(S, I_G)` for every finite
+  subgroup `S` of a group `G` and every `n : ℤ`.
 
 ## Main statements
 
@@ -53,8 +54,8 @@ open Rep
 variable {k G : Type u} [CommRing k] [Group G] (S : Subgroup G) [Fintype S]
 
 variable (k) in
-/-- **The augmentation dimension shift**: `Ĥⁿ(S, k) ≅ Ĥⁿ⁺¹(S, I_G)` for every subgroup `S` of the
-finite group `G` and every `n : ℤ`, given by the connecting homomorphism of the augmentation
+/-- **The augmentation dimension shift**: `Ĥⁿ(S, k) ≅ Ĥⁿ⁺¹(S, I_G)` for every finite subgroup
+`S` of a group `G` and every `n : ℤ`, given by the connecting homomorphism of the augmentation
 sequence. -/
 def augmentationδIso (n : ℤ) :
     tateCohomology (res S.subtype (trivial k G k)) n ≅
