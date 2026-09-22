@@ -153,6 +153,7 @@ theorem congruenceLattice_narrowModulus (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) 
 /-- **The congruence lattice of an integral ideal, upstairs.**  For a nonzero integral ideal `𝔞`,
 the congruence lattice of `𝔪` at `mk0 𝔞` is the image under `mixedEmbedding` of the ideal
 `𝔞 * 𝔪₀` of `𝓞 K`. -/
+@[simp]
 theorem coe_congruenceLattice_mk0_eq_image (𝔪 : Modulus K) (𝔞 : (Ideal (𝓞 K))⁰) :
     (congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞) : Set (mixedSpace K)) =
       (fun y : 𝓞 K ↦ mixedEmbedding K (y : K)) ''
