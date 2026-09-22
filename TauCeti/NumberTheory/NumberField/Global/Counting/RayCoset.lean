@@ -9,21 +9,24 @@ public import TauCeti.NumberTheory.NumberField.Global.Counting.CongruenceLattice
 public import TauCeti.RingTheory.Ideal.CoprimeCoset
 
 /-!
-# The admissible generators of a ray class, in the mixed space
+# Elements of an ideal congruent to one, in the mixed space
 
-Counting the integral ideals of a fixed ray class runs over the generators `α` of an ideal that are
-congruent to one modulo the finite part `𝔪₀` of the modulus.  For an ideal `𝔞` prime to `𝔪₀` those
-generators form a coset of `𝔞 * 𝔪₀`, and this file records what their images look like in the mixed
-space: a single translate of `congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)`.
+For a nonzero integral ideal `𝔞` and a modulus `𝔪` with finite part `𝔪₀`, the elements of `𝔞`
+that are congruent to one modulo `𝔪₀` form a coset of `𝔞 * 𝔪₀`.  This file records what their
+images look like in the mixed space: a single translate of
+`congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)`.
 
-The lattice being translated depends only on `𝔪` and `𝔞`, not on the generator chosen to name the
-translate, so the images of the admissible generators are the points of one translate of a fixed
-lattice.
+The lattice being translated depends only on `𝔪` and `𝔞`, not on the element chosen to name the
+translate, so those images are the points of one translate of a fixed lattice.
+
+A later result imposes the further conditions — that the element generate `𝔞`, and that `𝔞`
+represent a given ray class — under which this set is what a ray-class ideal count runs over.
+Nothing here assumes either.
 
 ## Main results
 
 * `TauCeti.GlobalNumberFields.image_setOf_mem_and_sub_one_mem_eq_vadd_congruenceLattice`:
-  the images of the admissible generators are a translate of the congruence lattice.
+  those images are a translate of the congruence lattice.
 -/
 
 public section
@@ -36,13 +39,13 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- **The admissible generators map onto a coset of the congruence lattice.**  For a nonzero
+/-- **The elements congruent to one map onto a coset of the congruence lattice.**  For a nonzero
 integral ideal `𝔞` and an element `ξ` of `𝔞` congruent to one modulo `𝔪₀`, the elements of `𝔞`
 congruent to one modulo `𝔪₀` map onto the translate of
 `congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)` by the image of `ξ`.
 
-An admissible `ξ` is what `Ideal.isCoprime_iff_exists_mem_and_sub_one_mem` extracts from
-coprimality of `𝔞` and `𝔪₀`, and the lattice on the right does not involve `ξ`: two admissible
+Such a `ξ` is what `Ideal.isCoprime_iff_exists_mem_and_sub_one_mem` extracts from
+coprimality of `𝔞` and `𝔪₀`, and the lattice on the right does not involve `ξ`: two such
 choices give translates of the same lattice. -/
 theorem image_setOf_mem_and_sub_one_mem_eq_vadd_congruenceLattice (𝔪 : Modulus K)
     (𝔞 : (Ideal (𝓞 K))⁰) {ξ : 𝓞 K} (hξ𝔞 : ξ ∈ (𝔞 : Ideal (𝓞 K))) (hξ𝔪 : ξ - 1 ∈ 𝔪.finitePart) :
