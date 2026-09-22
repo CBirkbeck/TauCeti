@@ -78,7 +78,7 @@ an embedded product.** For the attaching circles of a Heegaard diagram this says
 theorem isClosedEmbedding_ofFn_subtypeVal (hA : ∀ i, IsCompact (A i))
     (h : Pairwise (Function.onFun Disjoint A)) :
     IsClosedEmbedding fun x : ∀ i, ↥(A i) => ofFn fun i => (x i : α) :=
-  haveI (i : Fin n) : CompactSpace ↥(A i) := isCompact_iff_compactSpace.1 (hA i)
+  have (i : Fin n) : CompactSpace ↥(A i) := isCompact_iff_compactSpace.1 (hA i)
   continuous_ofFn_subtypeVal.isClosedEmbedding (ofFn_subtypeVal_injective h)
 
 /-- **The subspace `TauCeti.Sym.pi A` is the product of the members of the family**, for a pairwise
