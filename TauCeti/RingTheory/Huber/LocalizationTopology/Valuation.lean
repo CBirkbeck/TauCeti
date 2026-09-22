@@ -232,11 +232,10 @@ theorem le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) {u : Valua
     (hx : x ∈ integralClosure
       ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
     u x ≤ 1 := by
-  have hle : (Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))).toSubring ≤
-      u.integer := fun y hy ↦
-    (Valuation.mem_integer_iff _ _).mpr (le_one_of_mem_adjoin_plus S T s Aplus hplus hT hy)
-  exact (Valuation.mem_integer_iff _ _).mp ((Valuation.integer.integers u).mem_of_integral
-    (IsIntegral.map_of_comp_eq (Subring.inclusion hle) (RingHom.id S) rfl hx))
+  have : IsIntegrallyClosedIn u.integer S :=
+    Subring.isIntegrallyClosedIn_iff.mpr fun _ ↦ (Valuation.integer.integers u).mem_of_integral
+  exact (Subring.integralClosure_le_iff (T := u.integer)).mpr
+    (fun r ↦ le_one_of_mem_adjoin_plus S T s Aplus hplus hT r.2) hx
 
 omit [TopologicalSpace A] in
 /-- **The extension is `≤ 1` on the plus ring of the localisation** — the integral closure in
