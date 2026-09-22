@@ -71,8 +71,12 @@ of definition is free, and this one costs nothing.
   `n`-th basic neighbourhood of zero in `Aₛ`.
 * `TauCeti.Huber.PairOfDefinition.isContinuous_extendToLocalization`: **the extension of a
   continuous valuation is continuous** for `locTopology`.
+* `TauCeti.Huber.le_one_of_mem_integralClosure_adjoin_plus`: **any valuation on `Aₛ` bounded by
+  `1` on the image of `A⁺` and on the fractions `t/s` is `≤ 1` on the plus ring of the
+  localisation**, the integral closure of `A⁺[T/s]` in `Aₛ`.
 * `TauCeti.Huber.extendToLocalization_le_one_of_mem_integralClosure_adjoin_plus`: **the extension
-  is `≤ 1` on the plus ring of the localisation**, the integral closure of `A⁺[T/s]` in `Aₛ`.
+  is `≤ 1` on the plus ring of the localisation**, the previous result for the extension of a
+  valuation on `A`.
 
 The two headline results are assembled into a statement about adic spectra in
 `TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Surjective`.
@@ -195,22 +199,44 @@ end PairOfDefinition
 variable (T : Finset A) (s : A) [IsLocalization.Away s S]
 
 omit [TopologicalSpace A] in
-/-- **The extension is `≤ 1` on `A⁺[t₁/s, …, tₙ/s]`.** No topology enters: the subalgebra is
-generated over `A⁺` by the distinguished fractions, and the two hypotheses bound the extension on
-both families of generators. -/
-theorem extendToLocalization_le_one_of_mem_adjoin_plus (Aplus : Subring A) {v : Valuation A Γ₀}
-    (hs : v s ≠ 0) (hplus : ∀ a ∈ Aplus, v a ≤ 1) (hT : ∀ t ∈ T, v t ≤ v s) {x : S}
+/-- **A valuation on `Aₛ` that is `≤ 1` on the image of `A⁺` and on the distinguished fractions
+is `≤ 1` on `A⁺[t₁/s, …, tₙ/s]`.** The subalgebra is generated over `A⁺` by those fractions, so
+the two hypotheses bound the valuation on both families of generators.
+
+The valuation is an arbitrary one on `Aₛ`, not necessarily an extension from `A`: a valuation
+pulled back along a ring map out of `Aₛ` is bounded on the same generators and qualifies. -/
+theorem le_one_of_mem_adjoin_plus (Aplus : Subring A) {u : Valuation S Γ₀}
+    (hplus : ∀ a ∈ Aplus, u (algebraMap A S a) ≤ 1) (hT : ∀ t ∈ T, u (divBy t s : S) ≤ 1) {x : S}
     (hx : x ∈ Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) :
-    v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S x ≤ 1 := by
+    u x ≤ 1 := by
   induction hx using Algebra.adjoin_induction with
-  | mem y hy =>
-    obtain ⟨t, rfl⟩ := hy
-    exact Valuation.extendToLocalization_divBy_le_one S hs (hT t t.2)
-  | algebraMap r =>
-    rw [IsScalarTower.algebraMap_apply ↥Aplus A S, Valuation.extendToLocalization_apply_map_apply]
-    exact hplus _ r.2
+  | mem y hy => obtain ⟨t, rfl⟩ := hy; exact hT t t.2
+  | algebraMap r => rw [IsScalarTower.algebraMap_apply ↥Aplus A S]; exact hplus _ r.2
   | add y z _ _ hy hz => exact le_trans (Valuation.map_add _ _ _) (max_le hy hz)
   | mul y z _ _ hy hz => rw [Valuation.map_mul]; exact mul_le_one' hy hz
+
+omit [TopologicalSpace A] in
+/-- **A valuation on `Aₛ` that is `≤ 1` on the image of `A⁺` and on the distinguished fractions
+is `≤ 1` on the plus ring of the localisation** — the integral closure in `Aₛ` of
+`A⁺[t₁/s, …, tₙ/s]`, which
+`TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_integralClosure_adjoin_plus` makes a ring
+of integral elements of `Aₛ`.
+
+The integral closure is free of charge: the valuation ring is integrally closed in `Aₛ`, so
+bounding the valuation on the generating subalgebra bounds it on the closure.
+
+As with `le_one_of_mem_adjoin_plus`, the valuation is arbitrary; the extension of a valuation on
+`A` is the case `extendToLocalization_le_one_of_mem_integralClosure_adjoin_plus` below. -/
+theorem le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) {u : Valuation S Γ₀}
+    (hplus : ∀ a ∈ Aplus, u (algebraMap A S a) ≤ 1) (hT : ∀ t ∈ T, u (divBy t s : S) ≤ 1) {x : S}
+    (hx : x ∈ integralClosure
+      ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
+    u x ≤ 1 := by
+  have hle : (Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))).toSubring ≤
+      u.integer := fun y hy ↦
+    (Valuation.mem_integer_iff _ _).mpr (le_one_of_mem_adjoin_plus S T s Aplus hplus hT hy)
+  exact (Valuation.mem_integer_iff _ _).mp ((Valuation.integer.integers u).mem_of_integral
+    (IsIntegral.map_of_comp_eq (Subring.inclusion hle) (RingHom.id S) rfl hx))
 
 omit [TopologicalSpace A] in
 /-- **The extension is `≤ 1` on the plus ring of the localisation** — the integral closure in
@@ -218,22 +244,17 @@ omit [TopologicalSpace A] in
 `TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_integralClosure_adjoin_plus` makes a ring
 of integral elements of `Aₛ`.
 
-The integral closure is free of charge: the valuation ring of the extension is integrally closed
-in `Aₛ`, so bounding the extension on the generating subalgebra bounds it on the closure. -/
+This is `le_one_of_mem_integralClosure_adjoin_plus` for the extension of a valuation on `A`: the
+extension is `≤ 1` on the image of `A⁺` because `v` is, and on `t/s` because `v t ≤ v s`. -/
 theorem extendToLocalization_le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A)
     {v : Valuation A Γ₀} (hs : v s ≠ 0) (hplus : ∀ a ∈ Aplus, v a ≤ 1) (hT : ∀ t ∈ T, v t ≤ v s)
     {x : S} (hx : x ∈ (integralClosure
       ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring) :
-    v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S x ≤ 1 := by
-  set w := v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S
-  set E := Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))
-  let φ : ↥E →+* w.integer :=
-    (E.toSubring).subtype.codRestrict w.integer fun r ↦
-      (Valuation.mem_integer_iff _ _).mpr
-        (extendToLocalization_le_one_of_mem_adjoin_plus S T s Aplus hs hplus hT r.2)
-  rw [Subalgebra.mem_toSubring, mem_integralClosure_iff] at hx
-  have hint : IsIntegral w.integer x := hx.map_of_comp_eq φ (RingHom.id S) (by ext r; rfl)
-  exact (Valuation.mem_integer_iff _ _).mp ((Valuation.integer.integers w).mem_of_integral hint)
+    v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S x ≤ 1 :=
+  le_one_of_mem_integralClosure_adjoin_plus S T s Aplus
+    (fun a ha ↦ by rw [Valuation.extendToLocalization_apply_map_apply]; exact hplus a ha)
+    (fun t ht ↦ Valuation.extendToLocalization_divBy_le_one S hs (hT t ht))
+    (Subalgebra.mem_toSubring.mp hx)
 
 end TauCeti.Huber
 
