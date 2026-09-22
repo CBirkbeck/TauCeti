@@ -102,9 +102,13 @@ theorem exists_abs_ncard_rayFundamentalDomain_inter_norm_le_inter_vadd_sub_le (�
     Real.rpow_inv_natCast_pow ht0.le hn.ne'
   have herr : (t ^ ((finrank ℚ K : ℝ))⁻¹) ^ (finrank ℚ K - 1) =
       t ^ (1 - ((finrank ℚ K : ℝ))⁻¹) := by
-    rw [← Real.rpow_natCast (t ^ ((finrank ℚ K : ℝ))⁻¹) (finrank ℚ K - 1), ← Real.rpow_mul ht0.le,
-      Nat.cast_sub hn, Nat.cast_one, mul_sub, inv_mul_cancel₀ (Nat.cast_ne_zero.mpr hn.ne'),
-      mul_one]
+    -- the two semantic steps: a natural power of an `rpow` is an `rpow`, and `rpow` exponents
+    -- multiply; what remains is arithmetic in the exponent
+    rw [← Real.rpow_natCast (t ^ ((finrank ℚ K : ℝ))⁻¹) (finrank ℚ K - 1), ← Real.rpow_mul ht0.le]
+    congr 1
+    have hn0 : (finrank ℚ K : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn.ne'
+    push_cast [Nat.cast_sub hn]
+    field_simp
   -- dilating by `c` scales the norm by `c ^ [K:ℚ]`, so `c = t ^ (1 / [K:ℚ])` is the factor that
   -- presents the norm-≤-`t` section as a dilate of the norm-≤-one section
   have key := hA ξ (t ^ ((finrank ℚ K : ℝ))⁻¹) hc1
