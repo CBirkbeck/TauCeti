@@ -41366,3 +41366,59 @@ open head clean; #6953 was branched from it at r879.
 **In progress now:** #6950, #6952 (rebuilding) and #6953. The cap is full.
 
 No toolkit edits.
+
+---
+
+## r881 — 2026-09-22T12:55Z — six-day gap: the whole queue merged; the two drafts were parked `on-hold`, rebased and marked ready; kind 1 dry at the new pin; kind 2 opened as #8101
+
+**Board** (12:55:13Z; a real call read 4969 REST calls left; sweep exited 0). The session had been idle since r880 on 2026-09-15.
+
+* **Only two `improve/*` PRs were still open**, #6952 and #6953, both drafts, both CI-green, both carrying a label this role had
+  not seen: **`on-hold`**, description "Draft PR or explicitly held by a keep/hold/wip/human/do-not-close label". The timelines
+  show `tauceti-review-bot` swapping `awaiting-review` → `on-hold` at 2026-09-16T07:33:27Z and 07:33:29Z. It is automatic, a
+  consequence of leaving them in draft, not a human hold: no comment asks for one.
+* **Every other PR merged.** #6950 (06:59:48Z), #6947 (07:15:38Z), #6945 (07:48:23Z), #6941 (08:20:45Z), #6933 (08:41:30Z),
+  #6923 (09:14:10Z), #6915 (09:39:29Z), #6911 (09:45:57Z), #6910 (09:54:31Z), #6902 (10:04:56Z), #6899 (10:10:06Z) and #6896
+  (10:18:58Z), all on 2026-09-16; #6875 on 2026-09-21T05:44:38Z (it needed Chris because of `web/examples`); and Chris's #5950
+  on 2026-09-17T15:57:25Z. Thirteen of this role's PRs landed.
+* **Main** moved `e0103897b` → `c6b94ee7a`, 1157 commits and 2422 files, and again to `1c3418d52` during the round. The Mathlib
+  pin moved `30a58f795a` → `dc4b8d60d5` across three bumps (#6935 cb03454, #7433 8842b50, #7622 a78f66a); toolchain
+  `leanprover/lean4:v4.34.0-rc2`.
+
+**Step 3: the two drafts.** Their green builds dated from 2026-09-15 and predated two pin bumps, so a rebase was the honest move
+rather than trusting them.
+
+* Both branches merge clean against the new main, and main had touched neither file.
+* `improve/segment-formula-style` rebased `f2f4f9666` → **`8ca6278ac`** and `improve/weierstrass-derivation-dead-haves`
+  `e36314bd2` → **`5d7fe3322`**; each re-gated **12 ok / 0 failed / 0 UNRUN**, pushed with a lease, and marked ready
+  (13:01:23Z and 13:04:48Z). `on-hold` cleared on both. #6952's fresh build went green at 13:11:02Z, so step 4 may drive it only
+  after 14:11Z; #6953 was still building at the end of the round.
+
+**Kind 1 re-scanned at the new pin — dry.** Mathlib added 255 declaration headers across 383 files between the pins. Sixteen
+names collide with TauCeti declarations; all but one family are generic category-theory spellings (`of`, `lift`, `pi`, `image`,
+`dim`, `proj`, `limit`, `coe_of`, `prodFst`, `prodSnd`, `I`, `H0π`). The `wordProd` family was read on both sides and rejected:
+Mathlib's new `Group.Generators.wordProd` evaluates **signed** words `List (ι × Bool)` over a generating family via
+`P.lift (FreeGroup.mk l)`, while `TauCeti.wordProd` multiplies an **unsigned** `List b.support` of simple reflections into
+`P.weylGroup`. Mathlib's docstring says it is modelled on the separate unsigned `CoxeterSystem.wordProd` — which TauCeti's
+Coxeter files already use — so there is nothing to delete; adopting it would be a redesign across 18 files.
+
+**Step 5: kind 2 opened as draft #8101** (kind 1's slot, per the substitution rule).
+
+* **Target**: 142 files scored on current main, excluding the 305 files that 99 open PRs touch.
+  `TauCeti/Probability/Exchangeability/L2/Cesaro/Convergence.lean` led (339 lines, 64 `fun … =>`, one importer, no open PR).
+* **Edits** (+64/−62, no statement changes): every `fun … =>` → `↦` (64, the file's only `=>`); the two
+  `intro i j; have := h…_lt i; omega` chains split one tactic per line; and two docstrings restated off the roadmap stage — the
+  module docstring drops "This file proves the `weighted_sums_converge_L1` milestone from Layer 3 of the Exchangeability
+  roadmap." and `weighted_sums_converge_L1` drops ", the shape the Layer 3 roadmap names". The Kallenberg reference and the
+  `cameronfreer/exchangeability` attribution stay.
+* **gpt-6-astra** (`astra-cesaro-answer.txt`): all four classes safe, "no elaboration or mathematical-meaning risk".
+* `/mathlibable`: not a candidate — the results are stated for Tau Ceti's `Contractable`/`blockAverage`/`cov` API, and the one
+  generic-looking private helper `dist_toLp_sq_eq_integral_sq` has no counterpart at the pin (`L2Space.lean` carries
+  `L2.inner_def`, `integral_inner_eq_sq_eLpNorm` and `memLp_two_iff_integrable_sq`, none of which is this identity).
+* **Gate** (on `c6b94ee7a`): **12 ok / 0 failed / 0 UNRUN**. **Opened #8101** (draft, 13:12:50Z), head
+  `CBirkbeck:improve/cesaro-convergence-style@5c3e4390e`, `Roadmap: Exchangeability` as #3372; main had moved to `1c3418d52` by
+  then, with a clean merge-tree and the file untouched. The live body matches the file.
+
+**In progress now:** #6952, #6953 and #8101. The cap is full; the next opening is kind 3.
+
+No toolkit edits.

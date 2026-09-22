@@ -1,4 +1,4 @@
-# Last round — r880 (2026-09-15T23:14Z)
+# Last round — r881 (2026-09-22T13:15Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -42,32 +42,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6875** | `462ed9705b` | green (07:49:13Z) | kind 1 (Mathlib's deck group); **10/10 on the re-review** (08:54:23Z, head `462ed97`), `ready-to-merge` since ~09:28Z and NEVER-QUEUED after r803 fixed the first board's naming, placement and documentation findings; cannot auto-merge (`web/examples`) | **Chris** — merge it; until then it holds one of the three step-5 slots |
-| **#6896** | `8a6278e95` | green (15:34:55Z) | kind 2 (convex-subgroup exclusion lemmas take `≤`, renamed to `notMem`); **10/10** (codex, 17:14:21Z), `ready-to-merge`, **QUEUED 36/76** (23:01Z, r879) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6899** | `f450e0dcc` | green (15:42:54Z) | kind 3 (`chafaiRescaling_coe_of_nonneg`); **10/10** (eohjelle, 16:40:36Z), `ready-to-merge`, **QUEUED 35/76** (23:01Z, r879) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6902** | `3282c9611` | green (18:32:05Z) | kind 2 (PseudoHyperbolic cleanup; `attribution` answered by a `## References` entry). **10/10 on the r861 re-review** (19:41:02Z), `ready-to-merge`, **QUEUED 51/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6910** | `3548cebb7` | green (17:32:21Z) | kind 3 (Vandermonde dedup); **10/10** (codex, 18:41:05Z), `ready-to-merge`, **QUEUED 31/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6911** | `4a8439956` | green (17:43:41Z) | kind 2 (Resolvent/Basic.lean style pass); **10/10** (18:03:15Z), `ready-to-merge`, **QUEUED 34/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6915** | `4f9c8d7cd` | green (21:36:18Z) | kind 3 (three strict hypotheses weakened; `one_add_sq_div_eq` became the public `@[simp]` `Real.inv_sqrt_mul_sq` after two `api-design` rounds); **10/10** (22:06:19Z), `ready-to-merge`, **QUEUED 68/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6923** | `8f846c57b` | green (19:21:52Z) | kind 2 (`Jump.lean` style pass); **10/10 on the r865 driven board** (20:31:04Z), `ready-to-merge`, **QUEUED 55/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6933** | `311f6a427` | green (20:05:45Z) | kind 3 (drops the duplicate private `comap_coact_mem`); **10/10 on the r869 driven board** (21:10:20Z), `ready-to-merge`, **QUEUED 62/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6941** | `8c4c5fa79` | green (20:49:35Z) | kind 2 (`Residue/Theorem.lean` style pass); **10/10 on the r873 driven board** (22:01:03Z), `ready-to-merge`, **QUEUED 67/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6945** | `c7129d24c` | green (21:37:02Z) | kind 3 (drops the public, unused `ExchangeableAt.of_lt`); **10/10 on the r878 driven board** (22:50:18Z, $0.84), `ready-to-merge`, **QUEUED 75/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6947** | `3687b12b1` | green (22:20:35Z) | kind 2 (`Arrays/ZeroOne.lean` style pass); **10/10 on its head** (the local worker, 22:56:19Z), `ready-to-merge`, **QUEUED 76/76** (23:01Z) | nobody — the queue builds its group; on an eject, read the removal reason first |
-| **#6950** | `049193f7a` | green (22:32:19Z) | kind 3 (drops two unused `have`s, `hDtop₂` and `hDbot₂`, in `KnotTheory/Grid/Differential/Square/Recut/Pairing.lean`; found by `deadhave`; gate 12/0/0; `Roadmap: CombinatorialHeegaardFloer`, as #6211); opened as a draft 22:15:32Z, **marked ready 22:37:55Z**, `awaiting-review`, no board | **pipeline** — board due; step 4 may drive only after 23:38Z |
-| **#6952** | `f2f4f9666` | **first build FAILED** (23:04:28Z); fix pushed 23:13:09Z, rebuilding | kind 2, in kind 1's slot (`Winding/Number/Segment/Formula.lean` style pass: 32 `↦`, 7 `;` chains split, `h_avoid` as a term, roadmap parenthetical out of the docstring). CI rejected one golf at line 159: `simpa only [mul_one] using h2.comp t h1` — "Type mismatch: After simplification", the composed term carrying `(NormedAlgebra.toNormedSpace ℝ).toModule` where the goal has `Semiring.toModule`. `f2f4f9666` restores `have h3 := …`, `simp only [mul_one] at h3`, `exact h3`; every other edit stands. Gate 12/0/0, body v2 patched. Still a **draft** | **CI** — mark ready when `sandboxed-build` is green |
-| **#6953** | `e36314bd2` | first build | kind 3 (drops the unused `h2` and `h3` in `Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero`; its `simp only` set lists neither and `linear_combination (norm := module) h0` reads only `h0`; the chain-rule lemmas keep their used copies; gate 12/0/0; `Roadmap: EllipticCurves`, as #6301); **draft**, opened 23:06:25Z from `e0103897b` | **CI** — mark ready when `sandboxed-build` is green |
-| **#5950** | `a64ba63667` | green | `ready-to-merge`, **NEVER-QUEUED** | **Chris** — do not refresh |
+| **#6952** | `8ca6278ac` | green (13:11:02Z) | kind 2 (`Winding/Number/Segment/Formula.lean` style pass: 32 `↦`, 7 `;` chains split, `h_avoid` as a term, roadmap parenthetical out of the docstring; the r880 `simpa only` revert stands). Opened 2026-09-15 as a draft and never marked ready, so the bot parked it **`on-hold`** at 2026-09-16T07:33Z. r881 rebased it onto `c6b94ee7a` (gate 12/0/0), pushed with a lease and **marked it ready 13:01:23Z**; the fresh build against pin `dc4b8d60d5` is green | **pipeline** — board due; step 4 may drive only after 14:11Z |
+| **#6953** | `5d7fe3322` | building (pushed 13:04Z) | kind 3 (drops the unused `h2` and `h3` in `Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero`; gate 12/0/0; `Roadmap: EllipticCurves`). Same `on-hold` history; r881 rebased it onto `c6b94ee7a`, pushed and **marked it ready 13:04:48Z** | **CI** — then the board clock runs an hour from CI-green |
+| **#8101** | `5c3e4390e` | first build | kind 2, in kind 1's slot (`Probability/Exchangeability/L2/Cesaro/Convergence.lean` style pass: 64 `↦`, the two `intro i j; have …; omega` chains split, and two docstrings restated off the "Layer 3 roadmap" wording, keeping the Kallenberg reference and the `cameronfreer/exchangeability` pin; gpt-6-astra reviewed, no risk; gate 12/0/0; `Roadmap: Exchangeability`, as #3372); **draft**, opened 13:12:50Z from `c6b94ee7a` | **CI** — mark ready when `sandboxed-build` is green |
 
-**In progress: #6950 (`awaiting-review`, ready 22:37:55Z), #6952 (draft, first build) and #6953 (draft, first build).** The cap is full, so
-step 5 is shut until one of them turns `ready-to-merge`. #6875, #6896, #6899, #6902, #6910, #6911, #6915, #6923, #6933, #6941, #6945 and #6947 are `ready-to-merge` and do not count. #6855 merged at 05:43:53Z, #6854 at 21:52:04Z and #6851 at 22:11:28Z. Every queued PR reached the queue on a 10/10 board, and #6875 is 10/10 and waits for a human merge (r813). Main is `e0103897b`.
+**In progress: #6952 (`awaiting-review`, ready 13:01:23Z, green 13:11:02Z), #6953 (`awaiting-CI`, ready 13:04:48Z) and #8101 (draft, first build).** The cap is full, so
+step 5 is shut until one of them turns `ready-to-merge`. **Everything else this watch tracked has merged**: #6896, #6899, #6902, #6910, #6911, #6915, #6923, #6933, #6941, #6945, #6947 and #6950 between 06:59Z and 10:19Z on 2026-09-16, #6875 (the `web/examples` PR needing a human merge) on 2026-09-21T05:44:38Z, and Chris's #5950 on 2026-09-17T15:57:25Z. Main is `1c3418d52` and moving fast — 1157 commits in the six days this session was idle. The Mathlib pin is now `dc4b8d60d5` (bumped by #6935, #7433 and #7622) and the toolchain `leanprover/lean4:v4.34.0-rc2`.
 
 ## What to expect next
 
-0. **r843–r880:** the cap rule changed (rotation paragraph above). In progress: #6950 (green 22:32:19Z, ready 22:37:55Z; drive not
-   before 23:38Z), #6952 (the revert `f2f4f9666` is rebuilding; mark it ready when green) and #6953 (draft; mark it ready once its first build is green). Pass #6953, #6952, #6950, #6947, #6945,
-   #6941, #6933, #6923, #6915, #6911, #6910, #6902, #6899, #6896 and #6875 to `queuepos.py`. When a slot frees: kind 1 if a target
-   exists, otherwise kind 2.
+0. **r843–r881:** the cap counts only PRs in progress (rotation paragraph above). In progress: #6952 (green 13:11:02Z; drive not
+   before 14:11Z), #6953 (building; its clock starts at CI-green) and #8101 (draft; mark it ready once its first build is green).
+   Pass #8101, #6953 and #6952 to `queuepos.py`. When a slot frees the next opening is kind 3 — kind 2 took kind 1's slot at r881
+   because the catch-up scan at the new pin came up dry.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -78,32 +65,34 @@ step 5 is shut until one of them turns `ready-to-merge`. #6875, #6896, #6899, #6
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
-2. **#6851 (kind 1, Levi-Civita) MERGED at 22:11:28Z (r874).** Earlier history: it was 10/10 on its first board (22:35:00Z, head `fdeaff5cb7`). It was MERGING at 2 of
-   43 when the bot flushed the queue for #6852 (r798). Do not refresh: `merge-sweep` re-enqueues it (green,
-   TauCeti/-only) on its next run. #6852 failed its group build and left the queue at 07:57:43Z (r808), so the reservation
-   no longer blocks. The first such run, at 10:24:54Z (r822), aborted after 14 s: it could not read queue entry #6751's
-   files ("unexpected end of JSON input"), and it fails closed. The same call read cleanly at 10:37:48Z (r823), so the
-   failure was transient and the next scheduled sweep should re-enqueue it. If a later run still aborts, tell Chris rather
-   than refreshing. Re-simulate its merge group when main moves: it deletes
-   24 declarations and `LeviCivita/Existence.lean`, so pass `--deleted` to `stalequal` and the deleted path to `ghostref`.
-3. **#6854 (kind 2, quadratic separability) MERGED at 21:52:04Z (r873).** Earlier history: it was 10/10 on the r768 driven board (00:49:59Z, head `217fecb812`). It was
-   flushed from 14th the same way (r798); handle it like #6851. It removes nothing, so only merge-tree and ghostref's
-   firing control matter.
-4. **#6875 (kind 1 again, Mathlib's deck group) went 10/10 on its re-review** (r813, 08:54:23Z, head `462ed97`). It now waits for Chris's merge, because `web/examples` keeps it off auto-merge. Its first board went 7/10 at head `e70f761ba`, and commit
-   `462ed9705` answers the three findings. Naming: 24 declarations with a deck-transformation first argument became
-   `_root_.deck.<name>`. Placement: the `ConstMulAction` import is gone. Documentation: roadmap narrative is out of 33
-   module docstrings. Its CI went green at 07:49:13Z (r807), so the dropped import broke nothing;
-   the re-review landed at 08:54:23Z, so no drive was needed. `prepush.sh`'s
-   `decldiff`/`rootsurplus` FAILs on this move are the rooting-premise mismatch (r803). Expect `prepush.sh`'s `decldiff` FAIL (`VANISHED TauCeti.Deck`), since the deletion is the
-   point of the PR. It touches `web/examples/Examples.lean`, so it cannot auto-merge; once it is 10/10, the merge is
-   Chris's call, as with #5950.
-5. **At the next free slot:** kind 1 if a target exists, otherwise kind 2. Kind 3 went as #6953 (r879) and kind 2 as #6952 (r878);
-   the remaining kind-3 candidates are below (the `StronglyContinuousSemigroup.norm_resolvent_integrand_le` weakening still waits
-   for #6911 to merge). No kind-1
+2. **The whole 2026-09-15 queue drained.** Twelve of this watch's PRs merged inside three and a half hours on 2026-09-16
+   (06:59:48Z #6950 through 10:18:58Z #6896), #6875 waited for Chris and merged 2026-09-21T05:44:38Z, and #5950 merged
+   2026-09-17T15:57:25Z. Every board they carried was 10/10. Nothing from that batch needs watching; their rows are gone from the
+   board above.
+
+3. **A draft nobody marks ready gets parked.** `tauceti-review-bot` swapped `awaiting-review` → **`on-hold`** on #6952 and #6953 at
+   2026-09-16T07:33Z, six days before this round. The label means "Draft PR or explicitly held by a keep/hold/wip/human/do-not-close
+   label" — it is automatic, not a human hold, and the pipeline stops looking at the PR until it leaves draft.
+
+4. **A green build ages out at a pin bump.** Both PRs still showed CI green from 2026-09-15, but Mathlib's pin had moved twice since.
+   r881 rebased both onto fresh main and re-gated before marking them ready, so the builds that matter ran against `dc4b8d60d5`.
+
+
+5. **At the next free slot: kind 3** (candidates below; the `norm_resolvent_integrand_le` weakening is unblocked now that #6911 has
+   merged). Kind 2 went as #8101 (r881) in kind 1's slot, after the catch-up scan at pin `dc4b8d60d5` found no target. No kind-1
    target is left after #6875. #39722 (`Nat.Partition` → `YoungDiagram`, merged 2026-09-14) needs a pin from that date or later,
    and #6852's `8842b50` is from 2026-09-04.
 
-## Kind-1 prospects (r703 first pass, r798 re-run)
+## Kind-1 prospects (r703 first pass, r798 re-run, r881 re-run at pin `dc4b8d60d5`)
+
+**r881 re-run: dry.** Between pins `30a58f795a` and `dc4b8d60d5` Mathlib changed 383 files and added 255 declaration headers.
+Sixteen of those names are also declared in TauCeti, and all but one family are generic category-theory spellings (`of`, `lift`,
+`pi`, `image`, `dim`, `proj`, `limit`, `coe_of`, `prodFst`, `prodSnd`, `I`, `H0π`). The `wordProd` family looked promising and is
+**a false positive**: Mathlib's new `Group.Generators.wordProd` (`Mathlib/Geometry/Group/WordProd.lean`) evaluates *signed* words
+`List (ι × Bool)` over a generating family via `P.lift (FreeGroup.mk l)`, while `TauCeti.wordProd` multiplies an *unsigned*
+`List b.support` of simple reflections into `P.weylGroup`. Same name, different notion — Mathlib's own docstring says it is
+modelled on the separate unsigned `CoxeterSystem.wordProd`, which TauCeti's `GroupTheory/Coxeter/*` files already use. Adopting it
+would mean a `Group.Generators` instance and signed words through 18 files: a redesign, not a catch-up. Re-run after the next bump.
 
 Method: `$SP/mlcatchup.py` indexes pinned Mathlib `30a58f7` (243230 names) and TauCeti main (58119):
 same-name collisions, stale "Mathlib has no `X`" notes, and cited Mathlib PRs whose squash commit is in
@@ -140,7 +129,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r880 did
+## What r703–r881 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -333,6 +322,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r878: #6945's review, driven after its hour (22:47:13Z), approved 10/10 ($0.84), and the local worker approved #6947 10/10 (22:56:19Z); both queued (75, 76). Two slots freed, and with kind 1 still dry, kind 2 opened as draft **#6952**, a style pass on `Winding/Number/Segment/Formula.lean` (gpt-6-astra: no risk; gate 12/0/0). Main moved to `e0103897b` (#6845, #6841, additive), and all fourteen heads re-simulated clean. One slot is still free, and the next opening is kind 3.
 * r879: kind 3 opened as draft **#6953**, dropping the unused `h2` and `h3` in the Weierstrass equation differential (gate 12/0/0; `deadhave` flagged `h3`, and `h2` is dead the same way). No merges since #6845 and #6841, main still `e0103897b`, and #6950 was not yet due for a drive (23:38Z).
 * r880: **#6952's first build failed** on the `simpa only [mul_one]` golf (instance paths). The job log gave the exact mismatch, `f2f4f9666` restores the explicit `have`/`simp only`/`exact`, and the body was corrected. #6953 was still building, #6950 still had no board, and there were no merges.
+* r881 (2026-09-22, after a six-day gap): every queued PR had merged — thirteen of mine plus #5950. The two survivors, #6952 and #6953, were drafts the bot had parked `on-hold`; both were rebased onto `c6b94ee7a`, re-gated 12/0/0, pushed and marked ready. The kind-1 re-run at pin `dc4b8d60d5` was dry (the `wordProd` collision is a false positive), so kind 2 opened as draft **#8101**, a style pass on `Cesaro/Convergence.lean` (gpt-6-astra: no risk; gate 12/0/0).
 
 ## Candidates for a later step 5
 
@@ -389,7 +379,11 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
 ## Settled
 
 * **Merged this watch:** #6406, #6426, #6412, #6418, #6432, #6188, #6482, **#6093** (2026-09-14T21:09:02Z), **#6796**
-  (21:29:41Z), **#6800** (21:31:53Z), **#6855** (2026-09-15T05:43:53Z), **#6854** (2026-09-15T21:52:04Z), **#6851** (2026-09-15T22:11:28Z).
+  (21:29:41Z), **#6800** (21:31:53Z), **#6855** (2026-09-15T05:43:53Z), **#6854** (2026-09-15T21:52:04Z), **#6851** (2026-09-15T22:11:28Z),
+  and then the whole queue on **2026-09-16**: **#6950** (06:59:48Z), **#6947** (07:15:38Z), **#6945** (07:48:23Z), **#6941**
+  (08:20:45Z), **#6933** (08:41:30Z), **#6923** (09:14:10Z), **#6915** (09:39:29Z), **#6911** (09:45:57Z), **#6910** (09:54:31Z),
+  **#6902** (10:04:56Z), **#6899** (10:10:06Z), **#6896** (10:18:58Z); **#5950** (2026-09-17T15:57:25Z) and **#6875**
+  (2026-09-21T05:44:38Z).
 * **#6093** — `scope`, `naming`, `documentation` green; `api-design` answered. Deferred laws on
   `handover/fiber-compfiberequiv-laws-deferred`.
 
@@ -563,6 +557,14 @@ reviewer's request, decide its simp attribute in the same push.
 check-runs, beside the live `pr-6854-b40126a7…`. `git ls-remote … | head -1` picked the stale one. List every
 `gh-readonly-queue/main/pr-<n>-*` ref, and judge the group by the ref whose check-runs started after the latest enqueue (or by the
 `mergeQueue.entries` `headCommit`).
+**A draft left unmarked is parked, not reviewed** (r881). `tauceti-review-bot` relabels a draft `on-hold` ("Draft PR or
+explicitly held by a keep/hold/wip/human/do-not-close label") once its `awaiting-review` pass finds it still in draft, and then
+ignores it. #6952 and #6953 sat that way for six days. Mark a draft ready the same round its build goes green; if a round ends
+with a draft still building, the next round's first job is to mark it.
+
+**A green build ages out when the Mathlib pin moves** (r881). CI-green on a head is evidence only against the pin that built it.
+After a bump — three landed here in six days — rebase onto fresh main, re-gate, and let CI re-run before marking ready or driving
+a review.
 **A golf gpt-6-astra approves can still fail CI on instance paths** (r880, #6952). `simpa only [mul_one] using h2.comp t h1`
 was rejected with "Type mismatch: After simplification": the composed term carries `(NormedAlgebra.toNormedSpace ℝ).toModule`
 where the goal has `Semiring.toModule`, and only the original `exact` bridges that. `simp only … at h` then `exact h` is not
