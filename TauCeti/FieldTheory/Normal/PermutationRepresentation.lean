@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Algebra.Group.Subgroup.Ker
 public import TauCeti.FieldTheory.Normal.Embeddings
 
 /-!
@@ -32,7 +33,8 @@ the same reason.
 Two objects are provided, and the distinction is the generation hypothesis.
 `permutationRepresentation` is the underlying action homomorphism and needs no hypothesis; it is
 injective only when the embedded images generate `M`, and `permutationEmbedding` bundles that
-hypothesis with its proof to give the embedding `Gal(M/F) ↪ S_n` itself.
+hypothesis with its proof to exhibit `Gal(M/F)` as a subgroup of `S_n` — an isomorphism onto the
+range of the representation, so the group structure is retained.
 
 ## Main results
 
@@ -41,9 +43,9 @@ hypothesis with its proof to give the embedding `Gal(M/F) ↪ S_n` itself.
 * `TauCeti.FieldTheory.permutationRepresentation_apply`: it acts by `i ↦ e (σ • e.symm i)`.
 * `TauCeti.FieldTheory.permutationRepresentation_injective`: it is injective when the embedded
   images generate `M`.
-* `TauCeti.FieldTheory.permutationEmbedding`: the resulting embedding
-  `(M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n)`, with `TauCeti.FieldTheory.permutationEmbedding_apply`
-  identifying it with the representation.
+* `TauCeti.FieldTheory.permutationEmbedding`: the resulting isomorphism of `M ≃ₐ[F] M` with the
+  range of the representation, a subgroup of `Equiv.Perm (Fin n)`, with
+  `TauCeti.FieldTheory.permutationEmbedding_apply` identifying its values.
 * `TauCeti.FieldTheory.permutationRepresentation_eq_conj`: replacing the enumeration conjugates
   the representation.
 
@@ -83,21 +85,20 @@ theorem permutationRepresentation_injective
   -- Evaluate the trivial permutation at the index `e φ` naming `φ`.
   simpa using congrArg (fun p : Equiv.Perm (Fin n) => p (e φ)) hσ
 
-/-- **The permutation embedding `Gal(M/F) ↪ S_n`**, for an enumeration `e` of the embeddings and
-a proof that the embedded images of `L` generate `M`. Its underlying map is
-`permutationRepresentation e`, which carries the group structure; this bundles the injectivity
-that the generation hypothesis supplies. -/
+/-- **`Gal(M/F)` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the
+embeddings and a proof that the embedded images of `L` generate `M`: the representation is
+injective, so it is an isomorphism onto its range. -/
 noncomputable def permutationEmbedding
     (hgen : IntermediateField.normalClosure F L M = ⊤) (e : (L →ₐ[F] M) ≃ Fin n) :
-    (M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n) :=
-  ⟨permutationRepresentation e, permutationRepresentation_injective hgen e⟩
+    (M ≃ₐ[F] M) ≃* (permutationRepresentation (F := F) (L := L) (M := M) e).range :=
+  MonoidHom.ofInjective (permutationRepresentation_injective hgen e)
 
-/-- **The embedding is the representation**, bundled with its injectivity. -/
+/-- **The isomorphism acts as the representation.** -/
 @[simp]
 theorem permutationEmbedding_apply (hgen : IntermediateField.normalClosure F L M = ⊤)
     (e : (L →ₐ[F] M) ≃ Fin n) (σ : M ≃ₐ[F] M) :
-    permutationEmbedding hgen e σ = permutationRepresentation e σ :=
-  (rfl)
+    (permutationEmbedding hgen e σ : Equiv.Perm (Fin n)) = permutationRepresentation e σ :=
+  MonoidHom.ofInjective_apply _
 
 /-- **Replacing the enumeration conjugates the representation inside `S_n`**, by the re-indexing
 permutation `e.symm.trans e'`. The subgroup of `Equiv.Perm (Fin n)` is therefore well defined
