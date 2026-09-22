@@ -30,7 +30,9 @@ which depends on the two subsets alone.
 The identification of the limits then has two inputs. The diagram of presentations is isomorphic
 to this diagram restricted along `TauCeti.ValuationSpectrum.presentationToRationalSubsetIndex`,
 by presentation independence again; and that functor is initial, so restricting along it leaves
-the limit unchanged.
+the limit unchanged. That isomorphism of diagrams is stated on its own, as
+`TauCeti.ValuationSpectrum.presentationIndexDiagramIso`, so that it is available apart from the
+identification of the limits it is used for here.
 
 ## Main definitions
 
@@ -39,6 +41,9 @@ the limit unchanged.
 * `TauCeti.ValuationSpectrum.rationalSubsetIndexDiagram` : the diagram of coordinate rings on the
   rational subsets of `V`, with the comparison morphisms of Proposition 8.2(1) as its action on
   containments.
+* `TauCeti.ValuationSpectrum.presentationIndexDiagramIso` : **the two diagrams agree** — the
+  diagram of presentations is the diagram above, restricted along
+  `TauCeti.ValuationSpectrum.presentationToRationalSubsetIndex`.
 * `TauCeti.ValuationSpectrum.presentationLimitToRationalSubsetLimit` : the comparison map from
   the presentation-indexed limit to the subset-indexed one.
 * `TauCeti.ValuationSpectrum.presentationLimitIsoRationalSubsetLimit` : that comparison map as an
@@ -46,6 +51,8 @@ the limit unchanged.
 
 ## Main results
 
+* `TauCeti.ValuationSpectrum.rationalSubset_presentationIndex_eq` : the presentation chosen for a
+  rational subset has the same rational subset as any other presentation of it.
 * `TauCeti.ValuationSpectrum.presentationLimitToRationalSubsetLimit_comp_π` : the comparison map
   projects at a rational subset to the projection at the presentation chosen for it.
 * `TauCeti.ValuationSpectrum.isIso_presentationLimitToRationalSubsetLimit` : **the two limits
@@ -113,7 +120,11 @@ theorem rationalSubset_presentationIndex_subset {U W : RationalSubsetIndex Aplus
       RationalSubsetIndex.spaBasicOpen_presentationIndex]
     exact h
 
-private theorem rationalSubset_presentationIndex_eq (U : RationalSubsetIndex Aplus V)
+/-- **The choice of presentation does not change the rational subset**: a presentation `i` of the
+rational subset `U` and the presentation chosen for `U` have the same rational subset, so the
+comparison morphisms of Wedhorn's Proposition 8.2(1) run between their coordinate rings in both
+directions. -/
+theorem rationalSubset_presentationIndex_eq (U : RationalSubsetIndex Aplus V)
     {i : PresentationIndex (P := P) Aplus V}
     (hi : spaBasicOpen Aplus i.pres.num i.pres.den = (OrderDual.ofDual U).1) :
     rationalSubset Aplus (U.presentationIndex (P := P)).pres.num
@@ -219,7 +230,7 @@ private theorem presentationIndexDiagram_map_eq (Aplus : Subring A) (V : Opens �
   (conj_eqToHom_iff_heq _ _ (presentationIndexDiagram_obj Aplus V i)
     (presentationIndexDiagram_obj Aplus V j)).mpr (presentationIndexDiagram_map Aplus V f)
 
-/-! ### The comparison map of the two limits -/
+/-! ### The comparison of the two diagrams -/
 
 private noncomputable def presentationIndexDiagramIsoApp (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
@@ -247,14 +258,43 @@ private theorem presentationIndexDiagramIsoApp_naturality (Aplus : Subring A)
   simp [presentationIndexDiagramIsoApp, presentationIndexDiagram_map_eq,
     restrictionHom_eq_homOfRationalSubsetSubset Aplus hAplus]
 
-@[simps! hom_app]
-private noncomputable def presentationIndexDiagramIso (Aplus : Subring A)
+/-- **The diagram of presentations is the rational-subset diagram, restricted along
+`presentationToRationalSubsetIndex`.** This is the compatibility of the new diagram with the
+existing one: the coordinate ring of a presentation and the coordinate ring of the presentation
+chosen for the rational subset it presents are canonically isomorphic, naturally in the
+presentation.
+
+Identifying the two limits is one use of it; as an isomorphism of the diagrams themselves it also
+transports cones, restrictions along a functor, and whatever else is built from a diagram. The
+body is not exposed; `presentationIndexDiagramIso_hom_app` gives its components. -/
+noncomputable def presentationIndexDiagramIso (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus)) :
     presentationIndexDiagram (P := P) Aplus V ≅
       presentationToRationalSubsetIndex Aplus V ⋙
         rationalSubsetIndexDiagram (P := P) Aplus hAplus V :=
   NatIso.ofComponents (presentationIndexDiagramIsoApp Aplus hAplus V)
     (presentationIndexDiagramIsoApp_naturality Aplus hAplus V)
+
+/-- **The comparison at a presentation is a comparison morphism of Proposition 8.2(1)**: at a
+presentation `i` the isomorphism of the two diagrams is the comparison morphism of the containment
+supplied by `rationalSubset_presentationIndex_eq`, from the coordinate ring of `i` to that of the
+presentation chosen for the rational subset `i` presents, transported to the two diagrams'
+objects. -/
+@[simp]
+theorem presentationIndexDiagramIso_hom_app (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
+    (i : PresentationIndex (P := P) Aplus V) :
+    (presentationIndexDiagramIso Aplus hAplus V).hom.app i =
+      eqToHom (presentationIndexDiagram_obj Aplus V i) ≫
+        homOfRationalSubsetSubset Aplus hAplus
+          (rationalSubset_presentationIndex_eq _
+            (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).le ≫
+        eqToHom (rationalSubsetIndexDiagram_obj (P := P) Aplus hAplus V
+          ((presentationToRationalSubsetIndex Aplus V).obj i)).symm := by
+  rw [presentationIndexDiagramIso]
+  simp [presentationIndexDiagramIsoApp]
+
+/-! ### The comparison map of the two limits -/
 
 private noncomputable def rationalSubsetCone (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus)) :
@@ -316,7 +356,7 @@ private theorem presentationLimitToRationalSubsetLimit_comp_pre (Aplus : Subring
     presentationLimitπ_eq_π_comp hAplus i _ (rationalSubset_presentationIndex_eq _
       (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).le, key,
     presentationLimitCone_π_app]
-  simp [presentationIndexDiagramIsoApp, presentationLimitπToPresentation_eq]
+  simp [presentationLimitπToPresentation_eq]
 
 /-- **The two limits agree.** The comparison map from the presentation-indexed limit to the limit
 over the rational subsets of `V` is an isomorphism, when `A⁺` consists of power-bounded elements:
