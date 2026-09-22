@@ -21,8 +21,9 @@ is the homeomorphism itself.
 
 The argument factors the *ring* homomorphism rather than the homeomorphism. The structure map is
 the composite `A → Aₛ → A⟨T/s⟩` of the localization map with the completion map, so `spaComapLoc`
-is the composite of the two corresponding `spaComap`s — this is `spaComapLoc_eq_comp`, and it is
-what the two descent results below rewrite with. Each factor carries rational subsets in both
+is the composite of the two corresponding `spaComap`s — this is
+`TauCeti.ValuationSpectrum.spaComapLoc_eq_comp` in `Spa/Localization/Basic.lean`, and it is what
+the two descent results below rewrite with. Each factor carries rational subsets in both
 directions: the localization factor by clearing denominators, the completion factor because the
 completion map has dense range. The structure map itself need not have dense range — `A` is in
 general not dense in `Aₛ` — so the factorization is not a convenience but the route.
@@ -32,8 +33,6 @@ subject only to the hypothesis `A₀ ≤ A⁺` that the homeomorphism already ca
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.spaComapLoc_eq_comp`: pullback along `ρ` is pullback along the
-  completion map followed by pullback along the localization map.
 * `TauCeti.ValuationSpectrum.spaComapLoc_preimage_mem_spaRationalFamily` and
   `TauCeti.ValuationSpectrum.exists_mem_spaRationalFamily_spaComapLoc_preimage_eq`: the rational
   subsets of `Spa (A⟨T/s⟩, A_U⁺)` are exactly the preimages under `ρ` of the rational subsets of
@@ -59,46 +58,6 @@ namespace TauCeti.ValuationSpectrum
 open TauCeti.Huber TauCeti.Huber.PairOfDefinition TauCeti.Localization UniformSpace
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-
-/-- **Pullback along the structure map factors through the uncompleted localization.** The
-structure map `ρ : A → A⟨T/s⟩` is the localization map `A → Aₛ` followed by the completion map
-`Aₛ → A⟨T/s⟩`, so `spaComapLoc` is the composite of the two induced maps of adic spectra.
-
-Both factors are ordinary `spaComap`s with a visible plus ring, which is what makes the generic
-descent results for a localization and for a map with dense range applicable; neither is
-available for `ρ` itself.
-
-The two continuity proofs and the two plus-ring conditions are quantified rather than fixed, so
-that a consumer can supply exactly the proofs its own `spaComap` was built from. -/
-theorem spaComapLoc_eq_comp (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A) (s : A)
-    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    ∀ (hloc : Continuous (algebraMap A S))
-      (hlocp : ∀ a ∈ Aplus, algebraMap A S a ∈ (integralClosure ↥(Algebra.adjoin Aplus
-        (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring)
-      (hcpl : Continuous (Completion.coeRingHom : S →+* Completion S))
-      (hcplp : ∀ x ∈ (integralClosure ↥(Algebra.adjoin Aplus
-        (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring,
-          Completion.coeRingHom x ∈ completedPlusSubring P Aplus T s S hden),
-      spaComapLoc P Aplus T s S hden =
-        spaComap (algebraMap A S) hloc Aplus _ hlocp ∘
-          spaComap Completion.coeRingHom hcpl _ _ hcplp := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  intro hloc hlocp hcpl hcplp
-  -- the factorization of the structure map as a ring homomorphism
-  have hrho : toCompletionLoc P T s S hden = Completion.coeRingHom.comp (algebraMap A S) :=
-    RingHom.ext (toCompletionLoc_apply P T s S hden)
-  funext v
-  refine Subtype.ext ?_
-  -- rewrite with `hrho` only once both sides are pullbacks of the point `v.1`, where the ring
-  -- homomorphism occurs non-dependently
-  rw [spaComapLoc_val, Function.comp_apply, spaComap_val, spaComap_val, hrho, comap_comp,
-    Function.comp_apply]
 
 /-- **Rational subsets pull back to rational subsets along the structure map.** The preimage
 under `ρ : A → A⟨T/s⟩` of a member of the rational family of `Spa (A, A⁺)` is a member of the
