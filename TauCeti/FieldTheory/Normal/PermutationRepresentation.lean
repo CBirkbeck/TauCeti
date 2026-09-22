@@ -42,16 +42,17 @@ declarations assume. The generation hypothesis is the usual way to meet it:
 
 ## Main results
 
-* `TauCeti.FieldTheory.permutationRepresentation`: the representation `(M ≃ₐ[F] M) →* Equiv.Perm
+* `Equiv.permutationRepresentation`: the representation `(M ≃ₐ[F] M) →* Equiv.Perm
   (Fin n)` attached to an enumeration `e` of the embeddings.
-* `TauCeti.FieldTheory.permutationRepresentation_apply`: it acts by `i ↦ e (σ • e.symm i)`.
-* `TauCeti.FieldTheory.permutationRepresentation_injective`: it is injective when the action on
+* `Equiv.permutationRepresentation_apply`: it acts by `i ↦ e (σ • e.symm i)`.
+* `Equiv.permutationRepresentation_injective`: it is injective when the action on
   embeddings is faithful.
-* `TauCeti.FieldTheory.permutationEquivRange`: the resulting isomorphism of `M ≃ₐ[F] M` with the
+* `Equiv.permutationEquivRange`: the resulting isomorphism of `M ≃ₐ[F] M` with the
   range of the representation, a subgroup of `Equiv.Perm (Fin n)`, with
-  `TauCeti.FieldTheory.permutationEquivRange_apply` identifying its values.
-* `TauCeti.FieldTheory.permutationRepresentation_eq_conj`: replacing the enumeration conjugates
-  the representation.
+  `Equiv.permutationEquivRange_apply` identifying its values.
+* `Equiv.permutationRepresentation_eq_conj`: replacing the enumeration conjugates
+  the representation, and `Equiv.permutationRepresentation_range_map_conj` says the same of the
+  represented subgroups of `Equiv.Perm (Fin n)`.
 
 ## References
 
@@ -60,7 +61,7 @@ declarations assume. The generation hypothesis is the usual way to meet it:
 
 public section
 
-namespace TauCeti.FieldTheory
+namespace Equiv
 
 variable {F L M : Type*} [Field F] [Field L] [Field M] [Algebra F L] [Algebra F M]
 variable {n : ℕ}
@@ -84,12 +85,8 @@ theorem permutationRepresentation_apply (e : (L →ₐ[F] M) ≃ Fin n) (σ : M 
 acting trivially on the enumerated embeddings fixes every embedding, hence is the identity. -/
 theorem permutationRepresentation_injective [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
     (e : (L →ₐ[F] M) ≃ Fin n) :
-    Function.Injective (permutationRepresentation (F := F) (L := L) (M := M) e) := by
-  rw [injective_iff_map_eq_one]
-  intro σ hσ
-  refine FaithfulSMul.eq_of_smul_eq_smul (α := (L →ₐ[F] M)) fun φ => ?_
-  -- Evaluate the trivial permutation at the index `e φ` naming `φ`.
-  simpa using congrArg (fun p : Equiv.Perm (Fin n) => p (e φ)) hσ
+    Function.Injective (permutationRepresentation (F := F) (L := L) (M := M) e) :=
+  (e.permCongrHom.toEquiv.comp_injective _).2 MulAction.toPerm_injective
 
 /-- **`Gal(M/F)` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the embeddings
 and a faithful action on them: the representation is injective, so it is an isomorphism onto its
@@ -115,6 +112,21 @@ theorem permutationRepresentation_eq_conj (e e' : (L →ₐ[F] M) ≃ Fin n) (σ
   ext i
   simp [Equiv.Perm.mul_apply]
 
-end TauCeti.FieldTheory
+/-- **The represented subgroups of `S_n` are conjugate**, by the same re-indexing permutation.
+This is the subgroup-level form of `permutationRepresentation_eq_conj`, and it is what makes
+"canonical up to conjugacy" a statement about the image rather than about individual elements. -/
+theorem permutationRepresentation_range_map_conj (e e' : (L →ₐ[F] M) ≃ Fin n) :
+    Subgroup.map (MulAut.conj (e.symm.trans e' : Equiv.Perm (Fin n))).toMonoidHom
+        (permutationRepresentation (F := F) (L := L) (M := M) e).range =
+      (permutationRepresentation (F := F) (L := L) (M := M) e').range := by
+  ext p
+  constructor
+  · rintro ⟨_, ⟨σ, rfl⟩, rfl⟩
+    exact ⟨σ, by simpa [MulAut.conj_apply] using permutationRepresentation_eq_conj e e' σ⟩
+  · rintro ⟨σ, rfl⟩
+    exact ⟨permutationRepresentation e σ, ⟨σ, rfl⟩, by
+      simpa [MulAut.conj_apply] using (permutationRepresentation_eq_conj e e' σ).symm⟩
+
+end Equiv
 
 end
