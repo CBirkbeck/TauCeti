@@ -7,7 +7,6 @@ module
 
 public import Mathlib.FieldTheory.Galois.Basic
 public import TauCeti.FieldTheory.IntermediateField.Lift
-public import TauCeti.Order.Hom.Set
 
 /-!
 # The subfield dictionary for a field that need not be Galois
@@ -42,12 +41,13 @@ Both steps are existing order isomorphisms, composed:
 * `IntermediateField.intermediateFieldEquivSubgroup`: the dictionary,
   `IntermediateField F K ≃o (Set.Ici K.fixingSubgroup)ᵒᵈ`.
 
-The evaluation rules for the second step are generic order theory, and live with the
-construction they describe, in `TauCeti/Order/Hom/Set.lean`.
+The evaluation rules for `OrderIso.Iic`, which Mathlib does not state, are in
+`TauCeti/Order/Hom/Set.lean`.
 
 ## References
 
-* J. Neukirch, *Algebraic Number Theory*, Chapter I, §2.
+* S. Lang, *Algebra*, Chapter VI §1, Theorem 1.1, for the fundamental theorem of Galois theory
+  that the second step restricts.
 -/
 
 public section
@@ -63,6 +63,31 @@ containing `K.fixingSubgroup`. `K` itself need not be normal over `F`. -/
 noncomputable def intermediateFieldEquivSubgroup :
     IntermediateField F K ≃o (Set.Ici K.fixingSubgroup)ᵒᵈ :=
   (liftOrderIso K).trans ((IsGalois.intermediateFieldEquivSubgroup (F := F) (E := L)).Iic K)
+
+/-- **The dictionary sends an intermediate field of `K / F` to the fixing subgroup of its lift.**
+-/
+@[simp]
+theorem coe_intermediateFieldEquivSubgroup_apply (E' : IntermediateField F K) :
+    (OrderDual.ofDual (K.intermediateFieldEquivSubgroup E')).1 = (lift E').fixingSubgroup :=
+  (rfl)
+
+/-- **The inverse sends a subgroup to its fixed field**, read inside `L` through `lift`. -/
+@[simp]
+theorem lift_intermediateFieldEquivSubgroup_symm_apply (H : (Set.Ici K.fixingSubgroup)ᵒᵈ) :
+    lift (K.intermediateFieldEquivSubgroup.symm H) = fixedField (OrderDual.ofDual H).1 :=
+  lift_restrict _
+
+/-- **The dictionary sends `K` itself to `K.fixingSubgroup`**, the bottom of the interval.
+Not a `simp` lemma: `simp` already reduces both sides. -/
+theorem coe_intermediateFieldEquivSubgroup_apply_top :
+    (OrderDual.ofDual (K.intermediateFieldEquivSubgroup ⊤)).1 = K.fixingSubgroup := by
+  rw [coe_intermediateFieldEquivSubgroup_apply, lift_top]
+
+/-- **The dictionary sends `F` to the whole group**, the top of the interval.
+Not a `simp` lemma: `simp` already reduces both sides. -/
+theorem coe_intermediateFieldEquivSubgroup_apply_bot :
+    (OrderDual.ofDual (K.intermediateFieldEquivSubgroup ⊥)).1 = ⊤ := by
+  rw [coe_intermediateFieldEquivSubgroup_apply, lift_bot, fixingSubgroup_bot]
 
 end IntermediateField
 

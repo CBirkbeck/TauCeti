@@ -48,18 +48,14 @@ theorem restrict_lift (E' : IntermediateField F E) : restrict (lift_le E') = E' 
 /-- **`lift` reflects the order.** Monotonicity alone would only give one direction; the converse
 is what makes `liftOrderIso` an order isomorphism rather than a monotone bijection. -/
 theorem lift_le_lift_iff {a b : IntermediateField F E} : lift a ≤ lift b ↔ a ≤ b := by
-  constructor
-  · intro h x hx
-    exact (mem_lift x).1 (h ((mem_lift x).2 hx))
-  · intro h y hy
-    -- A member of `lift a` lies in `E`, so it has a name as an element of `E`.
-    have hyE : y ∈ E := lift_le a hy
-    exact (mem_lift (⟨y, hyE⟩ : E)).2 (h ((mem_lift (⟨y, hyE⟩ : E)).1 hy))
+  simp only [lift, ← SetLike.coe_subset_coe, coe_map, coe_val]
+  exact Set.image_subset_image_iff Subtype.val_injective
 
 variable (E) in
 /-- **The intermediate fields of `E / F` are the intermediate fields of `L / F` below `E`**, as an
-order isomorphism. -/
-def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
+order isomorphism. The body is exposed because consumers evaluate composites built from it, and
+the evaluation lemmas for those composites are provable only by unfolding it. -/
+@[expose] def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
   toFun E' := ⟨lift E', lift_le E'⟩
   invFun E' := restrict E'.2
   left_inv E' := restrict_lift E'
