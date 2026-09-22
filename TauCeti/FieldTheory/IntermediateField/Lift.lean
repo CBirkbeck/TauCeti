@@ -55,7 +55,7 @@ variable (E) in
 /-- **The intermediate fields of `E / F` are the intermediate fields of `L / F` below `E`**, as an
 order isomorphism. The body is exposed because consumers evaluate composites built from it, and
 the evaluation lemmas for those composites are provable only by unfolding it. -/
-@[expose] def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
+def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
   toFun E' := ⟨lift E', lift_le E'⟩
   invFun E' := restrict E'.2
   left_inv E' := restrict_lift E'
