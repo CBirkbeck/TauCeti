@@ -47,6 +47,10 @@ its orbits, which is what makes freeness the fact worth isolating here.
 ## References
 
 * S. Lang, *Algebraic Number Theory*, Chapter VI, §2.
+* `Mathlib/NumberTheory/NumberField/CanonicalEmbedding/FundamentalCone.lean`: `rayIntegerSet`, its
+  preimage API and the torsion action are structurally adapted from the `integerSet` layer there,
+  with the fundamental cone replaced by the ray fundamental domain and the full torsion group by
+  the congruence torsion.
 -/
 
 public section
@@ -153,6 +157,7 @@ theorem stabilizer_rayIntegerSet_eq_bot {𝔪 : Modulus K} (a : rayIntegerSet �
   rw [MulAction.mem_stabilizer_iff, Subtype.ext_iff, rayIntegerSetTorsionSMul_smul_coe] at hζ
   rw [← mixedEmbedding_preimageOfMemRayIntegerSet a] at hζ
   exact OneMemClass.coe_eq_one.mp
-    (eq_one_of_unitSMul_mixedEmbedding_eq (nonZeroDivisors.coe_ne_zero _) hζ)
+    (eq_one_of_unitSMul_mixedEmbedding_eq
+      (RingOfIntegers.coe_ne_zero_iff.mpr (nonZeroDivisors.coe_ne_zero _)) hζ)
 
 end TauCeti.GlobalNumberFields

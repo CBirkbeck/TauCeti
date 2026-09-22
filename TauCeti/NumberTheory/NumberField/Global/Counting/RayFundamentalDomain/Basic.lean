@@ -282,7 +282,8 @@ congruence units carrying a point of the ray fundamental domain back into it. -/
 def unitsCongruenceTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :=
   unitsCongruenceSubgroup 𝔪 ⊓ NumberField.Units.torsion K
 
-/-- Membership in `unitsCongruenceTorsion`, unfolded to the two defining conditions. -/
+/-- Membership in `unitsCongruenceTorsion`, unfolded to the two defining conditions.  The
+definition is not exposed, so `Subgroup.mem_inf` cannot see through it from another module. -/
 @[simp]
 theorem mem_unitsCongruenceTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
     u ∈ unitsCongruenceTorsion 𝔪 ↔
