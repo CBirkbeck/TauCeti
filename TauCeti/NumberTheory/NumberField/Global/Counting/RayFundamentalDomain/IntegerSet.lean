@@ -141,15 +141,12 @@ noncomputable instance rayIntegerSetUnitsCongruenceTorsionSMul (𝔪 : Modulus K
   smul := fun ⟨ζ, hζ⟩ ⟨a, ha⟩ ↦ ⟨ζ • a, unitsCongruenceTorsion_smul_mem_rayIntegerSet hζ ha⟩
 
 /-- The scalar action of the congruence roots of unity is a group action, which is what
-`stabilizer_rayIntegerSet_eq_bot` below speaks about. -/
+`stabilizer_rayIntegerSet_eq_bot` below speaks about.  It is transported along the injection
+into the mixed space, where the action laws are Mathlib's. -/
 noncomputable instance (𝔪 : Modulus K) :
-    MulAction (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) where
-  one_smul := fun _ ↦ by
-    rw [Subtype.mk_eq_mk, rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe, OneMemClass.coe_one,
-      one_smul]
-  mul_smul := fun _ _ _ ↦ by
-    rw [Subtype.mk_eq_mk]
-    simp_rw [rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe, Subgroup.coe_mul, mul_smul]
+    MulAction (unitsCongruenceTorsion 𝔪) (rayIntegerSet 𝔪) :=
+  Subtype.val_injective.mulAction Subtype.val fun ζ ↦
+    rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe 𝔪 ζ
 
 /-- **The action is free.**  A congruence root of unity fixing a point of `rayIntegerSet 𝔪` is
 the identity, because the point is the image of a nonzero algebraic integer. -/
