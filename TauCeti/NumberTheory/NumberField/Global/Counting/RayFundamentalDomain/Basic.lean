@@ -56,12 +56,20 @@ integers in a fixed ray class.
   — that translate is unique modulo the congruence units that are roots of unity;
 * `TauCeti.GlobalNumberFields.rayFundamentalDomain_one`: the trivial modulus recovers Mathlib's
   fundamental cone;
-* `TauCeti.GlobalNumberFields.measurableSet_rayFundamentalDomain`: the domain is measurable.
+* `TauCeti.GlobalNumberFields.measurableSet_rayFundamentalDomain`: the domain is measurable;
+* `TauCeti.GlobalNumberFields.smul_rayFundamentalDomain_inter_normLeOne`: the dilate by `c` of
+  the norm-≤-one section is the norm-≤-`c ^ [K:ℚ]` section.
 
 ## References
 
 The finite-union construction is the standard ray-class refinement of the fundamental cone; see
 S. Lang, *Algebraic Number Theory*, Chapter VI, Section 2.
+
+`smul_rayFundamentalDomain_inter_normLeOne` is adapted from
+`github.com/CBirkbeck/aintlib` @ `2622c61d2502159c62865a1b59fc1de473519113` (Apache-2.0),
+`projects/Chebotarev/CebotarevDensity/ForMathlib/IdealCongruenceCount.lean`, where
+`cone_normLe_eq_smul_normLeOne` states it privately for the fundamental cone and the trivial
+modulus under the stronger hypothesis `1 ≤ t`.
 -/
 
 public section
@@ -253,6 +261,22 @@ theorem smul_mem_rayFundamentalDomain_iff {𝔪 : Modulus K} {x : mixedSpace K}
     c • x ∈ rayFundamentalDomain 𝔪 ↔ x ∈ rayFundamentalDomain 𝔪 := by
   refine ⟨fun h ↦ ?_, fun h ↦ smul_mem_rayFundamentalDomain h hc⟩
   simpa only [inv_smul_smul₀ hc.ne'] using smul_mem_rayFundamentalDomain h (inv_pos.mpr hc)
+
+/-- **The norm grading is a dilation.**  Scaling by `c > 0` preserves the ray fundamental domain
+and multiplies `mixedEmbedding.norm` by `c ^ [K:ℚ]`, so the dilate by `c` of the norm-≤-one
+section is the norm-≤-`c ^ [K:ℚ]` section.
+
+It converts between the two gradings: the lattice-point estimate is stated for dilates of a
+fixed region, while ideals are counted by their absolute norm. -/
+@[simp]
+theorem smul_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus K) {c : ℝ} (hc : 0 < c) :
+    c • (rayFundamentalDomain 𝔪 ∩ {x : mixedSpace K | mixedEmbedding.norm x ≤ 1}) =
+      rayFundamentalDomain 𝔪 ∩
+        {x : mixedSpace K | mixedEmbedding.norm x ≤ c ^ Module.finrank ℚ K} := by
+  ext y
+  simp [Set.mem_smul_set_iff_inv_smul_mem₀ hc.ne',
+    smul_mem_rayFundamentalDomain_iff (inv_pos.mpr hc), mixedEmbedding.norm_smul,
+    abs_of_pos (inv_pos.mpr hc), inv_mul_le_iff₀ (pow_pos hc _)]
 
 /-- Multiplication by a root of unity congruent to one modulo `𝔪` preserves membership in the ray
 fundamental domain: the cone translates are stable under the torsion, and the prescribed signs are
