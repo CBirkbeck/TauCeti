@@ -5,7 +5,7 @@ Authors: Claude
 -/
 module
 
-public import Mathlib.GroupTheory.OrderOfElement
+import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 /-!
