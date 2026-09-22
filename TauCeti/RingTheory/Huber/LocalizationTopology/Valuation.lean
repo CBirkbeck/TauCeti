@@ -200,15 +200,17 @@ variable (T : Finset A) (s : A) [IsLocalization.Away s S]
 
 omit [TopologicalSpace A] in
 /-- **A valuation on `Aₛ` that is `≤ 1` on the image of `A⁺` and on the distinguished fractions
-is `≤ 1` on `A⁺[t₁/s, …, tₙ/s]`.** The subalgebra is generated over `A⁺` by those fractions, so
-the two hypotheses bound the valuation on both families of generators.
+is `≤ 1` on `A⁺[t₁/s, …, tₙ/s]`.**
 
-The valuation is an arbitrary one on `Aₛ`, not necessarily an extension from `A`: a valuation
-pulled back along a ring map out of `Aₛ` is bounded on the same generators and qualifies. -/
+The valuation is an arbitrary one on `Aₛ`, not necessarily an extension from `A`. For the
+extension of a valuation on `A`, see
+`extendToLocalization_le_one_of_mem_integralClosure_adjoin_plus`. -/
 theorem le_one_of_mem_adjoin_plus (Aplus : Subring A) {u : Valuation S Γ₀}
     (hplus : ∀ a ∈ Aplus, u (algebraMap A S a) ≤ 1) (hT : ∀ t ∈ T, u (divBy t s : S) ≤ 1) {x : S}
     (hx : x ∈ Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) :
     u x ≤ 1 := by
+  -- the subalgebra is generated over `A⁺` by the fractions `t/s`, so the two hypotheses cover
+  -- both families of generators and the remaining cases are the valuation axioms
   induction hx using Algebra.adjoin_induction with
   | mem y hy => obtain ⟨t, rfl⟩ := hy; exact hT t t.2
   | algebraMap r => rw [IsScalarTower.algebraMap_apply ↥Aplus A S]; exact hplus _ r.2
@@ -222,9 +224,6 @@ is `≤ 1` on the plus ring of the localisation** — the integral closure in `A
 `TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_integralClosure_adjoin_plus` makes a ring
 of integral elements of `Aₛ`.
 
-The integral closure is free of charge: the valuation ring is integrally closed in `Aₛ`, so
-bounding the valuation on the generating subalgebra bounds it on the closure.
-
 As with `le_one_of_mem_adjoin_plus`, the valuation is arbitrary; the extension of a valuation on
 `A` is the case `extendToLocalization_le_one_of_mem_integralClosure_adjoin_plus` below. -/
 theorem le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) {u : Valuation S Γ₀}
@@ -232,6 +231,8 @@ theorem le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) {u : Valua
     (hx : x ∈ integralClosure
       ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
     u x ≤ 1 := by
+  -- the integral closure costs nothing: the valuation ring is integrally closed in `Aₛ`, so a
+  -- bound on the generating subalgebra is already a bound on its closure
   have : IsIntegrallyClosedIn u.integer S :=
     Subring.isIntegrallyClosedIn_iff.mpr fun _ ↦ (Valuation.integer.integers u).mem_of_integral
   exact (Subring.integralClosure_le_iff (T := u.integer)).mpr
@@ -243,13 +244,14 @@ omit [TopologicalSpace A] in
 `TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_integralClosure_adjoin_plus` makes a ring
 of integral elements of `Aₛ`.
 
-This is `le_one_of_mem_integralClosure_adjoin_plus` for the extension of a valuation on `A`: the
-extension is `≤ 1` on the image of `A⁺` because `v` is, and on `t/s` because `v t ≤ v s`. -/
+This is `le_one_of_mem_integralClosure_adjoin_plus` for the extension of a valuation on `A`. -/
 theorem extendToLocalization_le_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A)
     {v : Valuation A Γ₀} (hs : v s ≠ 0) (hplus : ∀ a ∈ Aplus, v a ≤ 1) (hT : ∀ t ∈ T, v t ≤ v s)
     {x : S} (hx : x ∈ (integralClosure
       ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring) :
     v.extendToLocalization (Valuation.powers_le_supp_primeCompl hs) S x ≤ 1 :=
+  -- the two hypotheses of the general form: the extension is `≤ 1` on the image of `A⁺` because
+  -- `v` is, and on `t/s` because `v t ≤ v s`
   le_one_of_mem_integralClosure_adjoin_plus S T s Aplus
     (fun a ha ↦ by rw [Valuation.extendToLocalization_apply_map_apply]; exact hplus a ha)
     (fun t ht ↦ Valuation.extendToLocalization_divBy_le_one S hs (hT t ht))
