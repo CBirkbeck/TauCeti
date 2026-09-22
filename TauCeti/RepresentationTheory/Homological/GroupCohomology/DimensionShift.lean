@@ -37,7 +37,7 @@ the existing naturality of `δ` and no abstract choice of isomorphism enters.
 ## Main statements
 
 * `TauCeti.groupCohomology.dimensionShiftUpIso_hom`, `dimensionShiftUpResIso_hom`: the shift is
-  Mathlib's connecting homomorphism `groupCohomology.δ`.
+  Mathlib's connecting homomorphism `groupCohomology.δ` of `Rep.dimensionShiftUpSES`.
 * `TauCeti.groupCohomology.epi_δ_dimensionShiftUp_zero`,
   `TauCeti.groupCohomology.epi_δ_res_dimensionShiftUp_zero`: in the remaining degree the
   connecting homomorphism `H⁰(dimensionShiftUp A) ⟶ H¹(A)` is only surjective, over `G` and
@@ -60,47 +60,26 @@ open _root_.groupCohomology
 
 variable {k G : Type u} [CommRing k] [Group G] (A : Rep k G)
 
--- The short exact sequence is spelled out with `ShortComplex.mk` rather than through
--- `dimensionShiftUpSES`, whose body is not exposed, so that the endpoints of the connecting
--- homomorphism are visible in the statements below without unfolding it.
-
-/-- The upward dimension-shifting sequence, presented so that its terms are visible. -/
-abbrev dimensionShiftUpShortComplex : ShortComplex (Rep k G) :=
-  ShortComplex.mk (coindBotUnit A) (dimensionShiftUpπ A) (coindBotUnit_comp_dimensionShiftUpπ A)
-
-/-- The upward dimension-shifting sequence, presented via `ShortComplex.mk` so its endpoints
-stay visible without unfolding the opaque `dimensionShiftUpSES`, is short exact. -/
-theorem dimensionShiftUpShortComplex_shortExact : (dimensionShiftUpShortComplex A).ShortExact := by
-  simpa only [dimensionShiftUpSES_def] using dimensionShiftUpSES_shortExact A
-
-variable {H : Type*} [Monoid H] in
-/-- The upward dimension-shifting sequence stays short exact after restriction along an
-arbitrary monoid homomorphism `f : H →* G`, not merely a subgroup inclusion, so the results
-below can instantiate it at `S.subtype` for a subgroup `S`. -/
-theorem dimensionShiftUpShortComplex_res_shortExact (f : H →* G) :
-    ((dimensionShiftUpShortComplex A).map (resFunctor f)).ShortExact := by
-  simpa only [dimensionShiftUpSES_def] using dimensionShiftUpSES_res_shortExact A f
-
 /-- **Dimension shifting** as an isomorphism: `Hⁿ⁺¹(G, dimensionShiftUp A) ≅ Hⁿ⁺²(G, A)`, the
 connecting homomorphism of the coinduced sequence, whose middle term has vanishing cohomology
 in both degrees (Shapiro's lemma). The forward map is Mathlib's `δ`, so naturality is free;
 degree `0` is only an epimorphism, hence the indexing starts at `n + 1`. -/
 def dimensionShiftUpIso (n : ℕ) :
     groupCohomology (dimensionShiftUp A) (n + 1) ≅ groupCohomology A (n + 2) :=
-  (map_cochainsFunctor_shortExact (dimensionShiftUpShortComplex_shortExact A)).δIso
+  (map_cochainsFunctor_shortExact (dimensionShiftUpSES_shortExact A)).δIso
     (n + 1) (n + 2) rfl (isZero_coindBot_succ A.V n) (isZero_coindBot_succ A.V (n + 1))
 
 /-- The dimension-shifting isomorphism is the connecting homomorphism. -/
 @[simp]
 theorem dimensionShiftUpIso_hom (n : ℕ) : (dimensionShiftUpIso A n).hom =
-    δ (dimensionShiftUpShortComplex_shortExact A) (n + 1) (n + 2) rfl := (rfl)
+    δ (dimensionShiftUpSES_shortExact A) (n + 1) (n + 2) rfl := (rfl)
 
 /-- In the remaining degree the connecting homomorphism `H⁰(G, dimensionShiftUp A) ⟶ H¹(G, A)`
 is surjective: Shapiro's lemma only gives vanishing of the coinduced middle term in positive
 degrees, so degree `0` has the input an epimorphism needs but not the second input an
 isomorphism would need. -/
 theorem epi_δ_dimensionShiftUp_zero :
-    Epi (δ (dimensionShiftUpShortComplex_shortExact A) 0 1 rfl) :=
+    Epi (δ (dimensionShiftUpSES_shortExact A) 0 1 rfl) :=
   epi_δ_of_isZero _ 0 (isZero_coindBot_succ A.V 0)
 
 variable (S : Subgroup G)
@@ -112,20 +91,20 @@ def dimensionShiftUpResIso (n : ℕ) :
     groupCohomology (res S.subtype (dimensionShiftUp A)) (n + 1) ≅
       groupCohomology (res S.subtype A) (n + 2) :=
   (map_cochainsFunctor_shortExact
-    (dimensionShiftUpShortComplex_res_shortExact A S.subtype)).δIso (n + 1) (n + 2) rfl
+    (dimensionShiftUpSES_res_shortExact A S.subtype)).δIso (n + 1) (n + 2) rfl
       (isZero_res_coindBot_succ S A.V n) (isZero_res_coindBot_succ S A.V (n + 1))
 
 /-- The restricted dimension-shifting isomorphism is the connecting homomorphism. -/
 @[simp]
 theorem dimensionShiftUpResIso_hom (n : ℕ) : (dimensionShiftUpResIso A S n).hom =
-    δ (dimensionShiftUpShortComplex_res_shortExact A S.subtype) (n + 1) (n + 2) rfl := (rfl)
+    δ (dimensionShiftUpSES_res_shortExact A S.subtype) (n + 1) (n + 2) rfl := (rfl)
 
 /-- After restriction to a subgroup, the connecting homomorphism
 `H⁰(S, dimensionShiftUp A) ⟶ H¹(S, A)` is surjective: Shapiro's lemma only gives vanishing of
 the coinduced middle term in positive degrees, so degree `0` has the input an epimorphism needs
 but not the second input an isomorphism would need. -/
 theorem epi_δ_res_dimensionShiftUp_zero :
-    Epi (δ (dimensionShiftUpShortComplex_res_shortExact A S.subtype) 0 1 rfl) :=
+    Epi (δ (dimensionShiftUpSES_res_shortExact A S.subtype) 0 1 rfl) :=
   epi_δ_of_isZero _ 0 (isZero_res_coindBot_succ S A.V 0)
 
 end TauCeti.groupCohomology
