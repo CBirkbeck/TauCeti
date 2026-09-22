@@ -55,9 +55,9 @@ noncomputable def rayClassCharacterPartialSum
     (χ.onIdeals (I : integralIdealsPrimeTo 𝔪) : ℂ)
 
 open scoped Classical in
-/-- The partial sum unfolded.  A downstream module cannot see through the definition on its own —
-the module system does not expose it — so this is the lemma that turns the sum back into the family
-it sums. -/
+/-- **The partial sum as the `finsum` defining it.**  The rewrite rule turning
+`rayClassCharacterPartialSum` into the sum of `χ.onIdeals` over the integral ideals prime to `𝔪`
+of norm at most `x`. -/
 theorem rayClassCharacterPartialSum_def (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (x : ℝ) :
     rayClassCharacterPartialSum 𝔪 χ x =
       ∑ᶠ I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x},
