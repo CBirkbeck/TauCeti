@@ -143,7 +143,9 @@ open scoped Classical in
 Lipschitz map. -/
 private theorem isBounded_unitSMul_normLeOne (u : (𝓞 K)ˣ) :
     Bornology.IsBounded (u • normLeOne K) := by
-  obtain ⟨C, hC⟩ := TauCeti.NumberField.Units.exists_lipschitzWith_unitSMul u
+  -- the unit action *is* multiplication by `mixedEmbedding K u`, so Mathlib's bound applies
+  have hC : LipschitzWith ‖mixedEmbedding K (u : K)‖₊ fun x : mixedSpace K ↦ u • x :=
+    lipschitzWith_smul _
   rw [← Set.image_smul]
   exact hC.isBounded_image (isBounded_normLeOne K)
 
@@ -154,11 +156,12 @@ codimension one: a unit acts by a homeomorphism, so this frontier is the Lipschi
 private theorem isLipschitzParametrizable_frontier_unitSMul_normLeOne (u : (𝓞 K)ˣ) :
     TauCeti.IsLipschitzParametrizable (finrank ℝ (mixedSpace K) - 1)
       (frontier (u • normLeOne K)) := by
-  obtain ⟨C, hC⟩ := TauCeti.NumberField.Units.exists_lipschitzWith_unitSMul u
+  have hC : LipschitzWith ‖mixedEmbedding K (u : K)‖₊ fun x : mixedSpace K ↦ u • x :=
+    lipschitzWith_smul _
   refine .mono (.image hC (isLipschitzParametrizable_frontier_normLeOne K)) ?_
   rw [Set.image_smul]
   simp only [← Set.preimage_smul_inv]
-  exact (TauCeti.NumberField.Units.continuous_unitSMul _).frontier_preimage_subset _
+  exact (continuous_const_mul _).frontier_preimage_subset _
 
 open scoped Classical in
 /-- **The norm-≤-one section of the ray fundamental domain is bounded.** It is carved out of a
