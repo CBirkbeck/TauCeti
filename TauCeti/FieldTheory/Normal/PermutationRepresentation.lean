@@ -119,13 +119,10 @@ theorem permutationRepresentation_range_map_conj (e e' : (L →ₐ[F] M) ≃ Fin
     Subgroup.map (MulAut.conj (e.symm.trans e' : Equiv.Perm (Fin n))).toMonoidHom
         (permutationRepresentation (F := F) (L := L) (M := M) e).range =
       (permutationRepresentation (F := F) (L := L) (M := M) e').range := by
-  ext p
-  constructor
-  · rintro ⟨_, ⟨σ, rfl⟩, rfl⟩
-    exact ⟨σ, by simpa [MulAut.conj_apply] using permutationRepresentation_eq_conj e e' σ⟩
-  · rintro ⟨σ, rfl⟩
-    exact ⟨permutationRepresentation e σ, ⟨σ, rfl⟩, by
-      simpa [MulAut.conj_apply] using (permutationRepresentation_eq_conj e e' σ).symm⟩
+  rw [MonoidHom.map_range]
+  congr 1
+  ext σ
+  simp [MulAut.conj_apply, permutationRepresentation_eq_conj e e' σ]
 
 end Equiv
 
