@@ -42,9 +42,9 @@ subject only to the hypothesis `A₀ ≤ A⁺` that the homeomorphism already ca
   `exists_mem_spaRationalFamily_spaCompletedLocalizationHomeomorph_preimage_eq` and
   `TauCeti.ValuationSpectrum.spaCompletedLocalizationHomeomorph_image_mem_spaRationalFamily`: the
   same two statements phrased through the homeomorphism, together with the image form.
-* `TauCeti.ValuationSpectrum.bijOn_preimage_spaRationalFamily`: Wedhorn Proposition 8.2 (2),
-  second assertion — the bijection between the rational subsets of `Spa (A, A⁺)` contained in
-  `R(T/s)` and the rational subsets of `Spa (A⟨T/s⟩, A_U⁺)`.
+* `TauCeti.ValuationSpectrum.bijOn_preimage_spaCompletedLocalizationHomeomorph_spaRationalFamily`:
+  Wedhorn Proposition 8.2 (2), second assertion — the bijection between the rational subsets of
+  `Spa (A, A⁺)` contained in `R(T/s)` and the rational subsets of `Spa (A⟨T/s⟩, A_U⁺)`.
 
 ## References
 
@@ -128,7 +128,7 @@ theorem spaComapLoc_preimage_mem_spaRationalFamily (P : PairOfDefinition A) (Apl
   -- that the numerator ideal stays open, which holds for each factor separately
   rw [spaComapLoc_eq_comp P Aplus T s S hden hcont
       (algebraMap_mem_integralClosure_adjoin_plus Aplus T s S) Completion.continuous_coeRingHom
-      fun _ hx ↦ coe_mem_completedPlusSubring P Aplus T s S hden hx,
+      fun _ hx ↦ coeRingHom_mem_completedPlusSubring P Aplus T s S hden hx,
     Set.preimage_comp, spaComap_preimage_rationalSubset, spaComap_preimage_rationalSubset]
   refine mem_spaRationalFamily_iff.mpr ⟨_, _, ?_, rfl⟩
   -- the numerator ideal is carried to an open ideal by each of the two factors in turn
@@ -167,7 +167,7 @@ theorem exists_mem_spaRationalFamily_spaComapLoc_preimage_eq (P : PairOfDefiniti
     (integralClosure ↥(Algebra.adjoin Aplus
       (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring
     (completedPlusSubring P Aplus T s S hden)
-    (fun _ hx ↦ coe_mem_completedPlusSubring P Aplus T s S hden hx) hU
+    (fun _ hx ↦ coeRingHom_mem_completedPlusSubring P Aplus T s S hden hx) hU
   -- then through the localization map, by clearing denominators
   obtain ⟨W, hW, hWV⟩ := exists_mem_spaRationalFamily_spaComap_preimage_eq_of_isLocalization
     (Submonoid.powers s) Aplus _ hcont
@@ -175,7 +175,7 @@ theorem exists_mem_spaRationalFamily_spaComapLoc_preimage_eq (P : PairOfDefiniti
   refine ⟨W, hW, ?_⟩
   rw [spaComapLoc_eq_comp P Aplus T s S hden hcont
       (algebraMap_mem_integralClosure_adjoin_plus Aplus T s S) Completion.continuous_coeRingHom
-      fun _ hx ↦ coe_mem_completedPlusSubring P Aplus T s S hden hx,
+      fun _ hx ↦ coeRingHom_mem_completedPlusSubring P Aplus T s S hden hx,
     Set.preimage_comp, hWV, hVU]
 
 /-- **Rational subsets pull back to rational subsets through the homeomorphism.** The preimage
@@ -259,7 +259,8 @@ the homeomorphism is the *subtype* `↥R(T/s)`: pullback is not injective on all
 Restricting the domain to the rational subsets contained in `R(T/s)` is what makes it injective,
 and every rational subset of `Spa (A⟨T/s⟩, A_U⁺)` is still hit, because a rational subset may be
 intersected with `R(T/s)` without changing its preimage. -/
-theorem bijOn_preimage_spaRationalFamily (P : PairOfDefinition A) (Aplus : Subring A)
+theorem bijOn_preimage_spaCompletedLocalizationHomeomorph_spaRationalFamily
+    (P : PairOfDefinition A) (Aplus : Subring A)
     (hP : P.ringOfDefinition ≤ Aplus) (T : Finset A) (s : A)
     (hT : IsOpen (Ideal.span (T : Set A) : Set A)) (S : Type*) [CommRing S] [Algebra A S]
     [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) :

@@ -37,7 +37,6 @@ subject only to the hypothesis `A₀ ≤ A⁺` that `spaLocalizationHomeomorph` 
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.coe_mem_completedPlusSubring`: the image of `C` lies in `A_U⁺`.
 * `TauCeti.ValuationSpectrum.completedPlusSubring_eq_completionPlus`: `A_U⁺` is the completion
   plus ring of `C`.
 * `TauCeti.ValuationSpectrum.spaCompletedLocalizationHomeomorph_apply` and
@@ -59,26 +58,6 @@ namespace TauCeti.ValuationSpectrum
 open TauCeti.Huber TauCeti.Huber.PairOfDefinition TauCeti.Localization UniformSpace
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-
-/-- **The image of `C` lies in `A_U⁺`.** The completion map `A(T/s) → A⟨T/s⟩` carries the
-integral closure `C` of `A⁺[T/s]` in `A(T/s)` into the plus ring of the completed localization,
-which is by definition the closure of that image. Together with
-`UniformSpace.Completion.continuous_coeRingHom` this makes the completion map a morphism of pairs
-`(A(T/s), C) → (A⟨T/s⟩, A_U⁺)`, the second factor of the structure map `ρ : A → A⟨T/s⟩`; the
-first factor is covered by
-`TauCeti.Huber.PairOfDefinition.algebraMap_mem_integralClosure_adjoin_plus`. -/
-theorem coe_mem_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A)
-    (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {x : S}
-    (hx : x ∈ (integralClosure ↥(Algebra.adjoin Aplus
-      (Set.range fun t : T ↦ (divBy (t : A) s : S))) S).toSubring) :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    Completion.coeRingHom x ∈ completedPlusSubring P Aplus T s S hden := by
-  -- `A_U⁺` is the closure of the image of `C`, so the image itself is inside it
-  rw [mem_completedPlusSubring_iff]
-  exact subset_closure ⟨x, hx, rfl⟩
 
 /-- **`A_U⁺` is the completion plus ring of `C`.** Both are the closure, in `A⟨T/s⟩`, of the image
 of the integral closure `C` of `A⁺[T/s]` in `A(T/s)`, so the plus ring that `completedPlusSubring`
