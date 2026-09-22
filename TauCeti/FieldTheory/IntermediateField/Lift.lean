@@ -28,7 +28,9 @@ is the subfield dictionary of
 * `IntermediateField.restrict_lift`: restricting a lifted intermediate field recovers it. This
   is the round trip Mathlib does not state; `lift_restrict` is the other one.
 * `IntermediateField.lift_le_lift_iff`: `lift` reflects as well as preserves the order.
-* `IntermediateField.liftOrderIso`: the resulting order isomorphism with `Set.Iic E`.
+* `IntermediateField.liftOrderIso`: the resulting order isomorphism with `Set.Iic E`, with
+  `IntermediateField.liftOrderIso_apply` and `IntermediateField.liftOrderIso_symm_apply` giving
+  its two directions as `lift` and `restrict`.
 -/
 
 public section
@@ -56,13 +58,28 @@ theorem lift_le_lift_iff {a b : IntermediateField F E} : lift a ≤ lift b ↔ a
 
 variable (E) in
 /-- **The intermediate fields of `E / F` are the intermediate fields of `L / F` below `E`**, as an
-order isomorphism. -/
+order isomorphism.
+
+`@[expose]` because `TauCeti/FieldTheory/Galois/SubfieldDictionary.lean` composes it with
+`OrderIso.Iic`, whose codomain matches only definitionally; the resulting application lemmas are
+provable by `rfl` and not by rewriting. -/
+@[expose]
 def liftOrderIso : IntermediateField F E ≃o Set.Iic E where
   toFun E' := ⟨lift E', lift_le E'⟩
   invFun E' := restrict E'.2
   left_inv E' := restrict_lift E'
   right_inv E' := Subtype.ext (lift_restrict E'.2)
   map_rel_iff' := lift_le_lift_iff
+
+@[simp]
+theorem liftOrderIso_apply (E' : IntermediateField F E) :
+    liftOrderIso E E' = ⟨lift E', lift_le E'⟩ :=
+  (rfl)
+
+@[simp]
+theorem liftOrderIso_symm_apply (E' : Set.Iic E) :
+    (liftOrderIso E).symm E' = restrict E'.2 :=
+  (rfl)
 
 end IntermediateField
 
