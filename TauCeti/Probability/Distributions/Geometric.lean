@@ -11,6 +11,7 @@ public import Mathlib.Probability.Distributions.Geometric
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Moments.Basic
 public import Mathlib.Probability.Moments.IntegrableExpMul
+public import TauCeti.Probability.GeneratingFunction
 
 import TauCeti.Probability.Distributions.NegativeBinomial.Transforms
 
@@ -35,6 +36,8 @@ specializations of the negative-binomial ones.
   mean and variance of the real cast of a geometric law.
 * `integrableExpSet_id_map_cast_geometricMeasure` and `mgf_id_map_cast_geometricMeasure` give its
   exact moment-generating domain and moment-generating function.
+* `integrable_pow_geometricMeasure_iff` and `pgf_geometricMeasure` give the exact
+  probability-generating domain and probability-generating function on the native carrier.
 * `charFun_map_cast_geometricMeasure` computes its characteristic function.
 * `geometricMeasure_real_Iic` and `geometricMeasure_memoryless` give the cumulative mass and the
   division-free memoryless identity on the native carrier.
@@ -55,6 +58,26 @@ namespace TauCeti
 namespace Probability
 
 variable {p : unitInterval}
+
+/-- For a nonzero success probability, the geometric probability-generating-function integrand
+is integrable exactly on the open interval determined by the geometric-series ratio. -/
+theorem integrable_pow_geometricMeasure_iff (hp : p ≠ 0) (t : ℝ) :
+    Integrable (fun n : ℕ => t ^ n) (geometricMeasure p) ↔
+      |(1 - (p : ℝ)) * t| < 1 := by
+  rw [geometricMeasure_eq_negativeBinomialMeasure_one p hp]
+  exact integrable_pow_negativeBinomialMeasure_iff one_pos
+    (unitInterval.coe_pos.mpr (unitInterval.pos_iff_ne_zero.mpr hp)) p.2.2 t
+
+/-- The probability-generating function of a geometric distribution with nonzero parameter, on its
+exact integrability domain.  The boundary case `p = 1`, whose law is a Dirac mass at zero, is
+included. -/
+theorem pgf_geometricMeasure (hp : p ≠ 0) {t : ℝ}
+    (ht : |(1 - (p : ℝ)) * t| < 1) :
+    pgf id (geometricMeasure p) t = (p : ℝ) / (1 - (1 - (p : ℝ)) * t) := by
+  rw [geometricMeasure_eq_negativeBinomialMeasure_one p hp,
+    pgf_negativeBinomialMeasure one_pos
+      (unitInterval.coe_pos.mpr (unitInterval.pos_iff_ne_zero.mpr hp)) p.2.2 ht]
+  exact Real.rpow_one _
 
 /-- The exponential integrand for the cast geometric law is integrable exactly below the pole of
 its geometric series. -/
@@ -192,6 +215,13 @@ theorem geometricMeasure_cond_Ici (p : unitInterval) (n m : ℕ)
 /-- At success probability zero, Mathlib's totalized geometric law is Dirac at zero. -/
 theorem geometricMeasure_zero : geometricMeasure (0 : unitInterval) = Measure.dirac 0 := by
   simp [geometricMeasure]
+
+/-- At the zero parameter, Mathlib's geometric distribution is a Dirac mass at zero, so its
+probability-generating function is identically one. -/
+@[simp]
+theorem pgf_geometricMeasure_zero (t : ℝ) : pgf id (geometricMeasure 0) t = 1 := by
+  rw [geometricMeasure_zero, pgf_def]
+  simp
 
 /-- The real cast of the zero-parameter geometric law has every exponential moment. -/
 @[simp] theorem integrableExpSet_id_map_cast_geometricMeasure_zero :
