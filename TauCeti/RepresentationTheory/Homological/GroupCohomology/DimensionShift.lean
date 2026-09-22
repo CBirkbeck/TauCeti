@@ -38,6 +38,9 @@ the existing naturality of `δ` and no abstract choice of isomorphism enters.
 
 * `TauCeti.groupCohomology.dimensionShiftUpIso_hom`, `dimensionShiftUpResIso_hom`: the shift is
   Mathlib's connecting homomorphism `groupCohomology.δ` of `Rep.dimensionShiftUpSES`.
+* `TauCeti.groupCohomology.isZero_dimensionShiftUp_iff`,
+  `TauCeti.groupCohomology.isZero_res_dimensionShiftUp_iff`: the shift moves a vanishing
+  hypothesis between degrees, which is the form the inflation-restriction sequence consumes.
 * `TauCeti.groupCohomology.epi_δ_dimensionShiftUp_zero`,
   `TauCeti.groupCohomology.epi_δ_res_dimensionShiftUp_zero`: in the remaining degree the
   connecting homomorphism `H⁰(dimensionShiftUp A) ⟶ H¹(A)` is only surjective, over `G` and
@@ -58,7 +61,7 @@ public noncomputable section
 
 universe u
 
-open CategoryTheory Rep
+open CategoryTheory Limits Rep
 
 namespace TauCeti.groupCohomology
 
@@ -91,6 +94,15 @@ theorem dimensionShiftUpIso_hom (n : ℕ) :
           (coindBotUnit_comp_dimensionShiftUpπ A))
         (by simpa only [dimensionShiftUpSES_def] using dimensionShiftUpSES_shortExact A)
         (n + 1) (n + 2) rfl := (rfl)
+
+/-- Vanishing in degree `n + 1` of an upward shift is vanishing in degree `n + 2` of the
+original module. This is the form in which the shift is consumed: it moves a vanishing
+hypothesis between degrees. -/
+@[simp]
+theorem isZero_dimensionShiftUp_iff (n : ℕ) :
+    IsZero (groupCohomology (dimensionShiftUp A) (n + 1)) ↔
+      IsZero (groupCohomology A (n + 2)) :=
+  (dimensionShiftUpIso A n).isZero_iff
 
 /-- In the remaining degree the connecting homomorphism `H⁰(G, dimensionShiftUp A) ⟶ H¹(G, A)`
 is surjective: Shapiro's lemma only gives vanishing of the coinduced middle term in positive
@@ -125,6 +137,15 @@ theorem dimensionShiftUpResIso_hom (n : ℕ) :
           (coindBotUnit_comp_dimensionShiftUpπ A)).map (resFunctor S.subtype))
         (by simpa only [dimensionShiftUpSES_def] using
           dimensionShiftUpSES_res_shortExact A S.subtype) (n + 1) (n + 2) rfl := (rfl)
+
+/-- After restriction to a subgroup, vanishing in degree `n + 1` of an upward shift is
+vanishing in degree `n + 2` of the original module. Together with the unrestricted form this
+moves a vanishing hypothesis between degrees simultaneously on every subgroup. -/
+@[simp]
+theorem isZero_res_dimensionShiftUp_iff (n : ℕ) :
+    IsZero (groupCohomology (res S.subtype (dimensionShiftUp A)) (n + 1)) ↔
+      IsZero (groupCohomology (res S.subtype A) (n + 2)) :=
+  (dimensionShiftUpResIso A S n).isZero_iff
 
 /-- After restriction to a subgroup, the connecting homomorphism
 `H⁰(S, dimensionShiftUp A) ⟶ H¹(S, A)` is surjective: Shapiro's lemma only gives vanishing of
