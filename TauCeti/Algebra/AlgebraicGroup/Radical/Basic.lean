@@ -15,6 +15,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Augmentation
 /-!
 # Geometric normal-subgroup-freeness properties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Radical.Basic)
+
 This file packages the common construction behind the reductive and semisimple predicates. Given
 an isomorphism-invariant property `P` of finite-type commutative Hopf algebras over an algebraic
 closure, `geometricNormalSubgroupFreeCommHopfAlgProperty k P` says that the ambient group is

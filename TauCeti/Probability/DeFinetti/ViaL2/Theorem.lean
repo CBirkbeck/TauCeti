@@ -12,6 +12,8 @@ import TauCeti.Probability.Exchangeability.Contractability
 /-!
 # De Finetti's theorem via `L²` averaging
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaL2.Theorem)
+
 This file is the endpoint of the martingale-free `L²` route to de Finetti's theorem. The route's
 substantive conclusion,
 `Contractable.conditionallyIIDWith_directingProbabilityMeasure`, names the tail-conditional

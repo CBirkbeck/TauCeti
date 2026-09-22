@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Basic
 /-!
 # Rational matrices carry cusps to cusps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Cusps.Rat.Basic)
+
 `IsCusp.smul` moves a cusp of `Γ` to a cusp of the conjugate `ConjAct.toConjAct g • Γ`, and for
 a rational `g` that conjugate is again arithmetic (`Subgroup.IsArithmetic.conj`). Since every
 arithmetic subgroup has the same cusps as `𝒮ℒ`

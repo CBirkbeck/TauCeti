@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcoalgebra.Finite
 /-!
 # Finite comodule actions separate points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.PointSeparation)
+
 An algebra-valued point of an algebra-coalgebra acts on every scalar-extended comodule.
 Equality of two such actions on one comodule forces the points to agree on that comodule's
 matrix coefficients. Consequently, a comodule whose matrix coefficients generate the

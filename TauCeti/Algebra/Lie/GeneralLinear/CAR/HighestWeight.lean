@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.PBW
 /-!
 # A highest-weight vector in the CAR algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.HighestWeight)
+
 For the left `gl_n`-action on the Clifford algebra of the trace quadratic form, this file
 constructs the ordered-product candidate
 

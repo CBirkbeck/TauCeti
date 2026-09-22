@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Polynomial.Resultant.Discriminant
 /-!
 # The square root of the discriminant, and the test for the alternating group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Discriminant.Basic)
+
 Let `f` be a monic separable polynomial over a field `F`, and let `E` be an extension in which
 `f` splits. Numbering the roots of `f` in `E` by an equivalence `e : Fin f.natDegree ≃ f.rootSet E`
 turns the product of the root differences

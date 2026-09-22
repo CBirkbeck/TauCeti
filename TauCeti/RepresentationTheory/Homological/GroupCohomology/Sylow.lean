@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.GroupCohomology.Corestric
 /-!
 # Torsion of group cohomology and restriction to Sylow subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupCohomology.Sylow)
+
 For a finite group `G`, the composite `Cor ∘ Res : Hⁿ(G, A) ⟶ Hⁿ(S, A) ⟶ Hⁿ(G, A)` is
 multiplication by the index `[G : S]`. Taking `S` trivial shows that `Hⁿ(G, A)` is killed by the
 order of `G` for `n ≥ 1`; taking `S` a Sylow `p`-subgroup shows that restriction to `S` is

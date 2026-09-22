@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.Harnack.Planar
 /-!
 # The strong maximum principle for planar harmonic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.Harnack.StrongPrinciple)
+
 This file globalizes the zero case of the planar Harnack inequality from a disk to a preconnected
 set containing a neighborhood of the distinguished point.  The local disk result gives vanishing
 on a neighborhood, and Mathlib's `AnalyticOnNhd.eqOn_of_preconnected_of_eventuallyEq` propagates

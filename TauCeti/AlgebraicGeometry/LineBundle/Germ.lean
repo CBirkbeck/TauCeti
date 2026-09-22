@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.Modules.RationalFunctions
 /-!
 # Sections of line bundles on integral schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.LineBundle.Germ)
+
 A section of a line bundle on an integral scheme is determined by its restriction to any
 nonempty open subset, and even by its germ at any point of its domain. In particular, the
 map to the generic stalk is injective. This is the uniqueness input for realizing a line

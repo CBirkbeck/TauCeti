@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The graph automorphism of the pinned Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.GraphAutomorphism)
+
 `TauCeti.DynkinType.geckGroupScheme` is the explicit affine group scheme over `ℤ` attached to a
 valid Dynkin type: the smallest closed subgroup scheme of `GLₙ` containing the divided-power
 exponential root subgroups of the Bourbaki-numbered Chevalley generators together with the weight

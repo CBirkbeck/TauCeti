@@ -12,6 +12,8 @@ import TauCeti.RepresentationTheory.Irreducible
 /-!
 # The character projections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Character.Projection)
+
 The conjugate `conj χ_π` of the character of a continuous representation `π` of a compact group is
 a class function, so it acts on a finite-dimensional irreducible representation by a scalar
 (`TauCeti.ContRepresentation.integratedOperator_eq_smul_id`, from

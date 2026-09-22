@@ -12,6 +12,8 @@ public import Mathlib.Topology.Sheaves.MayerVietoris
 /-!
 # Mayer-Vietoris for the cohomology of a sheaf of modules on a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Cohomology.MayerVietoris)
+
 `TauCeti/AlgebraicGeometry/Cohomology/Basic.lean` defines the cohomology `Hⁿ(X, M)` of a sheaf of
 modules on a scheme, and the cohomology `Hⁿ(U, M)` of an open subset. This file adds the long
 exact Mayer-Vietoris sequence of two open subsets `U` and `V`:

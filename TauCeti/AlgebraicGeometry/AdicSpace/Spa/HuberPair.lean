@@ -13,6 +13,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # Maps of adic spectra for Huber pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.HuberPair)
+
 This file bundles the generic pullback API from
 `TauCeti.AlgebraicGeometry.AdicSpace.Spa.Comap` for morphisms of Huber pairs and proves the
 quotient-pair form of **Wedhorn, *Adic Spaces*, Proposition 7.38**.

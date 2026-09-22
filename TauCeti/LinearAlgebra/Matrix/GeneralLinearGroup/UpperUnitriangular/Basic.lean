@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # Upper-unitriangular matrix groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular.Basic)
+
 For a ring `R`, the upper-unitriangular group `Uₙ(R)` consists of the invertible
 upper-triangular matrices whose diagonal entries are all one. This file packages these matrices
 as a subgroup of `GLₙ(R)`, proves functoriality for commutative coefficient rings, and verifies

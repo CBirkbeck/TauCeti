@@ -16,6 +16,8 @@ public import Mathlib.CategoryTheory.ObjectProperty.FiniteProducts
 /-!
 # Finite resolutions in an exact category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Resolution)
+
 Let `E` be an exact structure on an additive category `C` and let `P` be a property of objects
 of `C`. A *finite `P`-resolution* of an object `X` is a finite chain of `E`-conflations
 

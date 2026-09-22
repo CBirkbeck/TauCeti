@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Diagram
 /-!
 # A simply-laced finite-type diagram has at most one branch vertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.UniqueBranch)
+
 The simply-laced lane of the finite-type Cartan-matrix classification reduces connected diagrams
 to paths and three-armed stars. Two branch vertices in a tree determine a double-fork subtree: the
 path between them, together with the two unused edges at either end, has affine type `D`, whose

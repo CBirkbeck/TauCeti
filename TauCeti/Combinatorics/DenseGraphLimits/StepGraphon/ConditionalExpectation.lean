@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.MeasurableSpace.Finpartition
 /-!
 # Block averages as conditional expectations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.ConditionalExpectation)
+
 The block-average step graphon of a measurable finite partition agrees almost everywhere with
 conditional expectation onto the σ-algebra recording the partition part of each coordinate.
 This identifies the strict block-average construction with the analytic conditional-expectation

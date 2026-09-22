@@ -14,6 +14,8 @@ import TauCeti.Probability.Exchangeability.Contractability
 /-!
 # Full exchangeability and path-law bridges
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.FullyExchangeable)
+
 The Layer 0 bridges between finite exchangeability, full exchangeability, and path-law
 endomorphisms:
 

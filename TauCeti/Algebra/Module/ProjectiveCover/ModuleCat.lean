@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Projective.Cover
 /-!
 # Projective covers in `ModuleCat`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.ProjectiveCover.ModuleCat)
+
 `TauCeti.IsProjectiveCover` is the module-level predicate — a surjection from a projective module
 with superfluous kernel — and `TauCeti.IsEssentialEpi` is its categorical counterpart, an
 epimorphism `π` such that every morphism `g` into its source with `g ≫ π` an epimorphism is itself

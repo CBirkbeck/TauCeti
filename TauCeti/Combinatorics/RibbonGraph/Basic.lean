@@ -16,6 +16,8 @@ import TauCeti.GroupTheory.Perm.Basic
 /-!
 # Finite bipartite ribbon graphs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.RibbonGraph.Basic)
+
 A finite bipartite ribbon graph consists of a finite set of edges, finite sets of black and white
 vertices, an endpoint of each colour for every edge, and a cyclic order on the edges incident to
 each vertex.  The cyclic orders are encoded by two permutations of the common edge set.  Requiring

@@ -16,6 +16,8 @@ import TauCeti.Analysis.Contour.ExitTime
 /-!
 # Window splitting of the truncated integral at a crossing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WindowSplitting)
+
 At a transverse crossing `γ t₀ = s` — non-zero one-sided derivative limits, unique crossing on
 the window `[l, u]` with `l < t₀ < u` — there are exit-time functions `τL`, `τR` converging to
 `t₀` from each side with exit radius exactly `ε`, such that for every integrand `g` with integrable

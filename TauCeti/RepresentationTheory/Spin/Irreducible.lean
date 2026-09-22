@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.ReflectionLift
 /-!
 # Invariant subspaces and intertwiners for the spinor and half-spin actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Irreducible)
+
 The Fock model makes the exterior algebra `S = ⋀·W` of the isotropic summand of a polarization a
 module over `CliffordAlgebra Q` (`TauCeti.spinAction`), and that action is onto the full
 endomorphism algebra as soon as `W` is finite free (`TauCeti.spinAction_surjective`). A module on

@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.Contractability
 /-!
 # Coordinatewise maps of exchangeable processes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Map)
+
 This file records that the Layer 0 symmetry notions for sequence laws are preserved by
 applying a measurable map to every coordinate of the process. It supplies the process-level
 closure API promised by the Exchangeability roadmap from the law-level lemmas

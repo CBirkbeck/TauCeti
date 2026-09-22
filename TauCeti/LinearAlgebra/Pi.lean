@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Block
 /-!
 # Supports and determinants of finite dependent products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Pi)
+
 For `s : Set ι`, the submodule `Submodule.pi sᶜ (fun _ ↦ ⊥)` of `ι → M` consists of the families
 vanishing outside `s` — the `Pi` analogue of `Finsupp.supported`. This file records that
 complementary supports meet in `⊥`. It also records the determinant of a coordinatewise

@@ -11,6 +11,8 @@ import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.DenseRange
 /-!
 # The adic spectrum is unchanged by completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Completion.Homeomorph)
+
 For a Huber ring `A` with a compatible uniform structure and any subring `A⁺ ⊆ A`, pullback along
 the completion map `ι : A → Â` is a homeomorphism
 

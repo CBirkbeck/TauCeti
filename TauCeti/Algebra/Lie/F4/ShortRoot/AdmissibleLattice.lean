@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Serre
 /-!
 # The admissible lattice of the short-root representation of type F4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.AdmissibleLattice)
+
 This file extends the integral twenty-six-dimensional representation of type `F₄` from
 `TauCeti.Algebra.Lie.F4.ShortRoot.Basic` to the rationals, lifts it to the universal enveloping
 algebra of the rational type-`F₄` Serre Lie algebra, and proves that the coordinate `ℤ`-lattice

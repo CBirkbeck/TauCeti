@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Chevall
 /-!
 # Chevalley relations for symplectic root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.ChevalleyRelations)
+
 This file lifts the six multiply-laced rank-two commutator relations from the standard
 symplectic matrices to the functor of points of `Sp₂ₘ`. For distinct `i` and `j`, they include
 

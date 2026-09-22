@@ -12,6 +12,8 @@ public import Mathlib.Probability.Kernel.Defs
 /-!
 # Measurable Bernstein measures and their kernel form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.Kernel)
+
 The Hausdorff--Bernstein--Widder theorem and its basic representing-measure API live in
 `TauCeti.Analysis.CompletelyMonotone.Bernstein.HausdorffBernsteinWidder`. This file shows that
 the Bernstein measure depends **measurably** on a parameter: a family `a ↦ f a` of completely

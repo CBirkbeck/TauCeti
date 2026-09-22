@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.EnergyForm.Basic
 /-!
 # Pointwise diagonal lower bounds for divergence-form energy integrands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyLowerBounds)
+
 The file `TauCeti.Analysis.PDE.EnergyForm.Basic` gives the pointwise energy integrand for a
 divergence-form operator together with its pointwise Gårding lower bound.  This file refines
 that Gårding estimate into an explicit diagonal lower bound

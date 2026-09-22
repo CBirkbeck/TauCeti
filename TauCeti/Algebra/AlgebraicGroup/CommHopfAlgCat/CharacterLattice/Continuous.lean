@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.CharacterLattice.Bas
 /-!
 # Continuity of the absolute-Galois action on geometric characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.CharacterLattice.Continuous)
+
 For a commutative Hopf algebra `H` over a field `k`, the geometric character group
 `X*(H)` carries the discrete topology. Its absolute-Galois action is continuous for the Krull
 topology. Indeed, every element of the scalar extension `k̄ ⊗[k] H` is a finite sum of pure

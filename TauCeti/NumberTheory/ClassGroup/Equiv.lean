@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.ClassGroup.Basic
 /-!
 # Functoriality of class groups under ring equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassGroup.Equiv)
+
 Mathlib defines `ClassGroup.mulEquiv f`, the multiplicative equivalence on ideal class groups
 induced by a ring equivalence `f : R ≃+* S`. This file supplies its basic functorial API: the
 induced map respects identity, composition, and inverses, and computes on the class of a unit

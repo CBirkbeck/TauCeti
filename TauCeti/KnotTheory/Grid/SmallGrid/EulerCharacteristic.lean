@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.SmallGrid.Gradings
 /-!
 # The graded Euler characteristic of the standard two-by-two grid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.SmallGrid.EulerCharacteristic)
+
 This file evaluates the state sum and graded Euler characteristic of the standard `2 × 2`
 unknot grid using the general Euler-characteristic theory and the explicit small-grid grading
 computations.

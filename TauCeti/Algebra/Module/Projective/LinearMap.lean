@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 /-!
 # Hom spaces out of a projective module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Projective.LinearMap)
+
 Let `k` be a field and `A` a `k`-algebra. For a projective `A`-module `P` the functor
 `Hom_A(P, -)` is exact, so when `P` and the targets are finite-dimensional over `k` the dimension
 `dim_k Hom_A(P, -)` is additive across a submodule and its quotient.

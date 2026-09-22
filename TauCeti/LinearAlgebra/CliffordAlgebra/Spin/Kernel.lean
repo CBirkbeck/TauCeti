@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Basic
 /-!
 # The kernel of the Spin action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Kernel)
+
 For a positive-dimensional finite nondegenerate quadratic space over a field where `2` is
 invertible, the kernel of the Spin action consists of the two scalar elements. The proof first
 shows that an even Clifford element commuting with every generating vector is scalar, using

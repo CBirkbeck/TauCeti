@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.AdeleRing
 /-!
 # Basic API for ideles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Ideles.Basic)
+
 This file records the relation between Mathlib's diagonal embeddings into the idele group and the
 adele ring. In particular, principal-idele membership can be tested on the underlying adele.
 -/

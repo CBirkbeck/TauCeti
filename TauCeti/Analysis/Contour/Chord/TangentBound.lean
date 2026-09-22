@@ -12,6 +12,8 @@ import Mathlib.Tactic.Module
 /-!
 # Chord-to-tangent bounds in the plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Chord.TangentBound)
+
 The elementary plane geometry behind the Hungerbühler–Wasem connecting-arc analysis: decompose a
 vector `w ∈ ℂ` into its projection on a direction `L` and the orthogonal remainder, and bound the
 chord from `w` to the "natural" tangent target `(‖w‖/‖L‖) • L` — the point of the ray `ℝ₊ • L` at

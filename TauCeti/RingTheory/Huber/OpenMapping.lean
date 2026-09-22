@@ -17,6 +17,8 @@ import Mathlib.Topology.Baire.CompleteMetrizable
 /-!
 # The open mapping theorem over a Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.OpenMapping)
+
 `TauCeti.HasZeroSequenceOfUnits.isOpenMap` is Henkel's theorem in the generality it is proved in:
 the scalars need only a zero sequence of units, the source is a complete first-countable
 nonarchimedean group, and the target need only be `T0Space` and Baire. This file records both

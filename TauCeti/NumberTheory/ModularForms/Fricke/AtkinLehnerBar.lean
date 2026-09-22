@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Fricke.Matrix
 /-!
 # The Atkin–Lehner bar is the adjugate, conjugated by the Fricke matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.AtkinLehnerBar)
+
 Two different matrices in this development are called "Atkin–Lehner". The Hecke-ring
 anti-involution of `TauCeti/NumberTheory/HeckeRing/GL2/Gamma0/AtkinLehner.lean` conjugates a
 transpose by the *diagonal* `w = diag(1, N)`, and the Fricke matrix of

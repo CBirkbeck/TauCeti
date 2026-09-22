@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Filtration
 /-!
 # The vectors and the scalars inside a Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Vectors)
+
 The generators of a Clifford algebra are the elements `ι Q m`, and the first thing one wants to
 know about them is that they are a faithful copy of `M`: that `ι Q` is injective, so that `M` is
 *the* module of vectors `LinearMap.range (ι Q)` sitting inside `CliffordAlgebra Q`, and that no

@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Components
 /-!
 # Link components under grid commutation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Components)
+
 An elementary grid commutation exchanges two adjacent, non-interleaving rows or columns. It
 does not change the represented link, and the first combinatorial shadow of this fact is that it
 preserves the component traversal. A row commutation leaves the component permutation unchanged.

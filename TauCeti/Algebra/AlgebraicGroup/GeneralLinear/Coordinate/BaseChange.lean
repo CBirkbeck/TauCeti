@@ -15,6 +15,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Determinant
 /-!
 # Base change of the general linear coordinate Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Coordinate.BaseChange)
+
 For a morphism of commutative rings `R → K`, this file identifies scalar extension of the
 coordinate ring of `GLₙ` with the coordinate ring constructed directly over `K`:
 

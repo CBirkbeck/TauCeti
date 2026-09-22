@@ -21,6 +21,8 @@ import Mathlib.RepresentationTheory.FinGroupCharZero
 /-!
 # The boundary principal series of `GL₂` splits
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.Boundary)
+
 For a finite field `F` and a multiplicative character `α : Fˣ → ℂˣ`, the principal series at
 the repeated parameter `(α, α)` is reducible. This file identifies its two constituents:
 

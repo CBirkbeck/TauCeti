@@ -19,6 +19,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Basic
 /-!
 # Weights of the diagonal torus of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Weight.Basic)
+
 A vector `w` of a representation `ρ` of `GL n k` has **weight** `l : Fin n → ℤ` when every
 invertible diagonal matrix `diagGL t` scales it by `∏ i, tᵢ ^ lᵢ`. The vectors of weight `l` form
 the **weight space** `TauCeti.weightSpace ρ l`, and this file builds that space and the two facts

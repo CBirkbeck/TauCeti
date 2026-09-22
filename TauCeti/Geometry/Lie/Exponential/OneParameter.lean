@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Lie.Exponential.Units.Basic
 /-!
 # One-parameter subgroups from the Banach algebra exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.OneParameter)
+
 For an element `x` of a complete normed real algebra, `TauCeti.expUnitHom` bundles
 `t ↦ expUnit (t • x)` as a continuous one-parameter subgroup. This file records the smoothness
 and initial velocity of its underlying curve, and characterizes the subgroup by that velocity.

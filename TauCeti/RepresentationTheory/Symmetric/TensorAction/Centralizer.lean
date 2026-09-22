@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Invariants
 /-!
 # The commutant of the permutation action on a tensor power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TensorAction.Centralizer)
+
 The symmetric group of `ι` acts on `⨂[R] (_ : ι), M` by permuting the tensor factors, and every
 **diagonal** endomorphism `f^{⊗ι} = PiTensorProduct.map (fun _ ↦ f)` commutes with that action
 (`PiTensorProduct.commute_reindexRepresentation_map`). This file proves the converse when `M` is

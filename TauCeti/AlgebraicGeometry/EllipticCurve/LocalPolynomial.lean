@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.SingularPointCount
 /-!
 # The Frobenius trace of a reduction, and the local polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.LocalPolynomial)
+
 Over the fraction field of a discrete valuation ring with finite residue field, the reduction of a
 minimal Weierstrass equation is a Weierstrass model over a finite field, so it has a Frobenius
 trace `a = q + 1 − #W(k)`, counted with its singular point. This file evaluates that trace at bad

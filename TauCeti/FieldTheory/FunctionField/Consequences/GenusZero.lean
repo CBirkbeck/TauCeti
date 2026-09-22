@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Consequences.HighDegree
 /-!
 # Genus-zero function fields with a divisor of degree one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Consequences.GenusZero)
+
 Let `F / k` be an algebraic function field with exact constant field.  If `F` has genus zero
 and admits a divisor of degree one, then `F` is a rational function field over `k`.  This is the
 nontrivial implication of Stichtenoth, *Algebraic Function Fields and Codes*, 2nd ed.,

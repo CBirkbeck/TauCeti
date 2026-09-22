@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Lie.Adjoint.Units.Basic
 /-!
 # Exponential compatibility of the adjoint action on algebra units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Units.Exponential)
+
 For the Lie group of units of a complete real normed algebra, the tangent adjoint of an exponential
 is the exponential of the continuous commutator operator. In finite dimensions, this transports to
 the abstract identity `Ad (lieExp X) = exp (ad X)` on left-invariant derivations.

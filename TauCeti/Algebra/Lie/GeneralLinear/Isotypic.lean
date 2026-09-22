@@ -15,6 +15,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Multiplicity
 /-!
 # The single-weight isotypy criterion for `gl_n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Isotypic)
+
 This file packages highest-weight existence and uniqueness into isotypy criteria for modules over
 the general linear Lie algebra. If every irreducible submodule has the same highest weight, then
 every pair of irreducible submodules is equivalent. Under complete reducibility, the module is the

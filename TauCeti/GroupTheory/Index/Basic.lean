@@ -14,6 +14,8 @@ import Mathlib.Tactic.Group
 /-!
 # Consequences of the index formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Index.Basic)
+
 The preimage `H.comap f` of a finite-index subgroup along a group homomorphism again has finite
 index: its index is the relative index of `H` in the range of `f`, which is finite. Adjoining
 the centre to a finite-index subgroup also keeps the index finite, since it only enlarges the

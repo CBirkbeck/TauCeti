@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Group.Quotient
 /-!
 # Continuous maps from group quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupAction.Quotient)
+
 This file records continuity results for maps out of group quotients that do not require
 transitivity of an action.
 

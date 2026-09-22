@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.CosetDecomposition
 /-!
 # Upper-triangular coset representatives at level `N`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.UpperTriangularDelta0)
+
 `GLn/CosetDecomposition.lean` constructs, from the bounded entry assignments
 `UpperTriEntries n a`, a family `upperTriGL B = diag(a) · U(B)` of upper-triangular elements of
 the double coset `SL_n(ℤ) · diag(a) · SL_n(ℤ)`, and shows that under positivity and a

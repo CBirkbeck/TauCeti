@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Valuation.Continuous.Basic
 /-!
 # Continuity of a valuation on a Huber ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Continuous.Valuation)
+
 On a Huber ring the neighbourhood filter of `0` has a concrete basis — the images of the powers
 `Iⁿ` of an ideal of definition (`TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero`). Continuity
 of a valuation, which is openness of the sets `{a | v a < v b}`, can therefore be tested against

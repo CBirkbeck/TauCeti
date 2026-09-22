@@ -11,6 +11,8 @@ import TauCeti.Geometry.Manifold.VectorField.Regularity
 /-!
 # Model-space and directional-derivative formulas for the manifold Lie bracket
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorField.LieBracket)
+
 This file transports Mathlib's normed-space identity `fderivWithin_apply_lieBracket` through a
 manifold chart. It identifies the differential of a vector-valued function on the manifold Lie
 bracket with the commutator of its directional derivatives. It also records that constant vector

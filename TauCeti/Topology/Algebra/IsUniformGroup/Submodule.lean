@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 /-!
 # The uniform structure on a submodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.IsUniformGroup.Submodule)
+
 A submodule carries the subspace uniformity, and both facts one needs about it hold for the
 underlying subobject: `Subgroup.isUniformGroup` gives the additive version for an `AddSubgroup`,
 and the countably generated uniformity is inherited by any subtype. Neither is keyed on

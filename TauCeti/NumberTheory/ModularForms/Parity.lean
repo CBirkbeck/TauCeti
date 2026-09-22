@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 /-!
 # The parity lemma for nebentypus character spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Parity)
+
 The weight and the nebentypus of a nonzero modular form determine each other's parity:
 `M_k(Γ₁(N), χ) ≠ 0` forces `χ(-1) = (-1)^k`. This is the emptiness criterion that odd
 weights and Eisenstein constructions consume, and the ModularForms roadmap pins it at

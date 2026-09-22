@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Basic
 /-!
 # Products of smooth unipotent affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Product)
+
 The tensor product of two commutative Hopf algebras is the coordinate algebra of the direct
 product of their affine group schemes. This file proves that the representation-theoretic
 unipotence condition is preserved and reflected by this product.

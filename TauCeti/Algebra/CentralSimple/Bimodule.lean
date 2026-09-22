@@ -15,6 +15,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # An algebra as a module over `B ⊗[K] Aᵐᵒᵖ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Bimodule)
+
 A `K`-algebra homomorphism `f : B →ₐ[K] A` turns `A` into a `B`-`A`-bimodule: `B` acts on the left
 through `f` and `A` on the right by multiplication. Packaged as a left module over
 `R = B ⊗[K] Aᵐᵒᵖ`, with `b ⊗ₜ op a` acting by `x ↦ f b * x * a`, this is `TauCeti.Bimodule f`.

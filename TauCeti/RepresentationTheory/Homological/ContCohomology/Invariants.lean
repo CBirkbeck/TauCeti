@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.FiniteQuot
 /-!
 # Invariants of a discrete module as a module over a quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Invariants)
+
 For a normal subgroup `H` of `G` acting distributively on an additive group `M`, the invariants
 `M ^ H` carry a distributive action of `G ⧸ H`. Over a profinite `G` with `H` open normal this is
 the coefficient system of the finite-level tower computing continuous cohomology: the finite group

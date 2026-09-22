@@ -14,6 +14,8 @@ import TauCeti.Topology.JordanCurve.SmallArc
 /-!
 # Small Jordan curves through image crosscuts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.SmallJordanCurve)
+
 Let `f` be a conformal map of a disc onto a bounded domain whose frontier is a Jordan curve. The
 length--area method supplies, at every point `ζ` of the source circle, arbitrarily small circular
 crosscuts with short images. This file closes such an image crosscut along the frontier of the image

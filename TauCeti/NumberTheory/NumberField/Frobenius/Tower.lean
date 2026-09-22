@@ -11,6 +11,8 @@ import TauCeti.RingTheory.Ideal.LiesOver
 /-!
 # Raising the base field: the tower formula for arithmetic Frobenius elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius.Tower)
+
 Let `K ⊆ M ⊆ L` be number fields with `L / K` and `L / M` Galois, let `Q` be a prime of `𝓞 L`
 unramified over `𝓞 K`, and write `𝔓 = Q ∩ 𝓞 M` and `𝔭 = Q ∩ 𝓞 K`. An arithmetic Frobenius
 `σ ∈ Gal(L/K)` at `Q` acts on the residue field by `x ↦ x ^ 𝔑𝔭`, while an arithmetic Frobenius

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Basis.VectorSpace
 /-!
 # Pseudo-inverses of linear maps of vector spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearMap.PseudoInverse)
+
 A **pseudo-inverse** of a linear map `f` is a linear map `g` in the opposite direction with
 `f ∘ g ∘ f = f`. Every linear map of vector spaces has one: the range of `f` is a projective
 module, so the corestriction of `f` to its range splits, and a section of it extends to the whole

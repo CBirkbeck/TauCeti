@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.F4.ModularLattice
 /-!
 # The modular short-root coordinate space in type F₄
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.Modular.Lattice)
+
 In the full integral F₄ Chevalley lattice reduced modulo two, the distinguished coordinate
 subspace is spanned by the twenty-four short-root vectors and the
 two short simple coroots.

@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.Sigma
 /-!
 # Covering spaces of a disjoint union are classified by their monodromy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Sigma)
+
 Let `X i` be a family of path-connected, locally path-connected, semilocally simply connected
 spaces. Their disjoint union is locally path connected but not path connected, so it falls
 outside the standing hypotheses of `TauCeti.CoveringSpace.monodromyEquivalence`; this file proves

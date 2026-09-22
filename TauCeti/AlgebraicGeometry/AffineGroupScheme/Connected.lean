@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.FiniteType
 /-!
 # Geometric connectedness of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Connected)
+
 This file compares geometric connectedness of a commutative Hopf algebra with Mathlib's
 scheme-theoretic `GeometricallyConnected` predicate on its Hopf spectrum.
 

@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.Subgroup.Center
 /-!
 # Central isogenies of group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Basic)
+
 For group schemes over the spectrum of a commutative ring, an isogeny is a homomorphism whose
 underlying scheme morphism is finite, flat, and surjective. It is central when its
 scheme-theoretic kernel is central. We express the latter condition intrinsically through the

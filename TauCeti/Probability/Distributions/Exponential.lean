@@ -20,6 +20,8 @@ import Mathlib.Order.ConditionallyCompleteLattice.Finset
 /-!
 # Elementary theory of the exponential distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Exponential)
+
 This file completes the elementary moment, transform, and tail API for Mathlib's exponential
 measure, parametrized by its rate. For a positive rate `r`, it evaluates all moments, identifies
 the exact exponential-moment domain, computes the moment- and cumulant-generating functions and the

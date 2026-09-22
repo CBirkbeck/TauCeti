@@ -10,6 +10,8 @@ public import TauCeti.Probability.Martingale.Crossings.TimeReversal
 /-!
 # Crossings: pathwise reversal lemmas
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Martingale.Crossings.Pathwise)
+
 Pathwise reversal lemmas relating upcrossings of a process to upcrossings of its negated time
 reversal. Downcrossings are not reintroduced here: Mathlib's `upcrossings (-b) (-a) (-X)` already
 *is* the downcrossing count, so we phrase everything through Mathlib's `upcrossings` /

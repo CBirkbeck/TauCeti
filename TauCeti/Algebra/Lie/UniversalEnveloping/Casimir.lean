@@ -15,6 +15,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Module
 /-!
 # The Casimir element of a universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Casimir)
+
 Let `L` be a finite-dimensional Lie algebra over a field `K` whose Killing form `κ` is
 nondegenerate.  Choosing a basis `x₁, …, xₙ` of `L` and the basis `y₁, …, yₙ` dual to it under `κ`,
 the **Casimir element** is

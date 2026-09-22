@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Regular.Basic
 /-!
 # Fibres of regular connected covers as deck torsors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Regular.Torsor)
+
 For a preconnected covering map with regular deck action, evaluation at any point of a fibre
 identifies the deck group with that fibre. This file packages the same fact in the standard
 Mathlib language of torsors: the fibre is a principal homogeneous space for the deck group.

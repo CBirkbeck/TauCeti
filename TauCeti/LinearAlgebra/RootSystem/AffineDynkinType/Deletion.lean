@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # Deleting the affine node of an affine simply-laced diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.AffineDynkinType.Deletion)
+
 An affine simply-laced diagram carries one node more than the finite simply-laced diagram it
 extends, and deleting the distinguished node `TauCeti.AffineDynkinType.affineNode` recovers that
 finite diagram. This file makes the statement precise, and in the form its consumers need: not as a

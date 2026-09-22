@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Chamber
 /-!
 # The Weyl vector of a base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Vector)
+
 The **Weyl vector** `ρ` of a base of a root pairing is the half-sum of the positive roots. It is
 the shift that turns the Weyl group action on weights into the dot action, and it appears in the
 Weyl character, dimension and Kostant formulas as the correction `λ ↦ λ + ρ`.

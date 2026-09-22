@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.Minor
 /-!
 # The special isogeny of type G2 as a matrix of minors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.SpecialIsogeny)
+
 Over a field of characteristic three the group of type `G₂` admits an endomorphism `τ` exchanging
 the two root lengths: it raises the parameter of a short simple root element to the third power
 and leaves that of a long one alone. It is the *special isogeny*, and the Ree groups `²G₂(3^(2m+1))`

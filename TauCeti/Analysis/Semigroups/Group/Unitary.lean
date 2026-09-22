@@ -18,6 +18,8 @@ import TauCeti.LinearAlgebra.LinearPMap.Basic
 /-!
 # Unitary strongly continuous groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Group.Unitary)
+
 A strongly continuous group on a complex Hilbert space is represented by real continuous linear
 maps, in accordance with the real-Banach-first convention of the semigroup development. Such a
 group is **unitary** when every operator preserves the complex inner product. Inner-product

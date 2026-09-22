@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.Semisimple
 /-!
 # The Cartan subalgebra acts diagonalizably, and weight spaces are honest
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Diagonalizable)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra, and let `M` be a
 finite-dimensional `L`-module. This file proves that **every `x : H` acts on `M` by a semisimple

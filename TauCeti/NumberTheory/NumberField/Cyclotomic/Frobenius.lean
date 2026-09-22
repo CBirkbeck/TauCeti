@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.AutomorphismAction
 /-!
 # The arithmetic Frobenius on roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Cyclotomic.Frobenius)
+
 Let `K` be a number field, `F` an extension field of `K`, `𝔭` a height-one prime of `𝓞 K`, and
 `Q` an ideal of `𝓞 F` lying over `𝔭`. An *arithmetic Frobenius* at `Q` is a `σ` with
 `σ x ≡ x ^ 𝔑𝔭 (mod Q)` for every `x : 𝓞 F` (Mathlib's `IsArithFrobAt`). This file records what

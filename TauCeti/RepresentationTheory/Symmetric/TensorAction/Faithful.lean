@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic
 /-!
 # How faithfully the symmetric group acts on a tensor power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TensorAction.Faithful)
+
 The symmetric group `S_d` acts on `(Rⁿ)^{⊗d}` by permuting tensor factors, and that action
 extends to an algebra map `R[S_d] → End((Rⁿ)^{⊗d})`.  Over a nontrivial commutative ring, this
 file measures how much of `R[S_d]` survives: the algebra map is injective **exactly** when `d ≤ n`.

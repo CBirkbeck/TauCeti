@@ -10,6 +10,8 @@ public import Mathlib.Topology.Homotopy.HomotopyGroup
 /-!
 # Radial coordinates on the cube
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Cube.Radius)
+
 Mathlib's generalized loops `Ω^ N X x` are continuous maps `I^N → X` that are constant on the
 cube boundary `Cube.boundary N = {y | ∃ i, y i = 0 ∨ y i = 1}`. Arguments that shrink a
 generalized loop into the middle of the cube and fill the resulting collar — the standard way

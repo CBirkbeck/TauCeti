@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Finiteness.Prod
 /-!
 # Existence of polarization data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.Exists)
+
 This file constructs `TauCeti.SpinPolarizationData` for finite-dimensional nondegenerate
 quadratic spaces over separably closed fields of characteristic different from two.
 

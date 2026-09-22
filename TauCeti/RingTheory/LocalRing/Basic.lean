@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.LocalRing.Basic
 /-!
 # Local rings that are not commutative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.LocalRing.Basic)
+
 Mathlib develops local rings mostly over a commutative base. This file records the two facts about
 a possibly noncommutative local ring that the Krull-Schmidt theorem needs of the endomorphism ring
 of an indecomposable module: it has no idempotents besides `0` and `1` (splitting `1 = a + (1 - a)`

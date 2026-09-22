@@ -14,6 +14,8 @@ import TauCeti.Analysis.Contour.Residue.SimplePole
 /-!
 # A possible singularity on the contour: the half-residue on a half-disc boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.HalfResidue)
+
 The pure on-contour case of `WorkedExamples/HalfDisc/Poles.lean`: an integrand whose only possible
 singularity is at the origin, where it is at worst a simple pole and where the half-disc contour
 passes straight through. Nothing is enclosed, so the result is the **half-residue** identity: the

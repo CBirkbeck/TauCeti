@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.OptimalTransport.Compactness
 /-!
 # The Wasserstein distance at the infinite exponent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Infinity.Basic)
+
 At `p = ∞` the Wasserstein distance `TauCeti.wassersteinEDist ∞ μ ν` is the infimum, over the
 couplings `π` of `μ` and `ν`, of the `π`-essential supremum of the ground distance
 (`TauCeti.wassersteinEDist_top`). This file proves, on a Polish metric space, the two facts that

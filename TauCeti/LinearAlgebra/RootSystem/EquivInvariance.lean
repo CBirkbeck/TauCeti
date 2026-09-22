@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Chain
 /-!
 # What an equivalence of root pairings preserves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.EquivInvariance)
+
 An equivalence `g : P.Equiv P₂` of root pairings consists of a linear equivalence of weight spaces,
 its transpose on coweight spaces, and a bijection `g.indexEquiv` of the indexing sets, subject to
 `g.weightMap (P.root i) = P₂.root (g.indexEquiv i)`. This file collects the combinatorial data that

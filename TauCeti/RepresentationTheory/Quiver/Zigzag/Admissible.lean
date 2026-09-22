@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Relations
 /-!
 # The zigzag relation ideal is admissible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Admissible)
+
 Let `R` be the arrow ideal of the path algebra of the doubled quiver of a finite simple graph `G`.
 The uniform zigzag relation ideal is squeezed between `R ^ 3` and `R ^ 2`: every uniform relator
 is a combination of paths of length at least two, and every path of length at least three is

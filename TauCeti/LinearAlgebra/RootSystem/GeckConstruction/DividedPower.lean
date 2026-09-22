@@ -13,6 +13,8 @@ import Mathlib.Tactic.Module
 /-!
 # Integral divided powers in Geck's representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.GeckConstruction.DividedPower)
+
 For a crystallographic reduced root pairing, Geck's construction gives numbered raising and
 lowering matrices `RootPairing.GeckConstruction.e` and `RootPairing.GeckConstruction.f` over
 `\mathbb{Q}`. This file proves that every divided power of either matrix has integer entries.

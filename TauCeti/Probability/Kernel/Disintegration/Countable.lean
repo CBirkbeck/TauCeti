@@ -10,6 +10,8 @@ public import Mathlib.Probability.Kernel.Disintegration.Basic
 /-!
 # Disintegrating a measure over a countable coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Kernel.Disintegration.Countable)
+
 A measure `σ` on a product `Y × Z` disintegrates over `Y` when it is the composition-product
 `σ.fst ⊗ₘ κ` of its first marginal with a Markov kernel `κ : Kernel Y Z`. Mathlib supplies such a
 kernel when the *second* factor `Z` is standard Borel

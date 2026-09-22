@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.ClassSum.Basis
 /-!
 # Structure constants of the class algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.StructureConstants)
+
 For conjugacy classes `Cᵢ`, `Cⱼ`, and `Cₖ` of a finite group, the structure constant
 `structureConstant Cᵢ Cⱼ Cₖ` counts factorizations `x * y = g`, where `x ∈ Cᵢ`, `y ∈ Cⱼ`, and
 `g` is any representative of `Cₖ`. Conjugating both factors proves that this count is independent

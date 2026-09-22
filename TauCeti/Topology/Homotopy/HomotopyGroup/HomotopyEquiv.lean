@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Map
 /-!
 # Homotopy groups are invariant under homotopy equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.HomotopyEquiv)
+
 Postcomposition with a continuous map induces a map on homotopy groups, and maps homotopic
 relative to the base point induce the same one. A *free* homotopy `H` from `f` to `g` moves the
 base point along its trace `H.evalAt x`, and the two induced maps then differ exactly by

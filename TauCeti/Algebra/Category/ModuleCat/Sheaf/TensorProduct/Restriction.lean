@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Monoidal
 /-!
 # Restriction of tensor products of sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Restriction)
+
 For a sheaf of commutative rings `R`, sheaves of `R`-modules `M` and `N`, and a continuous and
 cocontinuous functor between sites, this file identifies the pushforward of `M ⊗ N` with the tensor
 product of the pushforwards of `M` and `N`. Restriction to a slice site is the special case given by

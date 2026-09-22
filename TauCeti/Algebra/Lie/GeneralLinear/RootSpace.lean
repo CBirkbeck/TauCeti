@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Eigenspace.Matrix
 /-!
 # The root space decomposition of `gl n R`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.RootSpace)
+
 Let `gl n R = Matrix n n R` carry the commutator bracket and let `diagonalCartan R n` be its
 diagonal Cartan subalgebra. This file computes the weight spaces of `gl n R` for that Cartan
 subalgebra: *over a domain*, a matrix lies in the root space of a functional `χ` exactly when it is

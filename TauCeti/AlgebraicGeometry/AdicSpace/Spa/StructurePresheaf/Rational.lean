@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic
 /-!
 # The presentation limit on a rational open is `A⟨T/s⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Rational)
+
 Wedhorn §8.1 defines `𝒪_X(V)` for an open `V ⊆ Spa(A,A⁺)` as the limit of `A⟨T/s⟩` over the
 rational subsets `R(T/s) ⊆ V`, and states that on a rational open `U = R(T/s)` this limit is
 `A_U = A⟨T/s⟩` again. This file proves that statement for `presentationLimit`, the limit indexed by

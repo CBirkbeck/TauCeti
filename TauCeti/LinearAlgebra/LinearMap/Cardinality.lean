@@ -12,6 +12,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Counting a module along the range and the kernel of a linear map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearMap.Cardinality)
+
 For a linear map `f : M →ₗ[R] N` the first isomorphism theorem identifies `M ⧸ ker f` with
 `range f`, so the cardinality of `M` is the product of the cardinalities of the range and of the
 kernel. Both sides are `Nat.card`, which is `0` on an infinite type, so no finiteness hypothesis

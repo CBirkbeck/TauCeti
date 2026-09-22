@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.Coxeter
 /-!
 # The Coxeter transformation drives a dimension vector out of the positive cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Descent)
+
 Let `Q` be a finite quiver whose Tits form is positive definite, the numerical side of the ADE
 condition in Gabriel's theorem. This file proves that the Coxeter transformation `c`, the
 composite of the simple reflections along a repetition-free word running over every vertex, moves

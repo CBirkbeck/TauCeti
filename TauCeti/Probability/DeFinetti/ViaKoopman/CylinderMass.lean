@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Integral.ENNRealProd
 /-!
 # The block-cylinder mass, in the shape the common ending consumes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaKoopman.CylinderMass)
+
 The Koopman route's pieces assembled into the single hypothesis that
 `conditionallyIIDWith_of_measure_inter_blockCylinder_eq_setLIntegral` asks for.
 

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.ModularForm
 /-!
 # The normalisation lemma: the double coset of `diag(1, p)` is the classical `Uₚ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.DoubleCoset)
+
 Two Hecke operators on `M_k(Γ₁(N))` have been built independently. `HeckeSlash/Gamma1.lean`
 attaches one to an **arbitrary double coset** of the Hecke triple `(Γ₁(N), Δ₀(N))`, by slashing
 against representatives of the coset and summing; `UpperTri/ModularForm.lean` builds the

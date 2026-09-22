@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeB.RootGenerator
 /-!
 # The type-B spin representation of an odd polarization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeB.Representation)
+
 `TauCeti.SpinPolarizationData.typeBQuadraticEquiv` identifies the split type-`B` matrix Lie
 algebra `LieAlgebra.Orthogonal.typeB ι K` with the quadratic elements of the Clifford algebra of
 an odd polarization, and those act on the spinor module `ExteriorAlgebra K P.W` through

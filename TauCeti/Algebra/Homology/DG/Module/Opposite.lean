@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.GradedModule.LeftToRight
 /-!
 # Left DG modules as right modules over the graded opposite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Opposite)
+
 A left module over an internally graded algebra `A` determines a right module over the
 Koszul-signed graded opposite of `A`.  On homogeneous elements of degrees `p` and `q`, the action
 is

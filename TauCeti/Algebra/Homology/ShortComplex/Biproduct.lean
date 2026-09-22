@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.BinaryBiproducts
 /-!
 # Binary biproducts of short complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.ShortComplex.Biproduct)
+
 Two short complexes in a category with zero morphisms have a componentwise binary direct sum,
 provided the three relevant binary biproducts exist. This file constructs it and records the
 projection lemmas identifying its objects and maps.

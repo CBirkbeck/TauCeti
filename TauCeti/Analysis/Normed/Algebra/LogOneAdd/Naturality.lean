@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Normed.Algebra.LogOneAdd.Basic
 /-!
 # Naturality of the local logarithm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.LogOneAdd.Naturality)
+
 This file proves that continuous ring homomorphisms commute with the
 power series for `log (1 + u)` on the open unit ball. It also packages this
 local identity as an equality of germs at the origin.

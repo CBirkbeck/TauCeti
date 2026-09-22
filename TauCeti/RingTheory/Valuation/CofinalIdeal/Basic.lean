@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.CharacteristicGroup
 /-!
 # The ideal of cofinal values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.CofinalIdeal.Basic)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.1.** For a valuation `v` on a
 commutative ring and a convex subgroup `H` of its value group strictly containing the
 characteristic subgroup `cΓ_v`, the elements whose value is cofinal for `H` form a radical

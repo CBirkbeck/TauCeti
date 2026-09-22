@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.HopfIdealPoints.Funct
 /-!
 # Base change of the matrix points cut out by a Hopf ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.HopfIdealPoints.BaseChange)
+
 A closed subgroup scheme of `GLₙ/A` is often built over an extension `A` of `k` by a Hopf ideal
 `J` of `O(GLₙ/A)` together with an isomorphism identifying the quotient it cuts out with the
 scalar extension of the quotient by a Hopf ideal `I` of `O(GLₙ/k)`. The points of such a presented

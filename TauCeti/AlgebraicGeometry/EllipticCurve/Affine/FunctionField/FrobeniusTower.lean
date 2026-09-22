@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.Finite.Basic
 /-!
 # The finite-field Frobenius tower of a Weierstrass function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.FrobeniusTower)
+
 For a finite field `K` with `q` elements and a Weierstrass curve `W`, this file compares the
 general power tower `K(x^q) ⊆ K(x) ⊆ K(W)` with the subfield `K(W)^q` of `q`-th powers and
 computes `[K(W) : K(W)^q] = q`.

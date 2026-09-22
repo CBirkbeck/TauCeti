@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.Instances.Real
 /-!
 # The boundary model of a Euclidean half-space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Model)
+
 This file identifies the frontier of Mathlib's `(n + 1)`-dimensional manifold-with-boundary
 model `𝓡∂ (n + 1)` with the boundaryless model `𝓡 n`.  Concretely, the frontier is the
 coordinate hyperplane where the zeroth coordinate vanishes; deleting that coordinate gives a

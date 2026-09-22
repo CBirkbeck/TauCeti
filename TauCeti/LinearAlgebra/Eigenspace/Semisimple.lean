@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
 /-!
 # Diagonalizable endomorphisms are semisimple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.Semisimple)
+
 Mathlib records that a semisimple endomorphism of a finite-dimensional vector space over an
 algebraically closed field is diagonalizable
 (`Module.End.IsSemisimple.iSup_eigenspace_eq_top`). This file proves the converse, which needs no

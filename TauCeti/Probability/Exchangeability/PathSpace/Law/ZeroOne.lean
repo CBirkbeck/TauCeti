@@ -14,6 +14,8 @@ import TauCeti.Probability.Exchangeability.PathSpace.Exchangeable.ToContractable
 /-!
 # The zero-one characterization of product laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Law.ZeroOne)
+
 An exchangeable law on `ℕ → α` has trivial exchangeable σ-algebra exactly when it is an infinite
 product law:
 

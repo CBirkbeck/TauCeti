@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Valuation.RootMonic
 /-!
 # Integral points of a Weierstrass curve over a valued field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.ValuationIntegrality)
+
 Let `F` be a field, let `v` be a valuation on `F`, let `O` be the valuation subring of `v`, and
 let `W` be a Weierstrass curve over `F` admitting a model over `O`. This file records the
 valuation estimates that such a model forces, and the dichotomy they produce for the coordinates

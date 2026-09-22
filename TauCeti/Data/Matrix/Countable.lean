@@ -11,6 +11,8 @@ public import Mathlib.Basic.Countable.Basic
 /-!
 # Matrices over a countable type, with finitely many entries, are countable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Matrix.Countable)
+
 `Matrix m n α` is a semireducible definition rather than an abbreviation, so instance synthesis
 does not see through it to the underlying `m → n → α`: `Countable (m → n → α)` resolves and
 `Countable (Matrix m n α)` does not. This is the same reason Mathlib states the `Matrix` algebraic

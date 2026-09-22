@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Dual.BaseChange
 /-!
 # Matrix coefficients as regular-comodule morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Morphism)
+
 For a right comodule `M` over a coalgebra `C`, every linear functional `φ : M →ₗ[R] R`
 defines a matrix-coefficient map
 

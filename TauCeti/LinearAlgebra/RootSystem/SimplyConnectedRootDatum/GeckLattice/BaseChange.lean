@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # Base change of the pinned Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.BaseChange)
+
 For a valid Dynkin type `t`, `DynkinType.geckGroupScheme` is the explicit integral affine group
 scheme obtained by closing the numbered Geck root subgroups and the Geck weight torus inside a
 general linear group. This file specializes the base-change construction for a general Kostant

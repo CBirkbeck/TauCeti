@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Lie.Adjoint.Conjugation
 /-!
 # The tangent-space adjoint action of a Lie group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Basic)
+
 The tangent-space adjoint action is the differential at the identity of conjugation. We first prove
 that this differential transports left-invariant vector fields. Naturality of the manifold Lie
 bracket then shows that it is a Lie algebra automorphism, and the composition law for conjugation

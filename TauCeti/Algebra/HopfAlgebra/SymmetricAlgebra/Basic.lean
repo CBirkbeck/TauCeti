@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.HopfAlgebra.Basic
 /-!
 # The Hopf structure on a symmetric algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.SymmetricAlgebra.Basic)
+
 Mathlib equips `SymmetricAlgebra R M` with the cocommutative bialgebra structure in which each
 generator `ι x` is primitive, `Δ(ι x) = ι x ⊗ 1 + 1 ⊗ ι x` and `ε(ι x) = 0`, but it stops short
 of the antipode. Over a commutative ring `R` the symmetric algebra is a *Hopf* algebra: the

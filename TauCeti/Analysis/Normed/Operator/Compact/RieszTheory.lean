@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Normed.Operator.Compact.Eigenspace
 /-!
 # Riesz theory for compact perturbations of the identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Compact.RieszTheory)
+
 Let `K` be a compact operator on a Banach space `X` and write `A = 1 - K`. This file proves the
 three finiteness facts that make `A` a Fredholm operator: its kernel is finite dimensional, its
 range is closed, and its cokernel is finite dimensional. Together they are the operator-theoretic

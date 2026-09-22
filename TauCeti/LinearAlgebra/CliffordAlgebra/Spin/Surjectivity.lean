@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Spin.SpecialOrthogonal
 /-!
 # Surjectivity of the Spin action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Surjectivity)
+
 The determinant-one Pin elements are even, so Pin surjectivity restricts to Spin surjectivity onto
 the special orthogonal group.
 

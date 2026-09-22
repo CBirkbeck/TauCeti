@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Properties
 /-!
 # The bilinear pairing of finite-group class functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Pairing)
+
 This file defines the normalized bilinear pairing on class functions of a finite group.  When
 the coefficient field is algebraically closed and the group order is invertible, irreducible
 characters are orthonormal for this pairing.

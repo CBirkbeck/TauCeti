@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcoalgebra.Lattice
 /-!
 # Images of subcoalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcoalgebra.Map)
+
 This file proves that coalgebra morphisms send subcoalgebras to subcoalgebras. The underlying
 submodule of the image is the ordinary image of the underlying submodule.
 

@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Analytic.OfScalars
 /-!
 # The logarithm of one added to an element of a Banach algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.LogOneAdd.Basic)
+
 This file packages the power series
 `log (1 + u) = ∑ n ≥ 1, (-1)^(n+1) / n • u^n` in a Banach algebra over a
 characteristic-zero normed field. Its radius of

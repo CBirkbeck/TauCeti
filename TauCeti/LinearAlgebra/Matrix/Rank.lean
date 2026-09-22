@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.Rank
 /-!
 # Matrix rank
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Rank)
+
 This file records general results relating matrix rank to the corresponding linear maps.
 
 ## Main results

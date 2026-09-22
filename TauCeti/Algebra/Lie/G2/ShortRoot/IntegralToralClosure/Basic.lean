@@ -17,6 +17,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The integral toral closure of the short-root type-G2 representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.IntegralToralClosure.Basic)
+
 This file feeds the explicit seven-dimensional representation of type `G₂`, its admissible
 coordinate lattice, and its weights, the six short roots and zero, into the Kostant toral-closure
 construction. The result is an affine group scheme over `ℤ`, explicitly cut out inside `GL₇` by

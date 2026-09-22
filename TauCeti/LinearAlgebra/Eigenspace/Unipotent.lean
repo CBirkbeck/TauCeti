@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.GeneralLinearGroup.Unipotent
 /-!
 # Eigenspaces of unipotent automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.Unipotent)
+
 A unipotent automorphism has maximal generalized `1`-eigenspace equal to the whole space and has
 no eigenvalues other than one.
 

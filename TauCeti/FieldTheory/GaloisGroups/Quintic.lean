@@ -14,6 +14,8 @@ import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Solvable
 /-!
 # The Galois group of a quintic, from its discriminant and its resolvent sextic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Quintic)
+
 An irreducible separable quintic over a field carries exactly one of the five transitive-group
 labels `5T1`, …, `5T5`. For a monic such quintic, two data constrain the label. Away from
 characteristic `2` the discriminant reads its parity: it is a square exactly for the even labels

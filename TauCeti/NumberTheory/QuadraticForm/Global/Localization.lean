@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Places.ScalarExtension
 /-!
 # Localization of quadratic forms over number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.Localization)
+
 This file defines scalar extension of a quadratic form from a number field to its canonical
 finite completions and to the real or complex field selected by an infinite place.  The
 definitions use `QuadraticForm.baseChange`; in particular, their underlying spaces are genuine

@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.AbelianLayer
 /-!
 # The field cut out by an open normal subgroup of the absolute Galois group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.ClassField)
+
 Class field theory states its correspondences on the Galois side, as bijections between norm
 subgroups and open normal subgroups `V` of the absolute Galois group
 `G_F = Gal(Fˢ/F)`. This file records, once, the dictionary that turns such a subgroup back into a

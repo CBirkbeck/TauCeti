@@ -18,6 +18,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 /-!
 # Dimension vectors of quiver representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.DimensionVector)
+
 The dimension vector of a representation records the `Module.finrank` of its vector space at each
 vertex. No finite-dimensionality is assumed in the definition, so an infinite-dimensional component
 has value `0` by the convention for `Module.finrank`. This file defines dimension vectors and proves

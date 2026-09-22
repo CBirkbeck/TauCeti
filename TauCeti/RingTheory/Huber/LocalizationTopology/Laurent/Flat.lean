@@ -19,6 +19,8 @@ import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PairOfDefinition
 /-!
 # Flatness of the Laurent quotient, and of rational restriction maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Flat)
+
 Restriction maps between rational localisations are flat, at the ring level. For a fixed
 denominator the statements below run in increasing generality:
 

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Root subgroups on points of the toral Kostant closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.RootSubgroupPoints)
+
 The toral Kostant closure has a coordinate Hopf algebra obtained by quotienting the coordinate
 algebra of `GLₙ`, and each represented root subgroup factors through this quotient. This file
 records the resulting map on algebra-valued points. Thus, for every commutative ring `A` and root

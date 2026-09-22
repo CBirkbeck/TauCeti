@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Relations
 /-!
 # The vertex, arrow and volume basis of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Basis)
+
 The zigzag relation quotient `TauCeti.nonisolatedZigzagQuotient` of a finite simple graph `G` kills
 every length-two path whose endpoints differ, identifies all the backtracks based at one vertex,
 and kills every path of length at least three. What survives is spanned by the vertex idempotents,

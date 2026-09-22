@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Polynomial.Resultant.Discriminant
 /-!
 # Discriminants of quartics and their resolvent cubics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Quartic.Discriminant)
+
 A monic quartic of degree four and the cubic obtained by specializing `quarticD4Spec` have the
 same discriminant. Consequently, the specialized resolvent is separable exactly when the quartic
 is separable, so downstream quartic Galois-group criteria require no additional separation

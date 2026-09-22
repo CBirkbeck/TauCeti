@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 /-!
 # The additive circle and the complex unit circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Circle.AddCircle)
+
 For a nonzero real period `T`, Mathlib's `AddCircle.homeomorphCircle` identifies `AddCircle T`
 with the complex unit circle `Circle`. This file records where that identification sends the
 distinguished points: `0 : AddCircle T` is the point `1 : Circle`, so the inverse homeomorphism

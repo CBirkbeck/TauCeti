@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Frobenius.Points
 /-!
 # Frobenius on diagonalizable groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Frobenius)
+
 Let `A` be a commutative ring of exponential characteristic `p`. For any finitely generated
 commutative group `G`, applying the `n`-fold Frobenius of `A` to an `A`-valued point of the
 diagonalizable group `D(G)` agrees, under the coordinate-algebra comparison, with the existing

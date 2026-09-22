@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 /-!
 # Jordan's integral bound
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.JordanIntegral)
+
 The estimate
 
 $$\int_0^\pi e^{-c\sin\theta}\,d\theta \;\le\; \frac{\pi}{c} \qquad (c > 0)$$

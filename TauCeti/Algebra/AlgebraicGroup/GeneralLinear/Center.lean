@@ -15,6 +15,8 @@ public import TauCeti.Algebra.AlgebraicGroup.MultiplicativeGroup.Basic
 /-!
 # The center of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Center)
+
 For a field `k` and a positive integer `n`, this file identifies the center of the general
 linear group scheme `GLₙ` with the multiplicative group `𝔾ₘ`. On points, a unit acts by its
 scalar matrix. Mathlib's theorem `Matrix.GeneralLinearGroup.center_eq_range_scalar` supplies

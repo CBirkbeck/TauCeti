@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.Block
 /-!
 # The path algebra of the `A₂` quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.UpperTriangular)
+
 The `A₂` quiver `• → •` is the generalized Kronecker quiver on a one-element arrow type. Its path
 algebra has the two trivial paths and the single arrow as a basis, and this file identifies it with
 the three-dimensional algebra of upper-triangular `2 × 2` matrices.

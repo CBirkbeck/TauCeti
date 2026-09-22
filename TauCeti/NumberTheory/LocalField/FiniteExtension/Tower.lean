@@ -11,6 +11,8 @@ import TauCeti.RingTheory.Valuation.ValuativeRel.Extension
 /-!
 # Compatibility of local-field structures in towers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.FiniteExtension.Tower)
+
 For a finite tower `M/L/K` of extensions of a nonarchimedean local field, the valuative
 relation and topology constructed on `M` do not depend on whether the construction starts
 from `K` or from `L`. Thus constructions on finite subextensions can be compared without

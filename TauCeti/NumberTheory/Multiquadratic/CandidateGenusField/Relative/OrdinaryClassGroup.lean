@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Isomorphisms
 /-!
 # The ordinary class-group quotient in genus-field sign coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.OrdinaryClassGroup)
+
 Let `d > 0` be squarefree and nonsquare, and let `K = ℚ(√d)` be the embedded quadratic base of
 the candidate genus field. The genus characters identify `Cl⁺(K) / Cl⁺(K)²` with the sign vectors
 of even parity on the prime discriminants dividing `disc K`. Passing from the narrow class group

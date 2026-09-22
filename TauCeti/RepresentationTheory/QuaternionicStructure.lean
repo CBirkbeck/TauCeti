@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Basic
 /-!
 # Quaternionic structures on a complex representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.QuaternionicStructure)
+
 A **quaternionic structure** on a representation `ρ` of `G` on a complex vector space `V` is a
 conjugate-linear map `J : V →ₗ⋆[ℂ] V` with `J (J v) = -v` that commutes with the action.  It is the
 `-1` case of the Frobenius-Schur reality trichotomy; the `1` case is a real structure, a

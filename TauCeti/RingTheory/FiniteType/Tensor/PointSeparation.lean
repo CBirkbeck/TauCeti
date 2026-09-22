@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorProduct.Basis
 /-!
 # Point separation after tensoring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.FiniteType.Tensor.PointSeparation)
+
 Points of a reduced finite-type algebra valued in an algebraically closed extension detect
 not only its elements but also tensors with any vector space. This allows identities in a
 family of vectors to be checked at every geometric point of the parameter algebra.

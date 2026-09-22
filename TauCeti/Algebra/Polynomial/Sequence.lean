@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Polynomial.Sequence
 /-!
 # Linear independence of polynomial sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Sequence)
+
 This file generalizes Mathlib's `Polynomial.Sequence.linearIndependent` from domains to additive
 cancellation semirings where the sequence elements have right-regular leading coefficients, and
 constructs a basis over rings when those coefficients are units.

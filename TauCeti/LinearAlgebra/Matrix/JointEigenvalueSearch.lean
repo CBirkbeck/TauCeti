@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Echelon.KernelBasis
 /-!
 # Searching for common eigenvectors over a finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.JointEigenvalueSearch)
+
 For finitely many square matrices over a finite field, common eigenvectors can be found by an
 exhaustive but executable search. First choose one eigenvalue of each matrix using
 `TauCeti.eigenvalueSearch`. For a tuple `a`, stack the systems

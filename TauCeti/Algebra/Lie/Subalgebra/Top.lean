@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Semisimple.Basic
 /-!
 # Modules over a Lie subalgebra which is the whole algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Subalgebra.Top)
+
 A Lie subalgebra `L₁` of `L` acts on every `L`-module by restriction along the inclusion. When
 `L₁ = ⊤` that restriction loses nothing, because every element of `L` is the underlying element of
 one of `L₁`: the two actions have the same invariant subspaces, hence the same irreducibility, and

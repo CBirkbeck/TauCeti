@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basic
 /-!
 # Relabelling skew-zigzag algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Isomorphism)
+
 An isomorphism of simple graphs transports a skew-zigzag parameter by relabelling its incident
 edges. The induced isomorphism of doubled path algebras then carries each skew relation to the
 corresponding transported relation, and hence descends to an algebra isomorphism of the relation

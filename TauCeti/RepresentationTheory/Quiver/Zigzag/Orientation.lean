@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Basic
 /-!
 # Orienting a simple graph and recovering its doubled quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Orientation)
+
 An orientation of a simple graph chooses exactly one dart over every edge. The chosen darts form a
 quiver with one arrow over each edge, and symmetrifying that quiver recovers the doubled quiver of
 the graph. This file constructs mutually inverse, reversal-preserving prefunctors which implement

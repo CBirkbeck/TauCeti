@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.WithDensity
 /-!
 # The inverse-gamma distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.InverseGamma)
+
 The inverse-gamma law with shape `a` and scale `r` is the law of `X⁻¹` for
 `X ∼ gammaMeasure a r`, where `r` is the rate of the Gamma law.  This file defines that pushforward
 for positive parameters and uses the zero measure otherwise.  It derives the density

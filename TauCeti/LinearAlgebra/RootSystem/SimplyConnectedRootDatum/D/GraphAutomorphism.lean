@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.D.SpinWe
 /-!
 # The graph automorphism of the pinned type `Dₙ` root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.D.GraphAutomorphism)
+
 For `4 ≤ n`, the Dynkin diagram of type `Dₙ` has an involution exchanging its two fork nodes.
 On the classical realization by roots `±e_a ± e_b`, this involution changes the sign of the last
 coordinate. On the character and cocharacter lattices of the pinned simply connected datum, both

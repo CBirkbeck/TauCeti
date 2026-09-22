@@ -13,6 +13,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # The idempotent cutting out a connected component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Connected.Component)
+
 When `Spec R` is locally connected, the connected component of a point `x` is clopen. The
 idempotent--clopen correspondence therefore supplies a canonical idempotent `eₓ : R` whose basic
 open is that component. Equivalently, the ideal `(1 - eₓ)` cuts out the component as a closed

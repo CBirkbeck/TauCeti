@@ -11,6 +11,8 @@ public import TauCeti.Algebra.TensorProduct.BaseChange
 /-!
 # Base change of bialgebras in stages
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.BaseChange)
+
 For a tower of commutative semirings `k → L → K` and a `k`-bialgebra `H`, extending `H` to `L`
 and then to `K` agrees with extending it to `K` in one step. This file upgrades the algebra
 equivalence `TauCeti.Algebra.TensorProduct.baseChangeTowerAlgEquiv` to a bialgebra equivalence

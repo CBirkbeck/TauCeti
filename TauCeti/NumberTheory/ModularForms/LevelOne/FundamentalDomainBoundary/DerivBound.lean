@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 /-!
 # A uniform derivative bound for the boundary contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.DerivBound)
+
 The derivative of the boundary contour is bounded at every parameter: off the three corners
 each piece has a constant derivative or a scaled unit tangent, and at a corner the contour is
 not differentiable — the one-sided chords disagree — so `deriv` takes its junk value `0`.

@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.SubgroupFiberOrbit.B
 /-!
 # Normalizer-quotient actions on subgroup fibre quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.NormalizerQuotient.FiberAction)
+
 For a subgroup `H ≤ deck p`, the normalizer of `H` acts on the quotient of a fibre by
 `H`-orbits: a normalizer representative sends the class of `e` to the class of its deck
 translate. Elements of `H` act trivially on this quotient, so the action descends to the

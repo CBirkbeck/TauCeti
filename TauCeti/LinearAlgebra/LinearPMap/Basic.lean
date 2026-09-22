@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.LinearPMap
 /-!
 # Basic lemmas on partial linear maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearPMap.Basic)
+
 General lemmas on `LinearPMap` that Mathlib does not provide.
 
 ## Main results

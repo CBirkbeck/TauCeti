@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.GroupAction.Quotient
 /-!
 # Decomposing permutation triples into connected components
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.OrbitDecomposition)
+
 Every permutation triple restricts to each orbit of its monodromy group.  After numbering the
 points in every orbit, the original triple is the indexed disjoint sum of these restrictions.
 Thus the monodromy orbits are precisely the connected summands of a possibly disconnected

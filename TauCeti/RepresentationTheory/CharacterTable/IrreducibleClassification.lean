@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Semisimple.Wedderburn.Blocks
 /-!
 # The Wedderburn blocks of `k[G]` classify its irreducible representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.IrreducibleClassification)
+
 A Wedderburn presentation `e : k[G] ≃ₐ[k] Π i, Matₙᵢ(k)` of a finite group algebra over an
 algebraically closed field carries an irreducible representation on each block, and distinct blocks
 carry inequivalent ones (`TauCeti/RepresentationTheory/CharacterTable/BlockRepresentation.lean`).

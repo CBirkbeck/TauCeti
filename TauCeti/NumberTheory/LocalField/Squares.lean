@@ -17,6 +17,8 @@ import TauCeti.Algebra.Group.Units.Basic
 /-!
 # Deep units are squares, at the sharp depth
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.Squares)
+
 In a nonarchimedean local field of characteristic different from two, every unit in
 `U(K, 2 v_K(2) + 1)` is a square. In particular the subgroup of squares is open, including
 in residue characteristic two. This supplies the neighborhoods in which a nonzero value

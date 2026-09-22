@@ -14,6 +14,8 @@ public import TauCeti.FieldTheory.IntermediateField.ScalarTower
 /-!
 # The Galois action on the places lying over a place
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Galois)
+
 Let `F' / F` be an extension of fields and let `k` be a subfield of `F`. An `F`-automorphism `σ`
 of `F'` transports the places of `F' / k`: the valuation `v_P ∘ σ⁻¹` is again normalized and
 trivial on the constants, so `σ • P` is a place, and `v_{σ • P} (σ x) = v_P x`. Since `σ` fixes

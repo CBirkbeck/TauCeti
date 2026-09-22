@@ -29,6 +29,8 @@ import TauCeti.LinearAlgebra.Matrix.Diagonal
 /-!
 # Centralizers of the regular elements of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Centralizer)
+
 A `2 × 2` matrix over a field is **regular** as soon as it is not scalar: it is then cyclic
 (nonderogatory), and the matrices commuting with it are exactly the polynomials in it, the
 two-dimensional algebra `F[M]`. That is `TauCeti.commute_fin_two_iff`, from

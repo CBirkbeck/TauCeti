@@ -14,6 +14,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Range reindexing for finite sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finset.Range)
+
 Generic identities for sums indexed by `Finset.range` and `Finset.Ioo`. These are used by
 coderivation/Taylor expansions, which reindex a cut-and-collapse double sum over a triangle to a
 square and enlarge a vanishing-off-the-block range, and by divided-power exponential calculations,

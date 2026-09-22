@@ -16,6 +16,8 @@ import Mathlib.RingTheory.Ideal.IdempotentFG
 /-!
 # Smooth connected closed subgroups with equal tangent spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Smooth.Containment)
+
 A surjective map of coordinate Hopf algebras represents a closed immersion of affine groups.
 When both groups are smooth and connected, surjectivity on tangent spaces forces this closed
 immersion to be an isomorphism.

@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.SquareClass.Basic
 /-!
 # The degree of a multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Degree)
+
 For square roots `root j` of radicands `d j` over a field `K` (characteristic not two), the
 multiquadratic field `K(root₀, …, rootₙ₋₁)` has degree `2ⁿ` over `K` when the radicands are
 **square-class independent**: no nonempty subset product `∏_{j ∈ S} d j` is a square. Each

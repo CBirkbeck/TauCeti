@@ -17,6 +17,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 /-!
 # Almost sure uniqueness of the directing measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Unique)
+
 A **directing measure** — a witness of `ConditionallyIIDWith μ X ν` — is pinned down almost
 everywhere: any two of them agree `μ`-a.e. This is the sharp uniqueness statement that the
 mixture predicate `MixedIIDWith` fails to have, where only the *mixing law* `μ.map ν` is unique

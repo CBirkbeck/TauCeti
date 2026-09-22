@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Components
 /-!
 # Simply blocked grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Homology.SimplyBlocked)
+
 This file defines the simply blocked grid homology of a knot grid as the homology of the
 one-variable specialization of its unblocked grid complex.  Concretely, after choosing an
 `O`-marking in column `i` to block, the coefficient ring is the polynomial ring in the remaining

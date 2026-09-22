@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Sheaf
 /-!
 # The sheaf of a principal Weil divisor is a line bundle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Invertible)
+
 Let `X` be a locally Noetherian integral scheme of dimension at most one whose codimension-one
 local rings are discrete valuation rings. This file identifies the sheaf `𝒪_X(0)` of the zero
 divisor with the structure sheaf. When `X` is moreover Noetherian, which is the hypothesis under

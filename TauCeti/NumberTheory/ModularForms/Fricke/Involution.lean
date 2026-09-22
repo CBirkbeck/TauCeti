@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.Fricke.Operator
 /-!
 # The Fricke operator is an involution up to a scalar
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.Involution)
+
 The Fricke matrix squares to the scalar matrix `(-N) • 1`
 (`coe_frickeGL_sq` of `TauCeti/NumberTheory/ModularForms/Fricke/Matrix.lean`), and a scalar
 matrix acts trivially on `ℍ`. Slashing by `W²` is therefore multiplication by a constant, and

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.Removability.Basic
 /-!
 # Painlevé removability across a circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Removability.Circle)
+
 A circle is a removable set for continuous holomorphic functions: if `F` is continuous on an open
 set `Ω ⊆ ℂ` and holomorphic on `Ω` off a positive-radius circle, then `F` is holomorphic on all of
 `Ω`.

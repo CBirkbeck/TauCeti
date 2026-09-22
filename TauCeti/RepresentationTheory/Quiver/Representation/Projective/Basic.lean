@@ -17,6 +17,8 @@ public import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 /-!
 # The projective representation at a vertex of a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Projective.Basic)
+
 For a vertex `i` of a quiver `Q`, the representation `Pᵢ` puts the free `k`-module on the paths
 `i → j` at the vertex `j`, an arrow `e : a ⟶ b` acting by appending `e` to a path. Under the
 identification of representations with left modules over the path algebra it is the left ideal

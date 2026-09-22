@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Valuation.Discrete.Order
 /-!
 # Places of an algebraic function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Basic)
+
 A *place* of a field extension `F/k` is a normalized discrete valuation of `F` that is trivial
 on `k`: a valuation `v : Valuation F ℤᵐ⁰` which is surjective and satisfies `v c = 1` for every
 nonzero constant `c`. This is the object Stichtenoth introduces in

@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.QuadraticForm.OfParallelogram
 /-!
 # The canonical (Néron–Tate) height
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.CanonicalHeight)
+
 The naïve height `h` is quadratic only up to a bounded error: `approx_parallelogram_law` gives a
 constant `C` with `|h(P + Q) + h(P - Q) - 2(h P + h Q)| ≤ C`. Tate's observation is that averaging
 that error away along the doubling map removes it. This file carries

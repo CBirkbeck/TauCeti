@@ -10,6 +10,8 @@ public import Mathlib.Data.Matrix.Basic
 /-!
 # Iterated matrix-vector multiplication
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.MulVec)
+
 Multiplying a vector by a matrix twice is multiplying it by the square of the matrix, so a
 square-zero matrix annihilates every vector in two steps. This is the form in which the nilpotence
 of a root operator reaches the vector it acts on.

@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Smooth
 /-!
 # Reductive affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Reductive)
+
 This file transports reductivity from finite-type commutative Hopf algebras to affine group
 schemes of finite type over a field. The coordinate-ring predicate says that the group is smooth
 and geometrically connected and that its geometric fibre has no nontrivial connected normal

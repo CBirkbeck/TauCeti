@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Normed.Operator.Compact.RieszTheory
 /-!
 # Compact perturbations of Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.CompactPerturbation)
+
 A compact perturbation of a Fredholm operator between Banach spaces is Fredholm, with the same
 index. This is the last of the three classical stability statements for the Fredholm index --
 after finite-rank perturbations (`TauCeti.Analysis.Fredholm.FiniteRank`) and small perturbations

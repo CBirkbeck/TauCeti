@@ -13,6 +13,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 /-!
 # Weierstrass division for restricted power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.WeierstrassDivision)
+
 Let `f` be a power series which is distinguished of degree `s` at the radius `c`: its
 Gauss norm is attained in degree `s`, and every later coefficient is strictly smaller. A
 *Weierstrass division* by `f` writes a power series as

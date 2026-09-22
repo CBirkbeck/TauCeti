@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Quotient.Prod
 /-!
 # Orthogonal complements and quotients of an orthogonal direct sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Orthogonal.Prod)
+
 Let `A` and `B` be finite bilinear modules and let `H ≤ A`, `K ≤ B` be additive subgroups. The
 pairing of the orthogonal direct sum `A ⊥ B` has no cross terms, so orthogonality of a vector
 against the product subgroup `H × K` is orthogonality of each component against its own factor:

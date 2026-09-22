@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PDE.EnergyForm.Integrated.Basic
 /-!
 # Lower bounds for the shifted-Laplacian energy form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.ShiftedLaplacianEnergy)
+
 The energy-method lane of the PDE roadmap uses the shifted Laplacian `-Δ + m` as the model
 coercive operator before adding variable uniformly elliptic coefficients.  The pointwise file
 `TauCeti.Analysis.PDE.EnergyLowerBounds` already proves that the jet density

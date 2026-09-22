@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Bivector
 /-!
 # Reversal on Clifford subalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Reversal.Basic)
+
 This file restricts Clifford reversal to the even subalgebra and records its action on bivectors.
 -/
 

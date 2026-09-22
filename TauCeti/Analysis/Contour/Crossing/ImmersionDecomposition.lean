@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Crossing.Windows
 /-!
 # The winding decomposition of an immersed contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.ImmersionDecomposition)
+
 This file completes Hungerbühler--Wasem Proposition 2.2.  A closed piecewise-`C¹` immersion
 meets a point `s` at finitely many parameter values.  Provided the basepoint avoids `s`, we choose
 one common parameter radius around those crossings and then one common spatial exit radius.  The

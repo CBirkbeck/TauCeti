@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Modulus
 /-!
 # The congruence lattice of a modulus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Counting.CongruenceLattice)
+
 Let `𝔪` be a modulus of a number field `K` with finite part `𝔪₀`, and let `I` be an invertible
 fractional ideal.  Under the mixed embedding `K → ℝ^r₁ × ℂ^r₂`, the ideal `I` becomes the full
 lattice `mixedEmbedding.idealLattice K I`.  The **congruence lattice** `congruenceLattice 𝔪 I` is

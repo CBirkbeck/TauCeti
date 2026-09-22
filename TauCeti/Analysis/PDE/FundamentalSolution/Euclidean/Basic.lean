@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
 /-!
 # The Newtonian kernel in dimension at least three
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Euclidean.Basic)
+
 For `3 ≤ n`, this file defines the Newtonian kernel for the negative Laplacian on
 `EuclideanSpace ℝ (Fin n)`:
 

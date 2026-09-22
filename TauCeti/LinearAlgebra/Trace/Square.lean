@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # The trace of an endomorphism of a tensor square
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Trace.Square)
+
 A tensor square carries a basis indexed by *pairs* of indices of a basis of the underlying module,
 and the two tensor squares in the library — the binary `M ⊗[R] M` and the `Fin 2`-indexed
 `⨂[R]^2 M` — differ only in how that pair index is spelled. This file isolates the computation

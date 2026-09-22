@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Rep.Res
 /-!
 # The augmentation ideal and the augmentation sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.Augmentation)
+
 For a group `G` and a commutative ring `k`, the **augmentation** `k[G] ⟶ k` sends a group ring
 element to the sum of its coefficients, and its kernel `I_G` is the **augmentation ideal**, here
 taken as a representation of `G`. The **augmentation sequence** `0 ⟶ I_G ⟶ k[G] ⟶ k ⟶ 0` is short

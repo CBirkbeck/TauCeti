@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.Path
 /-!
 # Semilocally simple connectivity on sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SemilocallySimplyConnected.On)
+
 This file develops the unbased, pointwise form of semilocal simple connectivity used by the
 universal-cover construction. It is adapted from the Mathlib drafts
 [#31449](https://github.com/leanprover-community/mathlib4/pull/31449),

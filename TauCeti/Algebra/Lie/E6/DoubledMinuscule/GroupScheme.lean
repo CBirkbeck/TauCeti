@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The full-weight doubled type-E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.GroupScheme)
+
 This file feeds the explicit `54`-dimensional type-`E₆` representation `V(ϖ₁) ⊕ V(ϖ₆)`, its
 admissible coordinate lattice, and its full set of weights into the Kostant toral-closure
 construction. The result is an explicit affine group scheme over `ℤ`, cut out inside `GL₅₄` by the

@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.RamificationInertia.Basic
 /-!
 # Complete splitting is trivial ramification and inertia
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.Splitting)
+
 This file records the non-Galois counting criterion for primes in finite flat extensions of
 domains: a prime has as many primes above it as the degree allows exactly when every one of them
 is unramified with trivial residue extension.

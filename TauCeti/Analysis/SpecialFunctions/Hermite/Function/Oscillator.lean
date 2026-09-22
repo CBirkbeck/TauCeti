@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 /-!
 # The harmonic-oscillator eigen-equation for the Hermite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Oscillator)
+
 This file adds the **A2 oscillator milestone** of the `OrthogonalL2Bases` roadmap: the Hermite
 functions `ψₙ` (`TauCeti.hermiteFunction`, `ψₙ(x) = Hₙ(x√2) exp(-x²/2) / √(n!√π)`) are the
 eigenfunctions of the quantum harmonic oscillator,

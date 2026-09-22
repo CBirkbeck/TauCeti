@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.PointsFunctor
 /-!
 # The upper-triangular subgroup of the type-A full-weight carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.UpperTriangular)
+
 The full-weight type-`A_r` carrier is an explicit closed subgroup scheme of `GL_(r+1)`.  This file
 intersects it scheme-theoretically with the standard upper-triangular subgroup scheme of `GL_(r+1)`.
 On coordinate Hopf algebras, intersection is the join of the two defining Hopf ideals.  The

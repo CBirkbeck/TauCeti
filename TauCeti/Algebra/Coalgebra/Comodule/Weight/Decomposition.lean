@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.TensorProduct.Basis
 /-!
 # Weight decomposition of comodules over a group-like-spanned coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Weight.Decomposition)
+
 Let `C` be a torsion-free coalgebra over a domain `k` whose group-like elements span `C`. Over a
 field and for `C` a commutative Hopf algebra, this says that `C` is the coordinate algebra of a
 diagonalizable group. This file proves that every `C`-comodule is the sum of its group-like weight

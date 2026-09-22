@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.LSeries.SumCoeff
 /-!
 # Analytic continuation of an L-series from a bound on its partial sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.SumCoeff)
+
 If the partial sums `A(n) = ∑_{k=1}^n f k` of a sequence `f : ℕ → ℂ` are `O(n ^ r)`, Mathlib's
 `LSeries_eq_mul_integral` (from `Mathlib/NumberTheory/LSeries/SumCoeff.lean`)
 writes the L-series of `f` as

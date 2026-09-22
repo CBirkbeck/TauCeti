@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Augmentation
 /-!
 # Points of Hopf-ideal quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Basic)
+
 For a Hopf ideal `I` in a commutative Hopf algebra `H`, the quotient coordinate Hopf algebra
 `H ⧸ I` represents a closed subgroup of the affine group represented by `H`. On functors of
 points this is the injective group homomorphism

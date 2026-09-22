@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.TensorProduct.Free
 /-!
 # Multiplying by `a ⊗ₜ 1` in `A ⊗[K] B`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.TensorProduct.Mul)
+
 Two formulas for multiplication by a pure tensor `a ⊗ₜ 1` in an algebra tensor product, one on
 each side. Both are general facts about `A ⊗[K] B` over a commutative semiring: neither needs `A`
 or `B` to be central, simple, or even a ring.

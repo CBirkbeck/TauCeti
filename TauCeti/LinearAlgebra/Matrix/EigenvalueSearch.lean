@@ -27,6 +27,8 @@ import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # Searching a finite field for the eigenvalues of a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.EigenvalueSearch)
+
 Over a *finite* field the eigenvalues of a square matrix can be found by brute force: run through
 the field and keep the scalars `a` at which `a • 1 - A` is singular. This file defines that search,
 `TauCeti.eigenvalueSearch`, as a genuine `def` on decidable data, and proves that it finds exactly
@@ -83,7 +85,10 @@ variable {A : Matrix n n F} {a : F}
 
 A `Finset` rather than a list: the search has no preferred order on the field, and eigenvalues
 carry no multiplicity here. The body is exposed because consumers of an executable algorithm
-evaluate it, and kernel reduction needs the definition. -/
+evaluate it, and kernel reduction needs the definition.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.eigenvalueSearch) -/
 @[expose] def eigenvalueSearch (A : Matrix n n F) : Finset F :=
   Finset.univ.filter fun a => (Matrix.scalar n a - A).det = 0
 

@@ -10,6 +10,8 @@ public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 /-!
 # Norm bounds for bounded continuous functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.ContinuousMap.Bounded.Normed)
+
 This file records norm estimates for operations on bounded continuous functions.
 
 The main estimate, `TauCeti.norm_boundedContinuousFunction_comp_le`, bounds the sup norm of the

@@ -14,6 +14,8 @@ import Mathlib.Topology.MetricSpace.Ultra.TotallySeparated
 /-!
 # The additive group of the p-adic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.PadicInt)
+
 The additive group of `ℤ_[p]`, written multiplicatively as `Multiplicative ℤ_[p]`, is a
 pro-`p` group. Indeed, every open subgroup contains the kernel of a truncation
 `ℤ_[p] → ZMod (p ^ n)`, so its quotient is a quotient of a finite `p`-group.

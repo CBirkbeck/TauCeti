@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.DividedPowers.RootString.G2.Basic
 /-!
 # Normal ordering divided powers for the short pair in type `G₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DividedPowers.RootString.G2.ShortPair)
+
 Let `x`, `y`, `z`, `w`, and `s` belong to an associative algebra over `ℚ`, with
 
 ```text

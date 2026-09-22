@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.Lattice
 /-!
 # Rationalizing integral Lie lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Subalgebra.Rationalization)
+
 Let `M` be a free full Lie lattice over a domain `R` in a Lie algebra `L` over its fraction field
 `K`. The underlying submodule inclusion exhibits `L` as the scalar extension `K ⊗[R] M`. This file
 proves that the canonical rationalization equivalence respects the Lie bracket, giving

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.PowerSeries.Order
 /-!
 # Self-multiplication cancellation for formal power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.Order)
+
 A formal power series fixed by multiplication with a series of zero constant coefficient is zero:
 if `f = g * f` in `R⟦X⟧` and `constantCoeff g = 0`, then `f = 0`.
 

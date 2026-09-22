@@ -16,6 +16,8 @@ public import TauCeti.Algebra.Order.Group.Subgroup
 /-!
 # Convex subgroups of linearly ordered groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.Group.ConvexSubgroup)
+
 A subgroup of a group with a linear order is *convex* if it contains every element
 lying between two of its members. That definition, the closure and preimage constructions
 and the elementary exclusion lemmas need no more than a group with a linear order. The

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.ConstMulAction
 /-!
 # The tautological action of the diffeomorphism group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Diffeomorphism.Action)
+
 The self-diffeomorphism group `M ≃ₘ^n⟮I, I⟯ M` acts on the underlying manifold by evaluation:
 `φ • x = φ x`. This file records that action, its faithfulness, and continuity in the point.
 

@@ -10,6 +10,8 @@ public import Mathlib.Data.ZMod.ValMinAbs
 /-!
 # The residue window: small integers are recovered from their residues
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ZMod.ValMinAbs)
+
 If `2 * |z| < n` then `z` lies strictly inside the window `(-n/2, n/2]` that `ZMod.valMinAbs`
 picks representatives from, so `ZMod.valMinAbs` returns `z` itself from the residue of `z` modulo
 `n` -- and hence two such integers with the same residue are equal.

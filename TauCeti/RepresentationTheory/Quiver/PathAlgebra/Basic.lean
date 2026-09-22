@@ -16,6 +16,8 @@ public import Mathlib.RingTheory.Idempotents
 /-!
 # Path algebras of quivers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic)
+
 The path algebra `kQ` of a quiver `Q` over a semiring `k` is the free `k`-module on the paths of
 `Q`, with the product of two paths their concatenation when they are composable and `0` otherwise.
 

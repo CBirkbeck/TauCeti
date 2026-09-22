@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Inverse
 /-!
 # The addition series of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Series)
+
 `FormalGroup/Chord.lean` produces `formalThirdRoot`, the parameter of the third point in which
 the chord through the points with parameters `z₁` and `z₂` meets the curve, and
 `FormalGroup/Inverse.lean` produces `formalInverse`, the parameter of the negative of a point.

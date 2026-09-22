@@ -15,6 +15,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Tower
 /-!
 # The conorm of a divisor along an extension of function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.Conorm)
+
 Let `F' / k'` be a finite extension of the algebraic function field `F / k`.  Every place `P'` of
 `F' / k'` restricts to a place `P'.restrict k F` of `F / k`, and a place of `F / k` has only
 finitely many places above it.  The **conorm**

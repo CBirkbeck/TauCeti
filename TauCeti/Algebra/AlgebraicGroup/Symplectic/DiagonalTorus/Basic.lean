@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Diagona
 /-!
 # The diagonal torus of the symplectic group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.DiagonalTorus.Basic)
+
 This file promotes the diagonal symplectic matrices
 
 ```text

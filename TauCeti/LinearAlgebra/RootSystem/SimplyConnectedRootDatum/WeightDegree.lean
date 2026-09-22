@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.KostantF
 /-!
 # The height degree of pinned integral weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.WeightDegree)
+
 The pinned rational root system of a valid Dynkin type has the simple roots as a basis of its
 weight space. Summing the coordinates in this basis gives a rational-valued degree on integral
 weights. This file packages that functional as `TauCeti.DynkinType.weightDegree` and identifies

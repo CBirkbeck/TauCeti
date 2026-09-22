@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelCommute
 /-!
 # The descent commutes with the level-raise
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.LevelRaise.Commute)
+
 Miyake's Lemma 4.6.6 (2): for a prime `p ∣ N` and `l` coprime to `p`, the descent slash sum at
 level `l N` of the level-raise `V_l f` of `f ∈ S_k(Γ₁(N), χ)` is the level-raise of the descent
 slash sum of `f` at level `N`, provided `χ` is the pull-back of a character modulo `N / p`. The

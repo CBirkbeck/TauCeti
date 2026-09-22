@@ -12,6 +12,8 @@ public import Mathlib.Topology.MetricSpace.Isometry
 /-!
 # The Poincaré metric space on the complex unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.MetricSpace)
+
 The symmetry, nonnegativity, vanishing-on-the-diagonal and triangle-inequality lemmas already
 proved for the hyperbolic (Poincaré) distance `hyperbolicDist` on the open unit disc
 (`HyperbolicDistance.lean`, `HyperbolicTriangle.lean`) are exactly the metric-space axioms.
@@ -57,7 +59,10 @@ open _root_.Complex Metric Set
 This is a type synonym for `Complex.UnitDisc`, introduced so that the Poincaré distance can be
 registered as a `MetricSpace` instance without clashing with the Euclidean subspace metric that
 `Complex.UnitDisc` already carries. Move between the two views with the identity equivalences
-`Complex.UnitDisc.toPoincare` and `PoincareDisc.toUnitDisc`. -/
+`Complex.UnitDisc.toPoincare` and `PoincareDisc.toUnitDisc`.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PoincareDisc) -/
 @[expose] def PoincareDisc : Type := Complex.UnitDisc
 
 namespace PoincareDisc
@@ -65,7 +70,10 @@ namespace PoincareDisc
 /-- Reinterpret a point of the unit disc as a point of the Poincaré disc (the identity map). -/
 @[expose] def _root_.Complex.UnitDisc.toPoincare : Complex.UnitDisc ≃ PoincareDisc := Equiv.refl _
 
-/-- Reinterpret a point of the Poincaré disc as a point of the unit disc (the identity map). -/
+/-- Reinterpret a point of the Poincaré disc as a point of the unit disc (the identity map).
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PoincareDisc.toUnitDisc) -/
 @[expose] def toUnitDisc : PoincareDisc ≃ Complex.UnitDisc := Complex.UnitDisc.toPoincare.symm
 
 @[simp]

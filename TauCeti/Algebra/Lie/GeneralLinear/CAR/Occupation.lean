@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.GeneralLinear.Clifford
 /-!
 # Occupation elements in the CAR algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.Occupation)
+
 For the Clifford algebra of the trace form on matrices, write `dᵢⱼ = ι(Eᵢⱼ)`. This file studies
 the normalized quadratic elements
 

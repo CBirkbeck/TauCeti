@@ -14,6 +14,8 @@ public import TauCeti.Topology.Continuum
 /-!
 # Cluster sets and the continuous extension they produce
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.ClusterSet)
+
 The **cluster set** of a map `f` on `U` at a point `w` is the set of values approached by `f z` as
 `z → w` inside `U`. It is the standard tool for reading off boundary behaviour: `f` extends
 continuously across `w` exactly when it has a limit along `𝓝[U] w`, and — *once the values of `f`

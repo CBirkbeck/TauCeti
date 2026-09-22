@@ -12,6 +12,8 @@ public import TauCeti.Topology.Frontier
 /-!
 # A bounded set is exactly as wide as its frontier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.DiamFrontier)
+
 In a real normed space a bounded set `V` and its frontier have the same diameter:
 `TauCeti.diam_frontier`. One inequality is trivial, `frontier V` being contained in `closure V`.
 The other says that the frontier already realises every distance realised inside `V`, and it is

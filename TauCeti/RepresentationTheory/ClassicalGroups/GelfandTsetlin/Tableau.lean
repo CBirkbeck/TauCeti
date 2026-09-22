@@ -13,6 +13,8 @@ public import Mathlib.Data.Fintype.Fin
 /-!
 # Gelfand-Tsetlin patterns are semistandard Young tableaux
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.GelfandTsetlin.Tableau)
+
 A Gelfand-Tsetlin pattern whose top row is a shape `μ` records a chain of shapes
 
 ```text

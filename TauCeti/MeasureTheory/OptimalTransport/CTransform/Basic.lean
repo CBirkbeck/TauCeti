@@ -14,6 +14,8 @@ public import TauCeti.Data.EReal.Operations
 /-!
 # The infimal `c`-transform, `c`-concavity, and contact sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.CTransform.Basic)
+
 The Kantorovich dual constraint on a pair of potentials `φ : X → EReal` and `ψ : Y → EReal`
 against a cost `c : X × Y → ℝ` is the pointwise inequality `φ x + ψ y ≤ c (x, y)`. With `φ`
 fixed, the largest `ψ` satisfying it is the *infimal `c`-transform*

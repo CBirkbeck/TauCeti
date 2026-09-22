@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.MonoidLocalization.GrothendieckGroup
 /-!
 # Split `K₀` of an additive category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Split)
+
 The split Grothendieck group `TauCeti.SplitK0 C` of an essentially small category `C` with zero
 morphisms and binary biproducts -- an additive category, in the intended application -- is the
 free abelian group on the isomorphism classes of objects modulo the biproduct relations

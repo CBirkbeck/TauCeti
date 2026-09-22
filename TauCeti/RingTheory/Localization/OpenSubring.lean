@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.TopologicallyNilpotent
 /-!
 # Localising an open subring at a topologically nilpotent element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Localization.OpenSubring)
+
 Let `B` be an **open** subring of a topological ring `A`, and let `s : B` be topologically
 nilpotent in `A`. Inverting `s` on both sides does not distinguish the two rings: the induced map
 `B_s → A_s` is a ring isomorphism.

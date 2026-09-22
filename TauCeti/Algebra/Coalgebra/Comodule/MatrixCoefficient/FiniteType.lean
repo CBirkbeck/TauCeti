@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcoalgebra.Finite
 /-!
 # Finite-dimensional comodules generating a finite-type algebra-coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.FiniteType)
+
 Let `C` be a coalgebra over a field which is also finitely generated as an algebra. Choose a
 finite algebra-generating set and place it in a finite-dimensional subcoalgebra `D` using the
 fundamental theorem of coalgebras. The regular coaction restricts to `D`, and every element of

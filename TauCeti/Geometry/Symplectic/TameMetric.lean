@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Symplectic.AlmostComplex
 /-!
 # The metric of a tame pair
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.TameMetric)
+
 A symplectic form `ω` taming an almost complex structure `J` need not be `J`-invariant, so the
 bilinear form `ω(v, J w)` from `AlmostComplex.lean` is in general not symmetric. Its symmetric
 part, however, always is a metric: `gₛ(v, w) = ω(v, J w) + ω(w, J v)` is symmetric, automatically

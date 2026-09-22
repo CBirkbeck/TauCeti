@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # The trace of an endomorphism whose square is a multiple of itself
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Trace.Idempotent)
+
 An endomorphism `f` of a finite-dimensional vector space satisfying `f * f = a • f` is a scaled
 projection: when `a ≠ 0` the endomorphism `a⁻¹ • f` is idempotent with the same range as `f`, so
 the trace of `f` is `a` times the dimension of that range. The degenerate case `a = 0` obeys the

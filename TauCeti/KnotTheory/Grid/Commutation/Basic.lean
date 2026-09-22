@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Diagram.Basic
 /-!
 # Grid diagram commutation moves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Commutation.Basic)
+
 This file starts the commutation-move API for grid diagrams. The total row and column swap
 operations used as underlying relabelings live in `TauCeti.KnotTheory.Grid.Diagram.Basic`, next to
 the general row and column relabeling API. Here we add the move-specific hypothesis: two rows or

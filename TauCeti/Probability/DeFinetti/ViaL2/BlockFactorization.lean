@@ -14,6 +14,8 @@ import TauCeti.Probability.DeFinetti.DirectingMeasure.Integral
 /-!
 # The finite-block factorization, via `L²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaL2.BlockFactorization)
+
 For a contractable process on a standard Borel state space, the conditional law of any finite
 strictly monotone block, given the process tail, factorizes into the directing measure's marginals:
 

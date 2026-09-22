@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Algebra.Equiv
 /-!
 # A ramified prime of a quadratic field is totally ramified
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.TotalRamification)
+
 Let `K` be a number field of degree `2` over `ℚ` and let `p` be a rational prime that ramifies
 in `K`. This file proves the classical description of that ramification: there is exactly one
 prime `𝔭` of `𝓞 K` above `p`, it has ramification index `2` and inertia degree `1`, and

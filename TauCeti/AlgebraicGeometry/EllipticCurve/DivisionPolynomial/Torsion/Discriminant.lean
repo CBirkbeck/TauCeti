@@ -19,6 +19,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Discriminant
 /-!
 # The discriminant companion of Nagell–Lutz
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Discriminant)
+
 Over `ℤ`, a torsion point with integral coordinates either has `ψ₂ = 0` there or has `ψ₂²` dividing
 `4Δ`. Writing `κ = ψ₂(x₀, y₀) = 2y₀ + a₁x₀ + a₃`, that is the classical `y = 0 ∨ y² ∣ Δ` disjunct
 in the form a long Weierstrass model supports.

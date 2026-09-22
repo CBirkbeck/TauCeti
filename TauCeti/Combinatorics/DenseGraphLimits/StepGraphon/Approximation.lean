@@ -12,6 +12,8 @@ public import TauCeti.Probability.Process.PartitionFiltration
 /-!
 # Approximation by block-average step graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Approximation)
+
 On a countably generated probability space, the block averages of a graphon along the canonical
 refining finite partitions converge to the graphon in `L¹`. The finite partitions generate the
 ambient σ-algebra, so this is Lévy's upward theorem after identifying each block average with the

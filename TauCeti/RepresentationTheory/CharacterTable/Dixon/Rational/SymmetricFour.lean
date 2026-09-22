@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.IntegerChecker
 /-!
 # An exact character-table certificate for the symmetric group on four letters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.SymmetricFour)
+
 This file gives the integer character table of `S₄ = Equiv.Perm (Fin 4)` and certifies it
 against the computed class algebra.  Columns use the cycle-type order `1⁴`, `2·1²`, `2²`,
 `3·1`, `4` fixed by `TauCeti.symmetricGroupFourClassData`.  The rows are the trivial and sign

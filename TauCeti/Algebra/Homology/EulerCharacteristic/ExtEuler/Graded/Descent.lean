@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Addit
 /-!
 # Preliminary exact-K₀ descent of the graded Ext-Euler characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Descent)
+
 For extension-closed object properties `P` and `Q`, pointwise graded Euler-admissibility makes the
 Laurent-polynomial-valued Ext-Euler characteristic additive on every conflation in either
 subcategory.  The universal property of exact `K₀` therefore gives a biadditive pairing between

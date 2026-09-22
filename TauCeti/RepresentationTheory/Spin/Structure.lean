@@ -20,6 +20,8 @@ import Mathlib.RingTheory.SimpleRing.Congr
 /-!
 # The structure theorem for an even-dimensional Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Structure)
+
 A polarization of a quadratic space `(V, Q)` splits it as `W ⊕ W' ⊕ L` and makes the exterior
 algebra `S = ⋀·W` a module over `CliffordAlgebra Q` — the Fock model `TauCeti.spinAction`. That
 action is *onto* `Module.End K S` when `W` is finite free (`TauCeti.spinAction_surjective`): every

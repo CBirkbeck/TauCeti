@@ -13,6 +13,8 @@ import Mathlib.Analysis.Analytic.Linear
 /-!
 # Analytic coordinate changes for families of simple roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Polynomial.SimpleRoots.Family)
+
 An elementary-symmetric chart on a symmetric power of a surface separates a tuple into the
 points lying in finitely many disjoint coordinate patches. If the multiplicity in patch `i` is
 `m i`, its coordinates form a block `Fin (m i) → 𝕜`; a bijection

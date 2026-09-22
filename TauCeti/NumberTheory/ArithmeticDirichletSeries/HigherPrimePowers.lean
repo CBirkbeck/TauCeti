@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.VonMangoldt
 /-!
 # Crude prime counts and the higher prime powers of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.HigherPrimePowers)
+
 Chebyshev's `ψ` counts every prime power `𝔭 ^ k` with the logarithmic weight `log N(𝔭)`, while
 `ϑ` counts only the primes themselves.  Their difference is the sum of `log N(𝔭)` over the
 *higher* prime powers, those with `k ≥ 2`, and the point of this file is that this difference is

@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Polynomial.AlgebraMap
 /-!
 # Sending every variable to the same single variable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MvPolynomial.AevalConstX)
+
 The `R`-algebra map `R[Xᵢ : i ∈ σ] → R[X]` sending every variable `Xᵢ` to `X` is
 `MvPolynomial.aeval fun _ => Polynomial.X`. It is surjective as soon as `σ` is nonempty, and
 following it by `X ↦ X_c` is the renaming that sends every variable to `X_c`.

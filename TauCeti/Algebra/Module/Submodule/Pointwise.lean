@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Ring.Subring.Basic
 /-!
 # Powers of a subring scalar acting on a submodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Submodule.Pointwise)
+
 Let `S` be a subring of a commutative ring `A`, `M` an `A`-module and `M₀` an `S`-submodule of
 `M`. This file collects the elementary facts about the family `rⁿ • M₀`, for `r : S`, in
 Mathlib's pointwise action on submodules.

@@ -20,6 +20,8 @@ public import TauCeti.RepresentationTheory.Tensor.Power
 /-!
 # Matrix coefficients of a representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.MatrixCoefficients)
+
 The **matrix coefficients** of a representation `ρ` against a basis `b` of its carrier are the
 functions `g ↦ LinearMap.toMatrix b b (ρ g) i j` on the group.  A property of a representation is
 often expressed by asking that all of them lie in some fixed algebra `A` of functions on the group:

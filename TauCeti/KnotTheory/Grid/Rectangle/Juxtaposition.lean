@@ -11,6 +11,8 @@ import TauCeti.Data.Finset.Basic
 /-!
 # Juxtaposing toroidal grid rectangles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Juxtaposition)
+
 Two rectangles in a nondiagonal term of the grid differential square can share one corner.
 Cutting their L-shaped union along its other internal edge gives the alternate two-rectangle
 decomposition. This file proves the finite-domain identities behind that cut.

@@ -14,6 +14,8 @@ import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # Continuous logarithms on simple arcs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.ContinuousLog.Path)
+
 A zero-free continuous complex-valued function on a **simple arc** has a continuous logarithm.
 Here an arc is presented as the range of a path `γ : Path x y` whose parametrization is an
 embedding; the main theorem is `TauCeti.hasContinuousLogOn_range_of_isEmbedding_path`.

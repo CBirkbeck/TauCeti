@@ -16,6 +16,8 @@ import TauCeti.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Displacing the last coordinate of a block
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaKoopman.Decoupling)
+
 The step that decouples one factor from a block, over an invariant event.
 
 Appending the coordinate `r + m` to the prefix `0, 1, …, r - 1` gives a strictly increasing

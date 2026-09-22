@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Turning
 /-!
 # Nondegeneracy of the Schwarz--Christoffel polygon
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Nondegenerate)
+
 Strictly ordered prevertices with integrable exponents produce distinct consecutive
 Schwarz--Christoffel vertices.  The two closing sides are nondegenerate as well: their common
 endpoint at infinity differs from the first and last finite vertices.  Consequently every edge of

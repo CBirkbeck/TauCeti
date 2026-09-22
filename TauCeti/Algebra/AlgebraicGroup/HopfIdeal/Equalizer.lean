@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Equalizer
 /-!
 # The equalizer of two homomorphisms of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Equalizer)
+
 Two morphisms `f g : H ⟶ K` of commutative Hopf algebras are, contravariantly, two homomorphisms
 `Spec K ⟶ Spec H` of affine group schemes. This file cuts out the locus where they agree.
 

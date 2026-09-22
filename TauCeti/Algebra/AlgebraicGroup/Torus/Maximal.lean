@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.Basic
 /-!
 # Maximal tori in Hopf coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Maximal)
+
 A closed subgroup of an affine group is encoded contravariantly by a Hopf ideal in its
 coordinate algebra. This file defines a maximal torus to be a torus closed subgroup which is
 not properly contained in another torus. Thus, if `I` is maximal and `J ≤ I` defines a torus,

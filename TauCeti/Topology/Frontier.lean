@@ -10,6 +10,8 @@ public import Mathlib.Topology.Connected.Basic
 /-!
 # Elementary frontier lemmas
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Frontier)
+
 Facts about `frontier` that carry no structure of their own: straddling, splitting a domain in
 two, clinging to it from inside, the frontier of an image, and the frontier of a finite union.
 Each is the topological core of a step that a boundary argument would otherwise carry out inside

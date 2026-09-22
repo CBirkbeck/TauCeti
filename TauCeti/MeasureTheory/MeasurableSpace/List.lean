@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # The measurable structure on lists
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.List)
+
 Mathlib equips no type of lists with a measurable structure. This file gives `List α` the structure
 transported from its length-indexed representation `Σ n, Fin n → α`. Thus each fixed-length stratum
 has the finite product structure, and the list space is their countable disjoint union.

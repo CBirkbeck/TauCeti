@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Operators
 /-!
 # The twisted operator of `diag(1, p)` is the classical `Tₚ` on `M_k(N, χ)` and `S_k(N, χ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Basic)
+
 The `Γ₀(N)` Hecke ring acts on the nebentypus spaces `M_k(N, χ)` and `S_k(N, χ)` through the
 `χ`-twisted slash sums (`HeckeSlash/Nebentypus/*`), while the classical `Tₚ` on `M_k(Γ₁(N))` and
 `S_k(Γ₁(N))` is the untwisted sum over `Γ₁(N)` cosets (`HeckeSlash/Prime.lean`). This file

@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Function.BoundedMemLp
 /-!
 # Bounded observables of contractable processes in L²
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.BoundedObservable)
+
 This file supplies the bounded-observable entry point to the L² lane of the Exchangeability
 roadmap.  Applying a measurable real-valued observable coordinatewise to a contractable process
 preserves contractability, so whenever the mapped coordinates are square-integrable the process

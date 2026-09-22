@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic
 /-!
 # The image of the degree map and the degree quotient `Cl(X)/Pic⁰`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Image.Basic)
+
 This file computes the image of the (weighted) degree homomorphism and identifies the quotient
 of the divisor class group by the abstract `Pic⁰`, continuing the Jacobian roadmap's Layer A.
 

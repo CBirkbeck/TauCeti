@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Pushforward
 /-!
 # Products and mixtures for the infinite Wasserstein distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Infinity.Operations)
+
 For the usual supremum metric on a product, the `W_∞` distance of product probability laws is
 the maximum of the distances of the factors. For mixtures with common weights it is at most
 the supremum of the distances of the components with positive weight. Zero weights do not

@@ -24,6 +24,8 @@ import TauCeti.RingTheory.Semisimple.EndAlgebra
 /-!
 # The endomorphism algebra of a finite-dimensional vector space is central simple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.End)
+
 For a nonzero finite-dimensional vector space `V` over a field `K`, the algebra `Module.End K V` is
 central simple over `K`: it is the untwisted, "split" central simple algebra of degree
 `Module.finrank K V`. Centrality is already Mathlib's: its `Algebra.IsCentral` instance in

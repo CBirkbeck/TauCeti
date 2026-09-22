@@ -12,6 +12,8 @@ import Mathlib.Logic.Equiv.Option
 /-!
 # The number of orbits of a permutation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.OrbitCount.Basic)
+
 A permutation `σ` of a type `α` partitions `α` into the classes of `Equiv.Perm.SameCycle σ`.
 This file counts them: `TauCeti.orbitCount σ` is the cardinality of that quotient. Unlike
 `Equiv.Perm.cycleType`, which records only the cycles of length at least two, every fixed point

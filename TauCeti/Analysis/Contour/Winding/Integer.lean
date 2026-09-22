@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.Winding.EndpointRatio
 /-!
 # The winding number of a closed curve is an integer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Integer)
+
 For a curve `γ` on an interval that returns to its start (`γ a = γ b`), avoids a point `w`, and is
 regular enough — continuous, differentiable off a countable set, with an interval-integrable index
 integrand — its generalized winding number about `w` is an integer (see

@@ -13,6 +13,8 @@ import Mathlib.Algebra.Group.Commute.Units
 /-!
 # Squares of units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Units.Basic)
+
 This file relates squares in a monoid to squares in its group of units.
 
 ## Main results

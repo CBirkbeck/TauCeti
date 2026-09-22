@@ -16,6 +16,8 @@ import TauCeti.Analysis.CompletelyMonotone.Bernstein.Theorem
 /-!
 # The Hausdorff--Bernstein--Widder theorem on the open half-line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.OpenHalfLine)
+
 A function completely monotone on the *open* half-line `(0, ∞)` is the Laplace transform of a
 unique positive measure on `ℝ≥0`, and that measure need not be finite: the reciprocal
 `t ↦ 1 / t` is completely monotone on `(0, ∞)` and is represented by Lebesgue measure. The

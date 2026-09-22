@@ -16,6 +16,8 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 /-!
 # Object properties: transport along equivalences, and closure properties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.ObjectProperty)
+
 This file contains general lemmas about object properties: transporting them along an
 equivalence, comparing Mathlib's closure type classes with one another in the presence of a
 zero object and of binary biproducts, smallness of full subcategories, and additivity of the

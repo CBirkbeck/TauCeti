@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Fredholm.Estimate
 /-!
 # A map with upper semi-Fredholm derivative is proper near the point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Proper)
+
 A continuous map between infinite-dimensional Banach spaces need not be proper: a Fredholm linear
 map with nonzero kernel has a noncompact fibre over zero. A map whose derivative at a point `a` is
 closed-range with finite-dimensional complemented kernel — in particular, a **Fredholm**

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.Removability.Basic
 /-!
 # The Schwarz reflection principle across the real axis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Reflection.Principle)
+
 This file proves the summit of the conformal-mapping roadmap's Schwarz-reflection layer (L4 in
 `ConformalMapping/README.md`, the `sorry`-goal stated in `ConformalMapping/Suggested.lean`): on a
 conjugation-symmetric open set `Ω`, a function that is continuous on the closed upper part,

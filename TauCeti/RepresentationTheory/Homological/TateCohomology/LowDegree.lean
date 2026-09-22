@@ -11,6 +11,8 @@ public import Mathlib.Data.ZMod.QuotientRing
 /-!
 # Low-degree Tate cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.LowDegree)
+
 This file gives the low-degree descriptions used by the Nakayama map. For a representation `M`
 of a finite group, degree zero is the quotient of the invariant submodule by the image of the
 norm, and degree `-1` is the kernel of the norm modulo the augmentation submodule `I_G M`. For a

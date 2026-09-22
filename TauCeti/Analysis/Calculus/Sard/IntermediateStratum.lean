@@ -14,6 +14,8 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # The intermediate strata in Sard's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Sard.IntermediateStratum)
+
 This file supplies the local dimension-reduction step for the intermediate strata in the
 Morse--Sard proof. Suppose the `i`th iterated derivative of a smooth map vanishes at `a`, but the
 derivative of order `i + 1` does not. A scalar component of the `i`th derivative then has a nonzero

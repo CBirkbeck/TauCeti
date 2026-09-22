@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Fredholm.Basic
 /-!
 # Closed range from a finite-dimensional cokernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.ClosedRange)
+
 For the nonlinear-analysis substrate of the analytic Heegaard Floer roadmap (Lane F0, "Fredholm
 operators and index theory"), this file proves that the closed-range hypothesis in the definition
 of a Fredholm operator is *automatic* between Banach spaces once the cokernel is finite

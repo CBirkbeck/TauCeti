@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Adjoint
 /-!
 # Naturality of the tangent and adjoint actions in the coefficient algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Naturality)
+
 For a bialgebra `A` over `R`, the tangent space is naturally a functor of the
 coefficient algebra:
 

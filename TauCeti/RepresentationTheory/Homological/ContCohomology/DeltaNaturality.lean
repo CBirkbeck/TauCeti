@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.ShortExact
 /-!
 # Naturality of the low-degree connecting maps, and their compatibility with corestriction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.DeltaNaturality)
+
 The connecting maps `δ⁰ : H⁰(G, C) → H¹(G, A)` and `δ¹ : H¹(G, C) → H²(G, A)` of a short exact
 sequence `0 → A → B → C → 0` of discrete `G`-modules are natural in the sequence and in the group.
 Both statements are instances of a single square: a continuous homomorphism `φ : H →ₜ* G` together

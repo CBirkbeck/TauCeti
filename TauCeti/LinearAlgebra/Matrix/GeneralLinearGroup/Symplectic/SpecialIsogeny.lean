@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Minor
 /-!
 # The special isogeny of `Sp₄` in characteristic two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.SpecialIsogeny)
+
 Over a field of characteristic two the pinned group of type `B₂ = C₂` admits an endomorphism `τ`
 that exchanges the two root lengths, raising the parameter of a short simple root subgroup to the
 defining characteristic and leaving that of a long one alone. It is the *special isogeny*, and the

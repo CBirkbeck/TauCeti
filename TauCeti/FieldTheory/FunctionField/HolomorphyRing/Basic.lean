@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Genus
 /-!
 # Holomorphy rings of an algebraic function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.HolomorphyRing.Basic)
+
 A set `S` of places of an algebraic function field `F / k` cuts out the ring
 
 `𝒪_S = ⋂_{P ∈ S} 𝒪_P`

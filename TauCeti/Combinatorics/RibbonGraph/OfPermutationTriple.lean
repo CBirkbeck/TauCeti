@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Perm.Basic
 /-!
 # The bipartite ribbon graph of a permutation triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.RibbonGraph.OfPermutationTriple)
+
 A degree-`n` permutation triple and a finite bipartite ribbon graph carry the same information,
 and this file builds the graph out of the triple. The edges are the `n` sheets, the black
 vertices are the cycles of `σ0` and the white ones the cycles of `σ1` — fixed points included,

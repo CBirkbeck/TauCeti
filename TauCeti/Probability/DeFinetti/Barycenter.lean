@@ -21,6 +21,8 @@ import TauCeti.MeasureTheory.Measure.Measurability
 /-!
 # The de Finetti barycenter of a mixing law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.Barycenter)
+
 De Finetti's representation is a map in one direction and a theorem in the other. This file builds
 the map. For a measure `π` on `ProbabilityMeasure α` — a *mixing law* — the **de Finetti
 barycenter**

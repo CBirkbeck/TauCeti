@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.Orthogonal.TypeB.SpinCarrier.PointsFunctor
 /-!
 # Frobenius on the full-weight type-B spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.SpinCarrier.Frobenius)
+
 `TauCeti.TypeBSpinCarrier.groupScheme n` is the explicit full-weight Chevalley carrier of
 type `Bₙ₊₁`, cut out inside `GL_(2^(n+1))` over `ℤ` by the split spin representation and its
 exterior coordinate lattice. For a commutative value ring `A` of exponential characteristic

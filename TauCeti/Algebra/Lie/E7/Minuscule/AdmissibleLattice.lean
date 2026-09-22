@@ -15,6 +15,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Serre
 /-!
 # The admissible lattice in the type-E7 minuscule representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.AdmissibleLattice)
+
 This file extends the integral `56`-dimensional minuscule representation of the type-`E₇`
 Serre presentation to the rational Serre algebra and proves that its coordinate `ℤ`-lattice is
 preserved by the Serre Kostant form. The raising and lowering matrices have integral entries, are

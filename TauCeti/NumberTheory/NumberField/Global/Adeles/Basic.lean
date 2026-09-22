@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.Basic
 /-!
 # Topology of the adele ring of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Adeles.Basic)
+
 Mathlib's `NumberField.InfiniteAdeleRing K` is the finite product of the completions of `K` at its
 infinite places, and `NumberField.AdeleRing R K` is the product of the infinite adele ring with the
 finite adele ring of `R`.  Both are defined as type synonyms, so the Hausdorff property of the

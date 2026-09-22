@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.EssentialImage
 /-!
 # Groups of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.Basic)
+
 A finite-type affine group over a field is of multiplicative type when it becomes diagonalizable
 after extending scalars to an algebraic closure. On coordinate Hopf algebras, diagonalizability is
 the intrinsic condition that the group-like elements span the algebra. Thus a finite-type

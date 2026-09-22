@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The descent matrices at a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cosets)
+
 Miyake's level descent at a prime `p` runs over the `p` upper-triangular matrices `[1, v; 0, p]`
 together with, when `p` divides `N` but `p²` does not, one further matrix built from an element
 of `Γ₀(N / p)` reducing to `S = [[0, -1], [1, 0]]` modulo `p` and to the identity modulo `N / p`.

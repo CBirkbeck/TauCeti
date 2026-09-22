@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.TensorProduct
 /-!
 # The discriminant and the signed discriminant of a regular quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Discriminant)
+
 Over a field in which two is invertible, a regular quadratic form is diagonalizable, and the
 product of the weights of a diagonalization is well defined modulo squares. That square class is
 the **discriminant** `d(q)`; correcting it by the sign `(-1)^{m(m-1)/2}` in rank `m` gives the

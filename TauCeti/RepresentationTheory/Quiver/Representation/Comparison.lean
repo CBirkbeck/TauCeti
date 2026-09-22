@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Simple
 /-!
 # Comparing a vertex simple with its projective and its injective
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Comparison)
+
 For a vertex `i` of a quiver `Q` there are three representations attached to `i`: the vertex
 simple `Sᵢ`, the projective `Pᵢ` and the injective `Iᵢ`. This file builds the two comparison
 morphisms that tie them together, `Pᵢ ↠ Sᵢ` and `Sᵢ ↪ Iᵢ`, and proves that the first is an

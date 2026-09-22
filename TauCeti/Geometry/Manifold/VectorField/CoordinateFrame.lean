@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorField.LieBracket
 /-!
 # Coordinate frames of manifold charts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorField.CoordinateFrame)
+
 The canonical trivialization of the tangent bundle at `x₀` is read off the chart at `x₀`, so the
 local frame it induces from a basis `b` of the model space is the classical coordinate frame of
 that chart.  This file identifies that frame with the pullback of constant model-space vector

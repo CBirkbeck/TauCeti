@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.E6.Minuscule.RootDatum
 /-!
 # Torus characters of the doubled type E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.RootDatum)
+
 `TauCeti.E6DoubledMinuscule.groupScheme` and the twenty-seven-dimensional
 `TauCeti.E6Minuscule.groupScheme` use the same type-`E₆` Serre generators and hence the same
 numbered root characters. The smaller carrier already identifies those characters with the

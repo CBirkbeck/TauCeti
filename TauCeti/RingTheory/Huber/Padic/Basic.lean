@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.Basic
 /-!
 # The p-adic integers are a Huber ring, and not a Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Padic.Basic)
+
 `ℤ_[p]` with its norm topology is a Huber ring, with `(ℤ_[p], (p))` as a pair of definition, and
 it is not a Tate ring. It is the roadmap's Layer-0 example after the discrete case, and the first
 to separate `TauCeti.Huber.IsHuberRing` from `TauCeti.Huber.IsTateRing`: the units of `ℤ_[p]` are

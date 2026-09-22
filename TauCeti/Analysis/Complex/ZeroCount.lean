@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Module.Convex
 /-!
 # The zero count of a holomorphic function on a disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.ZeroCount)
+
 The zero count of `f` on an open disc is the finitely supported sum
 `∑ᶠ z ∈ ball c R, analyticOrderNatAt f z`. It is what the argument principle produces — through
 `TauCeti.Contour.argumentPrinciple_divisor` and the bridge

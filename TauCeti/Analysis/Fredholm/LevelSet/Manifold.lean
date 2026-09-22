@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Fredholm.LevelSet.Smooth
 /-!
 # A regular level set of a Fredholm map is a manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.LevelSet.Manifold)
+
 Let `f : E → F` be a map between Banach spaces which, at every point of the level set
 `{x | f x = c}`, is strictly differentiable and `C^m`, with surjective Fredholm derivative of
 index `n`. `TauCeti.levelSetChartedSpace` already makes that level set a charted space modelled on

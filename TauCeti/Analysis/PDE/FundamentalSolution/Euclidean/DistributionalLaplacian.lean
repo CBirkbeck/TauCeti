@@ -16,6 +16,8 @@ import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 /-!
 # The Newtonian kernel is a fundamental solution of `-Δ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Euclidean.DistributionalLaplacian)
+
 For `n ≥ 3`, the Newtonian kernel `Gₙ(x) = (n (n - 2) ωₙ)⁻¹ ‖x‖²⁻ⁿ` on `ℝⁿ` satisfies the
 distributional identity `-Δ Gₙ = δ₀`: for every `C²` function `f` with compact support,
 

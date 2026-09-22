@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.Equiv.Defs
 /-!
 # Transporting the self-homeomorphism group along a homeomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Homeomorph.Congr)
+
 A homeomorphism `e : M ≃ₜ N` conjugates self-homeomorphisms of `M` into self-homeomorphisms of `N`
 by `φ ↦ e ∘ φ ∘ e⁻¹`. Because this preserves composition, it is a group isomorphism
 `(M ≃ₜ M) ≃* (N ≃ₜ N)` between the self-homeomorphism groups. This file records that isomorphism,

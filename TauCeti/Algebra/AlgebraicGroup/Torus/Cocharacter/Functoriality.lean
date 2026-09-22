@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.GaloisLattice.Dual
 /-!
 # The cocharacter-lattice functor of tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Cocharacter.Functoriality)
+
 A morphism of coordinate Hopf algebras sends geometric characters forward. Precomposition with
 that character map sends integral duals backward, and hence gives the contravariant map on
 geometric cocharacters. This file proves that these maps are equivariant for the contragredient

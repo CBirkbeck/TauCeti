@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.TateCohomology.Functorial
 /-!
 # Conjugation of a finite normal layer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.Conjugation)
+
 An element `g` of the ambient group carries a finite normal layer `V ◁ U` of a formation to the
 layer `gVg⁻¹ ◁ gUg⁻¹`. In field notation `g` is an automorphism of the big extension, and the
 conjugate layer is the layer `gK/gF` obtained by transporting `K/F` along it. This file builds

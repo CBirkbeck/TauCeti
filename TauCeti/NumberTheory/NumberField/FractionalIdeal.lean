@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.NumberField.FractionalIdeal
 /-!
 # The index of one fractional ideal in another
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.FractionalIdeal)
+
 An invertible fractional ideal of a number field `K` is a full `ℤ`-lattice in `K`.  If `J ≤ I` are
 two such ideals, the index of `J` in `I` is the ratio of their absolute norms.  The index is
 computed from the determinant formula `NumberField.det_basisOfFractionalIdeal_eq_absNorm` and

@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Basic
 /-!
 # Multiplication from semidirect products of internal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Normal)
+
 Let `i : N ⟶ G` be a normal subgroup object and let `j : H ⟶ G` be another internal-group
 homomorphism. Conjugation through `j` gives an action of `H` on `N`. This file constructs that
 action and the canonical internal-group homomorphism

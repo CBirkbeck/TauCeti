@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.SymmetricPower.Basic
 /-!
 # Symmetric powers of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SymmetricPower)
+
 This file equips each symmetric power of a representation with the induced diagonal action.
 Intertwining maps and equivalences pass functorially to symmetric powers.
 

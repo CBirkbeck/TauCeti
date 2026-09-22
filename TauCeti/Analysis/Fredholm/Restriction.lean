@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Fredholm.Criteria
 /-!
 # Fredholm operators from finite-codimension restrictions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Restriction)
+
 Let `T : E →L[𝕜] F` carry a closed finite-codimensional subspace `E₁` into a closed
 finite-codimensional subspace `F₁`. Mathlib's `ContinuousLinearMap.IsFredholm.of_restrict`
 shows that `T` is Fredholm when the induced operator `E₁ →L[𝕜] F₁` is. This file records the

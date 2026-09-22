@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Geometrically.Integral
 /-!
 # Geometrically integral morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Geometrically.Integral)
+
 Mathlib's `AlgebraicGeometry.GeometricallyIntegral` records that the property is stable under base
 change, but has nothing about isomorphisms. This file adds the missing base case:
 

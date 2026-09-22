@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
 /-!
 # Residue degrees of scheme morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.ResidueDegree)
+
 This file develops the elementary functorial API for Mathlib's
 `AlgebraicGeometry.Scheme.Hom.residueDegree`. For a scheme morphism `f : X ⟶ Y` and a point
 `x : X`, this is the degree `[κ(x) : κ(f(x))]`, with value zero when the field extension is

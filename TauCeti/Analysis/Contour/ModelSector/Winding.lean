@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.Winding.Number.Circle
 /-!
 # The valence-formula winding values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ModelSector.Winding)
+
 The generic circular-arc index integrals — `indexIntegral_arc_interval`, `indexIntegral_arc` and
 `windingNumber_circle` — are `circleMap` results rather than model-sector ones and live in
 `TauCeti.Analysis.Contour.Winding.Number.Circle`, which this module re-exports so that imports of

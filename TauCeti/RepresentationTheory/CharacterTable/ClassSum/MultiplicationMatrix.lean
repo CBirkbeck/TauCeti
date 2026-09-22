@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # The class-multiplication matrices of a finite group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.MultiplicationMatrix)
+
 The centre of the group algebra `k[G]` of a finite group has the class sums `K_C` as a `k`-basis
 (`TauCeti.classSumBasis`), and multiplication in that basis is described by the structure constants
 `aᵢⱼₖ` (`TauCeti.structureConstant`). This file records the matrices of that multiplication.

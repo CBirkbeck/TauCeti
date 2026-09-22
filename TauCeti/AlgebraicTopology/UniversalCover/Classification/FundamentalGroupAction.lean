@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.Groupoid.SingleObj
 /-!
 # Covering spaces are classified by fundamental-group sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.FundamentalGroupAction)
+
 Let `X` be path connected, locally path connected and semilocally simply connected, and fix a
 basepoint `x₀`. This file proves that taking the fibre over `x₀` with its monodromy action is an
 equivalence of categories

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Basic
 /-!
 # Roots of unity do not leave an integrally closed subring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.IntegrallyClosed)
+
 If `R` is integrally closed in `A`, then `R` and `A` have the same `n`-th roots of unity for every
 `n ≠ 0`: an `n`-th root of unity `x` of `A` satisfies `x ^ n = 1`, so it is integral over `R` and
 therefore comes from `R`, and its inverse `x ^ (n - 1)` comes from `R` as well.

@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Monoidal.Cartesian.Normal
 /-!
 # Normal Hopf ideals as categorical normal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Categorical)
+
 A commutative Hopf algebra is equivalently a group object in the opposite category of
 commutative algebras. Under this equivalence, a Hopf-ideal quotient `H ⟶ H/I` represents the
 closed-subgroup inclusion `Spec(H/I) ⟶ Spec H`.

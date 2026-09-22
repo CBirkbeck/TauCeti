@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic
 /-!
 # The maximal elementary-2 quotient of a free abelian group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.ElementaryTwoQuotient.FreeModule)
+
 For a finite-rank free `ℤ`-module `A`, the multiplicative group `Multiplicative A` has maximal
 elementary-2 quotient of cardinality `2 ^ rank`: squaring is doubling, and `A / 2A` is an
 `𝔽₂`-vector space with basis the reduction of any `ℤ`-basis. Correspondingly the 2-rank of

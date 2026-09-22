@@ -10,6 +10,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Comparing finite sums after removing one index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finset.Erase)
+
 Two functions on a finite type that agree away from one index and have the same sum agree
 everywhere. The result applies to any additive cancellative commutative monoid.
 

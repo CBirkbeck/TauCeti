@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.NormalForm
 /-!
 # Class functions on `GL₂(𝔽_q)` are determined by the four normal forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.ClassFunction)
+
 Over a finite field `F` with a supplied degree-`2` extension `E/F`, every element of `GL₂(F)` is
 conjugate to a central scalar, to a split semisimple `diag (a, b)` with `a ≠ b`, to a Jordan block
 `!![a, 1; 0, a]`, or to the matrix of multiplication by an element of `E` outside `F`

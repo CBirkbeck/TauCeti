@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Basic
 /-!
 # The conilpotence filtration of reduced tensor words
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Filtration)
+
 The reduced tensor coalgebra is filtered by tensor length, and reduced deconcatenation strictly
 decreases that length: a word of length at most `n + 1` is cut into two words each of length at
 most `n`.  This length bound is the inductive step behind conilpotence, which asserts that a high

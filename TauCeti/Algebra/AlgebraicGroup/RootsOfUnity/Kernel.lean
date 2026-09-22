@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.RootsOfUnity.Inclusion
 /-!
 # `μ_n` is the kernel of the `n`th power endomorphism of `𝔾ₘ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.RootsOfUnity.Kernel)
+
 The group scheme of `n`th roots of unity `μ_n = D(ℤ/n)` sits inside the multiplicative group
 `𝔾ₘ = D(ℤ)` through the inclusion `TauCeti.RootsOfUnityGroup.inclusion`, the contravariant
 image of the quotient `ℤ ↠ ℤ/n`. On the other side, `TauCeti.DiagonalizableGroup.powEnd n` is

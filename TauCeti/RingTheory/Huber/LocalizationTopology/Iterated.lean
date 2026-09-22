@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 /-!
 # A rational localisation of `A⟨T/s⟩` is a rational localisation of `A`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Iterated)
+
 Let `B = A⟨T/s⟩`, with structure map `ρ : A → B`, and let `(T'', s'')` refine `(T, s)`:
 `s'' = s * r` and every `t * r`, for `t ∈ T`, lies in `T''`. Wedhorn's Remark 8.4 identifies
 `A⟨T''/s''⟩` with the rational localisation `B⟨ρ(T'')/ρ(s'')⟩` of `B`, compatibly with the

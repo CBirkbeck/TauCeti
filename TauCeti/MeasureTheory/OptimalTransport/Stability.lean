@@ -15,6 +15,8 @@ import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # Stability of the primal transport problem under varying marginals and costs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Stability)
+
 A family of transport problems indexed by a filter is *stable* when its optimal values converge to
 the optimal value of a limiting problem, and its optimal plans accumulate only on optimal plans of
 that limiting problem. This file proves both, from two hypotheses that are stated explicitly rather

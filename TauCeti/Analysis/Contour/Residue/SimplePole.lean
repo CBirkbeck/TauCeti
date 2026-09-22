@@ -11,6 +11,8 @@ import Mathlib.Analysis.Complex.RemovableSingularity
 /-!
 # The residue at a simple pole as a limit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.SimplePole)
+
 For `f : ℂ → ℂ` with a **simple pole** at `z₀` (`meromorphicOrderAt f z₀ = −1`), the residue
 `TauCeti.Contour.residue f z₀` is the elementary limit `lim_{z→z₀} (z − z₀) · f z` — the textbook
 recipe for computing residues at simple poles, which the roadmap names as the defining property of

@@ -18,6 +18,8 @@ import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Surjective
 /-!
 # Strong noetherianness of a nonarchimedean ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.StronglyNoetherian)
+
 The completed restricted power-series algebras `A⟨X₁,…,Xₖ⟩` of a nonarchimedean commutative
 ring `A`, and the predicate they support: `A` is *strongly noetherian* when every one of them
 is noetherian. This is the hypothesis of Wedhorn's Theorem 8.28 (*Adic Spaces*,

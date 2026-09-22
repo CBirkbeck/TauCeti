@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Analytic.OfScalars
 /-!
 # Composition of scalar formal multilinear series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Analytic.OfScalars)
+
 This file computes the formal composition of two scalar series in an arbitrary algebra. The
 algebra need not be commutative: variables retain their original order inside every composition
 block.

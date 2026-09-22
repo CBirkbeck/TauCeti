@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Support
 /-!
 # Coefficients of the square of the fully blocked grid differential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Coefficient)
+
 This file expands the coefficient of `∂ (∂ x)` for the fully blocked grid differential as the
 finite sum over intermediate grid states. It is the algebraic handoff from the matrix
 coefficient definition of the differential to the rectangle-pairing argument: proving `∂² = 0`

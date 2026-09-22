@@ -12,6 +12,8 @@ public import Mathlib.Topology.MetricSpace.Isometry
 /-!
 # Linear isometries of the unit sphere
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Sphere.LinearIsometry)
+
 A linear isometry equivalence preserves norms, so it restricts to an equivalence of unit spheres.
 This file develops that restriction independently of the manifold structure on spheres.
 

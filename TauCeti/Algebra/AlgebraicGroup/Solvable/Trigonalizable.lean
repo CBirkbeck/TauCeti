@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Exists
 /-!
 # Trigonalizing the representations of a commutative affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Trigonalizable)
+
 Let `H` be a reduced finite-type commutative Hopf algebra over an algebraically closed field `k`.
 If the points of `H` act on a finite-dimensional comodule by pairwise-commuting operators, that
 comodule has a nonzero weight vector: a joint eigenvector of the commuting operators spans a

@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Limits.Shapes.Biproduct
 /-!
 # Binary biproducts of conflations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Biproduct)
+
 Distinguished conflations in an exact category are closed under binary direct sums.  The proof
 uses only Quillen's axioms.  First, E2 shows that adjoining an identity summand to an inflation
 again gives an inflation: the relevant square is a biproduct pushout.  E1 then gives the direct

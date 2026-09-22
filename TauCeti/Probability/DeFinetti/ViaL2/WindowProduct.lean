@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.Function.ProductL1Convergence
 /-!
 # Simultaneous convergence of a product of indicator block averages
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaL2.WindowProduct)
+
 For a contractable process on a standard Borel state space, the block averages of finitely many
 indicators over **pairwise disjoint** windows converge in `L¹`, simultaneously, to the product of
 the corresponding directing-measure evaluations:

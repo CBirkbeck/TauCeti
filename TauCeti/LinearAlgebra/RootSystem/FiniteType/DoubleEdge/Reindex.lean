@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.RootSystem.FiniteType.TwoDoubleEdges
 /-!
 # Reindexing path-shaped diagrams with a double edge
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.DoubleEdge.Reindex)
+
 The classification of the model matrices `TauCeti.doubleEdgeCartanMatrix p q` is already known:
 when both chains are nonempty, finite type leaves precisely the families `B_n`, `C_n`, and the
 exceptional type `F_4`. To apply that result to an arbitrary Cartan matrix, its diagram must first

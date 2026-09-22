@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Group.MinimalAxioms
 /-!
 # Points of a Weierstrass formal group in an adic ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.AdicPoint)
+
 Let `I` be an adic ideal of a complete linearly topologised ring `O`. The elements of `I` form an
 additive commutative group under evaluation of the Weierstrass formal group law: addition is
 `F(t₁, t₂)` and negation is the formal inverse `ι(t)`. This file packages that group as

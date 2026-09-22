@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Nilpotent
 /-!
 # Lifting symplectic matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Lift)
+
 A symplectic matrix lifts across a quotient by a square-zero ideal. Starting with arbitrary
 lifts of its entries, the failure to preserve the standard alternating form is an alternating
 matrix with entries in the ideal. Its strict upper triangle gives an integral solution of the

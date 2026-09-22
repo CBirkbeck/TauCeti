@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Algebra.Prod
 /-!
 # Algebra maps out of a product that factor through a coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Algebra.Prod)
+
 An algebra map `φ : A × C →ₐ[F] B` does not restrict to the first factor on the nose, because
 `a ↦ (a, 0)` is not unital and so is not an algebra map.  It does restrict once `φ (1, 0) = 1`:
 that hypothesis supplies exactly the missing unitality, and `a ↦ φ (a, 0)` is then an algebra map

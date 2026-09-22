@@ -15,6 +15,8 @@ import Mathlib.Probability.Process.FiniteDimensionalLaws
 /-!
 # Exchangeable families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Family)
+
 This file extends the sequence-level symmetry predicates to families indexed by an arbitrary type.
 An `ExchangeableFamily` has the same law along any two finite injective selections of indices.
 The existing `ConditionallyIIDWith` and `ConditionallyIID` predicates are already index-generic;

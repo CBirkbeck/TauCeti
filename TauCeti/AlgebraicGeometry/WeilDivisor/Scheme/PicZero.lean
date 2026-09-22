@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.EulerCharacteristic
 /-!
 # The degree homomorphism on the Picard group, and `Pic⁰` of a curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.PicZero)
+
 Let `X` be a proper integral curve over a field `k` whose codimension-one local rings are
 discrete valuation rings and whose `H¹(X, 𝒪_X)` is finite-dimensional. Tensor product makes the
 isomorphism classes of line bundles on `X` into the Picard group `Pic X`, and on it the

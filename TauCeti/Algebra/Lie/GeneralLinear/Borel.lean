@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # The standard Borel subalgebra of `gl n R`, and the two nilpotent triangles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Borel)
+
 Order the index type `n` linearly. The upper triangular matrices form a Lie subalgebra
 `TauCeti.upperTriangular R n` of `gl n R = Matrix n n R`, and the strictly upper triangular
 matrices form a Lie subalgebra `TauCeti.strictUpperTriangular R n` inside it. This is the *matrix

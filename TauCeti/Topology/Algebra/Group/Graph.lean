@@ -12,6 +12,8 @@ public import Mathlib.Topology.Separation.Hausdorff
 /-!
 # Graphs of continuous monoid homomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Graph)
+
 This file studies the graph of a continuous monoid homomorphism with its inherited subtype topology.
 The source is continuously multiplicatively equivalent to the graph, and the graph is closed when
 the codomain is Hausdorff. For groups, these results specialize from submonoid graphs to subgroup

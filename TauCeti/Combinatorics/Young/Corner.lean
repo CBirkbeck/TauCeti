@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.Diagram
 /-!
 # Corners of a Young diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Corner)
+
 A *corner* of a Young diagram `μ` is a cell of `μ` with neither the cell to its right nor the cell
 below it in `μ`.  Equivalently, the corners are the maximal cells of `μ`
 (`YoungDiagram.IsCorner.eq_of_le`): they are exactly the cells `c` for which removing `c`

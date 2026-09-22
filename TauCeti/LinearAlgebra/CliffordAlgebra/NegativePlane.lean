@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.BottPeriodicity
 /-!
 # The negative-plane recurrence for real Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.NegativePlane)
+
 Adjoining a hyperbolic plane to a real quadratic module tensors its Clifford algebra with
 `M₂(ℝ)` and leaves the form alone (`CliffordAlgebra.hyperbolicEquivTensor`). This file proves the
 companion step for the **negative definite** plane: adjoining two generators which both square to

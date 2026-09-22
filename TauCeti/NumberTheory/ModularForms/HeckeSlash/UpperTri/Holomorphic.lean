@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Sum
 /-!
 # The upper-triangular Hecke slash sum preserves holomorphy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Holomorphic)
+
 `heckeSlashUpperTri` is a finite sum of slashes by the upper-triangular representatives
 `upperTriRep p b` for `b : Fin p`. Because each representative is a rational matrix of positive
 determinant, each summand is holomorphic whenever the underlying function is, and hence so is the

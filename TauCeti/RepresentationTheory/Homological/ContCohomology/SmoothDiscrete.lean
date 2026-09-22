@@ -13,6 +13,8 @@ public import Mathlib.Topology.Algebra.MulAction
 /-!
 # Smooth discrete topological representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.SmoothDiscrete)
+
 An object `X : TopRep R G` carries one continuous operator `X.ρ g` per group element, and nothing
 in that data forces the assignment `g ↦ X.ρ g` to be continuous in the group variable. So an
 object whose underlying module happens to be discrete can still have non-open point stabilizers,

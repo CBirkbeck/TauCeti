@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Arctan
 /-!
 # Complementary arctangents at the corners of a rectangle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Arctan)
+
 Mathlib's `Real.arctan_inv_of_pos` gives `arctan x⁻¹ = π / 2 - arctan x`; the quotient form
 `arctan (u / v) + arctan (v / u) = π / 2` that occurs when the two legs of a right angle are named
 separately is not stated there.

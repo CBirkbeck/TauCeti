@@ -12,6 +12,8 @@ public import Mathlib.Data.Finset.Option
 /-!
 # Multiquadratic CM fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CMField.Basic)
+
 A multiquadratic *CM* field is one of the form `ℚ(i, √p₁, …, √pₙ)`: a totally imaginary
 multiquadratic field obtained by adjoining `√(-1)` together with the square roots of distinct
 primes. The roadmap's worked example asks to recover the field

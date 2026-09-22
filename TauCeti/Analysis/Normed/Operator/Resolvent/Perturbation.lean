@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Normed.Operator.Resolvent.Unbounded
 /-!
 # Bounded perturbations of a resolvent point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Resolvent.Perturbation)
+
 Adding a bounded operator `B` to an unbounded operator `A` does not change the domain, so the
 perturbed operator is Mathlib's `B +ᵥ A`. On `D(A)` the two operators are related by the
 factorisation

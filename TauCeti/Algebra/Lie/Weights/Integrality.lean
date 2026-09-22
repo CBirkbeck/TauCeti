@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Sl2.Spectrum
 /-!
 # Integrality of the weights of a module over a semisimple Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Integrality)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, let `H` be a splitting Cartan subalgebra, and let `M` be a finite-dimensional
 `L`-module. This file defines when a linear form is an **integral weight** and proves that module

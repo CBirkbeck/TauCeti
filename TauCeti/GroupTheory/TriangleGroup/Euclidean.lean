@@ -12,6 +12,8 @@ import Mathlib.RingTheory.RootsOfUnity.Complex
 /-!
 # Euclidean triangle groups are infinite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TriangleGroup.Euclidean)
+
 The triangle group `Δ(a, b, c)` is *Euclidean* when `1/a + 1/b + 1/c = 1`; for positive
 parameters these are `(3, 3, 3)`, `(2, 4, 4)`, `(2, 3, 6)` and their permutations. This file
 proves that such a group is infinite, by an explicit representation by affine maps of a field.

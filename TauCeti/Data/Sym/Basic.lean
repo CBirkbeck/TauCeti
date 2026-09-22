@@ -17,6 +17,8 @@ import Mathlib.Logic.Equiv.Fin.Basic
 /-!
 # Basic lemmas for symmetric powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Sym.Basic)
+
 This file records small API extensions for Mathlib's symmetric powers, and the map
 `TauCeti.Sym.ofFn` reading an ordered `n`-tuple `f : Fin n → α` as an unordered one.
 

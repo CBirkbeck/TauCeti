@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Torus
 /-!
 # The Borel-type subgroup attached to a set of Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Borel)
+
 Let `U_ℤ = kostantForm e h` act on a rational representation `V` preserving an additive subgroup
 `M ≤ V` with a weight basis `b`, so that the split torus `T(A) = 𝔾ₘ^κ(A)` acts diagonally on
 `A ⊗[ℤ] M` and each designated root vector `eᵢ` acts nilpotently. For a set `S` of root indices,

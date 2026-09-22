@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Valuation.NontrivialComap
 /-!
 # Extensions of places: the ramification index and the relative degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Basic)
+
 Let `F' / k'` be a field extension lying over `F / k`, with `F'` algebraic over `F`. Restricting
 the valuation of a place `P'` of `F' / k'` to `F` gives a valuation of `F` that is trivial on the
 constants and — because `F'` is algebraic over `F`, so that a valuation ring of `F'` containing

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.CofinalIdeal.Restrict
 /-!
 # The restriction underlying the retraction `r_I`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.RestrictToIdeal)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.2.**
 
 A point of `Spv A` is sent to the class of its canonical valuation restricted to `cΓ_v(I)`. The

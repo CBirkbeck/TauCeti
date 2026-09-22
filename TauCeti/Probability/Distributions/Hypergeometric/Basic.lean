@@ -15,6 +15,8 @@ public import Mathlib.Probability.Moments.Variance
 /-!
 # The hypergeometric distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Hypergeometric.Basic)
+
 The hypergeometric law describes the number of marked objects in a sample of size `n`, drawn
 without replacement from a population of size `N` containing `K` marked objects.  For
 `K ≤ N` and `n ≤ N`, its mass at `k` is

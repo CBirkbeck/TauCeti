@@ -17,6 +17,8 @@ import TauCeti.RingTheory.Polynomial.Pochhammer
 /-!
 # Vandermonde determinants in the falling-factorial basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Vandermonde)
+
 The falling factorials `descPochhammer R j` are monic of degree `j`, so Mathlib's
 `Matrix.det_eval_matrixOfPolynomials_eq_det_vandermonde` rewrites `det (vandermonde y)` as the
 determinant of the matrix `(descPochhammer R j).eval (yᵢ)`.  Unlike the powers, the falling

@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Unblocked
 /-!
 # The unblocked complex of a stabilized grid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Stabilization.Unblocked)
+
 Let `G` be a grid diagram of size `n`, let `s` be a column, and let
 `G' = G.stabilizeX s.castSucc (G.X s).castSucc s` be the stabilization that splits the
 `X`-marking of column `s` by inserting a new column immediately before `s` and a new row

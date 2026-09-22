@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Polynomial.Coeff
 /-!
 # Coefficients of powers of linear polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Binomial)
+
 The binomial coefficient formula for `(a + b X)^n` allows coefficient calculations without
 expanding a polynomial into a finite sum at each use.
 -/

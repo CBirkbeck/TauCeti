@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.Residue.SimplePole
 /-!
 # The residue of the logarithmic derivative is the meromorphic order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Residue.LogDeriv)
+
 For `f : ℂ → ℂ` meromorphic at `z₀` of order `n = meromorphicOrderAt f z₀`, the residue of the
 logarithmic derivative there is exactly that order:
 `TauCeti.Contour.residue (logDeriv f) z₀ = n`. This is the residue-form of the argument principle,

@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.Repartition.IndexOfSpecialty
 /-!
 # Strong approximation for an algebraic function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Consequences.StrongApproximation)
+
 Weak approximation (`TauCeti.Place.exists_forall_mem_ord_sub_eq`) prescribes the behaviour of a
 function at finitely many places of `F / k` and says nothing whatever about the remaining ones.
 **Strong approximation** keeps that prescription and adds regularity at every place of a set `S`

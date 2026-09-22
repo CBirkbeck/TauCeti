@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The double coset `Γ₁(N) · diag(1, p) · Γ₁(N)` at an index supported on the level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma1.UpperTriCosets)
+
 `GL2/CosetDecomposition.lean` supplies the `p` upper-triangular matrices
 `upperTriRep p b = !![1, b; 0, p]`, and `HeckeSlash/UpperTri/` builds an operator on
 `M_k(Γ₁(N))` by slashing against them and summing. Nothing so far says that this family *is* the

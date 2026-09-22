@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.VirtualCharacter
 /-!
 # The exceptional character attached to a trivial-intersection subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.ExceptionalCharacter)
+
 Let `H` be a trivial-intersection subgroup of a finite group `G` (`TauCeti.IsTISubgroup`): one
 meeting each of its distinct conjugates trivially, as a Frobenius complement does.  Induction from
 such an `H` is an isometry on the class functions that vanish at the identity

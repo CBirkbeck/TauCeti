@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Basic
 /-!
 # The Wasserstein distance of mixtures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Mixture)
+
 For a finite nonzero exponent `p`, the `p`-th power of the `p`-Wasserstein distance is jointly
 convex in the two laws: for weights `a i`,
 

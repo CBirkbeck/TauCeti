@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.Restriction
 /-!
 # The Riemannian distance on inner product spaces and their convex open subsets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Convex)
+
 The standard Riemannian metric of an inner product space `F` restricts to any open subset `U ⊆ F`
 through the open-submanifold instances of `TauCeti.Geometry.Manifold.Riemannian.Restriction`. This
 file computes the resulting Riemannian distance when `U` is convex: straight segments stay in `U`,

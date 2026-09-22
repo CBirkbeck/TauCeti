@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.OpenNormalSubgroup
 /-!
 # Quotients of topological groups by normal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Quotient.Basic)
+
 Generic facts about the quotient of a topological group by a normal subgroup, phrased for the
 unbundled classes `[Group G] [TopologicalSpace G] [IsTopologicalGroup G]`: neither compactness
 nor total disconnectedness is needed, so the results apply in particular to profinite groups.

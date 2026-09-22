@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Basic
 /-!
 # Hecke rings: the support of the multiplicity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Multiplicity.Support)
+
 Shimura's multiplicity `m(g, h; d)` is nonzero exactly when `d` lies in the product set
 `Γ₁gΓ₂hΓ₃` of the two double cosets. For a Hecke triple this identifies the support
 of the structure constants of the Hecke product with the image of `HeckeCoset.mulMap`, which is

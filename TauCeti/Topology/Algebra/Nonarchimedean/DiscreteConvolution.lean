@@ -13,6 +13,8 @@ import TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution
 /-!
 # Discrete convolution of cofinite-zero families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.DiscreteConvolution)
+
 In a nonarchimedean ring, additive convolution preserves families that tend to zero along the
 cofinite filter. When the ring is also complete, every coefficient sum in the convolution is
 summable, and when it is moreover `T0`, convolution of such families is associative.

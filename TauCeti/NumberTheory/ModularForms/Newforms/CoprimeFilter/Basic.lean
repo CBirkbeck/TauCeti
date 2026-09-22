@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.QSupport
 /-!
 # Coprime-index filters on `S_k(Γ₁(N), χ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.CoprimeFilter.Basic)
+
 Miyake's Lemma 4.6.5: a cusp form `f ∈ S_k(Γ₁(N), χ)` can be *filtered* at a divisor of the
 level. For a nonzero `L` all of whose primes already divide `N`, there is a cusp form `g` at a
 raised level, again with nebentypus `χ` read there, whose `q`-expansion keeps exactly the

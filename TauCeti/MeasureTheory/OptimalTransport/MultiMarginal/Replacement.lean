@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Basic
 /-!
 # Replacing one marginal of a multi-marginal coupling
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Replacement)
+
 This file constructs a new multi-marginal coupling by replacing one coordinate according to a
 two-coordinate transport plan. Given a joint law `π` of a family `(X j)`, an index `i`, and a plan
 `σ` whose first marginal is the `i`th marginal of `π`, first glue `π` to `σ` along coordinate `i`.

@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Toric.Algebraic.DualSemigroup.Basic
 /-!
 # Affine toric schemes of cones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.AffineScheme)
+
 The affine toric scheme associated to a cone is the spectrum of the complex monoid algebra of
 its dual semigroup.  A compatible map of lattices carrying one cone into another induces a map
 of dual semigroups in the opposite direction, hence a homomorphism of coordinate rings and,

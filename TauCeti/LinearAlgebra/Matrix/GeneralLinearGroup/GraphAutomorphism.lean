@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Transvection
 /-!
 # The pinned type-A graph automorphism on matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.GraphAutomorphism)
+
 For a commutative ring `A`, inverse transpose is an automorphism of `GL_n(A)`. In type `A_r`,
 conjugating it by the signed reversal matrix gives the pinned graph automorphism
 

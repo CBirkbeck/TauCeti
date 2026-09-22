@@ -10,6 +10,8 @@ public import Mathlib.Probability.CDF
 /-!
 # The cumulative distribution function of a natural-valued law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Cdf)
+
 A probability measure `μ` on `ℕ` becomes a real law by pushing it forward along the cast
 `ℕ → ℝ`. The resulting cumulative distribution function is determined by the cumulative masses of
 `μ` itself: it vanishes below the origin, where the pushforward has no mass at all, and at a

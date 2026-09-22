@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 /-!
 # Analytic rank and conductor of a newform
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.AnalyticInvariants)
+
 For a positive-weight newform, its coefficient Dirichlet series has the entire continuation
 `ModularForm.L`.  This file defines the analytic rank to be the order of vanishing of that
 continuation at the central point `k / 2`.  The continuation is not identically zero, because

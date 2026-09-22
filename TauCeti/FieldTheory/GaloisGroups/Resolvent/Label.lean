@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.GaloisGroups.Resolvent.Root
 /-!
 # Resolvents and transitive-group labels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Label)
+
 The resolvent criterion of `TauCeti.ResolventSpec.exists_isRoot_specialize_iff_exists_le_map_conj`
 compares the roots of a specialized resolvent in the base field with the Galois image of `f` read
 through a numbering of its roots. That image is only defined up to a numbering, while the

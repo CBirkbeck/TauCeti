@@ -13,6 +13,8 @@ public import Mathlib.Basic.Real.Basic
 /-!
 # Doubling is invertible on a real vector space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.End.InvertibleTwo)
+
 For a real vector space `N`, multiplication by `2` is a bijection, so the doubling map is a unit
 of the endomorphism ring — and it remains one when `N` is regarded only as a `ℤ`-module, where
 `2` itself is not invertible. This file records that as an `Invertible (2 : Module.End ℤ N)`

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The degree of a rank-two diagonal double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.DiagonalCosetDegree)
+
 The degree of a double coset is the relative index of the conjugated copy of `SL₂(ℤ)`. For a
 diagonal representative `a = (a₀, a₁)` with `a₀ ∣ a₁` whose ratio `N = a₁ / a₀` is positive,
 conjugating `SL₂(ℤ)` by `natDiagGL 2 a` carves out exactly `Γ₀(N)`, so

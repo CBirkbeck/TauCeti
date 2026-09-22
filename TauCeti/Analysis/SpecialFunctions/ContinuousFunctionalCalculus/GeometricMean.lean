@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpo
 /-!
 # The geometric mean of two positive elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.GeometricMean)
+
 For a strictly positive element `a` of a unital algebra carrying a continuous functional calculus
 and a nonnegative element `b`, the *geometric mean*
 

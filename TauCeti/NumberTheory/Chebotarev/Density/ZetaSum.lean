@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet
 /-!
 # The prime zeta sum over the Frobenius fibres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.Density.ZetaSum)
+
 Let `L / K` be a finite Galois extension of number fields. The Artin class partitions the primes
 of `𝓞 K` outside the finite set `ramifiedPrimes K L` into the fibres `frobeniusPrimeSet K L C`,
 one for each conjugacy class `C` of `Gal(L/K)`. This file transports that partition through

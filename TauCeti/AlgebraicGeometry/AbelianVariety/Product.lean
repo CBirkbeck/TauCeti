@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Trivial
 /-!
 # Products of abelian varieties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.Product)
+
 This file constructs the product of two abelian varieties over a field. Its underlying scheme is
 the fibre product over the base field, equipped with the componentwise group law. The projections
 and pairing operation exhibit this construction as the categorical binary product in

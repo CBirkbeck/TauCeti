@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Eval
 /-!
 # Points of a Weierstrass curve from formal-group parameters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Basic)
+
 Over a complete ring `O` carrying the `I`-adic topology, a parameter `t ∈ I` gives a point of
 `W` over any field `K` whose structure map `O → K` is injective: the `w`-expansion converges at
 `t`, and the pair

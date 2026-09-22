@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.MvPolynomial.WeightedHomogeneous
 /-!
 # `E₄` and `E₆` freely generate the level-one modular forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.GradedRing)
+
 This file defines the evaluation map `ℂ[X₀, X₁] →ₐ[ℂ] ⨁ k, ModularForm 𝒮ℒ k` sending
 `X₀ ↦ E₄`, `X₁ ↦ E₆`, and proves it is surjective: every modular form of level one is a
 polynomial in the Eisenstein series `E₄` and `E₆`.

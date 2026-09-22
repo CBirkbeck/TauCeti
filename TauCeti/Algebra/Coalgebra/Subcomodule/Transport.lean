@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Basic
 /-!
 # Transport of subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Transport)
+
 Mutually inverse comodule morphisms identify the corresponding subcomodule lattices by taking
 images. In particular, transporting a comodule structure along a linear equivalence preserves
 its subcomodules and their underlying submodules.

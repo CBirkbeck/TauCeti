@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic
 /-!
 # Sylow subgroups of profinite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Sylow.Basic)
+
 A Sylow pro-`p` subgroup is a closed pro-`p` subgroup whose image in every quotient by an open
 normal subgroup has index prime to `p`; for a profinite group these quotients are exactly the
 finite continuous ones. This file introduces that predicate and identifies its finite-level

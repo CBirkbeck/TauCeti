@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Semisimple.MatrixDivisionRing
 /-!
 # The index of a central simple algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Index)
+
 Every finite-dimensional central simple algebra `A` over a field `K` has a Wedderburn
 presentation
 

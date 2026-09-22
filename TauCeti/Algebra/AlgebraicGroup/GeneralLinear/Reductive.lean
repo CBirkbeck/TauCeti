@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Faithful
 /-!
 # The general linear group is reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Reductive)
+
 The coordinate Hopf algebra of `GL_n` is reductive over every field and in every natural rank.
 The proof uses the geometric definition, so it works in arbitrary characteristic.
 

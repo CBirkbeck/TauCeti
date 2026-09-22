@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Finiteness.Basic
 /-!
 # Finiteness of a `ℤ`-submodule read as an additive subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Submodule.Finite)
+
 `Submodule.toAddSubgroup` is reducible and keeps the carrier set, so `p` and `p.toAddSubgroup`
 have the same elements and the same `ℤ`-module structure. Instance search is nevertheless keyed
 on the head symbol, so a `Module.Finite ℤ p` instance is never tried against the goal

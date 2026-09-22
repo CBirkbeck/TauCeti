@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.LSeries.Twist
 /-!
 # Deleting finitely many Euler factors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Restrict)
+
 Restricting Euler-product data away from a finite set `S` of primes, keeping only the
 coefficients of the ideals prime to `S`, replaces the local Euler factors at `S` by `1` and leaves
 the others untouched. On the half-plane of absolute convergence the two `L`-series therefore

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Diagram
 /-!
 # Affine simply-laced Dynkin diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.AffineDynkinType.Basic)
+
 The simply-laced affine diagrams carry one node more than the corresponding finite simply-laced
 diagram. Throughout this file a name such as `Aₙ` or `E₆` refers to the *affine* diagram, matching
 the constructors below.

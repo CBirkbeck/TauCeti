@@ -14,6 +14,8 @@ import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
 /-!
 # The singular sets on the boundary contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.SingularSets)
+
 The two candidate exceptional sets the on-curve principal values excise, built from any
 finite set of upper half-plane points and closed under the identifications the contour
 pairings use: the arc singular set —

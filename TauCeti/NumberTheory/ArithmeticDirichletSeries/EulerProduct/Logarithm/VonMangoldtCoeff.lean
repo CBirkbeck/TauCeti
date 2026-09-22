@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.VonMangoldt
 /-!
 # The logarithmic derivative as a von Mangoldt Dirichlet series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.VonMangoldtCoeff)
+
 Strictly to the right of the abscissa of absolute convergence,
 
 `logDeriv L(s) = -∑' A, χ(A) Λ(A) / N(A) ^ s`,

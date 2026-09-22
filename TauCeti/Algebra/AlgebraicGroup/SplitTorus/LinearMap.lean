@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.Scheme
 /-!
 # Linear maps of split-torus character lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.LinearMap)
+
 An integral linear map between finite coordinate character lattices induces, contravariantly, a
 morphism of the corresponding split tori. On scheme-valued points this morphism is the Laurent
 monomial map prescribed by the images of the standard basis characters.

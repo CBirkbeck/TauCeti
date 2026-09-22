@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.Model.Basic
 /-!
 # Isomorphisms of models
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Model.Isomorphism)
+
 This file identifies the categorical isomorphisms between models with the isomorphisms of their
 total spaces.  The generic-fibre condition in `Model.Hom` is preserved by the inverse because
 base change is functorial; consequently model isomorphisms are exactly the morphisms whose total

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.NullHomologous
 /-!
 # Scaling invariance for contour winding numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Scale)
+
 This file records the basic nonzero-scaling API for the generalized winding number. Multiplying
 both the curve and the distinguished point by the same nonzero complex number leaves the index
 principal value unchanged, so the winding number and null-homology are invariant. Scaling only

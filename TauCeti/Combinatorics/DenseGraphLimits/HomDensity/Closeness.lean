@@ -14,6 +14,8 @@ import Mathlib.Tactic.Linarith
 /-!
 # Closeness of the two finite homomorphism densities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Closeness)
+
 For a pattern graph `F` on `k` vertices and a host graph `G` on `n` vertices, the
 all-homomorphism density `t(F, G)` and the injective density `t₀(F, G)` satisfy
 

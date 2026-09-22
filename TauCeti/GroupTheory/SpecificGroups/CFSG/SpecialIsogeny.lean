@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SpecialNodePermutations
 /-!
 # The special isogeny selected by a Suzuki--Ree index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.SpecialIsogeny)
+
 The Steinberg endomorphism of a Suzuki or Ree group is an odd power of the exceptional isogeny of
 its pinned ambient group. That isogeny exists only for `B₂` and `F₄` in characteristic two and for
 `G₂` in characteristic three, and this file selects it, on root data, for every
@@ -138,7 +140,10 @@ characteristic three for the Ree `G₂` family, and of `F₄` in characteristic 
 family and the Tits index.
 
 The sixteen branch equations below name the selected isogeny on each family, field by field, so no
-consumer needs this body. -/
+consumer needs this body.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.SuzukiReeIndex.datumSpecialIsogeny) -/
 noncomputable def datumSpecialIsogeny (e : SuzukiReeIndex) :
     RootPairingIsogeny (e.1.dynkinType.simplyConnectedRootDatum e.1.dynkinType_valid)
       (e.1.dynkinType.simplyConnectedRootDatum e.1.dynkinType_valid) :=

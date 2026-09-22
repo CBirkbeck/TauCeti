@@ -14,6 +14,8 @@ import TauCeti.Analysis.Sobolev.W1p.Density
 /-!
 # `H²` regularity of whole-space weak solutions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.Regularity)
+
 Let `A` be a constant, uniformly elliptic coefficient matrix and let `u ∈ H¹(ℝⁿ)` be a weak
 solution of the divergence-form equation
 

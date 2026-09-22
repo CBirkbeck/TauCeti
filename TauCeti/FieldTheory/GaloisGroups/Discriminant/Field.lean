@@ -11,6 +11,8 @@ import TauCeti.FieldTheory.KummerExtension
 /-!
 # The discriminant field `F(√disc f)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Discriminant.Field)
+
 Let `f` be a polynomial over a field `F` and let `E` be an extension of `F`. The **discriminant
 field** of `f` in `E` is the subfield of `E` generated over `F` by the square roots of
 `Polynomial.discr f` that lie in `E`. It is `TauCeti.discrField f E`, defined as the adjunction to

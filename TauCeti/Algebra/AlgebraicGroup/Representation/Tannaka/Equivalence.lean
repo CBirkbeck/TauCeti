@@ -11,6 +11,8 @@ import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Morphism
 /-!
 # Pointwise Tannakian reconstruction for commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Equivalence)
+
 Let `H` be a commutative Hopf algebra over a field `k`, and let `A` be a commutative
 `k`-algebra. This file identifies the `A`-valued points of `H` with the tensor automorphisms of
 scalar extension on finite-dimensional `H`-comodules.

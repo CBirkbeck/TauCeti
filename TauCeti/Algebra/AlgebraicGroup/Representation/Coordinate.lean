@@ -15,6 +15,8 @@ import TauCeti.Algebra.HopfAlgebra.Basic
 /-!
 # The coordinate morphism of a finite free comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Coordinate)
+
 A right comodule over a commutative Hopf algebra `H` with a basis indexed by `Fin n` has a
 coefficient matrix over `H`, whose determinant is a unit
 (`TauCeti.Comodule.isUnit_det_coefficientMatrix`). Evaluation on that matrix therefore extends

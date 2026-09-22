@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Naturality
 /-!
 # The tangent Lie algebra is natural in the coefficient algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Naturality)
+
 Postcomposition along a homomorphism of coefficient rings preserves the convolution
 commutator bracket on counit-valued derivations. Thus the functorial linear map
 `Derivation.mapValue` upgrades to a Lie algebra homomorphism. This is the

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.JordanDecomp
 /-!
 # Tannakian characterization of semisimple points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.SemisimplePoint)
+
 Let `H` be a Hopf algebra over a commutative semiring `k`, let `K` be a perfect field equipped with
 a `k`-algebra structure, and let `g : WithConv (H →ₐ[k] K)` be a `K`-valued point. The natural
 automorphism formed from the semisimple factors of the actions of `g` on finitely generated

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Weights.StructureConstant.Opposite
 /-!
 # Rescaling a normalised system against an automorphism inverting the Cartan subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Chevalley.Twist)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero, let `H` be a splitting Cartan subalgebra, and let `ω` be a Lie automorphism of
 `L` acting by `-1` on `H`. Such an `ω` inverts every weight, so it carries the root space of `α`

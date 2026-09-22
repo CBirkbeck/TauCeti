@@ -12,6 +12,8 @@ public import Mathlib.Data.Int.Cast.Lemmas
 /-!
 # Evaluating a Laurent polynomial at a unit of a not necessarily commutative algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Laurent.Basic)
+
 Mathlib's `LaurentPolynomial.eval₂` substitutes a unit of a *commutative* semiring into a Laurent
 polynomial.  The Laurent coefficient ring of graded `K`-theory has to act on abelian groups, so it
 has to be substituted into endomorphism rings, which are not commutative.  This file supplies that

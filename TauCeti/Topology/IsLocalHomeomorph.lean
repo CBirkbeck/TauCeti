@@ -11,6 +11,8 @@ public import Mathlib.Topology.IsLocalHomeomorph
 /-!
 # Local path-connectedness passes to the domain of a local homeomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.IsLocalHomeomorph)
+
 A local homeomorphism `p : E → B` identifies a neighbourhood of each point of `E` with an open
 subset of `B`, so `E` inherits any property of `B` that is local and stable under passing to open
 subspaces. This file records that for local path-connectedness.

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Solvable
 /-!
 # Candidates for the solvable radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Basic)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A candidate
 for its solvable radical is a connected normal smooth solvable closed subgroup. In Hopf
 coordinates this is a normal Hopf ideal `I` whose quotient `H/I` is geometrically connected,

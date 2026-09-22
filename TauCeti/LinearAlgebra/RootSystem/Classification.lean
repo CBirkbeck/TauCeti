@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # A base has at most one valid Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Classification)
+
 `TauCeti.HasCartanType P b t` says that the Cartan matrix of a base `b` becomes the standard Cartan
 matrix of the Dynkin type `t` after one simultaneous relabelling of its rows and columns. This file
 proves that a base has **at most one valid** Cartan type: two valid Dynkin types whose standard

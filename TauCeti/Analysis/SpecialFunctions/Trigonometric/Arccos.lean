@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 /-!
 # Comparing an angle with an arccosine
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Arccos)
+
 Mathlib's `Analysis/SpecialFunctions/Trigonometric/Inverse.lean` carries a complete comparison
 family for `Real.arcsin` — `Real.arcsin_le_iff_le_sin`, `Real.le_arcsin_iff_sin_le`,
 `Real.arcsin_lt_iff_lt_sin`, `Real.lt_arcsin_iff_sin_lt` and their primed variants — turning an

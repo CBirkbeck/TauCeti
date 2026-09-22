@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.NormalForms
 /-!
 # The `2`-torsion of the group of points of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.TwoTorsion)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`. In that normal form negation is `-(x, y) = (x, -y)`, so a point is its own
 negative exactly when `y = 0`, and the `2`-torsion of `W(K)` is the origin together with the

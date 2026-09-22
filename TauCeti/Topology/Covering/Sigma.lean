@@ -12,6 +12,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # Covering maps of a disjoint union
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Sigma)
+
 A family of covering maps `f i : E i → X i` assembles into a single map
 `Sigma.map id f : (Σ i, E i) → Σ i, X i`, and this file proves that the assembled map is again a
 covering map, identifies its fibres, and computes its monodromy.

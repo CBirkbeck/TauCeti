@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.NonSimpl
 /-!
 # The root datum of the symplectic group relative to its diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.DiagonalTorus.RootDatum)
+
 The paired diagonal torus `diag(t₀, …, tₘ₋₁, t₀⁻¹, …, tₘ₋₁⁻¹)` of `Sp₂ₘ` has character lattice
 `X*(T) = ULift (Fin m) →₀ ℤ` and cocharacter lattice `X_*(T) = ULift (Fin m) → ℤ`. This file
 equips these lattices with the root datum of type `Cₘ`, indexed by the standard symplectic root

@@ -16,6 +16,8 @@ import Mathlib.Analysis.Complex.CauchyIntegral
 /-!
 # Holomorphic branches of `log` and of `n`-th roots on a simply connected domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.BranchLogRoot)
+
 Mathlib's `Complex.exists_continuousOn_eqOn_exp_comp` produces a **continuous** branch of `log ∘ g`
 on a simply connected open set. The Riemann-mapping argument needs a **holomorphic** one. This file
 supplies that upgrade for the logarithm, consuming Mathlib's branch rather than rebuilding it, and

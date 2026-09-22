@@ -16,6 +16,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Product
 /-!
 # Products of finitely generated comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Product)
+
 This file packages the direct-sum product comodule inside `FGComoduleCat`. The ambient
 category `ComoduleCat` already has the product comodule on the cartesian product of the
 underlying modules; finite generation is preserved by binary products of modules, so this

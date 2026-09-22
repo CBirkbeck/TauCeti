@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.PiTensorProduct.Basic
 /-!
 # Pure tensors on two strands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.PiTensorProduct.TwoStrand)
+
 Calculations on a tensor square index their pure tensors by `Fin 2`, and repeatedly need the same
 three pieces of bookkeeping: a sum over the functions `Fin 2 → ι` is a double sum, a pure tensor
 indexed by `Fin 2` may be rewritten in `![·, ·]` form, and pushing a matrix through both strands

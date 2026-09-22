@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Index.NSmul
 /-!
 # The 2-Selmer group, and the Mordell–Weil rank bound it gives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.SelmerGroup)
+
 Explicit `2`-descent cuts the square classes `W.M` of the étale algebra down by two kinds of
 condition: a global one, that the norm class is trivial (`WeierstrassCurve.Affine.normM`), and a
 local one at each place (`WeierstrassCurve.Affine.localCondition`). The subgroup cut out by all

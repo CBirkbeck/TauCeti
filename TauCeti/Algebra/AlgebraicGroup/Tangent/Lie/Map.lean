@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # The differential is a Lie algebra morphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Map)
+
 Precomposition of counit-valued derivations along a bialgebra morphism
 (`TauCeti.derivationComp`) preserves the convolution commutator: the differential of a
 morphism of affine monoid schemes is a morphism of Lie algebras (ReductiveGroups

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.SpecialOrthogonal.Orbit
 /-!
 # Orbits of compact real Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Real.Orbit)
+
 For `n ≥ 2`, the compact real Spin group acts transitively on the unit level set of its
 positive-definite quadratic form. This is the algebraic input for its continuous sphere orbit.
 

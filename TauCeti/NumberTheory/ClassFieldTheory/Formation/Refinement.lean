@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Basic
 /-!
 # Refinements of a finite normal layer, and inflation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.Refinement)
+
 Let `V ◁ U` be a finite normal layer of a formation, the layer `K/F` in field notation. Enlarging
 the top field to a field `K ⊆ L` that is still Galois over `F` gives a layer `L/F`: its top
 subgroup `V' ≤ V` is again normal in the *same* ground subgroup `U`. Two layers are related by a

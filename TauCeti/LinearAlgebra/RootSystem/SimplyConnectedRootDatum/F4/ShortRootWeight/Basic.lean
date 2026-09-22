@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Lengt
 /-!
 # The short-root weight table of type F4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.ShortRootWeight.Basic)
+
 This file tabulates twenty-six elements of the type-`F₄` character lattice: the twenty-four short
 roots, each once, and the zero weight twice. The numbering of the nodes is the Bourbaki one, in
 which the nodes `0` and `1` are long and the nodes `2` and `3` are short, and the entries are

@@ -11,6 +11,8 @@ import TauCeti.GroupTheory.Commutator
 /-!
 # Generating the difference-root subgroups of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Generation)
+
 For the standard type-`C_m` root system, the roots `eᵢ - eⱼ` form its type-`A_(m-1)`
 subsystem, whose structure-constant-one Chevalley relation is
 

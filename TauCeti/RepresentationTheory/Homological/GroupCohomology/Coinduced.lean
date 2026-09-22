@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
 /-!
 # Cohomology of modules coinduced from the trivial subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupCohomology.Coinduced)
+
 By Shapiro's lemma, the representation `Coind_⊥^G X` coinduced from the trivial subgroup has
 vanishing cohomology in positive degrees, and so does its restriction to any subgroup `S`, since
 that restriction is again coinduced from the trivial subgroup (`Rep.resCoindBotIso`)

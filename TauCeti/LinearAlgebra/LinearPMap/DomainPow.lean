@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.LinearPMap
 /-!
 # Domains of the iterates of a partially defined linear map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearPMap.DomainPow)
+
 A partially defined linear map `A : E →ₗ.[R] E` cannot in general be composed with itself:
 `LinearPMap.comp` asks for `A x ∈ D(A)` at every `x ∈ D(A)`, which is exactly what fails for an
 unbounded operator. What always makes sense is the *domain* of the `n`-th iterate,

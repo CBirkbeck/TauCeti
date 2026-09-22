@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Function.SpecialFunctions.Basic
 /-!
 # The weight ↔ measure isometry `L²(w·μ) ≃ₗᵢ L²(μ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.WeightL2Isometry)
+
 For an almost-everywhere-positive real weight `w` on an arbitrary measurable space, multiplication
 by `√w` is a linear isometric equivalence from the weighted `L²` space `L²(w·μ)` onto `L²(μ)`, where
 `w·μ := μ.withDensity (ENNReal.ofReal ∘ w)`. It is an *equivalence* precisely because `w > 0`

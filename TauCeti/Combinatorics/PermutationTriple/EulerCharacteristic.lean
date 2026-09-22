@@ -13,6 +13,8 @@ import Mathlib.Logic.Equiv.Fin.Rotate
 /-!
 # The Euler characteristic of a permutation triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.EulerCharacteristic)
+
 The surface carrying the cover encoded by a degree-`n` permutation triple `t` is glued from `n`
 faces, and its cells are counted by the cycles of the three components. Its Euler characteristic
 is therefore the integer

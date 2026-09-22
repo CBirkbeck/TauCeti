@@ -15,6 +15,8 @@ public import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.SineIntegral
 /-!
 # The half-disc worked example
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc)
+
 This module re-exports the half-disc contour and its winding numbers, the half-residue evaluation
 along it -- both for a lone pole on the contour and with enclosed poles added -- the
 improper-integral worked example that evaluation supports, and the Dirichlet integral it

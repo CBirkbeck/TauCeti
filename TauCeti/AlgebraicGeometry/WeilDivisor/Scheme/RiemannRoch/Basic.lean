@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.EulerCharacteristic
 /-!
 # The Riemann–Roch theorem for a proper curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.RiemannRoch.Basic)
+
 Let `X` be a proper integral curve over a field `k` whose codimension-one local rings are
 discrete valuation rings, with a `k`-rational point and with `H¹(X, 𝒪_X)` finite-dimensional.
 For every Weil divisor `D` on `X`,

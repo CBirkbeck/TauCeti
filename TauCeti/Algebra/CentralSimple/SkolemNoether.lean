@@ -28,6 +28,8 @@ import TauCeti.RingTheory.Semisimple.SimpleArtinian
 /-!
 # The Skolem-Noether theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.SkolemNoether)
+
 Let `K` be a field, let `A` be a finite-dimensional **simple** `K`-algebra and let `B` be a
 finite-dimensional **central simple** `K`-algebra. The Skolem-Noether theorem says that two
 `K`-algebra homomorphisms `f g : B →ₐ[K] A` differ by conjugation: there is a unit `u` of `A` with

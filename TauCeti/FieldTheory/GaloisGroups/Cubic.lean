@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Polynomial.Roots
 /-!
 # The Galois group of a cubic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Cubic)
+
 An irreducible separable cubic has transitive Galois image in `Equiv.Perm (Fin 3)`, and the only
 transitive subgroups of the symmetric group on three points are the alternating group `A₃`, the
 reference subgroup of the label `3T1`, and the whole group `S₃`, that of `3T2`. So such a cubic

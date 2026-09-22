@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.Padics.LocalField
 /-!
 # Normalization of the p-adic absolute value
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.Padic)
+
 These comparison lemmas let the generic normalized-valuation API interoperate with Mathlib's
 concrete p-adic norm and valuation APIs.
 

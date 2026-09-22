@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.LocallyCompact
 /-!
 # Local compactness of adeles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Adeles.LocallyCompact)
+
 The adele ring of a number field is locally compact: its archimedean part is a finite product of
 local fields, while its finite part is a restricted product with compact open integer rings.
 

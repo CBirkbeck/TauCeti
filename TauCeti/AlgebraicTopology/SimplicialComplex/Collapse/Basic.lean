@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Basic
 /-!
 # Simplicial collapse
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Collapse.Basic)
+
 This file passes from the local elementary-collapse move to finite simplicial collapses.  A
 complex `K` collapses to `L` when there is a finite, possibly empty, sequence of elementary
 collapses from `K` to `L`; it is collapsible when the endpoint can be a one-vertex complex.

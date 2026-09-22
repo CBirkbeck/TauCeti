@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Group.Subgroup.Finite
 /-!
 # Regular permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Regular)
+
 A connected permutation triple is *regular* when its automorphism group — the simultaneous
 centralizer of its components — acts transitively on the sheets. These are the triples of the
 regular (Galois, normal) three-point covers: those whose deck group acts transitively on a fiber.

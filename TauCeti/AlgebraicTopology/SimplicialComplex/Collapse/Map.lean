@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Collapse.Basic
 /-!
 # Relabeling simplicial collapses
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Collapse.Map)
+
 Simplicial collapse is intrinsic to a complex and must not depend on its ambient vertex names.
 This file proves that an injective relabeling preserves and reflects free pairs, elementary
 collapses, finite collapse sequences, and collapsibility.

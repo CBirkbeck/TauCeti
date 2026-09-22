@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Measure.Measurability
 /-!
 # Coordinatewise maps of mixed i.i.d. families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedIID.Map)
+
 This file completes the Layer 0 closure API for the exchangeability symmetry classes: applying a
 measurable map `f : α → β` to every coordinate of a mixed i.i.d. family gives another mixed
 i.i.d. family, whose mixing representative is the coordinatewise pushforward

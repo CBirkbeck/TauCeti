@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Stellar.Ba
 /-!
 # Stellar equivalence of simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Stellar.Equivalence)
+
 Starring a face at a fresh vertex (`PreAbstractSimplicialComplex.stellarSubdivision`) is one
 *stellar move*. Two complexes are **stellar equivalent** when a finite sequence of stellar moves
 and inverse stellar moves carries one to the other. This is the combinatorial relation that

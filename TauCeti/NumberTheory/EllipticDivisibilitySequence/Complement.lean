@@ -11,6 +11,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The complement of a normalised EDS at a general multiple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Complement)
+
 Mathlib defines `complEDS b c d k` to witness `normEDS b c d k ∣ normEDS b c d (n * k)`, but
 proves the witnessing identity `normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k)`
 only at `k = 2`, as `normEDS_mul_complEDS₂`. This file proves it at every `k`, **unconditionally**:

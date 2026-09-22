@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Continuous.Subrepresentation
 /-!
 # The invariants of a normal subgroup as a representation of the quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Invariants)
+
 For a continuous representation `π` of a group `G` on `V` and a normal subgroup `S ≤ G`, the
 invariants of the restricted representation `π|_S` form a `G`-stable submodule of `V`, and the
 action of `G` on it factors through `G ⧸ S`. This file builds that `G ⧸ S`-representation, both in

@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Semisimple.BasicAlgebra
 /-!
 # The semisimple quotient of a path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.SemisimpleQuotient)
+
 Killing the arrows of a quiver leaves its vertices. This file makes that precise at the level of
 algebras: reading off the coordinates of an element of `pathAlgebra k Q` on the trivial paths is an
 algebra homomorphism `TauCeti.PathAlgebra.trivialCoeff` onto the product algebra `Q → k`, and its

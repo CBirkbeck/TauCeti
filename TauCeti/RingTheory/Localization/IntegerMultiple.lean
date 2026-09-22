@@ -12,6 +12,8 @@ import Mathlib.Algebra.Algebra.Tower
 /-!
 # Clearing a finite family of denominators in a localization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Localization.IntegerMultiple)
+
 Mathlib's `IsLocalization.finsetIntegerMultiple` simultaneously clears the denominators of a
 finite family in a localization. This file records how those cleared elements map back into the
 localization and the resulting identity between the ideals generated before and after clearing.

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Category.TopCat.Cech.Refinement
 /-!
 # Refinements of fundamental-groupoid Čech diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroupoid.Cech.Refinement)
+
 A chosen refinement `r` from a family of open sets `U` to a family `V`, with
 `U i ⊆ V (r i)`, sends every finite intersection for `U` into the intersection for the image of
 its indices under `r`. Applying the fundamental-groupoid functor to these inclusions gives a

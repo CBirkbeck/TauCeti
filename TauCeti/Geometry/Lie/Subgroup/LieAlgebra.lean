@@ -16,6 +16,8 @@ import Mathlib.Analysis.Calculus.Deriv.Slope
 /-!
 # The Lie subalgebra of a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Subgroup.LieAlgebra)
+
 For a subgroup `K` of a Lie group `G` the derivations whose one-parameter subgroup never leaves
 `K`,
 

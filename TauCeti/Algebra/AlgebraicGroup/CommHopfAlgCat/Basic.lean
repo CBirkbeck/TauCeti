@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.PointsFunctor
 /-!
 # Commutative Hopf algebras and their functor of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.Basic)
+
 This file packages the group object represented by a commutative coordinate Hopf algebra and the
 contravariant functor that sends it to its group-valued functor of points `A ↦ Hom_R(H, A)`.
 

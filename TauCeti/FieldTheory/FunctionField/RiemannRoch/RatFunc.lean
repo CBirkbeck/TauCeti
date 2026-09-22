@@ -14,6 +14,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Genus
 /-!
 # The Riemann–Roch spaces and the genus of the rational function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.RiemannRoch.RatFunc)
+
 The rational function field `k(x)` is the base case of the theory, and its Riemann–Roch spaces
 can be written down by hand, long before the Riemann–Roch theorem is available.  For `n : ℕ`, a
 rational function lies in `L(n · P_∞)` exactly when it is a polynomial of degree at most `n`:

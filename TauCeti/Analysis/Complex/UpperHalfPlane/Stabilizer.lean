@@ -14,6 +14,8 @@ import Mathlib.RingTheory.IntegralDomain
 /-!
 # Point stabilizers of subgroups of `PSL(2, ℝ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.Stabilizer)
+
 The transformations fixing a point `z` of the upper half-plane are recorded by their derivative
 there. By the chain rule that derivative is multiplicative on the stabilizer, so it is a
 character `stabilizer Γ z →* ℂ` for any subgroup `Γ ≤ PSL(2, ℝ)`, and it is injective: a Möbius

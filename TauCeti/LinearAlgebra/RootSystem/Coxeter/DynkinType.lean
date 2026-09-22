@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Dynkin
 /-!
 # The Coxeter matrix of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Coxeter.DynkinType)
+
 `TauCeti.coxeterMatrixOfBase` reads a Coxeter matrix off the Cartan matrix of a base, entry by
 entry: the order of the product of two simple reflections is the Cartan product of the two simple
 roots, translated by `0 ↦ 2`, `1 ↦ 3`, `2 ↦ 4`, `3 ↦ 6`. This file performs that translation on

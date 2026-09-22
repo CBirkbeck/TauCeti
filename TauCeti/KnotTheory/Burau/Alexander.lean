@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.CornerMinor
 /-!
 # The Alexander polynomial of a braid closure, from the Burau representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Burau.Alexander)
+
 Closing a braid on `n` strands, by joining the `i`-th endpoint at the top to the `i`-th endpoint
 at the bottom, presents an oriented link. This file attaches a Laurent-polynomial-valued invariant
 to that presentation, read off the unreduced Burau representation:

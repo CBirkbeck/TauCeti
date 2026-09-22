@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Structure
 /-!
 # Counting the modular central-character search
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.CentralCharacterCount)
+
 `TauCeti.ClassData.centralCharacterSearch` is the executable simultaneous eigenvalue search of the
 Burnside--Dixon--Schneider algorithm: it returns the `Finset` of normalized common left eigenrows of
 the reduced class-multiplication matrices. `TauCeti.ClassData.mem_centralCharacterSearch` says what

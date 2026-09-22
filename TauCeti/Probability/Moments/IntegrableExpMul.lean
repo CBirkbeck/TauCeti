@@ -12,6 +12,8 @@ import Mathlib.Probability.Moments.Basic
 /-!
 # Exponential moments of a statistic that is bounded below
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.IntegrableExpMul)
+
 Mathlib's `ProbabilityTheory.integrable_exp_mul_of_le` makes `exp (t * X)` integrable against a
 finite measure when `X` is bounded above and the rate `t` is nonnegative. A law carried by a
 half-line `[b, ∞)` needs the mirror image: `X` bounded below and `t` nonpositive. Both bounds are

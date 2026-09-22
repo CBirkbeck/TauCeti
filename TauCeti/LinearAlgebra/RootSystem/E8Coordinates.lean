@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # The Bourbaki coordinate model of type `E₈`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.E8Coordinates)
+
 The simple roots of type `E₈` have half-integral coordinates in the orthonormal basis
 `ε₁, ..., ε₈` of Bourbaki's Plate VII, so the table recorded here is twice them: row `i` of
 `TauCeti.DynkinType.e8DoubledSimpleRoot` is twice the `i`-th simple root, which makes all entries

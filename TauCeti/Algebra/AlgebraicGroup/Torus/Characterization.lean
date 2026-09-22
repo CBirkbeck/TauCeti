@@ -14,6 +14,8 @@ import TauCeti.Algebra.MonoidAlgebra.Torsion
 /-!
 # Characterization of tori among groups of multiplicative type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Characterization)
+
 A finite-type group of multiplicative type is a torus exactly when it is geometrically connected
 and geometrically reduced. After passing to an algebraic closure, its coordinate ring is a group
 algebra. Reducedness and connectedness force the character group to be torsion-free, while finite

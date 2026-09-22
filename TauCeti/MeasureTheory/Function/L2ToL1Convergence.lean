@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # `L²` convergence gives `L¹` convergence on a finite measure space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.L2ToL1Convergence)
+
 Mathlib supplies the exponent comparison `eLpNorm_le_eLpNorm_mul_rpow_measure_univ`, which costs a
 fixed finite factor `μ univ ^ (1/p - 1/q)`. Packaging it as a statement about *convergence* — and
 in the `∫ ‖·‖` form rather than the `eLpNorm` form — is what consumers usually want, and is not in

@@ -12,6 +12,8 @@ import Mathlib.Data.Set.Card.Arithmetic
 /-!
 # The open-mapping degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.LocalDegree)
+
 The local mapping theorem: near a point `z₀` at which `f - f z₀` vanishes to order `n`, every
 value `w` close enough to `f z₀` is attained exactly `n` times, counted with multiplicity. This is
 the third target of layer **L0 (the local-mapping engine)** of the conformal-mapping roadmap.

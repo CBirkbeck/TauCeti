@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # From Gauss codes to PD-codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.GaussCode.PDCode.Basic)
+
 A based oriented Gauss code records the two visits to every crossing in traversal order. An
 oriented PD-code instead records the four half-edges at every crossing, their cyclic order, and
 the arcs pairing them. This file gives the canonical passage from the former presentation to the

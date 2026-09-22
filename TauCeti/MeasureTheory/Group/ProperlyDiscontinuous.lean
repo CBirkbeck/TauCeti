@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.GroupAction.FreeLocus
 /-!
 # Fundamental domains of properly discontinuous actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.ProperlyDiscontinuous)
+
 Let a countable group `G` act properly discontinuously on a second countable, locally compact
 Hausdorff space `X`. Every point with trivial stabilizer has a neighbourhood disjoint from all
 of its nontrivial translates. Enumerating the basic open sets with this property as

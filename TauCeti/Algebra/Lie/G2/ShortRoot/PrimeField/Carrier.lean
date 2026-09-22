@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Equalizer
 /-!
 # The short-root type-G2 carrier over the prime field of characteristic three
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.PrimeField.Carrier)
+
 The short-root type-`G₂` carrier over `ℤ` is the Kostant toral closure of the seven-dimensional
 module `V(ϖ₁)` inside `GL₇`: the largest Hopf ideal of `O(GL₇/ℤ)` killed by the coordinate maps of
 the four numbered simple root subgroups and of the rank-two weight torus. This file forms the

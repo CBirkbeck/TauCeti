@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Units
 /-!
 # The narrow relation between the ramified primes of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.RamifiedPrime.Narrow)
+
 Let `K = ℚ(√d)` be a quadratic number field, presented by `θ : 𝓞 K` with
 `minpoly ℤ θ = X ^ 2 - d` and `Algebra.adjoin ℚ {θ} = ⊤`, with `d` squarefree and `1 < |d|`, and
 let `𝔭_p` be the prime of `𝓞 K` above a ramified rational prime `p`. The narrow classes `[𝔭_p]⁺`

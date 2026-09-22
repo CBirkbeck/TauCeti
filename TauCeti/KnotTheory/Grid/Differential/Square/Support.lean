@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Support.Cardinality
 /-!
 # Two-step support for the fully blocked grid differential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Support)
+
 This file records the finite support bookkeeping for applying the fully blocked grid
 differential twice. The one-step support theorem says that `∂ x` is supported on the states
 obtained from `x` by one nontrivial column transposition. Applying that theorem again gives a

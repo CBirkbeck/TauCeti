@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.Haar.Basic
 /-!
 # Measure theory on the multiplicative type tag
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.TypeTags)
+
 `Multiplicative α` is the type `α` with its addition renamed to multiplication. Mathlib transports
 the algebraic and topological structure of `α` along that renaming, but not the measurable
 structure, so an additive group carrying a Haar measure is not usable as a *multiplicative* group

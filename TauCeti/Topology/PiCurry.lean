@@ -10,6 +10,8 @@ public import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # Currying and regrouping a tuple, topologically
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.PiCurry)
+
 A family of spaces indexed by a sigma type has the same sections as the curried family: the
 equivalence `Equiv.piCurry` is a homeomorphism for the product topologies. Composing it with a
 bijection between the sigma index and another index presents a tuple as a family of tuples.

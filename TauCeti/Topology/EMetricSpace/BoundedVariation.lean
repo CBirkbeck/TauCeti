@@ -10,6 +10,8 @@ public import Mathlib.Topology.EMetricSpace.BoundedVariation
 /-!
 # Limits of total variation bounds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.EMetricSpace.BoundedVariation)
+
 This file transfers eventual upper bounds on the total variations of a family of maps to a
 `liminf` bound on the total variation of a pointwise limit.
 

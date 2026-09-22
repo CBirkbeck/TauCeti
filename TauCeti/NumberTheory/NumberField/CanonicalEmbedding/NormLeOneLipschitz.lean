@@ -14,6 +14,8 @@ public import TauCeti.Topology.MetricSpace.LipschitzParametrizable
 /-!
 # A Lipschitz parametrization of the frontier of the norm-≤-one region
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.CanonicalEmbedding.NormLeOneLipschitz)
+
 `TauCeti.NumberTheory.GeometryOfNumbers.LatticePointCount` counts lattice points in a dilated
 region with a power-saving error, but only for regions whose frontier is Lipschitz
 parametrizable: `exists_abs_ncard_smul_inter_vadd_sub_le` takes

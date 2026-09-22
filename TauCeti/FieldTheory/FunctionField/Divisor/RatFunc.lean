@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.RatFunc.Order
 /-!
 # Divisors of the rational function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.RatFunc)
+
 The rational function field `k(x)` is the base case of the theory of algebraic function fields,
 and this file computes its principal divisors: the divisor of an irreducible polynomial, its
 special case the divisor of `x`, and the degree of the pole divisor of a nonzero rational

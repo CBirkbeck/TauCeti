@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.Multiquadratic.Quadratic.Ramification
 /-!
 # The candidate genus field is unramified over `ℚ(√d)` at the finite places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Ramification)
+
 For a squarefree integer `d`, `candidateGenusField hd` is the compositum of the quadratic fields
 attached to the prime discriminants dividing `fundamentalDiscriminant d`, and
 `candidateGenusFieldBase hd` is the copy of `K = ℚ(√d)` inside it. This file proves that, for such

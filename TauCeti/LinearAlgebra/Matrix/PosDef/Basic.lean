@@ -12,6 +12,8 @@ import Mathlib.Data.Rat.Star
 /-!
 # Positive definiteness over the rationals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.PosDef.Basic)
+
 `Matrix.PosDef` is stated relative to the coefficient ring, so for a matrix of integers it says
 that the associated quadratic form is positive on nonzero *integer* vectors. That is formally
 weaker than positivity on nonzero *rational* vectors, and it is the rational statement that later

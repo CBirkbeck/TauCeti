@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basis
 /-!
 # Coordinate projections on an exterior algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.ExteriorAlgebra.Contraction)
+
 Left multiplication by a basis vector after contraction by its dual coordinate is the projection
 onto the exterior basis vectors containing that coordinate. This is the occupation-number
 projection used by both scalar detection in Clifford algebras and the matrix-unit construction

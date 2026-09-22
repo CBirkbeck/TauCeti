@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.Resolution
 /-!
 # The inverse of Shapiro's isomorphism in homology is the corestriction of the unit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupHomology.Shapiro)
+
 For a subgroup `S ≤ G` and an `S`-representation `A`, Mathlib's homological Shapiro isomorphism
 `groupHomology.indIso A n : Hₙ(G, Ind_S^G A) ≅ Hₙ(S, A)` is constructed through `Tor`: it compares
 the bar resolution of `S` with the restriction to `S` of the bar resolution of `G`. This file

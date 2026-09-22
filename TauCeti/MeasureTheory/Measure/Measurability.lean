@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Measurability of measure-valued maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Measurability)
+
 This file supplies general-purpose measurability results for maps into the Giry measurable space
 of measures.
 

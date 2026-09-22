@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Exact
 /-!
 # Finite Laurent support and graded dimension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.GradedDimension)
+
 A family of vector spaces indexed by `ℤ` has a Laurent-polynomial-valued graded dimension only
 when every piece is finite-dimensional and only finitely many pieces are nonzero.  This file
 packages those two conditions as `TauCeti.HasFiniteLaurentSupport` and defines

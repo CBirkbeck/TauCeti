@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.Equiv
 /-!
 # The second derivative as a derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.SecondDerivative)
+
 The second derivative `fderiv 𝕜 (fderiv 𝕜 g) x` of a map between normed spaces is, by definition,
 the derivative at `x` of the map `fderiv 𝕜 g`. Mathlib supplies the differentiability of
 `fderiv 𝕜 g` at a twice continuously differentiable point through `ContDiffAt.fderiv_right`; this

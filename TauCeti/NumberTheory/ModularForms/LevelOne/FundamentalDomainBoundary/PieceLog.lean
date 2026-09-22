@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deri
 /-!
 # The winding number of each boundary piece is a principal logarithm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.PieceLog)
+
 Each smooth piece of the boundary contour of the truncated fundamental domain is confined
 to an axis-aligned half-plane: the verticals have constant real part `±1/2`, the arc stays
 below height `1`, and the truncation ceiling has constant height `H`. About a point `w` on

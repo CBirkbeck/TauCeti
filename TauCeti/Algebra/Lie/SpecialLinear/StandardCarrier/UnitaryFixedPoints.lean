@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.TwistedFrobenius
 /-!
 # The points of the type-A carrier fixed by the graph-twisted Frobenius
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.UnitaryFixedPoints)
+
 `TauCeti.SlStd.twistedFrobenius r p k A` is the composite `γ ∘ Frob_q` of the pinned type-`A_r`
 graph automorphism with the entrywise `q`-power Frobenius, `q = p ^ k`. This file identifies the
 points it fixes by a single matrix equation. Writing `Q` for the signed reversal matrix

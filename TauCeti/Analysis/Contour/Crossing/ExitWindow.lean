@@ -15,6 +15,8 @@ import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 /-!
 # Equal-radius cap windows at crossings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.ExitWindow)
+
 Hungerbühler--Wasem Proposition 2.2 removes a small parameter interval about each crossing and
 joins its endpoints by a circular cap.  The two endpoints must lie on the same circle about the
 crossed point: otherwise the cap does not join both of them.  This file obtains those endpoints

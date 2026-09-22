@@ -11,6 +11,8 @@ public import TauCeti.Data.Fin.Basic
 /-!
 # Neighbours in a cycle graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.CycleGraph)
+
 For `m ≥ 2`, Mathlib's `SimpleGraph.cycleGraph m` joins two elements of `Fin m` exactly when they
 differ by one and records the neighbour set of a vertex as the pair `{v - 1, v + 1}`; for `m ≥ 3`,
 it computes the degree to be two. This file derives the weaker fact valid for every nonzero `m`

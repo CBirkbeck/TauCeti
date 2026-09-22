@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.Basic
 /-!
 # The diagonal torus as a closed subgroup of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.ClosedImmersion)
+
 Over every commutative ring, the diagonal torus of `SL_{r+1}` is cut out by the Hopf ideal of
 functions whose restriction to the torus vanishes, the kernel of the surjective coordinate
 morphism `TauCeti.SpecialLinear.diagonalTorusCoordinateMap`. The quotient by this ideal is the

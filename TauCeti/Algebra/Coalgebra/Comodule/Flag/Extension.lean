@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Induced
 /-!
 # Upper-triangular comodule structures and extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Flag.Extension)
+
 An extension of upper-triangular comodules is again upper triangular. More explicitly, let `N` be
 a subcomodule of `M`. A basis of `N` and a basis of `M ⧸ N` combine, using Mathlib's
 `Module.Basis.sumQuot`, into a basis of `M`. If the coefficient matrices on the subcomodule and

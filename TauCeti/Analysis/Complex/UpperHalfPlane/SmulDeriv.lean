@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 /-!
 # The derivative of the `PSL(2, ℝ)`-action on the upper half-plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.SmulDeriv)
+
 A Möbius transformation of the upper half-plane is holomorphic, with derivative
 `det g / denom g z ^ 2` at `z`, where `denom g z = c * z + d` is Mathlib's automorphy factor
 (`UpperHalfPlane.hasStrictDerivAt_smul`). A representative in `SL(2, ℝ)` has determinant `1`, so

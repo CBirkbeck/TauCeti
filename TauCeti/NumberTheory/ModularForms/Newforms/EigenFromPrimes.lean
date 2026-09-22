@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 /-!
 # Building a good Hecke eigenform from the prime eigenvalues
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.EigenFromPrimes)
+
 `EigenformAwayFromLevel` bundles a cusp form with an eigenvalue at every index coprime to the
 level. Eigen-ness at those indices is already determined by the primes
 (`exists_smul_heckeTCompositeGamma0_of_forall_prime_of_coprime`), so a nonzero cusp form of

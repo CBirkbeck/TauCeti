@@ -10,6 +10,8 @@ public import TauCeti.Algebra.HopfAlgebra.SymmetricAlgebra.Basic
 /-!
 # Symmetric-algebra Hopf structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.SymmetricAlgebra)
+
 This module preserves the former public import path for the symmetric-algebra Hopf structure.
 The declarations now live in `TauCeti.Algebra.HopfAlgebra.SymmetricAlgebra.Basic`.
 -/

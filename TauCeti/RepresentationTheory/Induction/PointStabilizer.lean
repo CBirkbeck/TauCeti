@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Standard
 /-!
 # Inducing the trivial representation from a point stabilizer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.PointStabilizer)
+
 Let `α` be a finite set and let `x₀ : α`.  The symmetric group `Equiv.Perm α` acts transitively on
 `α`, so the coset space of the stabilizer of `x₀` is `α` itself, and inducing the trivial
 representation of that stabilizer produces the permutation representation of `Equiv.Perm α` on

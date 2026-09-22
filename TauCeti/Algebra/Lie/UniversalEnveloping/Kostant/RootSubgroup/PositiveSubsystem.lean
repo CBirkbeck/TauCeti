@@ -15,6 +15,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Elementary.C
 /-!
 # Upper-unitriangular positive Kostant subsystem groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.PositiveSubsystem)
+
 Let a Kostant form act on an integral lattice with a finite ordered weight basis. Suppose that a
 set `S` of distinguished root vectors acts by positive weight shifts: whenever a positive divided
 power carries the weight at basis index `s` to the weight at `r`, one has `r < s`. The individual

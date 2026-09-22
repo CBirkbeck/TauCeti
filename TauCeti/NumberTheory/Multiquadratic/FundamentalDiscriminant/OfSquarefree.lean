@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Basic
 /-!
 # The fundamental discriminant of a squarefree radicand
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.OfSquarefree)
+
 For a squarefree integer `d`, the quadratic field `ℚ(√d)` has discriminant `d` when
 `d ≡ 1 (mod 4)` and `4 * d` otherwise. This file packages that assignment as a function
 `TauCeti.Multiquadratic.fundamentalDiscriminant` and proves the two facts the genus-field layer

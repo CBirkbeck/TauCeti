@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Basic
 /-!
 # Inverse images of subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Comap)
+
 This file adds inverse images of subcomodules under comodule morphisms. If
 `f : M → N` is a morphism of right comodules and `B ≤ N` is a subcomodule, then
 `B.comap f` has underlying submodule `B.toSubmodule.comap f`. Stability under the

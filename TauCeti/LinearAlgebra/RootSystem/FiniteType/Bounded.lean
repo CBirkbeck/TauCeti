@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic
 /-!
 # A finite-type Cartan inequality has finitely many natural solutions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Bounded)
+
 Let `A` be an integer matrix of finite type, that is a generalized Cartan matrix carrying a
 positive symmetrizer whose symmetrization is positive definite (`TauCeti.IsFiniteType`). This file
 proves that for every integer vector `y` the system of inequalities

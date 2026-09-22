@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Residue
 /-!
 # Evaluating a function on a divisor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Divisor.Eval)
+
 For a function `f` and a divisor `D` whose support avoids the zeros and poles of `f`, the
 classical quantity
 

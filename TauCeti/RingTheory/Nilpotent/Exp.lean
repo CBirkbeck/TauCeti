@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Nilpotent.Exp
 /-!
 # The integral exponential of a nilpotent element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Nilpotent.Exp)
+
 Let `A` be an associative `ℚ`-algebra and `x : A` a nilpotent element. Mathlib's
 `IsNilpotent.exp x` is the finite sum `∑ i, xⁱ / i!`. This file rewrites that sum in terms of the
 divided powers `x⁽ⁱ⁾ = xⁱ / i!` of `TauCeti/RingTheory/DividedPowers/Associative.lean`, so that

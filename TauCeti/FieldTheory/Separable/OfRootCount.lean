@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Separable
 /-!
 # A polynomial that attains its degree in distinct roots is separable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Separable.OfRootCount)
+
 A polynomial has at most `natDegree p` roots counted with multiplicity, and at most that many
 distinct ones. If it has at least that many *distinct* roots then both bounds are equalities: it
 splits, and none of its roots repeats — which is separability.

@@ -11,6 +11,8 @@ import Mathlib.Algebra.Polynomial.Coeff
 /-!
 # The lattice complex has no homology in top cubical degree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.TopDegree)
+
 `Bounded.lean` locates Némethi's lattice homology below the number of plumbing vertices only
 because the chain groups themselves vanish there. This file removes the remaining top degree,
 where the chain group is as large as it ever gets: the lattice differential is *injective* on

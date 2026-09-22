@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.ArtinSymbol
 /-!
 # The ideal weight of a Galois character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Weight)
+
 For a finite Galois extension `L / K` of number fields and a character `χ : Gal(L/K) →* ℂˣ`, this
 file builds the *canonical ideal weight* `galoisCharacterWeight χ`: the completely multiplicative
 function on the ideals of `𝓞 K` whose value at a height-one prime `𝔭` is `χ (Frob 𝔭)` when `𝔭` is

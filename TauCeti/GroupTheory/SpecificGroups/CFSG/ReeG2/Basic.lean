@@ -14,6 +14,8 @@ public import TauCeti.GroupTheory.FixedPointCandidate
 /-!
 # The Ree G2 Steinberg map and candidate group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeG2.Basic)
+
 The signed-minor construction gives the exceptional endomorphism of the characteristic-three
 short-root carrier. Its odd power is the Steinberg map for a validated Ree G2 index. The candidate
 is the derived subgroup of its fixed points modulo the centre of that derived subgroup.

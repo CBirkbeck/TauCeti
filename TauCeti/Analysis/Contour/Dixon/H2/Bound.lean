@@ -11,6 +11,8 @@ import TauCeti.Analysis.Contour.Curve.IntegralBound
 /-!
 # Norm bound and decay at infinity of Dixon's `dixonH2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Dixon.H2.Bound)
+
 For `w` outside a ball containing the curve, Dixon's Cauchy-type integral
 `dixonH2 f γ a b w = ∫ t in a..b, f (γ t) / (γ t - w) * deriv γ t` is small and tends to `0` as
 `‖w‖ → ∞`. The distance lower bound `‖w‖ - R ≤ ‖γ t - w‖` (for `‖γ‖ ≤ R < ‖w‖`) controls the Cauchy

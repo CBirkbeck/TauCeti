@@ -19,6 +19,8 @@ import TauCeti.RingTheory.Valuation.RootMonic
 /-!
 # The bad primes of a Weierstrass curve, and the arithmetic away from them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.BadPrimes)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`, and let `R` be a Dedekind domain with fraction field `K`. The **bad
 primes** of `W` over `R` are the primes dividing `2` or the discriminant `Δ`, together with those

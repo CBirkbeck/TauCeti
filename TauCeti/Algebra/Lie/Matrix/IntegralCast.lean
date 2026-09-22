@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.CoordinateLattice
 /-!
 # Integral matrices acting on a rational coordinate space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Matrix.IntegralCast)
+
 An explicit Chevalley carrier starts from a representation of a Serre presentation by matrices
 with integer entries, extends it to the rational Serre algebra, and shows that the integral
 coordinate lattice of the rational module is preserved. This file collects the facts that step

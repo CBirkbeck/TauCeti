@@ -13,6 +13,8 @@ public import TauCeti.Analysis.CompletelyMonotone.Basic
 /-!
 # Integral lemmas for completely monotone functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Integral)
+
 Taylor-remainder sign bounds and finite- and improper-integral facts about completely monotone
 functions.
 

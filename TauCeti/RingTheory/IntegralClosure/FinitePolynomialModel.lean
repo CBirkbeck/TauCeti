@@ -26,6 +26,8 @@ import TauCeti.RingTheory.IntegralClosure.IsIntegral.Basic
 /-!
 # A finite normalization from a separating polynomial model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.FinitePolynomialModel)
+
 Let `A` be a polynomial algebra `F[X]` over a field, `K` its fraction field and `L` a finite
 separable extension of `K`. If every element of `A` is integral over a base ring `R` inside `L`,
 then any integral closure `C` of `R` in `L` is a **finite** `R`-module.

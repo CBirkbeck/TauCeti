@@ -16,6 +16,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Negative semidefiniteness from a positive null vector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.NegSemidef)
+
 Let `A` be a symmetric matrix over a linear ordered field whose off-diagonal entries are
 nonnegative, and suppose that `A` kills a vector `m` with strictly positive entries. Then the
 quadratic form of `A` is negative semidefinite, and when the positive-entry graph of `A` is

@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.CartierDivisor.LocalEquations
 /-!
 # Transition units for Cartier divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.CartierDivisor.Transition)
+
 Local equations for a Cartier divisor differ by regular units on overlaps.  This file packages
 that unit and exposes the restriction compatibility needed to glue the local copies of the
 structure sheaf:

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.GradedCoalgHom
 /-!
 # Morphisms of A-infinity algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.Hom.Basic)
+
 A morphism of uncurved nonunital `A∞` algebras `A ⟶ B` is a degree-zero coalgebra morphism
 `F : Tᶜ(sA) ⟶ Tᶜ(sB)` of reduced bar constructions which intertwines the bar differentials,
 `b_B ∘ F = F ∘ b_A`.  A coalgebra morphism of reduced tensor coalgebras is determined by its

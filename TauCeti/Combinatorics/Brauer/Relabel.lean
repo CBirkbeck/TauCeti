@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.Brauer.Boundary
 /-!
 # Relabelling the boundary of a Brauer diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Brauer.Relabel)
+
 Renaming the bottom points of a Brauer diagram by a permutation `σ` and its top points by a
 permutation `τ` gives another Brauer diagram, `TauCeti.BrauerDiagram.relabel`: the arc joining `x`
 to `y` becomes the arc joining the renamed `x` to the renamed `y`, so the underlying perfect

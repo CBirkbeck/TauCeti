@@ -13,6 +13,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Weight-unipotent subgroup schemes of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Unipotent.Basic)
+
 An integer weight `w i` on each coordinate of `GL_N` defines a decreasing filtration. The
 unipotent subgroup attached to this filtration consists of the invertible matrices which are
 block triangular and induce the identity on every associated-graded weight space. Equivalently,

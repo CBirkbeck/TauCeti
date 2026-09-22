@@ -17,6 +17,8 @@ import TauCeti.Topology.Algebra.Module.Submodule
 /-!
 # Restricted Power Series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.PowerSeries)
+
 This file defines restricted power series `A⟨T₁, …, Tₖ⟩`, following Wedhorn's *Adic Spaces*,
 where the convergent/restricted power series ring is (5.6.1) in §5.6.
 

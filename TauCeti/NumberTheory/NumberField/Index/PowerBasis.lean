@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Polynomial.Resultant.Discriminant
 /-!
 # The power basis of an integral primitive element and its discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.PowerBasis)
+
 An integral primitive element `θ` of a number field `K` generates `K` over `ℚ`, so its powers
 `1, θ, …, θ ^ (n - 1)` form a `ℚ`-basis of `K`, where `n = [K : ℚ]`. This file packages that
 basis as a `PowerBasis ℚ K` and identifies its discriminant with the discriminant of the minimal

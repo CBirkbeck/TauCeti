@@ -24,6 +24,8 @@ import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
 /-!
 # The four conjugacy normal forms of `GL₂` over a finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.NormalForm)
+
 `TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/ConjugacyClasses.lean` classifies the conjugacy
 classes of `GL₂(F)` by trace and determinant, with the companion matrix of the characteristic
 polynomial as the representative of each non-scalar class. That representative is uniform but

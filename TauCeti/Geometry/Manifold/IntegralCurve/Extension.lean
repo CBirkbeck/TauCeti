@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.IntegralCurve.Basic
 /-!
 # Extending an integral curve past a finite endpoint
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.IntegralCurve.Extension)
+
 Mathlib's integral-curve API produces a local integral curve through a point and shows that two
 integral curves on a common open interval agree. It says nothing about what happens at a finite
 endpoint of the interval of definition. This file supplies the missing extension criterion:

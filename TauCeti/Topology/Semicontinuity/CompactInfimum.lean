@@ -10,6 +10,8 @@ public import Mathlib.Topology.Semicontinuity.Basic
 /-!
 # Infima of a lower semicontinuous function over a compact factor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Semicontinuity.CompactInfimum)
+
 A lower semicontinuous function on a nonempty compact space attains its infimum, and the partial
 infimum `y ↦ ⨅ x, f (x, y)` of a jointly lower semicontinuous function over a compact first factor
 is again lower semicontinuous.

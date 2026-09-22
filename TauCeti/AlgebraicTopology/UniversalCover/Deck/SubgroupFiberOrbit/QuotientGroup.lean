@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.SubgroupFiberOrbit.B
 /-!
 # Subgroup fibre orbits of a regular cover as deck-group quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.SubgroupFiberOrbit.QuotientGroup)
+
 For a regular preconnected covering map, evaluation at any point of a fibre identifies the
 deck group with that fibre. This file records the corresponding quotient-level statement:
 orbits of a subgroup `H ≤ deck p` on the fibre are equivalent to the coset quotient

@@ -12,6 +12,8 @@ public import Mathlib.Tactic.Abel
 /-!
 # Telescoping differences in additive submonoids
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Submonoid.Telescoping)
+
 This file records criteria for differences and sums of terms in a sequence to belong to an
 additive submonoid, given membership of its consecutive differences.
 

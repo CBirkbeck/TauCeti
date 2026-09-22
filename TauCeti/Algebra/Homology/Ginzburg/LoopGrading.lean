@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.Ginzburg.Basic
 /-!
 # The loop-count grading of the two-dimensional Ginzburg path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Ginzburg.LoopGrading)
+
 The Ginzburg quiver of a quiver `Q` consists of the doubled arrows and one additional loop `t_i`
 at every vertex.  Its cohomological grading gives doubled arrows degree `0` and the loops degree
 `-1`.  This file introduces the companion natural-number weight

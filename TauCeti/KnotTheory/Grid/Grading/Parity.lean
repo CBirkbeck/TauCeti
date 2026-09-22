@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.Grading.Integer
 /-!
 # Parity of the gradings, and integrality of the Alexander grading
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.Parity)
+
 The Maslov gradings of a grid diagram are integers, and the Alexander grading
 `A = (M_O - M_X) / 2 - (n - 1) / 2` is a priori only a half-integer. This file computes the parity
 of both Maslov gradings and settles the parity-sensitive question: `A` is an integer exactly when

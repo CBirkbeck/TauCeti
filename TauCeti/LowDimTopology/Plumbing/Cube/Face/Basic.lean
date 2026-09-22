@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Cube.Weight.Basic
 /-!
 # Face weights for plumbing-lattice cubes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.Face.Basic)
+
 This file adds the codimension-one face bookkeeping needed for the cubical boundary in
 Némethi's lattice homology. A cube with base point `x` and directions `S` has two faces in a
 direction `v`: the lower face with the same base point and directions `S.erase v`, and the

@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Measure.ProbabilityMeasure.Convex
 /-!
 # The convex structure on exchangeable path laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Law.Convex)
+
 Exchangeable probability laws on `ℕ → α` are closed under convex combination
 (`ExchangeableLaw.smul_add_smul`), so the subtype they form carries the convex structure of
 `ProbabilityMeasure`. This file names that combination.
@@ -53,7 +55,10 @@ theorem ExchangeableLaw.smul_add_smul {ρ₁ ρ₂ : Measure (ℕ → α)} (h₁
 
 /-- The **convex combination of two exchangeable path laws**, in the subtype of exchangeable
 probability measures on `ℕ → α`. Exchangeability is preserved because the defining permutation
-invariance is linear (`ExchangeableLaw.smul_add_smul`). -/
+invariance is linear (`ExchangeableLaw.smul_add_smul`).
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Probability.exchangeableLawConvexComb) -/
 def exchangeableLawConvexComb {a b : ℝ≥0∞} (hab : a + b = 1)
     (ρ₁ ρ₂ : {ρ : ProbabilityMeasure (ℕ → α) // ExchangeableLaw (ρ : Measure (ℕ → α))}) :
     {ρ : ProbabilityMeasure (ℕ → α) // ExchangeableLaw (ρ : Measure (ℕ → α))} :=

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.MvPowerSeries.Equiv
 /-!
 # Coefficients of a one-variable power series viewed in one variable of a family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.Equiv)
+
 `PowerSeries.toMvPowerSeries i` views a one-variable power series as a multivariate one in the
 single variable `i`. Mathlib records that it is an algebra map, how it acts on `C` and `X`, that
 it is injective, and that its coefficients vanish off the powers of `i`

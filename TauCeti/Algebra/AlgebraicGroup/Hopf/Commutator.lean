@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Convolution
 /-!
 # The commutator morphism in Hopf-algebra coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.Commutator)
+
 For a commutative Hopf algebra `H` over a commutative semiring `R`, this file constructs the
 algebra morphism
 

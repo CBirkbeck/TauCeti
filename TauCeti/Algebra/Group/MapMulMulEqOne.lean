@@ -11,6 +11,8 @@ public import Mathlib.Tactic.Group
 /-!
 # Building a homomorphism from a ternary relation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.MapMulMulEqOne)
+
 Mathlib builds a `MonoidHom` out of a bare map from the two-variable identities
 `f (x * y) = f x * f y` (`MonoidHom.mk'`) and `f (x * y⁻¹) = f x * (f y)⁻¹`
 (`MonoidHom.ofMapMulInv`). Some maps are not naturally presented that way: they are defined by a

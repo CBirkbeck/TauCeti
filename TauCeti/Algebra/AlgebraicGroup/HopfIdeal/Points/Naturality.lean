@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Basic
 /-!
 # Naturality of Hopf-ideal quotient points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Naturality)
+
 For a Hopf ideal `I` in a commutative Hopf algebra `H`, the quotient Hopf algebra
 `H ⧸ I` represents the closed subgroup whose `A`-points are the ambient `H`-points killing
 `I`. This file records that this description is natural in the value algebra `A`.

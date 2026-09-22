@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.LocalField.MultiplicativeGroup
 /-!
 # The `n`-th power subgroup of a local field away from the residue characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.PowerSubgroup)
+
 Let `K` be a nonarchimedean local field and let `n` be a natural number that is invertible in
 `𝒪[K]`, that is, prime to the residue characteristic. This file shows that the subgroup
 `(Kˣ)ⁿ`, the range of `powMonoidHom n : Kˣ →* Kˣ`, is open, and hence closed, in `Kˣ`.

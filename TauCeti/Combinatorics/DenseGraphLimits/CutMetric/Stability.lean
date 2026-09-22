@@ -11,6 +11,8 @@ import TauCeti.Combinatorics.DenseGraphLimits.Kernel.Pullback
 /-!
 # Stability of graphon cut distance under approximation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Stability)
+
 The coupling cut distance is stable when either graphon is replaced by a nearby graphon on the
 same carrier.  Quantitatively,
 

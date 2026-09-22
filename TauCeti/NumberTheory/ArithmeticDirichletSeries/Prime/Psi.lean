@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.HigherPrimePowers
 /-!
 # Chebyshev's `ψ` for a set of prime ideals, and the removal of the higher prime powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.Psi)
+
 For a set `S` of height-one primes of the ring of integers of a number field `K`, Chebyshev's
 `ψ` weights *every* prime power `𝔭 ^ k` with `𝔭 ∈ S` and `k ≥ 1` by `log N(𝔭)`, while `ϑ` weights
 only the primes themselves.  This file defines `ψ`, proves that the difference `ψ - ϑ` is exactly

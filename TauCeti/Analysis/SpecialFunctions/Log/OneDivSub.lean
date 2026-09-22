@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # The divergence of `log (1 / (s - a))` as `s` decreases to `a`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Log.OneDivSub)
+
 `s ↦ log (1 / (s - a))` diverges to `+∞` on a right neighbourhood of `a`, for any real `a`. That
 single limit is what this file provides.
 

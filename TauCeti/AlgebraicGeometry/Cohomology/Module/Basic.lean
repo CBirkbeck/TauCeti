@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.Modules.GlobalSections
 /-!
 # Scalar actions on the cohomology of a sheaf of modules on a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Cohomology.Module.Basic)
+
 This file equips the cohomology of a sheaf of modules on a scheme with its canonical module
 structure over the ring of global functions. The construction first realizes a global function
 as a scalar endomorphism of the coefficient sheaf, then applies the cohomology functor. No

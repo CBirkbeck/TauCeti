@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.GradedAlgebra.Opposite
 /-!
 # Graded left modules as right modules over the graded opposite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.LeftToRight)
+
 A left module over an internally graded algebra `A` determines a right module over the
 Koszul-signed graded opposite of `A`. On homogeneous elements of degrees `p` and `q`, the action is
 

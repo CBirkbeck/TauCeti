@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Ideal.Maximal
 /-!
 # Integrality over an algebra, tested on quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.Quotient)
+
 A failure of `x : R` to be integral over `A` is already a failure modulo a **prime** ideal of `R`.
 That is what this file proves, together with the elementary description of integrality in a
 quotient that the argument runs on: `x` becomes integral over `A` in `R ⧸ J` exactly when some

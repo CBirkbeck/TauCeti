@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.IdealEntries
 /-!
 # The subgroup scheme of `GLₙ` preserving a constant bilinear multiplication
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.ConstantMultiplication.Basic)
+
 For a commutative ring `R`, a natural number `n`, and a family of **constant** structure
 matrices `C : Fin n → Matrix (Fin n) (Fin n) R`, read `Cₖ` as the matrix of left multiplication
 by the `k`th basis vector of `Rⁿ`, so that the bilinear multiplication is the one with structure

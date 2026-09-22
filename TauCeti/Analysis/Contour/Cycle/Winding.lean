@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.Winding.Integer
 /-!
 # Winding numbers of contour cycles off their trace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cycle.Winding)
+
 The generalized winding number of a contour cycle is defined at every point by additive extension
 from its closed piecewise-`C¹` generators. Away from the cycle's trace, every generator is in the
 classical regime: its principal value is an ordinary integral and its winding number is an integer.

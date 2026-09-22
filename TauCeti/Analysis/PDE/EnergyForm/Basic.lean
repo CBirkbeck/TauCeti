@@ -11,6 +11,8 @@ public import TauCeti.Analysis.PDE.LowerOrder
 /-!
 # The pointwise integrand of a divergence-form energy bilinear form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Basic)
+
 For a divergence-form operator `L u = -∂ⱼ(aⁱʲ ∂ᵢ u) + bⁱ ∂ᵢ u + c u`, the weak (energy)
 bilinear form is
 

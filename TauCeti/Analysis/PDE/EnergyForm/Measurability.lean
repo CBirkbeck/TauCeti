@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Function.StronglyMeasurable.Lemmas
 /-!
 # Measurability of pointwise PDE energy integrands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Measurability)
+
 The weak-form lane of the PDE roadmap is stated for bounded measurable coefficients.  Before the
 pointwise jet integrand
 `x ↦ energyIntegrand (a x) (b x) (c x)` can be integrated over a domain, it must be available as a

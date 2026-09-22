@@ -11,6 +11,8 @@ public import TauCeti.Algebra.CubicDiscriminant
 /-!
 # The sharp discriminant divisibility for a model with `a₁ = a₃ = 0`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.CubicDiscriminant)
+
 For a Weierstrass model with `a₁ = a₃ = 0` — so the equation is the cubic
 `y² = x³ + a₂x² + a₄x + a₆` — a point whose `y²` divides `Ψ₃(x)` has `y²` dividing the
 **discriminant of that cubic**, Mathlib's `Cubic.discr ⟨1, a₂, a₄, a₆⟩`.

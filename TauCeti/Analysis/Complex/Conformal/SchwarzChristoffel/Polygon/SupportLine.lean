@@ -16,6 +16,8 @@ import TauCeti.Analysis.SpecialFunctions.Trigonometric.TurningChain
 /-!
 # Bounded Schwarz--Christoffel sides are supporting lines
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.SupportLine)
+
 Under the classical convex-polygon hypotheses (strictly ordered prevertices, exponents in
 `(-1, 0)` and total exponent `-2`), the line through each bounded side of the Schwarz--Christoffel
 polygon supports the whole polygon: after rotating the side's direction to the positive real

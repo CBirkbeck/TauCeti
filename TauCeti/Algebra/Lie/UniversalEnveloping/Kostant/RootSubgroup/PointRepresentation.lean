@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Basic
 /-!
 # Kostant root subgroups as natural point representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.PointRepresentation)
+
 The divided-power exponential attached to a nilpotent root-vector action gives a homomorphism
 from `𝔾ₐ(A)` to the automorphisms of `A ⊗[ℤ] M` for every commutative `ℤ`-algebra `A`.
 This file packages those homomorphisms and their value-ring naturality as a

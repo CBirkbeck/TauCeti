@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Powers of the ideal defining an adic topology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.AdicTopology)
+
 For an ideal `I` of a commutative ring `R`, Mathlib's `Ideal.openAddSubgroup` records that each
 power `I ^ n` is an open additive subgroup **of `R` carried with the topology `I.adicTopology`**.
 A ring is usually met the other way round: it comes with a topology already, and `IsAdic I` is

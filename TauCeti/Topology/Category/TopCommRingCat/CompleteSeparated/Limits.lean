@@ -13,6 +13,8 @@ public import Mathlib.CategoryTheory.Limits.FullSubcategory
 /-!
 # Limits of complete separated topological rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits)
+
 Roadmap Layer 3.2's second half: the full subcategory
 `TauCeti.CompleteSeparatedTopCommRingCat` has products and equalizers, and the inclusion into
 `TopCommRingCat` creates them. Both come from the closure instances proved here:

@@ -24,6 +24,8 @@ import TauCeti.RingTheory.Jacobson.MulOpposite
 /-!
 # The radical of a preadditive category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.Radical.Basic)
+
 The **radical** of a preadditive category is the categorical Jacobson radical: the morphism
 `f : X ⟶ Y` lies in `TauCeti.jacobsonRadical X Y` when `𝟙 X - f ≫ g` is invertible for every
 `g : Y ⟶ X`. On a single object this is the usual characterization of the Jacobson radical of the

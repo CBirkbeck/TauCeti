@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Functoriality
 /-!
 # Functoriality of Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Map)
+
 A linear isometry of quadratic spaces induces an algebra homomorphism of their Clifford algebras.
 This file proves that the homomorphism preserves the Spin group and packages the restriction as a
 group homomorphism. Isometry equivalences induce group equivalences, and these maps commute with

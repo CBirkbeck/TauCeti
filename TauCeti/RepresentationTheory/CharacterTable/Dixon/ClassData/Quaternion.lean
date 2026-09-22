@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Basic
 /-!
 # Class data for the quaternion group of order eight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Quaternion)
+
 This file feeds the computable enumeration `TauCeti.quaternionElements` to
 `TauCeti.ClassData.ofList` and evaluates the conjugacy classes and class-algebra structure constants
 of `QuaternionGroup 2`.  The five classes have representatives `1`, `-1`, and one member of each

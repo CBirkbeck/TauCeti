@@ -12,6 +12,8 @@ import TauCeti.Topology.Spectral.PatchCriterion
 /-!
 # The patch presentation of the valuation spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.PatchPresentation)
+
 Following Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), proof of Proposition 4.7: the map
 sending a point of `Spv A` to the boolean table of its relation embeds `Spv A` into the
 compact product `(A × A) → Bool`, with closed image; the basic opens of `Spv A` are clopen

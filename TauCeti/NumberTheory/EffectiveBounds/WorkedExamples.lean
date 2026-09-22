@@ -18,6 +18,8 @@ import Mathlib.FieldTheory.KummerPolynomial
 /-!
 # Worked examples: the effective bounds on the named quadratic fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EffectiveBounds.WorkedExamples)
+
 The effective-bounds roadmap keeps its estimates honest with two arithmetic worked examples,
 each asking that a general bound be exercised on a *named* number field rather than a
 same-shape analogue:

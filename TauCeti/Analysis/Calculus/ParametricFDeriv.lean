@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Calculus.SecondDerivative
 /-!
 # Mixed derivatives of a parametric map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ParametricFDeriv)
+
 For a map `F : 𝕜 × E → F'` with the minimum smoothness needed for symmetric second derivatives,
 differentiating its spatial Jacobian in the parameter direction at `t₀` is the spatial derivative
 of its parameter velocity at `t₀`. This is the mixed-partial identity needed to identify the

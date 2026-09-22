@@ -11,6 +11,8 @@ import Mathlib.Algebra.Ring.Commute
 /-!
 # Adjoining elements with matching squares
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.Adjoin.Square)
+
 Two sets of elements generate the same intermediate field if every element of either set has
 the same square as some element of the other. This makes square-root composita independent of
 the choices of signs, as needed to identify explicit genus fields with their canonical

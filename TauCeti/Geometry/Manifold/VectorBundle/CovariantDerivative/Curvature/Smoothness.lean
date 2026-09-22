@@ -11,6 +11,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.Hom
 /-!
 # Smoothness of the curvature tensor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Smoothness)
+
 The pointwise curvature tensor of a smooth connection is a smooth section of the
 iterated hom bundle. We express the existing algebraic `curvatureTensor` using
 continuous linear maps, so Mathlib's hom-bundle topology and smooth structure apply.

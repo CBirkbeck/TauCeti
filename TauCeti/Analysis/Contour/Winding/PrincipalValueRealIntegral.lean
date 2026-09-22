@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # The real part of a principal-value winding number
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.PrincipalValueRealIntegral)
+
 Hungerbühler--Wasem Proposition 2.3 replaces the singular complex index integrand along a curve
 through `w` by the real integrand
 

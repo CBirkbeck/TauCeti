@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Basic
 /-!
 # Transport costs of mixtures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.Mixture)
+
 For a fixed cost `c`, the transport cost is positively homogeneous and countably subadditive as a
 function of the pair of marginals:
 

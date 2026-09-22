@@ -13,6 +13,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.Law.Basic
 /-!
 # Process-level ↔ path-law bridges for exchangeability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Law.Bridge)
+
 This file connects the process-level `FullyExchangeable`/`Exchangeable` predicates with the
 path-space `ExchangeableLaw` predicate: a process is fully exchangeable exactly when its
 `pathLaw` is an exchangeable path-space law, and (under a finite base law) finite exchangeability

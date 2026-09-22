@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma1
 /-!
 # The `ℤ`-linear extension of the Hecke slash operators to the Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Ring)
+
 `heckeSlashGamma1ModularFormEnd` attaches a `ℂ`-linear endomorphism of `M_k(Γ₁(N))` to a
 single double coset. This file extends that assignment `ℤ`-linearly over the basis of the
 Hecke ring `𝕋 Δ₀(N) Γ₁(N) ℤ`, assigning an endomorphism of `M_k(Γ₁(N))` to each ring element.

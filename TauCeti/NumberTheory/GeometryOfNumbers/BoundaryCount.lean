@@ -16,6 +16,8 @@ public import TauCeti.Topology.MetricSpace.LipschitzParametrizable
 /-!
 # Counting points of a discrete subgroup near a dilated Lipschitz-parametrizable set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.GeometryOfNumbers.BoundaryCount)
+
 Let `L` be a discrete additive subgroup of a proper normed real vector space `E`, and let `S ⊆ E` be
 Lipschitz parametrizable in dimension `d`, that is, covered by finitely many Lipschitz images of
 the unit `d`-cube.  Dilating `S` by a factor `c ≥ 1` and thickening it by a fixed bounded set `B`

@@ -14,6 +14,8 @@ import Mathlib.Analysis.LocallyConvex.SeparatingDual
 /-!
 # The canonical symplectic form on a continuous-dual cotangent space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Cotangent.StrongDual)
+
 For a real normed space `V`, the continuous-dual cotangent model `V × StrongDual ℝ V` carries
 the canonical symplectic form
 

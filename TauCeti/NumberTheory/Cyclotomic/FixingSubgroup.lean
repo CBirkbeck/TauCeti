@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 /-!
 # The automorphisms fixing the roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Cyclotomic.FixingSubgroup)
+
 The `K`-automorphisms of `M` fixing `K(μ_m)` pointwise are exactly the kernel of the cyclotomic
 character `IsPrimitiveRoot.autToPow`. No Galois, normality or separability hypothesis is needed —
 only that `M` contains a primitive `m`-th root of unity — although when `M / K` is Galois this

@@ -11,6 +11,8 @@ public import Mathlib.Topology.Covering.Basic
 /-!
 # Covering maps onto a clopen subspace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Clopen)
+
 A covering map `p : E → ↥s` onto a subspace of `X` is also a covering map `E → X` as soon as `s`
 is clopen: over a point of `s` an evenly covered neighbourhood in `↥s` is one in `X` because `s`
 is open, and over a point outside `s` the open set `sᶜ` has empty preimage, which

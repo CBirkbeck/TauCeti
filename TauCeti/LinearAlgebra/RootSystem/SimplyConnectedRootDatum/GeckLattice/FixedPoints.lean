@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The Frobenius-fixed points of the pinned Geck carrier are its points over the fixed subring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.FixedPoints)
+
 `TauCeti.DynkinType.geckFrobenius` is the `p ^ k`-power Frobenius endomorphism of the points of the
 pinned Geck carrier over a value ring `A` of exponential characteristic `p`. Which points it fixes
 is settled in general: the carrier is a closed subgroup scheme of `GLₙ` presented by a Hopf ideal,

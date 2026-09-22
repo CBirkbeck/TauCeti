@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Continuous.Transport
 /-!
 # The group adjoint representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Representation.Basic)
+
 This file bundles the roadmap-facing group adjoint `Ad` as a continuous representation on
 left-invariant derivations. It transports operator-valued smoothness across the canonical
 isometric identification between left-invariant derivations and the tangent space at the identity,

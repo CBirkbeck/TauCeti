@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 /-!
 # The adic spectrum of a rational localisation lies over the rational subset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Basic)
+
 Roadmap Layer 3.1 attaches to a rational subset `U = R(T/s)` of `X = Spa(A, A⁺)` the complete
 topological coordinate ring `A_U = A⟨T/s⟩` together with its ring of integral elements `A_U⁺`,
 and asks for a natural homeomorphism

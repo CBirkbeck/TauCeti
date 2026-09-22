@@ -14,6 +14,8 @@ public import Mathlib.Data.Sym.Sym2.Order
 /-!
 # Auditable Coxeter relator lists
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Presentation.Coxeter)
+
 A Coxeter presentation is normally published as a diagram: a set of involutions, one per node, with
 a braid relation on each edge and a commuting relation on each non-edge. Mathlib turns a
 `CoxeterMatrix` into a group through `CoxeterMatrix.relationsSet`, the *range* of

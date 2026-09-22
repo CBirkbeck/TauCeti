@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Reconstructing a recurrent path from its excursions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.Reconstruction)
+
 A recurrent process that starts at `a₀` returns to it infinitely often, so concatenating its
 excursions recovers the path: `pathOfExcursions_excursion` is the identity used here, and it needs
 exactly that recurrence.  This file turns it into an identity of laws,

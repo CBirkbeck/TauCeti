@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Intertwining
 /-!
 # The Weyl modules of the two extreme shapes: symmetric and exterior powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.ExtremeShape)
+
 The Weyl construction `TauCeti.YoungTableau.weylModule` cuts a subrepresentation of
 `(kⁿ)^{⊗d}` out of a Young symmetrizer `c_t`. This file evaluates it at the two extreme shapes,
 where the symmetrizer degenerates and the answer is a power of the standard representation:

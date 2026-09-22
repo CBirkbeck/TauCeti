@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.ModularForms.BoundedAtCusp
 /-!
 # Vanishing and boundedness at a cusp are closed under finite sums and scalars
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.BoundedAtCusp)
+
 Mathlib's `OnePoint.IsZeroAt` and `OnePoint.IsBoundedAt` are closed under binary sums
 (`OnePoint.IsZeroAt.add`, `OnePoint.IsBoundedAt.add`), but the zero function and a
 `Finset.sum` are not recorded. Nor is scaling by a constant: `Filter.ZeroAtFilter.smul` and

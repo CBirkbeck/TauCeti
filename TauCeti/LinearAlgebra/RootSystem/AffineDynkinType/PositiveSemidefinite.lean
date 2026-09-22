@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.AffineDynkinType.Basic
 /-!
 # The form of an affine simply-laced diagram is positive semidefinite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.AffineDynkinType.PositiveSemidefinite)
+
 The generalized Cartan matrix `C` of an affine simply-laced diagram is symmetric, so the
 symmetrizing diagonal matrix of the diagram is the identity and `C` itself, read over `ℝ`, is the
 symmetrized bilinear form of the diagram. This file proves that this form is positive semidefinite

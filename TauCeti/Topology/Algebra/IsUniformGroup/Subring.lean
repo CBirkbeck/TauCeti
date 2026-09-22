@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 /-!
 # The uniform structure on a subring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.IsUniformGroup.Subring)
+
 A subring carries the subspace uniformity, and the two facts one needs about it hold already for
 the underlying subobject: `AddSubgroup.isUniformAddGroup` gives the additive group structure at
 `S.toAddSubgroup`, and a countably generated uniformity is inherited by any subtype. Neither is

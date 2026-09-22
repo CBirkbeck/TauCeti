@@ -14,6 +14,8 @@ public import TauCeti.Topology.Order.Interval
 /-!
 # The unbounded Schwarz--Christoffel boundary edges
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.UnboundedEdge)
+
 Assume that all prevertices having nonzero exponent lie on one side of a real point `p`, and that
 the sum of the exponents at `p` is greater than `-1`.  The canonical boundary map then follows one
 straight edge on the corresponding half-line.  If the total exponent is less than `-1`, the edge

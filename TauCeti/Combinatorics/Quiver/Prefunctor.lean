@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.Quiver.Path
 /-!
 # Prefunctors on paths and on vertices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Quiver.Prefunctor)
+
 Elementary facts about a prefunctor `φ : Q ⥤q R` which `Prefunctor.mapPath` and `Prefunctor.comp`
 leave unrecorded: pushing a path along `φ` preserves its length, a prefunctor with a two-sided
 inverse is bijective on vertices, and a pair of composable one-sided inverse pairs composes to a

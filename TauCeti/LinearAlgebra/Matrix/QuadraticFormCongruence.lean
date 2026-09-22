@@ -12,6 +12,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # A quadratic form forced by per-prime matrix congruences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.QuadraticFormCongruence)
+
 Let `q` and `t` be integers, thought of as the size of the base field and the trace of Frobenius.
 This file shows that an integer `D` is *forced* to equal the binary quadratic form
 `q * r ^ 2 - t * (r * s) + s ^ 2` as soon as, for every prime `ℓ` other than one exceptional `p`,

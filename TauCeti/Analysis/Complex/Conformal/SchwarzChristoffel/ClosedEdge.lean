@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Boundary
 /-!
 # The closed edges of the Schwarz--Christoffel map are segments
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.ClosedEdge)
+
 The boundary values of the Schwarz--Christoffel map along a real interval free of prevertices with
 nonzero exponent are collinear and injective on the open interval.  This file pins down the whole
 closed arc: the image of a closed prevertex-free interval is exactly the *segment* joining the two

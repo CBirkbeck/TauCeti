@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.SmoothEmbedding.SmoothAmbientIsotopy.Bas
 /-!
 # Diffeomorphism actions and smooth ambient isotopy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SmoothEmbedding.SmoothAmbientIsotopy.Diffeomorph)
+
 This file connects composition of bundled smooth embeddings with diffeomorphisms to smooth ambient
 isotopy. Transport by the final map of a diffeotopy is smoothly ambient isotopic to the original
 embedding, while reparametrising two smoothly ambient-isotopic embeddings by the same source

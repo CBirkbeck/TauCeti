@@ -10,5 +10,7 @@ public import TauCeti.Analysis.Complex.Conformal.Removability.Arc
 /-!
 # Painlevé removability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Removability)
+
 This module re-exports Painlevé removability across lines, circles, and analytic arcs.
 -/

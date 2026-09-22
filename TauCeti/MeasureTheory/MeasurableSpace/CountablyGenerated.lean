@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Prod
 /-!
 # Boolean coordinates for a measurable function on a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.CountablyGenerated)
+
 A measurable function `f : α × β → γ` into a nonempty standard Borel space depends on only
 countably many measurable sets of each factor, so it factors through a pair of maps into the
 Cantor space

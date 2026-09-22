@@ -14,6 +14,8 @@ public import Mathlib.Topology.Algebra.MulAction
 /-!
 # Continuous actions on discrete spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupAction.Discrete)
+
 This file develops openness properties of continuous group actions on discrete spaces.
 For a finite space, the kernel of the action is open and the action factors through a finite
 quotient. For an arbitrary discrete space acted on by a compact topological group, every finite

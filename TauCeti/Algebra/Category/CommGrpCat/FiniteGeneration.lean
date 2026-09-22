@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Finiteness
 /-!
 # Finitely generated commutative groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.CommGrpCat.FiniteGeneration)
+
 This file packages finitely generated commutative groups as a full subcategory of
 `CommGrpCat`.
 

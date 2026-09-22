@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 /-!
 # Left translation on a coset space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.QuotientGroup.Basic)
+
 A group `G` acts on the quotient `G ⧸ H` by translation.  This file records the stabilizer of a
 coset for that action, and, for the trivial subgroup, the compatibility of the identification
 `QuotientGroup.quotientBot : G ⧸ ⊥ ≃* G` with translation.

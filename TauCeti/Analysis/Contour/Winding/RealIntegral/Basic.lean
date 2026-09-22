@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.Winding.Integrand
 /-!
 # The real bounded-integrand formula for the winding number (Hungerbühler–Wasem Prop 2.3)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.RealIntegral.Basic)
+
 For a closed piecewise-`C¹` curve `γ` that avoids a point `w`, Hungerbühler–Wasem Prop 2.3 evaluates
 the generalized winding number by the **real** integral
 

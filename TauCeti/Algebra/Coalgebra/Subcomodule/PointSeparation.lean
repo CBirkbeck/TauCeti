@@ -15,6 +15,8 @@ import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Detecting subcomodules on geometric points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.PointSeparation)
+
 Let `C` be a reduced commutative algebra of finite type over a field `k`, equipped with a
 coalgebra structure, and let `M` be a right `C`-comodule. A `k`-submodule `N` of `M` is a
 subcomodule if its scalar extension is

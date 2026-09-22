@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Filtration
 /-!
 # Lifting through a surjection with control on the `I`-adic filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.ArtinRees)
+
 Mathlib's Artin–Rees lemma, `Ideal.exists_pow_inf_eq_pow_smul`, compares the `I`-adic filtration
 of a module with the filtration it induces on a submodule. This file draws the lifting consequence
 that the adic theory uses.

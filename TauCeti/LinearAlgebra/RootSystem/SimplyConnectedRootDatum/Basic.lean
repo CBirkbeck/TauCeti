@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Base
 /-!
 # Scaffolding shared by the pinned simply connected root data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Basic)
+
 Layer 6 of the root-systems roadmap pins one integral root datum per valid Dynkin type, each on the
 lattices `Fin n → ℤ` with the dot product as pairing, and each carrying a base whose support is the
 image of an injective *simple index* map `e` naming the simple roots in Bourbaki order. This file

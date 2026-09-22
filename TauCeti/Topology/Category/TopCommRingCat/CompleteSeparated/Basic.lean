@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.UniformRing
 /-!
 # The category of complete separated topological commutative rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Basic)
+
 Wedhorn's structure presheaves take values among *complete separated* topological rings
 (*Adic Spaces*, arXiv:1910.05934v1, §8.1; roadmap Layer 3.2). This file defines the
 predicate and the full subcategory of `TopCommRingCat` it cuts out.
@@ -76,7 +78,10 @@ namespace TauCeti.TopCommRingCat
 Hausdorff for the group uniformity `IsTopologicalAddGroup.rightUniformSpace` of its
 topology. This is Wedhorn's standing convention that "complete" includes "Hausdorff"
 (*Adic Spaces*, §5.3); separatedness is stated as `T0Space`, with
-`IsCompleteSeparated.t2Space` supplying the Hausdorff form. -/
+`IsCompleteSeparated.t2Space` supplying the Hausdorff form.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.TopCommRingCat.IsCompleteSeparated) -/
 structure IsCompleteSeparated (R : TopCommRingCat.{u}) : Prop where
   /-- Completeness for the group uniformity of the topology. -/
   completeSpace :
@@ -163,7 +168,10 @@ theorem IsCompleteSeparated.of_isClosedEmbedding {R S : TopCommRingCat.{u}} (f :
 
 /-- The complete separated objects, as a named `ObjectProperty` — the form the subcategory
 and its instance machinery key on. Consumers go through `isCompleteSeparated_iff` and the
-object instances rather than the definition. -/
+object instances rather than the definition.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.TopCommRingCat.isCompleteSeparated) -/
 def isCompleteSeparated : ObjectProperty TopCommRingCat.{u} :=
   fun R ↦ IsCompleteSeparated R
 
@@ -193,7 +201,10 @@ namespace TauCeti
 
 /-- The category of complete separated topological commutative rings: the full subcategory
 of `TopCommRingCat` on the objects that are complete and Hausdorff for the group uniformity
-of their topology. This is the codomain of the adic structure presheaf. -/
+of their topology. This is the codomain of the adic structure presheaf.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.CompleteSeparatedTopCommRingCat) -/
 noncomputable abbrev CompleteSeparatedTopCommRingCat : Type (u + 1) :=
   TopCommRingCat.isCompleteSeparated.{u}.FullSubcategory
 

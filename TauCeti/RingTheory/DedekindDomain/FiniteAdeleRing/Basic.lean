@@ -12,6 +12,8 @@ import TauCeti.RingTheory.DedekindDomain.AdicValuation.Approximation
 /-!
 # The finite adele ring: separation, integral elements, and strong approximation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.Basic)
+
 Mathlib's `IsDedekindDomain.FiniteAdeleRing R K` is the restricted product of the completions
 `v.adicCompletion K` over the height one primes `v` of a Dedekind domain `R` with fraction field
 `K`, with respect to the integer rings `v.adicCompletionIntegers K`.  This file records basic facts

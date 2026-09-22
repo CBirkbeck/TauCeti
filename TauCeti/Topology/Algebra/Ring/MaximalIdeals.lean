@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Ring.Ideal
 /-!
 # Ideals of a topological ring with open unit group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Ring.MaximalIdeals)
+
 Openness of the unit group makes the closure of a proper ideal proper again: the units are open, so
 their complement is a closed set containing the ideal, hence containing its closure. For a maximal
 ideal `𝔪` that closure is an ideal squeezed between `𝔪` and the unit ideal, so it is `𝔪` itself and

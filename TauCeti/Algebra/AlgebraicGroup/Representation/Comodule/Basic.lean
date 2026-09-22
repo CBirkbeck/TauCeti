@@ -15,6 +15,8 @@ import TauCeti.Algebra.Coalgebra.Convolution
 /-!
 # Point representations and comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Basic)
+
 Let `H` be a commutative Hopf algebra over a commutative ring `R`, and let `V` be an
 `R`-module. This file identifies natural actions of the represented point groups
 

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TotallyReal.Basic
 /-!
 # Totally real factors of the standard product almost complex structure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.TotallyReal)
+
 The general doubled-module lemmas in `TauCeti.LinearAlgebra.TotallyReal.Basic` are phrased for the
 Mathlib map `LinearEquiv.skewSwap`, which sends `(x, y)` to `(-y, x)`. The symplectic layer has
 its own bundled version of the same map, `TauCeti.AlmostComplexStructure.product`. This file

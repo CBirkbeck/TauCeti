@@ -13,6 +13,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The two-piece Laurent cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Laurent.Cover)
+
 Let `A` be a complete separated nonarchimedean ring and let `f : A`.  The two Laurent pieces and
 their overlap have the presentations
 

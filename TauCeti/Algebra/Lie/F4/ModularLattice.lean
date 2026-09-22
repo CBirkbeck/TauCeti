@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Weights.Root.IntegralBasis
 /-!
 # The integral and modular Chevalley lattice in type F₄
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ModularLattice)
+
 The full integral Chevalley lattice of the chosen rational F₄ Chevalley system is reduced
 modulo two. Its root--simple-coroot basis retains the pinned root labels. This file supplies
 root and coroot vectors and their bracket formulas before selecting the short-root ideal.

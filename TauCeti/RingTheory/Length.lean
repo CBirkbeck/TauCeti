@@ -14,6 +14,8 @@ import Mathlib.RingTheory.QuotSMulTop
 /-!
 # General facts about the length of a module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Length)
+
 Mathlib defines `Module.length R M` as the Krull dimension of the lattice of submodules and
 proves that it is additive in short exact sequences. This file adds the facts about it that a
 length-counting argument needs but Mathlib does not yet have: monotonicity in the submodule

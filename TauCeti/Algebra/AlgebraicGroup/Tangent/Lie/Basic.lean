@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.OfAssociative
 /-!
 # The Lie algebra of the tangent space at the identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Basic)
+
 Counit-valued derivations of a bialgebra `A` — the tangent vectors at the identity
 point (`TauCeti.Bialgebra.CounitAlgebra`) — are closed under the commutator of the
 convolution product: for derivations `d₁ d₂` the linear map `d₁ ⋆ d₂ - d₂ ⋆ d₁` is

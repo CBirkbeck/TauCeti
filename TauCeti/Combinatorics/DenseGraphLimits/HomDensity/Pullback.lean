@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Basic
 /-!
 # Homomorphism densities are invariant under measure-preserving pullback
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Pullback)
+
 If `f : Ω' → Ω` pushes a probability measure `ν` forward to `μ`, then a graphon `W` on `(Ω, μ)` and
 its pullback `W.comap f` on `(Ω', ν)` have the *same* homomorphism densities:
 `t(F, W.comap f) = t(F, W)` for every finite graph `F`.

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Trace.Prod
 /-!
 # The trace of an endomorphism of a short exact sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Trace.Exact)
+
 An endomorphism of a short exact sequence `0 → N → M → Q → 0` of vector spaces, `M`
 finite-dimensional, has `trace f = trace fN + trace fQ`.
 

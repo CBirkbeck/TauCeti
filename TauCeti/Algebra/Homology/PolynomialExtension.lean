@@ -15,6 +15,8 @@ public import TauCeti.Algebra.Homology.HomotopyCofiber
 /-!
 # Mapping cones of `X - a` on a polynomial extension of a complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.PolynomialExtension)
+
 Let `K` be a complex of modules over a commutative ring `A`. Its polynomial extension
 `K[X] = A[X] ⊗[A] K` is again a complex of `A`-modules, and multiplication by any polynomial
 `p : A[X]` is a chain endomorphism of it. For `a : A`, the mapping cone of multiplication by

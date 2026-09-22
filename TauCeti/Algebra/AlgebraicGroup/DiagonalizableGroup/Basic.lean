@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.MultiplicativeGroup.Basic
 /-!
 # The diagonalizable group and its character functor of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Basic)
+
 For a commutative group `G`, the group algebra `R[G]` is a commutative Hopf algebra in which
 every group element `g` is group-like (`Δ(single g 1) = single g 1 ⊗ single g 1`,
 `ε(single g 1) = 1`, antipode `single g 1 ↦ single g⁻¹ 1`). The associated affine group

@@ -16,6 +16,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Prod
 /-!
 # The split quadratic model of a Morse flow
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.SplitModel)
+
 This file studies the standard split-quadratic example of a negative-gradient flow.  On a product
 of real Hilbert spaces, put
 

@@ -12,6 +12,8 @@ public import TauCeti.Analysis.SpecialFunctions.ExpRecovery
 /-!
 # Bernstein functions are the exponents of completely monotone semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.Exponential.Basic)
+
 `TauCeti.IsBernsteinFunction.isContinuousCompletelyMonotoneOnIoi_exp_neg_mul` produces, from a
 Bernstein function `f`, the completely monotone functions `t ↦ e^{-x f(t)}` for every `x ≥ 0` —
 the Laplace transforms of the subprobability convolution semigroup subordinate to `f`.  This

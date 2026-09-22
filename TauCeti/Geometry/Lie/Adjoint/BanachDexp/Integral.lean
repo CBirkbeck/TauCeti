@@ -12,6 +12,8 @@ import TauCeti.Analysis.Normed.Algebra.Basic
 /-!
 # The integral action formula for the Banach dexp factor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.BanachDexp.Integral)
+
 This file rewrites the filled commutator quotient as an integral of conjugations. It is the
 Banach-algebra shadow of the left-trivialized differential-of-exponential factor.
 

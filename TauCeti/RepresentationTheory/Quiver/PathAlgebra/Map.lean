@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Grading
 /-!
 # Path algebras are functorial in the quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.Map)
+
 A prefunctor `φ : Q ⥤q R` pushes a path of `Q` to a path of `R`, hence a basis element of `kQ` to a
 basis element of `kR`. This file extends that assignment to an algebra homomorphism
 `TauCeti.PathAlgebra.mapAlgHom`, and shows that it is an isomorphism when `φ` is one.

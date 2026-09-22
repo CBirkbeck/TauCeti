@@ -13,6 +13,8 @@ import Mathlib.Algebra.Polynomial.Div
 /-!
 # Simply blocked homology of the two-by-two unknot
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.SmallGrid.SimplyBlocked.Homology)
+
 The differential is `d(a · id + b · swap) = a V · swap`. Multiplication by `V` is
 injective, even over a coefficient ring with zero divisors. Thus cycles are the multiples
 of `swap`, and boundaries are exactly those whose coefficient has zero constant term.

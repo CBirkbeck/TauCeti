@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.Cells
 /-!
 # Highest weight vectors of `gl ι` from Young diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.YoungWedge)
+
 Every weakly decreasing tuple of natural numbers is the weight of a highest weight vector in a
 `gl ι`-module finite over the base ring. The module is a single exterior power, and the vector is
 a wedge of standard basis vectors indexed by the cells of a Young diagram.

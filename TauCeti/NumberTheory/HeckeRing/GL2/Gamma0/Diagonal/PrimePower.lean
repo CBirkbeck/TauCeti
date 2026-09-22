@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.AtkinLehner
 /-!
 # The diagonal generators of the `Γ₀(N)` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower)
+
 This file builds the two generating classes of the Hecke ring `R(Γ₀(N), Δ₀(N))` on top of the
 general diagonal element `diagElemGamma0` from `Diagonal/Elem.lean`, together with the family
 the Diamond–Shurman recurrence assembles.

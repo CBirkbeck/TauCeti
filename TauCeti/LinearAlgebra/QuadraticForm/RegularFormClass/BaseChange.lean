@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Discriminant
 /-!
 # Scalar extension of isometry classes and their discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.BaseChange)
+
 Extension of scalars along a field extension `K → L` carries a diagonal presentation to the
 presentation of the same rank whose weights are the images of the original weights. That operation
 descends to isometry classes as `TauCeti.RegularFormClass.baseChange`, and the discriminant

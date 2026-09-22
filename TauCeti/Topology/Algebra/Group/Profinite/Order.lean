@@ -13,6 +13,8 @@ public import TauCeti.Topology.Algebra.Group.OpenNormalSubgroup
 /-!
 # The supernatural order of a profinite group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Order)
+
 The order of a profinite group is the least common multiple, in the supernatural-number
 lattice, of the orders of all its continuous finite quotients.  We define it primewise using
 the quotients by open normal subgroups and identify it with the supremum of their finite

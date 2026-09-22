@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Weyl.
 /-!
 # The Weyl element of a standard `sl₂`-module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Weyl.Standard)
+
 The two ladder operators of `TauCeti.Sl2Std K n`, raising and lowering, are nilpotent over any
 characteristic-zero domain `K` equipped with a `ℚ`-algebra structure, so they carry a Weyl element
 

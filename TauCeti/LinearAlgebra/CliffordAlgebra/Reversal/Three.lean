@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Reversal.Basic
 /-!
 # Reversal in three-dimensional Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Reversal.Three)
+
 In dimension three, an even Clifford element plus its reversal is scalar. Thus every two-by-two
 matrix model identifies reversal with adjugation and the norm-one equation with determinant one.
 -/

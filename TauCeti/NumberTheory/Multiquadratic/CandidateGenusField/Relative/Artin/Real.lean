@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.R
 /-!
 # Artin reciprocity for the real quadratic genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Artin.Real)
+
 For positive squarefree nonsquare `d`, put `K = ℚ(√d)` and let `G` be the maximal totally real
 subfield of the prime-discriminant compositum. The isomorphism
 `autCandidateGenusFieldRealEquivElementaryTwoQuotient` carries the ideal Artin map of `G/K` to

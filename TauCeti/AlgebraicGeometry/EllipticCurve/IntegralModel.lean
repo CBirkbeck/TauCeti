@@ -14,6 +14,8 @@ import Mathlib.Tactic.Field
 /-!
 # Changes of variables between integral models
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.IntegralModel)
+
 A change of variables `D : VariableChange K` carrying one integral Weierstrass model to another
 need not be integral itself: its scaling factor `D.u` is a unit of `K`, and `D.r`, `D.s`, `D.t` are
 elements of `K`. This file shows that when `R` is integrally closed in `K`, as soon as `D.u` comes

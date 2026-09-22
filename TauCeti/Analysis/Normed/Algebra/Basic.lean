@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Module.Basic
 /-!
 # Basic facts about normed algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.Basic)
+
 This file provides small pieces of generic normed-algebra infrastructure used across Tau Ceti.
 -/
 

@@ -13,6 +13,8 @@ import TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximizer
 /-!
 # The weak maximum principle for `-Δ + c` with a nonnegative zeroth-order term
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Laplacian.ZerothOrderMaximumPrinciple)
+
 `TauCeti.Analysis.InnerProductSpace.Laplacian.WeakMaximumPrinciple` proves the weak maximum
 principle for the bare Laplacian: a subharmonic (`0 ≤ Δ f`) function on a compact set is bounded on
 all of `K` by any bound it satisfies on `frontier K`. The next step of the PDE roadmap (Lane C,

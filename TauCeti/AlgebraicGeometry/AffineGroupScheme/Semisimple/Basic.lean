@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Smooth
 /-!
 # Semisimple affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Semisimple.Basic)
+
 This file transports semisimplicity from finite-type commutative Hopf algebras to affine group
 schemes of finite type over a field. The coordinate-ring predicate says that the group is smooth
 and geometrically connected and that every connected normal smooth solvable closed subgroup of

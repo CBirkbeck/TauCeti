@@ -10,6 +10,8 @@ public import TauCeti.CategoryTheory.Exact.Stable.ProjectivePresentation
 /-!
 # Loops on a projective stable category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Loop)
+
 For an exact structure with enough projectives, choose conflations `ΩX ⟶ P(X) ⟶ X`.
 Lifting a morphism `X ⟶ Y` to the projective middle terms induces a map `ΩX ⟶ ΩY`.
 Different lifts induce the same map modulo morphisms factoring through projectives. This

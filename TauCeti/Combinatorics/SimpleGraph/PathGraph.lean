@@ -12,6 +12,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Hasse
 /-!
 # A finite tree of maximum degree two is a path graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.PathGraph)
+
 A finite connected graph in which every vertex has at most two neighbours is a path or a cycle, and
 acyclicity leaves the path. This file proves that identification in the form a consumer wants: a
 finite tree of maximum degree two is isomorphic to Mathlib's `SimpleGraph.pathGraph` on as many

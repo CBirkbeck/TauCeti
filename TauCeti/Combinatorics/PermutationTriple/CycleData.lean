@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Perm.OrbitCount.Basic
 /-!
 # Cycle data of permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.CycleData)
+
 The cycle data of a permutation triple records, in the ordered branch-point convention
 `0, 1, ∞`, the full cycle partition of each component. These are the parts of Mathlib's
 `Equiv.Perm.partition`, rather than `Equiv.Perm.cycleType`: fixed points therefore appear as

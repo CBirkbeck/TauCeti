@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Presentation.Serre
 /-!
 # Serre relations in the standard split Lie algebra of type B
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.SerreRelations)
+
 The Bourbaki-numbered matrices in
 `TauCeti.Algebra.Lie.Orthogonal.TypeB.RootGenerators` give explicit positive-root,
 negative-root, and coroot generators for the standard integral split orthogonal Lie algebra of

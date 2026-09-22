@@ -20,6 +20,8 @@ public import Mathlib.Probability.Distributions.Poisson.Basic
 /-!
 # Measurability of the standard families in their parameters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Measurability)
+
 A distribution is a family of measures indexed by its parameters, and `MeasureTheory.Measure α`
 carries the Giry measurable structure. This file proves parameter measurability for Mathlib's
 Gamma, exponential, Beta, Pareto, Gaussian, Cauchy, Poisson, geometric, Bernoulli and binomial

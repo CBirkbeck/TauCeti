@@ -16,6 +16,8 @@ import Mathlib.Probability.Process.FiniteDimensionalLaws
 /-!
 # Row exchangeable arrays and the factorization of their directing measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.RowExchangeable)
+
 An array `Y : ι × ℕ → Ω → α` is **row exchangeable** when its law is unchanged by permuting the
 entries of each row separately: for every family `π : ι → Equiv.Perm ℕ` of time permutations, one
 for each row, the array `(a, k) ↦ Y (a, π a k)` has the law of `Y`. This is the symmetry of the

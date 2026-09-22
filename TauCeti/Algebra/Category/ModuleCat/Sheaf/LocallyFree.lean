@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.Quasicoherent.Monoidal
 /-!
 # Locally free sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.LocallyFree)
+
 Let `R` be a sheaf of commutative rings on a small site with pullbacks. If `M` and `N` are locally
 free sheaves of `R`-modules, then so is `M ⊗ N`: on a common refinement of covers on which `M`
 and `N` are free, the restriction of `M ⊗ N` is the tensor product of two free sheaves, which is

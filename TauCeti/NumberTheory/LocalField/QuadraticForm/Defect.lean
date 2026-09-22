@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.LocalField.Squares
 /-!
 # The quadratic defect
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.QuadraticForm.Defect)
+
 Let `K` be a nonarchimedean local field with ring of integers `𝒪[K]`. The quadratic defect of
 `a : Kˣ` is O'Meara's fractional ideal
 

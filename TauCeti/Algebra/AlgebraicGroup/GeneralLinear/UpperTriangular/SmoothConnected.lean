@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.UpperTriangular.Basic
 /-!
 # Geometry of the upper-triangular subgroup scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.UpperTriangular.SmoothConnected)
+
 The standard upper-triangular subgroup of `GL_n` is the weight parabolic for the strictly
 decreasing weights `i ↦ n - 1 - i`. This file specializes the general geometry of weight
 parabolics to establish smoothness and geometric connectedness of the upper-triangular group

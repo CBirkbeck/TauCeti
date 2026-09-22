@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.PowerSeries.Exp
 /-!
 # The Weyl dimension formula for a root pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Dimension)
+
 The Weyl character formula `ch · Δ = N(λ)` is an identity in the group algebra `ℤ[M]` of the
 weight space of a root pairing, between a formal character `ch`, the Weyl denominator
 `Δ = ∏_{α>0}(1 - e^{-α})` and the Weyl numerator `N(λ) = ∑_w sgn(w) e^{w ⬝ λ}`. The **Weyl

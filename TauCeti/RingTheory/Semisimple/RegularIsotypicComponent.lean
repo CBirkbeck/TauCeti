@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.SimpleModule.Isotypic
 /-!
 # Isotypic components of the regular module as an invariant of abstract simple modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.RegularIsotypicComponent)
+
 Mathlib's `isotypicComponent R N S` is the sum of all submodules of `N` isomorphic to `S`, and
 `isotypicComponents R N` is the set of its nontrivial values as `S` ranges over the simple
 *submodules* of `N`. For `N = R` the latter is a set of left ideals, and it is what indexes the

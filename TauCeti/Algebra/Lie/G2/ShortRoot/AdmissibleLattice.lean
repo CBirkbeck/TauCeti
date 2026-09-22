@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.Matrix.IntegralCast
 /-!
 # The admissible lattice in the seven-dimensional representation of type G2
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.AdmissibleLattice)
+
 This file extends the integral seven-dimensional representation of the type-`G₂` Serre
 presentation to the rational Serre algebra and proves that its coordinate `ℤ`-lattice is
 preserved by the Serre Kostant form. The raising and lowering matrices have integral entries and

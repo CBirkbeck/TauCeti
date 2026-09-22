@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 /-!
 # Wasserstein convergence implies weak convergence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.WeakConvergence)
+
 Convergence in any `p`-Wasserstein distance with `1 ≤ p` is stronger than weak convergence of
 probability measures. This file proves that implication through the Lévy--Prokhorov metric.
 

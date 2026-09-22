@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.TensorProduct.Basis
 /-!
 # Weight spaces of a comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Weight.Space)
+
 Let `M` be a comodule over a coalgebra `C` over a commutative semiring. For a group-like element
 `c` of `C`, its weight space is the submodule of vectors whose coaction is `m ↦ m ⊗ c`. This
 file packages that submodule and its elementary functorial API. Over a domain, when `C` is

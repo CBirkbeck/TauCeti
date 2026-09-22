@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Submodule.DirectSum
 /-!
 # The multiplicity of an irreducible Lie module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Multiplicity)
+
 `LieModule.isotypicMultiplicity R L M S` is the finrank of the space `S →ₗ⁅R,L⁆ M` of morphisms
 from a Lie module `S` to a Lie module `M`. This file proves that when `S` is finite-dimensional and
 irreducible over an algebraically closed field, this number counts

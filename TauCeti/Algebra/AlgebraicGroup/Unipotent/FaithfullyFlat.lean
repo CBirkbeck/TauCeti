@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Basic
 /-!
 # Unipotence under faithfully flat morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.FaithfullyFlat)
+
 Let `f : H ⟶ K` be a finite-type faithfully flat morphism of commutative Hopf algebras over a
 field. Contravariantly, every algebraically closed point of `Spec H` lifts to a point of
 `Spec K`, so geometric unipotence descends from `K` to `H`.

@@ -10,6 +10,8 @@ public import Mathlib.Topology.UniformSpace.Completion
 /-!
 # Countable generation of neighbourhoods passes to the separated completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.UniformSpace.Completion)
+
 If the neighbourhood filter of a point of a uniform space is countably generated, so is the
 neighbourhood filter of its image in the separated completion. Nothing is assumed of the space
 beyond its uniformity — no separation, no completeness, no algebraic structure.

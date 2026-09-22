@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.OptimalTransport.Gluing
 /-!
 # The triangle inequality for graphon cut distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Triangle)
+
 This file proves the triangle inequality for the coupling-primary cut distance on arbitrary
 probability carriers.  The central finite-middle case glues two couplings over a countable
 intermediate carrier and pulls all three overlaid kernels back to the glued probability space,

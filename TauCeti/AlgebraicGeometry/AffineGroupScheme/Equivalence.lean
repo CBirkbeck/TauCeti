@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Affine group schemes are anti-equivalent to commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Equivalence)
+
 Over a commutative ring `S`, the contravariant functor `Spec` is an equivalence from the
 opposite of the category of commutative `S`-Hopf algebras onto the category of affine
 group schemes over `Spec S`. This is the assembled Layer 0 dictionary of the

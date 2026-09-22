@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.RootSystem.DominantCone
 /-!
 # The weight support of a highest weight module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Weight.Support)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a splitting Cartan subalgebra, let `b` be a base of
 its root system, and let `M` be an `L`-module carrying a highest weight vector of weight `lam`.

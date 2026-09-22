@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.Differential.CanonicalDivisor
 /-!
 # Clifford's theorem for divisors of a function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Consequences.Clifford)
+
 This file proves Clifford's dimension bound for a divisor `D` of an algebraic function field
 over an infinite exact field of constants, assuming `0 ≤ deg D ≤ 2g - 2`:
 

@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.MacWilliams
 /-!
 # The Krawtchouk form of the MacWilliams identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Krawtchouk)
+
 The integer `krawtchouk q n w j` is the q-ary Krawtchouk value `K_w(j)` for
 words of length `n`. For `j ≤ n`, its generating function is
 `(1 + (q - 1) Z)^(n-j) (1 - Z)^j`. Taking coefficients in the MacWilliams identity gives

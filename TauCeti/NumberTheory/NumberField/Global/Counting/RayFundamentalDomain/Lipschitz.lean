@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDom
 /-!
 # A Lipschitz parametrization of the frontier of the ray fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Lipschitz)
+
 `TauCeti.NumberTheory.GeometryOfNumbers.LatticePointCount` counts lattice points in a dilated
 region with a power-saving error term, but only for regions whose frontier is Lipschitz
 parametrizable in codimension one. `NormLeOneLipschitz` discharges that hypothesis for Mathlib's

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.SmoothConnected
 /-!
 # Tori are reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Reductive)
+
 A torus over a field is smooth and geometrically connected, and its geometric fibre is a
 diagonalizable group. Every closed subgroup of a diagonalizable group has only semisimple
 geometric points. If such a subgroup is also smooth and unipotent, smoothness makes its

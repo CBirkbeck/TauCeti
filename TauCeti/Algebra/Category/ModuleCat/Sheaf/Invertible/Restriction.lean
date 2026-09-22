@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PushforwardContinuous
 /-!
 # Restricting local trivializations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.Restriction)
+
 A local trivialization of a sheaf of modules over an object `X` remains a trivialization after
 restriction along a morphism `f : Y ⟶ X`. This file packages that elementary but necessary
 step for the local-triviality formulation of invertible sheaves.

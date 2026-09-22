@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Continuous.Transport
 /-!
 # Equivalent irreducible unitary representations are unitarily equivalent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Unitary.Equivalence)
+
 An equivalence of continuous representations is a linear equivalence intertwining the actions; it
 need not respect the inner products. For irreducible *unitary* representations it can always be
 rescaled to one that does, so the two notions of equivalence coincide and nothing is lost by

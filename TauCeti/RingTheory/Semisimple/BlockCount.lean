@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.SimpleRing.Matrix
 /-!
 # Block counts and factor matching for products of simple rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.BlockCount)
+
 Artin--Wedderburn presents a semisimple ring `R` as a finite product of matrix algebras over
 division rings,
 

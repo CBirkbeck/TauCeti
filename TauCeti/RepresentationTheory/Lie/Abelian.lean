@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Finiteness.Prod
 /-!
 # A faithful square-zero representation of an abelian Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Lie.Abelian)
+
 For an abelian Lie algebra `L` over a commutative ring `R`, let `L` act on `R × L` by
 
 `x • (a, y) = (0, a • x)`.

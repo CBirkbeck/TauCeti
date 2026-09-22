@@ -15,6 +15,8 @@ public import TauCeti.Algebra.Bialgebra.TensorProduct
 /-!
 # The diagonalizable group of a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Product)
+
 This file records the functor-of-points consequence of
 `TauCeti.MonoidAlgebra.prodTensorBialgEquiv`: for commutative monoids `G` and `H`, points of
 `Spec R[G × H]` split as pairs of points of `Spec R[G]` and `Spec R[H]`. For commutative groups,

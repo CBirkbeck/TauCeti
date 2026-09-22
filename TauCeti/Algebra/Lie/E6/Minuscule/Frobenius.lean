@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.E6.Minuscule.PointsFunctor
 /-!
 # The Frobenius of the full-weight type-E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.Minuscule.Frobenius)
+
 The type-`E₆` minuscule carrier is the explicit Kostant toral closure over `ℤ` built from the
 27-dimensional minuscule representation and its admissible full-weight lattice. Over a commutative
 ring `A` of exponential characteristic `p`, entrywise `p ^ k`-th powers preserve its defining Hopf

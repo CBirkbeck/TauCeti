@@ -14,6 +14,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # The circular crosscut of a disc at a boundary point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.Basic)
+
 Fix a disc `ball c r` and a point `ζ` of its boundary circle. For `0 < ρ < 2 * r` the circle
 `sphere ζ ρ` meets the disc in an arc, the **circular crosscut** of `ball c r` at `ζ` of radius
 `ρ`, and that arc cuts the disc in two: the *crosscut neighbourhood* `ball c r ∩ ball ζ ρ` of `ζ`,

@@ -11,6 +11,8 @@ import Mathlib.Combinatorics.SimpleGraph.Ends.Defs
 /-!
 # Components left by deleting a branch vertex of a tree
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.BranchComponents)
+
 Deleting a vertex `c` from a tree separates it into one component for each neighbour of `c`.
 When every vertex of the complement has degree at most two there, the resulting components are
 paths.  This is the graph-theoretic extraction step behind the `D` and `E` branches of the

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.JordanChevalley.Commuting
 /-!
 # Jordan decomposition of commuting algebraic-group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.JordanDecomposition.Commuting)
+
 The Jordan decomposition of algebraic-group points respects commuting products. If two points
 commute, then all of their reconstructed Jordan factors commute across the two decompositions,
 and the semisimple and unipotent parts of their product are the corresponding products.

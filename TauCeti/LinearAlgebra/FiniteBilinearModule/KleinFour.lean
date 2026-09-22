@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Quadratic
 /-!
 # Finite quadratic modules on the Klein four-group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.KleinFour)
+
 A `ℚ/ℤ`-valued quadratic map on `(ℤ/2)²` is determined by its three values on the nonzero
 elements, and conversely any three values admissible for the two-torsion of the group occur.
 This file makes that presentation available as a construction: given `α β γ : ℚ/ℤ` with

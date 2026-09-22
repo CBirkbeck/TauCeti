@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Valuation.Polynomial
 /-!
 # Valuation rings of an algebraic function field are the rings of places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.OfValuationSubring)
+
 Stichtenoth defines a *valuation ring* of `F / k` to be a subring `𝒪` with `k ⊊ 𝒪 ⊊ F` such that
 `z ∈ 𝒪` or `z⁻¹ ∈ 𝒪` for every `z : F` (Definition 1.1.4), and proves that every such ring is a
 discrete valuation ring (Theorem 1.1.6), so that the places of `F / k` are exactly the proper

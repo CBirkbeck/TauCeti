@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Prime
 /-!
 # Dixon prime data for the small dihedral groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Dihedral)
+
 The Burnside--Dixon--Schneider algorithm is meant to run, so the groups it is run on are handed a
 prime by hand rather than by the existence theorem `TauCeti.exists_isGoodDixonPrime`, whose witness
 is noncomputable. This file certifies the two worked examples: `5` for the dihedral group of order

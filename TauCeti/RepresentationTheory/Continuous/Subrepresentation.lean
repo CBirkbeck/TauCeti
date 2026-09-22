@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Module.Spaces.ContinuousLinearMap
 /-!
 # Restricting a continuous representation to an invariant submodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Subrepresentation)
+
 This file restricts a continuous representation of a monoid to a submodule preserved by every
 action operator, the continuous counterpart of Mathlib's `Representation.subrepresentation`.
 

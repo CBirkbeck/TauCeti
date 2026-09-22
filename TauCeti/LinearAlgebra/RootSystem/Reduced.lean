@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Reduced
 /-!
 # A symmetry criterion for reduced root pairings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Reduced)
+
 A finite root pairing over a characteristic-zero domain is reduced as soon as its pairing is
 symmetric on roots and coroots. Indeed, two linearly dependent roots have Coxeter weight four.
 Symmetry makes this weight the square of one pairing value, so that value is `2` or `-2`; the

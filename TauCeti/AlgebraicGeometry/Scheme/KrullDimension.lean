@@ -12,6 +12,8 @@ public import TauCeti.Topology.KrullDimension
 /-!
 # Krull dimension of schemes and extension of the base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.KrullDimension)
+
 The Krull dimension of a scheme is the topological Krull dimension of its underlying space. This
 file computes it from an open cover and shows that it is unchanged by extending the base field:
 if `X` is locally of finite type over a field `K` and `L / K` is a field extension, then

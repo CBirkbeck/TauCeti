@@ -20,6 +20,8 @@ import TauCeti.Probability.Martingale.Convergence
 /-!
 # Tail-level factorization for the de Finetti martingale route
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.TailFactorization)
+
 For a contractable process `X`, this file factors the conditional expectation of a prefix indicator
 product given the **tail** σ-algebra `tailProcess X` into a product of single-coordinate tail
 conditional expectations — the tail-level input to the de Finetti martingale route.

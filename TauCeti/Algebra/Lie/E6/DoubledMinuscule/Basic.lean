@@ -12,6 +12,8 @@ import Mathlib.Data.Matrix.Block
 /-!
 # The doubled minuscule representation of type E6
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.Basic)
+
 The nontrivial diagram automorphism of type `E₆` exchanges the minuscule representations `V(ϖ₁)`
 and `V(ϖ₆) = V(ϖ₁)ˣ`. Consequently the `27`-dimensional carrier alone does not admit the pinned
 diagram symmetry. This file constructs the graph-stable direct sum `V(ϖ₁) ⊕ V(ϖ₆)` over `ℤ`.

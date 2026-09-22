@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.FrobeniusGroup.Basic
 /-!
 # A Frobenius group: `S₃` with complement a point stabilizer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.FrobeniusGroup.SymmetricThree)
+
 `S₃` is the smallest Frobenius group.  It decomposes as `A₃ ⋊ ⟨(a+1 a+2)⟩`, with complement the
 point stabilizer of `a` -- of order two -- and kernel the alternating subgroup, of order three;
 the complement acts on the kernel without nonidentity fixed points because a transposition

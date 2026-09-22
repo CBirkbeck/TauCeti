@@ -18,6 +18,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.DiagonalBasis
 /-!
 # The diagonal torus attached to a weighted basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Basis.DiagonalTorus.Basic)
+
 A basis `b : Basis ι R M` and a family of units `w : ι → Rˣ` determine the automorphism of `M`
 scaling the `i`-th basis vector by `w i`. Letting `w` range over all such families realizes the
 group `ι → Rˣ` — the `R`-points of the split torus `𝔾ₘ^ι` — inside the automorphism group of `M`.

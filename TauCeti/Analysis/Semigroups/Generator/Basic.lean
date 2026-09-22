@@ -14,6 +14,8 @@ import Mathlib.Topology.Algebra.Group.Order
 /-!
 # Generators of strongly continuous semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator.Basic)
+
 This file defines the infinitesimal generator as a `LinearPMap`, exposes domain
 membership through the explicit right-difference-quotient limit, and proves the local
 orbit-integral lemmas giving density of the generator domain.

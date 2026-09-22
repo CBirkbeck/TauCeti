@@ -14,6 +14,8 @@ import TauCeti.RingTheory.TensorProduct.PointSeparation
 /-!
 # The derived subgroup is the closure of the point commutator subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Derived.PointClosure)
+
 For a reduced affine group of finite type over an algebraically closed field, its derived
 defining ideal consists exactly of the functions vanishing on the abstract commutator
 subgroup of its rational points. Thus its scheme-theoretic derived subgroup is the reduced

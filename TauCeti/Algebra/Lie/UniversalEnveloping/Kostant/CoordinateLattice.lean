@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.CoordinateLattice
 /-!
 # Kostant-form stability of a coordinate lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.CoordinateLattice)
+
 A standard Chevalley carrier is built from a rational representation on a coordinate space
 `ι → ℚ` whose coordinate `ℤ`-lattice is preserved by the Kostant integral form. This file proves
 that stability once, from the two properties every such representation supplies: each designated

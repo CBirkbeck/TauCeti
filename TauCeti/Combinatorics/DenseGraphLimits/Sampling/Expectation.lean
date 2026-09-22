@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Closeness
 /-!
 # Expected homomorphism densities in graphon samples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Expectation)
+
 For a fixed finite graph `F`, the expected ordinary homomorphism density of `F` in a graphon
 sample `G(n, W)` converges to the graphon homomorphism density `t(F, W)`. At every finite
 sample size `n ≥ |V(F)|`, the difference is at most `|V(F)|.choose 2 / n`.

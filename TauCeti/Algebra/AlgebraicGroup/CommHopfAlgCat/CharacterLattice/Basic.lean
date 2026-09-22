@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Bialgebra.GroupLike.ScalarAut
 /-!
 # Geometric character groups and their Galois action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.CharacterLattice.Basic)
+
 For a commutative Hopf algebra `H` over a field `k`, its geometric characters are the group-like
 elements of its coordinate algebra after extension to an algebraic closure:
 

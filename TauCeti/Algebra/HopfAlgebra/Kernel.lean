@@ -14,6 +14,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Basic
 /-!
 # Kernels of Hopf algebra morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.Kernel)
+
 This file records two conditions under which the kernel of a morphism of Hopf algebras is a
 Hopf ideal. Over an arbitrary commutative base, surjectivity provides the exactness needed to
 identify the kernel of the tensor-square map with `ker f ⊗ H + H ⊗ ker f`. Alternatively,

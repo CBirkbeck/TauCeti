@@ -12,6 +12,8 @@ public import TauCeti.LowDimTopology.Plumbing.Grading
 /-!
 # The cubically graded lattice chain complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.ChainComplex)
+
 This file assembles the cubical-degree pieces of the plumbing chain module into an
 `ℕ`-indexed chain complex. In degree `q` its object is the free submodule supported on
 `q`-dimensional plumbing cubes, and its differential is the restriction of Némethi's weighted

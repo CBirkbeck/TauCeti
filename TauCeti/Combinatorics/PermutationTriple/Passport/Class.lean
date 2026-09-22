@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.PermutationTriple.Passport.Basic
 /-!
 # Classes in a passport
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Passport.Class)
+
 A passport class is an isomorphism class of connected permutation triples with fixed monodromy
 subgroup up to conjugacy and fixed ordered cycle partitions.  This file collects those classes in
 a finite set and defines the passport size to be its cardinality.

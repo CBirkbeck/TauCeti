@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Ideal.PowerStabilization
 /-!
 # Localising at `1 + I`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.OneAddLocalisation)
+
 For an ideal `I` of a semiring `B`, the set `1 + I` is a submonoid of `B`. If `B` is commutative,
 `I` is finitely generated, and its image in a localisation at `1 + I` lies in every prime there,
 then a single element of `1 + I` annihilates a power of `I`.

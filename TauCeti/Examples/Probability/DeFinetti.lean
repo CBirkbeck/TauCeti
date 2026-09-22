@@ -10,6 +10,8 @@ import TauCeti.Probability.DeFinetti
 /-!
 # Worked examples: the de Finetti public API
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Examples.Probability.DeFinetti)
+
 This file demonstrates the public de Finetti API available from the single facade import
 `TauCeti.Probability.DeFinetti`. The initial bare references give a compact index of the principal
 process predicates, implications, representation theorems, uniqueness results, and empirical

@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.LongExact
 /-!
 # `H²(G_K, μₙ)` is the `n`-torsion of the cohomological Brauer group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisCohomology.BrauerTorsion)
+
 Let `K` be a field, `Kˢ` a separable closure, `G_K = AbsoluteGaloisGroup K`, and `n` a natural
 number invertible in `K`. The inclusion `μₙ ⊆ (Kˢ)ˣ` induces
 

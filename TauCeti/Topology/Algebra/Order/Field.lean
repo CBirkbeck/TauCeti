@@ -12,6 +12,8 @@ import Mathlib.Tactic.Linarith
 /-!
 # Ratios whose denominator diverges
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Order.Field)
+
 Mathlib's `Mathlib/Topology/Algebra/Order/Field.lean` proves
 `tendsto_bdd_div_atTop_nhds_zero`: a numerator confined to a fixed interval, divided by a
 denominator that diverges to `atTop`, tends to `0`. This file records the companion statement

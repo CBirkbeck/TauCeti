@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Conjugation
 /-!
 # Conjugating deck normalizer quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.NormalizerQuotient.Conjugation)
+
 An isomorphism of covers over a common base identifies deck groups by conjugation. This file
 records the induced identification on the normalizer quotients `N(H) / H` of deck subgroups.
 Those quotients are the deck groups of covers attached to subgroups.

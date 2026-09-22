@@ -11,6 +11,8 @@ import all TauCeti.Topology.Category.TopCat.Cech.Diagram
 /-!
 # Maps of topological Čech diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopCat.Cech.Map)
+
 A continuous map between spaces, together with a map of cover indices that carries each source
 open into the corresponding target open, induces a natural transformation between their Čech
 diagrams.  The transformation commutes with the canonical inclusions of the intersections into

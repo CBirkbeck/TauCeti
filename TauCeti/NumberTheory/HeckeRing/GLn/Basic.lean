@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.DoubleCoset
 /-!
 # The arithmetic Hecke triple for `GL_n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.Basic)
+
 The canonical arithmetic Hecke triple in `GL_n(ℚ)`, following [Shimura][shimura1971] §3.2:
 `H = SL_n(ℤ)` (embedded via `mapGL ℚ`) and `Δ` the submonoid of integral matrices with
 positive determinant. The heart is **Shimura's Lemma 3.10**

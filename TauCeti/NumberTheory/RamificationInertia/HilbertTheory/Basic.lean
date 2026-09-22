@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.RamificationInertia.SeparableDegree
 /-!
 # Splitting of a prime in the inertia field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.HilbertTheory.Basic)
+
 Let `L/K` be a finite Galois extension, `B` the integral closure of a Dedekind domain `A` in `L`,
 and `P` a prime of `B` over a prime `p` of `A` with ramification index `e` and inertia degree `f`.
 Hilbert theory describes the splitting of `p` in the tower `K ⊆ D ⊆ E ⊆ L` cut out by the

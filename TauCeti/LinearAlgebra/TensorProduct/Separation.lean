@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Basis.VectorSpace
 /-!
 # Separating tensors by linear functionals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorProduct.Separation)
+
 Separating families of linear functionals detect zero tensors by contraction, first in one
 factor and then in both. These lemmas supply the shared separation step for rational-point
 separation and reducedness of tensor products of algebras.

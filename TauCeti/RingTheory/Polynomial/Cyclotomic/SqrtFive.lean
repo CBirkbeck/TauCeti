@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 /-!
 # The fifth cyclotomic polynomial over a field containing `√5`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Cyclotomic.SqrtFive)
+
 Over any field `E` of characteristic different from `2` containing a square root `s` of `5`, the
 fifth cyclotomic polynomial factors as
 

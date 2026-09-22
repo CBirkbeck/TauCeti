@@ -12,6 +12,8 @@ public import Mathlib.Data.Int.Cast.Lemmas
 /-!
 # Collapsing an iterated product of powers into a single product of powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.ZPow)
+
 `Finset.prod_pow_eq_pow_sum` collapses a product of natural powers of one fixed element into a
 single power. This file records the analogue for integral powers, in a commutative group and in a
 commutative group with zero at an invertible element, and the three substitution rules that follow

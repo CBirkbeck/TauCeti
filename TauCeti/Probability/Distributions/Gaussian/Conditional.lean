@@ -15,6 +15,8 @@ import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
 /-!
 # Conditional multivariate Gaussian distributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Conditional)
+
 This file constructs the Gaussian kernel obtained by conditioning one block of a jointly
 Gaussian vector on the other.  For a positive-semidefinite covariance matrix with a
 positive-definite observed block, the conditional mean is affine in the observed block and the

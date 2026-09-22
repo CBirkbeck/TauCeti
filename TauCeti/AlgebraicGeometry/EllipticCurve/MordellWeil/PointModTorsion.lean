@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Module.Torsion.Basic
 /-!
 # The points modulo torsion, and the Néron-Tate pairing on them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.PointModTorsion)
+
 The Néron-Tate pairing vanishes as soon as either argument is torsion, so it descends to the
 quotient of the points by their torsion submodule, unconditionally. Under
 `[Northcott (Point.canonicalHeight (W := W))]` — the hypothesis that makes height zero force

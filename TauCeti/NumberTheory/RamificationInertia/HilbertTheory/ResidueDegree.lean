@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.RamificationInertia.SeparableDegree
 /-!
 # Hilbert theory over arbitrary residue fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.HilbertTheory.ResidueDegree)
+
 For a finite Galois extension of Dedekind domains, write `D` and `E` for the decomposition
 and inertia fields at `P`. The degree formulas are `[L : D] = e * f`, `[D : K] = g`,
 `[L : E] = e * fᵢ`, and `[E : D] = fₛ`, where `fₛ` and `fᵢ` are the separable and inseparable

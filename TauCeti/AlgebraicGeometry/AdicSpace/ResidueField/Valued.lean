@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Valued.WithVal
 /-!
 # The residue field of a point as a topological field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.ResidueField.Valued)
+
 `residueFieldValuation v` topologises the residue field `κ(v)` of a point `v : Spv A`, through
 Mathlib's type synonym `WithVal`. This file describes the canonical map `A → κ(v)` for that
 topology: the valuation it computes, and its continuity when `v` is a continuous point.

@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Module.HahnBanach
 /-!
 # Crossing finiteness for piecewise-`C¹` immersions (HW Proposition 2.2)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.Finiteness)
+
 A piecewise-`C¹` immersion meets any given point `z₀ ∈ ℂ` at only finitely many parameters —
 Proposition 2.2 of Hungerbühler–Wasem (there stated with endpoint avoidance; the one-sided
 isolation lemmas here cover the endpoints, so no avoidance is needed), the geometric input

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.GradedAlgebra.Basic
 /-!
 # The trivial grading of an algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.GradedAlgebra.Trivial)
+
 Every algebra has a grading concentrated in degree zero.  This file packages that grading in the
 internal `GradedAlgebra` presentation and records its elementary membership and projection API.
 It is the canonical target grading for augmentations of integer-graded algebras.

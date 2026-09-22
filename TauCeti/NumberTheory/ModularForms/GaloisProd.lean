@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 /-!
 # The Galois product of a periodic function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.GaloisProd)
+
 For `f : ℍ → α` valued in a commutative monoid and `N : ℕ`, the product
 `galoisProd N f τ = ∏_{j < N} f(τ − j)` over the integer translates — the building block
 of the modular norm map. If `f` has period `N` along `ofComplex` then the product has

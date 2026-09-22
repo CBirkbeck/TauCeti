@@ -11,6 +11,8 @@ public import Mathlib.Topology.Compactification.OnePoint.Basic
 /-!
 # Multiplication on the one-point extension of `ZMod p`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.ZMod.OnePoint)
+
 `TauCeti.mulModEquiv` (`Data/ZMod/FinEquiv.lean`) is multiplication by a unit as a permutation of
 the residues themselves. This file is its companion on the one-point extension: multiplication by
 a `d` coprime to `p`, acting on `OnePoint (ZMod p)` and fixing `∞`.

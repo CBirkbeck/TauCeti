@@ -14,6 +14,8 @@ import Mathlib.Algebra.BigOperators.Field
 /-!
 # The Boolean calculus of Dirichlet density
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.DirichletDensity.Basic)
+
 For a number field `K`, Mathlib's `NumberField.Set.HasDirichletDensity S δ` says that
 
 `S.primeIdealZetaSum s / Set.univ.primeIdealZetaSum s → δ` as `s → 1⁺`.

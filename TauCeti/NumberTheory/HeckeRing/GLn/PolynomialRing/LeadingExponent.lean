@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.PolynomialRing.Basic
 /-!
 # The leading elementary-divisor vector of a Hecke monomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.PolynomialRing.LeadingExponent)
+
 Towards **Shimura's Theorem 3.20** at general `n`: the `p`-local Hecke ring `pLocalSubring` is
 the polynomial ring `ℤ[X₁, …, Xₙ]` on the diagonal prime cosets `heckeGen k = T(1, …, 1, p, …, p)`.
 The injectivity half is a leading-term argument. Multiplying double cosets multiplies their

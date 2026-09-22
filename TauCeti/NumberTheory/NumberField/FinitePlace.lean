@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 /-!
 # Finite places of number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.FinitePlace)
+
 This file records general facts about the finite places of a number field.
 
 The main content is that a number field always *has* a finite place: the finite places are the

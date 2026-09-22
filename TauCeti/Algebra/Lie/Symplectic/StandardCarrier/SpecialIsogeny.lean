@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Special
 /-!
 # The special isogeny of the rank-two type-`C` carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.SpecialIsogeny)
+
 The rank-two member of the explicit full-weight type-`C` Chevalley carrier is the ambient group
 of the two classification-list families on the `B₂` diagram, the untwisted `B₂(q)` and the Suzuki
 family `²B₂(2^(2m+1))`. Over a field of characteristic two its points carry the special isogeny,

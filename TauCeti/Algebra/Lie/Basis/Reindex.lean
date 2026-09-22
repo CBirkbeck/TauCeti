@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Basis.Basic
 /-!
 # Renumbering the nodes of a Lie algebra basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Basis.Reindex)
+
 A `LieAlgebra.Basis ι H` is a Chevalley-style presentation of a Lie algebra: a Cartan matrix
 indexed by `ι`, three families `h`, `e`, `f` of elements indexed by `ι`, and the relations between
 them. Nothing in the structure depends on which index type is used, so a bijection `ι ≃ ι'`

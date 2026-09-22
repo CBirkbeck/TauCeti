@@ -16,6 +16,8 @@ public import TauCeti.KnotTheory.Grid.XHomotopy.Annulus
 /-!
 # Multiplication by the grid variables is homotopic along a link component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.XHomotopy.Complex)
+
 Let `X_k` be the `X`-marking of column `k` of a grid diagram, and let `O_j` be the `O`-marking in
 the row of `X_k`. In characteristic two, the `X`-marking homotopy `H_k` satisfies
 

@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Complex.LinearPart
 /-!
 # Transporting almost complex structures along linear equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Transport)
+
 A real-linear isomorphism `e : V ≃ₗ[ℝ] W` carries an almost complex structure `J` on `V` to
 one on `W` by conjugation, `w ↦ e (J (e.symm w))`. This file records that transport and its
 functoriality, and packages the statement that `e` itself is then a complex-linear isomorphism

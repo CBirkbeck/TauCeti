@@ -13,6 +13,8 @@ import TauCeti.Algebra.Coalgebra.Convolution
 /-!
 # The finite dual of a Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.FiniteDual.Basic)
+
 For a finite projective bialgebra `H` over a commutative ring `k`, the linear dual carries the
 transposed bialgebra structure. Its multiplication is convolution, while its comultiplication and
 counit are characterized by

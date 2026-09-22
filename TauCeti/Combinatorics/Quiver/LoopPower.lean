@@ -11,6 +11,8 @@ public import Mathlib.Data.Fintype.EquivFin
 /-!
 # Powers of a closed path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Quiver.LoopPower)
+
 A closed path `p : Quiver.Path a a` can be concatenated with itself, so it has powers
 `p.loopPow n`, the path that runs around `p` exactly `n` times. Their lengths are the multiples
 `n * p.length` of the length of `p`, so a *nontrivial* closed path has pairwise distinct powers

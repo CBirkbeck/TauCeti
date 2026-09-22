@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Normed.Module.Connected
 /-!
 # Paths to normalized reflection-pair lifts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Spin.ReflectionPair)
+
 A path between two unit vectors maps to a path from the identity to their reflection-pair lift by
 Clifford multiplication by the first vector. For the positive-definite real Clifford form, the
 Euclidean unit sphere supplies such a path for every pair of unit vectors.

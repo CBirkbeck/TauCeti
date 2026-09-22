@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The graph-twisted Frobenius of the pinned Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.TwistedFrobenius)
+
 For a valid Dynkin type `t` and a symmetry `σ` of its Bourbaki-numbered Dynkin diagram, the points
 of `TauCeti.DynkinType.geckGroupScheme` over a value ring of exponential characteristic `p` carry
 two commuting endomorphisms: the `q`-power Frobenius `TauCeti.DynkinType.geckFrobenius`, with

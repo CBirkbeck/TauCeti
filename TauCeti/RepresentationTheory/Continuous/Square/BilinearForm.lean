@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.InvariantForm
 /-!
 # Invariant tensors and invariant bilinear forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Square.BilinearForm)
+
 On an inner product space the inner product turns a tensor `t` of the tensor square `V ⊗[𝕜] V` into
 the bilinear form `B_t (v, w) = ⟪t, v ⊗ₜ w⟫`, `TauCeti.BilinForm.ofTensor`, built in
 `TauCeti/Analysis/InnerProductSpace/BilinearForm.lean` together with its injectivity, its

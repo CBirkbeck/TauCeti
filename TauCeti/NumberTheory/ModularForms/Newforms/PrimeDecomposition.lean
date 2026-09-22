@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.MainLemma
 /-!
 # Prime degeneracy decomposition in the Atkin--Lehner Main Lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.PrimeDecomposition)
+
 The Atkin--Lehner Main Lemma says that a cusp form whose Fourier coefficients vanish at every
 index coprime to its level is old.  For a form of fixed nebentypus, the stronger conclusion used
 in newform theory is an explicit decomposition

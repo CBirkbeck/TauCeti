@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basic
 /-!
 # Gauge equivalence of skew-zigzag parameters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Gauge)
+
 A skew-zigzag parameter labels each ordered pair of incident edges of a simple graph `G` by the
 unit-valued ratio between the two backtracks they carry, and the associated relation quotient
 imposes `backtrack(h) = ratio(h,h') • backtrack(h')`. Rescaling every arrow of the doubled quiver

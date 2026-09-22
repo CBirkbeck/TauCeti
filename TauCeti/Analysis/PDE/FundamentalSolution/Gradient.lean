@@ -11,6 +11,8 @@ public import Mathlib.Analysis.InnerProductSpace.Calculus
 /-!
 # Gradient of the planar Newtonian kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Gradient)
+
 This file computes the full Fréchet derivative of the planar Newtonian kernel away from its
 pole.  The result is the covector
 

@@ -13,6 +13,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Weight-parabolic subgroup schemes of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Parabolic)
+
 An integer weight `w i` on each coordinate of `GL_N` cuts out the matrices whose `(i,j)` entry
 vanishes whenever `w i < w j`. This file represents that weight parabolic by a finite-type closed
 subgroup scheme over an arbitrary commutative base ring.

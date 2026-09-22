@@ -16,6 +16,8 @@ public import TauCeti.Topology.Algebra.Module.LocallyConvex
 /-!
 # The thrice-punctured sphere
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.ThricePuncturedSphere.Basic)
+
 The thrice-punctured sphere `ℙ¹(ℂ) ∖ {0, 1, ∞}` is the base of the three-point covers classified
 by permutation triples and dessins d'enfants. This file fixes its affine model
 `TauCeti.ThricePuncturedSphere := {z : ℂ // z ≠ 0 ∧ z ≠ 1}`, together with the point-set facts the

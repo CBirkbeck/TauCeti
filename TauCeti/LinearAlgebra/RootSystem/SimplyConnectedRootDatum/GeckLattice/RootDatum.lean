@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The conjugation equations of the Geck carrier, against its named root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.RootDatum)
+
 For a valid Dynkin type `t`, `TauCeti.DynkinType.geckGroupScheme t` is the explicit Kostant
 toral-closure carrier built from Geck's integral coordinate lattice. Its split weight torus
 conjugates the parameter of the numbered raising subgroup at node `i` through the character

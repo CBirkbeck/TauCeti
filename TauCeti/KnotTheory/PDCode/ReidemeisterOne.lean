@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.Perm.SumCongr
 /-!
 # The first Reidemeister move on PD-codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.PDCode.ReidemeisterOne)
+
 The first Reidemeister move adds a kink to an arc of a diagram: the arc is cut open and a small
 loop crossing itself once is spliced in. On a PD-code with `n` crossings,
 `TauCeti.PDCode.reidemeisterOne D h b` adds this kink to the arc ending at the half-edge `h`. The

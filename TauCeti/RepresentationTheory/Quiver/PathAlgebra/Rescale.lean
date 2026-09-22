@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # Rescaling the arrows of a path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.Rescale)
+
 A labelling of the arrows of a quiver by scalars multiplies out along a path to the *weight* of
 that path, and rescaling every basis path by its weight is an algebra endomorphism of the path
 algebra: weights are multiplicative under concatenation and trivial on the vertex idempotents,

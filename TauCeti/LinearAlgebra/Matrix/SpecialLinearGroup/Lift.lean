@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Nilpotent
 /-!
 # Lifting special-linear matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Lift)
+
 A special-linear matrix lifts across a quotient by a nilpotent ideal. Lift its entries
 arbitrarily; its determinant is then a unit because it is one modulo the ideal. Scaling one row
 by the inverse determinant corrects the lift without changing its image.

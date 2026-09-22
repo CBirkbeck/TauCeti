@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.AlgebraicClosure.Integral
 /-!
 # Stickelberger's congruence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Discriminant.Stickelberger)
+
 The discriminant of a number field is congruent to `0` or `1` modulo `4`.
 
 Let `b` be a `ℚ`-basis of the number field `K` consisting of algebraic integers, and let `M` be the

@@ -13,6 +13,8 @@ import TauCeti.Data.Fin.Basic
 /-!
 # The rank-one Tits system of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.TitsSystem)
+
 Let `B` be the upper-triangular subgroup of `GL₂(k)` and let `N` be the normalizer of its
 diagonal torus `T`. Over a field whose unit group is nontrivial, these subgroups form a Tits
 system. Its single simple reflection is represented by the permutation matrix

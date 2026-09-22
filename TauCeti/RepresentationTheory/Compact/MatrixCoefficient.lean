@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Function.L2Space
 /-!
 # Matrix coefficients in `L²` of a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.MatrixCoefficient)
+
 A matrix coefficient `g ↦ ⟪π g v, w⟫` of a continuous representation of a compact group is a
 continuous function on a probability space, hence square integrable. This file records its image
 in `L²(G)` for normalized Haar measure, and the identities that turn `L²`-statements about matrix

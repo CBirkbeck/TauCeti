@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
 /-!
 # Vanishing of maps induced on quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Limits.Shapes.ZeroMorphisms)
+
 In a category with zero morphisms, a composite of two maps induced on quotients vanishes as soon as
 the final quotient map kills the morphism inducing the first one.  This is the complex condition
 for sequences of quotients such as `coker f ⟶ coker (f ≫ g) ⟶ coker g`.

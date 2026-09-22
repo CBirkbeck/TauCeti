@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Lattice
 /-!
 # Completeness of the E₇ coroot enumeration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.Lattice)
+
 The 126 coroots of type `E₇` are enumerated in
 `TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.Basic` as coordinate vectors in the
 simple-coroot basis. This file proves that the enumeration is complete: a vector of `Fin 7 → ℤ`

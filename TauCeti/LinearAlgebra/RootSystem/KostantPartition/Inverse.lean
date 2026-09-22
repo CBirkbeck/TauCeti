@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.KostantPartition.Basic
 /-!
 # The Kostant partition function inverts the Weyl denominator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.KostantPartition.Inverse)
+
 The Weyl denominator `Δ = ∏_{α > 0} (1 - e^{-α})` of `TauCeti.weylDenominator` expands, by
 `TauCeti.weylDenominator_eq_sum_powerset`, as the signed sum
 `∑_{T ⊆ Φ⁺} (-1)^{|T|} e^{-∑_{α ∈ T} α}` over the subsets of the positive roots. Formally inverting

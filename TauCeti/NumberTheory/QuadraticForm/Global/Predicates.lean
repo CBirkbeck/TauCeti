@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.QuadraticForm.Global.Localization
 /-!
 # Local properties of quadratic forms over number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.Predicates)
+
 This file defines isotropy, representation, scalar representation, and equivalence at every
 finite and real place of a number field.  The predicates always use the canonical scalar
 extensions of the global forms, so their witnesses compare actual localizations rather than an

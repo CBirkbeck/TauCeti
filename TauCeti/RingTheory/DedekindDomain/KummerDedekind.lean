@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.RamificationInertia.Ramification
 /-!
 # Kummer–Dedekind: the primes over `p`, with their residue degrees and ramification indices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.KummerDedekind)
+
 Let `R` be an integrally closed domain, let `S` be a Dedekind domain that is a torsion-free
 `R`-algebra, let `x : S` be integral over `R`, and let `p` be a nonzero maximal ideal of `R` that
 is prime to the conductor of `R[x]` in `S`.  Mathlib's `KummerDedekind` file matches the prime

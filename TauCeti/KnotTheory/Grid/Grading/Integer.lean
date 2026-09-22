@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Gradings
 /-!
 # Integer-valuedness of the Maslov gradings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.Integer)
+
 The Maslov gradings `M_O` and `M_X` of a grid state are defined in
 `TauCeti.KnotTheory.Grid.Gradings` as rational-valued formulas through the `J`-function, which is
 itself a half-integer (the symmetrization of a point-pair count divided by two). This file proves

@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.BlockedRectangle
 /-!
 # The fully blocked grid chain module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Chain.Basic)
+
 This file packages the first algebraic object in the grid-combinatorial lane: the free
 `ZMod 2`-module on grid states, together with the linear map whose matrix coefficient from
 `x` to `y` is the parity of fully blocked empty rectangles from `x` to `y`.

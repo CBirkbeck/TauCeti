@@ -13,6 +13,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Vanishing at zero and oddness of an elliptic sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Elementary)
+
 `IsEllipticSequence W` constrains `W` on every triple of integers. Two facts about `W` alone
 follow, given that suitable terms are nonzerodivisors: `W` vanishes at `0`, and `W` is an odd
 function.

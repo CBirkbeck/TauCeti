@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.DimensionVector
 /-!
 # The Euler and Tits forms under reflection of a quiver at a vertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.EulerForm)
+
 Reflecting a quiver at a vertex does not change its underlying graph, so it changes neither the
 Tits form (`TauCeti.titsForm_reflect`) nor its polarization (`TauCeti.titsPolarForm_reflect`), and
 hence not the simple reflections on dimension vectors either

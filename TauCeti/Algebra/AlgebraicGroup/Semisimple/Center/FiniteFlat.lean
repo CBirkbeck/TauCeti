@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Basis.VectorSpace
 /-!
 # The center of a semisimple group is finite locally free
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Semisimple.Center.FiniteFlat)
+
 The scheme-theoretic center of a semisimple affine group over a field is a finite locally free
 commutative group scheme. In Hopf coordinates, its coordinate algebra is finite by the finiteness
 theorem for semisimple centers, projective because it is a vector space over a field, and

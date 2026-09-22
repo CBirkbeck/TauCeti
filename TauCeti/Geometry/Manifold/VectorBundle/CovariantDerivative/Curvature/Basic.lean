@@ -15,6 +15,8 @@ import TauCeti.Geometry.Manifold.VectorField.Regularity
 /-!
 # Curvature of a covariant derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Basic)
+
 For a covariant derivative `∇` on a vector bundle, this file defines its curvature operator
 
 `R(X, Y) σ = ∇ X (∇ Y σ) - ∇ Y (∇ X σ) - ∇ [X, Y] σ`.

@@ -13,6 +13,8 @@ import TauCeti.Algebra.Order.BigOperators.BoundedDifferences
 /-!
 # McDiarmid's bounded-differences inequality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.McDiarmid)
+
 This file proves the moment-generating-function form of McDiarmid's inequality for a measurable
 real-valued function on a finite product of identical probability spaces. If changing coordinate
 `i` changes the function by at most `c i`, then the centered function is sub-Gaussian with variance

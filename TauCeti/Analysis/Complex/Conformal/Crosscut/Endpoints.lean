@@ -13,6 +13,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # The endpoints of a circular crosscut
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.Endpoints)
+
 For a point `ζ` on `sphere c r` and a radius `ρ` with `0 < ρ < 2 * r`, the circle
 `sphere ζ ρ` cuts the disc `ball c r` in one open arc. This file identifies that arc, its closed
 companion, and its two endpoints exactly. If

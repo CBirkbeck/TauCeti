@@ -12,6 +12,8 @@ import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.BaseChange
 /-!
 # The unipotent radical and reductivity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Reductive.Basic)
+
 This file connects the construction of the geometric unipotent radical to the definition of a
 reductive finite-type affine group. It records that reductivity is equivalent to smoothness,
 geometric connectedness, and triviality of the unipotent radical after base change to an

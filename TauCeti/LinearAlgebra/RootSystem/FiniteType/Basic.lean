@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # Cartan matrices of finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic)
+
 The Cartan-Killing classification is, at bottom, a statement about integer matrices: the Cartan
 matrix of a finite crystallographic root system is a generalized Cartan matrix that is
 *symmetrizable with positive definite symmetrization*, and only finitely many combinatorial shapes

@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Symplectic.Lagrangian.Basic
 /-!
 # The canonical symplectic form on a cotangent space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Cotangent.Basic)
+
 For a real vector space `V`, the product `V × V*` is the linear model of its cotangent bundle.
 It carries the canonical symplectic form
 

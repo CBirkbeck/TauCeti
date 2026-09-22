@@ -16,6 +16,8 @@ public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 /-!
 # Chart Gram matrices of a Riemannian metric
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.Riemannian.ChartGram)
+
 This file constructs the Gram matrix of the metric supplied by a `RiemannianBundle` instance in
 the local frame induced by a tangent-bundle trivialization and proves that its entries and the
 entries of its inverse are smooth on the trivialization base set. The construction uses

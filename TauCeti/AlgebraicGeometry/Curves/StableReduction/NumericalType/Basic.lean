@@ -18,6 +18,8 @@ import TauCeti.LinearAlgebra.Matrix.Symmetric
 /-!
 # Numerical types and their signed genus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Basic)
+
 A **numerical type** is the combinatorial shadow of the special fibre of a proper regular model
 of a curve over a discrete valuation ring: a finite nonempty set of components carrying
 multiplicities `mᵢ`, weights `wᵢ` (the degrees of the constant fields of the components over the
@@ -109,7 +111,10 @@ universe u v w x
 `multiplicity i` and `weight i` are the multiplicity of the `i`-th component of the special fibre
 of a proper regular model and the degree of its constant field over the residue field, and
 `genus i` is its arithmetic genus over that constant field, not the genus of its normalization.
-The matrix `intersection` records the intersection numbers of the components. -/
+The matrix `intersection` records the intersection numbers of the components.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.NumericalType) -/
 structure NumericalType where
   /-- The finite nonempty index set of components. -/
   Component : Type u

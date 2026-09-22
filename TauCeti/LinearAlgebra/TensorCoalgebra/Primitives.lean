@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Basic
 /-!
 # Primitive elements of the reduced tensor coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Primitives)
+
 For an `R`-module `M`, the reduced tensor words `⨁_{n ≥ 1} M^{⊗n}` carry the reduced
 deconcatenation coproduct `Δ` built in `TauCeti.ReducedTensorWords.deconcatenation`.  This file
 computes its primitive elements: a tensor word killed by deconcatenation is a single letter.

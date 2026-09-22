@@ -12,6 +12,8 @@ public import TauCeti.Probability.Process.Tail.Basic
 /-!
 # The mass of a directing-measure event met with a block cylinder
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.DirectingMeasure.BlockCylinder)
+
 One lemma, the integration step shared by the routes that condition on the **tail** σ-algebra:
 
 ```text

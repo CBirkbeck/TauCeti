@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Skeletal
 /-!
 # Isomorphism classes of line bundles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.LineBundle.Class)
+
 The Picard group of a scheme consists of line bundles up to isomorphism, with tensor product as
 its operation. This file constructs the underlying type of isomorphism classes and descends the
 tensor product and the trivial line bundle to it. Tensor symmetry and the unit isomorphisms give

@@ -10,6 +10,8 @@ public import TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Functor
 /-!
 # Equivalences of quotients by morphism ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Equivalence)
+
 Let `F : C ⥤ D` be an additive functor carrying a morphism ideal `I` of `C` into a morphism ideal
 `J` of `D`, so that `F` induces `I.map J F hF : C/I ⥤ D/J`. This file records how the properties
 of `F` pass to the induced functor:

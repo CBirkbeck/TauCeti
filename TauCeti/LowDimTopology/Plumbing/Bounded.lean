@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.ChainComplex
 /-!
 # Boundedness of the lattice chain complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Bounded)
+
 The cubical degree of a plumbing-lattice generator is the cardinality of its finite set of
 directions. For a plumbing graph on `V`, this degree is therefore at most `Fintype.card V`.
 The grading-level bounds are established in `Grading.lean`. This file turns them into the

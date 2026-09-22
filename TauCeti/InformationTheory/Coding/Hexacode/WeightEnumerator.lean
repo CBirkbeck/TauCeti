@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Hexacode weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Hexacode.WeightEnumerator)
+
 Exact enumeration of the 64 messages gives the hexacode weight distribution:
 one word of weight zero, 45 of weight four, and 18 of weight six. Consequently its
 minimum distance is four and its homogeneous enumerator is `X⁶ + 45X²Y⁴ + 18Y⁶`.

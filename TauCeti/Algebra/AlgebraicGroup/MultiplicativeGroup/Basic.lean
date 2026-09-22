@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 /-!
 # The multiplicative group example
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeGroup.Basic)
+
 This file records the functor-of-points calculation for the multiplicative group. Mathlib
 already equips the Laurent polynomial algebra `R[T;T⁻¹]` with its Hopf algebra structure,
 where `T n` is group-like and the antipode sends `T n` to `T (-n)`. We package the resulting

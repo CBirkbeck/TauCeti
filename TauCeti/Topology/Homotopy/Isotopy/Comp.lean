@@ -10,6 +10,8 @@ public import TauCeti.Topology.Homotopy.Isotopy.Basic
 /-!
 # Naturality of isotopy under composition with embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Isotopy.Comp)
+
 An isotopy is a homotopy through topological embeddings. This file records that the isotopy
 relation is *natural*: composing on either side with a
 topological embedding carries an isotopy to an isotopy, and so an isotopy relation to an

@@ -17,6 +17,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.LaurentFunctions
 /-!
 # The weight-space decomposition of a rational representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Weight.Decomposition)
+
 A rational representation of `GL n ℂ` is the internal direct sum of its weight spaces: the
 diagonal torus is simultaneously diagonalizable on it, and every joint eigencharacter occurring in
 it is among the monomial characters `t ↦ ∏ i, tᵢ ^ lᵢ` of the torus. Which of those characters

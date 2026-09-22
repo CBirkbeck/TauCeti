@@ -13,6 +13,8 @@ import TauCeti.Algebra.Lie.Weights.Eigenvector
 /-!
 # The central character of a highest weight module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.CentralCharacter)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero, let `H` be a splitting Cartan subalgebra and `b` a base of its root system.
 The centre `Z(U(L)) = Subalgebra.center K (UniversalEnvelopingAlgebra K L)` of the enveloping

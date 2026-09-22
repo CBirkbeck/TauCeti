@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.Modular.Orbits
 /-!
 # Pairing the boundary divisor points of the fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.BoundaryPairing)
+
 The boundary of the fundamental domain is identified with itself in pairs: `z ↦ z + 1`
 carries the left vertical edge onto the right one, and `z ↦ -1/z` swaps the two halves of
 the unit arc, fixing `i` and exchanging the two `ρ`-corners. A slash-invariant form has the

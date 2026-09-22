@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Polynomial.Resultant.Basic
 /-!
 # The norm on `AdjoinRoot g` is a resultant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Resultant.AdjoinRoot)
+
 For a monic `g : R[X]` and any `p : R[X]`, the norm of `AdjoinRoot.mk g p` over `R` is the
 resultant of `g` and `p`:
 

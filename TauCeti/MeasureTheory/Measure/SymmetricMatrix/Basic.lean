@@ -20,6 +20,8 @@ public import Mathlib.Topology.UniformSpace.Matrix
 /-!
 # The carrier of symmetric-matrix distributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Basic)
+
 The Wishart and related symmetric-matrix distributions live on Mathlib's
 self-adjoint subspace `selfAdjoint.submodule ℝ (Matrix (Fin p) (Fin p) ℝ)`. Over `ℝ`, `star` is
 transpose, so this is exactly the subspace of symmetric matrices, and
@@ -88,7 +90,10 @@ variable (p : ℕ)
 
 /-- The symmetric subspace carries the Frobenius norm induced from the ambient matrices, with
 its metric rebuilt on the subtype uniformity so that the uniform and topological structures are
-the subtype ones on the nose. -/
+the subtype ones on the nose.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.symmetricMatrixNormedAddCommGroup) -/
 instance symmetricMatrixNormedAddCommGroup :
     NormedAddCommGroup (selfAdjoint.submodule ℝ (Matrix (Fin p) (Fin p) ℝ)) :=
   letI : NormedAddCommGroup (Matrix (Fin p) (Fin p) ℝ) := Matrix.frobeniusNormedAddCommGroup

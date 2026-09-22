@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.Conjugation
 /-!
 # Yoneda theory for the functor of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.Yoneda)
+
 The underlying type-valued functor of points of a commutative Hopf algebra `H` is
 corepresented by `H` as a commutative algebra. Concretely, a morphism
 `CommAlgCat.of R H ⟶ A` is the same data as an `A`-valued point

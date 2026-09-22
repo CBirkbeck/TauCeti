@@ -13,6 +13,8 @@ public import TauCeti.Combinatorics.SimpleGraph.Counting
 /-!
 # Homomorphism densities in a finite graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Finite)
+
 Two densities of a finite pattern graph `F` in a finite host graph `G`:
 
 * `homDensityFin F G = |Hom(F, G)| / |V(G)| ^ |V(F)|` — all homomorphisms;

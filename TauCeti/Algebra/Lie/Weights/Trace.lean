@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.String
 /-!
 # The trace of a pair of opposite root vectors on a weight space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Trace)
+
 Let `H` be a nilpotent Lie subalgebra of `L` acting on a module `M` that is finite and free over a
 principal ideal domain `K`, let `α : H → K` be a linear form, and let `x` and `y` be root vectors of
 weights `α` and `-α` whose bracket `⁅x, y⁆` lies in `H`, say `⁅x, y⁆ = z`.  Acting first by `x` and

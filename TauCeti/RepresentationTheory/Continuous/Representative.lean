@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Continuous.Transport
 /-!
 # The representative ring of a monoid with a topology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Representative)
+
 A **representative function** on a monoid `G` equipped with a topology is a matrix coefficient of a
 finite-dimensional continuous representation of `G`. Their span
 `TauCeti.representativeSubmodule` is the **representative ring** `𝓡(G) ⊆ C(G, 𝕜)`, and the point of

@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # An odd linear automorphism of a Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.ParitySwap)
+
 The two halves `evenOdd Q 0` and `evenOdd Q 1` of the `ℤ/2`-grading of a Clifford algebra are in
 general only submodules, with nothing relating their sizes. They become isomorphic as soon as some
 *odd* operator on `CliffordAlgebra Q` is invertible, because an odd operator carries each half into

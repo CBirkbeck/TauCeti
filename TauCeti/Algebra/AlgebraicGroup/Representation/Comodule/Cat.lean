@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Basic
 /-!
 # The category of point representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Comodule.Cat)
+
 Let `H` be a commutative Hopf algebra over a commutative ring `R`. This file bundles natural
 actions of the affine group represented by `H` into a category. Morphisms are linear maps whose
 scalar extensions intertwine every algebra-valued point action.

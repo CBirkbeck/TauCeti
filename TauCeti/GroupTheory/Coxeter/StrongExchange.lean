@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Coxeter.Basic
 /-!
 # The strong exchange condition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.StrongExchange)
+
 Let `cs : CoxeterSystem M W` be a Coxeter system, let `ω` be a word, reduced or not, and let `t` be
 a reflection of `W`, that is, a conjugate of a simple reflection. The **strong exchange condition**
 says that if left multiplication by `t` shortens `π ω`, then `t * π ω` is spelled by `ω` with

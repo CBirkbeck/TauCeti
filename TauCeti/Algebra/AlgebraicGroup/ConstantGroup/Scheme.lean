@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Constant finite group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.ConstantGroup.Scheme)
+
 For a finite group `G` and a commutative ring `R`, this file applies relative spectrum to the
 Hopf algebra of functions `G → R`.  The result is the constant affine group scheme associated
 to `G`.  A group homomorphism induces a morphism of these group schemes in the same direction,

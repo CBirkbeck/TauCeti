@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.DirichletCharacter.Conductor
 /-!
 # Primitive Dirichlet Gauss sums in characteristic zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.DirichletCharacter.GaussSum)
+
 This file extends the Gauss-sum API from finite fields to primitive Dirichlet characters of an
 arbitrary level. For a primitive character `χ` and a primitive additive character `e` of
 `ZMod N`, the product of the Gauss sums for `(χ, e)` and `(χ⁻¹, e⁻¹)` is `N`. For a

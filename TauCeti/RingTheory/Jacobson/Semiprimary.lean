@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Jacobson.Semiprimary
 /-!
 # The radical quotient of a module over a semiprimary ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Jacobson.Semiprimary)
+
 Let `I` be a two-sided ideal of `R` with `R ⧸ I` a semisimple ring. Then for *any* `R`-module `M`
 the quotient `M ⧸ I • M` is a semisimple module: it is a module over `R ⧸ I`, annihilated by `I`,
 and semisimplicity does not depend on which of the two rings the scalars are read in. Nothing about

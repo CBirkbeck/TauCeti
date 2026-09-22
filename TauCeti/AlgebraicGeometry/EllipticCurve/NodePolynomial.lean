@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Polynomial.QuadraticDiscriminant
 /-!
 # The node polynomial of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.NodePolynomial)
+
 When a Weierstrass curve degenerates to a node, the two tangent directions there are the roots of a
 quadratic, and the reduction is called *split* exactly when those roots are rational over the
 residue field. Mathlib writes that quadratic out inline, in the very definition of

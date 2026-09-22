@@ -20,6 +20,8 @@ import TauCeti.RepresentationTheory.Subrepresentation
 /-!
 # The half-spin summands of the spin representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.HalfSpin.Basic)
+
 `TauCeti.spinAction` makes the exterior algebra `S = ⋀·W` of the isotropic summand of a
 polarization a module over the Clifford algebra, and `TauCeti.spinRep` restricts that action
 along the inclusion of `spinGroup Q` — the spin representation proper — as `TauCeti.pinRep` does

@@ -13,6 +13,8 @@ import TauCeti.Analysis.SpecialFunctions.Pow.LogDeriv
 /-!
 # Principal powers of `z - x` on the upper half-plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.Cpow)
+
 For a real number `x`, the difference `z - x` of an upper-half-plane point and `x` again has
 positive imaginary part, hence lies in `Complex.slitPlane`.  The principal power
 `(z - x) ^ (r : ℂ)` is therefore holomorphic and nonvanishing there, and its logarithmic

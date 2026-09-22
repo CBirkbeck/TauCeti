@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.TitsSystem.Basic
 /-!
 # Bruhat decomposition of a Tits system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TitsSystem.Bruhat.Basic)
+
 For a Tits system `(B, N)`, every element of the ambient group belongs to a double coset
 `B n B` represented by an element `n ∈ N`. Thus the canonical map from `N` to `B \ G / B`
 is surjective, and the union of the Bruhat cells is the whole group.

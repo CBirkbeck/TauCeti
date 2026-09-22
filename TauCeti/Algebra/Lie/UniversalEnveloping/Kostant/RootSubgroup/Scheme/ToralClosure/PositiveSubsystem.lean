@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Positive Kostant subsystem schemes are upper triangular
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.PositiveSubsystem)
+
 Let a Kostant form act on an integral lattice with a finite ordered weight basis. If the selected
 root operators raise weights strictly towards the beginning of that basis, their represented root
 subgroups are upper unitriangular, while the represented weight torus is diagonal. Consequently,

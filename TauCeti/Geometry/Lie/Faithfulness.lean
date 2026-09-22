@@ -12,6 +12,8 @@ import TauCeti.Geometry.Lie.Exponential.LocalInverse
 /-!
 # Faithfulness of the Lie functor on preconnected groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Faithfulness)
+
 A smooth homomorphism out of a preconnected finite-dimensional real Lie group is determined by its
 induced Lie-algebra homomorphism. Naturality of the Lie-group exponential first gives equality on
 the exponential image. The local inverse to the exponential promotes this to equality near the

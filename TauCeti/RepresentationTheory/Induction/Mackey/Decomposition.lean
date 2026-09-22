@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.Transitivity
 /-!
 # The Mackey decomposition as an isomorphism of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Decomposition)
+
 Let `H` and `K` be subgroups of a group `G` and let `A` be a representation of `H` over a
 commutative ring `k`.  Restricting the induced representation `Ind_H^G A` to `K` splits it as a
 direct sum over the double cosets `K \ G / H`:

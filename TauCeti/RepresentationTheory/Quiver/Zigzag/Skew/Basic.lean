@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Relations
 /-!
 # Scalar-labelled skew-zigzag relation quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basic)
+
 A skew-zigzag relation quotient changes the ordinary relation identifying all backtracks at a
 vertex by allowing a unit-valued, hence invertible, scalar ratio between each ordered pair of
 incident edges.  A parameter

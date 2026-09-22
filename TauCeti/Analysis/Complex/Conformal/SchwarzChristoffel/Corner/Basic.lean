@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Boundary
 /-!
 # Corner asymptotics of the Schwarz--Christoffel map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Corner.Basic)
+
 At a real boundary point `p` carrying total exponent `t > -1`, the Schwarz--Christoffel integrand is
 asymptotic to `C * (z - p) ^ t`, where `C` is the nonzero prevertex coefficient.  This file
 integrates that derivative asymptotic and identifies the first-order power law of the normalized

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Group.Subgroup.ZPowers
 /-!
 # The dihedral groups: an enumeration, a recognition criterion, and the rotation subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.Dihedral.Basic)
+
 `DihedralGroup n` is finite, but `Fintype` alone does not hand back a list of its elements, since
 `Finset.toList` is noncomputable. This file writes that list down, and evaluates
 `DihedralGroup.exponent` — which computes the exponent of `DihedralGroup n` as `lcm n 2` — at the

@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 /-!
 # The `{1, x}` rational basis of algebraic integers in a quadratic number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Internal.QuadraticIntegralBasis)
+
 Internal helper: in a quadratic number field `K`, an integral element `x` that is not rational
 packages the pair `{1, x}` as a `ℚ`-basis of `K` whose two vectors are algebraic integers. It is
 *not* claimed to be a `ℤ`-basis of the full ring of integers `𝓞 K`. This construction is shared by

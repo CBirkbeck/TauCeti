@@ -12,6 +12,8 @@ public import Mathlib.Topology.Maps.Basic
 /-!
 # Isotopy and ambient isotopy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Isotopy.Basic)
+
 An *isotopy* between two continuous maps is a homotopy whose every time slice is a topological
 embedding, and an *ambient isotopy* of a space `Y` is a
 homotopy from the identity of `Y` whose level-preserving total map `I × Y → I × Y` is a

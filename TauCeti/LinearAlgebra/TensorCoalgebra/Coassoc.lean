@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Coaugmented
 /-!
 # Reduced deconcatenation is coassociative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Coassoc)
+
 `TauCeti.ReducedTensorWords.deconcatenation` cuts a nonempty tensor word at every nontrivial
 position. This file proves that it is coassociative by including a reduced word into
 `TauCeti.TensorWords`, using coassociativity of full deconcatenation there, and projecting every

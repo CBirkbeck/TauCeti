@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 /-!
 # Power classes of a commutative group under equivalences and products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.QuotientGroup.PowMonoidHom)
+
 The group of `n`-th power classes of a commutative group `G` is the quotient
 `G ⧸ (powMonoidHom n).range`, the spelling `Mathlib.RingTheory.DedekindDomain.SelmerGroup` uses.
 This file transports that quotient along a multiplicative equivalence, and identifies the power

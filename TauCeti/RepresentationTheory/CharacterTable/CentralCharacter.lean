@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.ClassSum.Representatio
 /-!
 # The central character of an irreducible representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.CentralCharacter)
+
 The centre of `k[G]` acts on an irreducible representation by scalars: a central element acts by an
 intertwiner, and Schur's lemma over an algebraically closed field leaves only scalars. Recording
 those scalars is the **central character** `ωᵪ : Z(k[G]) →ₐ[k] k` of the representation, the

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Borel
 /-!
 # Borels from a Lie algebra basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Basis.Borel)
+
 This file connects a `LieAlgebra.Basis` to the positive nilradical and Borel subalgebra determined
 by its root-system base. The positive nilradical is generated as a Lie algebra by the raising
 operators `eᵢ`, so the corresponding Borel is the Cartan subalgebra together with their Lie span.

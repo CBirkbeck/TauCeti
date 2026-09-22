@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Basic
 /-!
 # The evaluation of a weighted restricted power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Map)
+
 `TauCeti/RingTheory/Huber/WeightedEval/Basic.lean` proves that the terms `φ(coeff ν f) · bν` of
 Wedhorn's evaluation (Proposition 5.50) are summable. This file takes their sum and gives it the
 API a universal property needs: the value on a constant series, the value on a variable, and

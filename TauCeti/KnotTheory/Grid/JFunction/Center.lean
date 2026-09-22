@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.JFunction.Count
 /-!
 # Pairing grid points against markings at the centers of their squares
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.JFunction.Center)
+
 The `J`-function of `JFunction/Basic.lean` compares two sets of grid points with the strict
 southwest relation. The Maslov and Alexander gradings, however, pair a *grid state*, which
 occupies grid points, against the `O`- and `X`-*markings*, which sit at the **centers** of

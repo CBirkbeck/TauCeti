@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Weight.Decompositi
 /-!
 # Every admissible lattice has a weight basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Weight.Basis)
+
 The split maximal torus of
 `TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/RootSubgroup/Torus/Basic.lean`, the matrix
 coordinates of

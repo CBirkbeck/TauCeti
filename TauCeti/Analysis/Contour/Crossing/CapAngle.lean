@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Chord.QuotientAsymptotics
 /-!
 # The capping angle at a crossing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.CapAngle)
+
 Hungerbühler–Wasem Proposition 2.2 replaces a small window around a crossing of a curve through
 `s` by a circular cap.  The local loop is the original crossing window followed by the reverse of
 that cap.  Its winding number is the crossing angle divided by `2π`.

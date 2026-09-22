@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.GiryMonad
 /-!
 # The full-path joint disintegration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.PathDisintegration)
+
 `ConditionallyIIDWith μ X ν` constrains the joint law of `(ν, block)` along each *finite* selection
 of coordinates. This file upgrades that to the whole path at once: the joint law of the directing
 measure together with the entire process is the disintegration `∫ δ_{ν ω} ⊗ (ν ω)^{⊗ℕ} dμ(ω)`.

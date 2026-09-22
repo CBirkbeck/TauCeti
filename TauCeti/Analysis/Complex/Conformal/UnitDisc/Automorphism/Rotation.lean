@@ -14,6 +14,8 @@ import TauCeti.Analysis.Calculus.DSlope.Basic
 /-!
 # A holomorphic automorphism of the unit disc fixing the origin is a rotation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Rotation)
+
 This file records the Schwarz-lemma rigidity for the complex unit disc: a holomorphic self-map
 `f` of `Metric.ball (0 : ℂ) 1` that admits a holomorphic left inverse which is itself a self-map
 of the disc, and that fixes the origin, is a rotation `z ↦ c * z` for a constant `c` of modulus

@@ -11,6 +11,8 @@ public import Mathlib.Probability.HasLaw
 /-!
 # Densities from laws presented as `withDensity`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Density)
+
 Two bridges from a law given as `μ.withDensity f` to Mathlib's `MeasureTheory.HasPDF` and `pdf`,
 together with three bridges for a law presented by a nonnegative real-valued density:
 `integrable_withDensity_ofReal_iff` and `integral_withDensity_ofReal` reduce integrability and

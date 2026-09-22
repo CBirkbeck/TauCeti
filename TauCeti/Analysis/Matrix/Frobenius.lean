@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Matrix.Normed
 /-!
 # The Frobenius inner product on real matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.Frobenius)
+
 Mathlib's `Matrix.frobeniusNormedAddCommGroup` equips `Matrix m n ℝ` with the Frobenius norm
 while keeping the topology and uniformity definitionally equal to the product ones. This file
 adds the compatible real inner product `⟪A, B⟫_ℝ = ∑ i, ∑ j, A i j * B i j`, together with its

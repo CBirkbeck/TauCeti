@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.Gram
 /-!
 # The simply connected root datum of type `E₈`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Datum)
+
 This file builds the pinned integral root datum of type `E₈` on the character and cocharacter
 lattices `Fin 8 → ℤ`, out of the enumeration of the two hundred and forty roots in
 `TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E8.Basic`. The character lattice is

@@ -12,6 +12,8 @@ import Mathlib.NumberTheory.LSeries.PrimesInAP
 /-!
 # Primes with prescribed prime-discriminant characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Dirichlet.Basic)
+
 Let `P₁, …, P_t` be distinct prime discriminants, at most one of them even, and let a sign
 `ε_i = ±1` be assigned to each. Then there are infinitely many primes `q` at which the characters
 attached to the `P_i` take exactly the prescribed values, `χ_{P_i}(q) = ε_i` for every `i`. This is

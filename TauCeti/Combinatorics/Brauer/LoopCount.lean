@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Brauer.Compose
 /-!
 # The middle loops of a stack of two Brauer diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Brauer.LoopCount)
+
 Stacking the Brauer diagram `D₁` above `D₂` identifies the bottom boundary of `D₁` with the top
 boundary of `D₂`; the arcs of the two diagrams that meet that middle boundary form strands, and
 `TauCeti.composeDiagram` reads off the matching those strands induce on the outer boundary. Some

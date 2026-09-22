@@ -13,6 +13,8 @@ public import TauCeti.FieldTheory.Finite.FrobeniusFixed
 /-!
 # The finite subfields of a separably closed field of positive characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.SepClosedSubfield)
+
 `TauCeti.frobeniusFixedSubfield K p n` is the subfield of solutions of `a ^ p ^ n = a`, defined for
 an arbitrary field of exponential characteristic `p`. When the field is separably closed and
 `n ≠ 0` it is the field of `q = p ^ n` elements sitting inside it.

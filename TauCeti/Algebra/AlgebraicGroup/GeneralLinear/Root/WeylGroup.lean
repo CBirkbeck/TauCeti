@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Normalize
 /-!
 # The Weyl group of the diagonal torus in the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Root.WeylGroup)
+
 For a field `k` with a nontrivial unit group, the normalizer quotient of the diagonal torus in
 `GL_n(k)` is the permutation group of the coordinate lines. Independently, the Weyl group of the
 diagonal coordinate root datum is the permutation group of its universe-lifted coordinates. This

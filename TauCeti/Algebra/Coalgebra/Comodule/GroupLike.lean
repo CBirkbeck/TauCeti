@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 /-!
 # Comodules with a group-like basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.GroupLike)
+
 A basis `b` of a module `M` together with a family `c` of group-like elements of a coalgebra `C`
 determines a right `C`-comodule structure on `M`, namely the linear extension of
 

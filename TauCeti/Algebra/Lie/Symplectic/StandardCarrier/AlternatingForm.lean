@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Symplectic.StandardCarrier.Scheme
 /-!
 # The full-weight type-C carrier preserves the standard alternating form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.AlternatingForm)
+
 `TauCeti.SpStd.groupScheme n` is the explicit full-weight Chevalley carrier of type `C_(n+1)`: the
 smallest closed subgroup scheme of `GL_(2n+2)` containing the divided-power exponentials of the
 Bourbaki-numbered Chevalley generators of `sp_(2n+2)` together with the weight torus of the

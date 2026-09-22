@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AugmentationPoint.Basic
 /-!
 # The augmentation point of a commutative bialgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.Augmentation)
+
 The counit of a commutative bialgebra over a field defines a point of its prime spectrum. For a
 Hopf algebra, this is the identity point of the represented affine group.
 

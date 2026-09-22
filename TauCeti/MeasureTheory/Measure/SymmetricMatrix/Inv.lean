@@ -15,6 +15,8 @@ public import Mathlib.Topology.Instances.Matrix
 /-!
 # Inversion and the change of variables on the positive-definite cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Inv)
+
 Matrix inversion is a self-map `TauCeti.symmetricInv` of the symmetric subspace, and an
 involution of the positive-definite cone. Its derivative at an invertible `A` is `H ↦ -A⁻¹ H A⁻¹`,
 that is, minus the congruence by `A⁻¹`, whose determinant

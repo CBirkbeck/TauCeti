@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 /-!
 # Derivations and the sum of two points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Derivation)
+
 For two nonzero points `P`, `Q` of a Weierstrass curve `W⁄K` with `P + Q ≠ 0`, and a derivation `D`
 on `K` over `R`, the derivation of the `x`-coordinate of `P + Q` is expressed through the
 derivations of the `x`-coordinates of `P` and `Q`: this is `Affine/Formula/Derivation.lean`'s

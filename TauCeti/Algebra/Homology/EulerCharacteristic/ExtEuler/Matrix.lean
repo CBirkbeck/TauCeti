@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.SesquilinearForm.NumericalQuotient.Basic
 /-!
 # Matrices of the Ext-Euler pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Matrix)
+
 This file records the matrix of the Ext-Euler pairing in independently chosen bases of two exact
 Grothendieck groups. No symmetry is assumed, so the source and target properties and their bases
 may be different.

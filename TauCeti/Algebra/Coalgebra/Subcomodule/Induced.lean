@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Basic
 /-!
 # The induced comodule on a subcomodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Induced)
+
 This file equips a subcomodule with its inherited right-comodule structure.  The definition is
 made under the flatness hypothesis on the coalgebra: flatness makes
 `N ⊗ C → M ⊗ C` injective for the subtype map of a subcomodule `N ≤ M`, so the ambient

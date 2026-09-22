@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.MinimumDistance.Basic
 /-!
 # Semilinear equivalence of codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Semilinear.Basic)
+
 A semilinear monomial transformation applies one automorphism of the alphabet to every
 coordinate, rescales by coordinate units, and permutes coordinates. Its induced equivalence
 of codes preserves dimension, cardinality, and Hamming data. This

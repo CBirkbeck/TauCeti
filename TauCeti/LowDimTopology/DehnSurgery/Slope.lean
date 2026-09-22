@@ -17,6 +17,8 @@ public import TauCeti.Algebra.Module.Primitive
 /-!
 # Slopes on a framed boundary torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.DehnSurgery.Slope)
+
 A *slope* on the boundary torus `T` of a knot or link complement is the datum needed to specify a
 Dehn filling: the isotopy class of an unoriented essential simple closed curve on `T`, equivalently
 a primitive class in `H₁(T; ℤ)` taken modulo sign (Rolfsen, *Knots and Links*, Chapter 9). This is

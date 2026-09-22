@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Split
 /-!
 # The tensor product makes split `K₀` a ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Monoidal)
+
 The split Grothendieck group `TauCeti.SplitK0 C` of
 `TauCeti/CategoryTheory/GrothendieckGroup/Split.lean` records the additive structure of a
 category: `[X ⊞ Y] = [X] + [Y]`. When `C` also

@@ -17,6 +17,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The full-weight type-D spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.SpinCarrier.Basic)
+
 For `4 ≤ n`, this file specializes the type-`Dₙ` spin representation to the canonical split
 quadratic space `M* × M`, where `M = Fin n → ℚ`. Its exterior coordinate lattice has basis
 indexed by the sign sets `Finset (Fin n)` and is stable under the type-`D` Serre Kostant form.

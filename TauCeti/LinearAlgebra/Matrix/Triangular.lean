@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Matrix.Reindex
 /-!
 # Triangular matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Triangular)
+
 Mathlib's `Matrix.BlockTriangular` API computes determinants and inverses of triangular
 matrices, but not their individual diagonal entries. This file supplies the facts that
 consumers keep needing: on the diagonal, a product of triangular matrices multiplies

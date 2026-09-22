@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 /-!
 # The homogeneous characteristic form of a `2 × 2` matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.CharpolyFinTwo)
+
 Mathlib's `Matrix.charpoly_fin_two` records the characteristic polynomial of a `2 × 2` matrix as
 `X ^ 2 - C M.trace * X + C M.det`. This file records the *homogeneous* two-variable form of the
 same fact, evaluated directly as a determinant rather than through `Polynomial`:

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.PointsFunctor
 /-!
 # Inner conjugation on the functor of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.InnerConjugation)
+
 An `R`-valued point of a Hopf algebra acts on its algebra-valued points by conjugation after
 extension to the value algebra. This action is a group automorphism, natural in the value
 algebra, and respects identity, multiplication, and inversion of the conjugating point.

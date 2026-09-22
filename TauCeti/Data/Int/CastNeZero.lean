@@ -11,6 +11,8 @@ public import Mathlib.Data.Int.Cast.Lemmas
 /-!
 # Integer casts that stay nonzero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Int.CastNeZero)
+
 An even integer with nonzero cast keeps `2` nonzero: if `2` cast to the ring were zero then so
 would be the cast of anything `2` divides.
 

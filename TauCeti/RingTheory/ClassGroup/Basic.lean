@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 /-!
 # Complements on the ideal class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.ClassGroup.Basic)
+
 Four facts about Mathlib's `ClassGroup R` and its principal-ideal map that Mathlib's own file does
 not carry: the kernel of `toPrincipalIdeal`, the generator form of triviality of a class, that a
 principal fractional ideal has trivial class, and the class `[v]` of a height one prime.

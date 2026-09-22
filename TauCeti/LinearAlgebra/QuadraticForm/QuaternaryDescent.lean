@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 /-!
 # Quaternary descent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.QuaternaryDescent)
+
 Let `F` be a field of characteristic not two and `Q` a regular quadratic form of dimension four
 over `F` whose discriminant is the square class of a nonsquare `d`. Let `E = F(√d)`, a quadratic
 field extension of `F`. Then `Q` is isotropic over `F` exactly when its scalar extension to `E` is

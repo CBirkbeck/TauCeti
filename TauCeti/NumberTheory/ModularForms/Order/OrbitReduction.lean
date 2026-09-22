@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.FiniteZeros
 /-!
 # Orbit-reduction machinery for the valence formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Order.OrbitReduction)
+
 The valence formula will be proved as an identity over an arbitrary complete divisor set: for
 every finite `S ⊆ 𝒟` catching all nonzero-order points, three sums — over the strict interior,
 the left vertical edge, and the left half-arc minus `ρ` — together with the weighted elliptic

@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Polynomial.Chebyshev.Basis
 /-!
 # Polynomial span of the Chebyshev modes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Span)
+
 This file connects the algebraic Chebyshev basis of `ℝ[X]` with the normalized Chebyshev
 functions in `L²(Polynomial.Chebyshev.measureT)`.  Evaluation followed by the canonical map into
 `L²` is bundled as a linear map.  Since every Chebyshev polynomial is a nonzero scalar multiple

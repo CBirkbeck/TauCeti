@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 /-!
 # The Petersson adjoint of the Hecke operators `Tₙ` at indices prime to the level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Hecke)
+
 For `n` coprime to `N`, the Hecke operator `Tₙ` on `S_k(Γ₁(N))` has Petersson adjoint
 `⟨n⟩⁻¹ Tₙ`:
 

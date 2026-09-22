@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 /-!
 # `q`-coefficient vanishing and cusp-function growth
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.QExpansion.BigO)
+
 The dictionary between vanishing of the first `N` `q`-coefficients of a periodic function
 on `ℍ` and `O(‖q‖^N)` growth of its cusp function at `0`, in both directions, together with
 the limit of the function's values along `Im τ → ∞`. The general layer asks only for

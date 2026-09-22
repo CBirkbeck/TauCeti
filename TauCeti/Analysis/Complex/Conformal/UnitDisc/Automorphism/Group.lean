@@ -14,6 +14,8 @@ public import Mathlib.GroupTheory.GroupAction.Defs
 /-!
 # The automorphism group of the complex unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Group)
+
 `Conformal/UnitDisc/Automorphism/Classification.lean` shows that a holomorphic self-map of the
 open unit disc with a holomorphic two-sided inverse has the standard form
 `z ↦ u * (z - a) / (1 - conj a * z)`.  That is a statement about individual maps.  This file
@@ -213,7 +215,10 @@ theorem exists_mem_unitDiscAut_apply_eq (z w : Complex.UnitDisc) :
   ⟨e, e.2, he⟩
 
 /-- The rotations `z ↦ u * z`, as a subgroup of the permutations of the unit disc.  It is the
-image of `Circle` under its multiplicative action on the disc. -/
+image of `Circle` under its multiplicative action on the disc.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.unitDiscRotation) -/
 noncomputable def unitDiscRotation : Subgroup (Equiv.Perm Complex.UnitDisc) :=
   (MulAction.toPermHom Circle Complex.UnitDisc).range
 

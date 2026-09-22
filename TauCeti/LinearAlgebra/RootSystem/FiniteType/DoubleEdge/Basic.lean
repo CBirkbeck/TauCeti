@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Classical
 /-!
 # The double-edge bound for finite-type Cartan matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.DoubleEdge.Basic)
+
 In a finite-type diagram an index carrying a multiple edge is joined to every *other* index by at
 most a single edge (`TauCeti.IsFiniteType.apply_mul_apply_le_one_of_two_le`) - a restriction on what
 is incident to one endpoint of the edge, not yet a count of the multiple edges of a whole diagram -

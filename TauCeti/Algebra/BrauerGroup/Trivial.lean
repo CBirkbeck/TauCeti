@@ -34,6 +34,8 @@ import Mathlib.Algebra.Field.ZMod
 /-!
 # Brauer triviality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.Trivial)
+
 Two finite-dimensional central simple `K`-algebras are **Brauer equivalent** when they become
 isomorphic after passing to matrix algebras over them (Mathlib's `IsBrauerEquivalent`), and
 `BrauerGroup K` is the quotient of `CSA K` by that relation. Mathlib stops there: the quotient

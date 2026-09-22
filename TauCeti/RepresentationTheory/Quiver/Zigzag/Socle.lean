@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.SimpleModule.Socle
 /-!
 # The socle and the top of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Socle)
+
 For a finite simple graph without isolated vertices over a field, the Jacobson radical of the
 zigzag relation quotient is its positive-length part, its square is the span of the volume
 classes, and its cube vanishes.  This file reads the two ends of that filtration as module

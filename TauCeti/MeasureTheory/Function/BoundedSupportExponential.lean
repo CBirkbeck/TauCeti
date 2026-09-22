@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 /-!
 # Exponential moments from bounded support
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.BoundedSupportExponential)
+
 This file records a small bounded-support integrability principle used by the
 `OrthogonalL2Bases` roadmap's moment-determinacy route.  If a measure is supported where the
 argument norm is essentially bounded, multiplying an integrable function by any exponential

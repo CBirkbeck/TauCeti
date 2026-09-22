@@ -15,6 +15,8 @@ import TauCeti.Algebra.AlgebraicGroup.Smooth.Product
 /-!
 # Solvability of normal products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.NormalProduct)
+
 Let `I` and `J` cut out smooth solvable closed subgroups of an affine group, with
 `I` normal. Multiplication is a homomorphism from their conjugation semidirect product into the
 ambient group, and `CommHopfAlgCat.productOfNormal` is its scheme-theoretic image.

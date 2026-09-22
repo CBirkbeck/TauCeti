@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.Projection
 /-!
 # Exact sequences and generalized weight spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Exact)
+
 Let a nilpotent Lie algebra `L` act on finite-dimensional triangularizable modules. This file
 proves that a surjective homomorphism of `L`-modules remains surjective after restriction to any
 generalized weight space. Consequently a short exact sequence of modules restricts to a short

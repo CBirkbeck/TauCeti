@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Module.Equiv
 /-!
 # The kernel of an operator paired with a complementary coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Splitting)
+
 A continuous linear map `A : M →L[R] F` together with a second map `q : M →L[R] G` describes `M`
 by "the value of `A`" and "the remaining coordinate `q`" exactly when the pair
 `A.prod q : M →L[R] F × G` is invertible. That is the situation the implicit function theorem

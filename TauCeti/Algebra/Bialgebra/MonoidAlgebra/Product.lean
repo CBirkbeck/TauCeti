@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # The monoid algebra of a product is the tensor product of monoid algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.MonoidAlgebra.Product)
+
 For two monoids `G` and `H`, the canonical map `single (g, h) 1 ↦ single g 1 ⊗ₜ
 single h 1` is an isomorphism of `R`-bialgebras `R[G × H] ≃ₐc[R] R[G] ⊗[R] R[H]`.
 

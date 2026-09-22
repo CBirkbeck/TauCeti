@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 /-!
 # Finite groups: normalized Haar, the `L²` pairing, and orthogonality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Finite)
+
 A finite group carrying the discrete topology is a compact topological group, so the whole
 compact-group development applies to it. This file identifies the objects it produces with the
 elementary finite-group ones: normalized Haar measure is `|G|⁻¹ • Measure.count`, the Haar integral

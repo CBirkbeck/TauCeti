@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Comparison
 /-!
 # The vertex projective is the projective cover of the vertex simple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Projective.Cover)
+
 For a vertex `i` of a quiver `Q` the surjection `Pᵢ ↠ Sᵢ` of
 `TauCeti.RepresentationTheory.Quiver.Representation.Comparison` exhibits the vertex simple as a
 quotient of the vertex projective. This file proves that as soon as the trivial path is the only

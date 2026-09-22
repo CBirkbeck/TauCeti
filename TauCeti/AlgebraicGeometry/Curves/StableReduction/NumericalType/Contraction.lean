@@ -18,6 +18,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Contracting a `(-1)`-index of a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Contraction)
+
 Let `e` be a `(-1)`-index of a numerical type `T`, so that `gₑ = 0` and `aₑₑ = -wₑ`. On a proper
 regular model this is the numerical shadow of an exceptional curve of the first kind, and
 contracting that curve produces a new regular model. This file constructs the numerical type

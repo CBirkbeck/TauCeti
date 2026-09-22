@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.Consequences.HighDegree
 /-!
 # Weierstrass gaps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Consequences.WeierstrassGaps)
+
 At a place `P`, a positive integer `n` is a pole number if some function has a pole of order
 exactly `n` at `P` and is regular at every other place.  Otherwise `n` is a gap.  At a rational
 place of a function field with integrally closed constants and positive genus `g`, there are

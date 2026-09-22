@@ -12,6 +12,8 @@ import TauCeti.Order.CompactlyGenerated
 /-!
 # Deligne's bigrading is an internal direct sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Mixed.Decomposition)
+
 `TauCeti/Geometry/Hodge/Mixed/DeligneSplitting.lean` builds the bigrading `I^{p,q}` of a mixed
 Hodge structure from Deligne's closed formula and proves what follows from the formula alone. This
 file proves Deligne's theorem about it: the pieces `I^{p,q}` form an internal direct sum of the

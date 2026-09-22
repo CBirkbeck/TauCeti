@@ -14,6 +14,8 @@ import Mathlib.CategoryTheory.Monoidal.Cartesian.GrpLimits
 /-!
 # Kernels of isogenies
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Isogeny.Kernel)
+
 The kernel of an isogeny of affine group schemes is finite and faithfully flat over the base.
 The kernel square is a pullback of the isogeny along the identity section, so each of
 finiteness, flatness, and surjectivity is inherited by the structural morphism of the kernel:

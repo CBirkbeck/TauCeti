@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.ClassGroup.Basic
 /-!
 # `n`-th roots of invertible fractional ideals, and the `n`-th root class map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.NthRoot)
+
 Let `R` be a Dedekind domain with fraction field `K`. `FractionalIdealDivisor.Basic` identifies the
 group of invertible fractional ideals of `R` with the free Weil-divisor group on the height-one
 primes, by `fractionalIdealDivisorAddEquiv`. In a free abelian group, an element all of whose

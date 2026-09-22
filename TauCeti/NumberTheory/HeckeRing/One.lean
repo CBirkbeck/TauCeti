@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Unit
 /-!
 # Hecke rings: the identity and the unital non-associative semiring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.One)
+
 The identity double coset `(1 : HeckeCoset Δ H H)` gives the multiplicative identity of the
 Hecke ring `𝕋 Δ H R`, following [Shimura][shimura1971], Chapter 3. This file proves that the
 structure constants collapse to a single basis element on convolution by the identity, deduces

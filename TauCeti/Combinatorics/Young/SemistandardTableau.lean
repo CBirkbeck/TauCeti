@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.Young.SemistandardTableau
 /-!
 # Order properties of semistandard Young tableaux
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.SemistandardTableau)
+
 Mathlib's `SemistandardYoungTableau` records that entries increase weakly along each row and
 strictly down each column, each within a single row or column. This file combines the two into the
 two-dimensional statement that consumers actually reach for, comparing entries that differ in both

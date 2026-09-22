@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 /-!
 # The real winding integrand at a crossing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.CrossingValue.Basic)
+
 This file proves the local crossing-value calculation in Hungerbühler–Wasem Proposition 2.3.
 For a plane curve `γ` passing through `s` at `t₀` whose chord and velocity have the stated filter
 expansions, the apparently singular real winding integrand

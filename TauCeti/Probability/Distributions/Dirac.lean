@@ -12,6 +12,8 @@ public import TauCeti.Probability.Quantile
 /-!
 # Distributional formulas for Dirac measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirac)
+
 This file records the cumulative distribution and quantile functions of a real Dirac measure, and
 the exponential-integrability domain and cumulant-generating function of a real-valued statistic
 under a Dirac measure. The moment-generating function is already available in Mathlib as

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic
 /-!
 # The diagram of a finite-type Cartan matrix is a forest
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Diagram)
+
 The elimination tools of `TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic` are stated entrywise:
 they say that certain patterns of nonzero entries cannot occur together. The classification of
 finite-type Cartan matrices reads them as statements about a graph, the *diagram* of the matrix,

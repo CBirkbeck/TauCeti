@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Basic
 /-!
 # The symplectic subgroup scheme of `GL₂ₘ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.Basic)
+
 For a commutative ring `R` and `m : ℕ`, the symplectic subgroup scheme `Sp₂ₘ` of `GL (m + m)`
 is the subgroup scheme preserving the standard alternating form `Jₘ`: the specialization of
 `TauCeti.ConstantForm` at `C = Jₘ`, cut out of `GL (m + m)` by the entries of

@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # Finiteness consequences of exact sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Exact)
+
 This file records two elementary consequences of exactness at the middle term: finite-dimensional
 outer vector spaces (over a division ring) force the middle vector space to be finite-dimensional,
 and trivial outer types force the middle type to be trivial. The second carries no algebraic

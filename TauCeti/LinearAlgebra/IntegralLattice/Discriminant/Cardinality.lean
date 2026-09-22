@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Gram
 /-!
 # Cardinality of an integral lattice's discriminant group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Cardinality)
+
 For a nondegenerate integral lattice `L`, the order of its discriminant group is the absolute
 value of any Gram determinant:
 

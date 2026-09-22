@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 /-!
 # A point of the circle and its inverse
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Circle.Basic)
+
 Mathlib's `Circle` is the unit circle of `ℂ` as a group. This file records when a point of it is
 separated from its inverse: `z - z⁻¹` vanishes exactly at the two square roots of `1`, the points
 `z = ±1`. The chord and arc geometry of the circle is

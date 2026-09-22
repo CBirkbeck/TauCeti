@@ -12,6 +12,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # The subgroup of `n`th powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.PowMonoidHom)
+
 Facts about `Gⁿ`, the range of the `n`th-power homomorphism of a commutative group `G`, and about
 Mathlib's subgroup of squares `G²`, which is the case `n = 2`.
 

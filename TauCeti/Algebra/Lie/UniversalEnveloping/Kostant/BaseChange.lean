@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Subring.RationalBaseChange
 /-!
 # The Kostant form is an integral form of the enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.BaseChange)
+
 Let `L` be a Lie algebra over `ℚ` and let `e : ι → L` and `h : κ → L` be the two distinguished
 families out of which `TauCeti.UniversalEnvelopingAlgebra.kostantForm` is built. As soon as those
 families generate `L` as a Lie algebra, the resulting subring is an integral form of the whole

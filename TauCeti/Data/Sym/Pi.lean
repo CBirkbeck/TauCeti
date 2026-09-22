@@ -13,6 +13,8 @@ import Mathlib.Basic.Finite.Sigma
 /-!
 # Unordered tuples with one point in each member of a family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Sym.Pi)
+
 Given a family `A : Fin n → Set α` of subsets of a type, `TauCeti.Sym.pi A` is the set of
 unordered `n`-tuples obtained by choosing one point in each `A i`. When the members of the family
 are pairwise disjoint that choice is recorded faithfully: the unordered tuple remembers which of

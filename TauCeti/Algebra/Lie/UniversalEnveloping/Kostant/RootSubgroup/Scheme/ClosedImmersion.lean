@@ -13,6 +13,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # A Kostant root subgroup is a closed copy of the additive group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ClosedImmersion)
+
 Let a Kostant integral form act on a rational representation, preserving an integral lattice `M`
 with finite basis `b`. A nilpotent root vector `eᵢ` then gives the scheme morphism
 `xᵢ : 𝔾ₐ → GLₙ` of `RootSubgroup.Scheme.Basic`. A pinning of a Chevalley--Demazure group needs

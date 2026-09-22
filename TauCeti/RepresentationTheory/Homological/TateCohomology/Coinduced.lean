@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.TateCohomology.LowDegree
 /-!
 # Tate cohomology of modules induced and coinduced from the trivial subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.Coinduced)
+
 For a finite group `G`, every Tate cohomology group of the representation `Coind_⊥^G X` coinduced
 from the trivial subgroup vanishes (Milne, *Class Field Theory*, II 3.1): in positive degrees this
 is Shapiro's lemma for cohomology, in degrees below `-1` Shapiro's lemma for homology (induction and

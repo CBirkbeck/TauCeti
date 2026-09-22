@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.ClassicalTypeD
 /-!
 # The simple-root basis of the checkerboard lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RootLattice.TypeD.SimpleRoots)
+
 `TauCeti.LinearAlgebra.IntegralLattice.RootLattice.TypeD.Basic` builds the checkerboard lattice
 `Dₙ = {x ∈ ℤⁿ | ∑ xᵢ even}` in the Conway--Sloane coordinate model and computes its discriminant
 group.  That model is the one the glue calculations need, but it does not by itself exhibit the

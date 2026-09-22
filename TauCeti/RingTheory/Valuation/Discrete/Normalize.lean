@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Valuation.Discrete.Order
 /-!
 # Normalizing a `ℤᵐ⁰`-valued valuation of a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Discrete.Normalize)
+
 The orders `ord_v f` attained by a `ℤᵐ⁰`-valued valuation `v` of a field form a subgroup of `ℤ`,
 so they are the multiples of a single natural number, the *index* `Valuation.ordIndex v`; it is
 zero exactly when `v` is trivial. Dividing the order by the index produces the *normalization*

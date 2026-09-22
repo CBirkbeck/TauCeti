@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 /-!
 # Coordinates and constructor elimination for affine points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic)
+
 `WeierstrassCurve.Affine.Point` is a two-constructor inductive type: the point at infinity, and an
 affine point together with a nonsingularity certificate. Ruling out the first constructor and
 naming the data of the second is a step that recurs wherever a point is known to be nonzero.

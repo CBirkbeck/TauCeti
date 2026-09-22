@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Basic
 /-!
 # Duals of finite-dimensional comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Dual)
+
 This file bundles the linear dual of a finite-dimensional right comodule over a Hopf algebra as
 an object of `FGComoduleCat`. The underlying coaction is the basis-free dual coaction constructed
 in `TauCeti.Algebra.Coalgebra.Comodule.Dual`.

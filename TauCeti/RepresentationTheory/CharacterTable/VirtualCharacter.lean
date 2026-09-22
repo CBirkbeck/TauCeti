@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.FDRep
 /-!
 # The virtual-character lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.VirtualCharacter)
+
 The characters of the finite-dimensional representations of a monoid `G` over a field `k` are
 closed under addition, the character of a direct sum being the sum of the characters, but in
 general not under negation: over `ℂ` a character takes the positive value `dim V` at `1`. The

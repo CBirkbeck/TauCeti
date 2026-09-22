@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.Sampling.Unbiased
 /-!
 # The sampling laws of a graphon form an exchangeable graph law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Sampling)
+
 Sampling `l` independent points from a graphon and then tossing an independent coin for each
 unordered pair produces a law on `SimpleGraph (Fin l)`. Those laws are consistent under
 restriction of the label set — that is

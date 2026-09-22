@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Adjugate
 /-!
 # The upper-left unit character of `Δ₀(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.UpperUnit)
+
 An element of `Δ₀(N)` is an integral matrix, upper-triangular modulo `N`, whose upper-left
 entry is a unit mod `N`. Reducing that entry gives a map
 

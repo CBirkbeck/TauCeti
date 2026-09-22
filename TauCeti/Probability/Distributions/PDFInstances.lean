@@ -15,6 +15,8 @@ public import Mathlib.Probability.Distributions.Cauchy
 /-!
 # `HasPDF` instances for Mathlib's continuous families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.PDFInstances)
+
 Several of Mathlib's continuous scalar laws can be presented as `withDensity` measures, but none is
 connected to `MeasureTheory.HasPDF`. This file supplies that bridge for the six such families,
 identifies the resulting density, and identifies each as a Radon–Nikodym derivative against

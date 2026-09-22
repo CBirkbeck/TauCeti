@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Bialgebra.Hom
 /-!
 # A comodule reconstructed from a multiplicative matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.FromMatrix)
+
 A square matrix whose entries satisfy the matrix comultiplication and counit identities defines a
 coaction on a finite free module. Its coefficient matrix is the original matrix, so this reverses
 the coefficient-matrix construction.

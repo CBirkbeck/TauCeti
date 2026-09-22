@@ -12,6 +12,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Binary diagonal quadratic forms in normal form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Binary)
+
 A *binary* form here is a diagonal form in two variables, that is
 `QuadraticMap.weightedSumSquares R ![a, b] : QuadraticForm R (Fin 2 → R)`, classically written
 `⟨a, b⟩`. This file proves the two normal-form theorems that pin such a form down.

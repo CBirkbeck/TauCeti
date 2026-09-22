@@ -13,6 +13,8 @@ import Mathlib.Algebra.MonoidAlgebra.MapDomain
 /-!
 # Weyl-invariant elements of the group algebra of a weight space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Invariant)
+
 An element `f` of the integral group algebra `ℤ[M]` of the weight space of a root pairing is
 **Weyl-invariant** when its coefficients are constant on the orbits of the *linear* action of the
 Weyl group, `[e^{w x}] f = [e^x] f`. The formal character of a finite-dimensional module over a

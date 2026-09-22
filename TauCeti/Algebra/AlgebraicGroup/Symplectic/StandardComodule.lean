@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Symplectic.Basic
 /-!
 # The standard representation of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.StandardComodule)
+
 The standard representation of the symplectic group scheme `Sp₂ₘ` is obtained by corestricting
 the standard `O(GL₂ₘ)`-comodule along the quotient coordinate morphism
 

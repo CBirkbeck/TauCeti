@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.TopologicallyNilpotent
 /-!
 # The geometric series in a complete nonarchimedean ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries)
+
 **Wedhorn, *Adic Spaces*, Proposition 5.38.** In a complete nonarchimedean topological ring,
 `1 - a` is a unit for every topologically nilpotent `a`.
 

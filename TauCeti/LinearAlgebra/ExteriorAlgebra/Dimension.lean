@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basis
 /-!
 # Freeness and dimension of an exterior algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.ExteriorAlgebra.Dimension)
+
 Mathlib records the graded pieces of an exterior algebra in full: `exteriorPower.instFree` says
 that `⋀[R]^n M` is free when `M` is, and `exteriorPower.finrank_eq` computes its rank as
 `(finrank R M).choose n`. It also builds the basis `Module.Basis.ExteriorAlgebra` of the whole

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Straightening
 /-!
 # The standard basis of the Specht module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.StandardBasis)
+
 The polytabloid `e_t` of a `μ`-tableau `t` is the signed sum, over the column group of `t`, of the
 tabloids `{q t}`, and the Specht module `S^μ` is the span of all of them.  This file proves that
 the polytabloids of the **standard** tableaux -- those increasing along rows and down columns --

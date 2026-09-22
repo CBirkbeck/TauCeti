@@ -12,6 +12,8 @@ import Mathlib.Topology.Algebra.InfiniteSum.Ring
 /-!
 # Single-point families and associativity of discrete convolution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.InfiniteSum.DiscreteConvolution)
+
 Mathlib's `DiscreteConvolution.single_convolution` says that `Pi.single 1 e` is a unit for
 convolution when `e` acts as one. More generally, the convolution of two families supported at one
 point each is supported at the product of the points, with the bilinear map applied to the values.

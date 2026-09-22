@@ -12,6 +12,8 @@ public import TauCeti.InformationTheory.Coding.Discriminant
 /-!
 # Additive codes in the Construction A discriminant group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.Code)
+
 The discriminant group of the zero-code Construction A lattice is canonically the coordinate
 alphabet `(ℤ/m)^ι`. This file transports an additive code through that canonical isometry, so the
 code becomes an actual subgroup of the discriminant group. The transport identifies bilinear

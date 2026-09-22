@@ -16,6 +16,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The commutant of a `2 × 2` matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Commute)
+
 A `2 × 2` matrix over a field is **regular** as soon as it is not scalar: it is then cyclic
 (nonderogatory), and the matrices commuting with it are exactly the polynomials in it. In size `2`
 those polynomials are the affine combinations `a • 1 + b • M`, so the commutant of a non-scalar

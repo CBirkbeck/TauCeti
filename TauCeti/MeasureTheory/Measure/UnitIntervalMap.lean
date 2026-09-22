@@ -10,6 +10,8 @@ public import Mathlib.Probability.Kernel.Representation
 /-!
 # Realizing a probability law by a map from the unit interval
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.UnitIntervalMap)
+
 Every standard Borel probability space `(Ω, μ)` receives a measure-preserving map from
 `(I, volume)`: there is `f : I → Ω` with `volume.map f = μ`. This is Theorem A.9 of Janson's
 *Graphons, cut norm and distance, couplings and rearrangements*.

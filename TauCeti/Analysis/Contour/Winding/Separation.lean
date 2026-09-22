@@ -17,6 +17,8 @@ import TauCeti.Analysis.Contour.Winding.LocallyConstant
 /-!
 # A segment crossing a set once has its ends on different sides
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Separation)
+
 A closed set `K ⊆ ℂ` with `K \ {p}` preconnected, crossed once by a straight segment at `p` with
 `K` adherent from both sides, separates the two ends into different connected components of `Kᶜ`.
 The proof uses winding numbers and needs no Jordan curve theorem.

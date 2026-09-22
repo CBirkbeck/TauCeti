@@ -12,6 +12,8 @@ public import Mathlib.Topology.Constructions.SumProd
 /-!
 # Product constructions for semigroup-group positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Product)
+
 This file builds Berg--Christensen--Ressel positive-definite functions on `ℝ≥0 × V`
 from separate time and spatial factors. If `f : ℝ≥0 → ℂ` supplies the positive-definite
 time kernel `(t, u) ↦ f (t + u)`, and `g : V → ℂ` supplies the positive-definite spatial

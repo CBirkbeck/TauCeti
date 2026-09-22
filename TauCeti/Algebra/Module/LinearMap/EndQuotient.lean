@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Ideal.Operations
 /-!
 # Reduction of endomorphisms modulo `I • M`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.LinearMap.EndQuotient)
+
 An endomorphism of a module `M` carries `I • M` into itself, so it descends to the quotient
 `M ⧸ I • M`, and the descent is a ring homomorphism `Ideal.endMapQ I M`. This file constructs that
 reduction map and proves the two properties that make idempotents lift along it: it is surjective

@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Symplectic.AlmostComplex
 /-!
 # The metric of a compatible pair
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.CompatibleMetric)
+
 A symplectic form `ω` compatible with an almost complex structure `J` determines a Riemannian
 metric `g(v, w) = ω(v, J w)`. This file records the standard compatible-triple identities tying
 `ω`, `J`, and `g` together, and packages the metric of a compatible pair as a genuine inner

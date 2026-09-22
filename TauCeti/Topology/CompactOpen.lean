@@ -10,6 +10,8 @@ public import Mathlib.Topology.CompactOpen
 /-!
 # The compact-open topology on maps out of a compact space into a discrete space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.CompactOpen)
+
 A continuous map `f` from a compact space to a discrete space has finite image, and each of its
 fibres is closed, hence compact. Prescribing the value of a map on each of those finitely many
 fibres is therefore a finite intersection of compact-open subbasic sets, so it is an open

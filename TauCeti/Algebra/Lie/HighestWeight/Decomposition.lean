@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.Submodule.Decomposition
 /-!
 # The packaged isotypic decomposition `M ≅ ⨁ L(λ)^{m λ}`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Decomposition)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra and `b` a base of its root
 system. Weyl's theorem decomposes a finite-dimensional `L`-module `M` into irreducible Lie

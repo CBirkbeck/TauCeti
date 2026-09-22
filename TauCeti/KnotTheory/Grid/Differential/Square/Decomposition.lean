@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Swap
 /-!
 # Two-step rectangle decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Decomposition)
+
 A two-step term in the square of the grid differential consists of a rectangle from `x` to an
 intermediate grid state and a second rectangle from that state to `z`. This file packages such a
 factorization as `GridRectangleDecomposition`, the shared object on which the disjoint,

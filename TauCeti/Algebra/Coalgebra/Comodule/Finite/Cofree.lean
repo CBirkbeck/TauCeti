@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Basic
 /-!
 # Finitely generated cofree comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Cofree)
+
 This file lifts the cofree right comodule `M ⊗[R] C` to the finitely generated comodule
 category when the tensor-product carrier is finitely generated over `R`. It is the
 finite-category version of `ComoduleCat.cofree`.

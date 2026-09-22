@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Norm.Defs
 /-!
 # The norm on unit groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Norm.Units)
+
 The norm `Algebra.norm R : S →* R` of an `R`-algebra is multiplicative, so it sends units to
 units. `TauCeti.Algebra.normUnits` packages that as a homomorphism `Sˣ →* Rˣ`. This is the form a
 statement about the norm of an invertible element wants: the value is a unit by construction, so

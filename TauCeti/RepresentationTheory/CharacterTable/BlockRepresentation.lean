@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # The irreducible representations carried by the Wedderburn blocks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.BlockRepresentation)
+
 A Wedderburn presentation `e : k[G] ≃ₐ[k] Π i, Matₙᵢ(k)` of a finite group algebra is a numerical
 statement until each block is turned into a representation. This file does that: composing `e` with
 the projection onto the `i`-th factor and with `Matrix.toLinAlgEquiv'` presents the column space

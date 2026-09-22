@@ -18,6 +18,8 @@ import TauCeti.Analysis.Normed.Operator.Surjective
 /-!
 # The Sard--Smale theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.SardSmale)
+
 A **Fredholm map** between Banach spaces is one whose Fréchet derivative is a Fredholm operator at
 every point. Sard's theorem fails outright in infinite dimensions -- there is no Haar measure to
 be null for, and the critical values of a smooth map on a Hilbert space can be everything -- but

@@ -20,6 +20,8 @@ import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 /-!
 # The per-window principal value at a higher-order pole
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PerWindow.HigherOrder)
+
 At a transverse crossing `γ t_i = s` that is flat of order `n ≥ k ≥ 2` and satisfies the
 condition-(B) power identity, the `ε`-truncated window integral of the order-`k` polar term
 `(c / (z - s)^k)` along the curve converges as `ε → 0⁺` to the boundary difference of its

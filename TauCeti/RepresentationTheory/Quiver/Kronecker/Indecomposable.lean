@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Simple
 /-!
 # The three indecomposable representations of the `A₂` quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.Indecomposable)
+
 The `A₂` quiver `• → •` is the generalized Kronecker quiver on a one-element arrow type. This file
 classifies its finite-dimensional indecomposable representations: there are exactly three, the two
 vertex simples `S₁ = (k → 0)` and `S₂ = (0 → k)` and the vertex projective

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.Model.Basic
 /-!
 # Generic fibres of models over a discrete valuation ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Fibers)
+
 This file defines the canonical inclusion of a model's chosen generic fibre into its total space.
 It records compatibility with the structure morphism and proves that the inclusion is open.
 When the model is a family of curves, so is its generic fibre.

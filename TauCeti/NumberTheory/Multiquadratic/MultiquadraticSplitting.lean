@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.NumberField.IntegralSqrt
 /-!
 # The prime-splitting law for a multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MultiquadraticSplitting)
+
 For a multiquadratic number field `K = ℚ(√d₁, …, √dₙ)` and an odd prime `p` dividing none of the
 radicands, `p` splits completely in `K` if and only if every `dᵢ` is a quadratic residue mod `p`.
 

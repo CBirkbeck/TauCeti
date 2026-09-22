@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Normal unipotent subgroups of linearly reductive affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Reductive.LinearlyReductive)
+
 Let `H` be a reduced, finite-type coordinate Hopf algebra of an affine group over an
 algebraically closed field `k`, and let `I` be a normal Hopf ideal cutting out a closed subgroup
 `N` whose coordinate ring is reduced, of finite type, and has only unipotent points. If `H` is

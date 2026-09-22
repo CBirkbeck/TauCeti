@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.Homology.HomologyZero
 /-!
 # Vertex classes and the augmentation in degree zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialSet.Homology.Zero)
+
 Vertex classes generate zeroth simplicial homology and commute with induced maps. In particular,
 the augmentation is natural. These facts let the augmentation kernels form a functor and let a
 chosen vertex split the augmentation.

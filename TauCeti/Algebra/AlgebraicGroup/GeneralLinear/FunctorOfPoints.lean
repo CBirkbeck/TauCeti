@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.PointsFunctor
 /-!
 # The functor of points of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.FunctorOfPoints)
+
 For a commutative ring `R` and `n : ℕ`, this file identifies the convolution group of
 algebra-valued points of the coordinate Hopf algebra
 

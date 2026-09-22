@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Lie.Subgroup.LieAlgebra
 /-!
 # A limit criterion for the Lie algebra of a closed subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Subgroup.LimitCriterion)
+
 Let `K` be a closed subgroup of a finite-dimensional Lie group. Its Lie algebra consists exactly
 of the limits `X` for which there are eventually positive real numbers `tₙ → 0` and derivations
 `Xₙ → X` such that, eventually,

@@ -15,6 +15,8 @@ import Mathlib.Analysis.Real.Sqrt
 /-!
 # Continuity of quadratic maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.QuadraticForm.Continuity)
+
 A quadratic map on a finite module is continuous for the module topologies when two is
 invertible. This follows from Mathlib's continuity theorem for bilinear maps by evaluating
 the associated bilinear map on the diagonal.

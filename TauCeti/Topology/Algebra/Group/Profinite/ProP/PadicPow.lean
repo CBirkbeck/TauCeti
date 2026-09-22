@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic
 /-!
 # Exponentiation of a pro-`p` group by the `p`-adic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.PadicPow)
+
 In a pro-`p` group every finite quotient is killed by a power of `p`, so the integer powers of
 an element `a` only depend on the exponent modulo a power of `p` in each finite quotient. The
 `p`-adic integers are the inverse limit of those exponent rings, and `hA.padicPow a l` is the

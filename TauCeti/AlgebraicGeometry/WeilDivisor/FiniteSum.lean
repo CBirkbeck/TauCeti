@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Basic
 /-!
 # Finite sums of point divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FiniteSum)
+
 This file adds an API for the effective Weil divisors represented by finitely supported
 natural-number multiplicities and by named finite-set constructors. These are the formal
 Layer A divisor objects that later receive geometric restrictions from symmetric powers and

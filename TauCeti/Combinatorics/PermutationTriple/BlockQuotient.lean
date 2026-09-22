@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.Perm.PermCongr
 /-!
 # Quotient triples by blocks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.BlockQuotient)
+
 Let `t` be a permutation triple and `B` a set of sheets. The monodromy group of `t` permutes the
 translates `g • B` of `B`, so after numbering those translates by `Fin m` the three components of
 `t` induce a triple of degree `m`: this is `TauCeti.PermutationTriple.blockQuotient`. It is always

@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # Changing coefficients in a path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.BaseChange)
+
 A homomorphism of commutative semirings `f : k →+* l` transports the coefficients of a path
 algebra while leaving its paths fixed.  More generally, if an `l`-algebra homomorphism out of
 `lQ` assigns values to the paths, those same values induce a `k`-algebra homomorphism out of

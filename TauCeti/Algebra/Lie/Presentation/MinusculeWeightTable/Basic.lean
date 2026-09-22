@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.Sl2.WeightString
 /-!
 # Chevalley generators from a minuscule weight table
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Presentation.MinusculeWeightTable.Basic)
+
 A minuscule representation of a simply laced simple Lie algebra is determined by its weights: each
 weight pairs with every simple coroot to `-1`, `0` or `1`, the simple reflections permute the
 weights, and the raising operator at a node moves a weight whose coordinate is `-1` to its

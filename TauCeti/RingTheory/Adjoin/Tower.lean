@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Algebra.Tower
 /-!
 # Generators survive a change of base ring in an algebra tower
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Adjoin.Tower)
+
 If a set generates `A` as an `F`-algebra, then in any `K` receiving `A` and a second `F`-algebra
 `R` compatibly, the images of those generators generate the whole image of `A`, now over the new
 base `R`. This is the step that turns an algebra-finite model of `A` over `F` into an

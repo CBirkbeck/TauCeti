@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.ElementaryTwoQuotient.Basic
 /-!
 # Commutative groups of order `4` and `2`-rank `2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.ElementaryTwoQuotient.KleinFour)
+
 A commutative group of order `4` whose maximal elementary-2 quotient `G / G²` has `2`-rank `2` is
 as large as that quotient, so every element squares to one
 (`TauCeti.sq_eq_one_of_card_elementaryTwoQuotient_eq_card`) and `G` is a Klein four-group.

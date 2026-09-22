@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Basic
 /-!
 # Witt cancellation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Witt.Cancellation)
+
 Over a field in which `2` is invertible, a regular summand may be cancelled from an orthogonal
 sum: if `q ⊥ q₁` and `q ⊥ q₂` are isometric and `q` is regular and finite dimensional, then `q₁`
 and `q₂` are isometric. This is Witt's cancellation theorem, and it is what makes the isometry

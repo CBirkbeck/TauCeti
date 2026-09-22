@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.ToLin
 /-!
 # Simple-root generators for the split orthogonal Lie algebra of type B
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.RootGenerators)
+
 This file constructs integral matrices for both signs of the Bourbaki simple roots in the standard
 split model `LieAlgebra.Orthogonal.typeB ι K`, together with the auxiliary difference-root family
 `εᵢ - εⱼ`. For a difference root, the matrices are the usual paired matrix units. For a short

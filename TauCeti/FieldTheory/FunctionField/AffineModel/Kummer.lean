@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.KummerDedekind
 /-!
 # Kummer's theorem at an affine model: the places over a place, exactly
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.AffineModel.Kummer)
+
 Let `F' / k'` be a finite extension of an extension of fields `F / k`, let `R` be an affine model
 of `F / k` and let `S` be a module-finite affine model of `F' / k'` over `R`, as in
 `TauCeti/FieldTheory/FunctionField/AffineModel/Extension.lean`.  Let `y : S` and let `𝔭` be a

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Basic
 /-!
 # Relative degrees of scheme-theoretic Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Degree)
+
 This file specializes `WeilDivisor.weightedDegree` to the residue-degree weights associated to a
 scheme morphism. For a curve over a field, applied to its structure morphism, this is the divisor
 degree `Σ_x [κ(x) : k] · ord_x`.

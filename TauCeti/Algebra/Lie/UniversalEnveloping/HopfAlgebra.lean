@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Basic
 /-!
 # The Hopf algebra structure on a universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.HopfAlgebra)
+
 The standard bialgebra structure on a universal enveloping algebra is a Hopf algebra. Its
 antipode reverses products and negates the canonical Lie generators. This file joins the
 independently useful bialgebra and antipode constructions: the antipode is a two-sided

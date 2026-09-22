@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.GraphAutomorphism
 /-!
 # The type-A graph automorphism on the general linear group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.GraphAutomorphism)
+
 This file transports signed reverse-inverse-transpose from general-linear matrix points to the
 coordinate Hopf algebra. Its characteristic theorem identifies precomposition by the recovered
 coordinate automorphism with `TauCeti.typeAGraphAutomorphism` under the standard point equivalence.

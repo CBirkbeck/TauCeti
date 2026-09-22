@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Semigroups.GrowthBound
 /-!
 # Strongly continuous one-parameter groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Group.Basic)
+
 A **C₀-group** on a real normed space `X` is a family `U : ℝ → X →L[ℝ] X` indexed by *all* of `ℝ`
 with `U 0 = 1`, `U (s + t) = U s ∘ U t`, and `t ↦ U t x` continuous at `0`. It is not reached by
 the C₀-semigroup API: the two-sided law makes every `U t` invertible, with inverse `U (-t)`, and

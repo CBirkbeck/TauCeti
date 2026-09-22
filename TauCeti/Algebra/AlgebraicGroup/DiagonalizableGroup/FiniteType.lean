@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Bialgebra.MonoidAlgebra.GroupLike
 /-!
 # Finite-type diagonalizable groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.FiniteType)
+
 The diagonalizable group attached to a commutative group `G` has coordinate Hopf algebra
 `R[G]`. It is of finite type over `R` precisely when `G` is finitely generated (over a
 nontrivial base). This file packages the forward direction categorically: finitely generated

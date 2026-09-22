@@ -21,6 +21,8 @@ import TauCeti.RingTheory.Semisimple.IsotypicEnd
 /-!
 # Wedderburn blocks enumerate the simple modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.Wedderburn.Blocks)
+
 Artin--Wedderburn presents a semisimple ring `R` as a finite product of matrix algebras over
 division rings,
 

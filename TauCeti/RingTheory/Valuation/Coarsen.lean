@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Valuation.CharacteristicGroup
 /-!
 # Coarsening a valuation by a convex subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Coarsen)
+
 Collapsing a convex subgroup `H` of the value units of `Γ₀` coarsens any `Γ₀`-valued
 valuation: values are pushed along `Γ₀ ≃ WithZero Γ₀ˣ → WithZero (Γ₀ˣ ⧸ H)`, which is
 monotone precisely because `H` is convex. The support is unchanged, bounds by `1` survive,

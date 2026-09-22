@@ -12,6 +12,8 @@ public import TauCeti.LowDimTopology.Plumbing.Filtration.Basic
 /-!
 # The lattice chain complex as a filtered colimit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Filtration.Colimit)
+
 For a plumbing graph `P` and characteristic covector `k`, the characteristic-weight sublevel
 complexes form an increasing diagram indexed by `ℤ`. This file compares that diagram with the
 untruncated lattice chain complex. The canonical map from each sublevel is inclusion on every

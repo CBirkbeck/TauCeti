@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Real.Basic
 /-!
 # Genus fields of quadratic fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.GenusField)
+
 This file gives an intrinsic characterization of the genus field and proves that the
 prime-discriminant compositum `candidateGenusField hd` has that characterization when `d < 0`.
 For positive nonsquare `d`, its maximal totally real subfield `candidateGenusFieldReal hd` has the

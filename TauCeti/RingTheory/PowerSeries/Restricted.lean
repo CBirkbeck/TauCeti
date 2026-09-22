@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.PowerSeries.Restricted
 /-!
 # Restricted power series with a vanishing tail
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.Restricted)
+
 Mathlib's `PowerSeries.IsRestricted` asks the weighted coefficient norms of a power series to
 tend to zero. A series whose coefficients vanish in every degree past some bound — a polynomial —
 satisfies that condition at every radius, and this file records the resulting introduction rule.

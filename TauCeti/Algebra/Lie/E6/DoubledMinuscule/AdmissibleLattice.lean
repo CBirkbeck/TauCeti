@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Serre
 /-!
 # The admissible doubled minuscule lattice of type E6
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.AdmissibleLattice)
+
 This file extends the integral doubled minuscule representation
 `V(ϖ₁) ⊕ V(ϖ₆)` to the rational type-`E₆` Serre algebra and proves that its coordinate
 `ℤ`-lattice is preserved by the Serre Kostant form. Its raising and lowering matrices are

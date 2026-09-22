@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Submodule.LocallyFinite
 /-!
 # An irreducible highest weight module of dominant integral weight is integrable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Integrable)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, let `H` be a splitting Cartan subalgebra, let `b` be a base of its root system
 and let `M` be an irreducible `L`-module carrying a highest weight vector `v` of weight `lam`.

@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.Boundary.Collar.Chart
 /-!
 # Local collars of a manifold with boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Collar.Local)
+
 `Boundary.Collar.Chart` reads a manifold with boundary in tangential and inward-normal
 coordinates, and `Boundary.Collar.Manifold` proves those coordinates are a `C^k` atlas. What they
 do not provide is a *collar*: the target of a collar chart is an arbitrary open subset of the

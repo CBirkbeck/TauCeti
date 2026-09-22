@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger.Unit
 /-!
 # The fundamental exact sequence of the Selmer group, and its finiteness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic)
+
 Let `R` be a Dedekind domain with fraction field `K`, let `S` be a set of height-one primes of `R`
 and let `n : ℕ`. Mathlib defines the Selmer group `K⟮S, n⟯` as the subgroup of `Kˣ ⧸ (Kˣ)ⁿ` of
 classes whose `v`-adic valuation is divisible by `n` for every `v ∉ S`, and its module docstring

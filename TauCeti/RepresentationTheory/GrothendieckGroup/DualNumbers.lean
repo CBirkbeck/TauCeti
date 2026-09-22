@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.GrothendieckGroup.CartanMatrix
 /-!
 # The Cartan matrix of the dual numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GrothendieckGroup.DualNumbers)
+
 Let `k` be a field, let `A = k[ε]` be the dual numbers `k[ε]/(ε²)`, and let `S = A/(ε)` be its
 residue field, viewed as an `A`-module. The ring `A` is local and Artinian, its only
 indecomposable finitely generated projective module is `A` itself, and its only simple module is

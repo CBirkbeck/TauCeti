@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Ring.CompTypeclasses
 /-!
 # Renaming variables, and discarding the ones outside the range
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MvPolynomial.Rename)
+
 Renaming the variables of a multivariable polynomial along an equivalence `e : σ ≃ τ` is a
 ring equivalence. Mathlib's `RingHomInvPair.of_ringEquiv` and
 `RingHomInvPair.of_ringEquiv_symm` are deliberately not instances, so this file registers them

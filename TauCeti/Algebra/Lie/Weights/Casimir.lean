@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.Weights.Trace
 /-!
 # The trace of the Casimir operator on a weight space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Casimir)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a splitting Cartan subalgebra, and let `M` be a
 finite-dimensional `L`-module. The Casimir element `Ω ∈ U(L)` is central

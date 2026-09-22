@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Serre
 /-!
 # The Cartan action on the numbered root generators of the type-D Serre presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.Serre.RootGenerator)
+
 The numbered positive and negative root generators of the type-`Dₙ` Serre presentation are weight
 vectors for its Cartan generators, and the weight is the one
 `TauCeti.TypeDStd.rootGeneratorWeight` already attaches to the numbering through the split

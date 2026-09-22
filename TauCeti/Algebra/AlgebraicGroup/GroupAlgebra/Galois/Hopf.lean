@@ -12,6 +12,8 @@ import Mathlib.RingTheory.Flat.Basic
 /-!
 # The Hopf algebra of Galois-invariant group-algebra elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Hopf)
+
 For a finite Galois extension `L/k`, the invariant algebra of the simultaneous action on
 coefficients and exponents of `L[M]` is a Hopf algebra over `k`. Its comultiplication is
 obtained from the tensor descent equivalence, its counit takes values in `k`, and its

@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Graded.Shift
 /-!
 # The Stasheff identities and the suspension sign
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Stasheff)
+
 An `A∞` algebra has operations `mₙ : A^{⊗ n} ⟶ A` of degree `2 - n` subject to the Stasheff
 identities: for every `n`,
 

@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Multiplication
 /-!
 # The symmetric Frobenius trace of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Trace)
+
 The zigzag algebra of a simple graph with no isolated vertex is a symmetric Frobenius algebra. This
 file constructs the trace that witnesses it: the linear functional `TauCeti.zigzagTrace` which is
 `1` on every volume class and `0` on the vertex idempotents and on the arrows, and proves that the

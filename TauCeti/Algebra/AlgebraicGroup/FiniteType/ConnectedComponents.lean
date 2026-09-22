@@ -12,6 +12,8 @@ public import TauCeti.Topology.NoetherianSpace.ConnectedComponents
 /-!
 # Connected components of finite-type affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.FiniteType.ConnectedComponents)
+
 The prime spectrum of the coordinate ring of a finite-type affine group over a Noetherian
 commutative ring has finitely many connected components, and each component is clopen. The Hopf
 structure is not needed for this finiteness statement: finite type over a Noetherian ring makes

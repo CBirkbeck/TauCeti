@@ -16,6 +16,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.IsAlgClosed
 /-!
 # The roots of `ΨSqₙ` are the abscissae of the nonzero `n`-torsion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Roots)
+
 `ΨSqₙ` is the square of the `n`-division polynomial, pushed down to a polynomial in `x` alone. Its
 roots are exactly the `x`-coordinates of the affine points killed by `n`: one direction holds over
 any field, the other needs the base field algebraically closed, so that the `y` completing a root

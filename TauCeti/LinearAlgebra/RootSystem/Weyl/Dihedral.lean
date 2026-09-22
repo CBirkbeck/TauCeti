@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.BraidRelation
 /-!
 # The Weyl group of a rank-two root system is dihedral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Dihedral)
+
 A base with two simple roots presents its Weyl group by two generators: the two simple reflections
 generate it (`TauCeti.weylGroup_eq_closure_simple`), they are involutions, and the order of their
 product is the corresponding entry of the Coxeter matrix of the base

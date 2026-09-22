@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Hom.Basic
 /-!
 # The units of the endomorphism monoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Units)
+
 An endomorphism of `W` is invertible exactly when it has degree one. Degree one means the
 function-field pullback is onto, and the factorisation theorem turns a surjective pullback into
 an isogeny inverting it on both sides; conversely degree is multiplicative and the identity has

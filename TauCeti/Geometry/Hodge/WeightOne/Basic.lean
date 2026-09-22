@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.Transport
 /-!
 # Effective Hodge structures of weight one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.WeightOne.Basic)
+
 An effective pure Hodge structure of weight one has only the two Hodge components
 `H^{1,0}` and `H^{0,1}`. Its Weil operator acts on them by `i` and `-i`, respectively, and
 therefore descends to an almost complex structure on the real form fixed by conjugation.

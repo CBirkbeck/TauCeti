@@ -12,6 +12,8 @@ import TauCeti.Analysis.Calculus.ContinuousLinearMapInverse
 /-!
 # Differentiating a parametric pullback
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ParametricPullback)
+
 For a differentiable vector field and a sufficiently smooth parametric family whose inverse spatial
 Jacobian is differentiable, the derivative at a base time of its pullback is the Lie bracket
 `[V, W]` of the family's parameter velocity `V` with the pulled-back field `W`, when the family

@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.ContinuousMonoidHom
 /-!
 # Restriction, inflation and coefficient maps in continuous cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Functoriality)
+
 Mathlib's `ContinuousCohomology.map` is functoriality for a *compatible pair*: a continuous
 homomorphism `φ : H →ₜ* G` together with a morphism `f : TopRep.res φ X ⟶ Y` induces
 `Hⁿ(G, X) ⟶ Hⁿ(H, Y)`. This file names the three instances of that construction which the rest of

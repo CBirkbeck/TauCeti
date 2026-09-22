@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.Representation
 /-!
 # Kostant's module: the Clifford algebra of the Killing form, left-regularly
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.LeftRegular)
+
 For a Killing-semisimple Lie algebra `L` the adjoint action is skew-adjoint for the Killing form,
 so it lifts to the quadratic elements of the Clifford algebra of that form
 (`CliffordAlgebra.adjointCliffordHom`). This file installs the `L`-module structure that Kostant's

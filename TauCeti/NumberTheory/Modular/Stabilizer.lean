@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 /-!
 # Orders of the point stabilisers of the modular group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Modular.Stabilizer)
+
 The stabiliser of a point of `ℍ` in `SL(2, ℤ)` is finite, and its order depends only on the
 orbit. Off the two elliptic orbits that order is `2` — the centre `±1`, which acts trivially —
 while on the orbit of `i` it is `4` and on the orbit of `ρ` it is `6`. Dividing by the centre

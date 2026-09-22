@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.SelmerGroupA
 /-!
 # The weak Mordell–Weil theorem: `E(K)/2E(K)` is finite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.WeakMordellWeil)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`, and let `R` be a Dedekind domain with fraction field `K`. **Step 7**, and
 with it the weak Mordell–Weil theorem, is `finiteIndex_range_nsmulAddMonoidHom_two`: the subgroup

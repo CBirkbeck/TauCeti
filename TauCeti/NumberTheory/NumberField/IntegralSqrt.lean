@@ -11,6 +11,8 @@ import Mathlib.FieldTheory.KummerPolynomial
 /-!
 # Square roots of integers as algebraic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.IntegralSqrt)
+
 An element `x` of a field `K` with `x² = d` for an integer `d` is integral over `ℤ` (its square
 is an integer, which is integral); this file packages such an `x` as an element
 `NumberField.integralSqrt hx` of the ring of integers `𝓞 K`, together with its two

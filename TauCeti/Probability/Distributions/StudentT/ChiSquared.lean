@@ -13,6 +13,8 @@ public import TauCeti.Probability.Distributions.StudentT.Cdf
 /-!
 # Student t laws as Gaussian--chi-squared ratios
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.StudentT.ChiSquared)
+
 This file proves the classical construction of a Student t variable: divide a standard Gaussian
 variable by the square root of an independent chi-squared variable divided by its degrees of
 freedom. The measure-level identity is primary, and a `HasLaw` formulation records the exact

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Gram
 /-!
 # The determinant of a full sublattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Index)
+
 Whenever two integral lattices share their ambient rational form and the carrier of one lies
 inside the carrier of the other, their invariants differ by the square of the index:
 

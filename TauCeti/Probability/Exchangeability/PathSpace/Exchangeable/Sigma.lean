@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Invariants
 /-!
 # Exchangeable σ-algebra on path space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Exchangeable.Sigma)
+
 This file records the Layer 2 exchangeability-roadmap σ-algebra of path-space events invariant
 under finitely supported permutations of the time coordinate.  It also relates the one-sided path
 tail σ-algebra to this exchangeable σ-algebra: a tail event is fixed by every finitely supported

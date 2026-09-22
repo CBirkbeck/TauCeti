@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Rep.Res
 /-!
 # Intertwining maps along a homomorphism of monoids
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Rep.ChangeOfGroup)
+
 Mathlib's `Representation.IsIntertwiningMap` compares two representations of one and the same
 monoid. For a homomorphism `f : G →* H`, a linear map intertwining `ρ : Representation R G V` with
 `σ.comp f`, for `σ : Representation R H W`, is the same datum as a morphism of `G`-representations

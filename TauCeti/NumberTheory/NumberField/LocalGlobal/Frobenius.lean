@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.LocalGlobal.DecompositionGroup
 /-!
 # Frobenius under the decomposition-group equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Frobenius)
+
 Let `L/K` be a Galois extension of number fields, and let `w` be a finite place of `L` above a
 finite place `v` of `K`. The decomposition-group equivalence identifies the stabilizer of `w`
 with the Galois group of the completed extension `L_w/K_v`. This file proves that the

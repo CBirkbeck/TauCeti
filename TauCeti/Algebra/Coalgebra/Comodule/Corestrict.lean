@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # Corestriction of comodules along a coalgebra morphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Corestrict)
+
 This file proves the basic functoriality of right comodules in the coalgebra. A coalgebra
 morphism `f : C →ₗc[R] D` turns every right `C`-comodule into a right `D`-comodule by
 postcomposing the coaction with `id ⊗ f`.

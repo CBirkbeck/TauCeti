@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Basis
 /-!
 # The vertex–arrow–volume basis of the public zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Decomposition)
+
 The public zigzag algebra is a finite product of component algebras. Its basis has one
 idempotent and one volume for every vertex, including isolated vertices, and one arrow for
 every dart. On a singleton component the volume is the infinitesimal generator of the dual

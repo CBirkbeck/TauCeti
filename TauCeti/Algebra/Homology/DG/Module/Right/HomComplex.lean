@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.Hom
 /-!
 # The Hom complex of differential graded right modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.HomComplex)
+
 For two right modules over a differential graded algebra, the degree-`p` cochains are the
 right-module linear maps which raise internal degree by `p`.  Their differential is the graded
 commutator

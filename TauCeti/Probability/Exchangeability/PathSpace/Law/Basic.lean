@@ -15,6 +15,8 @@ import Mathlib.Probability.Independence.InfinitePi
 /-!
 # Exchangeable laws on path space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Law.Basic)
+
 This file adds the path-law formulation of full exchangeability for measures on `ℕ → α`.
 The process-level definitions in `TauCeti.Probability.Exchangeability.Basic` remain the main
 user-facing API for stochastic processes; `ExchangeableLaw` names the equivalent path-space
@@ -44,7 +46,10 @@ namespace Probability
 variable {α : Type*} [MeasurableSpace α]
 
 /-- A measure on one-sided path space is exchangeable if it is invariant under every
-permutation of the time coordinate. -/
+permutation of the time coordinate.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Probability.ExchangeableLaw) -/
 def ExchangeableLaw (ρ : Measure (ℕ → α)) : Prop :=
   ∀ π : Equiv.Perm ℕ, ρ.map (permReindex (α := α) π) = ρ
 

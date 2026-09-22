@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Basic
 /-!
 # The coaugmented tensor coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Coaugmented)
+
 For an `R`-module `M`, the tensor words `⨁_{n ≥ 0} M^{⊗n}` carry the deconcatenation coproduct
 `Δ (x₁ ⋯ x_n) = ∑_{c = 0}^{n} (x₁ ⋯ x_c) ⊗ (x_{c+1} ⋯ x_n)`, whose outer two summands use the
 empty word.  Together with the counit that reads off the length-zero coefficient this makes the

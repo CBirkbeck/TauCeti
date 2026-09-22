@@ -12,6 +12,8 @@ public import TauCeti.Topology.NoetherianSpace.ConnectedComponents
 /-!
 # Finiteness of the components of an affine group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Components.Finite)
+
 An affine group scheme of finite type over a Noetherian commutative ring has finitely many
 connected components. This is the scheme-side form of the corresponding coordinate-ring fact:
 its structural morphism is locally of finite type over the Noetherian scheme `Spec R`, so its

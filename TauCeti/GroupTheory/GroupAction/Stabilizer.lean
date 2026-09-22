@@ -15,6 +15,8 @@ import TauCeti.GroupTheory.QuotientGroup.Basic
 /-!
 # Point stabilisers: their cardinality, and when they are normal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupAction.Stabilizer)
+
 A count defined through a point stabiliser is useful only alongside the rules for moving it.
 Two such rules are recorded here, both consequences of Mathlib machinery rather than new
 mathematics, and both stated for `Nat.card` because that is the form a numerical invariant of

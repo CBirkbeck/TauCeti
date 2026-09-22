@@ -16,6 +16,8 @@ public import TauCeti.Algebra.Lie.G2.ShortRoot.PrimeField.PreservesTensors
 /-!
 # The special isogeny of the short-root type-G2 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.PrimeField.SpecialIsogeny)
+
 The matrix `Matrix.g2SpecialIsogeny` of signed two-by-two minors is multiplicative on matrices
 preserving the type-`G₂` cross product and its invariant dual form.  The universal point of the
 short-root carrier over `𝔽₃` preserves both tensors, so the formula determines an endomorphism of

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The type-G₂ relation for Kostant root-subgroup scheme morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Relations.G2.Basic)
+
 This file transports the integral type-`G₂` root-string identity to the scheme-valued points of
 the represented Kostant root-subgroup morphisms `xᵢ : 𝔾ₐ ⟶ GLₙ`. Suppose six distinguished
 root vectors follow the positive root string

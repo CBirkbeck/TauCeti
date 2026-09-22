@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Galois
 /-!
 # Places that split completely in an extension of function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Splitting)
+
 Let `F' / k'` be a finite extension of `F / k`. A place `P` of `F / k` **splits completely**
 when it has `[F' : F]` distinct extensions to `F' / k'`, the largest number allowed by the
 fundamental inequality. This is Stichtenoth, *Algebraic Function Fields and Codes*, 2nd ed.,

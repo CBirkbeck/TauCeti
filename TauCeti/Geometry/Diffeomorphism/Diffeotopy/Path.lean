@@ -13,6 +13,8 @@ public import Mathlib.Topology.Path
 /-!
 # The path traced by a diffeotopy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Diffeomorphism.Diffeotopy.Path)
+
 A diffeotopy of `M` is a `C^n` motion through self-diffeomorphisms, so its time slices are a
 jointly `C^n` family of diffeomorphisms; `Diffeomorph.ofSmoothFamily` therefore makes them a
 continuous curve in `TauCeti.Diff` for the weak Whitney topology. Since a diffeotopy starts at

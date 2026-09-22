@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Short
 /-!
 # The integral seven-dimensional representation of type G2
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.G2.ShortRoot.Basic)
+
 This file realizes the Chevalley generators of type `G₂` on the seven-element weight diagram of
 the fundamental module `V(ϖ₁)`, whose weights are the six short roots together with zero. In the
 fundamental-weight coordinates of `TauCeti.DynkinType.g2Root`, and with Bourbaki's numbering in

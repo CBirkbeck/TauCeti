@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Basic
 /-!
 # The weight-`k` slash action of `GL(2, ℚ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.SlashActionRat)
+
 Mathlib defines the slash action of `GL(2, ℝ)` on `ℍ → ℂ` and specialises it to `SL(2, ℤ)`
 through `monoidHomSlashAction`. The Hecke operators need the group in between: their coset
 representatives are *rational* matrices of positive determinant — `Δ₀(N)` is a submonoid of

@@ -13,6 +13,8 @@ public import TauCeti.Topology.Algebra.GroupExtension.FactorSet
 /-!
 # Profinite extensions by a compact kernel are twisted products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupExtension.Profinite)
+
 A group extension `1 → M → E → G → 1` is an extension *of topological groups* when its inclusion
 and its projection are continuous. This file proves that, when `E` is profinite and the kernel `M`
 is compact — in the application of the extension dictionary, finite and discrete — such an

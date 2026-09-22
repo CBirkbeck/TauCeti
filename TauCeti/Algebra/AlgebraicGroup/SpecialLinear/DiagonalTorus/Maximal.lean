@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.MaximalTorus
 /-!
 # Maximality of the diagonal torus in the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.Maximal)
+
 Over any field, the diagonal torus of `SL_{r+1}` is a maximal torus. Over an algebraically closed
 field it is moreover maximal among reduced commutative closed subgroup schemes: a competing
 subgroup need not be a torus, or even connected.

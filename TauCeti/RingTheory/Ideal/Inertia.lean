@@ -12,6 +12,8 @@ public import Mathlib.Tactic.Ring
 /-!
 # Testing the inertia subgroup of an ideal on algebra generators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.Inertia)
+
 Let `G` act by ring automorphisms on a commutative ring `S`, and let `I` be an ideal of `S`.
 Mathlib's `Ideal.inertia G I` collects the `σ` with `σ x - x ∈ I` for every `x`. That condition is
 multiplicative and additive in `x` up to `I`, so the elements it holds for form a subalgebra over

@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.GenericPoint
 /-!
 # The multiplication isogenies compose: `[m] ∘ [n] = [m n]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Comp)
+
 On an elliptic curve `W`, the multiplication isogeny `[n]` is defined for those `n` whose
 division polynomial `ψₙ` does not vanish at the generic point — by
 `psiFunctionField_ne_zero_of_Δ_ne_zero`, every `n ≠ 0`. For such integers this file proves

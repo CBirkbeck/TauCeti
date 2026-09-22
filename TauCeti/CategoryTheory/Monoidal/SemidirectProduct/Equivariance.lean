@@ -11,6 +11,8 @@ import Mathlib.Tactic.Group
 /-!
 # Equivariance of multiplication from a normal semidirect product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Equivariance)
+
 Let `i : N ⟶ G` and `j : H ⟶ G` be normal subgroup objects. Ambient conjugation acts
 simultaneously on both factors of the semidirect product `N ⋊ H`: a generalized point `g` sends
 `(n, h)` to `(gng⁻¹, ghg⁻¹)`. This file constructs that internal action and proves that the

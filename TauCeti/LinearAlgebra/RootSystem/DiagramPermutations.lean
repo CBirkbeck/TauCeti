@@ -12,6 +12,8 @@ public import Mathlib.GroupTheory.OrderOfElement
 /-!
 # Numbered diagram permutations for the finite groups of Lie type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.DiagramPermutations)
+
 This file pins the permutations of Bourbaki-numbered simple roots used by the graph automorphisms
 and exceptional isogenies in the construction of finite groups of Lie type.  Bourbaki node `i` is
 represented by `Fin` index `i - 1`, as in `TauCeti.DynkinType.cartanMatrix`.

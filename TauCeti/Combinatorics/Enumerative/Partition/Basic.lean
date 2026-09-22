@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 /-!
 # Named partitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.Partition.Basic)
+
 This file records some partitions of `n` that are referred to by name.  Two of them are the
 extremes: `Nat.Partition.ones n = (1ⁿ)`, the finest partition, into `n` parts equal to `1`, is the
 opposite extreme to Mathlib's coarsest partition `Nat.Partition.indiscrete n = (n)`, whose parts

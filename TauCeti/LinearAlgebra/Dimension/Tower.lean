@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Isomorphisms
 /-!
 # Rank is additive along a tower of submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dimension.Tower)
+
 For submodules `p ≤ q ≤ r` of a module `M`, the relative quotient `r / p` is filtered by `q / p`,
 and `TauCeti.rank_quotient_submoduleOf_tower` records that its rank is the sum of the ranks of the
 two steps.  Relative quotients are spelled with `Submodule.submoduleOf`, so that `q / p` means

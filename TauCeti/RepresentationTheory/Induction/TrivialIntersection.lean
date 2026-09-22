@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.FrobeniusReciprocity
 /-!
 # Induction from a trivial-intersection subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.TrivialIntersection)
+
 Let `H` be a trivial-intersection subgroup of a finite group `G`: one meeting each of its distinct
 conjugates trivially (`TauCeti.IsTISubgroup`).  A class function on `H` that vanishes at the
 identity then induces to `G` *without changing its values on `H`*, and therefore without changing

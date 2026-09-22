@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 /-!
 # The elliptic points `i`, `ρ` and `ρ + 1` on the fundamental domain boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.Rho)
+
 Mathlib gives `ρ` its square (`UpperHalfPlane.ρ_sq`) and its norm (`UpperHalfPlane.norm_ρ`).
 This file adds how `ρ` behaves under the inversion `z ↦ -1/z`, which is what the two `ρ`-corners
 of the standard fundamental domain need: the inversion swaps them, carrying `ρ` to `ρ + 1` and

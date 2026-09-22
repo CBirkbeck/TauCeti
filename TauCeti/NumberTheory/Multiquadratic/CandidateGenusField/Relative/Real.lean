@@ -13,6 +13,8 @@ import TauCeti.GroupTheory.QuotientGroup.KerEquiv
 /-!
 # The real genus-field Galois group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Real)
+
 For a positive squarefree nonsquare integer `d`, let `K = ℚ(√d)` be the quadratic subfield of
 the prime-discriminant compositum and let `K_gen` be its maximal totally real subfield. This file
 proves the ordinary real genus-field isomorphism

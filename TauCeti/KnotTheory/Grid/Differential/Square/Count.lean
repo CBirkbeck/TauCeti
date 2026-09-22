@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Unblocked
 /-!
 # Counting two-rectangle decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Count)
+
 The coefficient of the square of the fully blocked grid differential is a sum over intermediate
 states of products of rectangle counts. This file identifies that expression with the parity of a
 single finite set: the set of pairs of composable fully blocked empty rectangles with prescribed

@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Derivation.Lie
 /-!
 # Derivations of a symmetric algebra induced by endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.Derivation.OfEnd)
+
 A linear endomorphism `f` of a module `M` over a commutative ring `R` extends uniquely to a
 derivation of the symmetric algebra `SymmetricAlgebra R M`, sending each generator `ι x` to
 `ι (f x)`. The assignment `f ↦` (its derivation) is a homomorphism of Lie algebras from

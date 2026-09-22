@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.NormCoeff
 /-!
 # Regrouping an ideal-indexed Dirichlet series by absolute norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Regroup)
+
 An `TauCeti.IdealArithmeticFunction K` has two Dirichlet series attached to it: the series indexed
 by the nonzero integral ideals of `𝓞 K`, whose terms are `TauCeti.idealTerm`, and the Mathlib
 `LSeries` of the regrouped coefficients `TauCeti.normCoeff`. This file proves that the second is

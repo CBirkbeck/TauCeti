@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.NumberField.ExistsRamified
 /-!
 # The ramified rational primes of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.RamifiedPrimes)
+
 The genus theory of a quadratic field is governed by the number `t` of rational primes that ramify
 in it: the genus field has degree `2 ^ t` over `ℚ` and the `2`-rank of the narrow class group is
 `t - 1`. This file names that set of primes and records its basic properties.

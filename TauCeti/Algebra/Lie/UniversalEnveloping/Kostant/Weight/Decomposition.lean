@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.Binomial
 /-!
 # Admissible lattices decompose into weight components
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Weight.Decomposition)
+
 Let `U_ℤ = kostantForm e h` be a Kostant integral form in `U(L)`, acting through `ρ` on a rational
 vector space `V`, and let `M ≤ V` be a `U_ℤ`-stable additive subgroup — an *admissible lattice*
 once it is also a lattice. A designated Cartan vector `h j` acts on `V` by an operator whose

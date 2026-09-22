@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProC
 /-!
 # Free pro-`C` groups on a type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Free.ProC)
+
 For a class `C` of finite groups, the free pro-`C` group on `X` is the pro-`C` completion of
 the free profinite group on `X`.
 

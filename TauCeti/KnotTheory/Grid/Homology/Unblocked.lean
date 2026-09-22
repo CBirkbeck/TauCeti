@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.XHomotopy.Complex
 /-!
 # Unblocked grid homology as a module over `R[U]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Homology.Unblocked)
+
 The unblocked grid homology `GH⁻(G)` of a grid diagram `G` of size `n` is the homology of the
 unblocked complex `GC⁻(G)`, a module over `R[V₀, …, V_{n-1}]` (`unblockedHomology`). The
 `X`-marking homotopies show that two variables `V_c`, `V_{c'}` whose columns lie on the same link

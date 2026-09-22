@@ -13,6 +13,8 @@ public import TauCeti.MeasureTheory.Integral.Dilation
 /-!
 # Dilation scaling of the `Lᵖ` seminorm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.Dilation)
+
 Dilating the variable of a function on a finite-dimensional real normed space `E` by `r⁻¹`, for
 `r > 0`, multiplies its `Lᵖ` seminorm against an additive Haar measure by `r ^ (n / p)`, where
 `n` is the dimension of `E` and `0 < p < ∞`. This is the `eLpNorm` form of the lower Lebesgue

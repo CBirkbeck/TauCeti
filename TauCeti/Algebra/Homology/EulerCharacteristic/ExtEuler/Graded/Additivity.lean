@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Basic
 /-!
 # Additivity of the graded Ext-Euler characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Additivity)
+
 The graded Ext-Euler characteristic is additive on short exact sequences in either variable.
 The proof reads each Laurent coefficient as an ordinary Ext-Euler characteristic: the coefficient
 of `q^j` is the Euler characteristic against the target shifted by `-j`.  Ordinary Ext-Euler

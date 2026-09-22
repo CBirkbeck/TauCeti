@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # Conjugation invariants in the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Conjugation)
+
 This file records elementary invariants of conjugation in a general linear group that are useful
 across the concrete subgroup and conjugacy-class computations.
 

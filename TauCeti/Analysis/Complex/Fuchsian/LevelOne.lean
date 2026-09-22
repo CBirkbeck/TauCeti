@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Modular
 /-!
 # The level-one modular group as a cofinite Fuchsian group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.LevelOne)
+
 The effective group acting on the upper half-plane at level one is the image of
 `PSL(2, ℤ)` in `PSL(2, ℝ)`, not `SL(2, ℤ)`: the latter still contains the central matrix
 `-I`, which acts trivially. This file proves that the projective image is a discrete cofinite

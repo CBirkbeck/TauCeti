@@ -11,6 +11,8 @@ public import TauCeti.Algebra.MonoidAlgebra.NotReduced
 /-!
 # The coordinate ring of `μ_p` is non-reduced in characteristic `p`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.NotReduced)
+
 For a commutative group `G`, the diagonalizable group `D(G)` over `R` is `Spec R[G]`, with
 coordinate Hopf algebra the group algebra `R[G]`. By `TauCeti.not_isReduced_monoidAlgebra`,
 `R[G]` fails to be reduced whenever `R` has prime characteristic `p` and `G` has a nontrivial

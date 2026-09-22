@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.LSeries.WienerIkehara.Asymptotic
 /-!
 # A growth bound for nonnegative coefficients, and the summability it supplies
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.WienerIkehara.BoundaryGrowth)
+
 The smoothed Wiener--Ikehara asymptotic
 `TauCeti.LSeries.tendsto_tsum_term_mul_fourier_atTop` still carries a summability hypothesis: the
 Fourier-weighted series `∑ a n 𝓕 psi (log (n / x) / 2π) / n` has to converge on the boundary line

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Coalgebra.GroupLike
 /-!
 # Transport of group-like elements along coalgebra equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.GroupLike.Map)
+
 A coalgebra equivalence preserves the group-like equations in both directions and therefore
 induces an equivalence of group-like elements.
 

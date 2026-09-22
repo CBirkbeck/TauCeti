@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.GroupAction.Pointwise
 /-!
 # Steps toward Henkel's open mapping theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.OpenMapping.Basic)
+
 Henkel's open mapping theorem says that a continuous surjective linear map between complete
 Hausdorff first-countable modules over a ring with a zero sequence of units is open. Its first
 half is a Baire-category argument, and this file collects the steps up to and including the one

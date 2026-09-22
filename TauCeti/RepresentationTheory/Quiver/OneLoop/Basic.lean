@@ -11,6 +11,8 @@ public import Mathlib.Data.Fintype.Basic
 /-!
 # The loop quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.OneLoop.Basic)
+
 The loop quiver `•↺` has a single vertex and a single arrow from it to itself. It is the smallest
 quiver that is not acyclic, which makes it the standard boundary case of the theory: its path
 algebra is the infinite-dimensional `k[X]`

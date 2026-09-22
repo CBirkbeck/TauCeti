@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Algebra.Equiv
 /-!
 # The postcomposition action of algebra equivalences on algebra maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupAction.AlgHom)
+
 For algebras `L` and `M` over a commutative semiring `K`, the group `M ≃ₐ[K] M` acts on the set
 of algebra maps `L →ₐ[K] M` by postcomposition, `σ • φ = σ ∘ φ`.
 

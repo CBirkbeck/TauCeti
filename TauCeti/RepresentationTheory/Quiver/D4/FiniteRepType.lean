@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.FiniteRepType.PosDef
 /-!
 # The `D₄` quiver has finite representation type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.D4.FiniteRepType)
+
 The Tits form of the `D₄` quiver is positive definite (`TauCeti.Quiver.D4.titsForm_posDef`), so
 `TauCeti.isFiniteRepType_of_titsForm_posDef` applies: over every field it has only finitely many
 finite-dimensional indecomposable representations, at most as many as the twelve positive roots

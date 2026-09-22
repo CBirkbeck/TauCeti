@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Basic
 /-!
 # The `ℤ`-linear extension of the twisted slash sum, and the `χ`-invariant function space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Ring)
+
 `HeckeSlash/Nebentypus/Basic.lean` attaches a `ℂ`-linear endomorphism `twistedHeckeSlashSumEnd` of
 `ℍ → ℂ` to a single double coset of `Γ₀(N)`, weighting each summand by the nebentypus character
 of its own representative. This file does the two things that assignment needs before it can be

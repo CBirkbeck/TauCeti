@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Basis.SMul
 /-!
 # A positive-definite form is the standard one in suitable coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.PositiveDefinite)
+
 Let `S` be a symmetric operator on a finite-dimensional inner product space `V` whose associated
 Hermitian form `⟪S v, w⟫` is positive definite. This file produces a linear automorphism of `V`
 along which that form pulls back to the inner product `V` already carries:

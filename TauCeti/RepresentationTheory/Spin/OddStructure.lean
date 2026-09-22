@@ -18,6 +18,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # The structure theorem for an odd-dimensional Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.OddStructure)
+
 Over a separably closed field of characteristic not two, the Clifford algebra of a nondegenerate
 quadratic form on a space of dimension `2 * l + 1` is a **product of two matrix algebras**,
 

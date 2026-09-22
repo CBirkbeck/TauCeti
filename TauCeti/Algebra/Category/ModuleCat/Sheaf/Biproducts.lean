@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Preadditive.Biproducts
 /-!
 # Finite biproducts of sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Biproducts)
+
 Sheaves of modules over a sheaf of rings form a preadditive category with finite coproducts, so
 they have finite biproducts. These biproducts provide the finite direct sums used to construct
 finite free sheaves and their monoidal duality.

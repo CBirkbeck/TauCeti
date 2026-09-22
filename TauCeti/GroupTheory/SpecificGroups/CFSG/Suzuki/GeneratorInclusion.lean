@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.MatrixEquations
 /-!
 # Standard generators inside the Suzuki fixed points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.GeneratorInclusion)
+
 The generator presentation of `Sz(2^(2m+1))` and its Steinberg fixed-point construction use
 different coefficient fields. This file chooses an embedding of the generator field into the
 algebraic closure of a valid Suzuki index and proves that the standard generators belong to the

@@ -18,6 +18,8 @@ import TauCeti.MeasureTheory.Integral.Dilation
 /-!
 # The potential estimate behind the Poincaré–Wirtinger inequality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.Poincare.Potential)
+
 This file proves the pointwise estimate that controls the oscillation of a `C¹` function about
 its mean by a Riesz potential of its derivative. Let `Ω` be an open subset of a finite-dimensional
 real normed space `E` of dimension `n`, star-convex about `x` and contained in `closedBall x D`,

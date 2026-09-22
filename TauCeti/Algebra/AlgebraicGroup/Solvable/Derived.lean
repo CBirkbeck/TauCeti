@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Basic
 /-!
 # Solvability and the derived closed subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Derived)
+
 Let `H` be a commutative Hopf algebra. Its derived closed subgroup has coordinate algebra
 `H / CommHopfAlgCat.derivedDefiningIdeal H`. This file proves, over any commutative base and at
 every commutative value algebra, that the point group of `H` is solvable exactly when the point

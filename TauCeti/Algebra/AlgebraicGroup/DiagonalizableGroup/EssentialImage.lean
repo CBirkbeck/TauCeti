@@ -14,6 +14,8 @@ import TauCeti.Algebra.Bialgebra.GroupLike.Evaluation
 /-!
 # The essential image of diagonalizable coordinate Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.EssentialImage)
+
 Over a field `k`, a finite-type commutative Hopf algebra is the coordinate algebra of a
 diagonalizable group exactly when its group-like elements span the whole carrier. This file
 identifies that intrinsic object property with the essential image of

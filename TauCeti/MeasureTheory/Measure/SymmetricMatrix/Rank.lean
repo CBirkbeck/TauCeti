@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Measure.SymmetricMatrix.Basic
 /-!
 # Rank sublevel sets on the symmetric subspace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Rank)
+
 The symmetric matrices of rank at most `k` form a closed, hence measurable, subset of
 `selfAdjoint.submodule ℝ (Matrix (Fin p) (Fin p) ℝ)`: the rank of a matrix is the rank of the
 operator it induces on Euclidean space (`Matrix.rank_coe_toEuclideanCLM`), and having rank at

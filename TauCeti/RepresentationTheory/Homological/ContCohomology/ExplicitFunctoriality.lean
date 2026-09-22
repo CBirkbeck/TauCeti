@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.ContinuousMonoidHom
 /-!
 # Functoriality of explicit continuous cohomology in degrees one and two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.ExplicitFunctoriality)
+
 A compatible pair consists of a continuous monoid homomorphism `φ : H →ₜ* G` and a continuous
 additive homomorphism `f : M →+ N` satisfying
 `f (φ h • m) = h • f m`. It pulls a continuous cochain `c : G → M` back to

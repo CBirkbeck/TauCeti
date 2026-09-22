@@ -13,6 +13,8 @@ public import TauCeti.Order.Filter.ZeroAndBoundedAtFilter
 /-!
 # Slashing by an upper-triangular representative preserves behaviour at `i∞`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Infty)
+
 Mathlib's `UpperHalfPlane.IsBoundedAtImInfty.slash` and `IsZeroAtImInfty.slash` carry the
 hypothesis `g 1 0 = 0`, so they apply when `g` is upper triangular. (The hypothesis is sufficient,
 not necessary — the zero function stays bounded and vanishing after slashing by any matrix.)

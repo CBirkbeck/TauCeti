@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Basic
 /-!
 # Weight vectors of a comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Weight.Vector)
+
 A **weight vector** of a comodule `M` over a coalgebra `C` is a vector `v` whose coaction is
 `v ↦ v ⊗ c` for a single element `c` of `C`. Over a field, this is equivalent to the line it
 spans being a subcomodule.

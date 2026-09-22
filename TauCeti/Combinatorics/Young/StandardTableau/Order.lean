@@ -12,6 +12,8 @@ import Mathlib.Order.Preorder.Finite
 /-!
 # The labels of a standard Young tableau, ordered by their cells
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.StandardTableau.Order)
+
 A standard Young tableau increases along its rows and down its columns, so the order of two of its
 labels is decided by their cells as soon as those cells share a row or a column: two labels in one
 column are ordered as their rows are (`TauCeti.StandardYoungTableau.lt_iff_rowIndex_lt`), and two

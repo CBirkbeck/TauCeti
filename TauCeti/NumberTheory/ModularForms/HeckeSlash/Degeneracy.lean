@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.UpperTri.Periodic
 /-!
 # `Tₚ` commutes with the degeneracy operator `V_d`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Degeneracy)
+
 The degeneracy operator `V_d : S_k(Γ₁(M)) → S_k(Γ₁(N))`, `(V_d f) τ = f (d τ)`, raises the level
 along `d * M ∣ N`. This file proves that it commutes with the Hecke operator `Tₚ` at every prime
 `p` coprime to `N`, the input to the statement that `Tₚ` preserves the old and new subspaces.

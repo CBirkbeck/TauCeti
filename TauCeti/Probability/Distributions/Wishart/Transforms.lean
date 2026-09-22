@@ -17,6 +17,8 @@ import TauCeti.Probability.Moments.Pi
 /-!
 # Exponential moments of the Wishart families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Wishart.Transforms)
+
 A symmetric matrix `Θ` pairs with a Wishart matrix `A` through the real trace statistic
 `A ↦ trace (Θ * A)`; by `selfAdjoint.inner_eq_trace_mul` this is the Frobenius inner product of
 the symmetric subspace, so it is the pairing that `MeasureTheory.charFun` uses there. This file

@@ -11,6 +11,8 @@ import Mathlib.Data.Fintype.BigOperators
 /-!
 # Uniform sampling with and without replacement
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.UniformSampling)
+
 This file gives the finite sampling estimate underlying quantitative finite de Finetti theorems.
 When the finite function space `ι → κ` is nonempty, a uniform random map `x : ι → κ` has two
 coordinates collide with probability at most

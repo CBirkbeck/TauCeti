@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Artanh
 /-!
 # The infinitesimal density of the Poincaré metric
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Hyperbolic.Density)
+
 `Hyperbolic/Distance.lean` defines the hyperbolic (Poincaré) distance on the complex open unit
 disc in closed form, `hyperbolicDist z w = Real.artanh (pseudoHyperbolicExpr z w)`, and its
 docstring asserts that this normalisation "agrees with the infinitesimal Poincaré metric

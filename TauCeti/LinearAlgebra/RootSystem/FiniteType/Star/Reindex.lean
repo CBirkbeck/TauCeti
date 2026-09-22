@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.TypeA
 /-!
 # Reindexing a simply-laced branch diagram onto a star
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.Reindex)
+
 Deleting the unique branch vertex of a connected simply-laced finite-type diagram leaves three
 path components. This file roots each path at the neighbour of the deleted vertex and joins the
 three rooted paths back to their centre. The resulting simultaneous row-and-column relabelling

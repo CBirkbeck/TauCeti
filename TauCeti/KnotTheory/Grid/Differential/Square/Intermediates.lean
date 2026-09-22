@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Backtracking
 /-!
 # Intermediate states in two column swaps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Intermediates)
+
 The support of the square of the fully blocked grid differential is contained in the states
 reached from `x` by two nontrivial column swaps. This file records the exact finite set of possible
 intermediate states between a source `x` and a target `z`: the intersection of their one-swap

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Construction
 /-!
 # Isomorphism invariance of the solvable radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Isomorphism)
+
 An isomorphism of finite-type commutative Hopf algebras carries connected normal smooth
 solvable closed subgroups to such subgroups. Consequently it carries the greatest one to the
 greatest one: the defining Hopf ideal of the solvable radical pulls back to the defining ideal

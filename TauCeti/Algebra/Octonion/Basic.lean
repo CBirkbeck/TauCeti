@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Finiteness.Prod
 /-!
 # The split octonions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Octonion.Basic)
+
 The split octonions over a commutative ring `R` are realized here as **Zorn vector matrices**: an
 element is a formal `2 × 2` matrix
 
@@ -121,7 +123,10 @@ namespace TauCeti
 open Matrix
 
 /-- The **split octonions** over `R`, as Zorn vector matrices: the element `⟨a, b, v, w⟩` is the
-formal matrix `[[a, v], [w, b]]` with scalar diagonal and vector off-diagonal entries. -/
+formal matrix `[[a, v], [w, b]]` with scalar diagonal and vector off-diagonal entries.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Octonion) -/
 @[ext]
 structure Octonion (R : Type*) where
   /-- The top-left, scalar entry of the vector matrix. -/

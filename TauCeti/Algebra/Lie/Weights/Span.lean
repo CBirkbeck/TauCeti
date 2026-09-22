@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Weights.Cartan
 /-!
 # Spans of generalized weight spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Span)
+
 A nilpotent Lie algebra `H` acting on a module `M` cuts `M` into the generalized weight spaces
 `LieModule.genWeightSpace M χ`, indexed by the scalar-valued functions `χ` on `H`. This file
 records the `H`-submodule spanned by the weight spaces indexed by a set `S` of such functions,

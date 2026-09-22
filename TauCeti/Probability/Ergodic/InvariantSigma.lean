@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
 /-!
 # Invariant measurable representatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Ergodic.InvariantSigma)
+
 Within the ambient-almost-everywhere strongly measurable real-valued functions, this file
 identifies almost-everywhere invariance under a nonsingular endomorphism with almost-everywhere
 strong measurability for Mathlib's invariant σ-algebra.

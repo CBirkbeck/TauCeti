@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Module.Shrink
 /-!
 # Projective finite-dimensional modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.FGModuleCat.Projective)
+
 Over a division ring, every finite-dimensional module is free and hence projective. Consequently,
 every short exact sequence of finite-dimensional modules splits.
 

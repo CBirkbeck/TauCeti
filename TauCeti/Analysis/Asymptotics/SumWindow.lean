@@ -17,6 +17,8 @@ import Mathlib.Tactic.FieldSimp
 /-!
 # Linear growth of partial sums from a window bound
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Asymptotics.SumWindow)
+
 If nonnegative terms `f n` have sums over the multiplicative windows `q x < n ≤ x` bounded by a
 multiple of `x`, for a fixed ratio `0 ≤ q < 1` and all large `x`, then their partial sums
 `∑_{1 ≤ n ≤ x} f n` are `O(x)`: the partial sum up to `x` is the window sum plus the partial sum

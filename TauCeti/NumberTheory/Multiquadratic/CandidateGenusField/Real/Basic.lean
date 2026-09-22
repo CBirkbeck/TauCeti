@@ -17,6 +17,8 @@ import TauCeti.NumberTheory.RamificationInertia.Tower
 /-!
 # The genus-field candidate of a real quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Real.Basic)
+
 For positive squarefree nonsquare `d`, the prime-discriminant compositum `candidateGenusField hd`
 is the narrow genus field of `ℚ(√d)`, but it can ramify at the real places. Its maximal totally
 real subfield is the candidate for the ordinary genus field. This file defines that field and

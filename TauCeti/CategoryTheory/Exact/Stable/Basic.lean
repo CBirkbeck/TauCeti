@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Preadditive.MorphismIdeal.FactorThrough
 /-!
 # Projective stable quotients of exact categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Basic)
+
 For an exact structure `E`, this file packages the objects that are both relatively projective
 and relatively injective. It also defines `E.ProjectiveStableCategory`, the additive quotient by
 morphisms factoring through relative projectives. When `E` is Frobenius, the projectives are

@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Density
 /-!
 # Step graphons are dense in graphon space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.GraphonSpace.Density)
+
 `exists_stepGraphon_cutDist_le` approximates a graphon by a step graphon in cut distance.  This
 file transports that approximation to the metric space `GraphonSpace Ω μ`, where cut distance is a
 genuine metric on the separation quotient: the classes of step graphons on measurable finite

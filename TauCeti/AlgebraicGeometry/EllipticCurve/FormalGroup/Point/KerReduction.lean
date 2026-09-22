@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Range
 /-!
 # The formal group is the kernel of reduction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.KerReduction)
+
 Let `A` be a Dedekind domain with fraction field `F`, let `u` be a height-one prime of `A`, and let
 `C` be a Weierstrass curve over the completed valuation ring `O_u` which is elliptic over the
 completion `F_u`. The points of `C` over `F_u` reduce modulo `u` (`Point.reduction`), and the

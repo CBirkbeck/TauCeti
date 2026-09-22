@@ -17,6 +17,8 @@ public import TauCeti.RingTheory.Valuation.Microbial
 /-!
 # Analytic points and the analytic locus of `Spa(A, A⁺)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Analytic)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.39, Remark 7.40(2), (3), (5),
 Remark 7.42(2), and Proposition 7.49.**
 

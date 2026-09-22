@@ -14,6 +14,8 @@ public import TauCeti.MeasureTheory.Integral.PiSystem
 /-!
 # Pointwise products of `L²` functions on a finite product measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.L2.Pi)
+
 For a finite family of σ-finite measures `μ i` and `L²(μ i)` functions `f i`, the pointwise product
 `x ↦ ∏ i, f i (x i)` belongs to `L²(Measure.pi μ)`, the assignment factors the inner product as a
 tensor, and coordinatewise Hilbert bases multiply to a Hilbert basis `TauCeti.piHilbertBasis` of

@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.CochainCom
 /-!
 # Explicit and canonical continuous cocycles in degrees one and two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.CocycleComparison)
+
 `cocycleEquiv1` and `cocycleEquiv2` identify continuous inhomogeneous cocycles with the cycles of
 Mathlib's homogeneous complex. Their forward formulas are `g • c (g⁻¹ * h)` and
 `g • c (g⁻¹ * h, h⁻¹ * k)`; their inverses evaluate at `(1, g)` and `(1, g, g * h)`. Each

@@ -15,6 +15,8 @@ public import TauCeti.AlgebraicTopology.SimplicialSet.TopAdj
 /-!
 # Additivity of singular chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Additivity)
+
 A singular simplex of a disjoint union `Σ i, X i` has connected domain, so its image lies in a
 single summand, and it comes from a singular simplex of that summand in exactly one way.  Hence
 the singular simplicial set of a disjoint union is the coproduct of the singular simplicial sets

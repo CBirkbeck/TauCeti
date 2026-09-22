@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.AdjoinRoot
 /-!
 # Complements on `AdjoinRoot`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.AdjoinRoot.Basic)
+
 Mathlib's `AdjoinRoot.map` sends a ring homomorphism `f : R →+* S`, together with a divisibility
 `q ∣ p.map f`, to a ring homomorphism `AdjoinRoot p →+* AdjoinRoot q`. It records the action on
 `AdjoinRoot.of` and on `AdjoinRoot.root` (`map_of`, `map_root`) but not the action on the class of

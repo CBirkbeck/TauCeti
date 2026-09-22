@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Reindex
 /-!
 # The slash sum of a `Γ₁`-invariant function is `Γ₂`-invariant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Invariance)
+
 `heckeSlashSum` is a sum over *chosen* coset representatives, and `HeckeSlash/Basic.lean` records
 that on a general `f : ℍ → ℂ` the value depends on those choices. This file proves the theorem
 that repairs it: if `f` is invariant under the weight-`k` slash action of `Γ₁`, then

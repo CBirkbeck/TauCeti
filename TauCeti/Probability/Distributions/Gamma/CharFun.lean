@@ -11,6 +11,8 @@ public import TauCeti.Probability.Moments.ComplexMGF
 /-!
 # Characteristic function of the gamma distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.CharFun)
+
 This file computes the characteristic function of a gamma law with positive shape `a` and
 positive rate `r`:
 

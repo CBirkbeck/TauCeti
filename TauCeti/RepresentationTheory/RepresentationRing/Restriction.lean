@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.RepresentationRing.Basic
 /-!
 # Restriction is a homomorphism of representation rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.RepresentationRing.Restriction)
+
 For a monoid homomorphism `φ : G →* H` over a field `k`, restricting a finite-dimensional
 representation of `H` along `φ` is Mathlib's `CategoryTheory.Action.res (FGModuleCat k) φ`, under
 the definitional identification `FDRep k G = Action (FGModuleCat k) G`. This file passes that

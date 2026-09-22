@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst
 /-!
 # The inverse law of the chord group law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Inverse)
+
 `FormalGroup/Add/Series.lean` produces `formalAdd`, the series `F(z₁, z₂) = ι(z₃(z₁, z₂))` of the
 chord construction, and `FormalGroup/Add/Unit.lean` proves its two unit laws. This file proves the
 **inverse law** `F(z, ι(z)) = 0`, where `ι = formalInverse` is the formal inverse.

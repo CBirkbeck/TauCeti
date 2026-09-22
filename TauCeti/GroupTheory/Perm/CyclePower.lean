@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Perm.Cycle.Type
 /-!
 # Powers of a cycle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.CyclePower)
+
 A cycle `f` of a finite type has order the number `n = f.support.card` of points it moves
 (`Equiv.Perm.IsCycle.orderOf`), and every power `f ^ k` again moves either all of those points or
 none of them. This file computes the cycle type of such a power: whenever `n ∤ k` (equivalently,

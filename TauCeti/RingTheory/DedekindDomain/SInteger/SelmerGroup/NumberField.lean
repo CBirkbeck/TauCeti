@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic
 /-!
 # The Selmer group of a number field is finite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.NumberField)
+
 The finiteness proved in `TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic` asks its
 Dedekind domain for a finite class group and a finitely generated unit group. For the ring of
 integers of a number field both are theorems of Mathlib -- the class number theorem and

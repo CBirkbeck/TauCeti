@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.TensorPower.Symmetric
 /-!
 # Functoriality of symmetric tensor powers, and the symmetrization back into the tensor power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricPower.Basic)
+
 This file equips Mathlib's symmetric tensor power with the linear map induced by a linear map of
 the underlying modules. It proves the expected action on pure tensors, identity law, and composition
 law. It also records that a symmetric power indexed by a finite type is finitely generated when its

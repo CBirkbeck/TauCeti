@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic
 /-!
 # The degree-zero divisor quotient model of abstract `Pic⁰`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.PicZeroQuotient)
+
 This file adds a small Layer A bridge for the Jacobian roadmap.  The file
 `TauCeti.AlgebraicGeometry.WeilDivisor.Principal.Basic` defines the abstract divisor class group
 `Cl(X)` of an order system and defines `Pic⁰` as the kernel of the descended weighted degree on

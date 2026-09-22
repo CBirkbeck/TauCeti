@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Algebra.Hom
 /-!
 # Bridging lemmas between `AlgHom` and `RingHom`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Algebra.Hom)
+
 Two small families of identities relating the bundled homomorphism types, each of which several
 files would otherwise restate inline.
 

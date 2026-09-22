@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # Descent along a `q`-support condition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.Basic)
+
 A cusp form of level `Γ₁(N)` whose period-one `q`-expansion is supported on the multiples of `l`
 is `τ ↦ f (l τ)` for a function `f` invariant under the weight-`k` slash action of `T`.
 

@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Exci
 /-!
 # The excised boundary contour integral of a level-one logarithmic derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisedAssembly)
+
 `TauCeti.ModularForm.intervalIntegral_logDeriv_fdBoundary` assembles the boundary integral
 for a form with no zeros on the contour. The valence formula needs the version that tolerates
 them at the elliptic points `i` and `ρ`, which sit *on* the fundamental-domain boundary, so a

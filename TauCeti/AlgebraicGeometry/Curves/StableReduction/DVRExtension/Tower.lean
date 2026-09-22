@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.DVRExtension.Basi
 /-!
 # Maps and towers of chosen finite DVR extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.DVRExtension.Tower)
+
 The chosen place in a finite extension of a DVR is part of the data: a field embedding alone does
 not say how the corresponding local rings are related. This file therefore packages a compatible
 field embedding and local-ring map, with the square between them as an explicit law. These maps

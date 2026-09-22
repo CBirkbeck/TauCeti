@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 /-!
 # Coprime representatives of narrow ideal classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.NarrowClassGroup.CoprimeRepresentative)
+
 Every narrow ideal class of a number field has an integral representative coprime to any prescribed
 nonzero ideal. This is the finite-place approximation input needed to evaluate genus characters on
 narrow ideal classes in Layer 3 of the multiquadratic roadmap.

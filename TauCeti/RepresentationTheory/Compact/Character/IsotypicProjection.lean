@@ -15,6 +15,8 @@ import TauCeti.RepresentationTheory.Irreducible
 /-!
 # Isotypic projections for compact-group representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Character.IsotypicProjection)
+
 Let `sigma` be a finite-dimensional continuous representation of a compact group. The continuous
 class function
 

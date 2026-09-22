@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.MarkovExchangeable
 /-!
 # Reordering the excursions of a Markov exchangeable path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Excursion)
+
 A finite path that starts at a state `a₀` and returns to it splits at its visits to `a₀` into
 excursions, and `TauCeti.loopPathAt a₀ bs` spells out the path traversing the excursions
 `bs : List (List α)` in the listed order. This file proves that a **Markov exchangeable** process

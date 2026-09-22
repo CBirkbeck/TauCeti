@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Cheva
 /-!
 # Multiply-laced Chevalley relations for represented Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.MultiplyLacedRelations)
+
 For roots `α` and `β` whose positive rank-two root string contains both `α + β` and `2α + β`,
 this file proves, under the displayed bracket and nilpotence hypotheses, the conditional relation
 

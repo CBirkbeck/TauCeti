@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # The continuous dual of a finite-dimensional normed space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.FiniteDimension)
+
 Over a complete nontrivially normed field every linear functional on a finite-dimensional normed
 space is continuous, so the continuous dual `E →L[𝕜] 𝕜` coincides with the algebraic dual
 `Module.Dual 𝕜 E`. Mathlib records that coincidence as the linear equivalence

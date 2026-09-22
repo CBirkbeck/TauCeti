@@ -15,6 +15,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
 /-!
 # The function field of an elliptic curve has genus one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Genus)
+
 Let `W` be an elliptic Weierstrass curve over a field `F`, with coordinate functions `x` and `y`
 and place at infinity `O`.  This file computes the Riemann–Roch spaces `L(n · O)` by hand and
 reads off the two invariants of `F(W) / F` that the general theory of function fields needs:

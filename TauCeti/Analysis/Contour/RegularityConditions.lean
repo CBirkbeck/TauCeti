@@ -17,6 +17,8 @@ import TauCeti.Analysis.SpecialFunctions.Trigonometric.Angle
 /-!
 # The Hungerbühler–Wasem crossing angle and regularity conditions (A′) and (B)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.RegularityConditions)
+
 For a curve `γ : ℝ → ℂ` on `[a, b]` and an integrand `f : ℂ → ℂ`, this file defines the **crossing
 angle** and the **flatness** of `γ` at a time, and the roadmap's two Hungerbühler–Wasem regularity
 conditions at its on-curve singularities: the geometric flatness condition **(A′)** and the analytic

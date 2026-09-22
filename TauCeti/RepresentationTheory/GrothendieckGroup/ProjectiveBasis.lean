@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Multiplicity
 /-!
 # Indecomposable classes in the Grothendieck group of finitely generated projectives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GrothendieckGroup.ProjectiveBasis)
+
 Let `R` be an Artinian ring.  Every finitely generated `R`-module has finite length, so the
 Krull-Schmidt theorem applies to it: it decomposes into indecomposable summands, uniquely up to a
 matching.  The multiplicity of a fixed module among those summands is additive on direct sums, and

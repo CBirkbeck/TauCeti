@@ -13,6 +13,8 @@ import TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots
 /-!
 # The cyclotomic compositum `M = L(μ_m)` and its joint restriction isomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Cyclotomic.Compositum)
+
 Let `L / K` be a Galois extension of number fields and let `M = L(μ_m)` be obtained from `L`
 by adjoining the `m`-th roots of unity. When `m` is coprime to the discriminant of `L`, the
 two restriction maps out of `Gal(M/K)` — to `Gal(L/K)`, and to `(ZMod m)ˣ` via the cyclotomic

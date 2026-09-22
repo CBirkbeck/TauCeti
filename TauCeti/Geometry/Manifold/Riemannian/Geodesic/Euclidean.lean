@@ -12,6 +12,8 @@ import TauCeti.Geometry.Manifold.VectorField.LieBracket
 /-!
 # Geodesics in inner-product spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Euclidean)
+
 This file identifies the Riemannian geodesics of a finite-dimensional real inner-product space.
 Its standard Riemannian metric is constant, so the Levi-Civita connection has vanishing
 Christoffel map and affine lines are geodesics. Consequently their maximal intervals are all of

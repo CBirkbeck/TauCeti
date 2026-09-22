@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Dimension
 /-!
 # The CAR module: the Clifford algebra of the trace form of `gl n`, left-regularly
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Fock)
+
 The adjoint action of `gl n K` preserves its trace form, so it lifts to the Clifford algebra of
 that form; adding the normal-ordering constant makes the lift the homomorphism
 `TauCeti.glCliffordHom`, whose value on a matrix unit is `Eᵢⱼ ↦ ½ ∑ₖ dᵢₖ dₖⱼ`. This file installs

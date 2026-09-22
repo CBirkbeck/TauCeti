@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Ring.Subring.Basic
 /-!
 # The subring and subfield fixed by an iterated Frobenius
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CharP.Frobenius.Fixed)
+
 Let `A` be a commutative ring of exponential characteristic `p` and let `q = p ^ n`. The elements
 of `A` satisfying `a ^ q = a` are the equalizer of the ring homomorphism `iterateFrobenius A p n`
 and the identity, hence a subring: this file names it `TauCeti.frobeniusFixedSubring` and records

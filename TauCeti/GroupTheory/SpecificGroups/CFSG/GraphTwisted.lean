@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DiagramPermutations
 /-!
 # Diagram permutations of the graph-twisted families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.GraphTwisted)
+
 The Steinberg endomorphism of a finite group of Lie type that is not of Suzuki--Ree type is the
 field Frobenius composed with a graph automorphism `γ` of the underlying pinned Chevalley group.
 That automorphism is determined by a permutation of the Bourbaki-numbered simple roots, and this

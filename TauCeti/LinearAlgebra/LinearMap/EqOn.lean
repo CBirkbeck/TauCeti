@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Span.Basic
 /-!
 # Pointwise equality on generated submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearMap.EqOn)
+
 This file provides a small extension principle for semilinear maps that agree on a submodule and
 on one additional generator.
 -/

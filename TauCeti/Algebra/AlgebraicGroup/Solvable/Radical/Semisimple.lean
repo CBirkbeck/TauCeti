@@ -12,6 +12,8 @@ import TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.BaseChange
 /-!
 # The solvable radical and semisimplicity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.Semisimple)
+
 This file connects the solvable-radical construction to the definition of a semisimple
 finite-type affine group. Semisimplicity is equivalent to smoothness, geometric connectedness,
 and triviality of the solvable radical after base change to an algebraic closure.

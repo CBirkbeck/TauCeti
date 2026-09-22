@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.GeneralLinearGroup.Basic
 /-!
 # Intertwiners of linear automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.GeneralLinearGroup.Intertwining)
+
 A linear map `f : V →ₗ[K] W` **intertwines** automorphisms `a` of `V` and `b` of `W` when
 `f ∘ a = b ∘ f`. This is the heterogeneous form of `SemiconjBy`: source and target live in
 different modules, so the relation is not a statement inside one monoid and Mathlib's

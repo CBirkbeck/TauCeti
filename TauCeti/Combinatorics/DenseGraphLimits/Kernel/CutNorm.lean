@@ -11,6 +11,8 @@ import Mathlib.MeasureTheory.Measure.FiniteMeasure
 /-!
 # The cut norm of a symmetric kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Kernel.CutNorm)
+
 This file defines the cut norm of a bounded symmetric kernel on a finite measure space by
 
 `‖K‖□ = sup |∫_(S × T) K|`,

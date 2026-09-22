@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul
 /-!
 # Coprimality of the division polynomials `Φₙ` and `ΨSqₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality)
+
 Over a field, the `x`-coordinate of `n • (x, y)` is the rational function `Φₙ / ΨSqₙ`. This file
 proves that numerator and denominator are **coprime** as soon as the curve is nonsingular, so that
 quotient is already in lowest terms and its degree is visible from the two degrees separately.

@@ -14,6 +14,8 @@ public import TauCeti.InformationTheory.Coding.Equivalence
 /-!
 # Relabelling the coordinates of a linear code
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Reindex)
+
 Relabelling the coordinate set of a linear code along an equivalence is the most basic operation
 on codes, and every further construction is expected to commute with it. This file defines
 `TauCeti.reindex` as the image of the code under coordinate transport, and records membership,

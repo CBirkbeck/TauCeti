@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Normalize
 /-!
 # The diagonal normalizer and the Bruhat data of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Bruhat)
+
 This file aligns upper-triangular Bruhat data with the diagonal normalizer. For `GLₙ`, an
 upper-triangular monomial matrix is diagonal, and hence
 

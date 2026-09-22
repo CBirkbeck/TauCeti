@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.RestrictToConvex
 /-!
 # Restricting a valuation to `cΓ_v(I)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.CofinalIdeal.Restrict)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.2.**
 
 `Valuation.restrictToConvex` restricts a valuation to an arbitrary convex subgroup of the units

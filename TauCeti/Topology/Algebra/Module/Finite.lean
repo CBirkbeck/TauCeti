@@ -14,6 +14,8 @@ import TauCeti.Topology.Algebra.Nonarchimedean.Pi
 /-!
 # The module topology on a finite module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Module.Finite)
+
 Let `M` be a finite module over a topological ring `A`. Choosing a finite spanning family of `M`
 presents it as an open quotient of `Aⁿ`, by Mathlib's
 `IsModuleTopology.isOpenQuotientMap_of_surjective`, and so three properties of `A` descend to

@@ -18,6 +18,8 @@ import Mathlib.Analysis.Analytic.Polynomial
 /-!
 # The elementary symmetric chart is a homeomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Polynomial.SymmetricPower)
+
 `TauCeti.Sym.coeffEquiv` presents the `n`-th symmetric power of an algebraically closed field `K`
 as the affine space `Fin n → K`, by sending an unordered `n`-tuple to the lower coefficients of the
 monic polynomial having it as its root multiset. That equivalence is pure algebra. This file proves

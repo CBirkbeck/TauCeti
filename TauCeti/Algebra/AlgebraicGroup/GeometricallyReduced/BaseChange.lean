@@ -12,6 +12,8 @@ import TauCeti.Algebra.TensorProduct.CommonOverfield
 /-!
 # Geometric reducedness under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeometricallyReduced.BaseChange)
+
 Geometric reducedness of a commutative Hopf algebra is preserved by and descends along extension
 of the base field. In particular, `H` is geometrically reduced over `k` if and only if the scalar
 extension `K ⊗[k] H` is geometrically reduced over any field extension `K / k`.

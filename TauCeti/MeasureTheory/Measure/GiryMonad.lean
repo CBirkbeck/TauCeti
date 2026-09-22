@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.GiryMonad
 /-!
 # The Giry monad's `map`/`bind` interchange laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.GiryMonad)
+
 Two ways `Measure.map` and `Measure.bind` commute:
 
 * `map_bind` — pushing a mixture forward is the mixture of the pushforwards,

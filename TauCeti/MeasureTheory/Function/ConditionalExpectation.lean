@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
 /-!
 # Generic conditional-expectation facts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.ConditionalExpectation)
+
 - `condExp_comp_ae_eq_of_pair_law_eq`: if `(Y, Z)` and `(Y', Z)` have the same law, then for a
   measurable real observable `f` the conditional expectations of `f ∘ Y` and `f ∘ Y'` given `σ(Z)`
   agree a.e.

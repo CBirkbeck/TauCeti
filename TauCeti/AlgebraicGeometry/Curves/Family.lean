@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.Morphisms.RelativeDimension
 /-!
 # Families of curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.Family)
+
 A morphism of schemes `f : X ⟶ S` is a *family of curves* if it is proper, flat, of finite
 presentation, and of relative dimension at most one, following the Stacks Project's notion of a
 family of curves over a scheme base. Nodal, prestable, semistable, and stable families of curves

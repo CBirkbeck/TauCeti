@@ -14,6 +14,8 @@ public import TauCeti.MeasureTheory.Function.Lp.CompMeasurePreservingEquiv
 /-!
 # Conjugation-invariance in `Lp`, and the class functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Group.Conjugation)
+
 Conjugation `g ↦ h * g * h⁻¹` on a group is left translation followed by right translation, so a
 measure that is invariant under both is invariant under conjugation.  Normalized Haar measure on a
 compact group is such a measure, which is what makes "class function" a meaningful condition on an

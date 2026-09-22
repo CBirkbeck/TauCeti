@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.Coxeter.StrongExchange
 /-!
 # The Bruhat order on a Coxeter group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.Bruhat)
+
 Let `cs : CoxeterSystem M W` be a Coxeter system. The **Bruhat graph** of `cs` has an edge from `u`
 to `w` whenever `w = t * u` for a reflection `t` and `w` is the longer of the two; the **Bruhat
 order** `cs.BruhatLE` is the reachability relation of that graph, the reflexive transitive closure

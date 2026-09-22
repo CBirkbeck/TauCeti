@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Compact.Character.Basic
 /-!
 # Characters are class functions in `L²(G)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.ClassFunctionLp)
+
 The character of a finite-dimensional continuous representation of a compact group is a class
 function: it is constant on conjugacy classes.  Passing to `L²(G)` this becomes a statement about
 an almost-everywhere equivalence class, and the correct home for it is the closed subspace

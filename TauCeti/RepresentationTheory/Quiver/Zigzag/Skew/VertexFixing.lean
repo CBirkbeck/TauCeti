@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.Basis
 /-!
 # Vertex-fixing isomorphisms of skew-zigzag algebras and gauge equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Skew.VertexFixing)
+
 A skew-zigzag parameter `c` of a finite simple graph `G` labels each ordered pair of incident edges
 by a unit-valued ratio, and gauge equivalent parameters present isomorphic algebras through an
 arrow rescaling, which fixes every vertex idempotent. This file proves the converse over a

@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.LSeries.SumCoeff
 /-!
 # Cancellation in ideal partial sums and the continued L-function of a weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Cancellation)
+
 For a unitary ideal weight `χ` of a number field `K` of degree `d = [K : ℚ]`, the partial sums
 `∑_{N(I) ≤ x} χ(I)` over the nonzero integral ideals are trivially `O(x)`, by the linear ideal
 count. For nontrivial finite-order ray class characters, equidistribution among ray classes gives

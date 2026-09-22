@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.LinearPMap.Basic
 /-!
 # Semigroups whose generators are negatives of one another are mutually inverse
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator.Neg)
+
 Two C₀-semigroups whose generators are negatives of one another have mutually inverse operators
 at equal nonnegative times.  No group structure is assumed: these identities are exactly the
 hypotheses of the gluing construction

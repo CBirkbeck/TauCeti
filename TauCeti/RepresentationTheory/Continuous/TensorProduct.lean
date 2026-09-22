@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Continuous.MatrixCoefficient
 /-!
 # The tensor product of continuous representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.TensorProduct)
+
 The tensor product of two continuous representations of the same monoid acts by
 `g ↦ (π g) ⊗ (ρ g)`, that is, by Mathlib's `TensorProduct.mapL`. This file builds it and proves the
 three facts its use requires: the operator-valued action stays continuous, unitarity is preserved,

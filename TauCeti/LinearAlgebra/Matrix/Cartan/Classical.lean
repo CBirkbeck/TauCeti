@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Chain
 /-!
 # The determinants of the classical Cartan matrices of types `A`, `B` and `C`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Cartan.Classical)
+
 Mathlib computes the determinant of `CartanMatrix.E n`, and hence of the three exceptional
 matrices `E₆`, `E₇` and `E₈`, and evaluates `F₄` and `G₂` directly, but leaves the classical
 families untouched. This file computes

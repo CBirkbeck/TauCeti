@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Signature
 /-!
 # Integral and even overlattices via isotropic subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Overlattice.Isotropic)
+
 Let `L` be an integral lattice. This file refines the intermediate-carrier correspondence of
 `TauCeti.LinearAlgebra.IntegralLattice.Overlattice.Basic` by the two properties an intermediate
 carrier `L ≤ M ≤ Lᵛ` can enjoy: `M` is *integral* when it lies in its own dual submodule, so the

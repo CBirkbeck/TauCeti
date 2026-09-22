@@ -13,6 +13,8 @@ import Mathlib.Algebra.Lie.Classical
 /-!
 # The trace twist of a `gl n`-module, and every dominant weight as a highest weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Twist)
+
 Dominance for `gl n` constrains only the consecutive *differences* of a weight
 (`TauCeti.IsGlDominantIntegral`), so the dominant weights are the antitone tuples of natural
 numbers translated along the central direction `μ ↦ μ + c · (1, …, 1)`, with `c` a free scalar.

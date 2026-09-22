@@ -16,6 +16,8 @@ import TauCeti.Algebra.AlgebraicGroup.GeometricallyReduced.BaseChange
 /-!
 # Recognising a torus from a splitting field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Splitting)
+
 A torus is defined by becoming a finite-rank split torus over an algebraic closure of the base
 field. In practice a torus is produced together with a splitting field that is much smaller: a
 finite Galois extension over which the coordinate Hopf algebra becomes a group algebra. This file

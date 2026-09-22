@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 /-!
 # Painlevé removability across a line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Removability.Basic)
+
 A line is a removable set for *continuous* holomorphic functions: if `F` is continuous on an open
 set `Ω ⊆ ℂ` and holomorphic on `Ω` off a line, then `F` is holomorphic on all of `Ω`. This is the
 straight-line base case toward the L4 analytic-arc removability result in the conformal-mapping

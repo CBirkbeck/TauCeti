@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.NumberField.Minpoly
 /-!
 # The index of an integral primitive element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.Basic)
+
 An integral primitive element `θ` of a number field `K` generates a full-rank subring
 `ℤ[θ]` of the ring of integers `𝓞 K`. Its *index* is the finite cardinality
 

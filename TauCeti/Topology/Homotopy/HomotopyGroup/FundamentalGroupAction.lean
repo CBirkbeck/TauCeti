@@ -12,6 +12,8 @@ import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
 /-!
 # The action of the fundamental group on the higher homotopy groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.FundamentalGroupAction)
+
 Transporting a generalized loop along a path `γ` from `x` to `y` gives an isomorphism
 `π_n(X, x) ≃* π_n(X, y)` depending only on the homotopy class of `γ`
 (`TauCeti.homotopyGroupMulEquivOfPath`). Taking `y = x` turns that isomorphism into extra

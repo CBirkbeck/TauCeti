@@ -11,6 +11,8 @@ public import TauCeti.Topology.Semicontinuity.Approximation
 /-!
 # Lower semicontinuity of a lower semicontinuous integrand in the measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.LowerSemicontinuousLintegral)
+
 Fix a lower semicontinuous `f : Ω → ℝ≥0∞` on a pseudometric space. This file proves that the
 pairing `μ ↦ ∫⁻ x, f x ∂μ` is lower semicontinuous for the weak topology on `FiniteMeasure Ω` and
 on `ProbabilityMeasure Ω`, together with the two consequences the direct method of the calculus of

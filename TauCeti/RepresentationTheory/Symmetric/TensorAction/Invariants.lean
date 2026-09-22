@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic
 /-!
 # The symmetric tensors are spanned by the pure powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TensorAction.Invariants)
+
 The symmetric group of `ι` acts on the tensor power `⨂[R] (_ : ι), M` by permuting the factors.
 This file identifies the invariants of that action, once `(#ι)!` is invertible in `R`: they are
 exactly the span of the **pure powers** `⨂ₜ i, x`, the tensors with the same vector in every slot.

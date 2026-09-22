@@ -17,6 +17,8 @@ import Mathlib.FieldTheory.JacobsonNoether
 /-!
 # Central simple algebras over separably closed fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.SeparablyClosed)
+
 A finite-dimensional central simple algebra over a separably closed field is a full matrix
 algebra.  This strengthens the algebraically closed case used in the initial splitting-field API
 and is the field-theoretic input for refining an arbitrary finite splitting extension to a finite

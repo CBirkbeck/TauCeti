@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.SimpleModule.Basic
 /-!
 # The socle of a module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.SimpleModule.Socle)
+
 The **socle** of a module is the supremum of its simple submodules.  Mathlib already uses the
 submodule `sSup {m | IsSimpleModule R m}` as the object measuring how far a module is from being
 semisimple — `IsSemisimpleModule.of_sSup_simples_eq_top` and

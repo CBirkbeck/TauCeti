@@ -11,6 +11,8 @@ import Mathlib.Topology.Algebra.Group.Matrix
 /-!
 # Field-valued points of the type A full-weight carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.FieldPoints)
+
 This file proves that over a field the matrix points of the full-weight type `A_r` carrier are
 exactly `SL_{r+1}`. The ring-general transvection generation step is proved in
 `TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Generation`; Mathlib's generation of special

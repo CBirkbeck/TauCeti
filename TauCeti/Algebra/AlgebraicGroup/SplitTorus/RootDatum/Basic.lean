@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.RootSystem.Swap
 /-!
 # The coordinate-difference root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.RootDatum.Basic)
+
 For a finite coordinate type `σ`, this file constructs the root datum whose roots and coroots are
 the vectors `e_i - e_j`, indexed by ordered pairs `i ≠ j`. The character and cocharacter lattices
 are the standard split-torus coordinate lattices

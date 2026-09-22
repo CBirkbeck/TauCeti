@@ -12,6 +12,8 @@ import TauCeti.Algebra.TensorProduct.CommonOverfield
 /-!
 # Geometric connectedness under base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.BaseChange)
+
 Geometric connectedness of a commutative Hopf algebra is preserved by and descends along extension
 of the base field. In particular, `H` is geometrically connected over `k` if and only if the scalar
 extension `K ⊗[k] H` is geometrically connected over any field extension `K / k`.

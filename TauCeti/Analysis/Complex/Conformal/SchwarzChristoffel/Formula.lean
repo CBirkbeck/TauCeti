@@ -15,6 +15,8 @@ import TauCeti.Analysis.Complex.Conformal.Reflection.LogDeriv
 /-!
 # The Schwarz--Christoffel formula from local polygonal boundary data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Formula)
+
 A locally conformal map `f` of the upper half-plane satisfying the prescribed straight-side,
 corner-sector, and infinity boundary conditions is completely determined, up to an affine map of
 the target, by the real **prevertices** `a i` and the **turning exponents** `e i`: it is

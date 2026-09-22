@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.PrimitiveIdempotent
 /-!
 # The vertex idempotents of a path algebra are primitive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PrimitiveIdempotent)
+
 When the trivial path is the only path from `v` to `v`, the corner ring `eᵥ kQ eᵥ` of the vertex
 idempotent at `v` is as small as it can be: `eᵥ f eᵥ` is a scalar multiple of `eᵥ`
 (`TauCeti.vertexIdempotent_mul_mul_vertexIdempotent`), so the corner ring is a copy of `k`. As soon

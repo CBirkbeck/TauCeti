@@ -15,6 +15,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Integrality
 /-!
 # Every `x`-coordinate of a Weierstrass curve over an algebraically closed field is attained
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.IsAlgClosed)
+
 Fixing `x = a` in the Weierstrass equation leaves a monic quadratic in `y`, so over an
 algebraically closed field it has a root and `a` is the `x`-coordinate of a solution. The statement
 is about `Affine.Equation` alone: no nonsingularity, no ellipticity, and no division polynomial is

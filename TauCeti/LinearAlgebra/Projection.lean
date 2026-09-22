@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Projection
 /-!
 # Projections onto the summands of an internal direct sum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Projection)
+
 Mathlib's `Submodule.projectionOnto` projects a module onto one of two complementary submodules.
 A family `Q` of submodules that is `iSupIndep` and spans the whole module presents each `Q i` as
 complementary to the supremum of the other summands, so each summand inherits such a projection.

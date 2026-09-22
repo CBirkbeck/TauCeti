@@ -11,6 +11,8 @@ public import Mathlib.Data.Nat.Factorization.Basic
 /-!
 # Exact divisors of a natural number
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.ExactDivisor)
+
 `Q` is an **exact divisor** of `N` when `Q ∣ N` and `Q` is coprime to the complementary divisor
 `N / Q`; equivalently, `N = Q · M` with `Q` and `M` sharing no prime. Such a `Q` collects the
 full power of each prime it contains, so the exact divisors of `N` are exactly the products of

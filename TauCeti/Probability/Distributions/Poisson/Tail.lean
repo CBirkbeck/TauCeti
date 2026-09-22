@@ -12,6 +12,8 @@ public import Mathlib.Probability.Distributions.Poisson.Basic
 /-!
 # The cumulative masses of a Poisson law in closed form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Poisson.Tail)
+
 For a rate `r : ℝ≥0` the Poisson law `Po(r)` on `ℕ` assigns to the upper tail `{k | n < k}` the
 value `P(n + 1, r)` of the regularized lower incomplete gamma function `TauCeti.regularizedGamma`,
 and to the complementary lower half-line the value `1 - P(n + 1, r)`.

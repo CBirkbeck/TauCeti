@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Sign
 /-!
 # The Weyl numerator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Numerator)
+
 The Weyl character formula is an identity in the integral group algebra `ℤ[M]` of the weight space
 of a root pairing, between the formal character of an irreducible module and two universal
 elements of that algebra: the Weyl numerator `N(λ)` and the Weyl denominator `Δ`. As soon as there

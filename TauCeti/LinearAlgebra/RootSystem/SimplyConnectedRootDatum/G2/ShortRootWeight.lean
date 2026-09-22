@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Lengt
 /-!
 # The short-root weight diagram of type G2
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.ShortRootWeight)
+
 This file records the seven weights of the fundamental type-`G₂` module `V(ϖ₁)` in
 fundamental-weight coordinates. They are the six short roots and zero, ordered from the highest
 weight to its negative. The table is root-datum data used by the integral representation in

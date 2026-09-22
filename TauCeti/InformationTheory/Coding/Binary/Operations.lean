@@ -12,6 +12,8 @@ public import TauCeti.InformationTheory.Coding.Equivalence
 /-!
 # Operations on even and doubly-even binary codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.Operations)
+
 Evenness and double evenness are preserved by direct sums and by monomial equivalence, hence
 also by coordinate permutations. Over the binary field every unit is one, so the two notions of
 equivalence agree anyway, by `TauCeti.isMonomialEquivalent_iff_isPermutationEquivalent`.

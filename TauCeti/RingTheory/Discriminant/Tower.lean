@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Discriminant
 /-!
 # Discriminants in algebra towers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Discriminant.Tower)
+
 This file proves the standard discriminant identity for the basis of a composite algebra obtained
 from bases of the two steps in an algebra tower.
 

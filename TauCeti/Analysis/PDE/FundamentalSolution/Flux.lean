@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 /-!
 # Flux of the planar Newtonian kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Flux)
+
 This file computes the outward normal derivative of the planar Newtonian kernel on a circle.
 The resulting flux is `-1`, as required for the fundamental solution of the negative Laplacian.
 This calculation fixes the normalization of `planarNewtonianKernel` and is the boundary

@@ -16,6 +16,8 @@ import Mathlib.RingTheory.Unramified.Field
 /-!
 # Reducedness of smooth algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Smooth.GeometricallyReduced)
+
 A smooth algebra over a reduced commutative ring is reduced. The proof first treats integral
 domains: a standard-smooth algebra embeds into its étale generic fibre over a polynomial ring,
 and a standard-smooth localization cover gives the smooth case. For a reduced Noetherian base,

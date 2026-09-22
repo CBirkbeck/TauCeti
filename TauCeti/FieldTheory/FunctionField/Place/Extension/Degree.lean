@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Basic
 /-!
 # The degree of a place over the place below it
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Extension.Degree)
+
 Let `F' / F` be an algebraic extension of fields, both with the same field of constants `k`, and
 let `P'` be a place of `F' / k` lying over the place `P = P'|_F` of `F / k`. The residue fields
 then form a tower `k ⊆ F_P ⊆ F'_{P'}`, so the multiplicativity of `Module.finrank` reads

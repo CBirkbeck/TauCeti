@@ -14,6 +14,8 @@ import TauCeti.RingTheory.DedekindDomain.Ideal
 /-!
 # Conjugate-transversal ideal families in a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.DedekindDomain.Transversal)
+
 Let `σ` be a ring automorphism of a Dedekind domain `R` and `S` a finite set of nonzero prime
 ideals, packaged as `IsDedekindDomain.HeightOneSpectrum R`, on which `σ` acts as a
 fixed-point-free involution. Pairing each prime with its conjugate `σ p ≠ p`, the product of

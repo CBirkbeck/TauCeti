@@ -12,6 +12,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Closed immersions of diagonalizable group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.ClosedImmersion)
+
 A surjective homomorphism of finitely generated commutative character groups induces a
 surjective map of their group algebras. Relative spectrum reverses this map, so the resulting
 morphism of diagonalizable group schemes is a closed immersion.

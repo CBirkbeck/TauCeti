@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Projective.Eule
 /-!
 # The projectives at a vertex of an acyclic quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Projective.Acyclic)
+
 Over an acyclic quiver the only path `i → i` is the trivial one, so the path counts that
 `TauCeti.finrank_hom_indecProjRep_indecProjRep` and `TauCeti.titsForm_dimVector_indecProjRep`
 compute collapse to `1` on the endomorphisms of `Pᵢ` and on the Tits norm of its dimension vector:

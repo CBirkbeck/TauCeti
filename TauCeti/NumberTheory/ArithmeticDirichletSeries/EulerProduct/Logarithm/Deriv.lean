@@ -14,6 +14,8 @@ import TauCeti.Analysis.Complex.BranchLogRoot
 /-!
 # Derivatives of ideal Euler factors and logarithmic expansions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Deriv)
+
 For general `TauCeti.EulerProductData`, this file first differentiates each local Euler factor.
 The derivative at a prime `P` is the exact prime-power series
 

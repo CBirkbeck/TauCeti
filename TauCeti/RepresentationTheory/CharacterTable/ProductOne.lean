@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Eigenrow
 /-!
 # The Frobenius formula for product-one triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ProductOne)
+
 Fix a finite group `G` and three conjugacy classes `C₀`, `C₁`, `C∞` of it. The **product-one
 triples** of that data are the triples `(x, y, z)` with `x ∈ C₀`, `y ∈ C₁`, `z ∈ C∞` and
 `z * y * x = 1`. They are the finite shadow of a covering of the sphere branched over three points

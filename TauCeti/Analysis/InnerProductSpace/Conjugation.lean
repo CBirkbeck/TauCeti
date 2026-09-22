@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Coordinatewise conjugation in an orthonormal basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Conjugation)
+
 There is no canonical conjugation on an abstract inner product space, so this file attaches one to
 an orthonormal basis `e` by conjugating the coordinates in it:
 `conjugation e x = ∑ i, conj ⟪e i, x⟫ • e i`. It is a conjugate-linear isometric involution of `V`

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Conjugation
 /-!
 # Conjugation of Borel subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Borel.Conjugation)
+
 Conjugation by a rational point is an automorphism of the ambient affine group, so it preserves
 Borel subgroups. This file records that invariance for the Hopf-ideal definition of a Borel
 subgroup.

@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Huber.OpenIdeal
 /-!
 # The rational basis of the adic spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.29, Remark 7.30(5),
 and Theorem 7.35.**
 

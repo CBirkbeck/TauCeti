@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Symmetrizer
 /-!
 # Dominance between the shape of a tableau and the shape of a tabloid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Dominance)
+
 A `μ`-tabloid is a coset of the Young subgroup `youngSubgroup μ`, so it records a partition of the
 labels into rows and nothing more.  This file compares such a tabloid with a tableau `t` of a
 Young diagram `lam`, and proves **James's dominance lemma**: if the column antisymmetrizer `b_t`

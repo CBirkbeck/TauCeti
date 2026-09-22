@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Enumerative.PerfectMatching
 /-!
 # Brauer diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Brauer.Diagram)
+
 A **Brauer diagram** on `k` strands is a perfect matching of the `2 * k` boundary points
 `Fin k ⊕ Fin k`, where `Sum.inl i` is the `i`-th bottom point and `Sum.inr j` the `j`-th top
 point; the matched pairs are the arcs of the diagram. Brauer diagrams index a basis of the
@@ -56,7 +58,10 @@ namespace TauCeti
 
 /-- A **Brauer diagram** on `k` strands: a perfect matching of the `2 * k` boundary points
 `Fin k ⊕ Fin k`, with `Sum.inl i` the `i`-th bottom point and `Sum.inr j` the `j`-th top
-point.  The value `D.val x` is the boundary point that the diagram matches with `x`. -/
+point.  The value `D.val x` is the boundary point that the diagram matches with `x`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.BrauerDiagram) -/
 abbrev BrauerDiagram (k : ℕ) : Type _ := PerfectMatching (Fin k ⊕ Fin k)
 
 /-- **The number of Brauer diagrams.** There are `(2 * k - 1)‼` perfect matchings of the

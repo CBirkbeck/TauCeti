@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.PrimitiveElement
 /-!
 # Irreducible polynomials over finite fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.Irreducible)
+
 For every positive degree, a finite field has a monic irreducible polynomial of that degree. We
 obtain one as the minimal polynomial of a primitive element of a finite extension of that degree.
 

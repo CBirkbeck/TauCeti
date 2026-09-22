@@ -16,6 +16,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Minimal numerical types and their genus contributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Minimal)
+
 The signed genus of a numerical type `T` is a sum of contributions of its components,
 
 `g(T) = 1 + ∑ᵢ Φᵢ`, where `Φᵢ = mᵢ (wᵢ (gᵢ - 1) - aᵢᵢ / 2)`.

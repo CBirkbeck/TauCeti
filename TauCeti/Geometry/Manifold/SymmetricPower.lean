@@ -12,6 +12,8 @@ public import TauCeti.Topology.Sym.Family
 /-!
 # A charted-space structure on a symmetric power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SymmetricPower)
+
 If a Hausdorff space `α` is charted by a proper algebraically closed normed field `K` — the case of
 interest being a Riemann surface, charted by `ℂ` — then its `n`-th symmetric power `Sym α n` is
 charted by `Fin n → K`. This supplies the local-coordinate part of the topological-manifold

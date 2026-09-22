@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.ToLin
 /-!
 # Classical coordinates on the pinned type `Cₙ` lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.C.Classical)
+
 The pinned type `Cₙ` datum `TauCeti.DynkinType.typeCSimplyConnectedRootDatum` writes its character
 lattice in the fundamental-weight basis and its cocharacter lattice in the simple-coroot basis.
 Both lattices are also the classical lattice `ℤ ^ n` with standard basis `e₀, …, e_{n-1}`, because

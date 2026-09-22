@@ -12,6 +12,8 @@ public import TauCeti.Probability.Distributions.Gaussian.PolynomialMemLp
 /-!
 # Integrability, `L²` membership, and normalization of the Hermite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.MemLp)
+
 This file continues the object API for the Hermite functions
 `ψₙ(x) = Hₙ(x√2) exp(-x²/2) / √(n!√π)` (`TauCeti.hermiteFunction`), adding the regularity facts
 the `OrthogonalL2Bases` roadmap's **A2** milestone lists and its **A3** basis construction consumes:

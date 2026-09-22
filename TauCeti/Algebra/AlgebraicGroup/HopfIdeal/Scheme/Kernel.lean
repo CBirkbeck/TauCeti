@@ -14,6 +14,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.BaseChange
 /-!
 # The kernel of a morphism of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Kernel)
+
 A morphism `f : H ⟶ K` of commutative Hopf algebras induces contravariantly a morphism of
 affine group schemes `Spec K ⟶ Spec H` over `Spec R`. This file packages its kernel: the
 closed subgroup scheme of `Spec K` cut out by the kernel Hopf ideal

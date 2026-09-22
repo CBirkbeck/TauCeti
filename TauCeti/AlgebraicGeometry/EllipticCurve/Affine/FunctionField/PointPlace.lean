@@ -15,6 +15,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.CoordinateRi
 /-!
 # Rational points as degree-one places of an elliptic function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.PointPlace)
+
 For an elliptic Weierstrass curve `W` over a field `F`, this file completes the point--place
 dictionary.  It first packages the already constructed valuation at infinity as a normalized
 `TauCeti.Place F W.FunctionField`.  A place at which `x` has no pole contains the whole coordinate

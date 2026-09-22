@@ -14,6 +14,8 @@ import TauCeti.Topology.IsLocalHomeomorph
 /-!
 # Subgroups parametrise the pointed connected covers bijectively
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Bijection)
+
 Two halves of the correspondence between subgroups of `π₁(X, x₀)` and pointed connected covers
 of `(X, x₀)` are already available. The comparison theorem
 `IsCoveringMap.exists_homeomorph_comp_eq_iff_range_eq` says a pointed connected cover is

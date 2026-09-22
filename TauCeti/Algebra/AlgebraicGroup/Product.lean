@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Bialgebra.TensorProduct
 /-!
 # The direct product of affine group schemes on points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Product)
+
 For two commutative bialgebras `H₁` and `H₂` over `R`, the tensor product `H₁ ⊗[R] H₂` is the
 coordinate bialgebra of the direct product of the affine group schemes `Spec H₁` and
 `Spec H₂`. This file proves that this is reflected on the functor of points: for every

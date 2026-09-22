@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Exact.Stable.Loop
 /-!
 # Suspension and loops are inverse autoequivalences of a Frobenius stable category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Autoequivalence)
+
 Let `E` be a Frobenius exact structure, with chosen conflations `X ⟶ I(X) ⟶ ΣX` and
 `ΩX ⟶ P(X) ⟶ X` whose middle terms are projective-injective. This file proves that the stable
 suspension and stable loop functors are quasi-inverse, and packages them as an additive

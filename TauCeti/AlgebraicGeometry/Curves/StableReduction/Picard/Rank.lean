@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Basic
 /-!
 # Rank of the Picard group of a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Rank)
+
 The Picard group of a numerical type is a finitely generated abelian group of rank one. The key
 input is that the kernel of the intersection matrix has rank one: its positive-entry graph is
 connected and its strictly positive multiplicity vector lies in the kernel, so the weighted

@@ -18,6 +18,8 @@ import Mathlib.Tactic.Abel
 /-!
 # The explicit low-degree complex of continuous cochains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.LowDegree)
+
 Continuous cochain cohomology of a topological group `G` acting on a topological module `M` is
 computed in low degrees by an explicit complex of *plain functions carrying continuity as a
 predicate*: `C¹` is the additive subgroup of continuous elements of `G → M` and `C²` the

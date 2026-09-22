@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Dual.RightAction
 /-!
 # The Auslander--Reiten translate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.AuslanderReiten.Translate)
+
 For an algebra `A` over a commutative semiring `k`, the **duality** `D = Hom_k(-, k)` turns a right
 `A`-module into a left `A`-module, by `TauCeti.dualRightAction`.  This file applies that duality to
 the Auslander--Reiten transpose to define the **Auslander--Reiten translate**

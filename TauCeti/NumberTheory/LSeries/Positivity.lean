@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.LSeries.Basic
 /-!
 # Terms of a Dirichlet series with nonnegative coefficients at a real point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.Positivity)
+
 At a real point `sigma`, the terms of a Dirichlet series with nonnegative coefficients are
 themselves nonnegative reals. Each term therefore equals its own norm, plain summability at `sigma`
 is already absolute summability, and the value of the series is the sum of the norms of its terms.

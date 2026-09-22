@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Ideal.Operations
 /-!
 # Pfister classes and powers of the fundamental ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Witt.Pfister)
+
 For units `a₁, …, aₙ`, the `n`-fold Pfister form is the tensor product
 
 `<<a₁, …, aₙ>> = <<a₁>> ⋯ <<aₙ>>`,

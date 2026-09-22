@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.Submodule.Finite
 /-!
 # The weight basis of a Chevalley lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Weight.Chevalley)
+
 `TauCeti.UniversalEnvelopingAlgebra.kostantWeightBasis` produces a basis of weight vectors for an
 admissible lattice `M ≤ V` from three inputs: stability of `M` under the Kostant integral form,
 finite generation of `M` over `ℤ`, and the requirement that `M` lie in the span of the integral

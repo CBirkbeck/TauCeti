@@ -10,6 +10,8 @@ public import TauCeti.Probability.ProbabilityMassFunction.Marginal
 /-!
 # Finite sums for probability mass functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.ProbabilityMassFunction.Finite)
+
 This file records the summation identities for probability mass functions that need a finiteness
 hypothesis: the total mass on a finite type, and the finite-sum specializations of the marginal
 formulas of `TauCeti.Probability.ProbabilityMassFunction.Marginal`.

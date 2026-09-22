@@ -15,6 +15,8 @@ public import Mathlib.Algebra.CharP.Invertible
 /-!
 # The formal character of a highest weight module against the Weyl denominator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Character)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra and `b` a base of its root
 system. The Weyl character formula is the identity `ch L(λ) · Δ = N(λ)` in the integral group

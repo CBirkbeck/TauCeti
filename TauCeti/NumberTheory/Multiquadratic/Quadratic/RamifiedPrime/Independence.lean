@@ -15,6 +15,8 @@ import Mathlib.NumberTheory.NumberField.ClassNumber
 /-!
 # The ramified primes of an imaginary quadratic field span exactly `2 ^ (t - 1)` classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.RamifiedPrime.Independence)
+
 Let `K = ℚ(√d)` be an imaginary quadratic field, presented by `θ : 𝓞 K` with
 `minpoly ℤ θ = X ^ 2 - d` for a squarefree `d < -1`, and let `t` be the number of rational primes
 ramifying in `K`. The classes `[𝔭_p]` of the primes above the ramified primes are `2`-torsion

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Splitting
 /-!
 # Abel-Jacobi classes and the degree splitting
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.DegreeSplitting)
+
 This file records how the abstract Abel-Jacobi divisor class from
 `TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Basic` interacts with the class-group splitting
 from `TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Splitting`.

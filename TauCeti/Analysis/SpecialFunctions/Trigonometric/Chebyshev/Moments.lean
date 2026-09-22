@@ -11,6 +11,8 @@ import TauCeti.MeasureTheory.Function.PolynomialMemLp
 /-!
 # Polynomial moments for the Chebyshev `T` measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Moments)
+
 This file records bare-polynomial moment, `L¹`, and `L²` consequences of compact support for
 Mathlib's Chebyshev orthogonality measure `Polynomial.Chebyshev.measureT`.
 

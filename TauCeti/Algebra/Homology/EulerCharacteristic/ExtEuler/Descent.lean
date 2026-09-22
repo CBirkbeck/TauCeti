@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Abelian
 /-!
 # Additivity and descent of the Ext-Euler characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Descent)
+
 This file proves that the Ext-Euler characteristic is additive along a short exact sequence in
 either variable. The proof cuts the long exact `Ext` sequence off at a common vanishing bound;
 the correction term at a truncation is the rank of the next boundary map, and it vanishes at the

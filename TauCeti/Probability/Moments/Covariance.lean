@@ -10,6 +10,8 @@ public import Mathlib.Probability.Moments.CovarianceBilin
 /-!
 # Covariance matrices of Euclidean-valued measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.Covariance)
+
 This file packages the coordinate covariances of a measure on a finite-dimensional Euclidean
 space as a matrix and connects that matrix to Mathlib's basis-free `covarianceBilin`.
 

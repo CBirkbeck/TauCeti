@@ -15,6 +15,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Grading
 /-!
 # Quadratic duality for path algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.QuadraticDual)
+
 A quadratic algebra presented on a quiver `Q` is `kQ / (R)` for a space `R` of `k`-linear
 combinations of paths of length two. Its **quadratic dual** is presented on the opposite quiver by
 the orthogonal complement `R^⊥` of `R` for the pairing which makes the paths of length two an

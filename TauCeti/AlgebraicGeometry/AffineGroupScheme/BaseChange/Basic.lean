@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.PullbackSpecMap
 /-!
 # Base change of affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.BaseChange.Basic)
+
 Pullback along `Spec S ⟶ Spec R` carries an affine group scheme over `Spec R` to an affine
 group scheme over `Spec S`. This file bundles that construction on objects and morphisms as
 `TauCeti.AffineGroupSchemeCat.baseChangeFunctor`, and records comparison isomorphisms for base

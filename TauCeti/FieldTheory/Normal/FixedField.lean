@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.PurelyInseparable.Basic
 /-!
 # The fixed field of the automorphism group of a normal extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Normal.FixedField)
+
 For a normal extension `E / F`, the fixed field `E ^ Aut(E/F)` sits between `F` and `E` with
 `F ⊆ E ^ Aut(E/F)` purely inseparable and `E ^ Aut(E/F) ⊆ E` Galois. This is the splitting of
 Stacks, Fields, Lemma 9.27.3(2), whose proof reads "We set `E_insep = E^{Aut(E/F)}`. Details

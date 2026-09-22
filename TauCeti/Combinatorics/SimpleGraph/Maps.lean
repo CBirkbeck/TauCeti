@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Maps
 /-!
 # Pulling a simple graph back along an embedding
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.Maps)
+
 Pulling a simple graph back along an embedding `f : V ↪ W` forgets everything outside the window
 `f '' V`, and pushing the result forward again recovers exactly what the window sees: the
 intersection of the graph with the complete graph supported on that window. Since pushing forward

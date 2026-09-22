@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.LinearMap
 /-!
 # Frobenius on split tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.Frobenius)
+
 Let `A` be a commutative ring of exponential characteristic `p`. On the `A`-valued points of an
 integral split torus, post-composition with the `n`-fold Frobenius of `A` agrees with the
 group-scheme power endomorphism of exponent `p ^ n`. Thus the coordinate-free Frobenius on

@@ -13,6 +13,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 /-!
 # The division-polynomial Wronskian at the generic point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Wronskian)
+
 Multiplication by `n` scales the invariant differential, `[n]*ω = n ω` (Silverman III.5.3). Read
 through `ω = dx / u` with `u = 2y + a₁x + a₃`, and through `[n]*x = Φₙ / ΨSqₙ`, that single
 differential identity becomes an identity between division polynomials: the quotient rule turns

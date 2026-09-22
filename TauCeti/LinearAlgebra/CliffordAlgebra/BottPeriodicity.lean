@@ -18,6 +18,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.VolumeElement
 /-!
 # Hyperbolic Bott periodicity for real Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.BottPeriodicity)
+
 This file proves the `(1, 1)` periodicity step for Clifford algebras: adding one positive and one
 negative generator is equivalent to tensoring with two-by-two real matrices. It also derives the
 signature-switch recurrence `Cliff(p + 2, q) ≅ Cliff(q, p) ⊗ M₂(ℝ)` from

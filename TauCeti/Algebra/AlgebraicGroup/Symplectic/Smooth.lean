@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Lift
 /-!
 # Smoothness of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.Smooth)
+
 The coordinate algebra of the standard symplectic group `Sp_{2m}` is smooth over every
 commutative ring. The infinitesimal lifting criterion turns a lift of a coordinate-algebra map
 through a square-zero quotient into a lift of the corresponding symplectic matrix. The matrix

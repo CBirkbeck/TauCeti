@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.SemidirectProduct
 /-!
 # Joining a subgroup with a subgroup that normalizes it
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SemidirectProduct)
+
 Let `H` and `K` be subgroups of a group `G` with `K ≤ Subgroup.normalizer H`. Multiplication then
 carries the external semidirect product `H ⋊ K` into `G`, and its image is the join `H ⊔ K`.
 

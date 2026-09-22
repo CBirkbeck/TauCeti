@@ -12,6 +12,8 @@ public import Mathlib.GroupTheory.SemidirectProduct
 /-!
 # Permutation wreath products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.WreathProduct)
+
 Let `D` be a group and let a group `Q` act on an index type `ι` by permutations. The associated
 permutation wreath product is the semidirect product
 

@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Finite.SepClosedSubfield
 /-!
 # The Frobenius-fixed points of the full-weight type-C carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.FixedPoints)
+
 `TauCeti.SpStd.groupScheme n` is the explicit full-weight Chevalley carrier of type `C_(n+1)`, and
 `TauCeti.SpStd.frobenius n p k A` is the `p ^ k`-power Frobenius endomorphism of its point group
 over a value ring `A` of exponential characteristic `p`. This file names an isomorphism onto the

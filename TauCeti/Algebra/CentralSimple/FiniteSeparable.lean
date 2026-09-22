@@ -12,6 +12,8 @@ public import TauCeti.Algebra.CentralSimple.SplittingDescent
 /-!
 # Finite separable splitting fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.FiniteSeparable)
+
 Every finite-dimensional central simple algebra over a field has a finite separable splitting
 field. The separable closure splits the algebra, and finite descent produces a finite intermediate
 field which is automatically separable over the base field.

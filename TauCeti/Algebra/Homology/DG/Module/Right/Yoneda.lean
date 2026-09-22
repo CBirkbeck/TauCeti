@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.HomComplex
 /-!
 # The free rank-one right module and the differential graded Yoneda lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Yoneda)
+
 A differential graded algebra `A` is a differential graded right module over itself — this is
 `TauCeti.IsDGAlgebra.isDGRightModule`, the **free rank-one** right module, the module represented
 by the unique object of the one-object differential graded category attached to `A`.

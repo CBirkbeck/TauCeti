@@ -19,6 +19,8 @@ public import Mathlib.RingTheory.Spectrum.Prime.Noetherian
 /-!
 # The identity component as a Hopf ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.Comultiplication)
+
 Let `H` be a commutative Hopf algebra of finite type over an algebraically closed field.  The
 connected component of the counit point is stable under multiplication: equivalently, the
 comultiplication of the ideal cutting out that component lies in `I ⊗ H + H ⊗ I`.  Together

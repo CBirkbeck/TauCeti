@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.OpenMapping.Basic
 /-!
 # The approximating sequence of Henkel's open mapping theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.OpenMapping.Sequence)
+
 `TauCeti/Topology/Algebra/OpenMapping/Basic.lean` proves one step of Henkel's approximation: a
 point in
 `closure (f '' U)` is brought inside `closure (f '' V)` by subtracting the image of some `x ∈ U`.

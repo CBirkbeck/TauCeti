@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Basic
 /-!
 # Executable conjugacy-class data for the alternating group of degree four
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Alternating)
+
 The alternating group `A₄` has four conjugacy classes: the identity, the three double
 transpositions, and two classes of four three-cycles.  This file gives those classes the executable
 numbering needed by the Dixon--Schneider character-table algorithm.  The representatives are

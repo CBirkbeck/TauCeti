@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Signature
 /-!
 # The Morse index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.Index)
+
 This file defines the Hessian quadratic form of a real-valued function on a real normed space and,
 in finite dimensions, its **Morse index**: the negative index of inertia of the Hessian.  Thus the
 index is the maximal dimension of a subspace on which the Hessian is negative-definite.

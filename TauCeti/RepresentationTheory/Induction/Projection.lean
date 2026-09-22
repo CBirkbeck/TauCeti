@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Induced
 /-!
 # The projection formula for induced representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Projection)
+
 For a group homomorphism `φ : G →* H`, a `G`-representation `A` and an `H`-representation `B`, the
 *projection formula* (or *tensor identity*) is the isomorphism of `H`-representations
 

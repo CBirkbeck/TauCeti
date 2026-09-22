@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Symplectic.StandardCarrier.Scheme
 /-!
 # Presented points of the full-weight type-C carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.PointsFunctor)
+
 `TauCeti.SpStd.pointsPresentation` presents the carrier's matrix points by its defining
 integral Hopf ideal. The shared `GeneralLinear.IntegralPointsPresentation` API supplies maps
 of value rings, their functoriality, and the representing equivalence with quotient-algebra

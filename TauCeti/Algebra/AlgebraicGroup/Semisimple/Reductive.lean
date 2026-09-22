@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Solvable
 /-!
 # Semisimple affine groups are reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Semisimple.Reductive)
+
 Every smooth connected normal unipotent closed subgroup of a semisimple affine group has solvable
 geometric points. It is therefore trivial by semisimplicity, which is precisely the defining
 normal-subgroup condition for reductivity.

@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Duality.Basic
 /-!
 # Complementary slackness, optimality certificates, and `c`-cyclical monotonicity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Duality.Certificate)
+
 A pair of integrable potentials `φ`, `ψ` satisfying the Kantorovich dual constraint
 `φ x + ψ y ≤ c (x, y)` bounds the cost of every transport plan from below. When a plan is
 concentrated on the *contact set* where that constraint is an equality, the two bounds meet:

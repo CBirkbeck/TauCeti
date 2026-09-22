@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PushClass
 /-!
 # A class-group map on points associated to an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PointHom)
+
 An isogeny `φ : W₁ → W₂` is a map of function fields, backwards, and carries no map of points with
 it. The ideal class groups nevertheless define a map on points: `Isogeny.pushClass` extends an
 ideal of `W₁.CoordinateRing` into the intermediate ring and norms it down to

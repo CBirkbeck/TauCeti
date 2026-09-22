@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Monoidal
 /-!
 # Local functionals from tensor automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.LocalFunctional)
+
 Let `H` be a bialgebra over a commutative semiring `k`, and let `A` be a commutative
 `k`-algebra. A tensor automorphism `η` of scalar extension on the finitely generated
 `H`-comodules acts, in particular, on every finite subcomodule `N` of the regular comodule `H`.

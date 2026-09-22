@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Group.ConjFinite
 /-!
 # Sizes of conjugacy classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.ConjFinite)
+
 Two elementary facts about the carrier of a conjugacy class: the class of the identity is the
 singleton `{1}`, and every class of a finite group is nonempty.
 

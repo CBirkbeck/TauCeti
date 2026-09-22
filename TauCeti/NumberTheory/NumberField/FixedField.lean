@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.NumberField.AutomorphismAction
 /-!
 # Ideals over a fixed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.FixedField)
+
 Let `H` be a subgroup of `Gal(L/K)` and `E = L ^ H`.  The Galois correspondence identifies `H` with
 `Gal(L/E)` without moving points, hence without moving ideals: an element of `H` and its image in
 `Gal(L/E)` act alike on the ideals of `𝓞 L`.  The stabilizer of an ideal `Q` in `Gal(L/E)`

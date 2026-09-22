@@ -12,6 +12,8 @@ public import TauCeti.Probability.Kernel.Composition.MeasureCompProd
 /-!
 # Gluing a countable chain of transport plans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Chain)
+
 This file turns a sequence of probability measures on consecutive products
 `X n × X (n + 1)`, with matching adjacent marginals, into a probability measure on the path
 space `∀ n, X n`. Its projection to every consecutive pair is the prescribed measure.

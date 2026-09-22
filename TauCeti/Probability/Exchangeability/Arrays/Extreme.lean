@@ -13,6 +13,8 @@ import Mathlib.Probability.Process.FiniteDimensionalLaws
 /-!
 # Extreme jointly exchangeable array laws and finitary tests
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Extreme)
+
 A jointly exchangeable probability law on array path space `ℕ × ℕ → α` is an extreme point of
 the convex set of jointly exchangeable probability laws if and only if its coordinate array is
 jointly dissociated. With the corner-tail theorem and the ergodicity theorem this completes the

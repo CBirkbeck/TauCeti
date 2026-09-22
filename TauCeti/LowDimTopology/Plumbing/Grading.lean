@@ -11,6 +11,8 @@ public import TauCeti.LowDimTopology.Plumbing.Differential
 /-!
 # The cubical grading of the lattice differential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Grading)
+
 The generators of Némethi's lattice complex are plumbing cubes, graded by the cardinality of
 their direction sets. This file splits the total plumbing-chain module into its cubical-degree
 submodules and restricts the lattice differential to maps

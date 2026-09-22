@@ -11,6 +11,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 /-!
 # Normal forms: transport, changes of variables, and elementary consequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.NormalForms)
+
 Mathlib's `WeierstrassCurve.IsCharNeTwoNF` asserts `a₁ = a₃ = 0` and its
 `WeierstrassCurve.IsShortNF` asserts `a₁ = a₂ = a₃ = 0`, and its `NormalForms` file proves a
 great deal from those hypotheses. This file collects three things it does not record.

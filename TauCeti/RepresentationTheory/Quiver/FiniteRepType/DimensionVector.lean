@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.DimensionVector
 /-!
 # Dimension vectors of isomorphism classes of indecomposables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.FiniteRepType.DimensionVector)
+
 The dimension vector is constant on isomorphism classes, so it descends to the skeleton of the
 finite-dimensional indecomposable representations as `TauCeti.isoClassDimVector`. This file gives
 the generic map and its computation rules; results requiring a positive definite Tits form live in

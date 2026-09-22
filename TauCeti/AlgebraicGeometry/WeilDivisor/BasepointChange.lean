@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Basic
 /-!
 # Changing the base point in the abstract Abel-Jacobi class
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.BasepointChange)
+
 This file adds the base-point-change calculus for the formal divisor-class shadow of the
 Abel-Jacobi map from `TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Basic`.
 

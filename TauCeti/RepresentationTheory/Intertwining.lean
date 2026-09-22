@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Intertwining
 /-!
 # An injective intertwining map is an isomorphism onto its image
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Intertwining)
+
 Mathlib records the image of an intertwining map as a subrepresentation
 (`Representation.IntertwiningMap.range`) and turns a bijective intertwining map into an
 equivalence (`Representation.IntertwiningMap.ofBijective`), but it does not connect the two: an

@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.PermutationTriple.Passport.Class
 /-!
 # The passport of a connected permutation triple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Passport.OfTriple)
+
 Every connected permutation triple determines a passport: its monodromy subgroup is the reference
 subgroup and its three full cycle partitions are the ordered partition data.  The resulting
 passport is admissible and contains the original triple.

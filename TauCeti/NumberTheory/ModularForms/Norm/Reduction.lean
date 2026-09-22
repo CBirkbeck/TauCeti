@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.ModularForms.QExpansion.BigO
 /-!
 # The coset data of the norm map to level one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Norm.Reduction)
+
 The general-level valence formula reduces to level one along the norm map
 `ModularForm.norm`: the norm of a form `f` on a finite-index subgroup `Γ ≤ SL(2, ℤ)` is a
 level-one form, and the orders of `f` distribute over its factors. This file sets up the

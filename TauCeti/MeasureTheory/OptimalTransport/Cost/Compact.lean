@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Basic
 /-!
 # Transport costs on compact spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.Compact)
+
 This file records finiteness of the transport cost for a continuous real-valued cost on a compact
 product. Compactness bounds the cost by a finite constant, so any feasible pair of finite
 marginals has finite primal value.

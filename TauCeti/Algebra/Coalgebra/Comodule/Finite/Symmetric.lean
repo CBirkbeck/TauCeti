@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.Monoidal
 /-!
 # The symmetric monoidal category of finite comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Symmetric)
+
 This file equips finitely generated right comodules over a commutative bialgebra with their
 standard symmetric monoidal structure. The braiding is the ordinary tensor-product swap
 

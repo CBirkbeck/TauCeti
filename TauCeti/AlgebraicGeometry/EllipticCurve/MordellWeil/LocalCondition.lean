@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.BaseChange
 /-!
 # Base change of the étale algebra, and the local condition of `2`-descent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.LocalCondition)
+
 Let `W : y² = f(x) = x³ + a₂x² + a₄x + a₆` be an elliptic curve in characteristic `≠ 2` normal
 form over a field `K`, with étale algebra `A = K[X]⧸⟨f⟩` and descent map
 `μ : W(K) → M = Aˣ/(Aˣ)²`, as set up in

@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.SymplecticGroup
 /-!
 # The determinant of a rank-two matrix from its symplectic multiplier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SymplecticMultiplier)
+
 `Matrix.J l R` is the standard symplectic form on `l ⊕ l`, and `Matrix.symplecticGroup` collects
 the matrices preserving it, `Aᵀ * J * A = J`. This file records what happens one step out, when
 `A` merely *scales* the form: in the rank-two case — `l` a singleton — the scaling factor is

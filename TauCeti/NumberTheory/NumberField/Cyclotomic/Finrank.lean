@@ -11,6 +11,8 @@ import TauCeti.FieldTheory.IntermediateField.Adjoin.EqTop
 /-!
 # The degree of a cyclotomic extension of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Cyclotomic.Finrank)
+
 Mathlib computes the degree of an `m`-th cyclotomic extension either over `ℚ`
 (`IsCyclotomicExtension.Rat.finrank`) or over a base for which the `m`-th cyclotomic polynomial
 is already known to be irreducible (`IsCyclotomicExtension.finrank`). Neither is directly usable

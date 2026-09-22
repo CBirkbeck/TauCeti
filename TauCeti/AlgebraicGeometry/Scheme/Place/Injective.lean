@@ -12,6 +12,8 @@ public import Mathlib.AlgebraicGeometry.ValuativeCriterion
 /-!
 # A place determines its center on a separated scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.Place.Injective)
+
 On an integral separated scheme over a field, two points with discrete valuation ring stalks
 have the same associated function-field place exactly when they coincide. Equality of the
 places identifies their valuation rings inside the function field. The uniqueness part of the

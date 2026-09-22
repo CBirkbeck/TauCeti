@@ -12,6 +12,8 @@ import TauCeti.Algebra.CentralSimple.Quaternion
 /-!
 # Eight-step periodicity for real Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.EightPeriodicity)
+
 The matrix and quaternion recurrences combine to identify adding eight positive generators with
 tensoring by sixteen-by-sixteen real matrices.
 

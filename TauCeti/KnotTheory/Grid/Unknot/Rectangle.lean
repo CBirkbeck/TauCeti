@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Unknot.Basic
 /-!
 # Rectangles in the standard unknot grid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Unknot.Rectangle)
+
 This file characterizes when a rectangle in a standard unknot grid avoids all markings. Since the
 `O` markings lie on the diagonal and the `X` markings one row above it, the condition can be read
 off column by column.

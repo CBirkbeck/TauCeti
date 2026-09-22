@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Examples
 /-!
 # The rank-one lattice `⟨2m⟩` and its discriminant form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RankOne)
+
 For a nonzero integer `m`, let `⟨2m⟩` be the lattice `ℤe` inside `ℚ` carrying the form
 `B(e, e) = 2m`.  This file constructs it as `TauCeti.IntegralLattice.rankOne` and computes every
 invariant the integral-lattices roadmap asks a rank-one example to produce: the dual lattice, the

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Basic
 /-!
 # Vertices, oriented edges, and backtracks in a doubled path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.PathAlgebra)
+
 The zigzag algebra of a simple graph `G` is a quotient of the path algebra of the doubled quiver
 `TauCeti.DoubledQuiver G` by relations among the paths of length at most two. This file names those
 short paths and their path-algebra elements, and computes the products among them.

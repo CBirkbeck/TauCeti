@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Basic
 /-!
 # Points valued in the counit algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.CounitPoints)
+
 Tangent vectors at the identity of `Spec H` are derivations valued in
 `Bialgebra.CounitAlgebra R H B`, and the points that conjugate them are therefore points valued
 in that same algebra. The counit algebra is `B` carrying one extra `H`-algebra structure, which

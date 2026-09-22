@@ -13,6 +13,8 @@ import TauCeti.Topology.Homotopy.Path
 /-!
 # The fundamental groups of the two open sets of the standard cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.ThricePuncturedSphere.PuncturedHalfPlanes)
+
 The thrice-punctured sphere `ℂ ∖ {0, 1}` is covered by the two open sets
 `A = {z | re z < 1}` and `B = {z | 0 < re z}`. In `ℂ`, the set `A` is the convex half-plane
 `re z < 1` punctured at `0`, and `B` is the convex half-plane `0 < re z` punctured at `1`. The

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Quadratic
 /-!
 # Cyclic finite quadratic modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.Cyclic)
+
 A `ℚ/ℤ`-valued quadratic map on `ℤ/m` is determined by its value on the generator `1`, and a
 value `a` occurs exactly when `m²a = 0` and `2ma = 0`.  This file makes that presentation
 available as a construction: given `a : ℚ/ℤ` satisfying those two torsion conditions,

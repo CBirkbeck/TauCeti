@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.RootSystem.Height
 /-!
 # The Kostant partition function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.KostantPartition.Basic)
+
 The Kostant partition function `P(ν)` counts the ways of writing an element `ν` of the ambient root
 module as a sum of positive roots with multiplicity. This file defines it for a base of an arbitrary
 root pairing, together with the finiteness statement that makes the count meaningful.

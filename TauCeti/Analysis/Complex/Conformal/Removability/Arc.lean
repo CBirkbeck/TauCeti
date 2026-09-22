@@ -12,6 +12,8 @@ import TauCeti.Analysis.Complex.Conformal.Inverse.Function
 /-!
 # Painlevé removability across an analytic arc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Removability.Arc)
+
 An analytic arc is locally straightened by a biholomorphic coordinate chart. This file proves
 that every subset of the real locus of such a chart is removable for continuous holomorphic
 functions: if `F` is continuous on an open part of the chart source and holomorphic away from the

@@ -16,6 +16,8 @@ import Mathlib.NumberTheory.Padics.PadicVal.Basic
 /-!
 # Supernatural numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Supernatural)
+
 A supernatural number, also called a Steinitz number, is a formal product
 `\prod_p p ^ n_p`, where `p` ranges over the rational primes and every exponent `n_p` is an
 extended natural number.  This file realizes supernatural numbers as exponent functions and

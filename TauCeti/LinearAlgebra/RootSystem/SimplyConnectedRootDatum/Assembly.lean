@@ -19,6 +19,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Basic
 /-!
 # The pinned simply connected root datum of a Dynkin type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly)
+
 This file assembles the explicit simply connected root data for the nine irreducible
 crystallographic Dynkin families into one construction indexed by a valid
 `TauCeti.DynkinType`. Both lattices are `Fin t.rank → ℤ`: the character lattice uses the

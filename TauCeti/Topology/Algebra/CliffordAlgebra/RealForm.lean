@@ -11,6 +11,8 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Euclidean coordinates for positive-definite real Clifford forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.RealForm)
+
 The positive-definite real Clifford form is the squared Euclidean norm after passing between
 function and Euclidean-space coordinates. Consequently, its unit quadric is identified with the
 Euclidean unit sphere.

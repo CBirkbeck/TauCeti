@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.ObjectProperty.Equivalence
 /-!
 # Graded exact structures on full subcategories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Graded.FullSubcategory)
+
 An extension-closed full additive subcategory of an exact category — explicitly, one containing a
 zero object and closed under binary products — inherits an exact structure. If the ambient
 category is graded and the object property is moreover stable under the grading shift, that shift

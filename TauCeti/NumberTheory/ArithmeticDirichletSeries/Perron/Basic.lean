@@ -19,6 +19,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # The truncated Perron kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Perron.Basic)
+
 Perron's formula recovers a summatory function from a Dirichlet series by integrating `x ^ s / s`
 up a vertical line.  At finite height the integral is not the sharp step function it approximates,
 and this file makes the finite-height object visible before any estimate is applied to it.

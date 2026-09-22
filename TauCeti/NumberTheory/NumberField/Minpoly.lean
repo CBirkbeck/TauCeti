@@ -12,6 +12,8 @@ import Mathlib.FieldTheory.Minpoly.IsIntegrallyClosed
 /-!
 # Minimal polynomials of algebraic integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Minpoly)
+
 An algebraic integer `x` of a number field `K` has a minimal polynomial over `ℤ`, as an element of
 `𝓞 K`, and a minimal polynomial over `ℚ`, as an element of `K`. Since `ℤ` is integrally closed,
 the second is the first with its coefficients cast to `ℚ`.

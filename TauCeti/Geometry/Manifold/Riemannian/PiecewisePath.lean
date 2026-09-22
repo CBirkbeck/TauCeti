@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.PiecewisePath
 /-!
 # Piecewise smooth Riemannian paths
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.PiecewisePath)
+
 This file extends the metric-independent piecewise smooth path API with Riemannian length results.
 It proves that the sum of `Manifold.pathELength` over any ordered partition is the length on the
 whole interval. Consequently the sum used to compute the length of a piecewise-`C¹` path is

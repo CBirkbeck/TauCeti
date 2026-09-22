@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.Winding.UnboundedComponent
 /-!
 # The winding numbers of the half-disc contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Winding)
+
 `WorkedExamples/HalfDisc/Basic.lean` builds the boundary of the upper half-disc of radius `R`
 about the origin and computes its generalized winding number at the one point of the contour that
 the Hungerbühler–Wasem half-residue theorem needs: the origin, where the value is `½`. This file

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 /-!
 # Coordinate rotations in the special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.CoordinateRotation)
+
 For two distinct coordinates, the signed transposition which sends the first basis vector to the
 second and the second to the negative of the first is special orthogonal. Its square changes the
 sign of exactly those two coordinates. These elementary matrices give a convenient, ring-valued

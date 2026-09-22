@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Polynomial.Chebyshev
 /-!
 # The Chebyshev polynomials as a basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Chebyshev.Basis)
+
 This file packages the Chebyshev polynomials of the first kind as a basis of `R[X]` when `R` is an
 integral domain in which `2` is invertible. Mathlib
 already proves that `T R n` has degree `n`, records its leading coefficient, and bundles the

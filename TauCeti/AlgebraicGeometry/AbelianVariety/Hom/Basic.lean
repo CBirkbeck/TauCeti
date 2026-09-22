@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Basic
 /-!
 # Homomorphisms of abelian varieties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.Hom.Basic)
+
 This file supplies the morphism part of the basic abelian-variety API. A homomorphism of abelian
 varieties over `K` is a morphism over `Spec K` preserving the unit and multiplication of the
 underlying group schemes. Such morphisms form the category `AbelianVariety K`, inherited from

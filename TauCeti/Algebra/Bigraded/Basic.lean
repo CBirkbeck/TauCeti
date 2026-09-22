@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Ring.NegOnePow
 /-!
 # Bigraded Poincaré series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bigraded.Basic)
+
 This file defines the Poincaré series of a finite-dimensional bigraded vector space, together
 with its total dimension and Alexander-graded Euler characteristic.
 

@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Subrepresentation
 /-!
 # Invariant complements of unitary continuous representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.InvariantComplement)
+
 For a unitary representation of a *group* the orthogonal complement of an invariant subspace is
 again invariant, so an invariant subspace admitting an orthogonal projection has an invariant
 complement. This is the averaging-free half of complete reducibility: it needs no measure, only

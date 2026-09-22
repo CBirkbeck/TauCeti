@@ -11,6 +11,8 @@ public import Mathlib.Logic.Equiv.Basic
 /-!
 # Swapping two entries of an additive family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Swap)
+
 This file records the elementary identity expressing a transposition of an additive family as a
 reflection. It is shared by coordinate and type-`A` root-datum constructions.
 -/

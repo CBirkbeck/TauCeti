@@ -12,6 +12,8 @@ import TauCeti.RingTheory.MvPowerSeries.Rename
 /-!
 # Renaming the variables of `A⟨X⟩_T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Rename)
+
 An embedding `e : Fin k ↪ Fin m` of variables renames power series in `k` variables to power
 series in `m` variables, `Xᵢ ↦ X_{e i}`. Renaming preserves weighted restrictedness as soon as each
 weight `T i` lies in the weight `S (e i)` of the variable it is sent to, and so induces a

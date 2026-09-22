@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 /-!
 # The Weierstrass partial derivatives are derivatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Derivative)
+
 Mathlib defines the two partial derivatives `WeierstrassCurve.Affine.polynomialX` and
 `WeierstrassCurve.Affine.polynomialY` of the Weierstrass polynomial `W(X, Y)` by explicit
 formulae, and marks both definitions with the comment

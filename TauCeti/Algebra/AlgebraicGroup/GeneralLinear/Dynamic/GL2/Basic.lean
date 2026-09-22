@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Borel
 /-!
 # The upper-triangular Borel as a dynamic parabolic of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.GL2.Basic)
+
 For the cocharacter
 
 ```text

@@ -16,6 +16,8 @@ public import Mathlib.Topology.Maps.Strict.Basic
 /-!
 # The local coordinate at a cusp
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.UpperHalfPlane.CuspCoordinate)
+
 For a positive width `w`, the usual local coordinate
 `z ↦ exp (2 π i z / w)` maps the upper half-plane onto the punctured unit disc. Its fibres
 are exactly the orbits of the translation subgroup `w ℤ`. Consequently it identifies the orbit

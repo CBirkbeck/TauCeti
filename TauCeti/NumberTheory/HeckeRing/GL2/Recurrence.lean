@@ -14,6 +14,8 @@ import Mathlib.Tactic.Module
 /-!
 # The `GL₂` multiplication table: the prime-power recurrence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Recurrence)
+
 Shimura's Theorem 3.24(4): the summed Hecke operators at a prime satisfy
 
 `T(p^(k+1)) = T(p) · T(pᵏ) − p · T(p,p) · T(p^(k−1))`   for `k ≥ 1`,

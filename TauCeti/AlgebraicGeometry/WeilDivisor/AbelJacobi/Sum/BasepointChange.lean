@@ -12,6 +12,8 @@ import Mathlib.Tactic.Abel
 /-!
 # Changing the base point in Abel-Jacobi divisor sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Sum.BasepointChange)
+
 This file combines the point-level base-point-change API for the abstract Abel-Jacobi class
 with the divisor-level Abel-Jacobi sum.
 

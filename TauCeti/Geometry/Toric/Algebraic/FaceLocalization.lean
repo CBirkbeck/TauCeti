@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Toric.Algebraic.DualSemigroup.Face
 /-!
 # Face localizations of affine toric schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.FaceLocalization)
+
 A character `m` in the dual semigroup of a cone `σ` is nonnegative on `σ`, so it cuts out the face
 `σ ⊓ ker m` of `σ` (`PointedCone.isFaceOf_inf_ker`). The inclusion of that face into `σ` induces
 the restriction map from the coordinate ring of `σ` to the coordinate ring of the face. When `σ`

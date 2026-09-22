@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.FiniteDimension
 /-!
 # The Coxeter functor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Composite)
+
 Reflecting a quiver at a sink reverses the arrows there, and the Bernstein-Gelfand-Ponomarev
 reflection functor `C⁺ᵢ` carries its representations to representations of the reflected quiver
 (`TauCeti.reflectionFunctor`). Reflecting at the successive entries of a **sink-admissible** list

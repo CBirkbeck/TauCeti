@@ -13,6 +13,8 @@ import TauCeti.Analysis.SpecialFunctions.Trigonometric.Arccos
 /-!
 # The chord and the arc on a circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Circle.Metric)
+
 Mathlib's `Circle` carries both a metric, from the inclusion into `ℂ`, and an arc-length API:
 `Circle.exp` parametrizes it by angles and `Circle.angleDiff x y` is the length of the arc running
 counterclockwise from `x` to `y`. This file relates the two, comparing the *chord* `dist x y` with

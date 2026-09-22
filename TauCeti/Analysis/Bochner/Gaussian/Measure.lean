@@ -12,6 +12,8 @@ import TauCeti.Analysis.Bochner.Fourier.Convention
 /-!
 # The Bochner measure of a Gaussian
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.Gaussian.Measure)
+
 This file identifies the measure in Bochner's theorem for the Gaussian positive-definite
 function
 

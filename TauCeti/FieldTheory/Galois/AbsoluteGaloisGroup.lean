@@ -15,6 +15,8 @@ public import TauCeti.FieldTheory.Galois.FixedField
 /-!
 # The absolute Galois group of a field, taken at its separable closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Galois.AbsoluteGaloisGroup)
+
 For a normal extension `E/F` an automorphism of `E` is determined by, and determined on, the
 separable closure of `F` in `E`: restriction
 

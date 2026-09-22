@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Semisimple.BlockCount
 /-!
 # Chosen Wedderburn presentations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.Wedderburn.Presentation)
+
 The Artin--Wedderburn theorem in Mathlib gives an existential decomposition of a semisimple ring
 as a finite product of matrix rings over division rings.  This file packages one such decomposition
 as a `WedderburnPresentation`.  It also packages three refinements supplied by Mathlib: the algebra

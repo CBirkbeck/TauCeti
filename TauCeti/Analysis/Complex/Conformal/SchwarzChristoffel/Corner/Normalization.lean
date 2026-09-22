@@ -14,6 +14,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 /-!
 # Power normalization of a conformal corner
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Corner.Normalization)
+
 A conformal map meeting two straight boundary edges at an angle `βπ` can be straightened by
 the power `z ↦ z ^ (1 / β)`.  For a convex corner, `0 < β ≤ 1`, the normalized corner lies in
 the closed upper half-plane, so the principal power is continuous up to both edges.  It maps the

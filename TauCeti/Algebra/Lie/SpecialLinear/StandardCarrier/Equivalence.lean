@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.GraphAutomorphism
 /-!
 # Comparing the type-A standard carrier with special linear matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Equivalence)
+
 Over a field, the matrix points of the full-weight type-`A_r` carrier are precisely the
 determinant-one matrices. This file packages that equality as a multiplicative equivalence with
 `SL_{r+1}` and proves that it respects the structures used by the finite groups of Lie type:

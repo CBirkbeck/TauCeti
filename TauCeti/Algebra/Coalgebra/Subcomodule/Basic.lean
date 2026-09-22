@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Basic
 /-!
 # Subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Basic)
+
 This file defines subcomodules of a right comodule as submodules whose elements have
 coaction in the tensor product of the submodule with the coalgebra. It is deliberately a
 lightweight predicate-style API: over a general commutative semiring, the map

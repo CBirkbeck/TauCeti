@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Finsupp.Pi
 /-!
 # A base of the diagonal root datum of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Root.Base)
+
 For `GL_(n+1)`, the consecutive coordinate differences
 
 ```text

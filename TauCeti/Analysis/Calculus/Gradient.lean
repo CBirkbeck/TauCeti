@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Add
 /-!
 # The gradient is an isometric conjugate-linear image of the Fréchet derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Gradient)
+
 Mathlib defines `gradient f x`, written `∇ f x`, as the Riesz representative
 `(InnerProductSpace.toDual 𝕜 F).symm (fderiv 𝕜 f x)` of the Fréchet derivative of a scalar
 function on an inner product space, and develops its differential calculus. This file records the

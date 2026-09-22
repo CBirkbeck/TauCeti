@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Unipotent.Geom
 /-!
 # Geometry of general-linear weight parabolics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Parabolic.Geometry)
+
 Every weight Levi has a localized block-coordinate presentation that makes it smooth and
 geometrically connected. Combining these facts with the represented weight-parabolic Levi
 decomposition

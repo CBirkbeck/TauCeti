@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Module.Equiv
 /-!
 # Multiplication by `i` on a complex normed space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.SmulI)
+
 Multiplication by `i` is a real continuous linear automorphism of any complex normed space, with
 inverse multiplication by `-i`.  It is the conjugating operator by which complex linearity of a
 real-linear map is tested.

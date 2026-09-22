@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.HopfAlgebra.Convolution
 /-!
 # Hopf algebra morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.Basic)
+
 This file records Hopf-algebra API needed for the affine-group-scheme dictionary in the
 reductive-groups roadmap. Mathlib defines morphisms in `HopfAlgCat R` to be bialgebra
 morphisms; the missing algebraic fact is that such a morphism automatically preserves the

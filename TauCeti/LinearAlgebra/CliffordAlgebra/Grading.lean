@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.ExteriorAlgebra.Basis
 /-!
 # Reading the `ℤ/2`-grading: base cases, exterior bases, and ordered products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Grading)
+
 An induction over the `ℤ/2`-grading of a Clifford algebra — Mathlib's
 `CliffordAlgebra.evenOdd_induction` — hands its base case back as membership in a power of
 `LinearMap.range (ι Q)` whose exponent is a `ZMod.val`. Since `(0 : ZMod 2).val` is `0` and

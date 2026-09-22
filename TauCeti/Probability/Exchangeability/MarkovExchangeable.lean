@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.Basic
 /-!
 # Markov exchangeability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MarkovExchangeable)
+
 A process `X : ℕ → Ω → α` on a countable state space is **Markov exchangeable** — Diaconis and
 Freedman's *partial exchangeability* — when two finite paths that start at the same state and make
 the same number of transitions from each state to each state are equally likely:

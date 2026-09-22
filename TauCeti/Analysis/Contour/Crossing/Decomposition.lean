@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.Winding.Integer
 /-!
 # Winding-number accounting for finitely many crossing excisions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.Decomposition)
+
 Hungerbühler--Wasem Proposition 2.2 replaces finitely many crossing windows of a closed
 piecewise-`C¹` immersion by circular caps. `Crossing.FiniteExcision` constructs a simultaneously
 excised curve from a supplied list of windows. This file proves the finite accounting identity

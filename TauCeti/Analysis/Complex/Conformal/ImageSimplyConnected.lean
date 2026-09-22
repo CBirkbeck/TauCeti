@@ -13,6 +13,8 @@ import Mathlib.Topology.Maps.Basic
 /-!
 # Images of open simply connected sets under injective holomorphic maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.ImageSimplyConnected)
+
 A holomorphic map that is injective on an open set `Ω ⊆ ℂ` carries `Ω` to an open set, and carries
 a simply connected `Ω` to a simply connected set. Both facts are used by the Riemann mapping
 theorem, where the image of an extremal map has to be recognized as a domain of the same kind as

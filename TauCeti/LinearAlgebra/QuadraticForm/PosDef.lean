@@ -14,6 +14,8 @@ public import Mathlib.Data.Int.Interval
 /-!
 # Vectors of bounded value for a positive definite integral quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.PosDef)
+
 A positive definite quadratic form on a finitely generated free `ℤ`-module takes each of its values
 only finitely often: the sets `{x | q x ≤ n}` and `{x | q x = n}` are finite. This is the
 finiteness that makes "the vectors of norm `n`" of a positive definite lattice a finite list, and

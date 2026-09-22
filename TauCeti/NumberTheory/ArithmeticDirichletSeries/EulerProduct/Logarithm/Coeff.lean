@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.PowerSeries.Log
 /-!
 # Formal logarithmic-derivative coefficients of an ideal Euler product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Coeff)
+
 An `EulerProductData K` has at every height-one prime `P` a canonical local power series
 
 `F_P(X) = ∑ e, D(P ^ e) X ^ e`.

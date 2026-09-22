@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.Constructions.Pi
 /-!
 # Integrals over finite product measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.Pi)
+
 This file collects integration results for finite product measures. In addition to the lower
 integral product formula, it gives a Fubini identity obtained by refreshing two coordinates with
 independent samples.

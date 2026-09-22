@@ -11,6 +11,8 @@ public import Mathlib.Topology.Connected.Clopen
 /-!
 # Connected prime spectra and idempotents
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Connected.Spectrum)
+
 The prime spectrum of a nontrivial commutative ring is connected exactly when the ring has no
 idempotents other than zero and one.  Mathlib identifies idempotents with clopen subsets of the
 prime spectrum; this file records the resulting connectedness criterion in the form used by

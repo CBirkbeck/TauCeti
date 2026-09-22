@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Normed.Affine.Isometry
 /-!
 # Geometric invariance of the Laplacian
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Laplacian.Basic)
+
 Mathlib's `Mathlib/Analysis/InnerProductSpace/Laplacian.lean` records that the Laplacian `Δ`
 commutes with *left* composition by a continuous linear map or equivalence acting on the
 *values* of a function (`ContDiffAt.laplacian_CLM_comp_left`, `laplacian_CLE_comp_left`).

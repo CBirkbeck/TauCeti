@@ -15,6 +15,8 @@ import TauCeti.Algebra.Lie.Weights.Central
 /-!
 # Dominant weights and highest weight vectors for `gl n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.HighestWeight)
+
 Weights of `gl n R` for the diagonal Cartan subalgebra are tuples `μ : n → R`
 (`TauCeti.glWeightEquiv`). This file adds the two predicates that highest weight theory for
 `gl n` is stated against, both in the matrix unit positive system of

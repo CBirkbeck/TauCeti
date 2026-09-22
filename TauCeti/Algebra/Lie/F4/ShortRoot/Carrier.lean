@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The short-root carrier of type F4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.Carrier)
+
 This file feeds the explicit twenty-six-dimensional short-root representation of type `F₄`, its
 admissible coordinate lattice, and its full set of weights into the Kostant toral-closure
 construction. The result is an affine group scheme over `ℤ`: the smallest closed subgroup scheme

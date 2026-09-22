@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Consequences.HighDegree
 /-!
 # Elliptic function fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Elliptic)
+
 An algebraic function field `F / k` is *elliptic* when it has genus one and carries a divisor of
 degree one.  The degree-one divisor belongs to the definition and is not a consequence of the
 genus: it is what Riemann–Roch converts into a place of degree one, and nothing about a

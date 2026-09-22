@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Partition
 /-!
 # Bounded transport costs along weakly convergent marginals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.WeakConvergence)
+
 A cost `c : X × X → ℝ≥0∞` that is bounded and vanishes uniformly near the diagonal — for every
 `ε > 0` there is `δ > 0` with `c (x, y) ≤ ε` whenever `edist x y < δ` — measures how far apart two
 laws are. This file proves that on a separable pseudometric space every such transport cost tends

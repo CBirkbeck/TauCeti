@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Basic
 /-!
 # Coordinate criterion for central kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Coordinate)
+
 A morphism `f : H ⟶ K` of commutative Hopf algebras induces contravariantly a morphism
 `Spec K ⟶ Spec H` of affine group schemes. This file identifies the two existing notions of a
 central kernel for that morphism:

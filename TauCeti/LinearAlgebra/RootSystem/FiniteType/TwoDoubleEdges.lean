@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Basic
 /-!
 # A chain of a finite-type diagram carries at most one multiple edge
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.TwoDoubleEdges)
+
 In a finite-type diagram the multiple edges at a *single* index are already restricted: an index
 carrying one is joined to every other index by at most a single edge
 (`TauCeti.IsFiniteType.apply_mul_apply_le_one_of_two_le`), and a triple edge is isolated outright

@@ -16,6 +16,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # Invertible matrices fixed by the entrywise Frobenius
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Frobenius)
+
 Let `A` be a commutative ring of exponential characteristic `p`. Raising every entry to the
 `p ^ k`-th power is a group endomorphism `Matrix.GeneralLinearGroup.map (iterateFrobenius A p k)`
 of `GL ι A`, and this file describes its fixed points: an invertible matrix is fixed exactly when

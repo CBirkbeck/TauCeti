@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.RootGenerator
 /-!
 # Comparing the matrix and Clifford type-D Serre realizations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.Serre.Comparison)
+
 An even polarization identifies the standard split orthogonal Lie algebra with the quadratic
 Clifford Lie algebra. The two algebras already carry separately normalized type-`D` root and
 coroot generators. This file proves that the equivalence identifies their complete Serre

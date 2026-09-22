@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Hilbert90
 /-!
 # Ambiguous ideals of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Ambiguous.Basic)
+
 An ideal of `𝓞 K` is *ambiguous* when quadratic conjugation `σ` fixes it, `σI = I`; an ideal class
 is *ambiguous* when `σ` fixes it, which for a quadratic field means exactly that the class is
 `2`-torsion (`NumberField.mulEquiv_ringOfIntegersQuadraticConj_apply_eq_self_iff`, since `σ` acts by

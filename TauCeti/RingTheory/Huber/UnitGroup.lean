@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Ring.MaximalIdeals
 /-!
 # The unit group of a complete Huber ring is open, and proper ideals stay proper
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.UnitGroup)
+
 This is the first half of Wedhorn's Proposition 7.51, whose statement is "*then `𝔪` is closed
 and there exists `v ∈ Spa A` with `supp v = 𝔪`*". Only the closedness conjunct is proved here;
 the existence conjunct needs nonemptiness of the adic spectrum (Wedhorn Proposition 7.49) and is

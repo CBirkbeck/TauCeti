@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.SchurComplement
 /-!
 # The matrices `1 - u ⊗ v`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.OneSubVecMulVec)
+
 This file develops the matrix calculus for the rank-one perturbations `1 - vecMulVec u v` of the
 identity: their products, the commutation and braid relations, the quadratic relation, the
 inverse, the determinant, and the resulting element of the general linear group. Everything is

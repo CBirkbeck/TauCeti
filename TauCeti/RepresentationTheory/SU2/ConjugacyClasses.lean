@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.SU2.TorusConjugacy
 /-!
 # The conjugacy classes of `SU(2)` are classified by the trace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.ConjugacyClasses)
+
 Two elements of `SU(2)` are conjugate exactly when they have the same trace
 (`TauCeti.SU2.isConj_iff_trace_eq`), and the traces that occur are exactly the real numbers of
 absolute value at most `2`. So the conjugacy classes of `SU(2)` are parametrised by an angle

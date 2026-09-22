@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Submodule.DirectedUnion
 /-!
 # Linear maps out of directed unions of finite subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.DirectedUnion)
+
 This file specializes the universal property of a directed union of submodules to the finite
 subcomodules of a comodule. A compatible family of linear maps on the finite subcomodules glues to
 a linear map on the whole comodule as soon as every element lies in a finite subcomodule.

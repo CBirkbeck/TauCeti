@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Basic
 /-!
 # Finite-distance Wasserstein spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Space)
+
 The Wasserstein distance can be infinite, even between probability measures. This file isolates
 the parts on which it is finite and hence defines an ordinary pseudometric:
 

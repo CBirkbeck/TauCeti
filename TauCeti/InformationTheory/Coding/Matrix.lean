@@ -15,6 +15,8 @@ import Mathlib.LinearAlgebra.Basis.Submodule
 /-!
 # Matrix presentations of linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Matrix)
+
 A matrix presents a linear code in either of two complementary ways. A generator matrix presents
 the span of its rows, implemented as the range of `Matrix.vecMulLinear`; a parity-check matrix
 presents the kernel of `Matrix.mulVecLin`. This file defines both constructions and the predicates

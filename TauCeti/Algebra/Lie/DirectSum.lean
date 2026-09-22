@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Basic
 /-!
 # External direct sums of Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.DirectSum)
+
 This file supplements `Mathlib/Algebra/Lie/DirectSum.lean`, which puts a Lie module structure on an
 external direct sum `⨁ i, Pᵢ` and provides the inclusion `DirectSum.lieModuleOf` and the projection
 `DirectSum.lieModuleComponent` as morphisms of Lie modules. Those two come with no application

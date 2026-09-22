@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic
 /-!
 # Selmer groups of a finite etale algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Etale)
+
 The finiteness of the Selmer group proved in
 `TauCeti.RingTheory.DedekindDomain.SInteger.SelmerGroup.Basic` is stated for a Dedekind domain
 with a fraction *field*. The arithmetic application needs it for a finite etale algebra `A` over a

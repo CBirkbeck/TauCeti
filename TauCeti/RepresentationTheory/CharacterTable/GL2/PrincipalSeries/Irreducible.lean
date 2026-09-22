@@ -24,6 +24,8 @@ import TauCeti.RepresentationTheory.Simple.Basic
 /-!
 # The principal series of `GL₂(𝔽_q)` is irreducible exactly off the diagonal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.PrincipalSeries.Irreducible)
+
 The principal series `Ind_B^{GL₂}(α ⊗ β)` of `GL₂(𝔽_q)` is irreducible if and only if the two
 characters `α, β : 𝔽_qˣ → ℂˣ` are distinct. This file proves that, the last of the three
 statements the character-theory roadmap asks of the principal series; the other two, its

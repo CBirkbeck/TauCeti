@@ -12,6 +12,8 @@ import TauCeti.Analysis.Normed.Algebra.Basic
 /-!
 # The closed form of the Banach-algebra exponential derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.BanachDexp.Derivative)
+
 This file identifies the Fréchet derivative of the noncommutative exponential with the regularized
 commutator quotient, followed by left multiplication by `exp x`.
 

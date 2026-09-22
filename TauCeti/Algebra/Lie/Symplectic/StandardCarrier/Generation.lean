@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.TorusGe
 /-!
 # The full-weight type-`C` carrier is the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.Generation)
+
 `TauCeti.SpStd.groupScheme n` is the explicit full-weight Chevalley carrier of type `C_(n+1)`, the
 smallest closed subgroup scheme of `GL_(2n+2)` containing the divided-power exponentials of the
 Bourbaki-numbered Chevalley generators together with the weight torus of the standard lattice.

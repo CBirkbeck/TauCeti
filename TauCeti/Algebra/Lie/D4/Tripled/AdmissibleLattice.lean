@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.MinusculeWeightTab
 /-!
 # The admissible lattice in the tripled type-D4 representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.AdmissibleLattice)
+
 This file reads the rational extension of the integral `24`-dimensional tripled representation of
 the type-`D₄` Serre presentation, and the admissibility of its coordinate `ℤ`-lattice for the
 Serre Kostant form, off the minuscule weight table `TauCeti.D4Tripled.weightTable`, where they are

@@ -12,6 +12,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Acyclic quivers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Acyclic.Basic)
+
 This file defines an acyclic quiver to be one whose closed paths are all trivial. It develops
 the elementary path API for excluding directed cycles, including the fact that paths cannot run
 in both directions between distinct vertices.

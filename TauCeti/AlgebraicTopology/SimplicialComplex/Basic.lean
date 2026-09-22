@@ -11,6 +11,8 @@ public import Mathlib.Data.Set.Finite.Basic
 /-!
 # Basic abstract simplicial complex API
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Basic)
+
 This file contains general-purpose lemmas supplementing Mathlib's basic abstract simplicial
 complex API.
 

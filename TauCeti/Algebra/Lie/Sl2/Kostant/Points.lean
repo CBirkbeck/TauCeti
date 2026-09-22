@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Transvection
 /-!
 # The rank-one Kostant elementary group on field-valued points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Kostant.Points)
+
 This file identifies the elementary group obtained by applying the Kostant construction to the
 standard two-dimensional representation of `sl₂` with the determinant-one matrices.  Over an
 arbitrary commutative ring its two Kostant root subgroups are the upper and lower elementary

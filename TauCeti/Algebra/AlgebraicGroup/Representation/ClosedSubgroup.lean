@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Augmentation
 /-!
 # Faithful representations of closed subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.ClosedSubgroup)
+
 Let `M` be a finite free comodule over a commutative Hopf algebra `H`. Corestricting its coaction
 along a surjective bialgebra morphism `H ⟶ K` restricts the corresponding representation to the
 closed subgroup represented by `K`. Its coordinate morphism is the composite

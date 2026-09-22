@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.HookLength.Basic
 /-!
 # Beta-numbers and the hook-length product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.HookLength.BetaNumbers)
+
 Fix a Young diagram `μ` and a bound `r` on its number of rows, and write `βᵢ` for the beta-number
 `YoungDiagram.betaNumber μ r i = μ.rowLen i + (r - 1 - i)` of row `i`, defined in
 `TauCeti/Combinatorics/Young/BetaNumbers.lean`. For the exact row count `r = μ.colLen 0`, and only

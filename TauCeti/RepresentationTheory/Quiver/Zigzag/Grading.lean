@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Basis
 /-!
 # The zigzag relations are homogeneous and the induced grading
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Grading)
+
 Every zigzag relator of a simple graph is homogeneous for the path-length grading of the path
 algebra of the doubled quiver: the two quadratic families sit in degree two, and each long
 generator is a single path, homogeneous of its own length. Consequently both relation ideals of

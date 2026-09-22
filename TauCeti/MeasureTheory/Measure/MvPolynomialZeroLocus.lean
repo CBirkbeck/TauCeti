@@ -14,6 +14,8 @@ public import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # The zero locus of a nonzero multivariate polynomial is Lebesgue-null
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.MvPolynomialZeroLocus)
+
 A nonzero polynomial in finitely many real variables vanishes on a Lebesgue-null set.
 Determinants and minors are polynomials in the entries of a matrix, so this shows that generic
 polynomial conditions, such as nonsingularity, hold almost everywhere.

@@ -14,6 +14,8 @@ import Mathlib.NumberTheory.LSeries.Dirichlet
 /-!
 # Ordinary convergence of a Dirichlet series, and its abscissa
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.Convergence)
+
 Mathlib measures a Dirichlet series only through `LSeriesSummable`, which in `ℂ` is absolute
 convergence, and through the resulting `LSeries.abscissaOfAbsConv`.  A Dirichlet series can
 converge without converging absolutely, so the classical theory carries a second abscissa, lying

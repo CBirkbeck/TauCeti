@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.Finiteness
 /-!
 # Complex points of an affine semigroup and their monomial-embedding topology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Analytic.AffinePoint)
+
 The complex points of the affine scheme of a commutative additive monoid `S` are the
 `ℂ`-algebra homomorphisms `ℂ[S] →ₐ[ℂ] ℂ` out of the monoid algebra, equivalently the
 multiplicative characters `Multiplicative S →* ℂ`. Evaluating such a point on a finite family

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.GroupAction.Quotient
 /-!
 # Topological orbit-stabilizer for transitive actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupAction.Transitive)
+
 For a transitive action on a Hausdorff space `X`, if the orbit map at `b` is continuous and the
 quotient by the stabilizer is compact, then the orbit-stabilizer equivalence is a homeomorphism
 

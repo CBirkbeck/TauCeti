@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Tensor.Power
 /-!
 # Tensor powers of the standard representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.TensorPower)
+
 This file specializes the diagonal tensor-power construction to the standard representation of
 the general linear group. It supplies the tensor powers that underpin the Weyl construction for
 polynomial representations, together with the description of their monoid-algebra image over an

@@ -13,6 +13,8 @@ public import TauCeti.Order.Atoms
 /-!
 # Polarizable pure Hodge structures are semisimple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Semisimple)
+
 A polarization splits off every rational Hodge substructure, so the lattice of rational Hodge
 substructures of a polarizable pure Hodge structure is complemented. Over a finite-dimensional
 rational space that lattice is also modular and satisfies the descending chain condition, and the

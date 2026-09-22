@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PositiveDefinite.Basic
 /-!
 # The positive-definite function ↔ positive-definite kernel correspondence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Function.Kernel)
+
 A positive-definite function `F : M → ℂ` on an involutive additive monoid and a positive-definite
 kernel `K : M → M → ℂ` are two views of the same data, linked by the assignment
 `K(a, b) = F(a + b⋆)`. This file records the forward and reverse correspondence, packages them

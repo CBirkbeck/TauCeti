@@ -17,6 +17,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.RingOfIntegers
 /-!
 # The prime-splitting law for a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Splitting)
+
 For a quadratic number field `K = ℚ(√d)` — given as `K` generated over `ℚ` by an algebraic
 integer `θ` whose minimal polynomial over `ℤ` is `X² - d` — and an odd prime `p` not dividing
 `d`, the prime `p` splits completely in `K` (there are `[K:ℚ] = 2` primes of `𝓞 K` above it) if

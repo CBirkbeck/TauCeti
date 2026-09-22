@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.PurelyInseparable.Exponent
 /-!
 # Embedding a purely inseparable extension into a field with enough roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.PurelyInseparable.Embedding)
+
 Let `M / K` be a purely inseparable extension of exponent at most `n`, so that
 `x ↦ x ^ (p ^ n)` is a ring homomorphism `M →+* K` (`IsPurelyInseparable.iterateFrobenius`). If a
 field `K'` over `K` contains `p ^ n`-th roots of the images of a generating set of `M`, then `M`

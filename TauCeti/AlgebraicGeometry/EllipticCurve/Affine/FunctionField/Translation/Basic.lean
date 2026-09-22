@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Gener
 /-!
 # The translation action of the point group on the function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Translation.Basic)
+
 For a point `P` of an elliptic curve `W` over a field `F`, the translation `τ_P : Q ↦ Q + P` is an
 automorphism of the curve — of the curve, not of the elliptic curve: it does not fix the point at
 infinity unless `P = O`, so it is not an isogeny. What it does induce is an `F`-algebra

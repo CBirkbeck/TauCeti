@@ -13,6 +13,8 @@ import TauCeti.RingTheory.DividedPowers.Associative
 /-!
 # The type-B spinor lattice is stable under the simple-generator Kostant form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeB.KostantLattice)
+
 This file proves that, over `ℚ`, the coordinate spinor lattice of the type-`B` spin
 representation `TauCeti.SpinPolarizationData.typeBSpinRep` of an odd polarization is stable
 under the simple-generator Kostant integral form: the subring

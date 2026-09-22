@@ -14,6 +14,8 @@ import TauCeti.RingTheory.IntegralClosure.Transfer
 /-!
 # The integral closure of `𝓞 K` in a finite extension of number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.IntegralClosure)
+
 For a finite extension `L` of a number field `K`, the integral closure of `𝓞 K` in `L` is the
 integral closure of `ℤ` in `L` — that is `TauCeti.IsIntegralClosure.tower_bot` applied along
 `ℤ → 𝓞 K → L` — hence isomorphic to `𝓞 L`. Two consequences transfer along that identification

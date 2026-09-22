@@ -14,6 +14,8 @@ import TauCeti.RepresentationTheory.Continuous.Transport
 /-!
 # The circle group: Fourier monomials are its finite-dimensional irreducible representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Circle)
+
 For a positive period — the standing hypothesis `[Fact (0 < T)]`, which is what Mathlib's
 compactness instance and its Fourier analysis on `AddCircle T` both require — the circle
 `AddCircle T` is a compact abelian group. This file builds its continuous representations on `ℂ`
@@ -138,7 +140,10 @@ theorem continuous_coe_fourierChar (n : ℤ) :
   exact (fourier n).continuous.comp continuous_id
 
 /-- **The `n`-th Fourier character of the circle group**, as a one-dimensional continuous
-representation on `ℂ`: the group element `x` acts by multiplication by `fourier n x`. -/
+representation on `ℂ`: the group element `x` acts by multiplication by `fourier n x`.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.fourierRep) -/
 noncomputable def fourierRep (n : ℤ) : ContRepresentation ℂ (Multiplicative (AddCircle T)) ℂ :=
   .ofMonoidHom
     { toFun := fun x => (fourierChar T n x : ℂ) • (1 : ℂ →L[ℂ] ℂ)
@@ -160,7 +165,10 @@ theorem toRepresentation_fourierRep (n : ℤ) :
     exact fourierRep_apply T n x z
 
 /-- The Fourier representation is continuous: its action operator depends on the group element
-through the continuous map `fourier n`. -/
+through the continuous map `fourier n`.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.continuous_fourierRep) -/
 theorem continuous_fourierRep (n : ℤ) : Continuous (fourierRep T n) :=
   Continuous.congr (f := fun x : Multiplicative (AddCircle T) =>
       (fourier n (Multiplicative.toAdd x) : ℂ) • (1 : ℂ →L[ℂ] ℂ))

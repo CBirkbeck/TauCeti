@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Central.Matrix
 /-!
 # Centrality descends from a matrix algebra to its coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Central.Matrix)
+
 Mathlib proves that a matrix algebra over a central algebra is central
 (`Algebra.IsCentral.matrix`). This file supplies the converse over a nonempty finite index type:
 the centre of `Matrix ι ι D` is the image of the centre of `D` under the scalar embedding

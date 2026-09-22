@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.EquivInvariance
 /-!
 # Permutation actions of Weyl groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Group)
+
 This file proves that the action of the automorphism group of a root system on its root indices is
 faithful.  Consequently that automorphism group is itself finite when the root index type is
 finite, and hence so is every subgroup of it, the Weyl group in particular.  It also records how

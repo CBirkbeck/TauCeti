@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue
 /-!
 # Full Hecke eigenforms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Eigenform)
+
 A full Hecke eigenform is a nonzero cusp form of nebentypus `χ` that is an eigenvector for
 `T_n` at every positive index `n`, including the primes dividing the level. This is the
 unqualified notion of eigenform: `EigenformAwayFromLevel` remains the weaker object carrying

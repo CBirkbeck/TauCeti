@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Restriction
 /-!
 # The unit map into an induced representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.FiniteDimensional.Unit)
+
 For a finite-index subgroup `S` of a group `G`, every finite-dimensional representation `A` of
 `S` maps naturally into the restriction of `Ind_S^G A`.  On Mathlib's induced carrier this is the
 map `a ↦ ⟦1 ⊗ a⟧`; this file transports the unit of Mathlib's adjunction `Rep.indResAdjunction`

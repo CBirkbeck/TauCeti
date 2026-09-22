@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Basic
 /-!
 # Inverse images of Hopf ideals along a quotient morphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Comap)
+
 The quotient morphism `H ⟶ H ⧸ I` is surjective, so every Hopf ideal `J` of `H ⧸ I` has an
 inverse image `HopfIdeal.comapOfSurjective J` in `H`. This file records the resulting reflection
 principle: `J` is zero as soon as that inverse image is no larger than the Hopf ideal `I`

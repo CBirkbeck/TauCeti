@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.GraphAutomorp
 /-!
 # The fork-weight vectors in the type-D spin representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.ForkWeights)
+
 The two spin fundamental weights of type `Dₙ` occur at the fork of its Dynkin diagram. In the
 exterior model they are represented by the basis vector with every coordinate occupied and the
 basis vector obtained from it by erasing the final coordinate. This file combines two facts that

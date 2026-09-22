@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.SU2.SymmetricPower
 /-!
 # The characters of the symmetric powers span the class functions of `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Completeness)
+
 `TauCeti/RepresentationTheory/SU2/Weyl/Orthogonality.lean` proves that the characters `χ_d` of the
 symmetric powers `Symᵈ(ℂ²)` are *orthonormal* against the Weyl density. This file proves the
 complementary statement, that nothing else is needed: the `ℂ`-linear span of the `χ_d` is

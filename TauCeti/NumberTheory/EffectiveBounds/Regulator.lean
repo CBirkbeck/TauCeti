@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex
 /-!
 # The regulator of a number field of unit rank zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EffectiveBounds.Regulator)
+
 The regulator `R_F` of a number field `F` is the covolume of its unit lattice
 (`NumberField.Units.regulator`). When the unit rank is zero — equivalently, `F` has a single
 infinite place, so `F = ℚ` or `F` is imaginary quadratic — the unit lattice lives in the

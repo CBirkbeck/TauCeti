@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Newform
 /-!
 # The eigenvalue system of a good Hecke eigenform
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.RingEigenvalue)
+
 The eigenvalues of a good Hecke eigenform `f` (`EigenformAwayFromLevel`) inherit the
 multiplication table of the `Γ₀(N)` Hecke ring: they are multiplicative on coprime indices, and
 along the powers of a good prime `p` they satisfy the Diamond–Shurman recurrence

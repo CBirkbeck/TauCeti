@@ -12,6 +12,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Map
 /-!
 # A covering map induces isomorphisms on higher homotopy groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyGroup.Covering)
+
 Let `p : E → X` be a covering map and let `e : E`. This file shows that postcomposition with
 `p` identifies the homotopy groups of `E` at `e` with those of `X` at `p e`, in every
 dimension `≥ 2`.

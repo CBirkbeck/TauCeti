@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Rep.Basic
 /-!
 # The dual projection formula for coinduced representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.CoindProjection)
+
 For a group homomorphism `φ : G →* H`, a `G`-representation `A` and an `H`-representation `B`, the
 *dual projection formula* is the isomorphism of `H`-representations
 

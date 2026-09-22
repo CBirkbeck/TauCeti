@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Sl2.Standard
 /-!
 # The classification of the finite-dimensional irreducible `sl₂`-modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Classification)
+
 `TauCeti/Algebra/Lie/Sl2/WeightString.lean` shows that a module carrying a primitive vector of
 weight `n : ℕ` and irreducible over the subalgebra of an `sl₂` triple is determined by `n`, and
 `TauCeti/Algebra/Lie/Sl2/Standard.lean` exhibits such a module, `TauCeti.Sl2Std K n = V(n)`, for

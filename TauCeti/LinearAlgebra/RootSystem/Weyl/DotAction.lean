@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Vector
 /-!
 # The dot action of the Weyl group on weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.DotAction)
+
 The **dot action** of the Weyl group of a base is the linear action conjugated by the translation
 by the Weyl vector `ρ`:
 `w ⬝ x = w (x + ρ) - ρ`.

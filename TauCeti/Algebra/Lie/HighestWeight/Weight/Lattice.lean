@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Vector
 /-!
 # The Weyl vector and dominance through the coroot pairings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Weight.Lattice)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero, let `H` be a splitting Cartan subalgebra and let `b` be a base of its root
 system. `TauCeti/Algebra/Lie/Weights/WeightLattice.lean` builds the integral weight lattice

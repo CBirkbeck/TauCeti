@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Basic
 /-!
 # Solvability of semidirect products of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.SemidirectProduct)
+
 An internal action of affine groups equips the product of their underlying affine schemes with a
 semidirect-product group law. This file proves that the resulting affine group has solvable
 geometric points when both factors do.

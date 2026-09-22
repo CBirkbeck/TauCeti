@@ -12,6 +12,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
 /-!
 # Ricci curvature of a smooth connection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Ricci)
+
 The Ricci tensor of a connection on the tangent bundle is the bilinear form
 `Ric(u,v) = trace (w ↦ R(w,u)v)`. The trace makes this definition independent of a choice
 of basis. Applying it to the Levi-Civita connection gives Riemannian Ricci curvature.

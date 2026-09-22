@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Star.Unitary
 /-!
 # The unitary and special unitary matrix groups are compact
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.UnitaryGroup)
+
 For a finite index type `n` and `𝕜 = ℝ` or `ℂ` (any `RCLike` field), the unitary group
 `Matrix.unitaryGroup n 𝕜` and the special unitary group `Matrix.specialUnitaryGroup n 𝕜` are
 compact subsets of `Matrix n n 𝕜` in the entrywise topology, hence compact topological groups.

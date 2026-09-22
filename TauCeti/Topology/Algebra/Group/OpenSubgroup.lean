@@ -14,6 +14,8 @@ public import TauCeti.Topology.Algebra.Group.Generation
 /-!
 # Open subgroups of a topologically finitely generated compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.OpenSubgroup)
+
 A topologically finitely generated compact group has, for each `n`, only finitely many open
 subgroups of index `n`. The reason is the permutation representation: an open subgroup `U` of
 index `n` makes `G` act on the `n`-element coset space `G ⧸ U`, and `U` is recovered from that

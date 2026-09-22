@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Ideal.BigOperators
 /-!
 # Matrix entries lying in an ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.IdealEntries)
+
 An ideal containing every entry of a matrix contains every entry of any two-sided product
 formed from it, and every entry of any linear combination of matrices whose entries it
 contains: each such entry is an `S`-combination of entries of the original matrices.

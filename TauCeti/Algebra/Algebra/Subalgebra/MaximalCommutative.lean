@@ -18,6 +18,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 /-!
 # Commutative subalgebras of maximal dimension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Algebra.Subalgebra.MaximalCommutative)
+
 Let `A` be a finite-dimensional algebra over a field `K`. Dimensions of subalgebras of `A` are
 bounded by `finrank K A`, so among the commutative subalgebras there is one of largest dimension,
 and such a subalgebra is its own centralizer: an element commuting with all of it generates,

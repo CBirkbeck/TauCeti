@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.ProbabilityMeasure.Ext
 /-!
 # The mixing measure is identified by the i.i.d. mixture
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.MixtureInjective)
+
 The map `π ↦ π.bind (P ↦ P^{⊗ℕ})`, sending a measure on `ProbabilityMeasure α` to the law of a
 sequence drawn i.i.d. from a `π`-random probability measure, is injective on finite measures.
 

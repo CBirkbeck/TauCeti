@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Coord
 /-!
 # Chevalley relations for represented Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.ChevalleyRelations)
+
 A Kostant-stable integral lattice and a finite basis represent each divided-power root action by
 an affine group-scheme morphism `xᵢ : 𝔾ₐ → GLₙ`. This file connects those represented morphisms
 to the Chevalley relations already proved for the underlying divided-power actions.

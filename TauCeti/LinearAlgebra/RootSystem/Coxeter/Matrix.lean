@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimpleReflections
 /-!
 # The Coxeter matrix of a base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Coxeter.Matrix)
+
 A base of a finite crystallographic root pairing has a Cartan matrix, and the Cartan matrix
 determines a Coxeter matrix: the entry attached to a pair of distinct simple roots is read off
 their Cartan product `⟨αᵢ, αⱼ^∨⟩⟨αⱼ, αᵢ^∨⟩` by `0 ↦ 2`, `1 ↦ 3`, `2 ↦ 4`, `3 ↦ 6`. This file

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.Re
 /-!
 # Comparison maps from a containment of rational subsets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.PresentationIndependence)
+
 `TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_of_refines` compares two coordinate
 rings when the second presentation *refines* the first syntactically — `s'' = s * r` with every
 `t * r` a numerator. Wedhorn's Proposition 8.2(1) asks for the comparison under the weaker,

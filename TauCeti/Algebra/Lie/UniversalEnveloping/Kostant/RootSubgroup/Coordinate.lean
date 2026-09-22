@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # Matrix coordinates for Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Coordinate)
+
 Let `M` be a Kostant-stable integral lattice in a rational representation. A finite basis
 `b : Basis η ℤ M` gives every scalar extension `A ⊗[ℤ] M` the base-changed basis
 `b.baseChange A`. This file expresses the divided-power root subgroup action in that basis,

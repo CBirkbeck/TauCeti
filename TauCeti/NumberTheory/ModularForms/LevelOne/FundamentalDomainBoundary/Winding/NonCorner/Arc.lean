@@ -19,6 +19,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # Winding of the boundary contour at the open unit arc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner.Arc)
+
 A point `w` of the open unit arc is `fdBoundary H t₀` for a unique `t₀ ∈ (1, 3)`; the arc is
 one smooth circle parameterization through `t = 2`, so no corner is in the way even at `i`,
 and the winding number at every open-arc point is `-1/2`. The adapted branch

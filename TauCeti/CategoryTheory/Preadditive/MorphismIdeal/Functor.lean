@@ -10,6 +10,8 @@ public import TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Basic
 /-!
 # Functoriality of quotients by morphism ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Functor)
+
 An additive functor `F : C ⥤ D` pulls a morphism ideal of `D` back to one of `C`. Consequently,
 if `F` carries an ideal `I` into an ideal `J`, it induces an additive functor `C/I ⥤ D/J`.
 Natural transformations descend to these quotient functors, and the construction respects

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HilbertSymbol.Basic
 /-!
 # The Hilbert symbol over `ℝ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HilbertSymbol.Archimedean)
+
 This file computes the norm-equation Hilbert symbol `TauCeti.hilbertSymbol` over `ℝ`.
 
 Over `ℝ` the equation `b = x² - a y²` is solvable unless both `a` and `b` are negative, because

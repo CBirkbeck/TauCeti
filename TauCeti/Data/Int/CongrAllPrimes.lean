@@ -11,6 +11,8 @@ public import Mathlib.Data.Nat.Prime.Infinite
 /-!
 # Integers pinned by their residues at all but one prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Int.CongrAllPrimes)
+
 An integer divisible by every prime except possibly one is zero, and consequently two integers
 congruent modulo every prime except possibly one are equal. A nonzero integer has finitely many
 prime divisors while the excluded primes are infinite in number, so some prime both divides it

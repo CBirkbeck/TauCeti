@@ -12,6 +12,8 @@ public import TauCeti.Probability.Distributions.Gamma.Beta
 /-!
 # Fisher's F law as a ratio of independent chi-squared variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.FisherSnedecor.ChiSquared)
+
 Fisher's F law is defined in `TauCeti/Probability/Distributions/FisherSnedecor/Basic.lean` as the
 image of `betaMeasure (m / 2) (n / 2)` under the beta-to-F transformation
 `u ↦ (n / m) * u / (1 - u)`.  This file justifies that definition by identifying the law with the

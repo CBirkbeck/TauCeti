@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.GradedAlgebra.Opposite
 /-!
 # Opposites of differential graded algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Opposite)
+
 The opposite of a differential graded algebra uses the Koszul-signed multiplication
 
 `op a * op b = (-1) ^ (|a| * |b|) • op (b * a)`.

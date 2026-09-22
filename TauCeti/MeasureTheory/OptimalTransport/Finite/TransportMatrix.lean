@@ -11,6 +11,8 @@ public import TauCeti.Probability.ProbabilityMassFunction.Finite
 /-!
 # Finite transport plans as matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Finite.TransportMatrix)
+
 On finite spaces, a probability mass function on a product is the same data as a nonnegative
 matrix of total mass one. Prescribing its two marginals says exactly that the row and column sums
 of this matrix are the prescribed probability vectors.

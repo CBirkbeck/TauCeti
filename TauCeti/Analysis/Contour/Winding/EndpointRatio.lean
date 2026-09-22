@@ -15,6 +15,8 @@ import TauCeti.Analysis.Contour.Winding.SegmentSum
 /-!
 # The winding number of a point-avoiding arc exponentiates to its endpoint ratio
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.EndpointRatio)
+
 For a curve `γ` on the oriented interval with endpoints `a`, `b` that avoids `w`, the generalized
 winding number `n_w(γ) = windingNumber γ a b w` is an ordinary index integral, and
 

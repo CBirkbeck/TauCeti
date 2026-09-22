@@ -10,6 +10,8 @@ public import TauCeti.InformationTheory.Coding.Reindex
 /-!
 # Puncturing and shortening linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Puncture)
+
 A linear code on coordinates `ι` is a submodule of the word space `ι → F`, as defined in
 `TauCeti/InformationTheory/Coding/Basic.lean`. Given a set `s` of coordinates to retain,
 puncturing restricts every codeword to `s`. Shortening first restricts to the codewords which

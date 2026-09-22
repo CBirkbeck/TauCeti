@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Prod
 /-!
 # Tensor products of equivalent quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.TensorProduct)
+
 This file shows that tensor products preserve isometric equivalences and equivalence of quadratic
 forms. It complements Mathlib's tensor product of quadratic-form isometries.
 

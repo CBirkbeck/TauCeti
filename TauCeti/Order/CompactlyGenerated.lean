@@ -10,6 +10,8 @@ public import Mathlib.Order.CompactlyGenerated.Basic
 /-!
 # Independent families and compactness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Order.CompactlyGenerated)
+
 This file records lattice consequences of independence that involve compact elements and compact
 generation.
 

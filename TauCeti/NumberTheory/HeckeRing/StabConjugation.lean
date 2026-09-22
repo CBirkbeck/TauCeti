@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.DoubleCoset.Basic
 /-!
 # Moving the base point of a decomposition quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.StabConjugation)
+
 `DoubleCoset.DecompQuotient Γ₁ Γ₂ g` is `Γ₁ ⧸ (gΓ₂g⁻¹).subgroupOf Γ₁`, so it depends on `g`
 only through the conjugate `gΓ₂g⁻¹`. The conjugation facts themselves are general subgroup
 theory and live in `TauCeti.GroupTheory.DoubleCoset.Basic`

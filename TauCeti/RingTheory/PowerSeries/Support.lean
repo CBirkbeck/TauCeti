@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.PowerSeries.Expand
 /-!
 # Power series supported on multiples of `d`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.Support)
+
 A power series is *supported on multiples of `d`* when every coefficient at an index not
 divisible by `d` vanishes. The condition is preserved by the module operations, so the series
 satisfying it form a submodule, and — over a commutative ring — they are exactly what the

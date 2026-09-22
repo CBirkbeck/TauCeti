@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.Even
 /-!
 # Off-diagonal sums of a symmetric function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finset.OffDiagonal)
+
 The off-diagonal sum of `f : α → α → M` over a finite set `s` is
 `∑ i ∈ s, ∑ j ∈ s.erase i, f i j`: every ordered pair of distinct elements of `s` contributes
 once. When `f` is symmetric the two members of each unordered pair contribute equal terms, so the

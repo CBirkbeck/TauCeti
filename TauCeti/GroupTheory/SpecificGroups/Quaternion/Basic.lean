@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.SpecificGroups.Quaternion
 /-!
 # Quaternion-group infrastructure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.Quaternion.Basic)
+
 Mathlib equips `QuaternionGroup n` with a `Fintype` instance when `n` is nonzero, but converting
 that instance to a list is noncomputable.  The Dixon--Schneider character-table algorithm needs a
 list whose reduction can be evaluated by the kernel.  `TauCeti.quaternionElements` lists the two

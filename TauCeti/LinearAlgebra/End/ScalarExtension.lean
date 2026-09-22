@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.TensorProduct.Basic
 /-!
 # Base change of endomorphisms of a scalar extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.End.ScalarExtension)
+
 Let `M` be a module over a commutative semiring `R`, and let `f : A →ₐ[R] B` be a morphism of
 commutative `R`-algebras. Scalar extension of `M` is compared by the `f`-semilinear map
 

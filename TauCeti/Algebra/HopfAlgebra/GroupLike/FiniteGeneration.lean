@@ -14,6 +14,8 @@ import TauCeti.Algebra.Bialgebra.GroupLike.Evaluation
 /-!
 # Finite generation of group-like elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.GroupLike.FiniteGeneration)
+
 If a finite-type Hopf algebra over a nontrivial commutative ring is spanned by linearly independent
 group-like elements, then its group of group-like elements is finitely generated. Indeed,
 evaluation identifies the group algebra on the group-like elements with the original Hopf algebra.

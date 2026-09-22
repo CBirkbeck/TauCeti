@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Coalgebra.GroupLike
 /-!
 # The matrix-monoid coordinate bialgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Coordinate.Bialgebra)
+
 For a commutative semiring `R`, this file equips the polynomial coordinate algebra
 `R[Xᵢⱼ]` of square matrices with the explicit bialgebra structure dual to matrix
 multiplication. Its comultiplication and counit satisfy

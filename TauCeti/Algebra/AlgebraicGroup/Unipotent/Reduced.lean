@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Unipotence over reduced Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Reduced)
+
 An injective morphism `H ⟶ K` of coordinate Hopf algebras represents a schematically dense
 homomorphism `Spec K ⟶ Spec H`. When `K` is reduced and finite type, its geometric points separate
 elements. Applying this to the coefficients of the characteristic polynomial of every

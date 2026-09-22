@@ -23,6 +23,8 @@ import TauCeti.RingTheory.IntegralClosure.Transfer
 /-!
 # Finiteness of the normalization of a polynomial ring over a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.MvPolynomial)
+
 Let `k` be a field, `P = k[X_1, …, X_r]` a polynomial ring in finitely many variables, `K` its
 fraction field and `L / K` a finite field extension. This file proves that the integral closure
 of `P` in `L` is a **finite `P`-module**, with no separability hypothesis on `L / K`. For one

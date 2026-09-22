@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # The spin carrier and the candidate group of the untwisted family `Bₙ(q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Basic)
+
 The untwisted odd orthogonal family `Bₙ(q)` is built on the diagram `Bₙ`, and Tau Ceti's explicit
 full-weight Chevalley carrier for that diagram is `TauCeti.TypeBSpinCarrier.groupScheme`, the
 Kostant toral closure of the split spin representation inside `GL_(2^n)` over `ℤ`, whose weights
@@ -388,7 +390,10 @@ abbrev FixedPoints : Type := ↥(fixedSubgroup d.steinberg)
 /-- **The finite-simple-group candidate attached to a type-`B` index**: the derived subgroup of
 the Steinberg fixed points, modulo the centre of that derived subgroup. No finiteness or
 simplicity assertion is part of this definition, nor any identification of the spin carrier with
-the pinned simply connected group scheme of type `Bₙ`. -/
+the pinned simply connected group scheme of type `Bₙ`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.TypeBLieIndex.Group) -/
 abbrev Group : Type := FixedPointCandidate d.steinberg
 
 /-- The candidate carries a group structure; the quotient construction supplies it. -/

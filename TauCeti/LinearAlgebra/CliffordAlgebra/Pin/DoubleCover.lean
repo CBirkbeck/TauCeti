@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Pin.Kernel
 /-!
 # The Pin double cover as a group extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Pin.DoubleCover)
+
 For a positive-dimensional finite nondegenerate quadratic space over a field in which `2` is
 invertible, the kernel equivalence from `Pin.Kernel` and any proof that the action is surjective
 package the Pin double cover as a `GroupExtension`; in particular, the action is surjective over a

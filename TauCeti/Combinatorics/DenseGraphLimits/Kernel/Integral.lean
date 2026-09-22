@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # Integrating a symmetric kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Kernel.Integral)
+
 The integrals of a bounded symmetric kernel that the cut norm and its consumers are built from:
 over a measurable rectangle, against a pair of test functions, and against one test function with
 the other variable left free.

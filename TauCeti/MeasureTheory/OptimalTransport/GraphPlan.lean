@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Measure.Dirac
 /-!
 # Graph plans: the transport plan induced by a transport map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.GraphPlan)
+
 A *transport map* from `μ` to `ν` is a map `T : X → Y` that pushes `μ` forward to `ν`. Mathlib
 already has the predicate for this, `ProbabilityTheory.HasLaw T ν μ`, which asks for
 `μ`-almost-everywhere measurability of `T` together with `μ.map T = ν`; this file adds no second

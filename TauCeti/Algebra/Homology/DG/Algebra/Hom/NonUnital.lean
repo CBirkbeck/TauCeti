@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Homology.DG.Algebra.Defs
 /-!
 # Morphisms of nonunital differential graded algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Hom.NonUnital)
+
 A morphism of nonunital differential graded algebras is an `R`-linear multiplicative map which
 preserves the internal degree and commutes with the differentials. This file bundles those maps
 as `TauCeti.NonUnitalDGAlgHom` and supplies their identity and composition operations.

@@ -13,6 +13,8 @@ public import Mathlib.NumberTheory.Real.Irrational
 /-!
 # Counterexamples for toric cones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Counterexamples)
+
 This file collects the negative examples that fix the content of `TauCeti.Toric.IsToricCone`.
 
 Toricity need not be preserved by arbitrary intersections when the additive map into the ambient

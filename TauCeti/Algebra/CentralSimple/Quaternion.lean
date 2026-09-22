@@ -25,6 +25,8 @@ public import Mathlib.Basic.Real.Basic
 /-!
 # The tensor square of the real quaternions is `M₄(ℝ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Quaternion)
+
 The real quaternions `ℍ[ℝ]` are a central division algebra of dimension `4` over `ℝ`, hence a
 central simple `ℝ`-algebra of degree `2`. This file runs the opposite isomorphism of
 `TauCeti/Algebra/CentralSimple/Opposite.lean` on them, in the two forms

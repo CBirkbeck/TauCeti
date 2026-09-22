@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
 /-!
 # The tautological point of a coordinate pullback
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.TautologicalPoint)
+
 A coordinate pullback `p : W₂.CoordinateRing →ₐ[F] W₁.FunctionField` — the data underlying an
 isogeny `W₁ ⟶ W₂` — sends the two coordinate functions of `W₂` to elements of `F(W₁)`. The
 Weierstrass relation is exactly what the coordinate ring quotients out, so the pair solves the

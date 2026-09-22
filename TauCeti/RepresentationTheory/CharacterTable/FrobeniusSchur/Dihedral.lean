@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.Dihedral
 /-!
 # The Frobenius-Schur indicator of the two-dimensional representation of `D₄`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.Dihedral)
+
 The rotation subgroup of `D₄` has index two and is inverted by every reflection, so the
 Frobenius-Schur indicator of the representation induced from a linear character of it is given by
 `TauCeti.frobeniusSchurIndicator_indFDRep_ofLinearCharacter_eq_apply_sq_of_conj_eq_inv`.  This

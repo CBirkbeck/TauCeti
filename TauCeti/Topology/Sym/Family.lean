@@ -12,6 +12,8 @@ public import TauCeti.Topology.Sym.Basic
 /-!
 # The symmetric power is locally a product, along a family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Sym.Family)
+
 This file presents `Sym α n` locally as a product over a finite family `U : ι → Set α` of pairwise
 disjoint open sets, and then produces the family that a *given* tuple
 needs: in a Hausdorff space the distinct points of an unordered `n`-tuple have pairwise disjoint

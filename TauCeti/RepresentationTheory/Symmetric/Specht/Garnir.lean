@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Module
 /-!
 # The Garnir relations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Garnir)
+
 The polytabloids `e_t` of the `μ`-tableaux span the Specht module `S^μ`, and the standard basis
 theorem says that the polytabloids of the *standard* tableaux already do.  The relations that the
 straightening algorithm rewrites an arbitrary polytabloid with are the **Garnir relations**, and

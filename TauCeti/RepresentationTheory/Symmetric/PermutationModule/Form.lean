@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.PermutationModule.Basic
 /-!
 # The tabloid form on a Young permutation module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.PermutationModule.Form)
+
 The Young permutation module `M^μ` has a basis indexed by the `μ`-tabloids, and the bilinear form
 declaring that basis orthonormal is the **tabloid form**.  It is the specialisation to `M^μ` of the
 invariant form on a permutation representation, so the whole orthogonality API of

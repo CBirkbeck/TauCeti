@@ -15,6 +15,8 @@ import TauCeti.RepresentationTheory.Simple.Basic
 /-!
 # The character form of Clifford's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Decomposition)
+
 Let `N` be a normal subgroup of a finite group `G`, and let `W` be an irreducible
 finite-dimensional representation of `G` over a splitting field.  The restriction of `W` to `N`
 has irreducible constituents in one `G`-orbit, indexed by the left cosets of the inertia group of

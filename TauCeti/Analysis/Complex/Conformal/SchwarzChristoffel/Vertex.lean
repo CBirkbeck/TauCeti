@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Topology
 /-!
 # The vertices of the Schwarz--Christoffel map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Vertex)
+
 The Schwarz--Christoffel primitive is holomorphic on the open upper half-plane, and the polygon
 it is meant to parametrize would be read off from its *boundary* values at the real prevertices.
 This file shows that those boundary values exist as limits; identifying the image of the map as a

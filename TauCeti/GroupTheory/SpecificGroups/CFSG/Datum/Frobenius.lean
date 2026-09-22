@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # The root-datum Frobenius of a valid Lie-type index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Datum.Frobenius)
+
 The Steinberg endomorphism of every family on the CFSG list is built from the `q`-power Frobenius
 of the pinned Chevalley--Demazure group scheme, where `q` is the Frobenius parameter
 `TauCeti.LieTypeIndex.fieldOrder` recorded by the index. This file builds the shadow that Frobenius
@@ -73,7 +75,10 @@ noncomputable section
 /-- **The root-datum shadow of the `q`-power Frobenius** of a valid Lie-type index: multiplication
 by the Frobenius parameter on the pinned simply connected root datum. A Frobenius isogeny of a split
 group scheme fixes the root datum and multiplies its characters by `q`, so no diagram data enters
-here; the twisting of a family is carried entirely by the graph automorphism it is composed with. -/
+here; the twisting of a family is carried entirely by the graph automorphism it is composed with.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValidLieTypeIndex.datumFrobenius) -/
 def datumFrobenius :
     RootPairingIsogeny (d.dynkinType.simplyConnectedRootDatum d.dynkinType_valid)
       (d.dynkinType.simplyConnectedRootDatum d.dynkinType_valid) :=

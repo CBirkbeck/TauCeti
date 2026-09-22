@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.DG.Algebra.Opposite
 /-!
 # Opposite morphisms of differential graded algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Hom.Opposite)
+
 A DG algebra morphism induces a morphism of Koszul-signed opposite DG algebras, acting by the
 original map on underlying elements. Preservation of degrees makes the two multiplication signs
 agree, and the unchanged opposite differential commutes with the induced map.

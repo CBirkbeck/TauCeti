@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Shapiro
 /-!
 # The degree-zero trace/corestriction comparison
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Corestriction.Trace)
+
 The coinduced trace is developed with the rest of the coinduced-module API in
 `TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced`. This file proves that in
 degree zero its composite with the explicit Shapiro isomorphism is exactly the corestriction norm

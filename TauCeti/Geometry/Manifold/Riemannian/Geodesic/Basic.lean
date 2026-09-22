@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.Riemannian.Riesz
 /-!
 # Geodesics of a Riemannian manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Basic)
+
 A curve in a Riemannian manifold is a geodesic when its velocity is parallel along it: the
 derivative of the velocity field along the curve, taken for the Levi-Civita connection of the
 manifold's Riemannian bundle instance, vanishes.  This file introduces that predicate, carrying

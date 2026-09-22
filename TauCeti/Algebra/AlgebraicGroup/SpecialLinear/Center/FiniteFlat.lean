@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Center.Basic
 /-!
 # Finite flatness of the center of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Center.FiniteFlat)
+
 For a positive integer `n`, the center of `SLₙ` is the finite diagonalizable group `μₙ`.
 The preceding center calculation identifies its coordinate Hopf algebra with the group algebra
 `k[Multiplicative (ZMod n)]`. The standard group-algebra basis therefore makes this coordinate

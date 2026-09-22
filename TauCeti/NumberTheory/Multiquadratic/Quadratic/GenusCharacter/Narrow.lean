@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.TotallyPositive
 /-!
 # Genus characters and narrow-equivalent ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.Narrow)
+
 This file proves the cancellation step needed to descend genus characters from norms of ideals to
 the narrow class group of a quadratic field. Suppose two nonzero integral ideals `I` and `J` are
 related by

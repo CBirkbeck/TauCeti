@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.GaloisDescent.Range
 /-!
 # Galois invariants of a scalar extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.TensorProduct.Galois)
+
 For a finite Galois extension `L/k`, the elements of `L ⊗[k] A` fixed by the scalar-factor
 action are precisely the tensors `1 ⊗ a`. This identifies the original vector space inside its
 scalar extension, in arbitrary characteristic. Applied to algebras, it allows descent of

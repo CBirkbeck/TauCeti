@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Integer
 /-!
 # The semigroup `Δ₀(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Delta0)
+
 The submonoid `Δ₀(N) ⊆ GL₂(ℚ)` of integral matrices with positive determinant that are
 upper-triangular modulo `N` with unit upper-left entry. It is the `Δ` of the Hecke triples of
 both `Γ₀(N)` and `Γ₁(N)`, and nothing about it refers to either group, so it lives here rather

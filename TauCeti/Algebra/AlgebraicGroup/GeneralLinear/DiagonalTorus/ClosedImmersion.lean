@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Torus
 /-!
 # The diagonal torus as a closed subgroup of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.DiagonalTorus.ClosedImmersion)
+
 The diagonal morphism from the rank-`n` split torus to `GL_n` is a closed immersion over every
 commutative base ring. This file packages its image as a closed subgroup scheme.
 

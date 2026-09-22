@@ -13,6 +13,8 @@ import Mathlib.Algebra.Order.Star.Real
 /-!
 # The positive-definite cone in the space of all square matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.PosDef)
+
 Positivity of `x ⬝ᵥ M *ᵥ x` on nonzero vectors cuts out an open set of real square matrices,
 symmetric or not.
 

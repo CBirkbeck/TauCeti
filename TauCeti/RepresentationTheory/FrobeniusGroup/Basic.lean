@@ -16,6 +16,8 @@ public import TauCeti.RepresentationTheory.Induction.ExceptionalCharacter
 /-!
 # Frobenius's theorem: the Frobenius kernel is a normal subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.FrobeniusGroup.Basic)
+
 Let `H` be a trivial-intersection subgroup of a finite group `G` (`TauCeti.IsTISubgroup`), as a
 Frobenius complement is.  The **Frobenius kernel** `TauCeti.frobeniusKernel H` — the identity
 together with the elements of `G` lying in no conjugate of `H` — is available as a *set* for any

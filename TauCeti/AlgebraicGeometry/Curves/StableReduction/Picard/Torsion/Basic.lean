@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Rank
 /-!
 # Prime torsion for a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Torsion.Basic)
+
 For a numerical type `T`, this file equips the subgroups `Pic(T)[ℓ]` and `Coker(A)[ℓ]` killed by a
 natural number `ℓ` with their canonical `ZMod ℓ`-module structures.  When `ℓ` is prime,
 `Pic(T)[ℓ]` is a finite-dimensional vector space.  Its cardinality is therefore `ℓ` raised to its

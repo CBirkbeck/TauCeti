@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Lattice
 /-!
 # Finite fans of toric cones and their morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Fan.Basic)
+
 A *fan* is the combinatorial datum from which a toric variety is glued: a finite family of toric
 cones in one real vector space, closed under passing to faces, and such that the intersection of
 any two members is a face of each of them. This file defines fans and their morphisms, computes

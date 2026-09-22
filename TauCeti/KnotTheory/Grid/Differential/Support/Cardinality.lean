@@ -15,6 +15,8 @@ import Mathlib.Data.Nat.Choose.Basic
 /-!
 # Cardinality bounds for the fully blocked grid differential support
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Support.Cardinality)
+
 The fully blocked grid differential is already known to be supported on the
 column-swap neighbours of a grid state. This file makes that computability statement
 quantitative: those neighbours are the image of Mathlib's off-diagonal finite set of ordered

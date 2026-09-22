@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Basic
 /-!
 # The Fricke operator preserves the old subspace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Fricke.OldSpace)
+
 Let `N = d * e * M`. The Fricke matrix `W_N = !![0, -1; N, 0]` moves past the level-raising
 matrix `diag(d, 1)` at the cost of exchanging `d` for the complementary factor `e`:
 

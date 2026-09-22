@@ -15,6 +15,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Fppf.Basic
 /-!
 # Group objects on the affine fppf site
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Fppf.GroupObject)
+
 This file relates group-valued presheaves and sheaves on the affine fppf site to group objects in
 type-valued presheaves and sheaves. In particular, it presents the convolution-points sheaf of a
 commutative Hopf algebra as a group object and exposes the group-object sheafification adjunction.

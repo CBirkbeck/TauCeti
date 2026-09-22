@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Integral.Bochner.Basic
 /-!
 # The Petersson product under a slash and as an integral over translated domains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Adjoint)
+
 Slashing by `α ∈ GL(2, ℝ)` of positive determinant moves the Petersson integrand along the
 Möbius action, and the invariant measure of `ℍ` does not see that motion. Writing
 `D = det α > 0`, Mathlib's `UpperHalfPlane.petersson_slash` reads

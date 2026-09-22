@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Addition
 /-!
 # Fixed-degree compatibility for Abel-Jacobi divisor classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.FixedDegree)
+
 This file records fixed-degree effective-divisor and symmetric-power compatibility for the
 formal Abel-Jacobi divisor class map.  For an effective divisor `D`, the underlying weighted
 divisor-level map sends

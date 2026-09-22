@@ -11,6 +11,8 @@ public import TauCeti.Topology.UniformSpace.Completion
 /-!
 # Countable generation of `𝓝 0` passes to the separated completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupCompletion)
+
 The zero-point form of `UniformSpace.Completion.isCountablyGenerated_nhds_coe`, registered as an
 instance. Only a zero and a uniformity are needed; no group structure, no separation, no
 completeness.

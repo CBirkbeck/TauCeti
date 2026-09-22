@@ -19,6 +19,8 @@ import TauCeti.Algebra.Lie.Sl2.WeightString
 /-!
 # Type-C standard generators and full-weight lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.Basic)
+
 For positive rank `n + 1`, the symplectic Lie algebra `sp₂ₙ₊₂` acts on its standard module
 `(Fin (n + 1) ⊕ Fin (n + 1)) → ℚ`. This file records its Bourbaki-numbered simple Chevalley
 generators, their Serre relations, the standard integral lattice, and the standard weights. These

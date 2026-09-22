@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
 /-!
 # Ramification and residue degrees below a fixed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius.FixedField.Inertia)
+
 Let `H` be a subgroup of `Gal(L/K)`, let `E = L ^ H`, and let `Q` be a nonzero prime of `𝓞 L`
 over `𝓞 K`. The product of the ramification index and residue degree of `Q ∩ 𝓞 E` over
 `𝓞 K` is the relative index

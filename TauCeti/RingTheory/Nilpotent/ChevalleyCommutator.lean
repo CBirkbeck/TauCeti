@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.BaseChangeAction
 /-!
 # The Chevalley commutator relation for integral nilpotent exponentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Nilpotent.ChevalleyCommutator)
+
 Let `V` be a module over a `ℚ`-algebra `A`, let `M ≤ V` be an additive subgroup, and let
 `x`, `y`, `z` be elements of `A` with
 

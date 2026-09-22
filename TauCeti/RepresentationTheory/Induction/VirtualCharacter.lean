@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.VirtualCharacter
 /-!
 # Induction, restriction, and virtual characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.VirtualCharacter)
+
 This file records the compatibility of induction and of restriction along a subgroup with the
 virtual-character lattice: both send virtual characters to virtual characters, because both send
 characters to characters and both are additive.

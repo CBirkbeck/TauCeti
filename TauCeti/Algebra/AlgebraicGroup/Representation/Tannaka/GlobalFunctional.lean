@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.DirectedUnion
 /-!
 # Global functionals from tensor automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.GlobalFunctional)
+
 Let `H` be a Hopf algebra over a field `k`, and let `A` be a commutative `k`-algebra. A tensor
 automorphism of scalar extension on the finite-dimensional `H`-comodules determines a compatible
 linear functional on every finite subcomodule of the regular comodule. Since these subcomodules

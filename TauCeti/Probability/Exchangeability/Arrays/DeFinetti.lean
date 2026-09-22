@@ -12,6 +12,8 @@ public import TauCeti.Probability.DeFinetti.Theorem
 /-!
 # De Finetti's theorem for exchangeable arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.DeFinetti)
+
 The consequences of de Finetti's theorem for the array symmetries: over a nonempty standard Borel
 state space, the rows and columns of a separately exchangeable array are conditionally i.i.d., as
 are the rows of a block of a jointly exchangeable one, and the directing measures produced this way

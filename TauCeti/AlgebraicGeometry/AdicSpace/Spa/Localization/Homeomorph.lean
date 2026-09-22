@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Surjective
 /-!
 # The adic spectrum of a topological localization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.Homeomorph)
+
 For a rational subset `R(T/s)` of `Spa(A, A⁺)`, Wedhorn first equips the algebraic localization
 `Aₛ` with a topology for which the fractions `t/s` are power-bounded. Its plus ring is the
 integral closure of `A⁺[T/s]` in `Aₛ`. This file identifies the adic spectrum of that topological

@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Tangent.LeftInvariantDerivation
 /-!
 # The exponential map of a Lie group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Basic)
+
 This file defines the tangent-space exponential of a real Lie group modeled on a complete normed
 space by evaluating the canonical invariant one-parameter subgroup at time one. For a
 finite-dimensional smooth Lie group, it transports this construction across the canonical

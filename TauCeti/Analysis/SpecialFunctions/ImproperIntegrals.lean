@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 /-!
 # Improper-integral asymptotics and logarithmic decay
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.ImproperIntegrals)
+
 This file extends Mathlib's improper-integral estimates with an asymptotic estimate for weighted
 integrals and integrability at infinity of `(t (1 + log t) ^ 2)⁻¹`.
 

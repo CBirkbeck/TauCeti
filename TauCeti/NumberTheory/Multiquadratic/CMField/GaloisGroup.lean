@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.CMField.Basic
 /-!
 # The Galois group of a multiquadratic CM field is `(ℤ/2)^{n+1}`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CMField.GaloisGroup)
+
 The multiquadratic CM field `ℚ(i, √p₁, …, √pₙ)` has degree `2^{n+1}` over `ℚ`
 (`TauCeti.Multiquadratic.finrank_adjoin_I_sqrt_primes`). This file supplies its Galois group:
 adjoining `i = √(-1)` together with the real square roots of a finite family of distinct primes

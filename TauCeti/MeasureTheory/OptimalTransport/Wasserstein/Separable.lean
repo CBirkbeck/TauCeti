@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.FiniteSupport
 /-!
 # Separability of the finite-moment Wasserstein space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Separable)
+
 For a finite exponent `1 ≤ p < ∞` the Wasserstein space `TauCeti.WassersteinSpace p X` of laws of
 finite `p`-moment is separable when the ground space is second countable and its measurable
 structure is standard Borel and induced by the metric topology. The countable dense family is the

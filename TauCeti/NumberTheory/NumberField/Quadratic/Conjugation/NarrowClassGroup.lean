@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Norm.NegOne
 /-!
 # The narrow-versus-ordinary defect of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.NarrowClassGroup)
+
 For a number field `K` the sequence `Kˣ → Cl⁺(K) → Cl(K) → 1` is exact, so the defect between the
 narrow and the ordinary class group is the image of the principal-class map `mkPrincipal`. That
 image is a quotient of the group of sign patterns of `Kˣ` at the real places, modulo the global

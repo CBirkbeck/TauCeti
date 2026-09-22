@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Formula
 /-!
 # The affine group-law formulae under a change of variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Formula.VariableChange)
+
 An admissible change of variables `C : VariableChange R` carries a point `(x, y)` of `C • W` to
 the point `(u²x + r, u³y + u²sx + t)` of `W`. This file records what that substitution does to
 each formula Mathlib's `Affine/Formula.lean` defines — `negY`, `addX`, `negAddY`, `addY` and

@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Vectors
 /-!
 # The quadratic realization of a skew-adjoint Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Realization)
+
 For a nondegenerate quadratic form on a finite-dimensional vector space, the skew-adjoint
 endomorphisms of its polar form are exactly the quadratic elements of its Clifford algebra. The
 equivalence factors through the second exterior power, so its normalization is inherited from the

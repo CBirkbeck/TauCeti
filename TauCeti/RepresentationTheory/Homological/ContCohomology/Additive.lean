@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Functorial
 /-!
 # Additivity and linearity of continuous cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Additive)
+
 This file proves that the compatible-pair map on continuous cohomology is additive in its
 coefficient morphism. Over a commutative coefficient ring it also commutes with scalar
 multiplication. Consequently `Hⁿ(G, -)`, packaged as

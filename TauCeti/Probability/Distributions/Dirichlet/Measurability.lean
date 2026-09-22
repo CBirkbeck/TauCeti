@@ -12,6 +12,8 @@ import TauCeti.Probability.Distributions.Measurability
 /-!
 # Parameter measurability of the Dirichlet distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirichlet.Measurability)
+
 The Dirichlet law depends measurably on its concentration vector.  Thus a measurable random
 concentration vector can be composed with `dirichletMeasure` to give a measure-valued kernel.
 

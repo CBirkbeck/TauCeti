@@ -16,6 +16,8 @@ public import TauCeti.LinearAlgebra.BilinearForm.Prod
 /-!
 # Scalar extension of an integral bilinear form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.BilinearForm)
+
 An integral bilinear form on a lattice extends uniquely to a bilinear form on any abstract base
 change of that lattice. This file constructs that extension,
 `TauCeti.Hodge.integralFormBaseChange`, from Mathlib's base change of a bilinear form along the

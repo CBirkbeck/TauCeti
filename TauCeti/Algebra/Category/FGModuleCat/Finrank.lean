@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Abelian
 /-!
 # Finrank as an additive invariant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.FGModuleCat.Finrank)
+
 This file packages finrank on finite-dimensional vector spaces as an invariant additive on short
 exact sequences. It is the reusable bridge from `FGModuleCat` to abelian Grothendieck groups.
 

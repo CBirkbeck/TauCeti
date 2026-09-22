@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 /-!
 # Derivatives at zero of a finite sum of logarithms `log (1 - 2 t aⱼ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Log.SumLogOneSub)
+
 For real weights `a : ι → ℝ` indexed by a finite type and a real constant `c`, consider
 `t ↦ -c / 2 * ∑ j, log (1 - 2 * t * a j)`. When `c` is a positive natural number coerced to
 `ℝ`, this is locally the cumulant-generating function of a weighted sum of independent chi-squared

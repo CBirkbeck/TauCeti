@@ -15,6 +15,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # The additive group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveGroup.Scheme)
+
 For a commutative ring `R`, the one-dimensional additive group is represented by the symmetric
 Hopf algebra
 

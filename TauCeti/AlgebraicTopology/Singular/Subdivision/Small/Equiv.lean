@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.Singular.Subdivision.Small.Homotopy
 /-!
 # Chains subordinate to a cover are a deformation retract of all singular chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.Small.Equiv)
+
 For an open cover `U` of a space `X`, the singular chains subordinate to `U` — those supported on
 simplices whose image lies in a single member of `U` — include into all singular chains by a chain
 homotopy equivalence.  This is the small-chain theorem, the analytic heart of excision: it lets

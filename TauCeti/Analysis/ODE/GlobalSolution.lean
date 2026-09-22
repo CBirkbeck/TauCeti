@@ -15,6 +15,8 @@ public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 /-!
 # The global solution of a globally Lipschitz autonomous ODE
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.ODE.GlobalSolution)
+
 Picard--Lindelöf solves `γ' = v ∘ γ` only on a small time interval, because a solution can escape
 to infinity in finite time. When the vector field is *globally* Lipschitz no such escape happens,
 and through every initial point there is exactly one solution defined on all of `ℝ`. This file

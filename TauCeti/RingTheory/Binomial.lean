@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Finsupp.LinearCombination
 /-!
 # Products of generalized binomial coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Binomial)
+
 This file gives the linearization formula for the product of two generalized binomial
 coefficients in a binomial ring. The formula reads
 

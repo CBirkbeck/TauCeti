@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.LongExact
 /-!
 # The Kummer map `Kˣ → H¹(G_K, μₙ)` and the Kummer isomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisCohomology.Kummer)
+
 Let `K` be a field, `Kˢ` a separable closure, `G_K = AbsoluteGaloisGroup K`, and `n` a natural
 number invertible in `K`. The Kummer sequence
 

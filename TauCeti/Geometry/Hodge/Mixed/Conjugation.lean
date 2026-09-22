@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.SModEq.Basic
 /-!
 # Conjugation of Deligne's bigrading
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Mixed.Conjugation)
+
 For a mixed Hodge structure, complex conjugation exchanges the Deligne bigrading pieces up to
 strictly lower bidegrees. This file first proves the coarser weight-filtered form
 

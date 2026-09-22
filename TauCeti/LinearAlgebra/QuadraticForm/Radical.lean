@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Radical
 /-!
 # Radical API for quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Radical)
+
 This file records basic properties of the radical of a quadratic form (such as its invariance under
 negation and orthogonal products) and general consequences of nondegeneracy, together with the two
 facts about the

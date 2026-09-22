@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Base change of the full-weight doubled type-E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.DoubledMinuscule.BaseChange)
+
 `TauCeti.E6DoubledMinuscule.groupScheme` is the explicit integral affine group scheme obtained by
 closing the twelve numbered type-`E₆` root subgroups and the fifty-four-weight torus of
 `V(ϖ₁) ⊕ V(ϖ₆)` inside `GL₅₄`. This file specializes the base-change construction for a general

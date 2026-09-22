@@ -31,6 +31,8 @@ import Mathlib.Algebra.GroupWithZero.Units.Fintype
 /-!
 # The non-split torus of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.NonSplitTorus)
+
 Let `E/F` be a field extension of degree `2`. Choosing an `F`-basis of `E` presents multiplication
 by an element of `E` as a `2 × 2` matrix over `F`, and multiplication by a *nonzero* element as an
 element of `GL (Fin 2) F`. The image of `Eˣ` is the **non-split torus**

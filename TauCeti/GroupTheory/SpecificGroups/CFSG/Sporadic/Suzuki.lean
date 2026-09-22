@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.Presentation.GroupPresentation
 /-!
 # A transcribed presentation of the Suzuki sporadic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Sporadic.Suzuki)
+
 This file carries the `Suz` row of the sporadic presentation data required by milestone S1 of
 `TauCetiRoadmap/CFSGStatement/README.md`. It records the presentation `GPLTable.Suz.1` from
 Rolf Lindenbergh's Group Presentations Library as a `TauCeti.GroupPresentation`, together with

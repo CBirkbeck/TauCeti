@@ -12,6 +12,8 @@ public import TauCeti.LowDimTopology.Plumbing.IntersectionForm
 /-!
 # Characteristic covectors of a plumbing lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Characteristic)
+
 This file adds the characteristic-covector parity condition for the integral lattice attached
 to a plumbing graph. For a plumbing graph `P`, a covector `k : V → ℤ` is characteristic when its
 value on each basis sphere is congruent modulo two to the sphere's self-intersection, namely

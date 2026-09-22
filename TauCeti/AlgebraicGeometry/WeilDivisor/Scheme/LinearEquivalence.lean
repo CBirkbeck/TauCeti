@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LocallyPrincipal
 /-!
 # Isomorphic divisor sheaves come from linearly equivalent divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LinearEquivalence)
+
 `TauCeti/AlgebraicGeometry/WeilDivisor/Scheme/Sheaf.lean` attaches to a Weil divisor `D` on an
 integral scheme the subsheaf `𝒪_X(D)` of the sheaf `𝒦_X` of rational functions, and shows in
 `SchemeWeilDivisor.nonempty_iso_sheaf_of_linearlyEquivalent` that linearly equivalent divisors

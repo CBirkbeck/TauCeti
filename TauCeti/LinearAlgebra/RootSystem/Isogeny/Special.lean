@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Speci
 /-!
 # The special isogenies of the pinned `B₂`, `G₂` and `F₄` root data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Isogeny.Special)
+
 The root data of `B₂` and `F₄` over a field of characteristic two, and that of `G₂` over a
 field of characteristic three, admit an isogeny with themselves which exchanges the two root
 lengths. These three types are the only ones: exchanging the two lengths identifies the root

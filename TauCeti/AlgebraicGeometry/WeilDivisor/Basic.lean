@@ -15,6 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Weil divisors as finite integer combinations of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Basic)
+
 This file provides the first, purely combinatorial piece of the Jacobian roadmap's Layer A:
 Weil divisors are finite formal integer sums of points. The scheme-theoretic predicates
 which decide which points are codimension-one points, the principal-divisor map, and the

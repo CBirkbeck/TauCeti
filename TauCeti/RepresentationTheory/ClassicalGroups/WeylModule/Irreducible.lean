@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.Semisimple.NilpotentIdeal
 /-!
 # The Weyl module is an irreducible representation of `GL n k`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.WeylModule.Irreducible)
+
 Over a field `k` of characteristic zero, the Weyl module `𝕊^μ(kⁿ) = c_t · (kⁿ)^{⊗d}` of a
 `μ`-tableau `t`, the image of its Young symmetrizer `c_t` acting on the tensor power, is an
 **irreducible** representation of `GL n k` whenever it is nonzero, that is, whenever `μ` has at most

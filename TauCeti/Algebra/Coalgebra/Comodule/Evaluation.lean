@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Dual.BaseChange
 /-!
 # Evaluation and dual point actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Evaluation)
+
 For a finite-projective right comodule `M` over a Hopf algebra, this file relates the point
 action on its antipode-twisted dual comodule to the original point action. The canonical
 `A`-valued pairing between `A ⊗[R] Module.Dual R M` and `A ⊗[R] M` satisfies

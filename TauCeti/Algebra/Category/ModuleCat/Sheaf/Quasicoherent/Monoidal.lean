@@ -16,6 +16,8 @@ public import TauCeti.CategoryTheory.Sites.CoversTop
 /-!
 # The tensor product of quasi-coherent sheaves is quasi-coherent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Quasicoherent.Monoidal)
+
 Let `R` be a sheaf of commutative rings on a small site with pullbacks. If `M` and `N` are
 quasi-coherent sheaves of `R`-modules, then so is `M ⊗ N`: on a common refinement of covers on
 which `M` and `N` have presentations, the restriction of `M ⊗ N` is the tensor product of the

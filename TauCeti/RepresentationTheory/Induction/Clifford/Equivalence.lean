@@ -17,6 +17,8 @@ Roadmap source: `TauCetiRoadmap/RepresentationTheory/InductionRestriction/README
 /-!
 # The representation decomposition in Clifford's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Equivalence)
+
 Let `N` be a normal subgroup of a group `G`, and let `W` be an irreducible
 finite-dimensional representation of `G` over a splitting field. The isotypic components of the
 restriction of `W` to `N` are indexed by the inertia cosets of any one constituent `V`, and every

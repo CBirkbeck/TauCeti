@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.IsometryEquiv
 /-!
 # Quadratic forms over a separably closed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.SepClosed)
+
 This file proves that a finite-dimensional nondegenerate quadratic form over a separably closed
 field of characteristic different from two is equivalent to a sum of squares.
 

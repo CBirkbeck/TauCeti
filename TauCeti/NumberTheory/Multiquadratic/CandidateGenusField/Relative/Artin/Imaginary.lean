@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.A
 /-!
 # Artin reciprocity for the imaginary quadratic genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Artin.Imaginary)
+
 For negative squarefree `d`, put `K = ℚ(√d)` and let `K_gen` be the prime-discriminant compositum,
 which is the genus field of `K` (`isGenusField_candidateGenusField`). Since `K` is totally complex,
 its narrow and ordinary class groups agree, and the genus-field isomorphism takes the classical form

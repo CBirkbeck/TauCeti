@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PowerBounded
 /-!
 # The Laurent quotient of a numerator enlargement, and the maps between it and `A⟨T'/s⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Laurent.Presentation)
+
 Let `(T', s)` refine `(T, s)` by enlarging the numerators, and let `t ∈ T'`. Adjoining a variable
 `X` to `A⟨T/s⟩` and imposing the relation `X = t/s` gives `A⟨T/s⟩⟨X⟩ ⧸ (t/s - X)`. This file
 constructs the two canonical continuous ring homomorphisms between that quotient and `A⟨T'/s⟩`,

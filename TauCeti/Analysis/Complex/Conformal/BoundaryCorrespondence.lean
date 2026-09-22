@@ -15,6 +15,8 @@ import TauCeti.Analysis.Complex.Conformal.ImageSimplyConnected
 /-!
 # The boundary correspondence of a conformal map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.BoundaryCorrespondence)
+
 A conformal map — a holomorphic injection `f` on an open set `U ⊆ ℂ` — is a *proper* map onto its
 image: the preimage of a compact subset of `f '' U` is a compact subset of `U`. Properness is the
 mechanism that forces the boundary to go to the boundary, and it is the first step of the

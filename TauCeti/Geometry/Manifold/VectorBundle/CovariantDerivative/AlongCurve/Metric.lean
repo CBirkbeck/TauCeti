@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Metric
 /-!
 # Metric compatibility along a curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCurve.Metric)
+
 This file proves the product rule for a metric-compatible covariant derivative acting on tangent
 fields along a curve:
 

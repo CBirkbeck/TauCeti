@@ -10,6 +10,8 @@ public import TauCeti.Analysis.CompletelyMonotone.FiniteDifference.Laplace
 /-!
 # Hausdorff--Bernstein--Widder theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Bernstein.HausdorffBernsteinWidder)
+
 This file proves the finite-measure form of the Hausdorff--Bernstein--Widder theorem for
 completely monotone functions on the closed half-line: a function is continuous on `[0, ∞)`
 and completely monotone on `(0, ∞)` if and only if it is the Laplace transform of a (unique)

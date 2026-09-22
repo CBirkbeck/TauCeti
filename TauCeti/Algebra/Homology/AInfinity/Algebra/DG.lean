@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.DG.Algebra.Hom.Basic
 /-!
 # Differential graded algebras as `A∞` algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.DG)
+
 A differential graded algebra `(A, d)` is an `A∞` algebra with `m₁ = d`, `m₂` the product, and
 `m n = 0` for `n ≥ 3`.  The arity-one and arity-two Stasheff identities are `d² = 0` and the
 graded Leibniz rule, the arity-three identity is associativity, and every identity of arity at

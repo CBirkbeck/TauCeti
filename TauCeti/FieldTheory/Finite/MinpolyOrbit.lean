@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.Finite.FrobeniusFixed
 /-!
 # The Frobenius orbit of an element algebraic over a finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.MinpolyOrbit)
+
 Let `F` be a finite field with `q` elements and let `E` be an algebraic extension of `F`.  Raising
 to the `q`-th power is an `F`-algebra automorphism of `E`, Mathlib's
 `FiniteField.frobeniusAlgEquivOfAlgebraic`, and this file computes the orbit of `x : E` under the

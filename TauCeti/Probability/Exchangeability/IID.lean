@@ -12,6 +12,8 @@ public import Mathlib.Probability.IdentDistrib
 /-!
 # An i.i.d. sequence is mixed i.i.d., exchangeable, and contractable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.IID)
+
 This file discharges the first worked example of the Exchangeability roadmap
 (`TauCetiRoadmap/Exchangeability/README.md`, "Worked examples"):
 

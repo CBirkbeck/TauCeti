@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Cube.Face.Basic
 /-!
 # The cube-weight recursion in a plumbing lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.Weight.Recursion)
+
 The lattice-homology cube weight `characteristicCubeWeight k x S` is the maximum of the point
 weights `χ_k` over the `2 ^ |S|` vertices of the cube with base point `x` and directions `S`
 (`CubeWeight.lean`). The two faces of this cube in a direction `v ∈ S` are themselves cubes one

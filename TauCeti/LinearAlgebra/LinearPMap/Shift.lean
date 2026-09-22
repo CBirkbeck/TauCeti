@@ -11,6 +11,8 @@ public import Mathlib.Tactic.Module
 /-!
 # Scalar shifts of partial linear maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearPMap.Shift)
+
 For a partial linear map `A`, subtracting the scalar operator `omega I` leaves its domain
 unchanged.  This file develops the generic construction and its basic normalization API.
 

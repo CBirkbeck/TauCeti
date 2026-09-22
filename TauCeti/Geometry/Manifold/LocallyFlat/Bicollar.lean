@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.LocallyFlat.Basic
 /-!
 # Locally flat embeddings are locally bicollared
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.LocallyFlat.Bicollar)
+
 A locally flat embedding is one that ambient charts flatten onto the standard coordinate slice
 (`TauCeti.IsLocallyFlat`). This file extracts from those charts the structure they were isolated
 to provide: near each point of the domain, an open neighbourhood of the image that is a *product*,

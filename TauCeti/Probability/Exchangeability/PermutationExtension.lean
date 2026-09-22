@@ -12,6 +12,8 @@ import Mathlib.Data.Finset.Lattice.Fold
 /-!
 # Permutation extensions for finite exchangeability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PermutationExtension)
+
 This file records the combinatorial extension lemmas used in the Layer 0
 exchangeability API:
 

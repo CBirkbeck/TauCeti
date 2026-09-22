@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Bialgebra.Equiv
 /-!
 # Cocommutative coalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Cocommutative)
+
 This file records transport results for cocommutative coalgebras.
 
 ## Main declarations

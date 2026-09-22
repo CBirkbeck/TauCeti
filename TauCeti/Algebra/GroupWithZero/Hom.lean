@@ -11,6 +11,8 @@ public import Mathlib.Algebra.GroupWithZero.Defs
 /-!
 # Unitality of a multiplicative map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupWithZero.Hom)
+
 A multiplicative map need not preserve `1`, and the zero map shows it need not. Where
 multiplication in the codomain is left-cancellative away from zero there is nothing in between:
 such a map is identically zero or unital, the zero map being the only non-unital one. A unital

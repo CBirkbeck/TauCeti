@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.ResToImagAxis
 /-!
 # The Fricke functional equation of a cusp form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LFunction.FunctionalEquation)
+
 For a cusp form `f` of positive integral weight, the level-`N` completion is the Mellin
 transform of the restriction of `f` to the rescaled imaginary axis,
 

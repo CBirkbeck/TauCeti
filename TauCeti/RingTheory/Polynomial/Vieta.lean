@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Polynomial.Vieta
 /-!
 # Vieta's formulas for a family of roots indexed by a finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Vieta)
+
 Mathlib reads the coefficients of a product of linear factors off the elementary symmetric
 functions of the multiset of its roots (`Multiset.prod_X_sub_C_coeff`). Here the roots are a
 family `x : σ → S` indexed by a finite type and the elementary symmetric functions are the

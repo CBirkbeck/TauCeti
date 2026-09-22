@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Chevalley.System
 /-!
 # The Chevalley lattice is stable under divided powers of the adjoint action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Root.KostantStability)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, let `H` be a splitting Cartan subalgebra, and let `x` be a Chevalley system
 of root vectors. `TauCeti.IsChevalleySystem.chevalleyLieLattice` is the `ℤ`-span of the root

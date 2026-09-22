@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Petersson.Unitary
 /-!
 # The old and new subspaces at a fixed nebentypus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Nebentypus)
+
 The old subspace `S_k(Γ₁(N))ᵒˡᵈ` and its Petersson-orthogonal complement, the new subspace
 `S_k(Γ₁(N))ⁿᵉʷ` (`TauCeti/NumberTheory/ModularForms/Newforms/Basic.lean`), are both stable under
 the diamond operators: the old one because the level-raising maps intertwine the diamonds, the

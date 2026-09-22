@@ -11,6 +11,8 @@ public import TauCeti.Analysis.ODE.LyapunovPerron.Local
 /-!
 # The local stable set at a Morse critical point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.LocalStable)
+
 At a nondegenerate critical point `x` of a twice continuously differentiable function on a
 finite-dimensional real Hilbert space, the negative-gradient vector field in displacement
 coordinates splits as

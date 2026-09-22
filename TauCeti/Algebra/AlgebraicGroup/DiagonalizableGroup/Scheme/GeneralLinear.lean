@@ -15,6 +15,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Diagonal representations of a diagonalizable group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.GeneralLinear)
+
 A weight function `wt : Fin n → G` on a basis of a free module `M` makes `M` a comodule over the
 group algebra `R[G]`, that is, a representation of the diagonalizable group `D(G)` which is
 diagonal in that basis. This file records the resulting morphism of affine group schemes

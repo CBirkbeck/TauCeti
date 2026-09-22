@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 /-!
 # The fundamental groupoid of a simply connected space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroupoid.SimplyConnected)
+
 A space is simply connected exactly when its fundamental groupoid is codiscrete: there is one
 and only one morphism between any two of its objects. This file records that uniqueness as a
 `Unique` instance on the hom types, so that a transport map along a path inside a simply

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.FiniteDual.CartierDuality.Basic
 /-!
 # Base change of finite locally free Cartier duality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.FiniteDual.CartierDuality.BaseChange)
+
 Extension of scalars carries a finite locally free bicommutative Hopf algebra over `R` to one
 over an `R`-algebra `S`, and `TauCeti.ConvolutionDual.baseChangeBialgEquiv` says that it commutes
 with finite dualization. This file records both facts in the category

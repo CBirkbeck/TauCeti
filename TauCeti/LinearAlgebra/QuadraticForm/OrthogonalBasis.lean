@@ -14,6 +14,8 @@ import Mathlib.Data.List.OfFn
 /-!
 # An anisotropic orthogonal basis of a nondegenerate quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.OrthogonalBasis)
+
 Over a field in which `2` is invertible, every symmetric bilinear form on a finite-dimensional
 space admits an orthogonal basis (`LinearMap.BilinForm.exists_orthogonal_basis`). This file records
 the refinement that nondegeneracy adds: **no member of such a basis is isotropic**. Indeed a basis

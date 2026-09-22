@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Norm.Quadratic
 /-!
 # Norm-principality for quadratic conjugation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Norm.Basic)
+
 For a quadratic number field `K = ℚ(√d)` with quadratic conjugation
 `σ = NumberField.ringOfIntegersQuadraticConj`, this file proves the genus-theoretic
 key fact that `I · σI` is principal for every ideal `I` of `𝓞 K`.  This is the hypothesis

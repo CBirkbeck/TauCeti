@@ -14,6 +14,8 @@ import TauCeti.Order.Chain
 /-!
 # The realization map of a barycentric subdivision
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Realization)
+
 Every vertex of the barycentric subdivision of a simplicial complex `K` is a nonempty face of
 `K`. Send that vertex to the barycenter of its face and extend affinely over every simplex. Since
 the faces indexing a subdivision simplex form a chain, all their barycenters lie in the largest

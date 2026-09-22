@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Compact.Integrated
 /-!
 # Haar averaging projects onto the invariants, and the character integral counts them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Invariants)
+
 For a finite group `G` whose order is invertible in the scalars, Mathlib averages the action
 operators of a representation over the group and gets a projection onto the invariant subspace
 (`Representation.averageMap`, `Representation.isProj_averageMap`). This file is the compact-group

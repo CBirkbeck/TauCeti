@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Ideal.LiesOver
 /-!
 # The Frobenius acts on square roots by the Legendre symbol
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LegendreSymbol.Frobenius)
+
 Let `S` be a commutative domain, `Q` an ideal of `S` lying over the rational prime `p ≠ 2`, and
 `φ` an arithmetic Frobenius at `Q` (`AlgHom.IsArithFrobAt`, so `φ y ≡ y ^ p (mod Q)` for all
 `y`). If `x ∈ S` is a square root of an integer `d` with `p ∤ d`, then

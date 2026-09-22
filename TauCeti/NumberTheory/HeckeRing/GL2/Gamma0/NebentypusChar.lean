@@ -12,6 +12,8 @@ public import Mathlib.Basic.Complex.Basic
 /-!
 # The twisting character of the `χ`-twisted `Γ₀(N)` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.NebentypusChar)
+
 `Delta0UpperUnit` sends an element of `Δ₀(N)` to the unit its integral witness has in the
 upper-left corner mod `N`. Composing with a Dirichlet character `χ : (ZMod N)ˣ →* ℂˣ` gives
 

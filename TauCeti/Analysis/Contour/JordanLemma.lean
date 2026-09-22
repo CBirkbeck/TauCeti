@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.CircleIntegral
 /-!
 # Jordan's lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.JordanLemma)
+
 A large semicircular arc contributes little to a contour integral whose integrand carries an
 oscillatory factor `e^{iaz}` with `a > 0`:
 

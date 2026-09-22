@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Basic
 /-!
 # The simply connected root datum of type F4
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Basic)
+
 This file constructs the pinned integral root datum of type `F4` on the character and cocharacter
 lattices `Fin 4 → ℤ`. The character lattice is written in the fundamental-weight basis and the
 cocharacter lattice in the simple-coroot basis. Thus the first four roots are the rows of the

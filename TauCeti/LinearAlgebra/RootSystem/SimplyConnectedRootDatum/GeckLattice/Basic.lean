@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.KostantF
 /-!
 # The coordinate lattice in the pinned Geck module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.Basic)
+
 The pinned split Lie algebra `TauCeti.DynkinType.lieAlgebra` acts faithfully on the explicit Geck
 module `TauCeti.DynkinType.GeckIndex → ℚ`. This file equips that module with its coordinate
 `ℤ`-lattice, spanned by the standard coordinate vectors. It is finite free, has the expected

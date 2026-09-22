@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Polynomial.Sequence
 /-!
 # Completeness of an orthogonal polynomial system from moment determinacy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.PolynomialCompleteness)
+
 `TauCeti.hilbertBasisOfWeightedMeasure` assembles a `HilbertBasis` of `L²(w·μ)` from an
 orthogonality relation *and* a completeness hypothesis `(span …)ᗮ = ⊥`, but nothing in the library
 discharges that hypothesis. This file supplies it for a family of polynomials of exact degree,

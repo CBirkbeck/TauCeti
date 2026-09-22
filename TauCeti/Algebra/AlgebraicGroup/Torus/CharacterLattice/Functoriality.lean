@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.GaloisLattice.Basic
 /-!
 # The character-lattice functor of tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.CharacterLattice.Functoriality)
+
 The character group of a torus is a finite free `ℤ`-module with a continuous action of the
 absolute Galois group. Here continuity is expressed without choosing topology data on the
 underlying module: every vector has an open stabilizer, which is the standard criterion for an

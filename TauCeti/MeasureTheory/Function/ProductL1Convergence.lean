@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # `L¹` convergence of a finite product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.ProductL1Convergence)
+
 If finitely many families of unit-ball-valued functions each converge in `L¹`, then their pointwise
 product converges in `L¹` to the product of the limits:
 

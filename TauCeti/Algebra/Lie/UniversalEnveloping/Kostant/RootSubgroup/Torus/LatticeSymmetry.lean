@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.GeneralLinearGroup.InvariantRestrict
 /-!
 # Lattice symmetries of a Kostant torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Torus.LatticeSymmetry)
+
 Suppose an additive automorphism of an abelian group preserves a subgroup with a chosen integral
 basis and acts monomially on that basis. If the induced basis-index map is compatible with a
 permutation of the torus coordinates through the supplied weight function, then the scalar

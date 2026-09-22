@@ -12,6 +12,8 @@ public import TauCeti.Probability.Exchangeability.Basic
 /-!
 # The directing measure is the conditional law of every coordinate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.DirectingMeasure.Coord)
+
 `directingMeasure_ae_eq_condExp` (in `DirectingMeasure/Basic.lean`) identifies the directing
 measure with the conditional law of the initial coordinate `X 0` given the tail σ-algebra. For
 a **contractable** process the same holds for every coordinate.

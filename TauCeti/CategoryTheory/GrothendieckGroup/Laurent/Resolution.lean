@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.ProjectiveResolution
 /-!
 # The graded resolution theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Laurent.Resolution)
+
 Let `E` be a graded exact category and `P` a class of `E`-projectives containing a zero object,
 closed under binary biproducts, and stable under the grading shift `{1}`. The resolution theorem
 `TauCeti.ExactStructure.resolutionEquiv` identifies the exact `K₀` of `P` with the exact `K₀` of

@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.LinearPMap.Basic
 /-!
 # Restriction of scalars for partial linear maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearPMap.RestrictScalars)
+
 A partial linear map `A : E →ₗ.[R] F` over a ring `R` is in particular linear over any ring `S`
 acting compatibly through `R`, with the same domain and the same values.  This file records that
 restriction, `LinearPMap.restrictScalars S A`, the partial-map analogue of

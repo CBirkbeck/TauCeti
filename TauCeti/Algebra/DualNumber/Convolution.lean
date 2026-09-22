@@ -11,6 +11,8 @@ public import TauCeti.Algebra.DualNumber.Basic
 /-!
 # Convolution with dual-number coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.DualNumber.Convolution)
+
 `WithConv.snd_comp_convMul` computes the first-order coefficient of a convolution
 product. This product rule is used to differentiate the adjoint action.
 -/

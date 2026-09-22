@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Equivariance
 /-!
 # Containment and normality of normal-subgroup products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Product.Properties)
+
 Let `I` and `J` be Hopf ideals of a commutative Hopf algebra `H`. If `I` is normal, multiplication
 from the conjugation semidirect product has a scheme-theoretic image in `Spec H`. This file proves
 that the image contains the closed subgroups cut out by both `I` and `J`. If `J` is normal as well,

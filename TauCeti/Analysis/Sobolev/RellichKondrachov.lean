@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 /-!
 # Rellich--Kondrachov for zero-boundary first-order Sobolev spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.RellichKondrachov)
+
 This file proves that the canonical value map
 
 `W^{1,p}_0(Ω) → Lᵖ(Ω)`

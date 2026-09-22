@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic
 /-!
 # The invariant polynomial of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Invariant)
+
 This file defines the polynomial
 
 `WeierstrassCurve.invar = 6 X² + b₂ X + b₄`

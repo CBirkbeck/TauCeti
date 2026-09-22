@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The Frobenius of the tripled type-D4 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.Frobenius)
+
 The tripled type-`D₄` carrier is the explicit Kostant toral closure over `ℤ` built from the
 `24`-dimensional representation `V(ϖ₁) ⊕ V(ϖ₃) ⊕ V(ϖ₄)` and its admissible full-weight lattice.
 Over a commutative ring `A` of exponential characteristic `p`, entrywise `p ^ k`-th powers

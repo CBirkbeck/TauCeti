@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.UnitDisc.Basic
 /-!
 # Standard automorphisms of the complex unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Basic)
+
 This file adds the rotation factor in the standard disc-automorphism formula
 `z ↦ u * (z - a) / (1 - conj a * z)`, with `u` on the unit circle and `a` in the
 unit disc.  The previous Moebius file supplies the factor sending `a` to `0`; this file

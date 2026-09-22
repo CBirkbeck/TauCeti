@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.BilinearForm.Multilinear
 /-!
 # Bilinear forms from functionals on the second symmetric and exterior powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.Squares)
+
 A functional on `Sym²V` becomes a bilinear form on `V` by composing with the universal multilinear
 map, and the form it produces is symmetric because the symmetric square does not see the order of
 its two arguments; a functional on `⋀²V` becomes a form in the same way, and that form is

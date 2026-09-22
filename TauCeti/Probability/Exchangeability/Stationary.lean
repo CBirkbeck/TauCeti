@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.ProcessShift
 /-!
 # Exchangeable laws are stationary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Stationary)
+
 This file records the Layer 0 stationarity bridge from the Exchangeability roadmap: a finitely
 exchangeable process has a shift-invariant path law.  The existing implication
 `Exchangeable.contractable` gives the exchangeability-to-contractability bridge.  The lemmas here

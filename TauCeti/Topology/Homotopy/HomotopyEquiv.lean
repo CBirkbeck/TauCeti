@@ -11,6 +11,8 @@ public import Mathlib.Topology.Homotopy.Path
 /-!
 # Path connectedness is a homotopy invariant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.HomotopyEquiv)
+
 A homotopy equivalence `e : X ≃ₕ Y` is not surjective, so path connectedness of `Y` cannot be
 read off from the image of a path in `X`. What replaces surjectivity is the trace of the
 homotopy `e.toFun ∘ e.invFun ≃ id`: evaluated at a point `y`, it is a path from

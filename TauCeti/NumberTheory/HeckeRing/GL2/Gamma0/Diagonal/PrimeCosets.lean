@@ -15,6 +15,8 @@ import Mathlib.Algebra.Field.ZMod
 /-!
 # The double coset `Γ₀(N) · diag(1, p) · Γ₀(N)` at a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimeCosets)
+
 The right-coset decomposition of the `Γ₀(N)` double coset of `diag(1, p)`, the `Γ₀(N)`
 counterpart of `Gamma1/CoprimeCosets.lean` and `Gamma1/UpperTriCosets.lean`. At `p ∤ N` the
 representatives are the same `p + 1` matrices as over `Γ₁(N)` — `!![1, j; 0, p]` for `j < p` and

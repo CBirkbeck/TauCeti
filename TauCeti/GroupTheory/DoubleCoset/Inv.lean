@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.DoubleCoset.Basic
 /-!
 # Inverting a double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Inv)
+
 Inversion is an anti-automorphism of a group, so it carries the double coset `Γ₁ g Γ₂` to
 `Γ₂ g⁻¹ Γ₁`: the flanking subgroups are exchanged and the element is inverted. This file records
 that, as a set identity and in membership form.

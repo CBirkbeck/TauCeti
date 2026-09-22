@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.TensorProduct.Decomposition
 /-!
 # Tensor products of internally graded modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.TensorProduct)
+
 The tensor product of internally `ℤ`-graded modules is graded by total degree. Its degree-`n`
 piece is the sum of the images of
 

@@ -13,6 +13,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The Euler and Tits forms of the `D₄` quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.D4.EulerForm)
+
 This file evaluates the Euler and Tits forms of the `D₄` quiver in the coordinates of its four
 vertices and reads off their positive roots. Writing `c` for the value at the centre and `aᵢ` for
 the values at the three outer vertices,

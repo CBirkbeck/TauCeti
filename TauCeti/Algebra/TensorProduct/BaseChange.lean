@@ -22,6 +22,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # Base change is compatible with `⊗`, with `ᵐᵒᵖ`, and with itself
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.TensorProduct.BaseChange)
+
 Scalar extension along a commutative `K`-algebra `L` distributes over the tensor product, commutes
 with passing to the opposite algebra, and composes in stages:
 

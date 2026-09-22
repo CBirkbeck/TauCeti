@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Naturality
 /-!
 # Representability of dynamic weight-unipotent subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.Weight.Unipotent.Basic)
+
 The weight-unipotent subgroup scheme of `GL_N` represents the dynamic unipotent subgroup attached
 to the cocharacter `t ↦ diag(t ^ w i)`. On points, both descriptions say that the matrix is block
 triangular for the weight filtration and acts as the identity on every associated-graded weight

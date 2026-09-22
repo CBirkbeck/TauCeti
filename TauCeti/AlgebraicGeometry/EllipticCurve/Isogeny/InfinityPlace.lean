@@ -21,6 +21,8 @@ import Mathlib.RingTheory.Valuation.Integral
 /-!
 # Pointedness at the place at infinity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace)
+
 An isogeny of affine Weierstrass curves is a coordinate pullback `φ : R(W₂) → K(W₁)` carrying the
 integrality condition `MapsInfinity`, the algebraic form of `φ(O₁) = O₂`. This file reads that
 condition off as a statement about **places**: restricting the place at infinity of `W₁` along the

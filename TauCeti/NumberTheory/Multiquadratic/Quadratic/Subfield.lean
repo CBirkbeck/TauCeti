@@ -11,6 +11,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Quadratic subfields of a multiquadratic field from subset products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.Subfield)
+
 For square roots `root i` of radicands `d i ∈ K` over a field `K`, the subset-product
 root `∏_{i ∈ S} root i` squares into `K`: its square is the subset product `∏_{i ∈ S} d i` of the
 radicands. Each subset therefore names a simple subfield `K(∏_{i ∈ S} root i)` of the

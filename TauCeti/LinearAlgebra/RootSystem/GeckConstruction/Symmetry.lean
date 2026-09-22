@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.EquivInvariance
 /-!
 # Symmetries of Geck's construction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.GeckConstruction.Symmetry)
+
 Geck's construction attaches to a root pairing `P` with base `b` an explicit Lie subalgebra of the
 matrices indexed by `b.support ⊕ ι`, generated as a Lie subalgebra by the numbered matrices
 `RootPairing.GeckConstruction.h i`, `RootPairing.GeckConstruction.e i` and

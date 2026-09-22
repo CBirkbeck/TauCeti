@@ -11,6 +11,8 @@ public import Mathlib.Data.Sym.Sym2
 /-!
 # Backtracking in the two-step grid differential support
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Backtracking)
+
 The support of the square of the fully blocked grid differential is already bounded by
 `GridState.twoStepColumnSwapNeighbors`: states reached from `x` by two nontrivial column
 transpositions. This file records the first exact feature of that two-step support. A path that

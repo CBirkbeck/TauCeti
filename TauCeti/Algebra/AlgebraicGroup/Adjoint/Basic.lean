@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Semisimple.Basic
 /-!
 # Adjoint semisimple affine groups in Hopf coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Adjoint.Basic)
+
 A semisimple affine group over a field is **adjoint** when its scheme-theoretic center is
 trivial.  For a commutative Hopf algebra `H`, closed subgroup schemes are encoded
 contravariantly by Hopf ideals.  Thus the center is trivial precisely when its defining ideal is

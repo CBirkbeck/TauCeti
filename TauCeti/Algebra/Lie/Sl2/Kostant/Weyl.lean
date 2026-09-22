@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The rank-one Weyl representative in the Kostant carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Kostant.Weyl)
+
 For the full-weight `A₁` carrier constructed from the standard two-dimensional `sl₂` module, this
 file specializes the integral Weyl representative
 

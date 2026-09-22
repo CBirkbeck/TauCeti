@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.MainLemma
 /-!
 # A good Hecke eigenvector in the new part with `a₁ = 0` vanishes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.EigenvectorVanishing)
+
 The one statement both multiplicity one and strong multiplicity one run on. For a cusp form in
 `S_k(N, χ)` that is an eigenvector of the Hecke ring at every prime not dividing `N`, the
 eigenvector recurrences propagate `a₁ = 0` to the vanishing of every coefficient at an index

@@ -12,6 +12,8 @@ public import TauCeti.Data.Finset.Basic
 /-!
 # The Möbius function of the lattice of graphs on a fixed vertex set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.Moebius)
+
 The simple graphs on a finite vertex set `V` form a Boolean lattice, isomorphic through the edge
 set to the lattice of subsets of the non-diagonal pairs `Sym2 V`.  Its Möbius function is therefore
 the signed count `(-1)^{e(H) - e(F)}` on an interval `[F, H]`, where `e(·)` counts edges.  The two

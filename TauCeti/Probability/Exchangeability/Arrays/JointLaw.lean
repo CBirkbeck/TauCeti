@@ -16,6 +16,8 @@ import TauCeti.MeasureTheory.Measure.Measurability
 /-!
 # The directing measure of a separately exchangeable array is equivariant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.JointLaw)
+
 Applying de Finetti to the rows of a separately exchangeable array produces a directing measure
 `ν` on row paths, and `Arrays.MixingLaw` records the symmetry it inherits from the remaining column
 freedom: the *law* of `ν` is invariant under pushing every row path forward by a permutation `τ` of

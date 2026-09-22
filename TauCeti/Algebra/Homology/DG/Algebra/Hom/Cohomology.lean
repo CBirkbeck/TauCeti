@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.DG.Algebra.Hom.Basic
 /-!
 # Functoriality of the cohomology algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Hom.Cohomology)
+
 A morphism of differential graded algebras induces a graded algebra homomorphism on cohomology,
 compatibly with identities and composition.
 

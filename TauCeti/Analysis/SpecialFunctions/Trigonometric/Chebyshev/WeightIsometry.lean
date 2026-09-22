@@ -14,6 +14,8 @@ public import TauCeti.MeasureTheory.Function.WeightL2Isometry
 /-!
 # The two Chebyshev normalizations are images of one another
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.WeightIsometry)
+
 The `OrthogonalL2Bases` roadmap ships each orthogonal family in two normalizations: the bare
 polynomials as a basis of the *weighted measure*, and their `√w`-envelopes as a basis of the
 *reference measure*. For Chebyshev these are `TauCeti.chebyshevTHilbertBasis` on

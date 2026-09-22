@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Center.Basic
 /-!
 # Centers and isomorphisms of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.Isomorphism)
+
 An isomorphism of commutative Hopf algebras carries the ideal defining the center to the ideal
 defining the center. Equivalently, the induced isomorphism of affine group schemes restricts to
 an isomorphism of their centers.

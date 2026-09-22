@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Path
 /-!
 # Covers generate the fundamental groupoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroupoid.CoverGeneration)
+
 Let `U : ι → Set X` be a family of subsets whose interiors cover `X`, that is, every point has
 some `U i` as a neighbourhood (for instance an open cover). This file proves the generation half
 of the groupoid Seifert--van Kampen theorem: every morphism of the fundamental groupoid of `X` is

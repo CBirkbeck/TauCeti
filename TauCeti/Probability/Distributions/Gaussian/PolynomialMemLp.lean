@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Function.PolynomialMemLp
 /-!
 # Integrability and `L²` membership of polynomials against a Gaussian measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.PolynomialMemLp)
+
 This file collects the family-agnostic facts that a real polynomial, evaluated pointwise, is
 integrable and square-integrable against a real Gaussian measure `gaussianReal μ v`, together with
 the companion statement that a polynomial times a Gaussian *envelope* `exp (-(x - μ)²/(2v))` is

@@ -15,6 +15,8 @@ public import Mathlib.LinearAlgebra.PerfectPairing.Basic
 /-!
 # The character–cocharacter perfect pairing of a split torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.Cocharacter)
+
 `TauCeti.Algebra.AlgebraicGroup.Cocharacter` builds, for the diagonalizable group `D(M)`, the
 `ℤ`-valued character–cocharacter pairing `DiagonalizableGroup.pairing m ψ = (ψ m).toAdd`, whose
 value is the exponent of the power endomorphism of `𝔾ₘ` that realizes it on points

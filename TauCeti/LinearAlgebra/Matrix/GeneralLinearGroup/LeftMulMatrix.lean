@@ -20,6 +20,8 @@ public import Mathlib.RingTheory.Trace.Defs
 /-!
 # The unit group of an algebra inside a general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.LeftMulMatrix)
+
 Let `S` be an algebra over a commutative semiring `R`, free with basis `b : Module.Basis ι R S`.
 Multiplication by `x : S` is an `R`-linear endomorphism of `S`, and its matrix in the basis `b` is
 Mathlib's `Algebra.leftMulMatrix b x`. When `x` is a **unit** that matrix is invertible, so the

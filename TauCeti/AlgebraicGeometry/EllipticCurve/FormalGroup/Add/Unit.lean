@@ -11,6 +11,8 @@ import TauCeti.RingTheory.MvPowerSeries.Rename
 /-!
 # The unit laws and the linear part of the chord group law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Unit)
+
 `FormalGroup/Add/Series.lean` produces `formalAdd`, the series `F(z₁, z₂) = ι(z₃(z₁, z₂))` of the
 chord construction. This file records what `F` does at the origin and in lowest degree: the two
 unit laws `F(z, 0) = z` and `F(0, z) = z`, and the fact that `F(z₁, z₂) = z₁ + z₂` up to terms of

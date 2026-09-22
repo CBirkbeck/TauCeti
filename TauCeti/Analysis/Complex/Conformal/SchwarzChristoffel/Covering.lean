@@ -20,6 +20,8 @@ import TauCeti.Topology.Homotopy.Covering
 /-!
 # The Schwarz--Christoffel primitive as a covering map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Covering)
+
 Let `F = schwarzChristoffelPrimitive a e z₀` and let `P` be the range of the compactified boundary
 path `schwarzChristoffelCompactifiedBoundary a e z₀`.  Assume, as in
 `TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Image`, that every finite prevertex is

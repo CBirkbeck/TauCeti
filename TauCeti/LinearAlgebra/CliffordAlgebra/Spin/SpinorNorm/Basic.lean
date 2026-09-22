@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Basic
 /-!
 # The spinor norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.SpinorNorm.Basic)
+
 The Clifford norm of a Lipschitz element is a square on the kernel of its orthogonal action.
 It therefore descends to the orthogonal group modulo square classes. Restricting this homomorphism
 to the special orthogonal group gives the spinor norm, whose kernel is exactly the image of the

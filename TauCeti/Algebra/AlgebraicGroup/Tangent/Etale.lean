@@ -15,6 +15,8 @@ import Mathlib.RingTheory.Etale.Descent
 /-!
 # Étale affine groups and their Lie algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Etale)
+
 An affine group of finite type over a field is étale exactly when its Lie algebra at the
 identity is zero. No smoothness, reducedness, or connectedness assumption is needed.
 This criterion detects infinitesimal structure in finite group schemes, and applies to the

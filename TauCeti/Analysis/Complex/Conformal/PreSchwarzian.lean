@@ -16,6 +16,8 @@ import TauCeti.Analysis.SpecialFunctions.Pow.LogDeriv
 /-!
 # The pre-Schwarzian derivative: composition, rigidity, and asymptotics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.PreSchwarzian)
+
 The **pre-Schwarzian derivative** of a holomorphic function `f` is `logDeriv (deriv f) = f'' / f'`.
 Postcomposing `f` with `w ↦ a * w + b` for `a ≠ 0` leaves it unchanged, and this file proves the
 converse: on a domain -- an open preconnected subset of `ℂ` -- two holomorphic functions with

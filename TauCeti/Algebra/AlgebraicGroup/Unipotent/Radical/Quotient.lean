@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Smooth
 /-!
 # Unipotent radicals and quotient images
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Quotient)
+
 This file supplies the common reduction used to identify a unipotent radical with the kernel of a
 quotient homomorphism. Once the image of the radical in the target is trivial, maximality gives one
 ideal containment and triviality gives the other.

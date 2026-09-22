@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.AlmostSplit.Sequence
 /-!
 # Uniqueness of the almost-split sequence at a given end
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.AlmostSplit.Uniqueness)
+
 An almost-split sequence `0 ⟶ A ⟶ B ⟶ C ⟶ 0` whose left-hand end has **local** endomorphism ring
 is determined by its right-hand end `C`: two such almost-split sequences with isomorphic
 right-hand ends are isomorphic as short complexes, so in particular their left-hand ends and their

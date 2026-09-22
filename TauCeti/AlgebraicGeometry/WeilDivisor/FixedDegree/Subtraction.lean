@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Addition
 /-!
 # Subtraction of fixed-degree effective Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FixedDegree.Subtraction)
+
 This file records the residual effective divisor obtained by subtracting an effective
 sub-divisor from a fixed-degree effective Weil divisor. If `E ≤ D`, with `D` of degree `e`
 and `E` of degree `d`, then `D - E` is effective of degree `e - d`. The cancellation lemmas

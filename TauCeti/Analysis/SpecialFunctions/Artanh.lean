@@ -13,6 +13,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hyperbolic
 /-!
 # The algebra and the calculus of the inverse hyperbolic tangent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Artanh)
+
 Mathlib's `Analysis/SpecialFunctions/Artanh.lean` introduces `Real.artanh` and proves that it
 inverts `Real.tanh` on `(-1, 1)`, that it is strictly monotone there, and the closed forms
 `Real.sinh_artanh`, `Real.cosh_artanh`. It records neither the *additive law* of `Real.artanh`

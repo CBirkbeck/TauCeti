@@ -11,6 +11,8 @@ public import TauCeti.Probability.Moments.Covariance
 /-!
 # Mean and covariance of the Dirichlet distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Dirichlet.Moments)
+
 A Dirichlet law is carried by the standard simplex, so it has moments of every order and its
 elementary moments can be read off its block marginals.  Writing `a₀ = ∑ j, a j` for the total
 concentration, the total of a nonempty block of coordinates whose complement is also nonempty is a

@@ -13,6 +13,8 @@ public import Mathlib.Probability.UniformOn
 /-!
 # Empirical measures of sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Process.EmpiricalMeasure)
+
 This file defines the empirical probability measure of a nonempty finite population
 (`empiricalMeasureOfFintype`) and, as its `κ := Fin (n + 1)` case, of the first `n + 1` terms of a
 sequence (`empiricalMeasure`), together with their evaluation, integration, and measurability API.

@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.Basic
 /-!
 # Rings and ideals of definition of a Huber ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.RingOfDefinition)
+
 Wedhorn's characterisation of the rings of definition, the enlargement constructions for pairs of
 definition, and the two union descriptions they yield. On the **ring** side: Wedhorn's Lemma 6.2
 and the parts of his Corollary 6.4 covered here — that `A°` is the union of the rings of definition,

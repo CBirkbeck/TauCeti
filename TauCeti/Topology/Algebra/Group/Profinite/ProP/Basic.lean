@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.OpenNormalSubgroup
 /-!
 # Pro-p groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic)
+
 A topological group is pro-`p` when each of its continuous finite quotients is a `p`-group.
 For the unbundled profinite groups used in Tau Ceti, these quotients are represented by the
 quotients by open normal subgroups. This file introduces that quotient-form predicate and its

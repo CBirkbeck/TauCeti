@@ -13,6 +13,8 @@ import Mathlib.Tactic.NormNum.IsSquare
 /-!
 # Even prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.EvenPrimeDiscriminant)
+
 The genus-field layer of the multiquadratic roadmap uses the prime discriminants dividing a
 quadratic discriminant. The odd-prime normalization `p*` is developed in
 `TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Basic`; this file records the complementary
@@ -65,7 +67,10 @@ theorem isEvenPrimeDiscriminant_iff {D : ℤ} :
   Or.inr (Or.inr rfl)
 
 /-- The squarefree radicand associated to an even prime discriminant. For `D = -4, 8, -8`
-this gives respectively `-1, 2, -2`. -/
+this gives respectively `-1, 2, -2`.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Multiquadratic.evenPrimeDiscriminantRadicand) -/
 def evenPrimeDiscriminantRadicand (D : ℤ) : ℤ :=
   D / 4
 

@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.SuzukiRee
 /-!
 # The index of the Tits group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Tits.Index)
+
 `TauCeti.LieTypeIndex.tits` is the separate classification-list entry for the Tits group
 `²F₄(2)'`. It uses the same type-`F₄` diagram and characteristic-two exceptional isogeny as
 the Ree family `²F₄(2^(2m+1))`, but its Steinberg endomorphism is the exceptional isogeny itself:

@@ -17,6 +17,8 @@ import TauCeti.Geometry.Manifold.VectorField.Regularity
 /-!
 # The infinitesimal adjoint action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Infinitesimal)
+
 This file identifies the derivative of the tangent-space adjoint action at the identity with
 Mathlib's Lie-algebra adjoint map. This is the geometric prerequisite for transporting the result
 to the derivation-valued group adjoint representation.

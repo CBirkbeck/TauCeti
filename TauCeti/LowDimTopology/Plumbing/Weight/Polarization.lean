@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Basic
 /-!
 # The polarization identity for the plumbing-lattice weight function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Weight.Polarization)
+
 Némethi's local weight function `χ_k(x) = -(⟨k, x⟩ + x · x) / 2` is a quadratic function of the
 lattice point `x`, whose associated symmetric bilinear form is the negated intersection form. This
 file records that quadratic behaviour as a polarization identity: for a characteristic covector `k`

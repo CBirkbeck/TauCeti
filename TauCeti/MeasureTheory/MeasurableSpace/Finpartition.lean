@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # Measurable finite partitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.Finpartition)
+
 This file records elementary ways to construct measurable finite partitions and shows that
 measurability passes from a finer finite partition to a coarser one. It also makes the canonical
 map from a point to its finite-partition index measurable and packages the canonical finite

@@ -14,6 +14,8 @@ import TauCeti.Analysis.Fredholm.SardSmale
 /-!
 # Parameter maps on universal Fredholm level sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.LevelSet.Parametric)
+
 Let `f : E × Λ → F` be a parametrized equation and suppose that its total linearization at a
 solution `(x, l)` is `D₁.coprod D₂`. When this linearization is surjective with complemented
 kernel, `TauCeti.levelSetChart` parametrizes the universal level set near `(x, l)` by

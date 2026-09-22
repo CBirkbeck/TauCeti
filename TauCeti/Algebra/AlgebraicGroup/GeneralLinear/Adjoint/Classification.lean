@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Adjoint.RootSpace
 /-!
 # Classification of the adjoint roots of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Adjoint.Classification)
+
 For `GL_n` with its diagonal split torus, this file proves the converse to the matrix-unit weight
 calculation: every nontrivial adjoint weight is uniquely `e_i - e_j` for an ordered pair `i ≠ j`,
 and its weight space is the line spanned by `E_ij`.  In particular, every such root space has

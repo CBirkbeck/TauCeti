@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Orbit
 /-!
 # The Cartan-Killing classification in rank at most two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.RankTwo)
+
 The classification of finite-type Cartan matrices proceeds by induction on the number of nodes, and
 its base cases are the diagrams with one and with two nodes. This file settles them: an
 indecomposable finite-type matrix on two indices is, after a single simultaneous relabelling of its

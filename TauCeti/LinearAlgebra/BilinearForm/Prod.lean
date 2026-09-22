@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Properties
 /-!
 # Products of bilinear forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.Prod)
+
 The product of two bilinear forms is the block-diagonal form on the product module: each factor
 carries its own form and the two factors are orthogonal to each other. It is the bilinear
 counterpart of `QuadraticMap.prod`, and it is the form an orthogonal direct sum of bilinear

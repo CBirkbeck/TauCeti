@@ -15,6 +15,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Reductive.Basic
 /-!
 # Products of reductive affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Reductive.Product)
+
 The direct product of two reductive affine groups over a field is reductive. After extending
 scalars to an algebraic closure, a connected normal smooth unipotent subgroup of the product maps
 to such a subgroup of each factor. Reductivity makes both projection images trivial. Since the

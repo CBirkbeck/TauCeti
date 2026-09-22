@@ -11,6 +11,8 @@ import TauCeti.Algebra.Group.Subgroup.Map
 /-!
 # Images of Sylow pro-`p` subgroups under continuous surjections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Sylow.Functoriality)
+
 A continuous surjective group homomorphism from a compact source onto a Hausdorff target carries
 a Sylow pro-`p` subgroup onto a Sylow pro-`p` subgroup. For each open normal subgroup of the
 target, pull it back to the source. The induced map between the two quotients is surjective, so

@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Chain
 /-!
 # Invariant forms along root strings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.InvariantForm.RootString)
+
 This file records how an invariant bilinear form changes between consecutive roots in a root
 string. It also shows that any integer-valued length function symmetrizing the Cartan integers is
 quadratic along integral root relations. The results are the root-system calculation behind the

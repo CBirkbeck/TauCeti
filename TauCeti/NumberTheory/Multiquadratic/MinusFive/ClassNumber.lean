@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Norm.Quadratic
 /-!
 # The class number of `ℚ(√-5)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusFive.ClassNumber)
+
 This file proves that the imaginary quadratic field `ℚ(√-5)` has class number `2`, the
 class-group calculation in the first genus-field worked example of the multiquadratic roadmap.
 

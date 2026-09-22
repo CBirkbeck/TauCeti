@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # `dslope` as a parameter integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.DSlope.Integral)
+
 For `f : ℂ → ℂ` differentiable on an open set and points `c, w` there, the divided slope
 `dslope f c w` is a fundamental-theorem-of-calculus average of the derivative of `f` along the
 segment `[c, w]` — on a convex set,

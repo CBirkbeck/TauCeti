@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Completion
 /-!
 # The free profinite group on a type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Free.Basic)
+
 The **free profinite group** on a type `X` is the profinite completion of the discrete free
 group on `X`. This file constructs it together with the data that pins it down: the canonical
 map `freeProfiniteGroup.of` from `X`, the universal property that a map from `X` to a profinite

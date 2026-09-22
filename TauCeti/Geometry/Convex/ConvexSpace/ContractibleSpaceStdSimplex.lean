@@ -11,6 +11,8 @@ public import Mathlib.Topology.Homotopy.Contractible
 /-!
 # The standard simplex on a finite type is contractible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.ConvexSpace.ContractibleSpaceStdSimplex)
+
 The straight-line homotopy towards a vertex contracts `StdSimplex ℝ M` for a finite nonempty `M`.
 Contractibility upgrades the path-connectedness already recorded for the standard simplex to
 simple connectedness, which is what makes transport of a local coefficient system along a path

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.ODE.SmoothParameter
 /-!
 # Smooth dependence of an ODE solution on its initial condition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.ODE.InitialCondition)
+
 Picard iteration produces a solution of `γ' = v ∘ γ` continuously, indeed Lipschitzly, in the
 initial condition. It says nothing about differentiability: the contraction argument is metric.
 This file upgrades continuity to smoothness of the same order as the field, jointly in the initial

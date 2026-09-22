@@ -12,6 +12,8 @@ public import Mathlib.Tactic.Abel
 /-!
 # The Grothendieck ring of a semiring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.GrothendieckRing)
+
 Mathlib's `Algebra.GrothendieckAddGroup M` is the group completion of an additive commutative
 monoid `M`, realized as the localization of `M` at its top submonoid. When `M` carries a semiring
 structure the completion carries a ring structure, uniquely determined by the requirement that

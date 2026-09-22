@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Shift
 /-!
 # Complete monotonicity is closed under nonnegative affine reparametrization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Reparametrization)
+
 This file extends the closure API of `TauCeti.IsCompletelyMonotone` (sums, nonnegative scalar
 multiples, products and differentiation, in `TauCeti.Analysis.CompletelyMonotone.Basic` and
 `TauCeti.Analysis.CompletelyMonotone.Closure`) with closure under **reparametrizing the

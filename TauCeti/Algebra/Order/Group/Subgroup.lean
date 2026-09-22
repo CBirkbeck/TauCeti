@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.Subgroup.Lattice
 /-!
 # Separating subgroups of a linearly ordered group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.Group.Subgroup)
+
 A subgroup strictly contained in another is separated from it by an element of prescribed sign:
 `Δ < Γ'` admits a member of `Γ'` outside `Δ` that exceeds `1`, and dually one below `1`. Nothing
 beyond a group, a linear order and inversion reversing strict order is assumed.

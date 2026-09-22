@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.OrthogonalGroup
 /-!
 # Structural isometries and special orthogonal groups of quadratic-map products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Prod)
+
 Mathlib records the commutativity isometries of `QuadraticMap.prod`
 (`QuadraticMap.IsometryEquiv.prodComm` and `QuadraticMap.IsometryEquiv.prodProdProdComm`). This
 file adds the two remaining structural ones: the associator, and the deletion of a factor whose

@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Complex.Conformal.LocalDegree
 /-!
 # Holomorphic inverse functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Inverse.Function)
+
 This file supplies global-on-the-image forms of the holomorphic inverse function theorem for
 functions that are injective on an open set and for holomorphic open partial homeomorphisms.
 

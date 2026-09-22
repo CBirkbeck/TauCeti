@@ -17,6 +17,8 @@ public import Mathlib.Topology.UniformSpace.HeineCantor
 /-!
 # Calculus on spaces of continuous maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ContinuousMap)
+
 This file develops bounded pointwise operations for differentiating superposition maps, together
 with bounded integration operators on continuous paths for constructing Picard residuals.
 

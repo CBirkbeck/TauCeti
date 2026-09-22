@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Two-entry integer tuples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Int.Fin2Tuple)
+
 Arithmetic of `Fin 2 → ℤ`. Nothing here involves matrices; the results are stated for tuples
 so that callers holding a diagonal, a pair of invariant factors, or any other two integers can
 use them without dragging in linear algebra.

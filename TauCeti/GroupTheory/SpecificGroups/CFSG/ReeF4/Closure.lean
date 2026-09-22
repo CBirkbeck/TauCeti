@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.ReeF4.Index
 /-!
 # The algebraic closure for the Ree family of type `F₄`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeF4.Closure)
+
 This file records that the algebraic closure attached to a validated Ree index of type `F₄` has
 characteristic two, and equips it with the resulting structure of an algebra over the field of two
 elements. That is the form in which the characteristic reaches a construction on the family's

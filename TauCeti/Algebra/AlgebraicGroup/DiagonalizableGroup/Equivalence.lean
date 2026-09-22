@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.Basic
 /-!
 # The anti-equivalence for diagonalizable group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Equivalence)
+
 Over a field `k`, a group scheme over `Spec k` is diagonalizable when it is isomorphic to the
 spectrum of a finite-type commutative Hopf algebra whose group-like elements span its carrier.
 This file identifies that property with the essential image of

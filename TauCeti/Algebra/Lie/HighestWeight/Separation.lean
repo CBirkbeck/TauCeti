@@ -13,6 +13,8 @@ import TauCeti.Algebra.Lie.HighestWeight.Weight.Support
 /-!
 # Separation by the Casimir scalar
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Separation)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, let `H` be a splitting Cartan subalgebra and let `base` be a base of its root
 system. `TauCeti/Algebra/Lie/HighestWeight/Casimir.lean` computes the scalar by which the Casimir

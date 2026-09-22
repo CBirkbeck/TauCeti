@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Ring.Idempotent
 /-!
 # Eigenvalues of sums of commuting idempotents
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Eigenvalue)
+
 A finite family of pairwise commuting idempotents has a particularly rigid spectrum. If its sum
 scales a nonzero vector in a module with no zero scalar divisors, then the scalar is the image of a
 natural number no larger than the size of the family. This bounds the possible eigenvalues without

@@ -11,6 +11,8 @@ import Mathlib.CategoryTheory.PathCategory.MorphismProperty
 /-!
 # Reflecting a representation at a source
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Source.Basic)
+
 This file constructs the source-side Bernstein--Gelfand--Ponomarev reflection functor. For a
 source `i`, the linear map
 

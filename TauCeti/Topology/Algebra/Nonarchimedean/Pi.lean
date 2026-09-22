@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 /-!
 # Products of nonarchimedean groups and rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Pi)
+
 An arbitrary product of nonarchimedean groups is nonarchimedean, and likewise for rings.
 Mathlib has only the binary case, `Prod.instNonarchimedeanGroup`; these are the `Pi` analogues,
 stated over an unrestricted index type.

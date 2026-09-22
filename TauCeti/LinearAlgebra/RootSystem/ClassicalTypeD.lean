@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Matrix.Gram
 /-!
 # The classical integral roots of type `Dₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.ClassicalTypeD)
+
 This file constructs the classical integral root set of type `Dₙ` and gives the concrete
 infrastructure needed to build its pinned integral root datum. The squared-length-two root type and
 its reflection API are rank-polymorphic. The enumeration and Bourbaki simple-root APIs require

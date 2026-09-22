@@ -10,6 +10,8 @@ public import Mathlib.Analysis.ODE.ExistUnique
 /-!
 # A uniform time of existence for autonomous ODEs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.ODE.UniformTime)
+
 Picard–Lindelöf produces a solution of `x' = g x` through a single initial point. Extending an
 integral curve past a finite endpoint of its interval of definition needs more: a *single* time
 `ε > 0` that works for **every** initial point near a given one, together with control on where the

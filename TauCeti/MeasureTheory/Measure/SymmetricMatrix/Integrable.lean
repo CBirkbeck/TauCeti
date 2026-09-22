@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.SpecificCodomains.Pi
 /-!
 # Integrability of a random symmetric matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Integrable)
+
 A symmetric matrix is determined by its entries above the diagonal, and reading them off is a
 continuous linear equivalence with a finite product of copies of `ℝ`. A random symmetric matrix is
 therefore Bochner integrable exactly when each of its entries is, which is how the moments of a

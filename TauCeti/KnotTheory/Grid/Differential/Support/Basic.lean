@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Chain.Basic
 /-!
 # Support of the fully blocked grid differential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Support.Basic)
+
 A grid rectangle from `x` to `y` exists only when the two states differ at exactly two columns,
 where they exchange their rows: `RectangleSwap.lean` records that the target of any oriented
 rectangle is `y = x.swapColumns R.left R.right` for the two distinct side columns. Reading this

@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # The universal property of a bialgebra quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.Quotient)
+
 For a two-sided ideal `J` of an `R`-bialgebra `H` whose underlying `R`-submodule is a coideal,
 Mathlib equips the quotient ring `H ⧸ J` with the structure of an `R`-bialgebra, descending the
 comultiplication and counit from `H` (see `Mathlib.RingTheory.Bialgebra.Quotient`). This file

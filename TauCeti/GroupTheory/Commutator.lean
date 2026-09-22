@@ -12,6 +12,8 @@ import Mathlib.Data.Nat.Dist
 /-!
 # Normalizers and commutators tested on generating sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Commutator)
+
 Subgroups presented by generators are controlled by inspecting generators only. Conjugation and
 commutation are not preserved by products, so the first two results below carry an auxiliary
 normalizing hypothesis. The last result uses a commutator relation to propagate membership along

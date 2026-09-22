@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.GradedAlgebra.Homogeneous.Quotient
 /-!
 # The cohomology algebra of a differential graded algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Cohomology)
+
 Let `d` be a differential on an internally `ℤ`-graded `R`-algebra `𝒜` on a carrier `A`, in the
 sense of `TauCeti.IsDGAlgebra`.  Its **cycles** are the kernel of `d` and its **boundaries** are the
 image of `d`.  This file shows that the cycles form a subalgebra of `A`, that the boundaries form a

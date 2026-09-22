@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.FinTrdeg
 /-!
 # Transcendence degree in field towers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.TranscendenceDegree)
+
 This file records general consequences of Mathlib's transcendence-degree tower formula
 `lift_trdeg_add_eq` for field extensions.
 

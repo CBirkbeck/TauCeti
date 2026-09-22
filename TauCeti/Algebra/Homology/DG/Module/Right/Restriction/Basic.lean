@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.Hom
 /-!
 # Restriction of scalars for differential graded right modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Restriction.Basic)
+
 A morphism `f : A ⟶ B` of differential graded algebras turns every right DG `B`-module into
 a right DG `A`-module by the action `x · a = x · f(a)`.  This file packages that construction
 without installing a global module instance depending on `f`: the carrier is the wrapper

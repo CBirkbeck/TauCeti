@@ -15,6 +15,8 @@ public import TauCeti.Topology.Algebra.Group.FirstCountable
 /-!
 # Huber rings and Tate rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Basic)
+
 A *pair of definition* for a topological ring `A` is an open subring `A₀ ⊆ A` together with a
 finitely generated ideal `I ⊆ A₀` whose adic topology is the subspace topology of `A₀`. A ring
 admitting one is a *Huber ring* (Wedhorn's *f-adic* ring), and a Huber ring containing a
@@ -150,7 +152,10 @@ structure PairOfDefinition (A : Type*) [CommRing A] [TopologicalSpace A] where
   isAdic_idealOfDefinition : IsAdic idealOfDefinition
 
 /-- A topological ring is a *Huber ring* — Wedhorn's *f-adic* ring — if it admits a pair of
-definition. -/
+definition.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.IsHuberRing) -/
 class IsHuberRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] : Prop where
   /-- A Huber ring admits at least one pair of definition. -/
   nonempty_pairOfDefinition : Nonempty (PairOfDefinition A)
@@ -186,7 +191,10 @@ theorem IsPseudoUniformizer.map {A B F : Type*} [MonoidWithZero A] [TopologicalS
   isPseudoUniformizer_iff.mpr ⟨ha.isUnit.map φ, ha.isTopologicallyNilpotent.map hφ⟩
 
 /-- A *Tate ring* is a Huber ring containing a pseudouniformiser, that is, a topologically
-nilpotent unit. -/
+nilpotent unit.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.IsTateRing) -/
 class IsTateRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] : Prop
     extends IsHuberRing A where
   /-- A Tate ring contains a topologically nilpotent unit. -/

@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Function.L1Space.Integrable
 /-!
 # Fourier atoms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.FourierAtom)
+
 This file records the spatial Fourier atom used by the positive-definite and Bochner APIs.
 It uses Mathlib's `2π` Fourier convention.
 

@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Constructions.Pi
 /-!
 # The structural laws of a homomorphism density
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Structural)
+
 Read as a function of its first argument, `t(·, W)` is a real-valued parameter of finite simple
 graphs. This file proves the three laws that make it one, together with invariance under embedding
 the graph into a larger vertex type:

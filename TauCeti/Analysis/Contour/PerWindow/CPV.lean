@@ -20,6 +20,8 @@ import Mathlib.Analysis.SpecialFunctions.Complex.Log
 /-!
 # The per-window principal value at a simple pole
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PerWindow.CPV)
+
 At a transverse crossing `γ t₀ = s` with unique crossing on a window `[l, u]`, the
 `ε`-truncated integral of the simple-pole integrand `(γ t - s)⁻¹ * deriv γ t` over the window
 converges as `ε → 0⁺` (`perWindow_truncated_integral_tendsto`). The window integral

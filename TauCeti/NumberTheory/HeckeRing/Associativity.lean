@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.One
 /-!
 # Hecke rings: associativity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Associativity)
+
 Associativity of the convolution product of Hecke coset modules, in the mixed-level generality
 `HeckeCosetModule Δ H₁ H₂ R × HeckeCosetModule Δ H₂ H₃ R × HeckeCosetModule Δ H₃ H₄ R`, following
 Proposition 3.2 of [Shimura][shimura1971]. The combinatorial input is the invariance of Shimura's

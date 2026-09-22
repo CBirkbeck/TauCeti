@@ -13,6 +13,8 @@ import Mathlib.Probability.Kernel.CondDistrib
 /-!
 # Randomizing probability measures and kernels by uniform variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Kernel.Randomization)
+
 A probability measure on a standard Borel space is the law of a measurable function of a single
 uniform variable, and the function can be chosen to depend measurably on the measure. Packaging
 that choice once gives a **coding map**

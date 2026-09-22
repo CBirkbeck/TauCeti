@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.Basis.Base
 /-!
 # Serre systems in a split semisimple Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Presentation.Serre.Killing)
+
 Let `L` be a finite-dimensional Lie algebra with nondegenerate Killing form over a field `K` of
 characteristic zero, let `H` be a splitting Cartan subalgebra, and let `b` be a base of the root
 system of `(L, H)`. Choosing an `sl₂` triple `(αⱼ∨, eⱼ, fⱼ)` for each simple root `αⱼ` produces a

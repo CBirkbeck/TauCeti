@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Dimension.DirectSum
 /-!
 # A complete family of orthogonal idempotents decomposes every module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Module)
+
 Let `R` be a semiring and let `e : ι → R` be a *complete orthogonal family of idempotents*:
 `eᵢ eⱼ = 0` for `i ≠ j` and `∑ᵢ eᵢ = 1`. Then every left `R`-module `M` splits as an internal
 direct sum of the `S`-submodules `eᵢ • M`,

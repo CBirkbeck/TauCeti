@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.Multiquadratic.RelativeDegree
 /-!
 # The candidate genus field over its quadratic base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.Degree)
+
 For a squarefree integer `d`, `candidateGenusField hd` contains a chosen square root of `d`.
 This file names that root and the resulting copy of `ℚ(√d)` inside the candidate genus field.
 When `d` is not a rational square, this base has degree two over `ℚ`, and the full candidate

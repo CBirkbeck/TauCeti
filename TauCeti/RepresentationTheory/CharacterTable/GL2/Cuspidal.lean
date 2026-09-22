@@ -20,6 +20,8 @@ import TauCeti.FieldTheory.Finite.FrobeniusFixed
 /-!
 # The cuspidal virtual character of `GL₂(𝔽_q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.Cuspidal)
+
 Let `F` be a finite field with `q` elements, `E/F` a degree-`2` extension, `θ` a character of `Eˣ`
 and `ψ` a nontrivial additive character of `F`.  The **cuspidal virtual character**
 

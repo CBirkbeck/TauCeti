@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Idempotents
 /-!
 # Orthogonal nonzero idempotents are linearly independent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.LinearIndependent)
+
 Let `k` be a commutative ring whose multiplication cancels (`IsCancelMulZero`, so in particular any
 integral domain), let `A` be a torsion-free `k`-algebra -- no nonzero scalar annihilates a nonzero
 element -- and let `e : ι → A` be a family of pairwise orthogonal idempotents, none of them zero.

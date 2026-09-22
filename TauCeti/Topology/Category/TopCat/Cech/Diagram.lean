@@ -11,6 +11,8 @@ public import Mathlib.Topology.Sets.OpenCover
 /-!
 # The Čech diagram of a family of open sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Category.TopCat.Cech.Diagram)
+
 For a family `U : ι → Opens X`, the Čech index category consists of the nonempty finite subsets
 of `ι`, ordered by reverse inclusion. An index `s` represents the intersection `⋂ i ∈ s, U i`;
 reverse inclusion makes the evident inclusions of intersections into morphisms in `Opens X`.

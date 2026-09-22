@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.Modules.TensorProduct
 /-!
 # Finite locally free sheaves on a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.VectorBundle.FiniteLocallyFree)
+
 A sheaf of `𝒪_X`-modules on a scheme `X` is finite locally free if it is locally free and finitely
 presented (`SheafOfModules.isFiniteLocallyFree`). These are the sheaves of sections of algebraic
 vector bundles of finite rank. This file packages them as the full subcategory

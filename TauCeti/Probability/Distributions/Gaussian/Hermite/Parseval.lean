@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Gaussian.Hermite.Basis
 /-!
 # Parseval and expansions for the Gaussian Hermite basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Hermite.Parseval)
+
 `TauCeti.gaussianHermiteHilbertBasis` exhibits the normalized probabilists' Hermite polynomials
 `Hₙ / √(n!)` as a Hilbert basis of `L²(N(0, 1); 𝕜)`. This file supplies the coefficient,
 Parseval, and reconstruction API for that basis. In particular, its coordinate theorem writes the

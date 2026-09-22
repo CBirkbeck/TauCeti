@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Generation
 /-!
 # Geometric connectedness of the special orthogonal groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Connected)
+
 The coordinate Hopf algebra of the standard group `SOₙ` is geometrically connected in every
 dimension away from characteristic two, and in dimension two over every field. Connectedness is
 tested by

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Basic
 /-!
 # The symmetric monoidal category of sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Monoidal)
+
 Let `R` be a sheaf of commutative rings on a small site `(C, J)`. This file equips the category of
 sheaves of `R`-modules with a symmetric monoidal category structure whose tensor product is the
 sheafification of the sectionwise tensor product of the underlying presheaves of modules, and

@@ -10,6 +10,8 @@ public import Mathlib.Data.Setoid.Basic
 /-!
 # Setoid quotient helpers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Setoid.Basic)
+
 This file records small generic additions to Mathlib's `Setoid` quotient API.
 
 ## Main declarations

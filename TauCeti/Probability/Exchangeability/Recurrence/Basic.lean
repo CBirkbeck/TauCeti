@@ -11,6 +11,8 @@ public import TauCeti.Probability.Recurrent
 /-!
 # Exchangeable and contractable processes are recurrent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.Basic)
+
 A contractable process has a shift-invariant path law, so on a countable state space the
 Poincaré recurrence theorem of `TauCeti.Probability.Recurrent` applies to it. Exchangeable
 processes are contractable, so they are recurrent too.

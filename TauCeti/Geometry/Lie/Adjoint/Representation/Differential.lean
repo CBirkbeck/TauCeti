@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Lie.Adjoint.Representation.Basic
 /-!
 # The differential of the adjoint representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Representation.Differential)
+
 The differential at the identity of the group adjoint representation is Mathlib's Lie-algebra
 adjoint map. This is the roadmap-facing form of the infinitesimal adjoint identity, stated on the
 canonical Lie algebra of left-invariant derivations.

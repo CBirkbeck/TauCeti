@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.SideOverlap
 /-!
 # Cyclic order for overlapping empty grid rectangles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.OverlapOrder)
+
 Two composable rectangles in a nondiagonal term of the grid differential square either have
 disjoint side columns or share exactly one side column. In the latter case, constructing the
 alternate two-rectangle decomposition requires knowing the cyclic order of the three side columns

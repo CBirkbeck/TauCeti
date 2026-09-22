@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Intertwining
 /-!
 # Exterior powers of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ExteriorPower)
+
 This file equips each exterior power of a representation with the induced diagonal action.
 Intertwining maps and equivalences pass functorially to exterior powers, and the zeroth and first
 exterior powers recover the trivial and original representations.

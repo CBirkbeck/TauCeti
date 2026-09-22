@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Semisimple.Multiplicity
 /-!
 # The multiplicity of an irreducible Lie module, through the enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Multiplicity)
+
 `LieModule.isotypicMultiplicity` of `TauCeti/Algebra/Lie/Multiplicity.lean` is defined and computed
 without the universal enveloping algebra, in the same way as the Lie isotypy interface of
 `TauCeti/Algebra/Lie/Isotypic.lean`. This file connects it to the ring-level multiplicity theory of

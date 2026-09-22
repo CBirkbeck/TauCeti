@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # The joint law of a directing measure and a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.JointPathLaw)
+
 For a process `X : ℕ → Ω → α` carried along by a candidate directing measure
 `ν : Ω → ProbabilityMeasure α`, `jointPathLaw μ X ν` is the law of the pair
 `(ν ω, fun i => X i ω)` on `ProbabilityMeasure α × (ℕ → α)`.

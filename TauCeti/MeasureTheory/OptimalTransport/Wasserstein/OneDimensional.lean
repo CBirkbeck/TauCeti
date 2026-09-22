@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.OuterMeasure.SymmDiff
 /-!
 # The Wasserstein distance of two real laws at exponent one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.OneDimensional)
+
 On the real line the transport problem for the ground distance is solved explicitly: for two
 probability laws `μ` and `ν` on `ℝ`,
 

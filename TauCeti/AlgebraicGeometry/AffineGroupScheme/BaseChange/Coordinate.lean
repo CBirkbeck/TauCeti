@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.BaseChange.Basic
 /-!
 # Coordinate compatibility of affine-group-scheme base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.BaseChange.Coordinate)
+
 Let `H` be a commutative Hopf algebra over a commutative ring `R`, and let `S` be a
 commutative `R`-algebra. There are two constructions of the base-changed affine group scheme:
 pull back `Spec H` from `Spec R` to `Spec S`, or first extend scalars on coordinates to

@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.KrullDimension.Integral
 /-!
 # Krull dimension of finitely generated algebras over a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullDimension.FiniteType)
+
 Let `A` be a nontrivial finitely generated algebra over a field `k`. Noether normalization gives an
 injective finite map `k[X₁, …, Xₛ] → A`, so `A` has Krull dimension `s`. Extending scalars along
 any Noetherian `k`-algebra `K` keeps the map `K[X₁, …, Xₛ] → K ⊗[k] A` injective (every

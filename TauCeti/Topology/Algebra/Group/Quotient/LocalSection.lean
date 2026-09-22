@@ -11,6 +11,8 @@ public import Mathlib.Topology.FiberBundle.Trivialization
 /-!
 # Local trivializations of quotient maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Quotient.LocalSection)
+
 A continuous local section of the quotient by a subgroup determines a local trivialization of
 the quotient map.  On the source `mk ⁻¹' U`, the fiber coordinate of an element `g` is
 `s([g])⁻¹ * g`; its membership in the subgroup follows from the section property.  On the target

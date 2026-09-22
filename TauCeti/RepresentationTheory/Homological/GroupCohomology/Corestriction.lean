@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.GroupCohomology.Shapiro
 /-!
 # Corestriction in group cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupCohomology.Corestriction)
+
 Let `S` be a subgroup of finite index in a group `G` and `A` a `G`-representation. The
 **corestriction** (or transfer) is the map
 

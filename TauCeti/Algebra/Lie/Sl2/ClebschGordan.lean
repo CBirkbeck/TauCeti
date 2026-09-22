@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.TensorProduct.Basis
 /-!
 # The Clebsch-Gordan rule for `sl₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.ClebschGordan)
+
 Over a field of characteristic zero the tensor product of two standard irreducible
 `sl (Fin 2) K`-modules decomposes as
 

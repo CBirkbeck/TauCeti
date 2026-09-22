@@ -12,6 +12,8 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 /-!
 # Comparing weighted sums through their partial sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.BigOperators.Sum.ByParts)
+
 If every initial partial sum of `f` is at most the corresponding partial sum of `g`, then the
 same comparison holds after weighting both sequences by a nonnegative, antitone weight `w`:
 `∑_{i < N} w i * f i ≤ ∑_{i < N} w i * g i`. This is Abel's inequality in its comparison form.

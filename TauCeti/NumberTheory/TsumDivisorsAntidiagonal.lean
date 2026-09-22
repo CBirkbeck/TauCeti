@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.TsumDivisorsAntidiagonal
 /-!
 # Regrouping a double series by the product of the indices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.TsumDivisorsAntidiagonal)
+
 A sum over pairs of positive integers `(c, m)` can be regrouped according to the product
 `n = c m`: the `n`-th group is the finite sum over `Nat.divisorsAntidiagonal n`. This is how a
 double series `∑_{c, m ≥ 1} a(c) b(m) q^{c m}`, such as the `q`-expansion of an Eisenstein

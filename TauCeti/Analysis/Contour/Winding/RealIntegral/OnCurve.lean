@@ -21,6 +21,8 @@ import TauCeti.Analysis.Contour.Winding.PrincipalValueRealIntegral
 /-!
 # The real bounded-integrand formula for the winding number, allowing crossings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.RealIntegral.OnCurve)
+
 Hungerbühler–Wasem Proposition 2.3 evaluates the generalized winding number by the real,
 non-principal-value integral
 

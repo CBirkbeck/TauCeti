@@ -10,6 +10,8 @@ public import Mathlib.Logic.Function.Iterate
 /-!
 # Simulating the iterates of one function by another
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Logic.Function.Iterate)
+
 Read `f : α → α` and `g : β → β` as the one-step transitions of two discrete-time systems and
 `Φ : α → β` as a translation of the states of the first into states of the second. Say that `g`
 *simulates* `f` along `Φ` when every single step of `f` is matched by finitely many steps of `g`

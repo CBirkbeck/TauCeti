@@ -16,6 +16,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.SquarefreeDecomposition
 /-!
 # The coefficient formula of the descent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.Coefficient)
+
 For a prime `p ∣ N`, a squarefree `L` coprime to `p` whose primes divide `N`, and a cusp form
 `f ∈ S_k(Γ₁(N), χ)` whose nebentypus is pulled back from level `N / p` and which vanishes at
 every index coprime to `p L`, the descent `Φ = descendSlash k p N` satisfies

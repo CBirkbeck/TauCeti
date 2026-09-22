@@ -13,6 +13,8 @@ import Mathlib.Analysis.Normed.Ring.InfiniteSum
 /-!
 # Evaluating logarithmic-derivative coefficients of ideal Euler factors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Eval)
+
 For a general ideal Euler product, the formal series
 `TauCeti.EulerProductData.localLogDerivSeries` records the prime-power coefficients of the
 logarithmic derivative of each local factor. This file evaluates those formal coefficients at

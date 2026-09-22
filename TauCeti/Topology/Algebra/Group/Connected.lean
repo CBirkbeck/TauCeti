@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Group.Quotient
 /-!
 # Connectedness of topological groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Connected)
+
 This file derives connectedness of a group from preconnectedness of a subgroup and its coset
 quotient.
 

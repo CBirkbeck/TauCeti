@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
 /-!
 # The deviation of an `Lᵖ` function from a constant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.Const)
+
 On a finite measure space the `Lᵖ` seminorm of `fun x => f x - a`, for a constant `a`, is the
 `Lᵖ` distance from `f` to the constant class `MeasureTheory.Lp.const`.  The identity is the
 bridge between the seminorm form of an estimate on the deviation from a constant and its norm

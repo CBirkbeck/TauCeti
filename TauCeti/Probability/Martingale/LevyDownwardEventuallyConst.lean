@@ -10,6 +10,8 @@ public import TauCeti.Probability.Martingale.Convergence
 /-!
 # Lévy's downward theorem on an eventually constant filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Martingale.LevyDownwardEventuallyConst)
+
 This file is the Exchangeability-roadmap worked example
 (`TauCetiRoadmap/Exchangeability/README.md`, "Worked examples"): *the Lévy downward theorem
 specializes correctly to an eventually constant decreasing filtration*. It is a consistency

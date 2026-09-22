@@ -12,6 +12,8 @@ import Mathlib.Data.Fintype.Perm
 /-!
 # Resolvent specifications
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Spec)
+
 A resolvent tests whether the Galois group of a polynomial of degree `n`, viewed as a subgroup of
 `Equiv.Perm (Fin n)` through a numbering of the roots, lies in a conjugate of a subgroup `H`. The
 test is built from an invariant `Φ` in `n` formal roots whose stabilizer under permutation of the

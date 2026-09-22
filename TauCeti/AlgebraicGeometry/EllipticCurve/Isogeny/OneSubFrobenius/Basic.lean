@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Hom.Add
 /-!
 # The isogeny `1 − π`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Basic)
+
 For an elliptic curve `W` over a finite field `F`, the difference of the identity and the Frobenius
 isogeny `π` in the endomorphism carrier `Hom W W` is nonzero — the two have different degrees, by
 `TauCeti.Isogeny.frobeniusIsogeny_ne_id` — and so is an isogeny `W → W`. Its kernel is the group

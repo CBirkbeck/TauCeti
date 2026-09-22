@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.IntegralCurve.Extension
 /-!
 # The maximal integral curve of a vector field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.IntegralCurve.Maximal)
+
 Mathlib's integral-curve API produces a local integral curve through a point and shows that two
 integral curves on a common open interval agree, and
 `TauCeti/Geometry/Manifold/IntegralCurve/Extension.lean` extends an integral curve past a finite

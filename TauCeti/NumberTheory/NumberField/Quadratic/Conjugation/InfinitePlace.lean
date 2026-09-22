@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Norm.Basic
 /-!
 # Quadratic conjugation and the real places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.InfinitePlace)
+
 Let `K = ℚ(√d)` be a quadratic number field, presented by `θ : 𝓞 K` with `minpoly ℤ θ = X ^ 2 - d`
 and `Algebra.adjoin ℚ {θ} = ⊤`, and let `σ = quadraticConj` be its nontrivial `ℚ`-automorphism. A
 ring homomorphism `K →+* ℝ` is determined by the value it gives `θ`, and that value is one of the

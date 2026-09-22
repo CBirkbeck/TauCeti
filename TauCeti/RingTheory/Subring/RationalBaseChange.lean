@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Localization.BaseChange
 /-!
 # Extending the scalars of a subring of a rational algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Subring.RationalBaseChange)
+
 Let `A` be a `ℚ`-algebra and `R` a subring of `A`. Because `R` is a ring and not a `ℚ`-subalgebra,
 it can be a genuine lattice: an integral structure whose rational span is all of `A`. This file
 builds the comparison map

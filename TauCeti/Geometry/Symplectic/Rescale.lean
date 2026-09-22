@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Symplectic.Lagrangian.Basic
 /-!
 # Rescaling symplectic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Rescale)
+
 A nonzero scalar multiple of a symplectic form is again symplectic. This file records that
 pointwise linear-algebra operation and the basic interaction with the tame and compatible
 almost-complex predicates used by the analytic Heegaard Floer roadmap.

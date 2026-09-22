@@ -13,6 +13,8 @@ public import TauCeti.Topology.Algebra.UniformRing
 /-!
 # The completion `A⟨T/s⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Completion)
+
 The separated completion of `Aₛ` under `locTopology` is Wedhorn's `A⟨T/s⟩`. It is a Huber ring,
 and the universal property of `LocalizationTopology.UniversalProperty` extends across it for
 complete Hausdorff targets.

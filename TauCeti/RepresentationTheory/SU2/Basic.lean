@@ -18,6 +18,8 @@ import TauCeti.Topology.Circle.Basic
 /-!
 # `SU(2)` and its maximal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Basic)
+
 `SU(2)` is `Matrix.specialUnitaryGroup (Fin 2) ℂ`, the compact group that grounds the compact-group
 representation theory of the [compact-groups roadmap](https://github.com/TauCetiProject/TauCetiRoadmap/blob/roadmap/representation-theory/TauCetiRoadmap/RepresentationTheory/CompactGroups/README.md).
 Its compactness and topological group structure come from

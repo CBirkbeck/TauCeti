@@ -15,6 +15,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.ShortWeierstrass
 /-!
 # The Nagell–Lutz theorem for a short Weierstrass model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ShortNagellLutz)
+
 For `A B : ℤ`, a nonzero rational point of finite order on `y² = x³ + Ax + B` has **integral**
 coordinates, and its `y`-coordinate satisfies `y = 0` or `y² ∣ Δ`. That is the classical
 statement, and unlike the long-model theorem it has no order-two exception.

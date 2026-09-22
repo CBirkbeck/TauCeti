@@ -12,6 +12,8 @@ public import Mathlib.Topology.EMetricSpace.BoundedVariation
 /-!
 # Length spaces and geodesic spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.Length)
+
 A metric space is a *length space* when the distance between two points is the infimum of the
 lengths of the continuous curves joining them, and a *geodesic space* when that infimum is
 realised by a curve on `[0, 1]` whose distance function is the affine one, `dist (γ s) (γ t) =
@@ -155,7 +157,10 @@ section IsLengthSpace
 variable {X : Type*} [PseudoEMetricSpace X] {γ : ℝ → X} {x y : X}
 
 /-- A *length space* is a space in which the distance between two points is the infimum of the
-lengths of the continuous curves joining them. -/
+lengths of the continuous curves joining them.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.IsLengthSpace) -/
 class IsLengthSpace (X : Type*) [PseudoEMetricSpace X] : Prop where
   /-- The distance between two points is the infimum of the lengths of the curves joining them. -/
   edist_eq_iInf (x y : X) :

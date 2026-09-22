@@ -13,6 +13,8 @@ import TauCeti.RingTheory.IntegralClosure.Transfer
 /-!
 # The intermediate ring is module-finite over the target coordinate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Finite)
+
 `φ.intermediateRing` is a finite `W₂.CoordinateRing`-module, with no normality or separability
 hypothesis. This is the finiteness that the relative ideal norm — and through it `pushClass` and
 the induced map on points — needs, including for Frobenius.

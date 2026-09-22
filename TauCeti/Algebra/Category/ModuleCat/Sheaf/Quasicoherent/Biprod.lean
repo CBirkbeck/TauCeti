@@ -14,6 +14,8 @@ public import TauCeti.CategoryTheory.Sites.CoversTop
 /-!
 # Direct sums of quasi-coherent and locally free sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Quasicoherent.Biprod)
+
 Let `R` be a sheaf of rings on a site with pullbacks. This file shows that the binary biproduct
 (direct sum) `M ⊞ N` of two sheaves of `R`-modules is quasi-coherent, of finite type, finitely
 presented, or locally free as soon as `M` and `N` are. In particular, direct sums of finite

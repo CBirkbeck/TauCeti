@@ -19,6 +19,8 @@ import TauCeti.Topology.Algebra.Order.Field
 /-!
 # The all-prime Dirichlet sum is `log (1 / (s - 1)) + O(1)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.IdealZetaSum)
+
 For a number field `K`, write `P(s) = ∑_𝔭 N(𝔭) ^ (-s)` for the sum over all height-one primes of
 `𝓞 K`, which is `NumberField.Set.primeIdealZetaSum Set.univ s`. This file proves that
 `P(s) = log (1 / (s - 1)) + O(1)` as `s → 1⁺`, and hence that Mathlib's ratio-normalized

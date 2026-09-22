@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.Dihedral.Basic
 /-!
 # Characters of the rotation subgroup of a dihedral group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.Dihedral.Character)
+
 The rotation subgroup `TauCeti.dihedralRotations n` of `DihedralGroup n` is cyclic, its coordinate
 `TauCeti.dihedralRotationsMulEquiv` identifying it with `Multiplicative (ZMod n)`. A character of
 it is therefore named by a single `n`-th root of unity `ζ`: this file specializes

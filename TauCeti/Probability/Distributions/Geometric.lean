@@ -18,6 +18,8 @@ import TauCeti.Probability.Distributions.NegativeBinomial.Transforms
 /-!
 # Elementary theory of the geometric distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Geometric)
+
 This file develops moments and transforms of Mathlib's geometric measure, using the convention
 that the random variable counts failures before the first success.  It also records its cumulative
 mass and memoryless tail identity.  Mathlib totalizes the zero-success parameter by

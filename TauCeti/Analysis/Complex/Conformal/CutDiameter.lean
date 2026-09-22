@@ -13,6 +13,8 @@ import TauCeti.Topology.MetricSpace.Cut
 /-!
 # The piece a crosscut cuts off, measured by its boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.CutDiameter)
+
 `Topology/MetricSpace/Cut.lean` supplies the set-splitting lemmas that cut a set at a point `ζ` by
 the circle `sphere ζ ρ`, leaving the *crosscut neighbourhood* `U ∩ ball ζ ρ` of `ζ`, and
 `Conformal/Crosscut/Basic.lean` turns an oscillation bound on that neighbourhood into a boundary

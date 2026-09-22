@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Scheme
 /-!
 # The spectrum point defined by an augmentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AugmentationPoint.Basic)
+
 An algebra homomorphism from a commutative algebra to its ground field determines a rational point
 of the algebra's prime spectrum. This file records that point and its underlying prime ideal.
 

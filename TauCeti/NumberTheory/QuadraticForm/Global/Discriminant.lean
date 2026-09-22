@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.QuadraticForm.Global.Signature
 /-!
 # Discriminants of localized quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.Discriminant)
+
 The discriminant of a regular quadratic form over a number field localizes to the image of its
 global discriminant at every finite place and along every real or complex embedding.
 

@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
 /-!
 # Automorphism actions on group algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Descent)
+
 Let `L` be a `k`-algebra and let its group of `k`-algebra automorphisms act linearly on an
 abelian group `M` through a representation `rho`. The coordinate algebra `L[Multiplicative M]`
 of the diagonalizable group `D(M)` admits a simultaneous action on coefficients and exponents:

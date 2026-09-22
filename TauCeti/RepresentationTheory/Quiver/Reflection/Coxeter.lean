@@ -12,6 +12,8 @@ import TauCeti.RepresentationTheory.Quiver.Reflection.EulerForm
 /-!
 # The Coxeter transformation on the dimension vectors of a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Coxeter)
+
 Composing the simple reflections of a finite quiver `Q` at the successive vertices of a word
 `l = [i₁, …, iₙ]` gives the endomorphism `sᵢₙ ∘ ⋯ ∘ sᵢ₁` of the dimension-vector lattice `Q → ℤ`.
 The Coxeter transformation is the case of a word listing every vertex exactly once, taken in a

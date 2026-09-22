@@ -18,6 +18,8 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 /-!
 # Lower integrals of a real power, and the layer cake formula in `ℝ≥0∞`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Pow.Integral)
+
 This file collects the two lower integrals of `t ↦ t ^ s` on a half-line that the real
 interpolation method needs, and uses them to transport Mathlib's layer cake formula from
 real-valued to `ℝ≥0∞`-valued functions.

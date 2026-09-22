@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Semisimple.RegularIsotypicComponent
 /-!
 # Comparing the isomorphism classes of simple objects with the module-level classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Simple.FDRepClasses)
+
 A classification of representations is a bijection onto isomorphism classes, and the same group can
 be classified in two languages: over the isomorphism classes of simple objects of `FDRep k G`,
 which is `TauCeti.SimpleFDRepClasses` in `TauCeti.RepresentationTheory.Simple.Basic`, and over the

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Splice
 /-!
 # Coderivations of the reduced tensor coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Coderivation)
+
 For an `R`-module `M`, the reduced tensor words `⨁_{n ≥ 1} M^{⊗n}` carry the reduced
 deconcatenation coproduct `Δ` built in `TauCeti.ReducedTensorWords.deconcatenation`.  A
 *coderivation* is a linear endomorphism `b` satisfying the co-Leibniz rule

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.Basic
 /-!
 # Finite-type commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.FiniteType.CommHopfAlgCat)
+
 This file packages finite-type commutative Hopf algebras over a commutative ring `R`.
 These are the coordinate Hopf algebras for affine group schemes of finite type in the
 reductive-groups roadmap: the Hopf algebra structure carries the group law, while

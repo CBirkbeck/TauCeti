@@ -15,6 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The elliptic relator is sign-equivariant in its four indices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance)
+
 For an odd sequence `W : ℤ → R`, Mathlib's `IsEllipticNet.atomRel W a b c d` changes sign under a
 transposition of its four arguments. This file proves that for the three adjacent transpositions
 and then, by inducting over the generators of `Equiv.Perm (Fin 4)`, for an arbitrary permutation:

@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.RatFunc.PowerTower
 /-!
 # Power subfields of the function field of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.PowerTower)
+
 For any field `K`, exponent `n`, and Weierstrass curve `W`, this file packages the tower
 `K(x^n) ⊆ K(x) ⊆ K(W)` and computes `[K(W) : K(x^n)] = 2n`.
 

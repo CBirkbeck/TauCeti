@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Distribution.SchwartzSpace.Fourier
 /-!
 # Decay of Fourier transforms of smooth compactly supported functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fourier.Decay)
+
 A smooth compactly supported function is a Schwartz function, so its Fourier transform is again a
 Schwartz function and therefore decays faster than every negative power of `‖v‖`. This file records
 that decay in the elementary form `‖v‖ ^ k * ‖𝓕 f v‖ ≤ C`, which is the shape a Fourier transform

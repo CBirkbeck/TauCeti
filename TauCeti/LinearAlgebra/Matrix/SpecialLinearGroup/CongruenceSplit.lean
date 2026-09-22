@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 /-!
 # Chinese-remainder splitting of `SL(ι, ℤ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit)
+
 For coprime moduli `d, d'`, every `τ ∈ SL(ι, ℤ)` — `ι` any finite index type — factors as
 `τ₁ * τ₂` with `τ₁ ≡ 1 (mod d)`
 and `τ₂ ≡ 1 (mod d')`. The proof is by generators: `τ` is a product of transvections

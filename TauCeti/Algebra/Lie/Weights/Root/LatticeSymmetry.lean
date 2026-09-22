@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.Root.IntegralLattice
 /-!
 # Symmetries of the integral root--coroot lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Root.LatticeSymmetry)
+
 The Chevalley--Demazure construction starts from the integral lattice spanned by a normalized
 family of root vectors and by the coroots. A symmetry of the pinned Lie algebra does not usually
 fix those generators pointwise: it permutes the roots and can change both root vectors and coroots

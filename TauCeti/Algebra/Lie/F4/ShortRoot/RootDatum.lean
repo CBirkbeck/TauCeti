@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.F4.ShortRoot.Carrier
 /-!
 # Torus characters of the type-F4 short-root carrier in its named root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.RootDatum)
+
 `TauCeti.F4ShortRoot.groupScheme` is the full-weight Chevalley carrier obtained from the
 26-dimensional short-root representation of the type-`F₄` Serre presentation. Its eight
 numbered simple root subgroups and rank-four split weight torus are explicit. The carrier's

@@ -13,6 +13,8 @@ public import TauCeti.Topology.Continuum
 /-!
 # The ω-limit set of a curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.OmegaLimit)
+
 The **ω-limit set** of a curve `u : ℝ → X` is the set of points that `u t` approaches as
 `t → ∞`: the set of cluster points of `u` along `atTop`, written `{x | MapClusterPt x atTop u}`.
 This file proves that it is the nested intersection `⋂ T, closure (u '' Ici T)` of the closures of

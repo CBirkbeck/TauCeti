@@ -17,6 +17,8 @@ import TauCeti.Probability.Moments.IntegrableExpMul
 /-!
 # The log-normal distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.LogNormal)
+
 The log-normal law with log-mean `m` and log-variance `v` is the law of `exp X` for a Gaussian
 `X`, so it is *defined* here as the pushforward `(gaussianReal m v).map Real.exp` and its density
 is derived, not assumed.

@@ -18,6 +18,8 @@ import Mathlib.RingTheory.Valuation.Integral
 /-!
 # Valuations of a Weierstrass function field that are integral on the coordinate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.CoordinateRingIntegral)
+
 For a valuation of `F(W)` trivial on `F`, having no pole at the coordinate `x` forces the valuation
 to be at most `1` on the whole coordinate ring: `W.CoordinateRing` is integral over `F[x]`, and a
 valuation is at most `1` exactly on what is integral over its integers. This bounds those elements;

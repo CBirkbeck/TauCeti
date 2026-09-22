@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Polynomial.Factors
 /-!
 # Evaluating a real étale algebra at its real and complex places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.RealEtale)
+
 For a real polynomial `f`, the quotient `ℝ[X]/f` maps to a product of copies of `ℝ`, one for each
 real root of `f`, and copies of `ℂ`, one for each irreducible quadratic factor — the archimedean
 places of the algebra. This file builds that evaluation map and shows it is injective when `f` is

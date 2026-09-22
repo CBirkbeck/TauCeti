@@ -16,6 +16,8 @@ import Mathlib.RingTheory.Adjoin.Field
 /-!
 # Torsion points over an algebraically closed field are already rational
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.AlgClosed)
+
 Over an algebraically closed `F`, a torsion point of `W` with coordinates in an extension `Ω` has
 its coordinates in `F`: the extension buys no new torsion.
 

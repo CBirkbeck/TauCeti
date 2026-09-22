@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Positive
 /-!
 # The nilradicals and the Borel subalgebra of a positive system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Borel)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, and let `H` be a splitting Cartan subalgebra, so that
 `LieAlgebra.IsKilling.rootSystem H` is the root system of `L` relative to `H`. A base `b` of that

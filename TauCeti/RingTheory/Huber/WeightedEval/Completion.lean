@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.UniformRing
 /-!
 # The universal property of the completed algebra of `A⟨X⟩_T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Completion)
+
 Wedhorn's Proposition 5.50 —
 `existsUnique_continuous_ringHom_weightedRestrictedSubring_of_isWeightedVarPowerBounded` — is the
 universal property of the restricted-series ring `A⟨X⟩_T` itself. This file carries it across the

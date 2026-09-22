@@ -17,6 +17,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Equiv
 /-!
 # Dilation scaling of the Sobolev seminorms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.Dilation)
+
 Fix a finite-dimensional real normed space `E` of dimension `n` carrying an additive Haar
 measure `μ`, and dilate the variable of a function by `r > 0`, i.e. replace `u` by
 `x ↦ u (r⁻¹ • x)`. This file records how that operation rescales the `Lᵖ` seminorm of the

@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Subfactorizat
 /-!
 # Maximality of the candidate genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Unramified.Maximality)
+
 Let `d` be a squarefree integer that is not a rational square, let `M / ℚ` be an abelian number
 field extension, and let `y ∈ M` be a square root of `d` generating a quadratic subfield
 `F = ℚ(√d)` of `M`. If `M / F` is unramified at every finite prime, then `M` embeds over `ℚ` into

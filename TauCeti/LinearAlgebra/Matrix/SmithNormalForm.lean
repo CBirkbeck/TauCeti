@@ -27,6 +27,8 @@ import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # Smith normal form over `ℤ` with special linear transformations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SmithNormalForm)
+
 Every square integer matrix with positive determinant can be brought to diagonal form with
 positive diagonal entries in which each entry divides the next, using row and column
 operations of determinant one:

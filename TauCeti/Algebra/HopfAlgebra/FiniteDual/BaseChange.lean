@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Dual.BaseChange
 /-!
 # Base change of the finite dual
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.FiniteDual.BaseChange)
+
 The finite dual of a finite projective bialgebra commutes with extension of scalars. More
 precisely, for a map of commutative rings `k → K` and a finite projective `k`-bialgebra `H`,
 there is a canonical `K`-bialgebra equivalence

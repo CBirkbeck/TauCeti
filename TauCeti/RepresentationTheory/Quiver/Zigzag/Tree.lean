@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Potential
 /-!
 # Skew-zigzag algebras of trees and forests
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Tree)
+
 A skew-zigzag parameter whose transition factor along a path depends only on the endpoints of the
 path is gauge trivial (`TauCeti.SkewZigzagParameter.isGaugeEquivalent_one_of_walkTransition_eq`).
 On a forest a path is determined by its endpoints, so every skew-zigzag parameter on a forest is

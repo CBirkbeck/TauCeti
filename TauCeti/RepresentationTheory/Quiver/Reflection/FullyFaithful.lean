@@ -12,6 +12,8 @@ import Mathlib.CategoryTheory.PathCategory.MorphismProperty
 /-!
 # The reflection functor is fully faithful where the incoming sum is onto
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.FullyFaithful)
+
 The Bernstein-Gelfand-Ponomarev reflection `C⁺ᵢ` at a sink `i` replaces the vertex space `Mᵢ` by
 the kernel of the sum `TauCeti.incomingSum` of the arrows into `i`. It annihilates the vertex
 simple `Sᵢ`, so it cannot be an equivalence; what it *is*, is fully faithful on the representations

@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Ideal.Basic
 /-!
 # Essential idempotence of the Young symmetrizer
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.Ideal.Idempotent)
+
 The Young symmetrizer `c_t` of a tableau `t` of shape `μ` satisfies `c_t * c_t = κ • c_t` for some
 rational `κ`; that much is the sandwich lemma
 `TauCeti.YoungTableau.exists_eq_smul_youngSymmetrizer_sq`, which leaves `κ` unidentified. This

@@ -13,6 +13,8 @@ public import TauCeti.KnotTheory.Grid.Homology.Basic
 /-!
 # Cyclic symmetries of fully blocked grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Homology.Symmetry)
+
 The chain-level cyclic-permutation theorems identify the fully blocked differentials of a grid
 diagram and its row- or column-relabelled diagram. This file carries those identifications through
 the cycle and boundary submodules to the quotient that defines fully blocked grid homology.

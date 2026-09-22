@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.AdicCompletion.Functoriality
 /-!
 # Adic completeness of finite products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.AdicCompletion.Pi)
+
 For an ideal `I` of a commutative ring `R` and a family of `R`-modules `M i`, the product `∀ i, M i`
 is `I`-adically Hausdorff as soon as every factor is. If the family is finite, the analogous result
 holds for adic precompleteness and completeness. In particular a finite free module `Fin n → R`

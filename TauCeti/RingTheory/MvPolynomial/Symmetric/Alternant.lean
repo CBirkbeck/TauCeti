@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Determinant
 /-!
 # Alternants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Alternant)
+
 For a finite alphabet `σ` and an exponent vector `α : σ → ℕ`, the **alternant**
 
 `a_α = det (X_i ^ α_j)_{i, j ∈ σ}`

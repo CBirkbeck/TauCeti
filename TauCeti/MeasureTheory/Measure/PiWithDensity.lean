@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.Integral.Pi
 /-!
 # A finite product of weighted measures is the product measure with the product weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.PiWithDensity)
+
 `MeasureTheory.Measure.pi (fun i => (μ i).withDensity (f i))` is
 `(MeasureTheory.Measure.pi μ).withDensity (fun x => ∏ i, f i (x i))`: putting a density on each
 factor of a finite product measure is the same as putting the product of the densities on the

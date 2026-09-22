@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FiniteSum
 /-!
 # Abel-Jacobi sums of finite effective divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.FiniteSum)
+
 This file connects the formal finite effective divisor constructors from
 `TauCeti.AlgebraicGeometry.WeilDivisor.FiniteSum` with the divisor-level Abel-Jacobi sum from
 `TauCeti.AlgebraicGeometry.WeilDivisor.AbelJacobi.Sum.Basic`.

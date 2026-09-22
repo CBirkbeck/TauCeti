@@ -13,6 +13,8 @@ public import TauCeti.Algebra.TensorProduct.BaseChange
 /-!
 # Scalar automorphisms on group-like elements of base-changed bialgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.GroupLike.ScalarAut)
+
 For a commutative semiring extension `L/K` and a `K`-bialgebra `A`, the scalar-factor action on
 `L ⊗[K] A` preserves the counit and comultiplication equations defining group-like elements. It
 therefore induces an action on the group-like elements, and `Additive.distribMulAction` transports

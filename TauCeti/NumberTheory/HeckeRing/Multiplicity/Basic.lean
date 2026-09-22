@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.Basic
 /-!
 # Hecke rings: the multiplicity function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Multiplicity.Basic)
+
 Shimura's multiplicity (Proposition 3.2 of [Shimura][shimura1971]) counts, for double cosets
 `Γ₁gΓ₂`, `Γ₂hΓ₃` and `Γ₁dΓ₃`, the pairs of left-coset representatives `(σᵢ, τⱼ)` with
 `σᵢ g τⱼ h Γ₃ = d Γ₃`. These natural numbers are the structure constants of the Hecke product

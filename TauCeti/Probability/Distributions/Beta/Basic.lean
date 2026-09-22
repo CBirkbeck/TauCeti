@@ -15,6 +15,8 @@ import TauCeti.Probability.Density
 /-!
 # Elementary theory of the beta distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Beta.Basic)
+
 This file completes the elementary moment theory of Mathlib's beta distribution. For positive
 shape parameters it computes every natural raw moment, and obtains the mean and variance as the
 first two cases. It also records that the beta law is carried by `[0, 1]`, so every exponential

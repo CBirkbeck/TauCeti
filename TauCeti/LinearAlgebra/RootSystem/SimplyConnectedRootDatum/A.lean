@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.RootSystem.Swap
 /-!
 # The simply connected root datum of type `Aₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.A)
+
 This file constructs, uniformly in the rank `n`, the pinned integral root datum of type `Aₙ` on the
 character and cocharacter lattices `Fin n → ℤ`. The character lattice is written in the
 fundamental-weight basis and the cocharacter lattice in the simple-coroot basis, so the `i`-th

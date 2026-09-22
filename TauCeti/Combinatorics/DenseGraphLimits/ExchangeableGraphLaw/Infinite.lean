@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.ProjectiveLimit.Countable
 /-!
 # Exchangeable laws on infinite graphs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Infinite)
+
 An exchangeable random graph on the labels `ℕ` is a probability law on `SimpleGraph ℕ` that is
 invariant under relabelling along every permutation of `ℕ`. Its windows — the laws of the
 restrictions to the labels `Fin k` — form an `ExchangeableGraphLaw`: restricting along an

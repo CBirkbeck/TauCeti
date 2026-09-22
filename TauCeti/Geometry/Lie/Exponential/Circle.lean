@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.Instances.Sphere
 /-!
 # Compatibility with the circle exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Circle)
+
 Mathlib's `Circle.exp` is a continuous one-parameter subgroup of the analytic Lie group `Circle`.
 The classification of continuous one-parameter subgroups therefore supplies its unique abstract
 Lie-algebra generator. We normalize the one-dimensional Lie algebra identification by sending this

@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Norm.Quadratic
 /-!
 # The quadratic twist of a Weierstrass curve: definition and invariants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.QuadraticTwist)
+
 The quadratic twist `E.quadraticTwistOf t n` of a Weierstrass curve by parameters `(t, n)` — to
 be thought of as the trace and norm of a generator `θ` of a separable quadratic extension
 `L/K`, with `D := t² - 4n` the discriminant of its minimal polynomial — together with the

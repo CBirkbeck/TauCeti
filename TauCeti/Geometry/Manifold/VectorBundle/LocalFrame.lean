@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Basis
 /-!
 # Local frames: duality with the coefficient functionals, and testing hom-bundle sections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.LocalFrame)
+
 Let `V → M` be a smooth vector bundle, let `e` be a trivialization of `V` and let `b` be a basis
 of the model fibre, so that `e.localFrame b` is a local frame of `V` over `e.baseSet` with
 coefficient functionals `e.localFrameCoeff I b`. This file records that over `e.baseSet` the frame

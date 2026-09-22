@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.MeasurableSpace.Prod
 /-!
 # Square filtrations from finite measurable partitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Process.PartitionFiltration)
+
 The canonical finite partitions of a countably generated measurable space give a filtration on
 its square by recording the partition part of each coordinate. These square σ-algebras increase
 to the full product σ-algebra. This is the filtration naturally used by block-average

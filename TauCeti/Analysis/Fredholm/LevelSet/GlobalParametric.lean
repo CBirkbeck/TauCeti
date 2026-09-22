@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Fredholm.LevelSet.Parametric
 /-!
 # Global parametric transversality for Fredholm equations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.LevelSet.GlobalParametric)
+
 Let `f : E × Λ → F` be a parametrized equation. A parameter `l` is regular at the level
 `c` when the fixed-parameter linearization of `x ↦ f (x, l)` is surjective at every solution.
 This file proves that the regular parameters form a residual, and hence dense, subset of `Λ`

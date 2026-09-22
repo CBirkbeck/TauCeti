@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Augmentation
 /-!
 # Central closed subgroup schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Central)
+
 A closed subgroup of the affine group scheme `Spec H` is cut out by a Hopf ideal `I`, and it is
 **central** when conjugating by its points does nothing. This file states that condition on `I`,
 in the same coordinate style as normality: the coordinate morphism of conjugation agrees with the

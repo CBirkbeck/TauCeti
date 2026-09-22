@@ -19,6 +19,8 @@ import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # Base change preserves and detects centrality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Central.BaseChange)
+
 Let `A` be a central algebra over a field `K` and let `L / K` be a field extension. This file proves
 that the scalar extension `L ⊗[K] A` is central *over `L`*, and conversely that centrality of
 `L ⊗[K] A` over `L` forces centrality of `A` over `K`.

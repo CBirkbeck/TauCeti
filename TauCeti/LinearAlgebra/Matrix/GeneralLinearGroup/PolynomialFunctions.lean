@@ -15,6 +15,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # Polynomial and rational functions on the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.PolynomialFunctions)
+
 Two subalgebras of the `k`-valued functions on `GL n k`: the functions given by a polynomial in the
 matrix entries, and those given by such a polynomial divided by a power of the determinant.  They
 are the coordinate-level bookkeeping behind the polynomial and rational representations of

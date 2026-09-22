@@ -14,6 +14,8 @@ import Mathlib.Topology.ContinuousMap.Compact
 /-!
 # Smooth endpoint-preserving approximation of continuous complex curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.Approximation)
+
 Every continuous map from the unit interval to `ℂ` is uniformly approximated, to any positive
 tolerance, by a smooth curve on `ℝ` taking the same values at `0` and `1`. The approximants are
 Mathlib's Bernstein approximations, read as polynomial functions on all of `ℝ`, which is what makes

@@ -13,6 +13,8 @@ public import Mathlib.Topology.Spectral.Basic
 /-!
 # A basis criterion for spectral maps, and transport of spectrality along an embedding
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Spectral.SpectralMap)
+
 Two utilities for spectral spaces and maps. A continuous map is spectral as soon as the preimage
 of every member of some topological **basis** of the target is compact; and spectrality transports
 from the preimage of a set to the set itself along an embedding whose range contains it.

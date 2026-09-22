@@ -12,6 +12,8 @@ public import Mathlib.Topology.UnitInterval
 /-!
 # Graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Graphon.Basic)
+
 A **graphon** on a probability space `(Ω, μ)` is a `[0, 1]`-valued symmetric kernel: an
 everywhere-defined `W : Ω → Ω → ℝ` that is symmetric, jointly measurable, and takes values in
 `[0, 1]`. It is the limit object of the dense graph limit theory.
@@ -75,7 +77,10 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasu
 /-- A **graphon**: a `[0, 1]`-valued symmetric kernel on a probability space.
 
 Extends `SymmKernel`, so symmetry, measurability and boundedness come from there; the only new
-field is the pointwise range constraint. -/
+field is the pointwise range constraint.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.Graphon) -/
 structure Graphon (Ω : Type*) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     extends SymmKernel Ω μ where
   /-- A graphon takes values in `[0, 1]`. Stated via `Graphon.nonneg` and `Graphon.le_one`. -/

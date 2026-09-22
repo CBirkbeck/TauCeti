@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Integral.Bochner.Set
 /-!
 # Block cylinders and their indicator products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Cylinder)
+
 For a process `X : ℕ → Ω → α` and a finite coordinate selection `k : Fin m → ℕ`:
 
 * `blockCylinder X k C = {ω | ∀ i, X (k i) ω ∈ C i}` — the cylinder event on the selected

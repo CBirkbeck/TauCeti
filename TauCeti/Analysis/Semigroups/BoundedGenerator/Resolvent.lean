@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.LinearPMap.Basic
 /-!
 # Resolvent of a bounded generator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.BoundedGenerator.Resolvent)
+
 This file identifies the Laplace-transform resolvent of the uniformly continuous semigroup
 `t ↦ exp (tA)` with the Neumann series for `λI - A`.  For `‖A‖ < λ`, the series
 

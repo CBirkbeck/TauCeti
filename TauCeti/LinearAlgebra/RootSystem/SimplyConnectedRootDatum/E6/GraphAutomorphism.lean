@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E6.Minus
 /-!
 # The type `E₆` diagram automorphism on the pinned root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E6.GraphAutomorphism)
+
 This file records the type-`E₆` consequences of applying the general
 `TauCeti.DynkinType.diagramAut` construction to the order-two symmetry
 `TauCeti.graphPermE6` of the Bourbaki-numbered diagram: that it is nontrivial, and how it moves

@@ -14,6 +14,8 @@ public import TauCeti.Analysis.PositiveDefinite.Pullback
 /-!
 # Fourier-convention characteristic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.Fourier.Convention)
+
 Mathlib's characteristic function of a finite measure is
 `t ↦ ∫ x, exp (⟪x, t⟫ * I) ∂μ`, while the Fourier side of the Bochner roadmap uses the
 `2π` convention `a ↦ ∫ q, exp (-2πi⟪a, q⟫) ∂μ`. This file records the conversion between these

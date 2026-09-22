@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.Basic
 /-!
 # The ideal class group as a quotient of the finite ideles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.FiniteAdeleRing.ClassGroup)
+
 Let `R` be a Dedekind domain with fraction field `K`.  A *finite idele* is a unit of the finite
 adele ring `𝔸ᶠ[R, K]`: a family `(x_v)` of nonzero elements of the completions `K_v`, integral
 with integral inverse at all but finitely many height one primes `v`.  Reading off the `v`-adic

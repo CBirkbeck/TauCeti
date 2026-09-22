@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Uniqueness
 /-!
 # The divisor of a Weil differential, and the Riemann–Roch theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Differential.CanonicalDivisor)
+
 `TauCeti.Divisor.IsRiemannRochDivisor` records what it means for a divisor `W` to satisfy the
 Riemann–Roch identity `ℓ(D) = deg D + 1 - g₀ + ℓ(W - D)`; for such a `W` the number `g₀` is the
 genus, `deg W = 2g - 2` and `ℓ(W) = g`, and any two such divisors are linearly equivalent.

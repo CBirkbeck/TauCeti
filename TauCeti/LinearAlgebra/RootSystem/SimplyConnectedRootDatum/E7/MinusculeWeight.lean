@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Reduced
 /-!
 # The minuscule weight orbit of type E7
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.MinusculeWeight)
+
 This file enumerates the Weyl orbit of the seventh fundamental weight of the pinned simply
 connected root datum `TauCeti.DynkinType.e7SimplyConnectedRootDatum`. The fifty-six weights are
 expressed in the fundamental-weight basis `Fin 7 → ℤ`. The first weight is `ϖ₇`, and the table

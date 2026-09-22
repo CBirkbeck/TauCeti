@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel
 /-!
 # Multiplication by a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.PrimeKernel)
+
 For a prime `ℓ` the non-vanishing hypothesis the division-polynomial construction asks of `[n]` is
 supplied by primality rather than assumed, so `mulByPrimeIsogeny` exposes none. Its kernel is the
 `ℓ`-torsion, and carries the `ZMod ℓ`-module structure `Kernel.lean` builds for every nonvanishing

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.TautologicalPoint
 /-!
 # The tautological point is the generic point, pushed along the pullback
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.GenericPoint)
+
 The tautological point of an isogeny `φ : W₁ ⟶ W₂` is the point of `W₂` over `F(W₁)` whose
 coordinates are the pullbacks of the two coordinate functions of `W₂`. Those pullbacks are the
 images of the generic coordinates of `W₂` under the function-field map `φ^*`, so the tautological

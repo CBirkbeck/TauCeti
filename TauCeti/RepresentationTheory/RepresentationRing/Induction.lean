@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.RepresentationRing.Restriction
 /-!
 # Induction is a homomorphism of modules over the representation ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.RepresentationRing.Induction)
+
 For a finite-index subgroup `S ≤ G` over a field `k`, inducing a finite-dimensional representation
 is the functor `TauCeti.indFDRepFunctor : FDRep k S ⥤ FDRep k G`. This file passes that functor to
 the representation rings of `TauCeti/RepresentationTheory/RepresentationRing/Basic.lean`:

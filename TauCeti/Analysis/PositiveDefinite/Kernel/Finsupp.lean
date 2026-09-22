@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.PosSemidef
 /-!
 # The finitely supported Gram form of a positive-definite kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Kernel.Finsupp)
+
 This file packages the finitely supported Hermitian form attached to a positive-definite kernel.
 For a kernel `K : α → α → 𝕜` and finitely supported coefficient vectors `x y : α →₀ 𝕜`, the form is
 

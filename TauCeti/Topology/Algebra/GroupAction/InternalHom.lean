@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.GroupAction.Discrete
 /-!
 # Conjugation actions on internal homs of discrete modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.GroupAction.InternalHom)
+
 Let a group `G` act on two additive monoids `M` and `N`. The additive homomorphisms
 `M →+ N` carry the *conjugation* action
 

@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Homomorphism densities of a graphon
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Basic)
+
 The homomorphism density `t(F, W)` of a finite graph `F` in a graphon `W`: integrate, over all maps
 `x : V(F) → Ω`, the product of `W` along the edges of `F`.
 

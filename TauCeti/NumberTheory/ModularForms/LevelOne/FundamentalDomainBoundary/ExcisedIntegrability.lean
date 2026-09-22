@@ -14,6 +14,8 @@ import TauCeti.Analysis.Contour.LogDerivFTC
 /-!
 # The excised boundary integrand is integrable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisedIntegrability)
+
 `intervalIntegral_excised_logDeriv_fdBoundary` assembles the excised boundary integral from
 integrability *assumed* on `[0, 1]`, `[1, 2]` and `[4, 5]`. This file discharges that assumption,
 for any subinterval of `[0, 5]` at once.

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 /-!
 # Inverting a principal complex power on a sector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Pow.Complex)
+
 Taking the principal power `u ^ (r⁻¹ : ℝ)` of a nonzero `u` divides its argument by `r`, so
 raising the result back to the power `r` returns `u` — but only as long as the intermediate
 argument stays inside the principal range `(-π, π]`, which is where `Complex.cpow_mul` may be

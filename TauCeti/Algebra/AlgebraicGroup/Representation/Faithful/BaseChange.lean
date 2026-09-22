@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.BaseChange
 /-!
 # Base change of faithful comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Faithful.BaseChange)
+
 Let `M` be a finite free comodule over a commutative Hopf algebra `H`. After extending both the
 coefficient Hopf algebra and `M` along a morphism of commutative rings, the coordinate morphism of
 the extended comodule is the scalar extension of the original coordinate morphism, transported

@@ -17,6 +17,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Multilinear
 /-!
 # The diagonal operators of the invertible endomorphisms span all of them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.PiTensorProduct.GeneralLinear)
+
 A `V`-endomorphism `f` acts on the tensor power `⨂[K] (_ : ι), V` diagonally, by
 `f^{⊗ι} = PiTensorProduct.map (fun _ ↦ f)`. These diagonal operators are not closed under addition,
 so the span of the ones coming from *invertible* `f` is not visibly all of the span of them all.

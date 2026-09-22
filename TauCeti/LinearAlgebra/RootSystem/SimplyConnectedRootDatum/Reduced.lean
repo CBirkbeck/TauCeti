@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.NonSimpl
 /-!
 # Reducedness of the pinned root data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Reduced)
+
 The pinned simply connected root data of types `A`, `D`, `E₆`, `E₇`, and `E₈` are reduced. Their
 character and cocharacter lattices use different preferred bases, so reducedness is not obtained
 by identifying each root with its coroot. Instead, their coordinate constructions all exhibit a

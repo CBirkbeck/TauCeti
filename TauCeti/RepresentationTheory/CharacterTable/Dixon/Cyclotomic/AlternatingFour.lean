@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Cyclotomic.Solve
 /-!
 # The cyclotomic Dixon computation for the alternating group of degree four
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Cyclotomic.AlternatingFour)
+
 This file certifies the exact character table of `A₄`.  Its four conjugacy classes have sizes
 `1`, `3`, `4`, and `4`; the last two are the two classes of three-cycles.  If `ζ` is the
 distinguished primitive sixth root in `TauCeti.Cyclotomic 6` and `ω = ζ²`, the ordinary table is

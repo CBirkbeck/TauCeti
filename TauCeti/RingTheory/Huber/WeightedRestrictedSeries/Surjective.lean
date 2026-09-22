@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
 /-!
 # Restricted series lift along an open surjection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Surjective)
+
 A continuous **open** surjection `φ : A → B` of nonarchimedean rings whose source has countably
 generated `𝓝 0` induces a surjection of restricted power-series *rings* — the trivial-weight
 `TauCeti.Huber.weightedRestrictedSubring`, before completion — coefficientwise.

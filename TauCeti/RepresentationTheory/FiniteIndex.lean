@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.FiniteIndex
 /-!
 # Restricting to a finite-index subgroup and coming back
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.FiniteIndex)
+
 Let `S` be a subgroup of finite index in a group `G`. Coinduction from `S` to `G` is right adjoint
 to restriction (`Rep.resCoindAdjunction`), and, because the index is finite, also left adjoint to
 it (`Rep.coindResAdjunction`). For a `G`-representation `A` this gives two maps

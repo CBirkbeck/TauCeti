@@ -11,6 +11,8 @@ import TauCeti.Algebra.Bialgebra.GroupLike.ScalarTower
 /-!
 # Geometric characters of a descended group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.GeometricCharacter)
+
 The characters of a group algebra descended along a finite Galois extension `L/k`
 recover its exponent group over every `L`-algebra `K` with connected prime spectrum. Compatible
 scalar automorphisms of `K` and `L` act on those characters by the prescribed action

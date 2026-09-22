@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.GeneratingSections
 /-!
 # Refining quasi-coherent data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Quasicoherent.Refinement)
+
 Quasi-coherent data for a sheaf of modules `M` consists of a covering family `X i` together with
 a presentation of each restriction `M.over (X i)`. Given a second covering family `Y j` refining
 the first one, meaning that each `Y j` comes with an arrow to some `X i`, restricting the

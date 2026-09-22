@@ -12,6 +12,8 @@ public import Mathlib.Order.Preorder.Finsupp
 /-!
 # The order on Weil divisors and the positive/negative part decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Order)
+
 This file continues the Jacobian roadmap's Layer A formal Weil divisor API
 (`TauCeti.AlgebraicGeometry.WeilDivisor.Basic`) by recording the lattice-ordered-group structure of
 formal divisors and the canonical decomposition of a divisor into its effective positive and

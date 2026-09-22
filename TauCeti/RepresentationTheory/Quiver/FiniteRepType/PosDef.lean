@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.Uniqueness
 /-!
 # A positive definite Tits form forces finite representation type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.FiniteRepType.PosDef)
+
 Let `V` be a finite quiver whose Tits form is positive definite, the numerical side of the ADE
 condition in Gabriel's theorem. This file proves that `V` has finite representation type
 (`TauCeti.isFiniteRepType_of_titsForm_posDef`), and bounds the number of its indecomposables by the

@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Subrepresentation
 /-!
 # The invariant form on a permutation representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.PermutationForm)
+
 A permutation representation `k[X]` of a group `G` on a `G`-set `X` carries a canonical bilinear
 form, the one for which the standard basis `single x 1` is orthonormal: the pairing of `v` and `w`
 is the sum of `v x * w x` over the (finite) support of `v`.  Because the action of a group element

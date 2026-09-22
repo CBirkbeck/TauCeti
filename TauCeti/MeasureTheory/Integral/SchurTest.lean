@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Function.Lp.LIntegralRpow
 /-!
 # Schur's test for integral operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.SchurTest)
+
 Let `k : α → β → ℝ≥0∞` be a jointly measurable kernel whose row integrals `∫⁻ y, k x y ∂ν` are
 at most `A` and whose column integrals `∫⁻ x, k x y ∂μ` are at most `B`. Then, for `1 ≤ p`, the
 integral operator `g ↦ (x ↦ ∫⁻ y, k x y * g y ∂ν)` satisfies

@@ -20,6 +20,8 @@ import Mathlib.RingTheory.SimpleRing.Matrix
 /-!
 # The endomorphism ring of an isotypic module is simple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.IsotypicEnd)
+
 A semisimple module `M` all of whose simple submodules are isomorphic to one another
 (`IsIsotypic R M`) and which is finite over `R` is a finite power `Sⁿ` of a single simple module,
 by Mathlib's `IsIsotypic.linearEquiv_fun`.  Its endomorphism ring is therefore the matrix ring

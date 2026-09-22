@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Coalgebra.Basic
 /-!
 # Elements whose comultiplication is a single tensor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Basic)
+
 If the comultiplication of an element `a` of a coalgebra is the pure tensor `a ⊗ c`, then the
 counit law `(ε ⊗ id) ∘ Δ = id` collapses the coalgebra structure at `a`: applying it to
 `Δ a = a ⊗ c` gives `a = ε(a) • c`. In particular an element fixed by the regular coaction,

@@ -12,6 +12,8 @@ public import Mathlib.Topology.MetricSpace.ProperSpace
 /-!
 # The Poincaré disc carries the Euclidean topology and is a proper metric space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.Topology)
+
 `Poincare/MetricSpace.lean` equips the type synonym `TauCeti.PoincareDisc` of
 `Complex.UnitDisc` with the hyperbolic (Poincaré) distance `TauCeti.hyperbolicDist` as a
 `MetricSpace` instance. That instance says nothing yet about how the resulting topology

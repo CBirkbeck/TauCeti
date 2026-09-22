@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Length
 /-!
 # Krull–Akizuki: an integral closure that is Noetherian without separability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.NormalizationFinite)
+
 Let `A` be a Noetherian domain of Krull dimension at most one, let `K` be its fraction field and
 let `L` be a finite extension of `K`. This file proves that any integral closure of `A` in `L` is
 a Noetherian ring. No separability of `L / K` is assumed, and the integral closure is *not* claimed

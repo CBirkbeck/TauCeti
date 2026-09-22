@@ -19,6 +19,8 @@ import Mathlib.RingTheory.Flat.Basic
 /-!
 # The tensor product of two central algebras is central
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Central.TensorProduct)
+
 Mathlib's `Mathlib/Algebra/Central/TensorProduct.lean` has the two *converse* statements
 (`Algebra.IsCentral.left_of_tensor_of_field` and `Algebra.IsCentral.right_of_tensor_of_field`), but
 not the forward one. This file supplies it, over a field, together with the elementwise centralizer

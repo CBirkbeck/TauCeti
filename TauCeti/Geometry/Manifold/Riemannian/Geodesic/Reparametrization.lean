@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.Geodesic.Basic
 /-!
 # Restriction and affine reparametrization of geodesics
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Reparametrization)
+
 A geodesic remains a geodesic after restricting its parameter set, provided the smaller set still
 has unique derivatives. It also remains a geodesic after an affine change of parameter
 `t ↦ a * t + b`. The latter statement is special to affine reparametrizations: the velocity gains

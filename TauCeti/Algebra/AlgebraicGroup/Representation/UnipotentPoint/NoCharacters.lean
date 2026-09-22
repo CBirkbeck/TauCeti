@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Characters of a unipotent affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.NoCharacters)
+
 Let `H` be the reduced finite-type coordinate Hopf algebra of an affine group over a field `k`,
 and let `K` be an algebraically closed extension of `k`. If every `K`-valued point of the group is
 unipotent, then every group-like element of `H` is one. In geometric language, every algebraic

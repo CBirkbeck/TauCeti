@@ -12,6 +12,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Change of generators in a quaternion algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.SymbolEquiv)
+
 This file proves the quaternion-symbol rescaling relations by changing the standard
 generators. `TauCeti.QuaternionAlgebra.rescaleJEquiv` identifies `ℍ[R,a,c²b]` with `ℍ[R,a,b]`
 by sending `j` to `c j`, for a unit `c`. Its first-parameter counterpart

@@ -12,6 +12,8 @@ import Mathlib.Tactic.Group
 /-!
 # Basepoint change for fundamental-group subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.FundamentalGroup.BasepointChange)
+
 The pointed classification of connected covers records a subgroup of the fundamental group at
 a chosen basepoint. Changing the basepoint along a path transports that subgroup by the
 standard path-conjugation isomorphism of fundamental groups. This file packages that transport

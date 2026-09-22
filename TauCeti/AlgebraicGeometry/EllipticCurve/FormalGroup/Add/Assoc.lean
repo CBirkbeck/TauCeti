@@ -15,6 +15,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 /-!
 # The chord group law over the fraction field of the series ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.Assoc)
+
 **Associativity of the chord addition series**, `F(F(t₁, t₂), t₃) = F(t₁, F(t₂, t₃))`, proved by
 transporting the honest group law of a Weierstrass curve. The parameters are power series, so the
 curve has to be read over a field containing them: this file base changes `W` along

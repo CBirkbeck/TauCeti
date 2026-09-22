@@ -12,6 +12,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Extracting weighted prime powers from a pair of integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Int.WeightedPrimitivePair)
+
 Call a pair of integers `(A, B)` *primitive of weight `(m, n)`* if no prime `ℓ` has both
 `ℓ ^ m ∣ A` and `ℓ ^ n ∣ B`. For positive weights, every pair not both zero is
 `(d ^ m * A', d ^ n * B')` for a nonzero integer `d` and a pair `(A', B')` primitive of weight

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.LinearPMap.Shift
 /-!
 # The shift `c • x - A x` of a partial linear map as a linear map on its domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.LinearPMap.SmulSub)
+
 For a partial linear map `A : E →ₗ.[R] E` and a scalar `c`, the shift `x ↦ c • x - A x` is a
 linear map from the domain of `A` to `E`.  Bundling it (`LinearPMap.smulSub`) gives access to the
 `LinearMap` API, in particular to its range as a submodule, for arguments about resolvents,

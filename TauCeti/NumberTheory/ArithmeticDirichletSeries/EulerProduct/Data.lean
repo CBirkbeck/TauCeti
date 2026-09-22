@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Weight
 /-!
 # Euler-product coefficient data over a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Data)
+
 This file bundles the algebraic input for an Euler product over the height-one primes of the ring
 of integers of a number field. An `EulerProductData K` consists of an ideal arithmetic function
 that is multiplicative on relatively prime nonzero ideals. The prime-power series and local

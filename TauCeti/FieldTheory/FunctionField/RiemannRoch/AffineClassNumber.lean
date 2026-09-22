@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.ClassNumber
 /-!
 # The ideal class group of an affine model of a function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.RiemannRoch.AffineClassNumber)
+
 `TauCeti.FieldTheory.FunctionField.RiemannRoch.ClassNumber` proves that the degree-zero divisor
 class group `Cl⁰(F)` of an algebraic function field with a *finite* constant field is finite, and
 `TauCeti.FieldTheory.FunctionField.Divisor.AffineModel` exhibits the ideal class group of an

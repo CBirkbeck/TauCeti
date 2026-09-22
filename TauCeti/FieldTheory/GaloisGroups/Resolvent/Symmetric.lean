@@ -17,6 +17,8 @@ import Mathlib.RingTheory.Polynomial.Subring
 /-!
 # Symmetric descent for the universal resolvent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Symmetric)
+
 Given an integral multivariable polynomial `Φ` in `n` formal roots, its universal resolvent is
 the product of `X - Ψ` over the orbit of `Φ` under permutations of the variables. Permuting the
 formal roots permutes these factors, so every coefficient of the product is symmetric.

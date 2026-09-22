@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Group.Subgroup
 /-!
 # Topological closure and additive subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Subgroup)
+
 Converting a subgroup to an additive subgroup commutes with topological closure. This
 connects topological generation in a group with additive generation on its `Additive` type tag.
 -/

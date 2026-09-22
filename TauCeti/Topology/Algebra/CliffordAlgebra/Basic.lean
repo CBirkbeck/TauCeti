@@ -14,6 +14,8 @@ public import Mathlib.Topology.Algebra.Star
 /-!
 # Topology on Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Basic)
+
 This file gives a Clifford algebra its module topology, making it a topological additive group.
 Over a topological ring, multiplication is continuous when the Clifford algebra is a finite module.
 The topology is Hausdorff when the base ring is Hausdorff with continuous addition and

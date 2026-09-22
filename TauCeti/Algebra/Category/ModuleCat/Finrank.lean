@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Dimension.Finite
 /-!
 # Finrank of a zero object of `ModuleCat`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Finrank)
+
 Vanishing of an object of `ModuleCat R` is naturally expressed categorically, as
 `CategoryTheory.Limits.IsZero`, while the dimension counts that consume it speak of
 `Module.finrank`. This file supplies the one translation between the two: a zero object has

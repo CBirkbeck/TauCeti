@@ -13,6 +13,8 @@ import Mathlib.Analysis.SpecificLimits.Basic
 /-!
 # Exhausting a convex open set from inside
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Convex.Exhaustion)
+
 A convex open subset `Ω` of a *proper* real normed space — a finite-dimensional one, say — is the
 increasing union of convex open subsets whose closures are compact subsets of `Ω`.  Intersecting
 the homothetic copies `c + t • (Ω - c)` about a point `c ∈ Ω`, for `0 < t < 1`, with expanding

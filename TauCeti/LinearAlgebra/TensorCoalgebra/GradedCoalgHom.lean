@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.GradedCoderivation
 /-!
 # Graded coalgebra morphisms of reduced tensor coalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.GradedCoalgHom)
+
 Let `M` and `N` carry internal integer gradings `G` and `H`, and give their reduced tensor
 coalgebras `Tᶜ(M)` and `Tᶜ(N)` the total letter degree.  This file combines the ungraded
 correspondence between coalgebra morphisms `Tᶜ(M) ⟶ Tᶜ(N)` and their Taylor components

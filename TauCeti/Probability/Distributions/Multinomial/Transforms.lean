@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 /-!
 # Transforms of the multinomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Multinomial.Transforms)
+
 For the pushforward of `multinomialMeasure n p` into `EuclideanSpace ℝ ι` along
 `multinomialToEuclidean` and a direction `θ`, the directional moment generating function is
 finite everywhere and equals

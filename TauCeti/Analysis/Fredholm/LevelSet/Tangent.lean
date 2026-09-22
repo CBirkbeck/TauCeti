@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.FDeriv.OfCompLeft
 /-!
 # The tangent space of a regular level set away from its base point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.LevelSet.Tangent)
+
 `TauCeti.levelSetChart` parametrizes the level set `{x | f x = c}` near a regular point `a` by the
 kernel of the derivative `f'` there, and `TauCeti.hasStrictFDerivAt_coe_levelSetChart_symm`
 computes the derivative of that parametrization **at the chart origin**: it is the inclusion of

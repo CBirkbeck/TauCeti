@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.Sylow.Existence
 /-!
 # Sylow pro-`p` subgroups as inverse limits of Sylow subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Sylow.Limit)
+
 A Sylow pro-`p` subgroup of a profinite group is the same thing as a compatible choice of Sylow
 `p`-subgroup in each of its finite quotients. Such a choice is a `SylowFamily`, a point of the
 inverse limit of the finite sets `Sylow p (G ⧸ U)`, and `SylowFamily.equivIsProPSylow` is the

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.Quasicoherent.Biprod
 /-!
 # Direct sums of `𝒪ₓ`-modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Modules.Biprod)
+
 The site-level closure properties of direct sums of sheaves of modules
 (`TauCeti/Algebra/Category/ModuleCat/Sheaf/Quasicoherent/Biprod.lean`) specialize to a scheme `X`
 by taking the sheaf of rings to be the structure sheaf of `X`. Since `X.Modules` carries its own

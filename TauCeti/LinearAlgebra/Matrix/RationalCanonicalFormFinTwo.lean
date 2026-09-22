@@ -20,6 +20,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Rational canonical form in size two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.RationalCanonicalFormFinTwo)
+
 A `2 × 2` matrix over a field is scalar or **cyclic**: as soon as it is not scalar some vector `v`
 is not an eigenvector, and `v, M *ᵥ v` is then a basis in which `M` becomes the companion matrix
 `!![0, -det M; 1, trace M]` of its characteristic polynomial `X² - (trace M) X + det M`. That is

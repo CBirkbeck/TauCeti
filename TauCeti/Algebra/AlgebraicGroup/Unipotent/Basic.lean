@@ -14,6 +14,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Smooth.CommHopfAlgCat
 /-!
 # Smooth unipotent affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Basic)
+
 A smooth finite-type affine group over a field is unipotent when every point over an algebraic
 closure is a unipotent element. On coordinate Hopf algebras, a geometric point is an algebra map
 `H →ₐ[k] AlgebraicClosure k`, and its action on every finite-dimensional comodule supplies the

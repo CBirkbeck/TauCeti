@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.Basic
 /-!
 # Automorphisms acting on the ring of integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.AutomorphismAction)
+
 A ring automorphism of a field restricts to its ring of integers, because it preserves
 integrality. This file records how that restricted action relates to the ambient one: the
 structure map `𝓞 K → K` is equivariant, carrying `σ • z` to `σ` applied to the image of `z`.

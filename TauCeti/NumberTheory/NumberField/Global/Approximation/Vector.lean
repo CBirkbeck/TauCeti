@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Places.ScalarExtension
 /-!
 # Weak approximation for vectors at finite and real places
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Approximation.Vector)
+
 Let `K` be a number field and `V` a finite-dimensional `K`-vector space. For finitely many finite
 places `v` and real places `w`, one global vector `x : V` can be chosen so that its images
 `1 ⊗ x` in the localized spaces `K_v ⊗[K] V` and `ℝ ⊗[K] V` lie in arbitrarily prescribed

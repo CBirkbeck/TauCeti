@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.CliffordAlgebra.Equivs
 /-!
 # Quaternion algebras attached to binary quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.Binary)
+
 The Clifford algebra of the diagonal binary form `⟨a, b⟩` is the quaternion algebra
 `ℍ[R,a,b]`. Consequently, an isometry between two binary diagonal forms induces an algebra
 equivalence between the corresponding quaternion algebras. This is the binary quaternion lemma

@@ -14,6 +14,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # The Jacobson radical, and semiprimary rings, are left-right symmetric
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Jacobson.MulOpposite)
+
 `Ring.jacobson R` is the intersection of the maximal *left* ideals of `R`, so nothing about the
 definition is symmetric in the two sides. Mathlib knows the resulting ideal is two-sided, but it
 does not record the sharper statement that the *same* ideal is cut out by the maximal right

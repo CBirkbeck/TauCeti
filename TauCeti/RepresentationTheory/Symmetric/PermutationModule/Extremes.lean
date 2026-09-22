@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Symmetric.PermutationModule.Basic
 /-!
 # The two extreme Young permutation modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.PermutationModule.Extremes)
+
 The Young permutation module `M^μ` of a partition `μ` of `n` interpolates between two extremes.
 For the coarsest partition `(n)` there is a single `μ`-tabloid and `M^{(n)}` is the trivial
 representation; for the all-ones partition `(1ⁿ)` the tabloids are the permutations themselves

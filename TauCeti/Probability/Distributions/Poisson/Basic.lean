@@ -12,6 +12,8 @@ public import TauCeti.Probability.GeneratingFunction
 /-!
 # Moments and generating functions of the Poisson distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Poisson.Basic)
+
 This file develops the probability-generating function of the native Poisson law and the elementary
 analytic API of the real-valued Poisson law. For a rate
 `r : ℝ≥0`, the cast law `Po(ℝ, r)` has all exponential moments, moment-generating function

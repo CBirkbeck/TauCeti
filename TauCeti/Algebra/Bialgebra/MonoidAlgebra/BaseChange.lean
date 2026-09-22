@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
 /-!
 # Base change of monoid bialgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.MonoidAlgebra.BaseChange)
+
 For a commutative semiring extension `k → K` and a commutative monoid `G`, scalar extension of
 the monoid bialgebra `k[G]` is canonically the monoid bialgebra `K[G]`:
 

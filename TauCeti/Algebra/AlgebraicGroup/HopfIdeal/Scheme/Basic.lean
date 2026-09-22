@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Closed subgroup schemes from Hopf ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Basic)
+
 A Hopf ideal `I` in a commutative Hopf algebra `H` determines a quotient commutative Hopf
 algebra `H ⧸ I`. Applying relative spectrum contravariantly to the quotient morphism gives a
 morphism of group objects

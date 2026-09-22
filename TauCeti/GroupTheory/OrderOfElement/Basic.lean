@@ -11,6 +11,8 @@ public import TauCeti.Data.Nat.Factorization.MulDvd
 /-!
 # Which numbers divide the order of a power
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.OrderOfElement.Basic)
+
 Let `g` have finite order `n` and let `f` divide `n`. The order of `g ^ k` is `n / gcd n k`, so
 `f` divides it exactly when `f * gcd n k` divides `n`. That condition is decided one prime of `f`
 at a time: it fails at `p` exactly when `k` is divisible by `p ^ (v_p n - v_p f + 1)`, the room

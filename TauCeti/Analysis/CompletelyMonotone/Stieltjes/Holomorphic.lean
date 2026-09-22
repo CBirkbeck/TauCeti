@@ -15,6 +15,8 @@ import TauCeti.Analysis.Complex.SlitPlane
 /-!
 # The holomorphic extension of a Stieltjes function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Stieltjes.Holomorphic)
+
 A Stieltjes representation
 
 `f(t) = a / t + b + ∫ x, (t + x)⁻¹ ∂μ`

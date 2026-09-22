@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # Exponential integrals on the real line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.ExpDecay)
+
 This file records integrability and evaluation of exponential integrands on a half-line or the
 whole real line: natural powers multiplied by an exponentially decaying factor, the exact rate at
 which a bare exponential is integrable on a right half-line, and integrability of the two-sided

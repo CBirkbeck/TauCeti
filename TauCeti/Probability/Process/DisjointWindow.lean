@@ -11,6 +11,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Expanding a product of averages over disjoint windows
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Process.DisjointWindow)
+
 Writing `window N i j = (i + 1) * N + j` for the `i`-th block of `N` consecutive indices, a product
 of block averages over these windows expands as an average of products over tuples:
 

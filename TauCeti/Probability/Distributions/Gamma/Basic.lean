@@ -18,6 +18,8 @@ import TauCeti.Probability.Moments.Determinacy
 /-!
 # Elementary theory of the gamma distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Basic)
+
 This file develops the elementary moment theory of Mathlib's gamma distribution. For a positive
 shape `a` and a positive rate `r` it computes every natural raw moment, the mean and the variance,
 every natural inverse moment that exists, the exact set of rates at which an exponential moment

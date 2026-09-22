@@ -13,6 +13,8 @@ import Mathlib.Topology.UniformSpace.Ascoli
 /-!
 # Vitali's convergence theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Vitali)
+
 Vitali's theorem upgrades pointwise convergence on a set with an accumulation point to locally
 uniform convergence for a locally bounded sequence of holomorphic functions. This completes the
 Vitali component of layer **L1 (normal families / Montel)** of the conformal-mapping roadmap.

@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.ZMod.Torsion
 /-!
 # Roots of unity of order dividing `p - 1` in a prime field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.ZMod.Torsion)
+
 The unit group of `ZMod p` is cyclic of order `p - 1`, which `Mathlib.RingTheory.ZMod.Torsion`
 records as the instance `HasEnoughRootsOfUnity (ZMod p) (p - 1)`. Transporting it along a divisor
 `d ∣ p - 1` puts a primitive `d`-th root of unity into `ZMod p`, and with it the splitting of

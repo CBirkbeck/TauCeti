@@ -13,6 +13,8 @@ import TauCeti.Algebra.Lie.Sl2.Basic
 /-!
 # The Weyl element normalises the split torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Weyl.Torus)
+
 Let `U_ℤ = kostantForm e h` act on a rational vector space `V` through `ρ` and preserve an additive
 subgroup `M ≤ V`, presented in a weight basis, and let `eᵢ`, `eⱼ` be distinguished root vectors
 whose images span, together with the distinguished Cartan vector `h c`, an `sl₂` triple. The two

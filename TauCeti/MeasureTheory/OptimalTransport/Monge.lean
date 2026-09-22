@@ -11,6 +11,8 @@ public import TauCeti.Probability.HasLaw
 /-!
 # The Monge problem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Monge)
+
 The *Monge problem* for a cost `c : X × Y → ℝ≥0∞` and two measures `μ` and `ν` asks for a
 transport *map* — a map `T : X → Y` with `ProbabilityTheory.HasLaw T ν μ`, so that `T` pushes
 `μ` forward to `ν` — of least cost `∫⁻ x, c (x, T x) ∂μ`. This is the original transport

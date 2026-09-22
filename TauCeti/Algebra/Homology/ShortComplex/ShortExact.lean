@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 /-!
 # Short exact kernel and cokernel sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.ShortComplex.ShortExact)
+
 This file records that the canonical kernel sequence of an epimorphism and the canonical cokernel
 sequence of a monomorphism are short exact.
 

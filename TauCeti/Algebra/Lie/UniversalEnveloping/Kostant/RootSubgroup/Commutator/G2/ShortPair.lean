@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.RootString.G2.ShortPair
 /-!
 # The G₂ short-pair relation for Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Commutator.G2.ShortPair)
+
 For the roots `α`, `α + β`, `2α + β`, `3α + β`, `3α + 2β`, the scaled brackets
 `[eᵢ,eⱼ] = 2c eₖ`, `c[eᵢ,eₖ] = 3d eₗ`, and `c[eₖ,eⱼ] = 3a eₘ` give
 

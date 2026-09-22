@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.CanonicalTensor
 /-!
 # Metric trace of a bilinear form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Trace)
+
 This file defines the metric trace of a bilinear form on a finite-dimensional real inner product
 space. The definition contracts the form against Mathlib's canonical covariant tensor, making it
 independent of any choice of basis.

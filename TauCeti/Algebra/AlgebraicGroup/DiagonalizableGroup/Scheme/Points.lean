@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.Basic
 /-!
 # Scheme-valued points and morphisms of diagonalizable group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.Points)
+
 For a commutative ring `R` and a finitely generated commutative group `G`, the
 diagonalizable group scheme `D(G)` is represented by the group algebra `R[G]`. This file
 synchronizes its group-scheme and functor-of-points presentations. A scheme-valued point

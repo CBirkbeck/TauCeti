@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.A
 /-!
 # The root datum of the special linear group relative to its diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.RootDatum)
+
 The diagonal torus of `SL_{r+1}` is the rank-`r` split torus embedded through the standard weights
 `ε₀, …, ε_r`, written in fundamental-weight coordinates by
 `TauCeti.SpecialLinear.diagonalTorusWeight`. Its character lattice is

@@ -18,6 +18,8 @@ import TauCeti.Topology.Homeomorph.Quotient
 /-!
 # The q-coordinate of a normalized cusp datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.Coordinate)
+
 For a cusp datum with scaling `σ` and width `w`, the coordinate is
 `q(z) = exp (2 * π * I * σ(z) / w)`. Its fibres are exactly the orbits of the full cusp
 stabilizer. It therefore identifies the stabilizer quotient of the upper half-plane with the

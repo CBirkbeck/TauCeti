@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.AbelianVariety.Hom.Basic
 /-!
 # Isomorphisms of abelian varieties
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AbelianVariety.Hom.Iso)
+
 This file supplies the scheme-level interface to isomorphisms in the category of abelian
 varieties. An isomorphism `e : A ≅ B` forgets first to an isomorphism of schemes over `Spec K`,
 then to an isomorphism of the underlying schemes.

@@ -12,6 +12,8 @@ public import
 /-!
 # Closed root subgroups of the type-D full-spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.SpinCarrier.ClosedRootSubgroup)
+
 For every Bourbaki node of type `D_n`, the raising and lowering root-subgroup maps into
 `TauCeti.TypeDSpinCarrier.groupScheme n hn` are closed copies of the additive group scheme.
 

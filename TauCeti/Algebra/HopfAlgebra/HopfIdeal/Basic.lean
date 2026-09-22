@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.Ideal.Maps
 /-!
 # Hopf ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.HopfIdeal.Basic)
+
 This file defines Hopf ideals in a Hopf algebra over a commutative semiring. A Hopf ideal is
 an ideal `I` whose comultiplication lands in `I ⊗ H + H ⊗ I`, whose counit vanishes on `I`,
 and which is stable under the antipode.

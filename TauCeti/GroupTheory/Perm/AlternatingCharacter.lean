@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.GroupAction.ConjAct
 /-!
 # An odd permutation inverts every linear character of the alternating group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.AlternatingCharacter)
+
 Let `α` be a finite type and let `χ` be a homomorphism from `alternatingGroup α` to a commutative
 monoid. Conjugation by an *even* permutation cannot move `χ`, the target being commutative. This
 file proves that conjugation by an **odd** permutation inverts it, once the target has inverses:

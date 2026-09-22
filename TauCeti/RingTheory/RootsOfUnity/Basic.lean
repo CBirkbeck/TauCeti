@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Basic
 /-!
 # Basic results on roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.Basic)
+
 This file records a criterion for a root of unity congruent to `1` modulo an ideal to equal `1`.
 
 ## Main results

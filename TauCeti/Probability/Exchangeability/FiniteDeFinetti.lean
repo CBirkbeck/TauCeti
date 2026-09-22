@@ -12,6 +12,8 @@ public import TauCeti.Probability.Process.EmpiricalMeasure
 /-!
 # Quantitative finite de Finetti approximation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.FiniteDeFinetti)
+
 Let `x : κ → α` be a nonempty finite population. Its empirical distribution is the pushforward
 of the uniform law on `κ` by `x`. Sampling `ι` entries from that distribution independently is
 therefore the same as choosing a uniform map `ι → κ` and reading the selected entries of `x`.

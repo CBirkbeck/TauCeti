@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 /-!
 # Uniformizer coordinates on maximal-ideal graded pieces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DiscreteValuationRing.Uniformizer)
+
 Let `R` be a discrete valuation ring with maximal ideal `𝔪` and residue field `k`.  Fixing a
 uniformizer `π` identifies `k` with the graded piece `𝔪^m / 𝔪^(m+1)` by sending the residue
 of `x` to the class of `x * π ^ m`.  This file constructs that identification explicitly and

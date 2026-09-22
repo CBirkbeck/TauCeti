@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 /-!
 # The logarithmic integral along the boundary contour
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV)
+
 The argument principle read on the boundary of the truncated fundamental domain. For a function
 analytic and non-vanishing off a finite set `S`, the Cauchy principal value of its logarithmic
 integral along `fdBoundary H` is `2πi` times the winding-weighted sum of its orders.

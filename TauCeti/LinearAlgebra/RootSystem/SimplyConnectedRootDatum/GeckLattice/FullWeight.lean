@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The pinned Geck carrier is full-weight in the unimodular types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.FullWeight)
+
 The explicit Chevalley carrier `TauCeti.DynkinType.geckGroupScheme` of a valid Dynkin type is the
 smallest closed subgroup scheme of `GLₙ` over `ℤ` containing the divided-power exponential root
 subgroups of the numbered Chevalley generators together with the weight torus of Geck's admissible

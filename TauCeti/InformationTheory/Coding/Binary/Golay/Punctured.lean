@@ -12,6 +12,8 @@ public import TauCeti.InformationTheory.Coding.ParityExtension
 /-!
 # The binary Golay code of length twenty-three
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Binary.Golay.Punctured)
+
 Deleting one coordinate from the extended binary Golay code leaves the binary Golay code with
 parameters `[23, 12, 7]`. The dimension is unchanged because the extended code has minimum
 distance eight, and the minimum distance drops by exactly one because every coordinate is met

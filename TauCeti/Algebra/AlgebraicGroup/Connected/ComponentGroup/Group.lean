@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.Basic
 /-!
 # The group structure on connected components of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.Group)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over an algebraically closed
 field. Every connected component of `Spec H` contains a rational point, and two rational points
 lie in the same component exactly when they differ by a point of the identity component. Thus the

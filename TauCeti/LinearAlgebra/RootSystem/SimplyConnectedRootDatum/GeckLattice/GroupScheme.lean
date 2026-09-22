@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The Kostant toral-closure group scheme of the pinned Geck lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.GroupScheme)
+
 `TauCeti.DynkinType.lieAlgebra` is the split Lie algebra of a valid Dynkin type, realized by Geck's
 construction as explicit matrices acting on the coordinate space `GeckIndex → ℚ`, and
 `TauCeti.DynkinType.geckCoordinateLattice` is the `ℤ`-lattice of integral coordinate vectors in

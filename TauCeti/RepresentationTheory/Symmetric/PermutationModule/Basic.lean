@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Symmetric.YoungSubgroup
 /-!
 # Young permutation modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.PermutationModule.Basic)
+
 For a partition `μ` of `n`, the Young permutation module `M^μ` is the rational permutation
 representation of `Equiv.Perm (Fin n)` on the left cosets of the Young subgroup associated to
 `μ`. These cosets are the `μ`-tabloids.

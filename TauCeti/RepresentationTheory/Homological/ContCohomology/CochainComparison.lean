@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.SmoothDisc
 /-!
 # Inhomogeneous coordinates on continuous homogeneous cochains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.CochainComparison)
+
 As additive groups, the first three terms of Mathlib's homogeneous cochain complex are identified
 with `M`, `C1 G M`, and `C2 G M`. The forward maps are the classical formulas
 `g₀ • m`, `g₀ • c (g₀⁻¹ * g₁)`, and `g₀ • c (g₀⁻¹ * g₁, g₁⁻¹ * g₂)`;

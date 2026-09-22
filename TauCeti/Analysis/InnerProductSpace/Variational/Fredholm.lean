@@ -13,6 +13,8 @@ public import TauCeti.Analysis.Normed.Operator.Compact.RieszTheory
 /-!
 # The Fredholm alternative for compact perturbations of coercive forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Variational.Fredholm)
+
 Let `B` be a bounded coercive bilinear form on a real Hilbert space `V`, and let
 `J : V → H` be a continuous linear map to another real Hilbert space.  Lax--Milgram turns the
 quadratic form

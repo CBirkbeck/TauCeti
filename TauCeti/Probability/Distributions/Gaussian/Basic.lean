@@ -10,6 +10,8 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 /-!
 # Closed forms for the real Gaussian density
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Basic)
+
 Mathlib's `ProbabilityTheory.gaussianPDFReal μ v` is stated for a general mean `μ` and variance `v`.
 This file records the specialization at the standard parameters `μ = 0`, `v = 1`, where the shift
 and the variance both disappear and the density collapses to `(√(2π))⁻¹ · e^{-x²/2}`.

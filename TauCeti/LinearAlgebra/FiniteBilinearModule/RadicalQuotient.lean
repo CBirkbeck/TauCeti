@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Basic
 /-!
 # Quotients of a finite bilinear module by a subgroup of its radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.RadicalQuotient)
+
 A subgroup `K` of the radical of a finite bilinear module `A` pairs trivially with everything, so
 the pairing descends to the quotient `A / K`:
 

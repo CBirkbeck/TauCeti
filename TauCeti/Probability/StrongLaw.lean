@@ -12,6 +12,8 @@ public import Mathlib.Probability.Independence.InfinitePi
 /-!
 # The strong law of large numbers on a countable product space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.StrongLaw)
+
 Mathlib's `ProbabilityTheory.strong_law_ae` takes a sequence of pairwise independent, identically
 distributed, integrable random variables on an abstract probability space. The canonical carrier of
 such a sequence is the countable power `Measure.infinitePi fun _ : ℕ => Q` with its coordinate maps,

@@ -15,6 +15,8 @@ import TauCeti.Analysis.Contour.LogDerivFTC
 /-!
 # The index integral as a sum of segment logarithm increments
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.SegmentSum)
+
 Given a monotone partition `a = s 0 ≤ ⋯ ≤ s N = b` fine enough that on each segment the normalized
 ratio `(γ t - w) / (γ (s j) - w)` stays in `Complex.slitPlane`, the logarithmic-derivative integral
 splits into a sum of per-segment logarithm increments:

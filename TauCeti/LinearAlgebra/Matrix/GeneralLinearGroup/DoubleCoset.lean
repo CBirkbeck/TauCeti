@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 /-!
 # Determinants along a double coset of `GL ι R`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.DoubleCoset)
+
 The determinant is constant on a double coset `H₁ g H₂` as soon as every coefficient has
 determinant one. Nothing here is arithmetic: the argument is multiplicativity of `Matrix.det`,
 so it holds over any commutative ring and any finite index type.

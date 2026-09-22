@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Calculus.ParametricIntegral
 /-!
 # Smooth Hadamard factorization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Hadamard)
+
 This file develops the first-order factorization of a smooth map through displacement from a
 basepoint. It is the analytic input for identifying point derivations on a finite-dimensional
 smooth manifold with tangent vectors.

@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Space
 /-!
 # Wasserstein distance under pushforward
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Pushforward)
+
 A Lipschitz map sends every coupling to a coupling of the pushforward measures, while increasing
 the displacement of each coupled pair by at most its Lipschitz constant. Consequently pushforward
 is Lipschitz for every Wasserstein exponent, including the essential-supremum endpoint.

@@ -12,6 +12,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Forks of `(-2)`-indices of arbitrary length
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Fork)
+
 A fork consists of a chain of at least three components of self-intersection `-2w`, together with
 a distinct extra component of self-intersection `-2w` meeting the component indexed by `t - 2`.
 The extra component meets no other component of the chain.  When the numerical type has components

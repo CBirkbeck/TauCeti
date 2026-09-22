@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.SU2.Weyl.Character
 /-!
 # Orthonormality of the `SU(2)` characters over the Weyl chamber
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Weyl.Orthogonality)
+
 `TauCeti/RepresentationTheory/SU2/Weyl/Character.lean` computes the character of the symmetric
 power `Symᵈ(ℂ²)` on the maximal torus in the angle parametrisation:
 `sin θ · χ_d (diag (e^{iθ}, e^{-iθ})) = sin ((d+1) θ)`, with no hypothesis on `θ`.

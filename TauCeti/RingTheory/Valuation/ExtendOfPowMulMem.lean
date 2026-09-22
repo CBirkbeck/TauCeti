@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Valuation.Basic
 /-!
 # Extending a valuation from a subring reached by the powers of an element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.ExtendOfPowMulMem)
+
 Let `R` be a subring of a commutative ring `A`, and let `s ∈ R` be an element some power of which
 carries each element of `A` into `R`: for every `a` there is an `n` with `sⁿ * a ∈ R`. A
 valuation `w` of `R` that does not vanish at `s` then has only one possible extension to `A`,

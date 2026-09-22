@@ -18,6 +18,8 @@ import TauCeti.GroupTheory.Perm.Recognition
 /-!
 # Galois groups over `ℚ` from factorizations modulo primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Reduction)
+
 Let `f` be a monic integral polynomial and `p` a prime not dividing `disc f`. Dedekind's theorem,
 `TauCeti.NumberField.exists_gal_fullCycleType_eq_factorizationType`, says that the degrees of the
 irreducible factors of `f mod p` are the cycle lengths, fixed points included, of some element of

@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Normed.Module.Ball.Action
 /-!
 # The integer-unit action on real spheres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Ball.IntUnitsAction)
+
 The two units of the integers act on every sphere in a real seminormed space by the identity and
 the antipodal map.  This file restricts Mathlib's scalar action on spheres to that action, proves
 its basic coercion rules and continuity, and shows that the action on every nonzero-radius sphere

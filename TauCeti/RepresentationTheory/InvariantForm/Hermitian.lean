@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.InvariantForm
 /-!
 # Invariant sesquilinear forms on a representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.InvariantForm.Hermitian)
+
 A sesquilinear form `H : V →ₗ⋆[R] V →ₗ[R] R` on the space of a representation `ρ` is **invariant**
 when every `ρ g` preserves it, `H (ρ g x) (ρ g y) = H x y`.  This is the Hermitian companion of the
 bilinear `TauCeti.Representation.IsInvariantForm`, and the two together are what produce a real

@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Irreducible
 /-!
 # Invariant bilinear forms on a representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.InvariantForm)
+
 A bilinear form `B` on the space of a representation `ρ` of `G` is **invariant** when every `ρ g`
 preserves it, `B (ρ g x) (ρ g y) = B x y`.  The invariant forms are a submodule of all bilinear
 forms, and read as maps `V → V*` they are exactly the intertwiners from `ρ` to its dual

@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.FiniteModuleTopology
 /-!
 # Strict morphisms out of a finite module over a Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.StrictMorphism)
+
 Let `A` be a complete Hausdorff Tate ring, let `M` be a finite `A`-module and let `N` be a
 noetherian `A`-module, each carrying a complete Hausdorff first-countable topology making it a
 topological `A`-module. This file proves that every linear map `M →ₗ[A] N` is strict: it is open

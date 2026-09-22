@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Add
 /-!
 # The formal parameter map is additive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Hom)
+
 For an adic ideal `I` of a complete ring `O` mapping injectively to a field `K`, the Weierstrass
 formal group law makes its elements into `WeierstrassCurve.FormalGroupPoint W I`.  The usual
 parametrisation sends zero to the point at infinity and, for a nonzero parameter, is given by

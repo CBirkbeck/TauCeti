@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Relations
 /-!
 # The nonisolated zigzag quotient is an invariant of the graph
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Isomorphism)
+
 An isomorphism `e : G ≃g H` of simple graphs relabels the doubled quiver of `G` as the doubled
 quiver of `H`, hence relabels the path basis of `k(DoubledQuiver G)` as the path basis of
 `k(DoubledQuiver H)`. This file carries that relabelling through the zigzag relations: it is an

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Signature
 /-!
 # Scaling and negating integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Scaling)
+
 Multiplying the form of an integral lattice by an integer leaves its carrier fixed and preserves
 integrality. This file equips integral lattices with that scalar action and computes the induced
 integral form, Gram matrix, determinant, discriminant, radical, and signature. Positive scaling

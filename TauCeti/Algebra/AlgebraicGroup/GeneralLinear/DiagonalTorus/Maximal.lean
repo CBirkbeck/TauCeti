@@ -14,6 +14,8 @@ import TauCeti.Algebra.AlgebraicGroup.Torus.SmoothConnected
 /-!
 # Maximality of the diagonal torus in the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.DiagonalTorus.Maximal)
+
 Over any field, the diagonal torus of `GL_n` is a maximal torus. Over an algebraically closed
 field, it is moreover maximal among reduced commutative closed subgroup schemes. In Hopf
 coordinates, its defining ideal is the kernel of the surjective restriction morphism from

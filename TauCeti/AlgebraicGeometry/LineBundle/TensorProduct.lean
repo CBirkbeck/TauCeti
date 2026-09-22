@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.LineBundle.Basic
 /-!
 # Tensor products of line bundles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.LineBundle.TensorProduct)
+
 The sheafified tensor product of `𝒪_X`-modules sends two line bundles to a line bundle. This file
 packages that operation in the category `InvertibleSheaf X`, together with the unit computations
 for the trivial line bundle.

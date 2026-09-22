@@ -11,6 +11,8 @@ public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 /-!
 # Computed examples of finite graph graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.FiniteGraph.Examples)
+
 This file verifies the DenseGraphLimits roadmap's computed-value backstops for finite graph
 graphons: `t(K₂, W_{K₄}) = 3/4` and `t(K₃, W_{C₅}) = 0`.
 

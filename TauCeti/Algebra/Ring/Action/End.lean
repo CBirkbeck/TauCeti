@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Ring.Action.End
 /-!
 # The kernel of the automorphism representation of a group acting on a ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Ring.Action.End)
+
 A group `G` acting on a semiring `S` by ring automorphisms is represented by
 `MulSemiringAction.toRingAut G S`. This file reads off the kernel of that representation: an
 element lies in it exactly when it fixes every element of `S`, so the kernel is trivial precisely

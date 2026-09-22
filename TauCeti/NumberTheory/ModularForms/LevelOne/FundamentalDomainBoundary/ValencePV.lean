@@ -26,6 +26,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 /-!
 # The boundary principal value of a level-one logarithmic derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ValencePV)
+
 `intervalIntegral_excised_logDeriv_fdBoundary` assembles the boundary integral at a **fixed**
 `ε`, as `2πi·ord_∞ − (k/2)·∫₁³ (excised logDeriv γ)`. Two further facts turn that into a
 principal value:

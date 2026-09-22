@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Basic
 /-!
 # Base change of the special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.BaseChange)
+
 For a morphism of commutative rings `R → K`, scalar extension of the coordinate Hopf algebra
 of the standard special orthogonal group `SOₙ` is canonically the coordinate Hopf algebra
 constructed directly over `K`.

@@ -10,6 +10,8 @@ public import Mathlib.Order.Filter.SmallSets
 /-!
 # Indexing a net by the members of a filter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Order.Filter.SmallSets)
+
 A family indexed by the members of a filter `l` — a net of the shape `k : {s : Set α // s ∈ l} → β`
 — is naturally taken along `Filter.comap Subtype.val l.smallSets`, for which `∀ᶠ s in _, p s` says
 that `p` holds for every small enough member of `l`. This file records that this index filter is

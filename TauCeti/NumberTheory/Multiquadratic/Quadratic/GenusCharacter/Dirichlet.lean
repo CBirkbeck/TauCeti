@@ -13,6 +13,8 @@ import Mathlib.Data.Int.NatAbs
 /-!
 # Primitive Dirichlet characters from prime-discriminant products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.Dirichlet)
+
 `genusChar` bundles the existing integer-valued `genusCharFun` as a Dirichlet character at
 the absolute value of the product of its prime discriminants. When at most one factor is even,
 this character is primitive. Thus the quadratic character of a fundamental discriminant `D`

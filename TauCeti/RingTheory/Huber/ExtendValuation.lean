@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.ExtendOfPowMulMem
 /-!
 # Extending a valuation from a ring of definition to the whole Huber ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.ExtendValuation)
+
 A ring of definition `A₀` of a Huber ring `A` is open, so a topologically nilpotent `s`
 multiplies every element of `A` into it: `TauCeti.Huber.PairOfDefinition.exists_pow_mul_mem`
 gives an `n` with `sⁿ * a ∈ A₀`. That is exactly the hypothesis under which

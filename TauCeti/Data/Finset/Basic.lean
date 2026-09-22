@@ -19,6 +19,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Finite-set infrastructure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Finset.Basic)
+
 * `TauCeti.product_union_eq_union_product` rearranges a union of products of finsets.
 * `TauCeti.card_nonempty_finset` counts the nonempty finsets of a finite type.
 * `TauCeti.card_even_card_finset` and `TauCeti.card_odd_card_finset` count the finsets of a

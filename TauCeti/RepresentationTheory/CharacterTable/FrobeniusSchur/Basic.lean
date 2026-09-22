@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Tensor.Square
 /-!
 # The Frobenius-Schur indicator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.Basic)
+
 For a finite group `G` and a finite-dimensional representation `ρ` of `G` over a field `k`, the
 **Frobenius-Schur indicator** is the average of the character over squares,
 `ν₂(ρ) = |G|⁻¹ ∑_g χ(g²)`.

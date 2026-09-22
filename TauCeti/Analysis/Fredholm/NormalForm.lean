@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # Local normal form of a Fredholm map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.NormalForm)
+
 This file gives the Lyapunov--Schmidt finite-dimensional reduction of a nonlinear map at a point
 where its derivative is Fredholm. A Fredholm package splits the domain and codomain into
 essential parts, on which the derivative is invertible, and finite-dimensional inessential

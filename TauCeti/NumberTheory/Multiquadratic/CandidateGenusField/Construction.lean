@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.Multiquadratic.Quadratic.Subfield
 /-!
 # Constructing a square root of the radicand in the candidate genus field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Construction)
+
 For an integer `d`, the *candidate genus field* of `ℚ(√d)` is the compositum of the quadratic
 fields `ℚ(√(radicand D*))` over the prime discriminants `D*` dividing the fundamental discriminant
 `fundamentalDiscriminant d`. This file proves the square-class fact underlying the genus-field

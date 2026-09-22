@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Bialgebra.MonoidAlgebra.GroupLike
 /-!
 # Character groups of diagonalizable groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.CharacterLattice)
+
 The intrinsic geometric character group of a diagonalizable coordinate ring recovers the
 finitely generated commutative group used to construct it. Its absolute-Galois action is trivial.
 

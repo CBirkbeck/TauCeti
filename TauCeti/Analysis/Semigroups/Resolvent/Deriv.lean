@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 /-!
 # Differentiating a semigroup resolvent in the spectral parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Resolvent.Deriv)
+
 The Laplace-transform resolvent `R(lambda) x = ∫₀^∞ e^{-lambda t} S(t)x dt` of a C₀-semigroup
 `S` with growth bound `(omega, M)` is defined for `lambda > omega`, and it carries the proof
 `omega < lambda` as an argument; `StronglyContinuousSemigroup.resolventFun` packages it as an

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.EllipticDivisibilitySequence.Ext
 /-!
 # A normalised EDS is an elliptic net
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS)
+
 `normEDS b c d` is defined by the doubling recursion, so it satisfies that recursion by
 construction. This file draws the consequence: it satisfies the full **four**-index elliptic
 relation, for arbitrary `b`, `c`, `d` in any commutative ring. Being an elliptic *sequence* is

@@ -11,6 +11,8 @@ public import Mathlib.Topology.Order.OrderClosed
 /-!
 # Bounds that hold up to a vanishing correction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Order.OrderClosed)
+
 An estimate proved by a limiting argument typically arrives with an error term attached: one shows
 `v ≤ K + e i` for every `i` far enough along a filter, where `e i` vanishes in the limit.  The
 result below discharges that error term in one step, turning the eventual approximate bound into

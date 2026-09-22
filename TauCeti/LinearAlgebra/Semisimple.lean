@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Semisimple
 /-!
 # Transporting semisimplicity of an endomorphism along an injection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Semisimple)
+
 `LinearEquiv.isSemisimple_iff` transports semisimplicity between two endomorphisms intertwined by
 a linear equivalence. For one of the two directions an injection is enough: an endomorphism that
 embeds equivariantly into a semisimple one is semisimple, just as a submodule of a semisimple

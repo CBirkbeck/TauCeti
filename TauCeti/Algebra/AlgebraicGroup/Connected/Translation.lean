@@ -13,6 +13,8 @@ import TauCeti.AlgebraicGeometry.AugmentationPoint.ConnectedComponent
 /-!
 # Translations of the identity component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.Translation)
+
 Right translation by a `k`-rational point induces a homeomorphism of the prime spectrum. This file
 proves that a point in the connected component of the counit translates that component onto itself
 and preserves its defining idempotent and ideal.

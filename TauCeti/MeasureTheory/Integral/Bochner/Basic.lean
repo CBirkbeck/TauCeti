@@ -13,6 +13,8 @@ import Mathlib.Analysis.Convex.Mul
 /-!
 # Additional lemmas for the Bochner integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.Bochner.Basic)
+
 This file records general-purpose lemmas for Bochner integrals, including bridges between
 real-valued Bochner integrals and extended-nonnegative Lebesgue integrals, as well as inequalities
 for set and probability integrals.

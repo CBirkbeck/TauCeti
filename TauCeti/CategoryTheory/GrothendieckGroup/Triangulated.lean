@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Triangulated.Adjunction
 /-!
 # Triangulated `K₀` of a pretriangulated category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Triangulated)
+
 The triangulated Grothendieck group `TauCeti.TriangulatedK0 C` of an essentially small
 pretriangulated category `C` is the free abelian group on the isomorphism classes of objects
 modulo the relations `[Y] = [X] + [Z]`, one for each distinguished triangle

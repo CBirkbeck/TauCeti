@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Invariants
 /-!
 # Finiteness of descended group algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.FiniteType)
+
 Let `L/k` be a finite Galois extension and let a finitely generated abelian group `M` carry an
 integral representation of `Gal(L/k)`. The simultaneous semilinear action on
 `L[Multiplicative M]` has an invariant `k`-subalgebra. This file proves that the split group

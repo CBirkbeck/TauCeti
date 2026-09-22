@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.LinearCharacter
 /-!
 # Clifford theory along `A₄ ◁ S₄`: the inertia group of a linear character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Alternating)
+
 The alternating group is normal in the symmetric group, so Clifford theory applies to the pair
 `alternatingGroup α ◁ Equiv.Perm α`, and the first thing it asks for is the **inertia group** of a
 representation of the normal subgroup. This file computes it for a linear character: for a

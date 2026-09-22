@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.BilinearForm.Squares
 /-!
 # Exterior squares and skew-adjoint endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.ExteriorSquare)
+
 A nondegenerate symmetric bilinear form identifies the second exterior power with its
 skew-adjoint endomorphisms.  The construction factors through alternating bilinear forms and the
 canonical pairing between the exterior power of the dual and the dual of the exterior power.

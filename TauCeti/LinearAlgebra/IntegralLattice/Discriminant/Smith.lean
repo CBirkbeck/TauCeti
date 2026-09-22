@@ -12,6 +12,8 @@ import TauCeti.Algebra.Module.Submodule.Quotient
 /-!
 # Smith decomposition of an integral lattice's discriminant group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Discriminant.Smith)
+
 Let `L` be a nondegenerate integral lattice and choose a basis `b` of its carrier. Smith
 normalization of the Gram matrix gives positive invariant factors `dᵢ` in divisibility order and
 an additive equivalence

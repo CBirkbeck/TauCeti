@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.PrimePower
 /-!
 # Scalar multiplication in the `Γ₀(N)` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Diagonal.ScalarMul)
+
 The scalar row of the multiplication table at level `N`: `T(c, c) · T(b₁, b₂) = T(cb₁, cb₂)`,
 and its consequence for the scalar operator, `S_m · S_n = S_{mn}`.
 

@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Basic
 /-!
 # Maps of abstract simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Maps)
+
 This file bundles simplicial maps between pre-abstract simplicial complexes. A simplicial map is
 a map of ambient vertex types which sends every face to a face. The file supplies the identity,
 composition, restriction to subcomplexes, and extension to a larger complex, together with the

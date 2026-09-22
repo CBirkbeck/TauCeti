@@ -14,6 +14,8 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Transitivity of low-degree corestriction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Corestriction.Transitivity)
+
 For finite-index open subgroups `V ≤ U ≤ G`, corestriction is transitive in degrees zero, one,
 and two: `cor_V^G = cor_U^G ∘ cor_V^U`.  The tower of coset spaces is organised by Mathlib's
 equivalence `Subgroup.quotientEquivProdOfLE'`, which splits `G ⧸ V` as `(G ⧸ U) × (U ⧸ V)`.

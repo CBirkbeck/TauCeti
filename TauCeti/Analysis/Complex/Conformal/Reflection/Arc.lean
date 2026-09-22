@@ -12,6 +12,8 @@ import TauCeti.Analysis.Complex.Conformal.Inverse.Function
 /-!
 # The Schwarz reflection principle across an analytic arc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Reflection.Arc)
+
 This file transports the real-axis Schwarz reflection principle through biholomorphic coordinate
 charts. An `OpenPartialHomeomorph ℂ ℂ` whose forward map is holomorphic on its source is a
 biholomorphic chart: injectivity and the holomorphic inverse theorem make its inverse holomorphic

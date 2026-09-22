@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Recovering reduced closed subgroups from geometric points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Separation)
+
 Let `H` be a commutative Hopf algebra over a field and fix an algebraically closed extension. A
 Hopf ideal `I` cuts out the subgroup of extension-valued points of `H` that vanish on `I`. If the
 quotient `H/I` is reduced and of finite type, its points separate functions, so this subgroup

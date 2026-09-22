@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Group
 /-!
 # The Weyl group of the diagonal torus of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.WeylGroup)
+
 The Weyl group of the diagonal root datum of `SL_{r+1}` is the symmetric group on the
 `r + 1` coordinate lines. Reflections act on ordered root indices by transpositions, and
 faithfulness follows because the coroots span the cocharacter lattice. This realizes the

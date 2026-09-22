@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.FiniteBilinearModule.Quadratic
 /-!
 # Coordinate powers of finite bilinear and quadratic modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.FiniteBilinearModule.CoordinatePower)
+
 A finite bilinear module `A` determines a bilinear module on words `ι → A` by summing its
 pairing coordinatewise.  Thus the orthogonal complement of an additive subgroup of words is its
 standard dual additive code.  Nondegeneracy of the alphabet pairing passes to every finite

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.MonoidAlgebra.Basis
 /-!
 # The trace of multiplication by an element of a finite monoid algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.Trace)
+
 For a finite monoid `G` the monoid algebra `k[G]` is free on the monoid elements, so multiplication
 by a fixed element `x` is an endomorphism of a finite free module and has a trace. In the basis of
 monoid elements the matrix of *right* multiplication by `x` has `g`-th diagonal entry `x_1`,

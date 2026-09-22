@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Erf
 /-!
 # The lower incomplete gamma function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.IncompleteGamma)
+
 For a positive shape parameter `s` this file introduces
 
 * `TauCeti.lowerIncompleteGamma s x = ∫ t in 0..x, t ^ (s - 1) * exp (-t)`, the truncation of

@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Constructions of open normal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.OpenNormalSubgroup)
+
 Bundled constructions of `OpenNormalSubgroup` that Mathlib provides for `OpenSubgroup` but not
 for its normal variant: the preimage under a continuous group homomorphism, the trivial subgroup
 of a group with the discrete topology, and the whole group. All are stated for an arbitrary

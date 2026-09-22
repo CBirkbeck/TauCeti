@@ -10,6 +10,8 @@ public import TauCeti.Probability.Exchangeability.IID
 /-!
 # Constant mixing measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedIID.Const)
+
 This file characterizes `MixedIIDWith` for a constant mixing representative. It is equivalent to
 plain independence with common marginal law.
 

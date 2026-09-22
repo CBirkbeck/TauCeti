@@ -14,6 +14,8 @@ import TauCeti.RepresentationTheory.Invariants
 /-!
 # Herbrand quotients of finite cyclic group representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.HerbrandQuotient)
+
 For a representation `M` of a finite cyclic group, its Herbrand quotient is the quotient of the
 orders of `H-hat^0(G, M)` and `H-hat^(-1)(G, M)`. This file defines it directly on Mathlib's
 Tate-cohomology carrier, on top of the low-degree descriptions

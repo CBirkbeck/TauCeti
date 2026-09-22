@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Closed root subgroups of the type-E6 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.Minuscule.ClosedRootSubgroup)
+
 The twelve numbered raising and lowering maps into `TauCeti.E6Minuscule.groupScheme` are closed
 copies of the additive group scheme. For every Bourbaki node, one explicit edge in the minuscule
 weight graph recovers the root-subgroup parameter as a matrix coordinate. The raising operator

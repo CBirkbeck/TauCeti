@@ -12,6 +12,8 @@ import Mathlib.Algebra.Field.ULift
 /-!
 # Geometric reducedness of commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeometricallyReduced.CommHopfAlgCat)
+
 For a commutative Hopf algebra `H` over a field `k`, geometric reducedness means that every
 field extension `K / k` in their common universe gives a reduced coordinate ring `H ⊗[k] K`.
 The base field and Hopf algebra may live in independent universes.

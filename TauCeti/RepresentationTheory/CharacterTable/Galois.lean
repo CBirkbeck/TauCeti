@@ -15,6 +15,8 @@ import TauCeti.RepresentationTheory.BaseChange
 /-!
 # The Galois action on character values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Galois)
+
 A character value `χ(g)` at an element with `g ^ n = 1` is a sum of `n`-th roots of unity, the
 eigenvalues of `ρ g`, weighted by the dimensions of the eigenspaces. A ring endomorphism `σ` of the
 coefficient field fixes those dimensions, which enter as natural numbers, so it acts on `χ(g)` only

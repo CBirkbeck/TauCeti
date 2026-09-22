@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Hodge.HodgeForm
 /-!
 # The Hodge metric of a polarized Hodge structure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Metric)
+
 The positive-definite Hermitian Hodge form associated to a polarization defines a complex inner
 product. This file packages that form as `InnerProductSpace.Core` data. It does not install a global
 instance, since different choices of polarization on the same Hodge structure can give different

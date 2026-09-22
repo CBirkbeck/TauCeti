@@ -12,6 +12,8 @@ import Mathlib.Algebra.Category.Grp.Colimits
 /-!
 # Recognising filtered colimits of additive commutative groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.Grp.FilteredColimits)
+
 A cocone on a filtered diagram of additive commutative groups is colimiting as soon as its legs
 are jointly surjective and any two elements with the same image in the apex already have a common
 image somewhere deeper in the diagram.

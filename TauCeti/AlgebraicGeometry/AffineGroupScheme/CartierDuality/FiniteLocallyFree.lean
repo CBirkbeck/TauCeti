@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.Monoidal.Mon
 /-!
 # Cartier duality over an affine base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.CartierDuality.FiniteLocallyFree)
+
 This file transports finite locally free Cartier duality from coordinate Hopf algebras to
 commutative affine group schemes over an arbitrary commutative ring. A morphism to an affine base
 is finite locally free when it is finite, flat, and locally of finite presentation. For a Hopf

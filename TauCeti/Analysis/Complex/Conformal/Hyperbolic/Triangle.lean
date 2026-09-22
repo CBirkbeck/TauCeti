@@ -12,6 +12,8 @@ public import TauCeti.Analysis.SpecialFunctions.Artanh
 /-!
 # The triangle inequality for the hyperbolic distance on the unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Hyperbolic.Triangle)
+
 This file proves the **triangle inequality** for the hyperbolic (Poincaré) distance
 `hyperbolicDist` on the complex open unit disc, the metric-completeness step deferred in
 `HyperbolicDistance.lean`.

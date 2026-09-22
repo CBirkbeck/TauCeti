@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 /-!
 # Comparing linear combinations by their Gram kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.LinearCombination)
+
 Two families with the same pairwise inner products give linear combinations of the same norm
 when supplied with the same finitely supported coefficients. This comparison applies in
 seminormed inner product spaces and is useful for comparing realizations of a positive-definite

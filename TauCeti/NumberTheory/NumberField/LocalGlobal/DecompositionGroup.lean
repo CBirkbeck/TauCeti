@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Transport
 /-!
 # The decomposition group acts on the completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.DecompositionGroup)
+
 Let `L/K` be an extension of number fields, `v` a finite place of `K`, and `w` a finite place of
 `L` above `v`. An automorphism `σ ∈ Aut(L/K)` carries `w` to the place `σ • w`, and extends by
 continuity to an isomorphism of completions `L_w ≃ₐ[K_v] L_{σ • w}`. This file constructs that

@@ -12,6 +12,8 @@ import Mathlib.GroupTheory.Coset.Card
 /-!
 # Degree of the root permutation representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Degree)
+
 This file records the degree bookkeeping for the faithful permutation representation of the
 Galois group of a polynomial. A separable polynomial has `natDegree` distinct roots in its
 splitting field, so its intrinsic root set admits a numbering by `Fin p.natDegree`. No numbering

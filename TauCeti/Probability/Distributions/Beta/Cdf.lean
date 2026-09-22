@@ -13,6 +13,8 @@ public import TauCeti.Probability.Distributions.Beta.Basic
 /-!
 # The cumulative distribution function of a beta law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Beta.Cdf)
+
 This file computes `ProbabilityTheory.cdf (betaMeasure α β)` in closed form: for positive shape
 parameters it is the regularized incomplete beta function `TauCeti.regularizedIncompleteBeta`,
 `I_x(α, β)`.

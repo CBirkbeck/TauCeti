@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Localization.AtPrime
 /-!
 # A local ring inside the completed integer ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.Localization)
+
 Let `R` be a Dedekind domain with fraction field `K`, and let `v` be a height-one prime of `R`.
 The canonical map from `R` to the ring of integers `𝒪_v` of `K_v` sends every element outside
 `v` to a unit. It therefore extends uniquely to a map

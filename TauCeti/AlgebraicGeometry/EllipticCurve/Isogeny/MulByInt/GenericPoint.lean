@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Basic
 /-!
 # The generic point of an elliptic curve has infinite order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.GenericPoint)
+
 For an elliptic curve over a field, every nonzero integer multiple of its generic point is
 nonzero. Consequently, distinct integers give distinct multiples of the generic point.
 

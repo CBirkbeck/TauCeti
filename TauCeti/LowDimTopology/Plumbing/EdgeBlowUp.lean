@@ -15,6 +15,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Sublevel
 /-!
 # Blowing up a plumbing graph along an edge
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.EdgeBlowUp)
+
 This file adds the second of Neumann's plumbing moves: blowing up a plumbing graph along an edge.
 Given a plumbing graph `P` on vertex type `V` and two adjacent vertices `u` and `v` with edge
 witness `h : P.toSimpleGraph.Adj u v`, the edge blow-up `P.blowUpEdge u v h` is the plumbing
@@ -121,7 +123,10 @@ vertex `none` is `x u + x v + s` and whose coordinate at an old vertex `some w` 
 vectors this is `e_u ↦ e_u + e_none`, `e_v ↦ e_v + e_none`, `e_w ↦ e_w` for `w ∉ {u, v}`, and
 `(0, 1) ↦ e_none`.
 
-The map depends only on the endpoints `u` and `v` of the blown-up edge. -/
+The map depends only on the endpoints `u` and `v` of the blown-up edge.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PlumbingGraph.blowUpEdgeEquiv) -/
 def blowUpEdgeEquiv (u v : V) : ((V → ℤ) × ℤ) ≃ₗ[ℤ] (Option V → ℤ) where
   toFun p a := a.elim (p.1 u + p.1 v + p.2) p.1
   map_add' p q := by

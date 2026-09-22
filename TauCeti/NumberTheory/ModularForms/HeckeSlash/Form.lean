@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Invariance
 /-!
 # The slash sum as an operator on slash-invariant forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Form)
+
 `Invariance.lean` proves that `heckeSlashSum k D f` is `Γ₂`-invariant when `f` is `Γ₁`-invariant.
 This file packages the diagonal case of that into a map
 `SlashInvariantForm (G.map (mapGL ℝ)) k → SlashInvariantForm (G.map (mapGL ℝ)) k`, which is the

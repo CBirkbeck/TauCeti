@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.JordanChevalley.ScalarExtension
 /-!
 # Semisimple points of a Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.SemisimplePoint)
+
 Let `H` be a Hopf algebra over a commutative semiring `k` and let `K` be a field equipped with a
 `k`-algebra structure. A `K`-valued point `g : WithConv (H →ₐ[k] K)` acts on the scalar extension
 of every finitely generated `H`-comodule. This file calls `g` **semisimple** when every one of those

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Monodromy.Basic
 /-!
 # Finite covering spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Finite)
+
 A covering space is *finite* when all of its fibres are finite. This file records that condition
 as a property of an object of `TopCat / X` and names the resulting full subcategory
 `TauCeti.FiniteCoveringSpace X`, as an instance of `TauCeti.CoveringSpace.FullSubcategory`.

@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Two.Basic
 /-!
 # The rank-two `B₂` carrier in the pinned symplectic model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeB.Two.Agreement)
+
 `TauCeti.RankTwoBLieIndex` collects the two classification-list families on the `B₂` diagram.
 Both use an explicit full-weight rank-two type-`C` Chevalley carrier, while the reference group of
 the diagram is the group of algebraic-closure-valued points of the symplectic group scheme

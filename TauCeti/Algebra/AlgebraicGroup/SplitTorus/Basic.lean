@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Finiteness.Finsupp
 /-!
 # The split torus and its functor of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.Basic)
+
 The split torus on an index type `σ` is the diagonalizable group `D(M)` of the free abelian
 group `M = Multiplicative (σ →₀ ℤ)`; its character lattice is `σ →₀ ℤ`, the free `ℤ`-module on
 `σ`. Concretely it is `Spec R[Multiplicative (σ →₀ ℤ)]`, and for `σ = Fin n` it is the rank-`n`

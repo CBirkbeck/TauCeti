@@ -13,6 +13,8 @@ public import TauCeti.Probability.Moments.Covariance
 /-!
 # Moments of the multinomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Multinomial.Moments)
+
 This file computes the mean and covariance of the multinomial count vector after casting it into
 Euclidean space.  Each coordinate is binomial, while the sum of two distinct coordinates is
 binomial with the combined cell probability.  These marginal laws determine the coordinate

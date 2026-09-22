@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Integrality
 /-!
 # The integral weight lattice and the coroot pairings of a weight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.WeightLattice)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero and let `H` be a splitting Cartan subalgebra. A linear form
 `lam : Module.Dual K H` is *integral* when `lam (α^∨)` is an integer for every root `α`

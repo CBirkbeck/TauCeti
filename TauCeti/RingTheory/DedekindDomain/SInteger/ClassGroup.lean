@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger.Factorization
 /-!
 # The class group of the `S`-integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.ClassGroup)
+
 For a Dedekind domain `R` with fraction field `K` and a set `S` of height one primes, the class
 group of the ring `𝒪_S` of `S`-integers is the class group of `R` modulo the classes of the primes
 in `S`:

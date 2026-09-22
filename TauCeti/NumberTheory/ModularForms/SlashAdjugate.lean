@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Adjugate
 /-!
 # Slashing by the main involution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.SlashAdjugate)
+
 The classical adjoint theory of the Hecke operators is written with the **main involution**
 `α^ι = (det α) · α⁻¹` rather than with `α⁻¹`, because `α ↦ α^ι` preserves the integral matrices
 and so acts on the Hecke cosets, which `α ↦ α⁻¹` does not. This file records what the weight-`k`

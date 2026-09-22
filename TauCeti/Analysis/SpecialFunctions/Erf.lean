@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 /-!
 # The error function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Erf)
+
 This file defines the Gauss error function `erf x = (2 / √π) * ∫ t in 0..x, exp (-t ^ 2)` and its
 complement `erfc x = 1 - erf x`, and develops their elementary real-variable theory: oddness,
 strict monotonicity, the derivative, and the limits at both infinities.

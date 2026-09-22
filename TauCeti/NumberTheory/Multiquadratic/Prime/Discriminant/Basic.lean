@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Int.Basic
 /-!
 # Odd prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminant.Basic)
+
 The genus-field layer of the multiquadratic roadmap uses **prime discriminants** rather than
 bare squarefree radicands. For an odd prime `p`, the associated prime discriminant is
 

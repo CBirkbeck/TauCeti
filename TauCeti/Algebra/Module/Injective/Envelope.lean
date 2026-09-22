@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.Submodule.Essential
 /-!
 # Injective envelopes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Injective.Envelope)
+
 An **injective envelope** of a module `M` is an embedding `f : M →ₗ[R] Q` into an injective module
 whose image is essential in `Q` (`TauCeti.IsEssential`). This is the notion dual to the projective
 cover of `TauCeti/Algebra/Module/ProjectiveCover/Basic.lean`; Mathlib has injective objects but no

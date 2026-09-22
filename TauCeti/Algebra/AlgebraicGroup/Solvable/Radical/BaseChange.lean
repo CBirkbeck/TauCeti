@@ -14,6 +14,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Reduced
 /-!
 # Base change of the solvable radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Radical.BaseChange)
+
 Let `H` be a finite-type commutative Hopf algebra over a field `k`. Extension to a field `K`
 sends every connected normal smooth solvable closed subgroup of the affine group represented by
 `H` to another such subgroup. In particular, the base change of the solvable radical is contained

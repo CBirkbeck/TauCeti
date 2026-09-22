@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.LinearCharacter
 /-!
 # Determinant-power representations of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Determinant)
+
 This file packages the determinant and its integral powers as one-dimensional representations of
 the general linear group. These are the rational characters used to form determinant twists of
 polynomial representations.

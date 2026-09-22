@@ -13,6 +13,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # The subspace of unordered tuples with one point in each member of a family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Sym.Pi)
+
 `TauCeti.Sym.pi A` is the set of unordered `n`-tuples having one point in each member of a family
 `A : Fin n → Set α` of subsets. This file gives it its topology, as a subspace of the symmetric
 power `Sym α n`: it is closed when the members of the family are, compact when they are, and, for a

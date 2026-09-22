@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Presentation.MinusculeWeightTable.Basic
 /-!
 # The rational form of a minuscule weight table
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Presentation.MinusculeWeightTable.Rational)
+
 The raising and lowering generators named by a minuscule weight table have zero-one integer
 entries, while its diagonal Cartan generators contain the integral weights. Coercing these entries
 into `ℚ` gives matrices satisfying the same Serre relations: entrywise coercion is a homomorphism

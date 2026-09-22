@@ -10,6 +10,8 @@ public import Mathlib.Algebra.GroupWithZero.Units.Basic
 /-!
 # Powers in groups with zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.GroupWithZero.Units.Basic)
+
 A product `a ^ i * a⁻¹ ^ (n - i)`, in which the two exponents are natural numbers adding up to
 `n`, is the integer power `a ^ (2 * i - n)`.  Such a product is what a diagonal matrix
 `diag(a, a⁻¹)` contributes to a monomial of degree `n`, so the identity is the exponent

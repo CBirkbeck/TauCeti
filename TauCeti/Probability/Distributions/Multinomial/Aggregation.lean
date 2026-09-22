@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Monoid.FunOnFinite
 /-!
 # Aggregation of multinomial cells
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Multinomial.Aggregation)
+
 Combining cells of a multinomial count vector again gives a multinomial distribution. For a map
 `f : ι → κ`, the count in a target cell `j` is the sum of all source counts over the fibre of
 `j`, which is Mathlib's `FunOnFinite.map f`, while `Convexity.StdSimplex.map f` sums the

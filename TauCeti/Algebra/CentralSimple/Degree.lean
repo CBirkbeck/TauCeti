@@ -29,6 +29,8 @@ import TauCeti.Algebra.Central.Quaternion
 /-!
 # The degree of a central simple algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Degree)
+
 A finite-dimensional central simple algebra has square dimension over its base field. This file
 proves that, and defines the **degree** `TauCeti.Algebra.deg K A` as the square root of
 `Module.finrank K A`.
@@ -159,7 +161,10 @@ matrix algebra that `A` becomes over a separably closed extension of `K`
 This is defined for an arbitrary `K`-algebra. The characteristic property
 `TauCeti.Algebra.deg_eq_of_finrank_eq_sq` fixes the value whenever the dimension is a square, with
 or without central simplicity; on an algebra whose dimension is not a square, `Nat.sqrt` rounds down
-and the value carries no meaning. -/
+and the value carries no meaning.
+
+Tested by: 5 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Algebra.deg) -/
 noncomputable def deg : ℕ := Nat.sqrt (Module.finrank K A)
 
 variable {K A}

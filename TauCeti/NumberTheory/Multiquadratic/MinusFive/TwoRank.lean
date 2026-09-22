@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.Multiquadratic.Prime.Discriminants
 /-!
 # The `2`-rank of the class group of `ℚ(√-5)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusFive.TwoRank)
+
 Applying the genus-theoretic `2`-rank formula `2-rank Cl(K) = t - 1` to `K = ℚ(√-5)`. The
 fundamental discriminant is `-20 = (-4) · 5`, a product of two prime discriminants, so `t = 2`
 rational primes ramify (`2` and `5`) and the `2`-rank of the class group is `1`.

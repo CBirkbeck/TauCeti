@@ -11,6 +11,8 @@ import Mathlib.Tactic.Group
 /-!
 # Hecke rings: commutativity via an anti-involution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Commutativity)
+
 Shimura's commutativity criterion (Proposition 3.8 of [Shimura][shimura1971]): if the monoid
 `Δ` admits an anti-involution `ι` preserving `H` and fixing every double coset `HgH` for
 `g ∈ Δ`, then Shimura's multiplicity is symmetric, `m(g₁, g₂; d) = m(g₂, g₁; d)`, so the

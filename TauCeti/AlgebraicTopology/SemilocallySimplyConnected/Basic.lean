@@ -16,6 +16,8 @@ import TauCeti.Topology.Homotopy.Path
 /-!
 # Semilocally simply connected spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SemilocallySimplyConnected.Basic)
+
 A topological space `X` is *semilocally simply connected* if every point `x` has a
 neighbourhood `U` such that every loop in `U` based at `x` is null-homotopic *in `X`*. This is
 the standing point-set hypothesis (alongside path-connectedness and local path-connectedness)

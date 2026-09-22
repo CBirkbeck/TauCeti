@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # Chevalley relations in the generated Kostant group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Generated.Relations)
+
 The represented Kostant root subgroups factor through the closed group scheme they generate.
 This file proves that the factored root subgroups satisfy their Chevalley relations intrinsically
 in that generated carrier. The earlier matrix and scheme-point relations only identify the

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Primitives
 /-!
 # Coalgebra morphisms of reduced tensor coalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.CoalgHom)
+
 For `R`-modules `M` and `N`, a linear map `F : Tᶜ(M) ⟶ Tᶜ(N)` between the reduced tensor
 coalgebras `⨁_{n ≥ 1} M^{⊗n}` and `⨁_{n ≥ 1} N^{⊗n}` is a *coalgebra morphism* when it commutes
 with reduced deconcatenation: `Δ ∘ F = (F ⊗ F) ∘ Δ`.  This file proves the concrete correspondence

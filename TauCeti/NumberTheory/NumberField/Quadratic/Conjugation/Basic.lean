@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Quadratic.Basic
 /-!
 # Quadratic conjugation on a quadratic number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Basic)
+
 For a quadratic number field `K` — presented by an algebraic integer `θ : 𝓞 K` generating `K`
 over `ℚ` whose minimal polynomial over `ℤ` is `X² - d` — this file constructs the nontrivial
 `ℚ`-algebra automorphism of `K`, characterised by `θ ↦ -θ`, and restricts it to a ring

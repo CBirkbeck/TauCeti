@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Mul
 /-!
 # The evaluation of `A⟨X⟩_T` as a ring homomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Hom)
+
 The additive and multiplicative laws of Wedhorn's evaluation are proved in
 `WeightedEval/Map.lean` and `WeightedEval/Mul.lean` as statements about individual
 `T`-restricted series. On `A⟨X⟩_T` itself — where restrictedness is carried by membership rather

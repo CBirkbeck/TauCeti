@@ -13,6 +13,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Products of consecutive integers are nonnegative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Int.MulPred)
+
 Over `ℤ` the product `t * (t - 1)` of two consecutive integers is nonnegative, because no integer
 lies strictly between `t - 1` and `t`. This is a genuinely integral statement: over `ℝ` it already
 fails at `t = 1 / 2`, and over `ℕ` it is vacuous.

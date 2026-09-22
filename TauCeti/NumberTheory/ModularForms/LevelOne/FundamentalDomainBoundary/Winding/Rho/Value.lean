@@ -19,6 +19,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deri
 /-!
 # The winding number of the boundary contour at `ρ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Value)
+
 The generalized winding number of the truncated-fundamental-domain boundary about the
 corner `ρ` is `-1/6`. Over the corner-excised parameter ranges the logarithmic integral of
 the shifted contour `t ↦ fdBoundary H t - ρ` telescopes piece by piece through the

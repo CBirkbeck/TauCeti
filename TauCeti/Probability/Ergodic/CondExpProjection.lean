@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Function.L2ToL1Convergence
 /-!
 # The mean ergodic projection is conditional expectation given the invariants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Ergodic.CondExpProjection)
+
 Mathlib's von Neumann mean ergodic theorem gives convergence to an orthogonal projection, and the
 probabilistic form of the theorem still needs that projection identified with a conditional
 expectation. This file carries out the identification for the `L²` composition (Koopman) operator

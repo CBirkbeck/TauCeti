@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular
 /-!
 # Nilpotence of upper-unitriangular group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Nilpotent)
+
 The convolution points of the coordinate Hopf algebra of `U_n` are naturally equivalent to the
 ordinary upper-unitriangular matrix group. The matrix group is nilpotent over every commutative
 ring, so this equivalence makes every value of the represented group functor nilpotent, and hence

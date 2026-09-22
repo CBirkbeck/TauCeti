@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Dimension.StrongRankCondition
 /-!
 # The class-sum basis of the center
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassSum.Basis)
+
 For a finite group `G` and a commutative semiring `k`, the coefficients of a central element of
 the group algebra `k[G]` are constant on conjugacy classes. This identifies the center linearly
 with the space of `k`-valued functions on `ConjClasses G`.

@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Tits.Closure
 /-!
 # The ambient group of the Tits construction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Tits.Carrier)
+
 The Tits group `²F₄(2)'` is built inside the group of algebraic-closure-valued points of the
 short-root type-`F₄` carrier over `𝔽₂`. This is the closed subgroup scheme of `GL₂₆` generated
 over `𝔽₂` by the reductions of the numbered simple root subgroups and the weight torus of the

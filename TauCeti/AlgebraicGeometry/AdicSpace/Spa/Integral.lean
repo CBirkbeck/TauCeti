@@ -12,6 +12,8 @@ import TauCeti.RingTheory.Huber.Continuous.ValuativeCriterion
 /-!
 # The ring of integral elements is cut out by the points of the adic spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Integral)
+
 Wedhorn's Proposition 7.52(1): for a Huber pair `(A, A⁺)`, an element `f` of `A` whose value is
 at most `1` at *every* point of `Spa(A, A⁺)` already lies in `A⁺`. The converse is the defining
 condition of `spa`, so the two together say that `A⁺` is exactly the sub-unit locus of the adic

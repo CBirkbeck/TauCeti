@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.NumberField.RamifiedPrimes
 /-!
 # Ramification of primes in a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.Ramification)
+
 For a quadratic number field `K = ℚ(√d)` (given by `θ : 𝓞 K` with `minpoly ℤ θ = X² - d` and
 `Algebra.adjoin ℚ {θ} = ⊤`, `d` squarefree), a rational prime `p` ramifies iff it divides the
 discriminant, which is `fundamentalDiscriminant d`. Concretely:

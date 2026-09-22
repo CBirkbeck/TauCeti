@@ -12,6 +12,8 @@ import TauCeti.RepresentationTheory.AsModule
 /-!
 # Maschke's theorem for intertwining maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Maschke)
+
 Mathlib states Maschke's theorem for modules over the group algebra: over a field in which the
 order of the finite group `G` is invertible, a `k[G]`-linear injection has a `k[G]`-linear left
 inverse (`MonoidAlgebra.exists_leftInverse_of_injective`).  This file reads that statement through

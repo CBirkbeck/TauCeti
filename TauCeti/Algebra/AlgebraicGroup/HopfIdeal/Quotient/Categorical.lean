@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Basic
 /-!
 # Hopf-ideal quotients as categorical subgroup inclusions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Categorical)
+
 A morphism of commutative Hopf algebras represents a morphism in the opposite category of
 commutative algebras. In particular, the quotient map `H ⟶ H/I` represents the closed-subgroup
 inclusion `Spec(H/I) ⟶ Spec H`. This file supplies that normality-free categorical inclusion

@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Flat.Tensor
 /-!
 # `A⟨T₁, …, Tₖ⟩` is faithfully flat over a complete noetherian Tate ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.Flat)
+
 Wedhorn's Lemma 8.31(1): for a complete noetherian Tate ring `A`, the ring of restricted power
 series `A⟨T₁, …, Tₖ⟩` is faithfully flat over `A`.
 

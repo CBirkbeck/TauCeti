@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.IrreducibleMorphism
 /-!
 # Right and left almost split morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.AlmostSplit.Basic)
+
 A morphism `f : X ⟶ Y` is **right almost split** when it is not a split epimorphism and *every*
 morphism `Z ⟶ Y` that is not a split epimorphism factors through it. Dually `f` is **left almost
 split** when it is not a split monomorphism and every morphism `X ⟶ Z` that is not a split

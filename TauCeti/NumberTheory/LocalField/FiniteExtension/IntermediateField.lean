@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.LocalField.FiniteExtension.Basic
 /-!
 # Local-field structures on finite intermediate fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.FiniteExtension.IntermediateField)
+
 A finite intermediate field of an extension of a nonarchimedean local field need not inherit a
 topology or a valuative relation from its ambient field. This file packages the spectral-norm
 construction for such an intermediate field directly. The resulting named normed-field,

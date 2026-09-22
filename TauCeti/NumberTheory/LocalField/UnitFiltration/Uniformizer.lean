@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DiscreteValuationRing.Uniformizer
 /-!
 # Uniformizer coordinates on unit-filtration graded pieces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.UnitFiltration.Uniformizer)
+
 Fixing a uniformizer `π` identifies the `m`th positive graded piece of the unit filtration
 with the additive residue field: the class of `u` has coordinate `(u - 1) / π ^ m` modulo the
 maximal ideal.  This file constructs that coordinate by composing the unit-filtration graded

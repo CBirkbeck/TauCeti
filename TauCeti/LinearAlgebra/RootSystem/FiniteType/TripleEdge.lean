@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.RankTwo
 /-!
 # The triple-edge case of the finite-type classification
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.TripleEdge)
+
 A triple edge in a finite-type Cartan matrix is isolated: neither endpoint can have another
 neighbour.  This file combines that local obstruction with preconnectedness.  If the whole diagram
 is preconnected, the two endpoints are therefore all its vertices.  The rank-two classification then

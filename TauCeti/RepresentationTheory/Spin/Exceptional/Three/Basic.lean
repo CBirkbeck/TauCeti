@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Reversal.Three
 /-!
 # The chosen even Clifford matrix model in dimension three
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Exceptional.Three.Basic)
+
 This file chooses the two-by-two matrix model of a nondegenerate three-dimensional quadratic
 space. Generic reversal results live in `LinearAlgebra/CliffordAlgebra/Reversal/Three.lean`.
 

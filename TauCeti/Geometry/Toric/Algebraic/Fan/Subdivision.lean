@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Fan.Product
 /-!
 # Subdivisions of finite toric fans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Fan.Subdivision)
+
 A fan `Φ` subdivides a fan `Ψ` when they have the same support and every cone of `Φ` is
 contained in a cone of `Ψ`. Every cone of `Ψ` is then covered by the cones of `Φ` which it
 contains. This derived conewise form is needed to control affine cone charts and to apply support

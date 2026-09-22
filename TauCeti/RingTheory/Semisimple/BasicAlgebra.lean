@@ -22,6 +22,8 @@ import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # Basic algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.BasicAlgebra)
+
 A ring `A` is **basic** when its quotient by the Jacobson radical, `A ⧸ Ring.jacobson A`, is a
 finite product of division rings.  The definition states this as the quotient being *semisimple* and
 *reduced*, which says the same thing (`TauCeti.isBasic_iff_pi_divisionRing`): Artin--Wedderburn

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Basic
 /-!
 # The Frobenius isogeny kills the differentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Differential)
+
 Over a finite field, the Frobenius isogeny of a Weierstrass curve pulls every differential of the
 function field back to zero. This is the differential-level form of its inseparability: the
 invariant differential in particular is pulled back to `0`.

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.GradedAlgebra.Quotient
 /-!
 # The grading induced on a quotient by a homogeneous ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.GradedAlgebra.Homogeneous.Quotient)
+
 A homogeneous two-sided ideal `I` in an `R`-algebra `A` graded by `𝒜` descends that grading to
 `A ⧸ I`. Its degree-`i` piece is `TauCeti.GradedAlgebra.quotientPiece 𝒜 I i`, the image of `𝒜 i`
 under the quotient map. The scalar base `R` can be a commutative semiring.

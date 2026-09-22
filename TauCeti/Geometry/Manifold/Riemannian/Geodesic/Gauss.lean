@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.AlongCu
 /-!
 # The Gauss lemma for the Riemannian exponential map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Gauss)
+
 The Gauss lemma says that the differential of the exponential map preserves the radial component
 of a tangent vector.  If `v` belongs to the natural domain of `exp_p`, then
 

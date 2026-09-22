@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Ray.Primitive
 /-!
 # Transport of toric rays along lattice equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Ray.Equiv)
+
 A linear equivalence of ambient real vector spaces sends a ray of a pointed cone to a ray of the
 image cone.  When it is compatible with an equivalence of integral lattices, it also sends the
 primitive lattice generator of the ray to the primitive generator of the image ray.

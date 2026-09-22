@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 /-!
 # Continuous and algebraic intertwiners
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Intertwining)
+
 For finite-dimensional Hausdorff topological vector spaces, automatic continuity identifies
 continuous intertwiners and equivalences with their algebraic counterparts. The object and
 character side is already supplied by the universe-polymorphic `FDRep.ofShrink`,

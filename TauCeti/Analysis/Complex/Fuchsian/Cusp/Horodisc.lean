@@ -11,6 +11,8 @@ import TauCeti.Analysis.Complex.Fuchsian.Shimizu
 /-!
 # Precisely invariant horodiscs at a cusp
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.Horodisc)
+
 Let `D` be a normalized cusp datum of `Γ ≤ PSL(2, ℝ)`, with scaling `σ` and width `w`. The
 *horodisc of height `A`* at the cusp of `D` is the set `{z | A < (σ • z).im}`: in the scaling
 coordinate it is the half-plane above height `A`, and it is exactly the preimage of a punctured

@@ -14,6 +14,8 @@ import TauCeti.MeasureTheory.Measure.MixtureInjective
 /-!
 # The path law of a mixed i.i.d. process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedIID.Mixture)
+
 A mixed i.i.d. process has, as its **path law**, a mixture of infinite product measures: for a
 mixing representative `ν`,
 

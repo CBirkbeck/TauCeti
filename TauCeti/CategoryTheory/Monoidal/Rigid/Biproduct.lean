@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Monoidal.Rigid.Basic
 /-!
 # Exact pairings of finite biproducts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.Rigid.Biproduct)
+
 In a monoidal preadditive category, the tensor product distributes over finite biproducts. As a
 consequence, dualizable objects are closed under finite biproducts: if `Y i` is a right dual of
 `X i` for every `i` in a finite index type, then `⨁ Y` is a right dual of `⨁ X`. The

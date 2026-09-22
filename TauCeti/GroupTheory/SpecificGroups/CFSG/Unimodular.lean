@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # The Lie-type indices whose Dynkin diagram is unimodular
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Unimodular)
+
 `TauCeti.ValidLieTypeIndex.GeckGroup` gives every valid index a concrete matrix group with numbered
 root subgroups and a Frobenius. That carrier is built from the adjoint representation, so the
 characters occurring in it generate the root lattice and not, in general, the whole character

@@ -14,6 +14,8 @@ import Mathlib.Tactic.Module
 /-!
 # The Temperley-Lieb algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.TemperleyLieb)
+
 The Temperley-Lieb algebra `TemperleyLieb R δ n` on `n` strands, over a commutative semiring `R` and
 with loop value `δ : R`, is the associative unital `R`-algebra on generators `e 0, …, e (n - 2)`
 subject to

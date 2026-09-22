@@ -17,6 +17,8 @@ import Mathlib.Topology.Instances.Matrix
 /-!
 # Divergence of the Wishart cone integral off the positive-definite cone
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.MultivariateGamma.Divergence)
+
 Consider the integral of `(det A) ^ (a - (p + 1) / 2) * exp (-trace (B * A))` over the cone of
 positive-definite symmetric `p × p` matrices. For the identity weight `B = 1` and
 `(p - 1) / 2 < a`, its value is the multivariate Gamma function

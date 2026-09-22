@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Homogeneou
 /-!
 # Shapiro's lemma in degrees zero, one and two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Shapiro)
+
 For a profinite group `G`, a **closed** subgroup `U` and a discrete `U`-module `A`, the coinduced
 module `Coind_U^G A` of `TauCeti.DiscreteCoind` computes the cohomology of `U`:
 

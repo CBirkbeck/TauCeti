@@ -15,6 +15,8 @@ import Mathlib.Data.ZMod.Units
 /-!
 # Character decomposition of modular forms for `Γ₁(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.CharacterDecomp)
+
 For each character `χ : (ZMod N)ˣ →* ℂˣ`, the nebentypus character space
 `modFormCharSpace k χ` and its cusp-form analogue `cuspFormCharSpace k χ` are cut out in
 `TauCeti/NumberTheory/ModularForms/DiamondOperators.lean` as simultaneous

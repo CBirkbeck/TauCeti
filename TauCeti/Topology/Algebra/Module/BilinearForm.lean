@@ -15,6 +15,8 @@ import TauCeti.Analysis.Normed.Module.FiniteDimension
 /-!
 # Nondegeneracy of the bilinear form of a continuous linear map into the dual
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Module.BilinearForm)
+
 A continuous linear map `L : E →L[𝕜] E →L[𝕜] 𝕜` carries a bilinear form
 `ContinuousLinearMap.toBilinForm L`, and that form is left-separating exactly when `L` is
 injective: both say that no nonzero vector is annihilated by `L`. Reading nondegeneracy of the

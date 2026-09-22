@@ -12,6 +12,8 @@ public import Mathlib.Topology.UrysohnsLemma
 /-!
 # Approximate identities on a compact group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.ApproximateIdentity)
+
 Convolution against a continuous kernel smooths an `L²` class into a continuous function
 (`TauCeti.convolutionCLM`). This file supplies the kernels that make that smoothing harmless: for
 every neighbourhood `U` of the identity there is a **mollifying kernel** supported in `U`, and

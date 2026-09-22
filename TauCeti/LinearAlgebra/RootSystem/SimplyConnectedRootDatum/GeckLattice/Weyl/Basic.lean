@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLatt
 /-!
 # Weyl words in the Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.Weyl.Basic)
+
 For a valid Dynkin type, the numbered raising and lowering generators in the Geck carrier form an
 `sl₂` pair at every Bourbaki node.  The usual product
 

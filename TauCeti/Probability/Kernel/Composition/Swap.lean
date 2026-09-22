@@ -11,6 +11,8 @@ public import Mathlib.Probability.Kernel.Disintegration.StandardBorel
 /-!
 # The composition-product of a measure and a kernel, in the reversed coordinate order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Kernel.Composition.Swap)
+
 Mathlib's `μ ⊗ₘ κ` records the joint law of "draw `q` from `μ`, then `p` from `κ q`" as a measure
 on `V × Ω`, the base coordinate first. `TauCeti.swapCompProd μ κ` is that same joint law written
 on `Ω × V`, the kernel coordinate first, which is the order some product semigroups come in.

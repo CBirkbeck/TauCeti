@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # Opposites of path algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.Opposite)
+
 Reversing every path in a quiver with involutive arrow reversal identifies its path algebra with
 its opposite algebra. This file constructs that identification directly on the path basis and
 records its action on paths, vertices, and arrows.

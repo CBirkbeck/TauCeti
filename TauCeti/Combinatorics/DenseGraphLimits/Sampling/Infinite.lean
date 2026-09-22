@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.ProductKernel
 /-!
 # The joint sampling law of a graphon
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Infinite)
+
 The finite sampling laws `sampleGraph W n` are one probability measure for each `n`, on a
 different space each time, and nothing in that family couples them: the separate laws relate only
 through pushforwards, and do not themselves supply the common random object a samplewise or

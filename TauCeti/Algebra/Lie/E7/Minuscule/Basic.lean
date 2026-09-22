@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.Minus
 /-!
 # The integral minuscule representation of type E7
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.Basic)
+
 This file realizes the Chevalley generators of type `E₇` on the fifty-six-element weight
 diagram `TauCeti.DynkinType.e7MinusculeWeight`. On the coordinate vector belonging to a weight
 `lambda`, the Cartan generator `H_i` acts by the simple-coroot coordinate `lambda_i`; the raising

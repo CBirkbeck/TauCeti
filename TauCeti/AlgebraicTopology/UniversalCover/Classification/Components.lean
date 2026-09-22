@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Classification.Sigma
 /-!
 # Covering spaces over a locally path-connected base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Components)
+
 Let `X` be locally path-connected and semilocally simply connected, with no connectedness
 assumption. Its connected components are open and coincide with its path components, so
 `TauCeti.connectedComponentsSigmaHomeomorph` identifies `X` with the disjoint union of the

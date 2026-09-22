@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.KrullDimension.Basic
 /-!
 # Krull dimension along integral extensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullDimension.Integral)
+
 For an integral extension `R → S` the Krull dimensions of `R` and `S` are compared by the two
 Cohen–Seidenberg theorems.
 

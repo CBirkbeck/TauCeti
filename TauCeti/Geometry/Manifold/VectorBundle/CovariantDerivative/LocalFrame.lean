@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.LocalFrame
 /-!
 # Covariant derivatives read in a local frame
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LocalFrame)
+
 Let `V → M` be a finite-rank smooth vector bundle and let `e` be a trivialization of `V` with
 `b` a basis of the model fibre, so that `e.localFrame b` is a smooth frame of `V` over
 `e.baseSet`. This file reads a covariant derivative on `V` in that frame.

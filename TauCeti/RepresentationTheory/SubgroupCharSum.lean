@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.AsAlgebraHom
 /-!
 # Character sums over a subgroup as operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SubgroupCharSum)
+
 The character sum `∑_{h ∈ H} χ(h) h` of `TauCeti.subgroupCharSum` lives in the group algebra
 `k[G]`, so it acts on any representation of `G` through `Representation.asAlgebraHom`.  This file
 records the two facts every computation with that operator starts from.

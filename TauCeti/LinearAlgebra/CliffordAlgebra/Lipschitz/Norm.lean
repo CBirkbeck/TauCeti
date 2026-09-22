@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Basic
 /-!
 # The norm of the Lipschitz group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Lipschitz.Norm)
+
 The Clifford norm `star x * x` of a Lipschitz element is a unit scalar. This defines a
 homomorphism from the Lipschitz group to the units of the base ring. Generating vectors have norm
 the negative of their quadratic norm.

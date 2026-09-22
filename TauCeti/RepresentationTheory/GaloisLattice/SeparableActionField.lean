@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.GaloisLattice.ActionField
 /-!
 # Separable action fields of Galois lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GaloisLattice.SeparableActionField)
+
 The continuous absolute-Galois action on an integral Galois lattice factors through the
 automorphism group of the finite normal field `GaloisLatticeCat.actionField`. Over an imperfect
 base that field need not itself be separable. This file replaces it by its maximal separable

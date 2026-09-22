@@ -13,6 +13,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The centre of the Hamilton quaternions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Central.Quaternion)
+
 The Hamilton quaternions `ℍ[R]` over a commutative ring `R` are the free `R`-module on `1, i, j, k`
 with `i² = j² = k² = -1`. This file computes their centre, and deduces that `ℍ[R]` is a *central*
 `R`-algebra whenever `2` is a regular element of `R`. Over `ℝ` this makes `ℍ[ℝ]` a central simple

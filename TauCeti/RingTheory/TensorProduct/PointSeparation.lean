@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.TensorProduct.Separation
 /-!
 # Separating tensors by rational points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.TensorProduct.PointSeparation)
+
 Separating families of rational points on two algebras also separate their tensor product.
 This lets one check equations on products of separating families of rational points, without
 any finite-type or algebraic-closedness hypothesis.

@@ -16,6 +16,8 @@ import TauCeti.RepresentationTheory.Induction.ClassFunction
 /-!
 # Twisting the principal series of `GL₂(𝔽_q)` by a determinant character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.PrincipalSeries.Twist)
+
 Multiplying both parameters of the principal series by a character `γ : Fˣ →* ℂˣ` multiplies its
 character by the determinant character `γ ∘ det`:
 

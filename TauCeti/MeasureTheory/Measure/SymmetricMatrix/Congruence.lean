@@ -18,6 +18,8 @@ import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # Congruence and the change of variables on the symmetric subspace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.SymmetricMatrix.Congruence)
+
 For a rectangular matrix `M`, congruence `A ↦ M * A * Mᵀ` is a linear map between symmetric
 subspaces. For an invertible square matrix `C`, it is a continuous linear automorphism. In the
 upper-triangular coordinates its determinant is

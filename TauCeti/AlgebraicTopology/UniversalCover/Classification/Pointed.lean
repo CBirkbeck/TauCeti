@@ -13,6 +13,8 @@ public import TauCeti.Topology.Homotopy.Covering
 /-!
 # Pointed connected covers are determined by the subgroup they recover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Pointed)
+
 A *pointed cover* of `(X, x)` is a covering map `p : E → X` together with a lift `e₀` of `x`.
 It recovers the subgroup `p_* π₁(E, e₀) ≤ π₁(X, x)`, and
 `IsCoveringMap.stabilizer_eq_range` identifies that subgroup with the stabiliser of `e₀`

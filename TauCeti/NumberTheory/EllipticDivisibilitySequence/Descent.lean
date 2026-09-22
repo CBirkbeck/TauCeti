@@ -19,6 +19,8 @@ import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
 /-!
 # An elliptic net from its two doubling recurrences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Descent)
+
 `IsEllipticNet W` is a condition on every quadruple of integers, `IsEllipticSequence W` on every
 triple. This file proves both equivalent to two families of equations indexed by a *single*
 integer — the odd doubling recurrence from `m = 2` on and the even one from `m = 3` on — for a

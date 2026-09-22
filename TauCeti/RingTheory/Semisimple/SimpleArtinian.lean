@@ -16,6 +16,8 @@ import Mathlib.RingTheory.Finiteness.Basic
 /-!
 # Modules over a simple Artinian ring are classified by their dimension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.SimpleArtinian)
+
 Over a simple Artinian ring `R` all simple modules are isomorphic: Mathlib records this as
 `IsSimpleRing.isIsotypic`, which says that any two simple submodules of any `R`-module are
 isomorphic. A semisimple module is a direct sum of simple ones, so a finitely generated `R`-module

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Prod
 /-!
 # Basic rules for the quadratic form of a matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.ToQuadraticForm)
+
 Elementary rules for Mathlib's `Matrix.toQuadraticForm'` — evaluation, its behaviour under
 scaling, negation, transposition and on diagonal matrices — together with the isometries of the
 attached forms induced by congruence, block diagonals and reindexing. They are kept apart from

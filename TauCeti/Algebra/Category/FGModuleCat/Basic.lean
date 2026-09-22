@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Finiteness.Prod
 /-!
 # Finitely generated modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.FGModuleCat.Basic)
+
 This file provides general results about Mathlib's category of finitely generated modules.
 Additivity of finite-free rank on biproducts makes dimension a split-additive invariant, which
 feeds the Grothendieck-group computation for finite-dimensional vector spaces.

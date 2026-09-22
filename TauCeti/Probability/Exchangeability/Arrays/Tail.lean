@@ -12,6 +12,8 @@ public import TauCeti.Probability.Process.Tail.Basic
 /-!
 # Tail σ-algebras of arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.Tail)
+
 This file defines the corner tail of an array: the events readable from entries `X (i, j)` with
 both indices arbitrarily large. It is the two-dimensional analogue of the tail σ-algebra of a
 process, cutting both index axes at the same time, and it is the σ-algebra the zero-one law for a

@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.DoubleCoset
 /-!
 # Maps between double-coset quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Map)
+
 Enlarging the left subgroup coarsens the double-coset relation.  This file packages the resulting
 surjection `H \ G / K → H' \ G / K` for `H ≤ H'`, records its value on representatives, and
 proves its identity and composition laws.

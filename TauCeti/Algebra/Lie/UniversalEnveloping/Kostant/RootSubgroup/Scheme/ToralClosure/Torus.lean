@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The weight torus inside the Kostant toral closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.Torus)
+
 The Kostant toral closure is generated scheme-theoretically by represented root subgroups and a
 represented split torus. This file proves that, when the weights span the character lattice, the
 factored torus morphism into that closure is itself a closed immersion. It therefore packages the

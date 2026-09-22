@@ -13,6 +13,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.ThirdPoint
 /-!
 # The parametrisation carries the group law: the chord case
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Point.Add)
+
 `FormalGroup/Point/Basic.lean` sends a parameter `t` of an adic ideal to a point of `W⁄K`, and
 `FormalGroup/PairEval.lean` gives the group law `F(t₁, t₂)` on parameters. This file joins them in
 the case where the chord through the two points is not vertical: the point of the parameter

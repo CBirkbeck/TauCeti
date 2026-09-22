@@ -11,6 +11,8 @@ public import Mathlib.Basic.Complex.Basic
 /-!
 # The Atkin–Lehner normalizing constant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.AtkinLehner.Normalizer)
+
 The raw weight-`k` slash by an Atkin–Lehner matrix for a divisor `Q` of the level is not an
 involution: the matrix squares to `Q` times an element of `Γ₀(N)`, so the slash squares to the
 scalar `Q ^ (k - 2)`. The **arithmetic normalization** divides that away by multiplying the slash

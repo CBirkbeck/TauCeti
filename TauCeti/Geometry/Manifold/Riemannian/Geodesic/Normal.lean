@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.Geodesic.Exponential
 /-!
 # Normal domains and the Riemannian logarithm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Normal)
+
 A *normal domain* at a point `p` of a Riemannian manifold is an open star-shaped neighbourhood
 `U` of the origin of `T_p M`, inside the natural domain of the exponential map, on which `exp_p`
 restricts to a diffeomorphism onto its image.  The image `exp_p '' U` is the associated *normal

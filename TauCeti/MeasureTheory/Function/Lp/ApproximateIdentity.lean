@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Function.Lp.Translation
 /-!
 # Smooth approximate identities in `Lᵖ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.ApproximateIdentity)
+
 Let `φ` be a smooth bump function centred at the origin and normalized to have integral one.
 This file defines the corresponding averaging operator on `Lᵖ` by the Bochner integral
 

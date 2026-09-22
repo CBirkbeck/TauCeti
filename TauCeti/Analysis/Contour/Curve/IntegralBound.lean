@@ -11,6 +11,8 @@ public import Mathlib.Analysis.Complex.Basic
 /-!
 # A decay bound for `∫ (γ - w)⁻¹ · g` when `w` is far from the curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.IntegralBound)
+
 For a curve `γ : ℝ → ℂ` with `‖γ t‖ ≤ R` on the integrating interval and a point `w` with
 `R < ‖w‖`, the integral `∫ t in a..b, (γ t - w)⁻¹ * g t` of an interval-integrable weight `g` is
 bounded by `(∫ ‖g‖) / (‖w‖ - R)`: the distance lower bound `‖w‖ - R ≤ ‖γ t - w‖` gives

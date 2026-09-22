@@ -13,6 +13,8 @@ import TauCeti.Geometry.Convex.Cone.Face.Finite
 /-!
 # Faces cut out by nonnegative linear functionals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.Cone.Face.Exposed)
+
 A linear functional `φ` that is nonnegative on a pointed cone `C` cuts out the face
 `C ⊓ ker φ` of `C`. This file records that fact and the finiteness property that makes such faces
 useful for localization: if `C` is finitely generated, then any functional `ψ` that is nonnegative

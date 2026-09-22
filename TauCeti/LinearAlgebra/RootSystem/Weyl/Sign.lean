@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Weyl.Orbit
 /-!
 # The sign character of a Weyl group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Sign)
+
 The Weyl group of a root pairing carries a canonical homomorphism to `ℤˣ` sending every reflection
 to `-1`. This file builds it as `TauCeti.weylSign`, from the parity of the inversion count: the
 number of positive roots that an element sends to negative roots, taken modulo two.

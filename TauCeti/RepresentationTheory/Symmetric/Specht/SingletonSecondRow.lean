@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Standard
 /-!
 # The Specht module of the shape `(N-1, 1)` is the standard representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.SingletonSecondRow)
+
 Throughout, `N` is the degree of the symmetric group, and `n` the parameter the declarations for
 the concrete partition carry, so that `N = n + 2`.
 

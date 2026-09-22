@@ -12,6 +12,8 @@ import TauCeti.Analysis.Bochner.Fourier.Convention
 /-!
 # Bochner's theorem in characteristic-function form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.CharFun.Bochner)
+
 `TauCeti.bochner` represents a continuous positive-definite function on a finite-dimensional real
 inner-product space `V` in the Fourier convention `v ↦ ∫ q, exp (-2πi⟪v, q⟫) ∂μ`. Probability
 and much of classical harmonic analysis use the characteristic-function convention

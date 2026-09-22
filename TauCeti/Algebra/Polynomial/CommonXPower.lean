@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Polynomial.Div
 /-!
 # Clearing a common power of `X` from a family of polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.CommonXPower)
+
 Given a family of polynomials that is not identically zero, the least exponent occurring
 with a nonzero coefficient across the family is the largest power of `X` dividing every member.
 Dividing by that power leaves at least one polynomial with nonzero constant term. The family

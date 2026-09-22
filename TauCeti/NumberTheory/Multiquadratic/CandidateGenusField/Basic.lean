@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Complex.Polynomial.Basic
 /-!
 # The candidate genus field of `ℚ(√d)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Basic)
+
 For a squarefree integer `d`, the *candidate genus field* of `ℚ(√d)` built here is the compositum
 over `ℚ` of the quadratic fields `ℚ(√(radicand P))` attached to the prime discriminants `P` dividing
 the fundamental discriminant `fundamentalDiscriminant d`. This compositum is unramified at the

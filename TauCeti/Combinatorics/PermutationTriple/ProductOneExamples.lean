@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Perm.Fin
 /-!
 # Product-one counts in the symmetric group on three letters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.ProductOneExamples)
+
 In `S₃` the three-cycles form a conjugacy class of size `2` and the transpositions one of size `3`.
 The two counts below are decided by kernel computation and factor as
 `TauCeti.card_productOneTriples` predicts: `6 = 3 · 2` at a three-cycle and two transpositions, and

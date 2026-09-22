@@ -11,6 +11,8 @@ public import TauCeti.Topology.Compactification.OnePoint.ProjectiveLine
 /-!
 # Cusp points and cusp orbits of a projective subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.Basic)
+
 A cusp point of a subgroup `Γ ≤ PSL(2, ℝ)` is a point of the projective boundary fixed by a
 parabolic element of `Γ`. Parabolicity is invariant under conjugation, so the cusp points form an
 invariant subspace of `OnePoint ℝ`. A cusp orbit is an orbit in the full projective boundary whose

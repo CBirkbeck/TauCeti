@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.Multiquadratic.RelativeDegree
 /-!
 # The candidate genus field over `ℚ(√-5)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusFive.RelativeDegree)
+
 The multiquadratic roadmap's first genus-field example uses the prime discriminants `-4` and `5`,
 with radicands `-1` and `5` and roots `i` and `√5`. Since `ℚ(√-5)` has genus field
 `ℚ(√-1, √5) = ℚ(i, √5)`, its candidate genus field is exactly the multiquadratic CM field for the

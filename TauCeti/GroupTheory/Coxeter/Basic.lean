@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Coxeter.Basic
 /-!
 # Elementary facts about Coxeter words
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.Basic)
+
 This file evaluates Mathlib's alternating words through an arbitrary family, and specialises that
 evaluation to the lengths the braid relations are read off at. It also records the degenerate
 rank-zero case: a Coxeter system whose simple reflections are indexed by an empty type has a

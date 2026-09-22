@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Specification
 /-!
 # Exact certificates for character tables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ExactChecker)
+
 This file gives a coefficient-independent certificate for the exact stage of the
 Burnside--Dixon--Schneider character-table algorithm.  A numbered central-character table and
 ordinary table over a commutative ring with a chosen conjugation are certified by division-free

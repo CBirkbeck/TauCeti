@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Lattice
 /-!
 # Subcoalgebras as subcomodules of the regular comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcoalgebra.RegularSubcomodule)
+
 Every subcoalgebra of a coalgebra is, by the same underlying submodule, a subcomodule of the
 regular right comodule. This file records that bridge and its basic order and finiteness API.
 

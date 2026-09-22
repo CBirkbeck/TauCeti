@@ -18,6 +18,8 @@ import TauCeti.MeasureTheory.Measure.MixtureInjective
 /-!
 # The de Finetti correspondence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.Correspondence)
+
 De Finetti's theorem says that the barycenter map `π ↦ ∫ P^{⊗ℕ} dπ(P)` is a bijection from mixing
 laws onto exchangeable path laws. This file packages that bijection as an equivalence
 
@@ -98,7 +100,10 @@ exchangeable probability measures on `ℕ → α`.
 The forward map is `deFinettiBarycenter`; the inverse sends an exchangeable law to its mixing law.
 Injectivity is uniqueness of the mixing law and surjectivity is de Finetti's theorem, so the
 equivalence is exactly the content of `ExchangeableLaw.existsUnique_mixingLaw` in bijective
-form. -/
+form.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Probability.deFinettiEquiv) -/
 def deFinettiEquiv [StandardBorelSpace α] :
     ProbabilityMeasure (ProbabilityMeasure α) ≃
       {ρ : ProbabilityMeasure (ℕ → α) // ExchangeableLaw (ρ : Measure (ℕ → α))} :=

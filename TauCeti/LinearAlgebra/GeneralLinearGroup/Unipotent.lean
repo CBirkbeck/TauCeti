@@ -17,6 +17,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Unipotent linear automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.GeneralLinearGroup.Unipotent)
+
 A linear automorphism is unipotent when its underlying endomorphism minus the identity is
 nilpotent. This file records the elementary group-theoretic closure properties needed to use
 unipotent elements in algebraic groups: inverses, products of commuting elements, powers, and

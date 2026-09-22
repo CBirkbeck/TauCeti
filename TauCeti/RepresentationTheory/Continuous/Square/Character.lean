@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Tensor.Square
 /-!
 # The characters of the two squares of a continuous representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Square.Character)
+
 The symmetric square and the exterior square of a representation have characters
 `χ_{Sym²}` and `χ_{Λ²}`; away from characteristic two they are determined by the character of the
 representation through `χ_{Sym²}(g) = ½(χ(g)² + χ(g²))` and `χ_{Λ²}(g) = ½(χ(g)² - χ(g²))`

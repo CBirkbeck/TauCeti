@@ -12,6 +12,8 @@ import Mathlib.RingTheory.Polynomial.UniqueFactorization
 /-!
 # Degrees of polynomial factors modulo a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.FactorDegrees)
+
 For an integral polynomial `f` and a prime `p`, `Polynomial.factorDegrees f p` is the multiset of
 degrees of the monic irreducible factors of the reduction of `f` modulo `p`. Multiplicities are
 retained: a repeated irreducible factor contributes its degree repeatedly.

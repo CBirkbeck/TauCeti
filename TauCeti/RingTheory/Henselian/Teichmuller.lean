@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.RootsOfUnity.IntegrallyClosed
 /-!
 # The Teichmüller lift of a Henselian local ring with finite residue field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Henselian.Teichmuller)
+
 Let `R` be a Henselian local ring whose residue field `k` is finite, of cardinality `q`. Reduction
 `Rˣ → kˣ` identifies the `(q - 1)`-st roots of unity on both sides, because `q - 1` is a
 unit in `R`. Since every unit of `k` is a `(q - 1)`-st root of unity, the inverse equivalence gives

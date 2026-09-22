@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 /-!
 # The `N`-supported determinant case of `Δ₀(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.BadPrimeCoset)
+
 `Gamma0/DoubleCoset.lean` settles the **coprime** case: when `gcd(det α, N) = 1`, the
 `SL₂(ℤ)`-double coset of `α` meets `Δ₀(N)` in exactly the `Γ₀(N)`-double coset. This file
 handles the opposite extreme, Shimura Proposition 3.33: an element of `Δ₀(N)` whose determinant

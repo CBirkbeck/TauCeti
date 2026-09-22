@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Symplectic.Restrict
 /-!
 # Every symplectic vector space carries a compatible almost complex structure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.ExistsCompatible)
+
 Tameness and compatibility of an almost complex structure `J` with a symplectic form `ω` are the
 standing hypotheses of the analytic Heegaard Floer roadmap. The repository already supplied
 compatible structures for several standard models and their transports, but an arbitrary

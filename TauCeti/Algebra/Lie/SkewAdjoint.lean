@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.BilinearForm.Basic
 /-!
 # Skew-adjoint Lie algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SkewAdjoint)
+
 A basis identifies matrices skew-adjoint for the Gram matrix of a bilinear form with
 endomorphisms skew-adjoint for the form itself. This file packages that identification as
 `TauCeti.skewAdjointLieEquivOfBasis`.

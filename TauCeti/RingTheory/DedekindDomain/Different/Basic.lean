@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.DedekindDomain.Different
 /-!
 # The different ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Different.Basic)
+
 This file supplies general lemmas about trace-dual fractional ideals. The coercion result connects
 the fractional-ideal and submodule trace duals, allowing submodule results such as localization to
 be transferred to fractional ideals. The elementwise description of the trace dual of `S` as the

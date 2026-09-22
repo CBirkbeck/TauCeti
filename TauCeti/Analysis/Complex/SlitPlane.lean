@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Complex.Basic
 /-!
 # Geometry of the complex slit plane
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.SlitPlane)
+
 The quotient `z₂ / z₁` of two points of an open half-plane through the origin is never a
 nonpositive real, so it lies in `Complex.slitPlane`. The half-plane is encoded by a normal
 direction `a`: its members are the `z` with `0 < (conj a * z).re`. Specializations to the

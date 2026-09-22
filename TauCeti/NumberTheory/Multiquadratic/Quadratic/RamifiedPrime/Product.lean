@@ -14,6 +14,8 @@ import Mathlib.Algebra.GroupWithZero.Torsion
 /-!
 # The relation between the ramified primes of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.RamifiedPrime.Product)
+
 Let `K = ℚ(√d)` be a quadratic number field, presented by `θ : 𝓞 K` with
 `minpoly ℤ θ = X ^ 2 - d` and `Algebra.adjoin ℚ {θ} = ⊤`, with `d` squarefree. Every rational
 prime `p` dividing `d` ramifies, so `p 𝓞 K = 𝔭 ^ 2` for the unique prime `𝔭` of `𝓞 K` above it

@@ -15,6 +15,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Central simple quaternion symbol algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.CentralSimple)
+
 This file proves centrality and simplicity for the general quaternion algebra `ℍ[K,a,b,c]`. For a
 field `K` with `2` invertible, simplicity holds when `c * QuadraticAlgebra.discr a b ≠ 0`:
 completing the square reduces this case to a symbol with both parameters units, for which the norm

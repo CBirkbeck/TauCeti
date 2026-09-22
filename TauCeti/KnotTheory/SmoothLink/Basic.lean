@@ -11,6 +11,8 @@ public import TauCeti.Order.Disjoint
 /-!
 # Smooth link presentations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.SmoothLink.Basic)
+
 A labeled oriented smooth link with `n` components in a manifold is a family of `n` smooth
 circle embeddings whose images are pairwise disjoint.  The parametrization of each circle gives
 that component its orientation; the `Fin n` index records a component labeling.  This file bundles

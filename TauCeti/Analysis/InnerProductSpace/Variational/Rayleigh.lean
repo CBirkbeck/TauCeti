@@ -10,6 +10,8 @@ public import TauCeti.Analysis.InnerProductSpace.Variational.Spectrum
 /-!
 # The Rayleigh principle for a coercive variational problem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Variational.Rayleigh)
+
 Let `B` be a bounded coercive symmetric bilinear form on a real Hilbert space `V` and let
 `J : V →L[ℝ] H` be a continuous linear map into a second real Hilbert space.  When `J` is nonzero
 and compact, the **variational eigenvalues** of the pair are the reciprocals of the nonzero

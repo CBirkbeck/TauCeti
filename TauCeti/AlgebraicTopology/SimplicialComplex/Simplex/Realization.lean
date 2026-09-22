@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Basic
 /-!
 # Realizations of the standard one-simplex and its boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Realization)
+
 This file identifies the geometric realization of the full abstract complex on a finite vertex
 type with Mathlib's standard simplex of barycentric coordinate functions. Specializing to two
 vertices gives a homeomorphism from the standard one-simplex to the unit interval. Its boundary,

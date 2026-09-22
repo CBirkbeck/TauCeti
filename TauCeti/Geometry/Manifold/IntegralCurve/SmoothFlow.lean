@@ -12,6 +12,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.Tangent
 /-!
 # Smooth dependence of integral curves on their initial point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.IntegralCurve.SmoothFlow)
+
 A smooth vector field on a finite-dimensional boundaryless manifold admits, near every point, a
 family of local integral curves that depends smoothly on both the initial point and time.  This is
 the manifold form of smooth dependence for ordinary differential equations: express the field in

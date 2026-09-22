@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The full-weight type-E7 minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.Carrier)
+
 This file feeds the explicit 56-dimensional type-`E₇` minuscule representation, its admissible
 coordinate lattice, and its full set of weights into the Kostant toral-closure construction. The
 result is an affine group scheme over `ℤ`, explicitly cut out inside `GL₅₆` by the common kernel

@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Eigenspace.DiagonalBasis
 /-!
 # The weight decomposition of `Symᵈ(ℂ²)` under the maximal torus of `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Weight)
+
 `TauCeti/RepresentationTheory/SU2/SymmetricPower.lean` computes the *character* of the symmetric
 power `Symᵈ(ℂ²)` of the standard representation of `SU(2)` on the maximal torus as the weight
 string `z^{-d} + z^{2-d} + ⋯ + z^d`.  A character is a trace, so it records the weights only with

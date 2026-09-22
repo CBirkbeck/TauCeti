@@ -14,6 +14,8 @@ import Mathlib.Topology.Homotopy.Affine
 /-!
 # The punctured unit sphere
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Sphere.Puncture)
+
 Removing a point `p` from the unit sphere of a real normed space leaves a set that can be swept
 onto the antipode `-p`: for `x ≠ p` on the sphere the straight segment from `x` to `-p` never
 meets the origin, so normalising it gives a contraction of the punctured sphere inside the

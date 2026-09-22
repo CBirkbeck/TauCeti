@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.F4.Short
 /-!
 # A basis of the modular F4 short-root subspace
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.F4.ShortRoot.Modular.Basis)
+
 The modular short-root subspace has the twenty-four short-root vectors and the two short simple
 coroots as a basis. The coordinate equivalence from the short-root weight table fixes the two
 zero-weight coordinates as the simple coroots at zero-based Lean indices `2` and `3`.

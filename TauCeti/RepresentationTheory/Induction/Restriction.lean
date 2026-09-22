@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Rep.Res
 /-!
 # Restriction of representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Restriction)
+
 This file collects restriction infrastructure shared by the induction files: how the restriction
 functors `Rep.resFunctor` and `Action.res` behave under composing and inverting the homomorphism
 restricted along, and, for a subgroup `S` of a group `G`, the restriction of a finite-dimensional

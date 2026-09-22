@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The G₂ short-pair relation on represented Kostant root subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Relations.G2.ShortPair)
+
 The represented morphisms `xᵢ : 𝔾ₐ ⟶ GLₙ` satisfy the G₂ short-pair product relation
 on points over every commutative ring. The three additional factors have parameters
 `2ctu`, `3dt²u`, and `3atu²`, for the scaled brackets specified below. No structure

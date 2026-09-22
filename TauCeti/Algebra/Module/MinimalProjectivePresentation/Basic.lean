@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Module.ProjectiveCover.Basic
 /-!
 # Minimal projective presentations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.MinimalProjectivePresentation.Basic)
+
 A **projective presentation** of a module `M` is an exact sequence `P₁ → P₀ → M → 0` with `P₀` and
 `P₁` projective. It is **minimal** when both of its maps are as small as they can be: `P₀ → M` is a
 projective cover (`TauCeti.IsProjectiveCover`) and `P₁` covers the syzygy `ker (P₀ → M)`, again as

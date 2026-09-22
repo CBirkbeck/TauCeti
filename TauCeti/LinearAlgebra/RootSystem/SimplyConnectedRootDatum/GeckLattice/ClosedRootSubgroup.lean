@@ -12,6 +12,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Closed root subgroups of the Geck carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.GeckLattice.ClosedRootSubgroup)
+
 The numbered raising and lowering maps into the pinned Geck carrier are closed copies of the
 additive group. The parameter is recovered from one explicit matrix coordinate: for a simple root
 `i`, the raising divided-power exponential sends the coordinate vector at `-i` toward the Cartan

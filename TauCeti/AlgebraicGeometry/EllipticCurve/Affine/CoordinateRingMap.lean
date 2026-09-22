@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.AdjoinRoot.Basic
 /-!
 # The coordinate-ring map: surjectivity, and the generators of `XYIdeal`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRingMap)
+
 Mathlib's `WeierstrassCurve.Affine.CoordinateRing.map` sends a ring homomorphism `f : R →+* S` to
 `R[W] →+* S[W.map f]`. Around it Mathlib proves `map_mk`, `map_smul` and injectivity
 (`CoordinateRing.map_injective`), and it separately defines the classes `XClass`, `YClass` and the

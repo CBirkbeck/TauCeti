@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma0
 /-!
 # The nebentypus-twisted slash sum over a double coset of `Γ₀(N)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Basic)
+
 `HeckeSlash/Basic.lean` sums `f ∣[k] aᵥ` over representatives of the right cosets a double coset
 decomposes into, with no weights at all, and `HeckeSlash/Gamma0.lean` instantiates that at
 `Γ₀(N)`. That instantiation stops short of the character on purpose: `Γ₀(N)` is where the

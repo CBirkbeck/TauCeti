@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Basic
 /-!
 # Squared lengths of the pinned `G₂` roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.G2.Length)
+
 `TauCeti.DynkinType.g2SimplyConnectedRootDatum` tabulates its twelve roots in the
 fundamental-weight basis and its twelve coroots in the simple-coroot basis, and
 `TauCeti.DynkinType.g2Coeff` records their simple-root coordinates. None of those tables displays

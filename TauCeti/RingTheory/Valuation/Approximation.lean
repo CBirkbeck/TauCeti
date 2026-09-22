@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Valuation.AbsoluteValue
 /-!
 # Weak approximation for discrete valuations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Approximation)
+
 This file proves weak approximation for a finite family of pairwise inequivalent `ℤᵐ⁰`-valued
 valuations. It first sends such a valuation through the strictly monotone embedding
 `ℤᵐ⁰ → ℝ≥0 → ℝ`, obtaining a real absolute value with exactly the same comparisons. Mathlib's

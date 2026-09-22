@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Dimension.Constructions
 /-!
 # Extending a submodule basis by a quotient basis, indexed by `Fin (m + n)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.ExtensionBasis)
+
 `Module.Basis.sumQuot` combines a basis of a submodule `p` of `V` with a basis of `V ⧸ p` into a
 basis of `V` indexed by a sum type. An induction on `Module.finrank` wants that basis indexed by
 `Fin (m + n)` instead, so that the two blocks are picked out by `Fin.castAdd` and `Fin.natAdd` and

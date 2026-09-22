@@ -13,6 +13,8 @@ import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 /-!
 # Maps determined by their value on a primitive root
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.PrimitiveRoots)
+
 In a domain the `n`-th roots of unity are exactly the powers of a primitive one, so a ring
 endomorphism is pinned down on all of them by its value on a single primitive `n`-th root: if it
 raises that root to the `j`-th power, it raises every `n`-th root of unity to the `j`-th power.

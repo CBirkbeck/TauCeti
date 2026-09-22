@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.Weight.Enumerator
 /-!
 # Weight enumerators of semilinearly equivalent codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Semilinear.WeightEnumerator)
+
 Semilinearly equivalent codes have the same weight distribution, homogeneous weight enumerator,
 and one-variable weight polynomial. These invariants allow comparison of codes after uniform
 alphabet conjugation, coordinate scaling, and relabelling.

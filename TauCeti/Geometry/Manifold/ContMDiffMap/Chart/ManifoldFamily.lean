@@ -13,6 +13,8 @@ import Mathlib.Analysis.Calculus.TangentCone.Prod
 /-!
 # Smooth families of manifold-valued maps are continuous
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ContMDiffMap.Chart.ManifoldFamily)
+
 A jointly `C^n` map `P × M → N` between manifolds is a family of `C^n` maps `M → N` indexed by
 `P`, and this file proves that the family is continuous for the weak Whitney topology on
 `C^n⟮I, M; J, N⟯`. This is the direction that turns the object a proof produces, a smooth map on

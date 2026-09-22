@@ -15,6 +15,8 @@ import TauCeti.Analysis.Contour.Winding.Integer
 /-!
 # The winding number is locally constant off a closed curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.LocallyConstant)
+
 For a closed curve `γ` (so `γ a = γ b`) that is continuous on `Set.uIcc a b`, differentiable off a
 countable set, with interval-integrable derivative, the generalized winding number
 `fun w ↦ windingNumber γ a b w`, viewed as a function on the points off the curve, is locally

@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Signless
 /-!
 # The quadratic dual of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.QuadraticDual)
+
 The zigzag algebra of a finite simple graph `G` is presented on the doubled quiver by two families
 of quadratic relations: the length-two paths whose endpoints differ, and the differences of two
 backtracks based at one vertex. This file computes the orthogonal complement of the span of those

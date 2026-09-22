@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.SuzukiRee
 /-!
 # The index of the Ree family of type `F₄`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.ReeF4.Index)
+
 `TauCeti.LieTypeIndex` names the Ree family of type `F₄` by its constructor `reeF4 m`, whose
 field order is `2 ^ (2m+1)`. This file selects that constructor and validates it, giving the
 restricted index domain `TauCeti.ReeF4LieIndex` on which the family's carrier, Steinberg

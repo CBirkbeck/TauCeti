@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.Weight.Basic
 /-!
 # Weights add on a tensor product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Weight.Tensor)
+
 A diagonal matrix acts on a pure tensor of weight vectors by the product of the two scalars, so a
 tensor product of weight vectors is again a weight vector and its weight is the **sum** of the two
 weights (`TauCeti.tmul_mem_weightSpace_tprod`). This file promotes that one-line computation to a

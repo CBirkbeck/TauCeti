@@ -11,6 +11,8 @@ import TauCeti.RepresentationTheory.CharacterTable.Determined
 /-!
 # Injectivity of the character map on the representation ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.RepresentationRing.Injective)
+
 Let `G` be a finite group and `k` a field of characteristic zero. This file
 proves that the character homomorphism from the representation ring of `G` is injective. Thus a
 virtual representation is determined by its character.

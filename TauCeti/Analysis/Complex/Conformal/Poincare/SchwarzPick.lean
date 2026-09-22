@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.SchwarzPick.Rigidity
 /-!
 # Schwarz–Pick for the metric space `PoincareDisc`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.SchwarzPick)
+
 Layer **L2** of the conformal-mapping roadmap (`TauCetiRoadmap/ConformalMapping/README.md`) asks
 for two things at once: the Schwarz–Pick theorem, and the hyperbolic (Poincaré) metric on the
 disc. Both are on `main`, but they meet only at the level of the scalar function

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.Poincare.MetricSpace
 /-!
 # Disc automorphisms as Poincaré isometric equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.Isometry.Equiv)
+
 This file bundles the standard automorphisms of the complex unit disc as isometric
 equivalences of `PoincareDisc`. The underlying distance-preservation results are proved in
 `Poincare/MetricSpace.lean`; the bundled form records both the isometry and the inverse and is

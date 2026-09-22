@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.Int.Basic
 /-!
 # Products over a set of prime factors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.PrimeFactorsProd)
+
 A product of distinct primes taken from `n.primeFactors` is squarefree, divides `n`, and introduces
 no prime that `n` does not already have; and it is coprime to any prime left out of the set. These
 are the facts an induction over the primes of `n` spends at each step, when it peels one prime off

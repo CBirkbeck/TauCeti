@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Derivation.Basic
 /-!
 # Derivations of symmetric algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.Derivation.Basic)
+
 A derivation of `SymmetricAlgebra R M` is determined by its values on the canonical generators.
 Conversely, every linear map from `M` to a module over its symmetric algebra extends uniquely to a
 derivation. This file packages the extension and the resulting linear equivalence.

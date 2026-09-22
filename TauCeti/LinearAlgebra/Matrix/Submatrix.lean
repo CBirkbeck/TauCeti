@@ -14,6 +14,8 @@ public import Mathlib.GroupTheory.Perm.Basic
 /-!
 # Permutations preserving a square matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Submatrix)
+
 A permutation `σ` of the index set of a square matrix `M` *preserves* `M` when
 `M.submatrix σ σ = M`. This file records the three closure properties
 `TauCeti.submatrix_perm_refl`, `TauCeti.submatrix_perm_trans` and `TauCeti.submatrix_perm_symm`,

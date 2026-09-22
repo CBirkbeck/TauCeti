@@ -16,6 +16,8 @@ import Mathlib.Topology.LocallyConstant.Basic
 /-!
 # Analytic continuation along a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Continuation.Basic)
+
 An **analytic continuation along a path** `γ` is the classical device that turns a single
 holomorphic germ into a multi-valued function: one carries the germ along `γ`, re-expanding it at
 each parameter time. This file introduces that notion and proves its fundamental property, that a
@@ -186,7 +188,10 @@ sense that `f u` and `f t` have the same germ at `γ u` for every `u ∈ s` clos
 Only the germ of `f t` at `γ t` matters; the values of `f t` away from `γ t` are unconstrained.
 Reading the germs as points of the étale space of holomorphic germs over `ℂ`, the condition says
 precisely that `t ↦ (germ of f t at γ t)` is a continuous lift of `γ`; that is
-`TauCeti.isAnalyticContinuationAlong_iff_continuousOn_germPoint`. -/
+`TauCeti.isAnalyticContinuationAlong_iff_continuousOn_germPoint`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.IsAnalyticContinuationAlong) -/
 structure IsAnalyticContinuationAlong (f : X → ℂ → E) (γ : X → ℂ) (s : Set X) : Prop where
   /-- The path is continuous on the parameter set. -/
   continuousOn : ContinuousOn γ s

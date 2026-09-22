@@ -12,6 +12,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The invariant of a normalised EDS
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.NormEDS)
+
 For an elliptic net `W`, `invarNum_mul_invarDenom` gives the **cross-multiplied** identity
 `invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`. Over a general
 `CommRing` that is all it gives: a denominator may vanish or be a zero divisor, so there is no

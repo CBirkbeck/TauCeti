@@ -20,6 +20,8 @@ import TauCeti.MeasureTheory.Measure.GiryMonad
 /-!
 # The coding representation of an exchangeable sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.Coding)
+
 De Finetti's theorem describes an exchangeable sequence by a *conditional law*: there is a random
 probability measure `ν` such that, given `ν`, the coordinates are i.i.d. `ν`. This file converts
 that description into a *functional* one. Writing `ϑ` for a sequence of independent uniform

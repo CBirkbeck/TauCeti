@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Discriminant
 /-!
 # The discriminant of a regular real quadratic form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Real)
+
 Over `ℝ` the square class of a nonzero number is its sign, so the discriminant of a regular form
 only records the sign of the product of the weights of a diagonalization.  By Sylvester's law of
 inertia that sign is `(-1)^q`, where `q = sigNeg Q` is the negative index of inertia.  This is the

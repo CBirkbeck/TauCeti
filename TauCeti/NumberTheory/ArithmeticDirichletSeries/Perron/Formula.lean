@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Group.Tannery
 /-!
 # The arithmetic Perron formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Perron.Formula)
+
 `TauCeti.truncatedPerronKernel` is the Perron kernel of a single ratio `x`.  This file applies it
 to an absolutely convergent `L`-series: the integral over the truncated segment of the series
 against the Perron integrand is the series of the individual kernels, one for each `x / n`.

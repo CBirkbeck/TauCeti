@@ -11,6 +11,8 @@ public import Mathlib.Probability.Martingale.Upcrossing
 /-!
 # Time-reversal crossing bound
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Martingale.Crossings.TimeReversal)
+
 Reverse-martingale infrastructure bounding the completion time of upcrossings in a time-reversed,
 negated process. This is a combinatorial ingredient of the reverse-martingale upcrossing argument.
 

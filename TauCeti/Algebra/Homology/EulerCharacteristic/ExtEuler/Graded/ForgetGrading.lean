@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Sesqu
 /-!
 # The q-Euler form at `q = 1` against the ungraded Ext-Euler characteristic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.ForgetGrading)
+
 Let `C` be a `k`-linear abelian category with a grading-shift autoequivalence `e`, and let `D` be
 a `k`-linear abelian category thought of as `C` with its grading forgotten along a functor `U`.
 Setting `q = 1` collapses the internal degrees of

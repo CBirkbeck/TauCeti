@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # Further results on exterior powers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.ExteriorPower)
+
 This file records that the `d`th exterior power of a finite free module over a commutative ring
 vanishes as soon as `d` exceeds the rank of the module, and computes the trace of an induced
 endomorphism from a basis of eigenvectors.

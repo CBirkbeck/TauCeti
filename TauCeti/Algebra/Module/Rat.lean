@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Algebra.Rat
 /-!
 # Restricting scalars from rational to nonnegative-rational modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Rat)
+
 Every module over `ℚ` is a module over `ℚ≥0` by restriction of scalars along
 `algebraMap ℚ≥0 ℚ`. This is deliberately not a global instance: Mathlib already builds
 `Module ℚ≥0 R` from `DivisionSemiring R`, so a second global path would put two structures on

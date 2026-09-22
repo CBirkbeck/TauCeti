@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Basic
 /-!
 # Kantorovich dual feasibility and weak duality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Duality.Basic)
+
 For a nonnegative extended cost `c : X × Y → ℝ≥0∞`, a pair of real potentials `φ` and `ψ` is
 dual feasible when
 

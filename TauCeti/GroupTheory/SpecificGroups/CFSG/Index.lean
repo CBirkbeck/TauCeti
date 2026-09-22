@@ -13,6 +13,8 @@ public import Mathlib.Data.Fintype.OfMap
 /-!
 # Indices for the classification of finite simple groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Index)
+
 This file defines the parameters and indexing types for the eventual statement of the
 classification of finite simple groups. The Lie-type index records the family, rank, and finite
 field parameter as data. Its validity predicate first imposes the conventional rank and small-field
@@ -828,7 +830,10 @@ end LieTypeIndex
 
 /-- A Lie-type index satisfying its rank, field, and preferred-representative conditions. Later
 carrier-valued constructions take this subtype, so they need no branch for an invalid Dynkin rank
-or an excluded small group. -/
+or an excluded small group.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValidLieTypeIndex) -/
 abbrev ValidLieTypeIndex : Type _ := {d : LieTypeIndex // d.Valid}
 
 /-- A valid index whose Steinberg map is an odd power of a half-Frobenius: the three Suzuki--Ree
@@ -836,7 +841,10 @@ families together with the Tits group. -/
 abbrev SuzukiReeIndex : Type _ := {d : ValidLieTypeIndex // d.1.UsesHalfFrobenius}
 
 /-- A valid index whose Steinberg map uses ordinary Frobenius, possibly composed with a diagram
-automorphism. The Suzuki--Ree and Tits branches are excluded. -/
+automorphism. The Suzuki--Ree and Tits branches are excluded.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.GraphTwistedIndex) -/
 abbrev GraphTwistedIndex : Type _ := {d : ValidLieTypeIndex // ¬ d.1.UsesHalfFrobenius}
 
 /-- A valid index whose underlying Dynkin diagram has unimodular Cartan matrix: the six branches

@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.JFunction.Center
 /-!
 # Maslov and Alexander gradings for grid states
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Gradings)
+
 This file records the rational-valued grading formulas for the grid-combinatorial lane of the
 Heegaard Floer roadmap. The point-set `J`-function of a pair of grid states and the pairing of a
 grid state against a set of marked squares were developed separately; here we use them to define

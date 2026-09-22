@@ -12,6 +12,8 @@ import TauCeti.RingTheory.SimpleModule.Basic
 /-!
 # Products of endomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.End.Prod)
+
 This file proves that nilpotence and semisimplicity are preserved by componentwise products of
 endomorphisms.
 

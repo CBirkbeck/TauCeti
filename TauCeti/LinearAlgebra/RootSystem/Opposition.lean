@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.RootSystem.LongestElement
 /-!
 # The opposition involution of a base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Opposition)
+
 The longest element `w₀` of a finite Weyl group exchanges the positive and the negative roots, so
 `α ↦ -w₀ α` permutes the positive roots. This file proves that it permutes the **simple** roots: it
 is an involution of the base, the **opposition involution** `TauCeti.opposition`.

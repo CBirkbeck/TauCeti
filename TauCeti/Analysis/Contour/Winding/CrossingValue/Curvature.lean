@@ -17,6 +17,8 @@ import Mathlib.MeasureTheory.Integral.CircleIntegral
 /-!
 # The crossing value of the real winding integrand for a twice-differentiable curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.CrossingValue.Curvature)
+
 Hungerbühler–Wasem Proposition 2.3 states that the real winding integrand of a plane curve
 `Λ = x + i y` about a point it passes through stays *bounded*: at a crossing parameter `t̃` the
 apparently singular quotient `(x ẏ - y ẋ) / (x² + y²)` converges, with limit `½ k_Λ(t̃) |Λ̇(t̃)|`,

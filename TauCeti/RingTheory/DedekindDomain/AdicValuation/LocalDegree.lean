@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.RamificationIndex
 /-!
 # The local degree of a completion is `e · f`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.LocalDegree)
+
 Let `R ⊆ B` be Dedekind domains with fraction fields `K ⊆ L`, and let `w` be a height-one prime of
 `B` lying over the height-one prime `v` of `R`, with `w` of finite residue field. The completions
 `K_v` and `L_w` are then nonarchimedean local fields for the canonical algebra structure of the

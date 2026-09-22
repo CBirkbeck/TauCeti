@@ -11,6 +11,8 @@ public import TauCeti.Probability.Quantile
 /-!
 # The monotone quantile coupling of two real laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Quantile)
+
 Two probability laws on `ℝ` are simultaneously represented by their quantile functions: each is
 the law of its own quantile function under the uniform law on the open unit interval. Reading the
 two quantile functions off the *same* uniform variable produces the **monotone coupling**

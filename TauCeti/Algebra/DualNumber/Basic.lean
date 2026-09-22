@@ -10,6 +10,8 @@ public import Mathlib.Algebra.DualNumber
 /-!
 # Scalar compatibility for dual numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.DualNumber.Basic)
+
 The coordinatewise scalar action on dual numbers commutes with multiplication. These
 instances make bilinear multiplication and convolution available with that module structure.
 -/

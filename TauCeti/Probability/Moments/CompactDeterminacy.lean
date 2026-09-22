@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Measure.FiniteMeasureExt
 /-!
 # Multivariate moment determinacy on a compact set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.CompactDeterminacy)
+
 Two finite measures on a compact subset of `ι → ℝ` (`ι` finite) that agree on every mixed monomial
 `x ↦ ∏ i, x i ^ n i` are equal.
 

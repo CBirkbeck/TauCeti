@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Base
 /-!
 # Lowering positive roots by simple reflections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Lowering)
+
 This file records how reflection in a simple root changes the height relative to a root-pairing
 base. The change is the corresponding Cartan integer. When the root index type is finite, every
 positive root admits a simple reflection that strictly decreases its height. If the coefficient

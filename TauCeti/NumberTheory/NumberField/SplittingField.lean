@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.NumberField.Basic
 /-!
 # Splitting fields over number fields are number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.SplittingField)
+
 The splitting field `f.SplittingField` of a polynomial `f` over a number field `K` is a finite
 extension of `K`, hence a number field. In particular the splitting field of a rational
 polynomial is a number field, so its Galois group `f.Gal` is the Galois group of a number field

@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.CartanMatrix
 /-!
 # Flipping a root pairing transposes its Cartan matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Flip)
+
 Mathlib's `RootPairing.flip` interchanges the roots and the coroots of a root pairing, and
 `RootPairing.Base.flip` records that a base of `P` is a base of `P.flip` supported on the same
 simple indices. Interchanging the two sides transposes every pairing `⟨αᵢ, αⱼ^∨⟩`

@@ -13,6 +13,8 @@ import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Coordinate.Cha
 /-!
 # The geodesic spray
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Spray)
+
 The geodesic equation `u'' + Γ (u', u') = 0` is a second-order equation on the manifold; as usual
 it becomes a first-order equation on the tangent bundle, for the vector field
 

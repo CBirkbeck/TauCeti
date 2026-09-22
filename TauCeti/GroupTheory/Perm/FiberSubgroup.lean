@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Perm.DomMulAct
 /-!
 # Permutations preserving the fibers of a map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.FiberSubgroup)
+
 Given `f : α → ι`, the permutations `σ` of `α` with `f (σ a) = f a` for every `a` form a subgroup
 of `Equiv.Perm α`, here called `TauCeti.fiberSubgroup f`.  This file records that subgroup, the
 transpositions it contains, the behaviour of the construction under conjugation and pairing two

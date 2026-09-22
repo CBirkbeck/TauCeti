@@ -12,6 +12,8 @@ import Mathlib.FieldTheory.Perfect
 /-!
 # Reducing the roots of an integer polynomial modulo a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.RootReduction)
+
 Let `f` be a monic integer polynomial which splits in a number field `M` and is squarefree modulo
 a prime `p`. The roots of `f` in `M` are algebraic integers, so any ring homomorphism
 `ρ : 𝓞 M →+* k` to a field `k` over `𝔽_p` can be applied to them. Their images are all the roots

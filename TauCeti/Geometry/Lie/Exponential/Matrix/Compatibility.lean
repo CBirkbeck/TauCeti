@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Lie.Exponential.Units.Compatibility
 /-!
 # Compatibility with the matrix exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.Matrix.Compatibility)
+
 The abstract Lie-group exponential on the general linear group is the usual matrix exponential.
 The remaining results show that the transported abstract exponential inherits Mathlib's diagonal,
 transpose, and conjugation formulas. The statements use Mathlib's scoped `L∞` operator norm on

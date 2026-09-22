@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.Lattice
 /-!
 # Dual submodules of lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.BilinearForm.DualLattice)
+
 This file develops the duality theory for free full lattices in vector spaces equipped with a
 nondegenerate bilinear form over a fraction field.
 

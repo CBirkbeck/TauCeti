@@ -17,6 +17,8 @@ import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 /-!
 # Basics for quadratic number fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Basic)
+
 Shared facts about a quadratic number field `K` presented by an algebraic integer `θ : 𝓞 K` whose
 minimal polynomial over `ℤ` is `X² - d`. These feed the prime-splitting law
 (`Quadratic/Splitting.lean`), the conjugation automorphism (`Quadratic/Conjugation/Basic.lean`), the

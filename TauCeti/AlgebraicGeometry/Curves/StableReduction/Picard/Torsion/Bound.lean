@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.Rank
 /-!
 # Bounding prime torsion by the topological genus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.Picard.Torsion.Bound)
+
 Let `T` be a numerical type with `n` components, intersection matrix `A` and multiplicities `mᵢ`,
 and let `e` be the number of edges of its intersection graph, so that the topological genus
 `g_top = 1 - n + e` is the first Betti number of that graph. This file proves that for a prime `ℓ`

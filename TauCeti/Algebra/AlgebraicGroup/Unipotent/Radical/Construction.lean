@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Maximal
 /-!
 # The unipotent radical of an affine group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Construction)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over a field. A connected
 normal smooth unipotent closed subgroup is represented contravariantly by a normal Hopf ideal `I`
 whose quotient `H/I` is geometrically connected, smooth, and geometrically unipotent. The

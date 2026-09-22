@@ -10,6 +10,8 @@ public import Mathlib.Topology.Sion
 /-!
 # Helpers for real-valued applications of Sion's minimax theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Sion)
+
 Mathlib's infimum-supremum form of Sion's theorem uses a complete linear order as its codomain.
 Real-valued affine functions are therefore commonly coerced to `EReal`. This file records that
 convexity and concavity of the real function give the corresponding quasiconvexity and

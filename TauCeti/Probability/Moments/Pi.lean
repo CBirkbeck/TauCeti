@@ -12,6 +12,8 @@ public import Mathlib.Probability.Moments.IntegrableExpMul
 /-!
 # Moment-generating functions of sums of coordinates under a product measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.Pi)
+
 A statistic of the form `x ↦ ∑ j, f j (x j)` under a finite product measure `Measure.pi μ` has
 exponential `∏ j, exp (t * f j (x j))`, so Fubini's theorem turns its moment-generating function
 into the product of the coordinate ones. For a product of *probability* measures each factor is

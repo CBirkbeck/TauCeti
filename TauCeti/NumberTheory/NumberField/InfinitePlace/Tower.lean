@@ -11,6 +11,8 @@ import TauCeti.FieldTheory.Galois.Basic
 /-!
 # Infinite places in a normal tower
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.InfinitePlace.Tower)
+
 For a tower `K ⊆ F ⊆ L` with `F / K` normal, restriction of automorphisms along
 `AlgEquiv.restrictNormal` is compatible with the Galois action on infinite places: moving a
 place of `L` by `σ` and then inducing a place of `F` gives the same place as inducing first and

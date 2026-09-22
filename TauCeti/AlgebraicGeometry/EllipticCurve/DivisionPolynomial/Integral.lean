@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 /-!
 # An integral-root criterion for the division polynomials `Φₙ` and `ΨSqₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Integral)
+
 This file is pure polynomial algebra about Mathlib's division polynomials. Its content is that
 `Φₙ − C c * ΨSqₙ` is **monic**, for every `n` and `c` — `Φₙ` is monic of degree `n²` while `ΨSqₙ`
 has degree `n² - 1`, so subtracting a constant multiple of the latter cannot disturb the leading

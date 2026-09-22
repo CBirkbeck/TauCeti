@@ -16,6 +16,8 @@ public import TauCeti.KnotTheory.Grid.Rotation
 /-!
 # The grid `J`-function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.JFunction.Basic)
+
 This file adds the finite point-pair count used in the Maslov and Alexander gradings of grid
 homology. For finite sets of grid points, `GridPoint.ICount r s t` counts the ordered pairs
 `(p, q) ∈ s × t` with `r p q`; `GridPoint.I s t` is its value at the strict southwest relation,

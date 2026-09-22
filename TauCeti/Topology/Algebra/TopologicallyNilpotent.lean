@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.TopologicallyNilpotent
 /-!
 # Negation and topological nilpotence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.TopologicallyNilpotent)
+
 Mathlib closes `IsTopologicallyNilpotent` under the operations that a topology on the ring makes
 available — `zero`, `add`, `mul_left`, `mul_right`, `map` — but not under negation. This file adds
 that, at the hypotheses the statement needs: a `MonoidWithZero` with a distributive negation, and

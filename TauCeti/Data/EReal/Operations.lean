@@ -10,6 +10,8 @@ public import Mathlib.Data.EReal.Operations
 /-!
 # Operations on extended real numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.EReal.Operations)
+
 This file supplements Mathlib's API for arithmetic operations on `EReal`.
 
 ## Main results

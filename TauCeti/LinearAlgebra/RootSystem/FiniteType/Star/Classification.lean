@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.RootSystem.Classification
 /-!
 # Classification of finite three-arm stars
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.Classification)
+
 The fork bound in `TauCeti.LinearAlgebra.RootSystem.FiniteType.Star.Basic` restricts an ordered
 three-arm star of finite type to the shapes underlying `A`, `D`, `E₆`, `E₇`, and `E₈`.
 This file identifies each surviving model star with its standard Cartan matrix and proves the

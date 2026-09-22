@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.SimpleGraph.Moebius
 /-!
 # The Möbius transform of a graph parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Representability.Moebius)
+
 For a graph parameter `f` and a graph `F` on `Fin n`, the **Möbius transform**
 `f†(F) = ∑_{G ≥ F} (-1)^{e(G) - e(F)} f(G)` is the coefficient of `F` when `f`, restricted to the
 graphs on `Fin n`, is expanded in the "contains exactly" basis: Möbius inversion over the Boolean

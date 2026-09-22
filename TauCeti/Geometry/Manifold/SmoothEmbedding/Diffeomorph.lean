@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Manifold.SmoothEmbedding.Basic
 /-!
 # Composing smooth embeddings with diffeomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.SmoothEmbedding.Diffeomorph)
+
 Mathlib defines `Manifold.IsSmoothEmbedding` as an immersion that is also a topological embedding,
 and lists `Diffeomorph.isSmoothEmbedding` as a `TODO` in
 `Mathlib/Geometry/Manifold/SmoothEmbedding.lean`, because a general composite of immersions has to

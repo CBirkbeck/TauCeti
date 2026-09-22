@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Matrix.BilinearForm
 /-!
 # The type-B matrix model of an odd polarization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeB.Basic)
+
 An odd polarization whose orthogonal remainder contains a vector of quadratic norm one identifies
 the quadratic space with the standard split odd space. This file compares the resulting basis
 with Mathlib's matrix model of the type-`B` Lie algebra and then with the quadratic elements of

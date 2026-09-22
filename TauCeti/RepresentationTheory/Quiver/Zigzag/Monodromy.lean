@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Potential
 /-!
 # The monodromy of a skew-zigzag parameter around a closed edge cycle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Monodromy)
+
 A skew-zigzag parameter labels each ordered pair of incident edges of a simple graph by the
 unit-valued ratio between the two backtracks they carry, and gauge equivalent parameters present
 isomorphic algebras. This file supplies a complete invariant of gauge equivalence.

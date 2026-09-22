@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Modulus
 /-!
 # The idele congruence subgroup of a modulus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Ideles.Congruence)
+
 Let `K` be a number field and `𝔪` a modulus of `K`.  The **idele congruence subgroup**
 `ideleCongruenceSubgroup 𝔪` is the subgroup of the idele group cut out placewise by the
 conditions that `𝔪` prescribes:

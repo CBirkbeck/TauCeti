@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.RootSystem.FiniteType.Classical
 /-!
 # The root lattice of type `Aₙ` and its discriminant form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RootLattice.TypeA)
+
 The positive root lattice of type `Aₙ` is the rank-`n` integral lattice whose Gram matrix in the
 simple-root basis is the Cartan matrix `CartanMatrix.A n`.  This file constructs it inside
 `Fin n → ℚ`, proves it even and nondegenerate, and computes its discriminant form:

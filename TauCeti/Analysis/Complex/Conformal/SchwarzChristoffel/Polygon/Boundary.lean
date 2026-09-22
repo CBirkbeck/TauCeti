@@ -14,6 +14,8 @@ import Mathlib.Order.SuccPred.IntervalSucc
 /-!
 # The Schwarz--Christoffel compactified boundary is polygonal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Boundary)
+
 For a nondecreasing finite family of prevertices, the real projective line splits into the
 two unbounded intervals and the intervals between consecutive prevertices.  The
 Schwarz--Christoffel boundary map carries each finite interval onto its bounded side.  The real

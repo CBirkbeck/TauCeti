@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.GrothendieckGroup.UnimodularCartanMat
 /-!
 # The Ext-Euler matrix of a finite-dimensional algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GrothendieckGroup.ExtEulerMatrix)
+
 Let `A` be an algebra over a field `k`, with finite exhaustive families of pairwise nonisomorphic
 simple modules `S i` and indecomposable projectives `P i`, where `P i ⟶ S i` is a projective
 cover. This file computes the Ext-Euler characteristic

@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # Cofinite kernels of finite-dimensional Lie representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Lie.CofiniteKernel)
+
 A Lie algebra map `f : L →ₗ⁅K⁆ A` into an associative algebra extends along the universal property
 to an algebra homomorphism `UniversalEnvelopingAlgebra.lift K f`.  The motivating case is a
 representation `ρ : L →ₗ⁅K⁆ Module.End K V`, but nothing below uses the endomorphism structure, so

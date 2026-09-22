@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.Submodule.Atom
 /-!
 # Complements make a finite-dimensional Lie module a direct sum of irreducibles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Submodule.Decomposition)
+
 Complete reducibility is usually proved in its *complement* form: every Lie submodule of a
 finite-dimensional module has a complement. This file turns that form into the *decomposition*
 form: the module is the internal direct sum of finitely many irreducible Lie submodules.

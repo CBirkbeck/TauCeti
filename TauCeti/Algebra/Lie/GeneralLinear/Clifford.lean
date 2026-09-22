@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Vectors
 /-!
 # The quadratic Clifford lift of the general linear Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Clifford)
+
 The adjoint action of `gl n K` preserves its trace form. Adding the central character
 `(card n / 2) trace` to its quadratic realization gives the normal-ordered quadratic lift in the
 corresponding Clifford algebra.

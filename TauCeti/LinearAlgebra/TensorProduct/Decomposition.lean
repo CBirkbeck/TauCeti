@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Decomposition
 /-!
 # Tensor products of internal decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorProduct.Decomposition)
+
 If `M` and `N` are internal direct sums of families of submodules `A i` and `B j`, then
 `M ⊗ N` is the internal direct sum of the images `A i ⊗ B j`. Mathlib supplies the external
 tensor-product/direct-sum equivalence and the decomposition obtained from one decomposed factor;

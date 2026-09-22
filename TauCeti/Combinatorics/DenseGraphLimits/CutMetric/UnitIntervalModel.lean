@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.UnitIntervalMap
 /-!
 # Reading a graphon on the unit interval
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.UnitIntervalModel)
+
 Every standard Borel probability space receives a measure-preserving map out of `(I, volume)`
 (Janson, Theorem A.9), and the cut distance does not change when a graphon is read along a
 measure-preserving map (`cutDist_comap_right`). Pulling a graphon back along such a map therefore

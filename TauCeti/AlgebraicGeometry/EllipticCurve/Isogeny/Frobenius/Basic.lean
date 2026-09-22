@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.Finite.Frobenius
 /-!
 # The Frobenius isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Basic)
+
 Over a finite field `F` with `q = Nat.card F` elements, raising to the `q`-th power is an
 `F`-algebra endomorphism of any `F`-algebra (`FiniteField.frobeniusAlgHom`). Composing it with
 the embedding of the coordinate ring into the function field gives a coordinate pullback, and

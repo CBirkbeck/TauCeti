@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.MvPolynomial.Expand
 /-!
 # Finiteness of `MvPolynomial.expand`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Expand)
+
 The polynomial ring `R[X_i]` is a finite module over its image under `MvPolynomial.expand n`
 (the subring `R[X_i ^ n]`), spanned by the monomials whose exponents are all below `n`.
 

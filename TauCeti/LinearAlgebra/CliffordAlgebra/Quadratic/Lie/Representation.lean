@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.SkewAdjoint
 /-!
 # Lie representations induced from Clifford modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.Representation)
+
 A Lie homomorphism into the skew-adjoint endomorphisms of a nondegenerate quadratic module
 lifts through the quadratic realization in its Clifford algebra. Composing this lift with any
 Clifford action makes the target Clifford module a module for the original Lie algebra.

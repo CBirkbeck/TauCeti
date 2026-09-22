@@ -15,6 +15,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.PointCount
 /-!
 # The degree of `1 − π_q` is the number of rational points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.OneSubFrobenius.Degree)
+
 Over a finite field the isogeny `1 − π_q` has degree the number of rational points of the curve.
 One inequality is `pointCount_le_degree_oneSubFrobeniusIsogeny`: the kernel is every rational point
 and the kernel is at most the degree. This file supplies the other.

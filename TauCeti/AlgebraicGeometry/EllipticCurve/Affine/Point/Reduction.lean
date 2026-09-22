@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.ValuationIntegralit
 /-!
 # Reduction of points modulo a valuation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Reduction)
+
 Let `v` be a valuation on a field `F`, with valuation ring `O` and residue field `k`, and let `W`
 be a Weierstrass curve over `F` with an integral model `W_O` over `O`. Every point of `W(F)`
 reduces to a `k`-point of the projective plane lying on the reduced curve `W_k = W_O ⊗ k`: write

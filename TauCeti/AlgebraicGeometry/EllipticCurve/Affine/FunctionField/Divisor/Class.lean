@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.Divisor.AffineModel
 /-!
 # The points of a Weierstrass curve are the degree-zero divisor classes of its function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divisor.Class)
+
 The coordinate ring of an affine Weierstrass curve is an affine model of its function field whose
 only place at infinity is `TauCeti.Place.infinity`, and that place is rational. The general
 affine-model bridge therefore identifies the ideal class group of the coordinate ring with the

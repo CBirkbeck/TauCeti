@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Zero
 /-!
 # The `X`-marking homotopy on the unblocked grid complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.XHomotopy.Basic)
+
 Fix the `X`-marking `X_k` of column `k` of a grid diagram. The map `H_k` on the unblocked grid
 complex `GC⁻` counts the empty rectangles whose covered squares carry exactly one `X`-marking,
 namely `X_k`, each weighted by the monomial `V^{O(r)}` of its covered `O`-markings, exactly as the

@@ -13,6 +13,8 @@ import TauCeti.Probability.Distributions.PDFInstances
 /-!
 # Independent Gamma variables and the Beta distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gamma.Beta)
+
 This file studies the coordinate change
 
 `(x, y) ↦ (x / (x + y), x + y)`

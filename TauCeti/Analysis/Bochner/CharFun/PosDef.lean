@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Complex.Order
 /-!
 # A finite measure's characteristic function is positive definite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Bochner.CharFun.PosDef)
+
 This file proves the "easy" (necessary) direction of Bochner's theorem: the characteristic
 function `charFun μ` of a finite measure `μ` on a real inner product space `E` is a
 *positive-definite function*. Concretely, for every finite family `(cᵢ, tᵢ)` the Hermitian

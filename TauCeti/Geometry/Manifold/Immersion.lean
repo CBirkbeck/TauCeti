@@ -14,6 +14,8 @@ public import Mathlib.Topology.OpenPartialHomeomorph.Composition
 /-!
 # Composing immersions with diffeomorphisms, and immersions into finite dimensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Immersion)
+
 Mathlib defines `Manifold.IsImmersion` by a normal form in charts — `f` looks like `u ↦ (u, 0)`
 for suitable charts of the source and the target — and lists `IsImmersion.comp` as a `TODO` in
 `Mathlib/Geometry/Manifold/Immersion.lean`, because a general composite has to combine two

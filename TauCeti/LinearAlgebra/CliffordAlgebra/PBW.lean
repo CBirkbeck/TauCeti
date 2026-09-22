@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.QuadraticForm.Basis
 /-!
 # PBW equivalence for a Clifford filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.PBW)
+
 This file identifies the associated graded algebra of the Clifford degree filtration with the
 exterior algebra when `2` is invertible. It combines the equivalences on the successive quotients
 with their compatibility with homogeneous multiplication.

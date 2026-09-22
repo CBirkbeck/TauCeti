@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Whiskering
 /-!
 # Tannaka duality for `G`-sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.Tannaka)
+
 A monoid `G` can be read off from the category `Action (Type u) G` of `G`-sets together with the
 forgetful functor `Action.forget (Type u) G` to types: the monoid of natural endomorphisms of that
 functor is `G` itself, so its automorphism group is the unit group `Gˣ`, which for a group `G` is

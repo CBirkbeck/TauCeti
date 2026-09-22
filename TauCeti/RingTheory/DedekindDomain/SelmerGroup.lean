@@ -13,6 +13,8 @@ import Mathlib.RingTheory.DedekindDomain.FiniteAdeleRing
 /-!
 # Complements on the `v`-adic valuation of a unit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SelmerGroup)
+
 Mathlib's `IsDedekindDomain.HeightOneSpectrum.valuationOfNeZero` is the `v`-adic valuation
 restricted to `Kˣ`, valued in `Multiplicative ℤ` rather than `ℤₘ₀`, and Mathlib relates it to
 `valuation` only through the coercion `valuationOfNeZero_eq`. This file adds the triviality

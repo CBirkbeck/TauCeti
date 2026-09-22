@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.BaseChange
 /-!
 # Base change of the center of an affine group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.BaseChange)
+
 For a field extension `k → K` and a commutative Hopf `k`-algebra `H`, this file proves the
 coordinate identity
 

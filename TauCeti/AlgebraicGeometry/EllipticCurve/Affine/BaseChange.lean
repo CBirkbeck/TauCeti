@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
 /-!
 # Base change of affine elliptic curves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.BaseChange)
+
 Mathlib carries ellipticity through `WeierstrassCurve.map`. This module exposes the same instance
 for the canonical affine base-change spelling `W⁄A`, so consumers of the point and function-field
 base-change APIs do not have to unfold that abbreviation. It also records that base change along

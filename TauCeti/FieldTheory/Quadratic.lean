@@ -28,6 +28,8 @@ import Mathlib.RingTheory.AdjoinRoot
 /-!
 # The trace and the norm of a quadratic irrationality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Quadratic)
+
 An element `x` of a degree-`2` extension `E/F` that does not lie in `F` satisfies a monic quadratic
 `x² = t x - d` over `F`, and the pair `(1, x)` is then an `F`-basis of `E`. In that basis
 multiplication by `x` **is** the companion matrix `TauCeti.companionFinTwo t d` of `X² - t X + d`,

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Bialgebra.MonoidAlgebra.BaseChange
 /-!
 # Base change of diagonalizable-group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.BaseChange)
+
 For a commutative group `G`, the diagonalizable group `D(G)` over `k` is represented by the
 Hopf algebra `k[G]`. The imported `TauCeti.MonoidAlgebra.scalarTensorBialgEquiv` identifies its
 base change `K ⊗[k] k[G]` with `K[G]` as a bialgebra. This file records the corresponding

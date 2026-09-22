@@ -14,6 +14,8 @@ import TauCeti.Analysis.Complex.Conformal.Moebius
 /-!
 # Schwarz--Pick for the pseudo-hyperbolic expression
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzPick.Basic)
+
 This file proves the Schwarz--Pick contraction estimate for holomorphic self-maps of the
 complex unit disc, stated using Tau Ceti's pseudo-hyperbolic expression
 `pseudoHyperbolicExpr z w = ‖(z - w) / (1 - conj w * z)‖`.

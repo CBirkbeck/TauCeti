@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminants
 /-!
 # Frobenius on the square root of a prime-discriminant radicand
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Frobenius)
+
 Let `P` be a prime discriminant and `x` a square root of its radicand in a number field. At every
 rational prime `q` not dividing `P`, an arithmetic Frobenius fixes `x` exactly when the character
 `primeDiscriminantCharFun P` attached to `P` takes the value `1` at `q`. This is the form in which

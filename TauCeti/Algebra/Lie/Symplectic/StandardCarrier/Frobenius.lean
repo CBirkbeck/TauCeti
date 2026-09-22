@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.Symplectic.StandardCarrier.PointsFunctor
 /-!
 # Frobenius on the full-weight type-C carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.Frobenius)
+
 `TauCeti.SpStd.groupScheme n` is the explicit full-weight Chevalley carrier of type `C_(n+1)`,
 built from the standard representation of `sp_(2n+2)` and its coordinate integral lattice. For a
 commutative value ring `A` of exponential characteristic `p`, this file equips its point group

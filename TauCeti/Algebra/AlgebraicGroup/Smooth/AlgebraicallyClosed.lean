@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.BaseChange
 /-!
 # Smooth affine groups over algebraically closed fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Smooth.AlgebraicallyClosed)
+
 A reduced group scheme locally of finite type over an algebraically closed field is smooth.
 For finite-type commutative Hopf algebras this gives the particularly useful coordinate
 criterion

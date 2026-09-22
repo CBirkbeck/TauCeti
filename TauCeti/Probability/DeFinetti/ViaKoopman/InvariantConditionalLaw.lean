@@ -13,6 +13,8 @@ public import Mathlib.Probability.Kernel.CondDistrib
 /-!
 # The invariant conditional law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaKoopman.InvariantConditionalLaw)
+
 On path space, the conditional law of the initial coordinate given the **shift-invariant**
 σ-algebra `MeasurableSpace.invariants (shift α)`, bundled as a random probability measure.
 

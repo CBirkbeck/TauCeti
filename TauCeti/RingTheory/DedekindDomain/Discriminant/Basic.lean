@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.Different.Basic
 /-!
 # Relative discriminant ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.Discriminant.Basic)
+
 For a finite torsion-free extension `A → B` of Dedekind domains, the relative discriminant is the
 ideal of `A` obtained by taking the relative norm of Mathlib's different ideal of `B`. This file
 introduces that carrier, together with the two defining identities that are valid without a

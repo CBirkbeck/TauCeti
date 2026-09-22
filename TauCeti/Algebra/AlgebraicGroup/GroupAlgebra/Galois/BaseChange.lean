@@ -12,6 +12,8 @@ import TauCeti.RepresentationTheory.GaloisDescent.Injective
 /-!
 # Scalar extension of an invariant group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.BaseChange)
+
 The natural map from `L ⊗[k] (L[M])^Gal(L/k)` to `L[M]` is surjective when the
 automorphism group of `L/k` is finite. Here the action twists both the coefficients and the
 exponents, with the latter specified by an integral representation on the abelian group `M`.

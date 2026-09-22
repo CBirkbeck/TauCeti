@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
 /-!
 # Descending Pochhammer polynomials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Pochhammer)
+
 This module provides basic lemmas for descending Pochhammer polynomials `descPochhammer R n`
 over general rings.
 

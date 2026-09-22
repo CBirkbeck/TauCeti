@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Table
 /-!
 # The eigenrows of the class-multiplication matrices are the central characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Eigenrow)
+
 Let `G` be a finite group and `k` an algebraically closed field in which `|G|` is invertible. The
 class sums `K_C` are a basis of the centre `Z(k[G])`, and the class-multiplication matrices `Mᵢ`
 record multiplication by `K_{Cᵢ}` in that basis. A **normalized common left eigenrow** of the family

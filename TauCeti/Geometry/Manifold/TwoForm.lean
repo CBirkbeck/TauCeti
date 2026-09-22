@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.BilinearForm.Properties
 /-!
 # Smooth differential two-forms on manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.TwoForm)
+
 This file defines smooth real differential two-forms on a manifold. A `SmoothTwoForm` is a smooth
 section of the bundle of continuous bilinear forms on the tangent bundle, with the fiberwise
 alternation law. Its value at a point is exposed as Mathlib's algebraic `LinearMap.BilinForm`, so

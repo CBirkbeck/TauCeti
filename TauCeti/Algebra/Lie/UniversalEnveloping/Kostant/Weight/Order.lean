@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Trian
 /-!
 # Ordering a Kostant weight basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Weight.Order)
+
 The positive-root triangularity results for Kostant root subgroups require an integral weight
 basis ordered so that adding a positive multiple of a root moves to a smaller index. This file
 constructs such an ordering from a degree functional which is positive on the chosen roots.

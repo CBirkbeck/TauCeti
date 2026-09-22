@@ -12,6 +12,8 @@ public import TauCeti.Analysis.PositiveDefinite.Kernel.Shift
 /-!
 # Differences of bounded positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Function.Difference)
+
 On an involutive commutative additive monoid `M`, a *bounded* positive-definite function `F`
 dominates each of its translates by a self-adjoint element: if `star s = s`, then
 

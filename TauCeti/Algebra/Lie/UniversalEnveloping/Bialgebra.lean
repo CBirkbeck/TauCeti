@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Functoriality
 /-!
 # The bialgebra structure on a universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Bialgebra)
+
 This file equips the universal enveloping algebra of a Lie algebra with its standard
 cocommutative bialgebra structure. Every element of the original Lie algebra is primitive:
 its comultiplication is `x ⊗ 1 + 1 ⊗ x`, and its counit is zero.

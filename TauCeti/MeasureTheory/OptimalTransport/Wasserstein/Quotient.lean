@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Pushforward
 /-!
 # Wasserstein separation on pseudometric spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Quotient)
+
 On a pseudometric ground space, zero Wasserstein distance identifies probability laws only after
 the ground space itself is separated. This file expresses that statement using Mathlib's
 `SeparationQuotient`: for a complete second-countable pseudometric space carrying its Borel

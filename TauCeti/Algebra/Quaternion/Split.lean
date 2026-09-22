@@ -12,6 +12,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Split quaternion algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Quaternion.Split)
+
 This file constructs explicit algebra equivalences from split quaternion algebras to two-by-two
 matrix algebras, over a commutative ring in which two is invertible.
 

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashAdjugate
 /-!
 # The adjugates of the Hecke coset representatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Adjugate)
+
 `HeckeRing.GL2.heckeSlashSum` sums `f ∣[k] aᵥ` over `aᵥ = rightCosetRep D v = δ τᵥ⁻¹`, where `δ`
 represents the double coset and `τᵥ` runs over `Γ₂ ⧸ (Γ₂ ∩ δ⁻¹Γ₁δ)`. Moving that sum across the
 Petersson pairing replaces each `aᵥ` by its main involution `aᵥ^ι = adjugateGL aᵥ`

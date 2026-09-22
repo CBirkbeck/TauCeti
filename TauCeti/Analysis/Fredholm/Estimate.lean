@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Fredholm.Basic
 /-!
 # The a priori estimate of a closed-range operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Estimate)
+
 A continuous linear map `T : E →L[𝕜] F` between Banach spaces with closed range fails to be
 bounded below only in the direction of its kernel. When that kernel is complemented, this file
 makes the failure quantitative, in the classical form

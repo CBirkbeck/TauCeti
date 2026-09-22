@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.Singular.Subdivision.AffineChain
 /-!
 # Barycentric subdivision is chain homotopic to the identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.Homotopy)
+
 This file constructs the prism operator `P` of barycentric subdivision `S` and proves the chain
 homotopy formula `∂ P + P ∂ = 1 - S`, first on affine chains and then on singular chains with
 coefficients in an object `R` of a preadditive category with coproducts. On the standard simplex

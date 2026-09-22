@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Galois.Basic
 /-!
 # Galois descent for Weierstrass curve data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.GaloisDescent)
+
 Let `L/K` be a separable quadratic extension. Data attached to a Weierstrass curve over `L` and
 fixed by the nontrivial `σ ∈ Gal(L/K)` descends to `K`, because an element of `L` fixed by `σ` is
 already in `K` (`Algebra.IsQuadraticExtension.mem_range_algebraMap_of_apply_eq`). Two descent

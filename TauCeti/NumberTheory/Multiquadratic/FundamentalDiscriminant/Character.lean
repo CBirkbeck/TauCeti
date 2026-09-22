@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.Diric
 /-!
 # The primitive character of a fundamental discriminant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.FundamentalDiscriminant.Character)
+
 A fundamental discriminant `D` determines a primitive integer-valued Dirichlet character
 `fundamentalDiscriminantChar` of level `|D|`. It is the product of the characters of the
 prime discriminants in any factorization of `D`. At an odd prime `q` its value is

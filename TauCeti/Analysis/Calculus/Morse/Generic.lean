@@ -17,6 +17,8 @@ import TauCeti.MeasureTheory.Measure.Haar.NormedSpace
 /-!
 # Almost every linear perturbation of a function is Morse
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.Generic)
+
 Morse homology starts from a function all of whose critical points are nondegenerate, so the
 theory is empty until such functions are known to exist. This file proves that they are in fact
 *generic*: on an open subset `U` of a finite-dimensional real normed space `E`, for a twice

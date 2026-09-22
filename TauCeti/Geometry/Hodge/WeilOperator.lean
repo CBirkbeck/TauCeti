@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Complex.Conjugation
 /-!
 # The Weil operator of a pure Hodge structure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.WeilOperator)
+
 The Weil operator `C` of a pure Hodge structure of weight `n` is the complex-linear automorphism
 acting on the Hodge component `H^{p,q}` by the scalar `i^{p-q}`. Since `q = n - p` on the
 component `piece p`, that scalar is `i^{2p-n}`, and the Hodge decomposition

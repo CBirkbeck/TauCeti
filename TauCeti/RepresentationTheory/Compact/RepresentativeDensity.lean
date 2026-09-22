@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Compact.EigenspaceRepresentation
 /-!
 # The representative ring is dense in `C(G)`: the analytic core of Peter-Weyl
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.RepresentativeDensity)
+
 The **representative ring** `𝓡(G)` of `TauCeti/RepresentationTheory/Continuous/Representative.lean`
 is the span, inside `C(G, 𝕜)`, of the matrix coefficients of the finite-dimensional continuous
 representations of `G`. This file proves that on a compact group it is **uniformly dense** in

@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
 /-!
 # Discrete topological groups have the discrete uniformity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.UniformSpace.DiscreteUniformity)
+
 A complement to Mathlib's `DiscreteUniformity`: a uniform additive group whose topology is
 discrete has the discrete uniformity, since its uniformity is the comap of the (discrete)
 neighbourhood filter of zero.

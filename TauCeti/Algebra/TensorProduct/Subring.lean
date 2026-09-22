@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 /-!
 # Tensor squares of subrings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.TensorProduct.Subring)
+
 This file defines the canonical map from the integral tensor square of a subring of an algebra
 to the tensor square of the ambient algebra, together with its range and basic membership lemmas.
 

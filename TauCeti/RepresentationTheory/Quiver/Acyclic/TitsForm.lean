@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.EulerForm
 /-!
 # A positive definite Tits form forces acyclicity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Acyclic.TitsForm)
+
 A directed cycle is an obstruction to positive definiteness of the Tits form. Let `p` be a closed
 path of positive length and let `d` be the indicator vector of the set `S` of vertices it visits.
 Every vertex of `p` is the source of an arrow of `p`, and that arrow lands in `S` again, so the

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Finite.ScalarExtension.Monoidal
 /-!
 # Tensor automorphisms from algebraic-group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Monoidal)
+
 Let `H` be a Hopf algebra over a commutative semiring `R`, and let `A` be a commutative
 `R`-algebra. Scalar extension of finite `H`-comodules is a strong monoidal functor
 

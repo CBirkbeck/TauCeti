@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Bivector
 /-!
 # The quadratic elements of a Clifford algebra as a Lie subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Quadratic.Lie.Subalgebra)
+
 A Clifford algebra is an associative algebra, so its commutator makes it a Lie algebra. Inside it
 the **quadratic elements** — the span of the half-normalized commutators
 `CliffordAlgebra.bivector Q a b` of two generators — are closed under the bracket,

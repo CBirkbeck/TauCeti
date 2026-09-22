@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Module.LinearPMap
 /-!
 # Closedness of semigroup generators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator.Closed)
+
 This file proves that the infinitesimal generator of a strongly continuous semigroup on a real
 Banach space is a closed `LinearPMap`. The proof uses the Laplace-transform resolvent: for any
 parameter above a growth exponent, the generator graph is the equalizer

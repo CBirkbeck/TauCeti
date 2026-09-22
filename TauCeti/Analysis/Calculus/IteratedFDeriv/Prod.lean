@@ -11,6 +11,8 @@ import Mathlib.Analysis.Calculus.FDeriv.Equiv
 /-!
 # Iterated derivatives in one variable of a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.IteratedFDeriv.Prod)
+
 The iterated derivative of a slice `x ↦ f (p, x)` is the total iterated derivative of `f`
 restricted to directions in the second factor. Consequently these partial derivatives vary
 continuously in both variables when `f` is sufficiently differentiable. This gives the

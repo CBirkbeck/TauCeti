@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Basic
 /-!
 # The twisted slash sum at the cusps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Cusps)
+
 `HeckeSlash/Cusps.lean` proves `isZeroAt_heckeSlashSum` and `isBoundedAt_heckeSlashSum` for the
 unweighted sum. This file is the nebentypus-twisted counterpart.
 

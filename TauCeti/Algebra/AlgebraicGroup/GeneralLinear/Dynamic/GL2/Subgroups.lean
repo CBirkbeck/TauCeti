@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.GL2.Basic
 /-!
 # The dynamic Levi and unipotent subgroups of `GL₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Dynamic.GL2.Subgroups)
+
 For the cocharacter `t ↦ diag(t, 1)` of `GL₂`, the dynamic parabolic is the upper-triangular
 Borel subgroup. This file identifies the other two pieces of its dynamic Levi decomposition:
 

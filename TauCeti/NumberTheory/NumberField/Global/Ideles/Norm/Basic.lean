@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Places.Completion
 /-!
 # The idele norm of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Ideles.Norm.Basic)
+
 An idele of a number field `K` is a unit `x` of the adele ring `𝔸_K`
 (`NumberField.IdeleGroup (𝓞 K) K`).  Its coordinate `x_v` at every place is a unit of the
 completion `K_v`, and at all but finitely many finite places it is a unit of the valuation ring.

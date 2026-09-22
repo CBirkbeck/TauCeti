@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Galois.Group
 /-!
 # The subfield lattice of a multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Subfield.Lattice)
+
 For square roots `root i` of radicands `d i` over a field `K` with `2 ≠ 0`, square-class
 independence makes `M = K(rootᵢ : i)` Galois with group `(ℤ/2)ⁿ`
 (`TauCeti.NumberTheory.Multiquadratic.Galois.Group`). The fundamental theorem of Galois theory

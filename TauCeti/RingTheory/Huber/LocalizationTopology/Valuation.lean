@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Valuation.ExtendToLocalization
 /-!
 # Extending a valuation to Wedhorn's topological localisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Valuation)
+
 Roadmap Layer 3.1 attaches to a rational subset `U = R(T/s)` of `X = Spa(A, A⁺)` a coordinate
 ring together with its ring of integral elements, and asks for a natural homeomorphism
 

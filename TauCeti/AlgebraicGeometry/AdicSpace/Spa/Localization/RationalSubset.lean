@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Localization.IntegerMultiple
 /-!
 # Rational subsets under a localization homeomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.RationalSubset)
+
 Let `S` be a localization of `A` at a submonoid `M`. Every finite family of elements of `S` has a
 common denominator in `M`. Multiplying all the numerators and the denominator of a rational subset
 by that common denominator does not change the subset, because the multiplier is a unit. Thus

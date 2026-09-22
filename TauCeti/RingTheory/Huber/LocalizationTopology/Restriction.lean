@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.Completion.RingHom
 /-!
 # Restriction maps for a refined presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Restriction)
+
 The structure presheaf of an adic space sends a rational subset `R(T/s)` to `A⟨T/s⟩` and a
 containment `R(T'/s') ⊆ R(T/s)` to a restriction map `A⟨T/s⟩ → A⟨T'/s'⟩` (*Adic Spaces*,
 arXiv:1910.05934v1, §8.1–§8.2). This file builds such a map whenever the target presentation

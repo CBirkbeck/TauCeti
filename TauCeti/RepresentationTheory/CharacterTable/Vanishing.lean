@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.RootsOfUnity.Complex
 /-!
 # Burnside's vanishing theorem for character values
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Vanishing)
+
 Let `χ` be the character of an irreducible representation of a finite group `G`, and let `g` be an
 element whose conjugacy class `C` has size coprime to the degree `χ(1)`. Then `χ(g)` is as far from
 generic as it can be: either it vanishes, or it has the largest absolute value a character value

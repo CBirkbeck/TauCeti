@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Cocharacter
 /-!
 # Power endomorphisms of `𝔾ₘ` and the ring map `ℤ → End(𝔾ₘ)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.PowerEndomorphism)
+
 `TauCeti.Algebra.AlgebraicGroup.Cocharacter` introduces, for the multiplicative group
 `𝔾ₘ = D(Multiplicative ℤ)`, the `n`th power endomorphism `DiagonalizableGroup.powEnd n`, defined
 through the diagonalizable-group functoriality as the character of `𝔾ₘ` at the generator power

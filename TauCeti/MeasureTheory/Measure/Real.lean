@@ -10,6 +10,8 @@ public import Mathlib.Probability.CDF
 /-!
 # Real measures and the squaring map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.Real)
+
 Squaring loses the sign of a real number and nothing else, so it determines a measure on the line
 as soon as the measure cannot tell the two signs apart. This file records the two readings of that
 observation. For a reflection-invariant finite measure, the pushforward under squaring is a

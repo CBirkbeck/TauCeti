@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Basic
 /-!
 # Affine models: a place finite on a Dedekind subring is one of its height one primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.AffineModel.Place)
+
 An *affine model* of `F / k` is a Dedekind `k`-subalgebra `R` of `F` whose fraction field is `F`;
 the standard example is the integral closure `R_x` of `k[x]` in `F` for a transcendental `x`. This
 file proves the forward direction of the places ↔ height one primes correspondence: a place of

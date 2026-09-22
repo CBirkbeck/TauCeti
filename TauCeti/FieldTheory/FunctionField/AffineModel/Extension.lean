@@ -13,6 +13,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.Extension.Fibre
 /-!
 # Affine models of an extension: the fundamental identity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.AffineModel.Extension)
+
 Let `F' / k'` be a finite extension of the field extension `F / k`, let `R` be an affine model of
 `F / k` and let `S` be an affine model of `F' / k'` that is an `R`-algebra: a pair of charts of the
 two curves, compatible with the covering map. This file identifies the extension-theoretic data of

@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.Semisimple.RegularIsotypicComponent
 /-!
 # Inertia cosets index the constituents in Clifford's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Clifford.Orbit.Index)
+
 This file identifies the orbit of an irreducible constituent in Clifford's theorem with the left
 cosets of its inertia group. Concretely, if `σ` is a minimal subrepresentation of the restriction
 of an irreducible finite-dimensional representation `ρ` from `G` to a normal subgroup `N`, then

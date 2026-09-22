@@ -11,6 +11,8 @@ public import TauCeti.InformationTheory.Coding.RowOperations
 /-!
 # Generator matrices and parity-check matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.GeneratorParityCheck)
+
 The rows of a matrix generate a linear code, while the same matrix checks the Euclidean dual of
 that code. This identifies the kernel presentation by a parity-check matrix with the orthogonal
 complement of its row space and makes conversion between generator and parity-check matrices

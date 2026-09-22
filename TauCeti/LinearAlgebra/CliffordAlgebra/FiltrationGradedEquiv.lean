@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.ExteriorFiltration
 /-!
 # The degree quotients of a Clifford filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.FiltrationGradedEquiv)
+
 Mathlib's `CliffordAlgebra.equivExterior` identifies a Clifford algebra with its exterior-algebra
 model when `2` is invertible. This file proves that the equivalence respects the degree filtration,
 then transports the zero-form calculation of each successive quotient to an arbitrary quadratic

@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.PolynomialRing.Basic
 /-!
 # `pLocalSubring` is a polynomial ring for `n = 1, 2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.PolynomialRing.Injective)
+
 The injectivity half of **Shimura's Theorem 3.20** and the resulting isomorphism
 `ℤ[X₁, …, Xₙ] ≃+* pLocalSubring`, for `n = 1` and `n = 2`. The generators and the surjectivity half
 are in `PolynomialRing/Basic.lean`.

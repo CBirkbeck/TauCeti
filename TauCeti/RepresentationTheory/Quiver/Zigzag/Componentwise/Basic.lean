@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Isomorphism
 /-!
 # The componentwise zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Basic)
+
 The uniform path-algebra quotient `TauCeti.nonisolatedZigzagQuotient` gives the intended zigzag
 algebra on a connected graph with an edge, but gives only the coefficient ring on an isolated
 vertex.  The Huerfano--Khovanov convention instead assigns the dual numbers to a one-vertex

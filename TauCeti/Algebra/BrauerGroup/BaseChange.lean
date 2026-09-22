@@ -26,6 +26,8 @@ import TauCeti.Algebra.Matrix.BaseChange
 /-!
 # Base change is a homomorphism of Brauer groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.BaseChange)
+
 Let `L / K` be an extension of fields. Scalar extension sends a finite-dimensional central simple
 `K`-algebra `A` to the finite-dimensional central simple `L`-algebra `L ⊗[K] A`
 (`TauCeti/Algebra/CentralSimple/BaseChange.lean`), and this file shows that the assignment descends
@@ -132,7 +134,10 @@ It is well defined by `TauCeti.isBrauerEquivalent_baseChange_congr`, multiplicat
 
 The `Quotient.liftOn` is an implementation detail, kept unexposed: the interface is
 `TauCeti.BrauerGroup.baseChange_mk`, and every statement below is phrased and proved through
-that. -/
+that.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.BrauerGroup.baseChange) -/
 def baseChange : BrauerGroup.{u, u} K →* BrauerGroup.{u, u} L where
   toFun x := Quotient.liftOn x (fun A ↦ mk (CSA.baseChange L A))
     fun _ _ h ↦ Quotient.sound (isBrauerEquivalent_baseChange_congr L h)

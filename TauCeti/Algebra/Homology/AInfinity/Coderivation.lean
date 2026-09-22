@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.TaylorComponent
 /-!
 # Stasheff identities from a bar coderivation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Coderivation)
+
 This file identifies the Stasheff identities with the Taylor components of the square of the
 corresponding degree-one coderivation of the reduced tensor coalgebra.  The predicate
 `TauCeti.AInfinity.IsSuspension` records the commuting suspension square on homogeneous pure

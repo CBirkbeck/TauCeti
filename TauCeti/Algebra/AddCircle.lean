@@ -15,6 +15,8 @@ import TauCeti.Algebra.Module.Torsion.Basic
 /-!
 # Integrality and torsion in the circle group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AddCircle)
+
 A rational number reduces to zero in `ℚ/ℤ`, realized as `AddCircle (1 : ℚ)`, exactly when it
 lies in `(1 : Submodule ℤ ℚ)`, the copy of `ℤ` inside `ℚ`. This bridges the two spellings of
 integrality used by the discriminant-form theory: vanishing in the circle group and membership

@@ -11,6 +11,8 @@ import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 /-!
 # Adjoining roots of finitely many elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.Adjoin.Roots)
+
 For finitely many elements of a field `F` and `0 < n`, there is a finite extension of `F` in
 which each of them has an `n`-th root: adjoin the roots inside an algebraic closure.
 

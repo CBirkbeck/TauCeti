@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Normal.Defs
 /-!
 # Restricting automorphisms along an embedding of a normal extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Galois.Restriction)
+
 Mathlib's `AlgEquiv.restrictNormalHom` restricts automorphisms of `K/F` to a normal subextension
 `M/F` given by a scalar tower `F → M → K`. This file restricts along an arbitrary embedding
 `f : M →ₐ[F] K` instead, which is convenient when `M` is an intermediate field sitting inside `K`

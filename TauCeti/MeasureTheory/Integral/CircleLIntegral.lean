@@ -19,6 +19,8 @@ import Mathlib.Topology.Order.LeftRightNhds
 /-!
 # The lower integral of a weight over a circle, and the length–area inequality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.CircleLIntegral)
+
 For a weight `g : ℂ → ℝ≥0∞` this file introduces `TauCeti.circleLIntegral g ζ ρ`, the lower
 integral of `g` over the circle of centre `ζ` and radius `ρ` with respect to arc length, computed
 through Mathlib's parametrisation `circleMap ζ ρ`, which for `ρ > 0` runs once around that circle

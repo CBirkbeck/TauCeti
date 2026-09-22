@@ -12,6 +12,8 @@ import TauCeti.Analysis.InnerProductSpace.LinearCombination
 /-!
 # Kolmogorov decomposition of a positive-definite kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.Kernel.Kolmogorov)
+
 This file constructs the canonical Hilbert-space realization of a scalar-valued
 positive-definite kernel.  A kernel `K : α → α → 𝕜` is first regarded as the operator-valued
 kernel whose `(a, b)` entry is multiplication by `K a b` on the one-dimensional Hilbert space

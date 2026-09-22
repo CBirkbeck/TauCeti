@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.SemidirectProduct
 /-!
 # Solvability under faithfully flat affine group morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.FaithfullyFlat)
+
 Let `f : H ⟶ K` be a finite-type faithfully flat morphism of commutative Hopf algebras over a
 field. Contravariantly, every algebraically closed point of `Spec H` lifts to a point of
 `Spec K`. The resulting homomorphism on point groups is therefore surjective, so solvability of

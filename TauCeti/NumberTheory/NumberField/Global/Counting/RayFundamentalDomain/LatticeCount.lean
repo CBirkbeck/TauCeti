@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDom
 /-!
 # Counting congruence-lattice points in the ray fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.LatticeCount)
+
 Let `𝔪` be a modulus of a number field `K` and `I` an invertible fractional ideal.  This file
 counts the points of a coset of `congruenceLattice 𝔪 I` inside the dilates of the norm-≤-one
 section of `rayFundamentalDomain 𝔪`, with a power-saving error and — the point — with an implied

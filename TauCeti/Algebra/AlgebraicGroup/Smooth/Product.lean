@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Smooth
 /-!
 # Smoothness of products of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Smooth.Product)
+
 The coordinate algebra of a direct or semidirect product of affine groups is the tensor product
 of the two coordinate algebras. Smoothness is preserved by base change and composition, so the
 product is smooth when both factors are. Smoothness then descends to a scheme-theoretic image in

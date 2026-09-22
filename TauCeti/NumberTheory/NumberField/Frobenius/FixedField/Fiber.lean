@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Frobenius.Tower
 /-!
 # Contracting a Frobenius fiber to the fixed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius.FixedField.Fiber)
+
 Fix `σ ∈ Gal(L/K)` and let `E = L ^ ⟨σ⟩`. If `σ` is an arithmetic Frobenius at a prime `Q` of
 `𝓞 L` unramified over `𝓞 K`, then over `E` there is a relative Frobenius at `Q` restricting to
 `σ`. That is the direction a fixed-field count needs from this file.

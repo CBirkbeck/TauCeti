@@ -16,6 +16,8 @@ import TauCeti.RingTheory.Polynomial.Resultant.Discriminant
 /-!
 # Galois orbits on the roots of a polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Orbits)
+
 Let `p` be a polynomial over a field `F` and let `E` be an extension in which `p` splits. The
 Galois group `Polynomial.Gal p` acts on `p.rootSet E`, and this file identifies the orbits of
 that action with the monic irreducible factors of `p`.

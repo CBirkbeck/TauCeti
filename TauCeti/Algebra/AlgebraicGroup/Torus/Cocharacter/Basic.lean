@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.CharacterLattice.Basic
 /-!
 # Cocharacter lattices of tori
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.Cocharacter.Basic)
+
 The geometric cocharacter lattice, its dual comparison, Galois action, and evaluation pairing are
 defined for every group of multiplicative type in
 `TauCeti.Algebra.AlgebraicGroup.MultiplicativeType.Cocharacter`. This file specializes that API to

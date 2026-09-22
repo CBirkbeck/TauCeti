@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Algebra.Bilinear
 /-!
 # Corners cut out by two idempotents
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Corner)
+
 Let `A` be an algebra over a commutative semiring `k`. This file defines the corner `eAf` as the
 range of the `k`-linear map `x ↦ e * x * f`. When `e` and `f` are idempotent, membership is
 equivalent to the fixed-point equation `e * x * f = x`.

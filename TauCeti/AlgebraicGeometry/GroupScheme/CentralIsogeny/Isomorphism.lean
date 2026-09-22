@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Basic
 /-!
 # Central isogenies and isomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Isomorphism)
+
 An isogeny with monic underlying scheme morphism is an isomorphism. Central isogenies are also
 unchanged by replacing their source or target by an isomorphic group scheme. This file proves the
 corresponding `MorphismProperty.RespectsIso` instance and records the underlying fact that the

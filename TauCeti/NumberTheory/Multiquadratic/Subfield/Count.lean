@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.Multiquadratic.CoprimeSquarefree
 /-!
 # The number of quadratic subfields of a multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Subfield.Count)
+
 For square roots `root i` of radicands `d i` over a field `K` with `2 ≠ 0`, square-class
 independence makes `M = K(rootᵢ : i)` Galois with group `(ℤ/2)ⁿ`, and
 `TauCeti.NumberTheory.Multiquadratic.Subfield.Degree` reads off *which* intermediate fields are

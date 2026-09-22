@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.Even
 /-!
 # The Construction A lattice of the extended binary Golay code
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.Golay)
+
 Construction A applied to the extended binary Golay code produces the rank-`24` lattice of
 integer vectors in `ℚ^(Fin 24)` whose reduction modulo two is a Golay codeword, carrying the
 halved dot product. Because the Golay code is doubly even and Euclidean self-dual, this lattice

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.Model
 /-!
 # The simply connected root datum of type `Bₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.Datum)
+
 This file assembles the coordinate model of
 `TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.Model` into the pinned integral root
 datum of type `Bₙ`, uniformly in the rank `n`, on the character and cocharacter lattices

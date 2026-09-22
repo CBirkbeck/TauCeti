@@ -11,6 +11,8 @@ public import Mathlib.Topology.Homotopy.Path
 /-!
 # Paths in a disjoint union
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Sigma)
+
 A path in a disjoint union `Σ i, X i` never leaves the summand it starts in, because the unit
 interval is connected: this is Mathlib's `ContinuousMap.exists_lift_sigma`. This file draws the
 two consequences that the fundamental groupoid of a disjoint union needs, namely that the

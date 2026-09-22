@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Lie.Semisimple.Defs
 /-!
 # Isotypic Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Isotypic)
+
 This file defines isotypy for Lie modules over a commutative ring. It is the Lie-module analogue
 of Mathlib's module-theoretic `IsIsotypicOfType`, `IsIsotypic`, and `isotypicComponent` interface.
 The definitions here do not depend on a universal enveloping algebra; the comparison with

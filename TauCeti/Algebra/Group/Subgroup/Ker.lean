@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Group.Subgroup.Ker
 /-!
 # Kernels and equality loci of group homomorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Group.Subgroup.Ker)
+
 This file supplies the characteristic membership equation for the subgroup equality locus.
 -/
 

@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Field.ZMod
 /-!
 # Weight divisibility for ternary codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.Weight.Divisibility)
+
 The self-dot-product of a ternary word is its Hamming weight modulo three. Consequently,
 every word in a Euclidean self-orthogonal ternary code has weight divisible by three.
 This supplies the weight constraint for self-dual codes such as the extended ternary Golay code.

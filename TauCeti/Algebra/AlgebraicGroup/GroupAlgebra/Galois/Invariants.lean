@@ -12,6 +12,8 @@ public import TauCeti.Algebra.HopfAlgebra.Antipode
 /-!
 # Galois invariants of a group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Invariants)
+
 Let `L/k` be a Galois extension and let `M` be an abelian group carrying an integral
 representation of `Gal(L/k)`. The simultaneous action on coefficients and exponents of
 `L[Multiplicative M]` has a fixed `k`-subalgebra. This file constructs that subalgebra and proves

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.KrullSchmidt.Indecomposable
 /-!
 # Existence of a decomposition into indecomposable submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullSchmidt.Existence)
+
 The Krull-Schmidt theorem has two halves: every module of finite length is a finite internal direct
 sum of indecomposable submodules, and that decomposition is unique up to a matching of the summands.
 This file proves the first half. Uniqueness, whose proof is the exchange argument on the local

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Lie.AdjointAction.Basic
 /-!
 # The adjoint action of an associative algebra and the Frobenius
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.AdjointAction.Frobenius)
+
 Let `A` be an associative `R`-algebra, bracketed by its ring commutator, and let
 `ad R A a : Module.End R A` be the inner derivation `b ↦ ⁅a, b⁆`.  Two powers are in play and
 they must not be confused: `a ^ n` is a power in the ring `A`, while `ad R A a ^ n` is a power in

@@ -21,6 +21,8 @@ import TauCeti.RingTheory.Ideal.Operations
 /-!
 # Exactness for a two-piece Laurent cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.LaurentCover)
+
 Let `A` be a complete Hausdorff strongly noetherian Tate ring and `f ∈ A`. The rational subsets
 
 ```text

@@ -13,6 +13,8 @@ import Mathlib.Analysis.Real.Sqrt
 /-!
 # Compact real Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Spin.Real.Basic)
+
 For a positive-definite real quadratic form, every nonzero norm is a square. The spinor norm on
 the orthogonal group therefore agrees with the determinant modulo squares. Its restriction to the
 special orthogonal group is trivial, so the Spin action is surjective.

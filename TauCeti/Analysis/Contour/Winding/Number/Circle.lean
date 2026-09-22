@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Complex.CauchyIntegral
 /-!
 # The generalized winding number of a circle: `1` at the centre, `0` outside
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Circle)
+
 For the counterclockwise circle `circleMap c R` traversed over `[0, 2π]`, this file evaluates the
 generalized winding number `TauCeti.Contour.windingNumber` (Hungerbühler–Wasem Def 2.1) at two kinds
 of points:

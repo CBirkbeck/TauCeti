@@ -19,6 +19,8 @@ import Mathlib.RingTheory.Polynomial.DegreeLT
 /-!
 # Surjectivity of `Point.toClass`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.ToClass)
+
 Mathlib builds `WeierstrassCurve.Affine.Point.toClass : W.Point →+ Additive (ClassGroup
 W.CoordinateRing)` and proves it **injective**, realising the points of an affine Weierstrass
 curve as a subgroup of the affine ideal class group. It does not prove surjectivity; this file

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Parity
 /-!
 # The sign of the functional equation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LFunction.Sign)
+
 Hecke's functional equation relates the completed L-function of a cusp form `f` of level `Γ₁(N)`
 to that of its Petersson-normalized Fricke companion: `Λ_N(k - s, f) = i^k Λ_N(s, 𝒲_N f)`, a
 relation between *two* forms. When `f` is an eigenvector of the normalized Fricke operator,

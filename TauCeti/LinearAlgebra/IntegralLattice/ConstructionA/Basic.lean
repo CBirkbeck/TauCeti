@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.BilinearForm.Basic
 /-!
 # Construction A and its dual lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.ConstructionA.Basic)
+
 For an additive code `C ≤ (ZMod m)^ι`, `ConstructionA.lattice m C` is the submodule of
 `ℚ^ι` consisting of integer vectors whose reductions lie in `C`. The ambient form is
 `ConstructionA.form m x y = (∑ i, x i * y i) / m`. This rational model becomes the usual

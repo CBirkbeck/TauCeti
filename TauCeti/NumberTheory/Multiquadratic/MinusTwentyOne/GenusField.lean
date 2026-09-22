@@ -13,6 +13,8 @@ import TauCeti.FieldTheory.IntermediateField.Adjoin.Square
 /-!
 # The genus field of `ℚ(√-21)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusTwentyOne.GenusField)
+
 The fundamental discriminant of `ℚ(√-21)` is `-84 = (-4) · (-3) · (-7)`. Its
 prime-discriminant radicands are therefore `-1`, `-3`, and `-7`. This file identifies the
 canonical prime-discriminant compositum with the explicit field

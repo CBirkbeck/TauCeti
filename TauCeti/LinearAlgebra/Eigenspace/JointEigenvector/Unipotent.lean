@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.Unipotent
 /-!
 # Common fixed vectors for commuting unipotent automorphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Unipotent)
+
 A unipotent automorphism has only the eigenvalue one.  Consequently, the joint eigenvector of a
 commuting family of unipotent automorphisms is fixed by every member of the family.  We record both
 the resulting common fixed vector and the one-dimensional fixed submodule that it spans.

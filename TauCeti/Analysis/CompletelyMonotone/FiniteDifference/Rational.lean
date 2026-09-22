@@ -10,6 +10,8 @@ public import TauCeti.Analysis.CompletelyMonotone.FiniteDifference.Basic
 /-!
 # Complete monotonicity in the finite-difference sense, from rational data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.FiniteDifference.Rational)
+
 `TauCeti.IsDifferenceCompletelyMonotone` quantifies over *all* lists of nonnegative real steps and
 all nonnegative real base points. A construction that produces a candidate function as a countable
 limit — for instance a fibrewise Radon--Nikodym density, which is only defined up to a null set —

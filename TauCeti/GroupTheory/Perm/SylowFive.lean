@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Sylow
 /-!
 # Sylow `5`-subgroups of `S₅` and the orders of its transitive subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.SylowFive)
+
 Let `α` be a type with five elements, so that `Equiv.Perm α` is the symmetric group `S₅` of
 order `120`. Its Sylow `5`-subgroups have order `5`; there are six of them, and each has a
 normalizer of order `20`.

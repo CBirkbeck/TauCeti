@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.GramSchmidtOrtho
 /-!
 # The diagonal coefficient of the Gram-Schmidt process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.GramSchmidtOrtho)
+
 Mathlib's `InnerProductSpace.gramSchmidt_triangular` records that, in the basis `b` it is fed,
 `gramSchmidt 𝕜 b i` has no component along `b j` for `i < j`.  This file supplies the diagonal
 companion: the component along `b i` itself is `1`, because the Gram-Schmidt step subtracts from

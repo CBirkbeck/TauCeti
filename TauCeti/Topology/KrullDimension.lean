@@ -10,6 +10,8 @@ public import Mathlib.Topology.KrullDimension
 /-!
 # Krull dimension of topological spaces: open covers and closed points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.KrullDimension)
+
 This file records two facts about the topological Krull dimension and the codimension of points.
 
 The Krull dimension of a space is the supremum of the Krull dimensions of the members of an open

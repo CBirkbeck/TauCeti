@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.NarrowClassGroup.ElementaryTwoQuo
 /-!
 # Genus characters on the elementary-2 quotient of the narrow class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.GenusCharacter.ElementaryTwoQuotient)
+
 A genus character on the narrow class group has values in the two-element group `ℤˣ`, so it is
 trivial on squares. It therefore factors canonically through the maximal elementary-2 quotient
 

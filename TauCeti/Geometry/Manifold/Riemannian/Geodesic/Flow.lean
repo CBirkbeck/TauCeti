@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.Riemannian.Geodesic.Smoothness
 /-!
 # The smooth local geodesic flow
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Flow)
+
 The geodesic spray of a smooth finite-dimensional Riemannian manifold has a family of integral
 curves depending smoothly on the initial tangent vector and on time.  Projecting each spray
 trajectory to the manifold gives the geodesic with that initial position and velocity, on one

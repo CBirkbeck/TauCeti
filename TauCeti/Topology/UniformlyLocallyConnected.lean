@@ -12,6 +12,8 @@ import TauCeti.Topology.LocallyConnected
 /-!
 # Uniform local connectedness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.UniformlyLocallyConnected)
+
 A set `s` in a pseudometric space is **uniformly locally connected** when the connected sets
 joining nearby points can be chosen small *at a rate independent of where they are*: for every
 `ε > 0` there is a single `δ > 0` such that any two points of `s` at distance less than `δ` lie in

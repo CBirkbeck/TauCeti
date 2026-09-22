@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Monoid.FunOnFinite
 /-!
 # Fibrewise sums of Euclidean coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.PiL2)
+
 A map `f : ι → κ` of finite index types coarsens a Euclidean coordinate system: the coordinates
 of a vector indexed by `ι` are merged into the groups cut out by the fibres of `f`, one group
 summed into each coordinate of a vector indexed by `κ`.  This is Mathlib's `FunOnFinite.map`,

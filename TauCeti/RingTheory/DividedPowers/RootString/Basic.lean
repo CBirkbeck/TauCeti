@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.DividedPowers.NormalOrdering
 /-!
 # Normal ordering divided powers along the chain `β`, `α + β`, `2α + β`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DividedPowers.RootString.Basic)
+
 Let `x`, `y`, `z`, and `w` belong to an associative algebra over `ℚ`, with
 
 ```text

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 /-!
 # The vanishing order at the cusp
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Order.AtCusp)
+
 The vanishing order of a modular form at the cusp is the order of its `q`-expansion, as an
 integer with junk value `0` at the identically vanishing expansion — the convention of the
 interior dictionary `orderOfVanishingAt`. It is computed by the analytic order of the cusp

@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Dimension
 /-!
 # The dimensions of the half-spin summands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Dimension)
+
 `TauCeti.spinRep` realizes the spinor module of a polarized quadratic space `(V, Q)` on the
 exterior algebra `S = ⋀·W` of the isotropic summand `W` of the polarization, and
 `TauCeti.spinPlus` and `TauCeti.spinMinus` cut it into its even and odd halves. This file counts

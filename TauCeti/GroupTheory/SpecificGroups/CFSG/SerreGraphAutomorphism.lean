@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.GraphTwisted
 /-!
 # Serre graph automorphisms for the graph-twisted families
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.SerreGraphAutomorphism)
+
 For a graph-twisted finite group of Lie type, the graph part of its Steinberg endomorphism starts
 with the automorphism of the split semisimple Lie algebra which permutes the Chevalley generators
 according to the symmetry of the Dynkin diagram. This file constructs that automorphism on the

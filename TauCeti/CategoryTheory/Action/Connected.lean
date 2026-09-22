@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.Action.Transitive
 /-!
 # Connected `G`-sets are the transitive ones
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.Connected)
+
 An object of a category is *connected* in the sense of
 `CategoryTheory.PreGaloisCategory.IsConnected` when it is not initial and admits no nontrivial
 subobject. This file identifies that condition for `G`-sets: an object of `Action (Type u) G` is

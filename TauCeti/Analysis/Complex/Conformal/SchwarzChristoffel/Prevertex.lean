@@ -17,6 +17,8 @@ import TauCeti.Analysis.Contour.PolarPart.PartialFraction
 /-!
 # The prevertex residues of the pre-Schwarzian derivative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Prevertex)
+
 A conformal map of the upper half-plane onto a polygon is holomorphic across each open boundary
 interval between two consecutive prevertices, and its pre-Schwarzian derivative
 `logDeriv (deriv f) = f'' / f'` continues across those intervals to a conjugation-symmetric

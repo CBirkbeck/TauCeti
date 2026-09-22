@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cosets
 /-!
 # The level-descent matrices are permuted by `Γ₀(N / p)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.Action)
+
 `Newforms/Descent/Cosets.lean` defines the family `descendMatrix p N` that Miyake's level
 descent at a prime `p` runs over, and leaves open both that the family is a set of coset
 representatives and that the associated slash sum descends the level. This file proves neither of

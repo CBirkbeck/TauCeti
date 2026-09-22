@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.NumberField.DirichletDensityBounds
 /-!
 # Natural density of sets of prime ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.NaturalDensity)
+
 For a number field `K`, this file defines the natural density of a set `S` of nonzero prime
 ideals as the limit
 
@@ -75,7 +77,11 @@ variable {S T : Set (HeightOneSpectrum (𝓞 K))} {δ ε : ℝ}
 /-- A set `S` of height-one primes of a number field has natural density `δ` when the proportion
 of primes of `S` below `x`, relative to all primes below `x`, tends to `δ` as `x → ∞`.
 
-Both counts use the inclusive real cutoff fixed by `TauCeti.primeCount`. -/
+Both counts use the inclusive real cutoff fixed by `TauCeti.primeCount`.
+
+Reviewed-by: 1 person
+Tested by: 5 key results
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=NumberField.Set.HasNaturalDensity) -/
 def HasNaturalDensity (S : Set (HeightOneSpectrum (𝓞 K))) (δ : ℝ) : Prop :=
   Tendsto (fun x : ℝ => TauCeti.primeCount K S x /
     TauCeti.primeCount K (Set.univ : Set (HeightOneSpectrum (𝓞 K))) x) atTop (𝓝 δ)

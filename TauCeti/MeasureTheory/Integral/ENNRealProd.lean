@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Integrating finite products of `ℝ≥0∞`-valued functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.ENNRealProd)
+
 Two facts about a finite product `∏ i, f i ω` of `ℝ≥0∞`-valued functions, relating its real form
 to its `ℝ≥0∞` form.
 

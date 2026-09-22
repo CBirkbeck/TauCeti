@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.Scheme
 /-!
 # The diagonal torus of the general linear group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.DiagonalTorus.Basic)
+
 The rank-`N` split torus has `A`-points `Fin N → Aˣ`, while the general linear group has
 `A`-points `GL (Fin N) A`.  The diagonal embedding
 

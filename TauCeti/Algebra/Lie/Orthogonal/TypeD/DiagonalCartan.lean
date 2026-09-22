@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.Classical
 /-!
 # The diagonal Cartan subalgebra of the split orthogonal Lie algebra of type D
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeD.DiagonalCartan)
+
 Mathlib's `LieAlgebra.Orthogonal.typeD ι K` is the Lie algebra of matrices skew-adjoint for the
 split symmetric form with matrix
 

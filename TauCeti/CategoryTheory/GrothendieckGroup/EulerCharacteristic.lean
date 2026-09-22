@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Abelian
 /-!
 # The Euler characteristic of a bounded complex in abelian `K₀`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.EulerCharacteristic)
+
 For a cochain complex `K` over an abelian category `A` and an invariant `v` additive on short
 exact sequences, the alternating sum
 

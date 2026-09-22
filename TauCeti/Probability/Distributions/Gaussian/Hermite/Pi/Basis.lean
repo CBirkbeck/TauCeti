@@ -12,6 +12,8 @@ public import TauCeti.Probability.Distributions.Gaussian.Pi
 /-!
 # The multi-index Hermite basis of a multivariate Gaussian `L²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Hermite.Pi.Basis)
+
 The `Fintype`-indexed product of the one-dimensional Gaussian Hermite basis: the multi-index family
 `Ψ_a(x) = ∏ᵢ H_{aᵢ}(xᵢ)/√(aᵢ!)` is a Hilbert basis of `L²(γ^ι)`, the standard basis for
 multivariate Gaussian `L²` and for chaos expansions.

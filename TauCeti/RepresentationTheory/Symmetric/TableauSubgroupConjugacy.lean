@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Symmetric.YoungSubgroup
 /-!
 # Tableau row groups and Young subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.TableauSubgroupConjugacy)
+
 The row group of a tableau depends on its labeling, whereas the Young subgroup attached to its
 shape uses consecutive blocks. This file constructs the permutation sending the consecutive-block
 labeling to a given tableau and proves that it conjugates the corresponding Young subgroup onto

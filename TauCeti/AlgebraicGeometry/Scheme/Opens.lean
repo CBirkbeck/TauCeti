@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Scheme
 /-!
 # Open subsets of schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.Opens)
+
 This file records general-purpose facts about open subsets of schemes.
 
 ## Main declarations

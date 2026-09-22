@@ -17,6 +17,8 @@ import Mathlib.Topology.Piecewise
 /-!
 # Borsuk's separation criterion and Janiszewski's theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.PlaneSeparation.Basic)
+
 Two points `a`, `b` of the plane lie in the same connected component of the complement of a compact
 set `K` **exactly when** the *Borsuk map* `z ↦ (z - a) / (z - b)` admits a continuous logarithm on
 `K`. `TauCeti/Analysis/Complex/ContinuousLog/Basic.lean` introduces the predicate

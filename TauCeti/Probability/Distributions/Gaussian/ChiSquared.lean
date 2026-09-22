@@ -12,6 +12,8 @@ public import TauCeti.Probability.Moments.Pi
 /-!
 # Squares of standard Gaussian variables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.ChiSquared)
+
 This file identifies the square of a standard real Gaussian variable with the chi-squared law
 of one degree of freedom. It then combines this identification with independence to prove that
 the sum of the squares of a finite independent standard Gaussian family has the chi-squared law

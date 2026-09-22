@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Homological.TateCohomology.Basic
 /-!
 # Inflation in positive-degree Tate cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.Inflation)
+
 For a normal subgroup `S` of a finite group `G`, ordinary group cohomology has the canonical
 inflation map
 

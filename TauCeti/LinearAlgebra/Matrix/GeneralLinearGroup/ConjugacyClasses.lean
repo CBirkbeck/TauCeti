@@ -32,6 +32,8 @@ import Mathlib.FieldTheory.Finite.Trace
 /-!
 # The conjugacy classes of `GL₂` over a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.ConjugacyClasses)
+
 Rational canonical form in size two, proved in
 `TauCeti.LinearAlgebra.Matrix.RationalCanonicalFormFinTwo`, says that a non-scalar `2 × 2` matrix
 `M` over a field is similar to the companion matrix `!![0, -det M; 1, trace M]` of its

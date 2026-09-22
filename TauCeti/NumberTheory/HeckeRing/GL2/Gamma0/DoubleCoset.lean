@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The `Γ₀(N)` double coset of a coprime-determinant element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DoubleCoset)
+
 **Shimura, Lemma 3.29(3).** For `α ∈ Δ₀(N)` whose determinant is coprime to `N`,
 
 `SL₂(ℤ) α SL₂(ℤ) ∩ Δ₀(N) = Γ₀(N) α Γ₀(N)`.

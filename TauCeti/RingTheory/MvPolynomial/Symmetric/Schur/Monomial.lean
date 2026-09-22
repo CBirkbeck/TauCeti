@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Symmetric
 /-!
 # The monomial expansion of a Schur polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Schur.Monomial)
+
 The Schur polynomial `s_μ` is a sum of one monomial per semistandard tableau, so its coefficient at
 an exponent vector `d` is the Kostka number counting the tableaux of shape `μ` and content `d`
 (`TauCeti.coeff_schurPoly`).  That content is a *function* on the alphabet, while the Kostka

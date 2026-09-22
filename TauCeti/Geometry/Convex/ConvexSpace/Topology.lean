@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Convex.ConvexSpace.Topology
 /-!
 # Continuity of affine maps between standard simplices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.ConvexSpace.Topology)
+
 An affine map `Convexity.StdSimplex.affineMapMk v` out of a standard simplex is determined by the
 images `v m` of the vertices. When the target is a standard simplex on a finite type, its
 weights are the bilinear expressions `∑ m, w.weights m * (v m).weights n`, so the map is

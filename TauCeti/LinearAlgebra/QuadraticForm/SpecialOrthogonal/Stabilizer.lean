@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Prod
 /-!
 # The last-vector stabilizer in a special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.SpecialOrthogonal.Stabilizer)
+
 Let `Q` be a quadratic form on a finite free module `M`. Extending an element of `SO(Q)` by the
 identity on a rank-one summand embeds it into `SO(Q.prod QuadraticMap.sq)`. If two acts regularly on
 the base ring, its image is exactly the stabilizer of the last basis vector `(0, 1)`.

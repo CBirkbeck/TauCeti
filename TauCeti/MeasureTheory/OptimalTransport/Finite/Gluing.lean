@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Finite.TransportMatrix
 /-!
 # Finite coupling gluing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Finite.Gluing)
+
 For finite probability spaces, this file gives the elementary gluing formula used by finite
 coupling arguments.  If `π` is a law on
 `α × β` and `σ` is a law on `β × γ` with the same `β` marginal, the glued law on

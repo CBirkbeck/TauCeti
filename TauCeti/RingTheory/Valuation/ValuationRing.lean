@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Valuation.ValuationRing
 /-!
 # Squares of the form `1 + 4c` in a valuation ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.ValuationRing)
+
 In a valuation ring `R` in which `2 ≠ 0`, the element `1 + 4c` is a square exactly when `c` has
 the form `t ^ 2 + t`, the witness being `1 + 2t`. One direction is an identity valid in every
 commutative ring. The other says that every square root `y` of `1 + 4c` satisfies `2 ∣ y - 1`,

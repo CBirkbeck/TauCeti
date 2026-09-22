@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Prime.Radicands
 /-!
 # The Galois group of a prime-radicand multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.GaloisGroup)
+
 The field-generic isomorphism `TauCeti.Multiquadratic.galoisGroupEquiv` identifies the Galois
 group of a multiquadratic field `M = K(rootᵢ : i)` with `(ℤ/2)ⁿ` once the radicands are
 **square-class independent**: no nonempty subset product of them is a square. This file derives

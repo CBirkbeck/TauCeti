@@ -14,6 +14,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.ZSMul
 /-!
 # A torsion point's `x`-coordinate is integral over the base field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion.Integral)
+
 `ΨSqₙ` is a nonzero polynomial over the base field whenever `n ≠ 0` and the curve is nonsingular,
 and a torsion point is a root of it. So the `x`-coordinate of an affine point killed by a nonzero
 `n` is integral over the base, with no hypothesis on the extension.

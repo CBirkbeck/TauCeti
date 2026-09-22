@@ -15,6 +15,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # Based oriented Gauss codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.GaussCode.Basic)
+
 A based oriented Gauss code records the combinatorial data seen while traversing an oriented knot
 diagram from a chosen base point. There are `2 * n` visits to `n` crossings; a perfect matching
 pairs the two visits at each crossing, and the Boolean `over` field records which visit passes over

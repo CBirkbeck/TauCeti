@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.Maximal
 /-!
 # Tori contained in Borel subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Borel.Torus)
+
 Every torus in a finite-type affine group over an algebraically closed field is contained in a
 Borel subgroup. The coordinate-ring order is contravariant: if `I` defines the torus and `J`
 defines the Borel, containment is the inequality `J ≤ I`.

@@ -10,6 +10,8 @@ public import TauCeti.KnotTheory.PDCode.ReidemeisterOne
 /-!
 # The first Reidemeister move on oriented PD-codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.PDCode.OrientedReidemeisterOne)
+
 The first Reidemeister move inserts a kink into an oriented planar-diagram code.  The old arc
 orientation uniquely determines the orientations of the four new half-edges.  This file lifts
 `PDCode.reidemeisterOne` to oriented codes and computes the sign of the new crossing and the

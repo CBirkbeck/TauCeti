@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.BilinearMap.GramCongruence
 /-!
 # Matrices of the graded Ext--Euler pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Graded.Matrix)
+
 The graded Ext--Euler pairing is Laurent-sesquilinear: the involution
 `LaurentPolynomial.invert` acts on its first argument and the second argument is linear. This file
 records its matrix in independently chosen bases and proves the corresponding change-of-basis

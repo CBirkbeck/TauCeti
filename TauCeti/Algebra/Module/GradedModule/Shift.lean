@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Module.GradedModule.Internal
 /-!
 # Shifting an internal grading
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.Shift)
+
 An internal grading may be regraded by a fixed shift `c`, so that the degree-`p` piece of the
 shifted grading is the degree-`(p + c)` piece of the original one. The underlying module is
 unchanged, and the shifted family is again an internal direct sum: reindexing the homogeneous

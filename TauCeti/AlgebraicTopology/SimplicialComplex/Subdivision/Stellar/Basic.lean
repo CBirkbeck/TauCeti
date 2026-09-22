@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Link
 /-!
 # Stellar subdivision at a face
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Subdivision.Stellar.Basic)
+
 *Starring* a complex `K` at one of its faces `σ`, with a fresh vertex `v`, replaces the closed
 star of `σ` by the cone with apex `v` on the boundary of that closed star. It is the combinatorial
 model of the geometric move in which a new vertex placed in the interior of `σ` cones off the

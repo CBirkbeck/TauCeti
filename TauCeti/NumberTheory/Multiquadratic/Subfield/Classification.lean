@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Subfield.Count
 /-!
 # The quadratic subfields are exactly the subset-product subfields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Subfield.Classification)
+
 For square roots `root i` of radicands `d i ∈ K` over a field `K`, the nonempty subset products
 `∏_{i ∈ S} root i` generate quadratic subfields of the multiquadratic field `M = K(rootᵢ : i)`,
 and when `2 ≠ 0`, under square-class independence, distinct nonempty subsets give distinct

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Orthogonal matrices as linear isometries
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.OrthogonalGroup)
+
 This file relates Mathlib's matrix orthogonal group to the linear isometry group of the
 corresponding Euclidean space.
 

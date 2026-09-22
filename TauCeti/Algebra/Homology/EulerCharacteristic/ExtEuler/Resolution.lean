@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Exact.Projective
 /-!
 # The Ext-Euler characteristic from a finite projective resolution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.Resolution)
+
 Let `C` be a `k`-linear abelian category. A finite projective resolution
 
 ```text

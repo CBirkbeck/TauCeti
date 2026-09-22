@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Counting
 /-!
 # Abel summation for norm-indexed summatory functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.AbelSummation)
+
 Mathlib's `sum_mul_eq_sub_sub_integral_mul` is Abel summation for a sequence indexed by the natural
 numbers.  Every counting argument of the arithmetic-Dirichlet-series roadmap instead sums a weight
 over a carrier indexed by ideals or by height-one primes, cut off inclusively by the absolute norm.

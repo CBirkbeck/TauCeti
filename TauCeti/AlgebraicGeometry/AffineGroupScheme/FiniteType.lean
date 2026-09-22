@@ -13,6 +13,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.HopfSpec
 /-!
 # Affine group schemes of finite type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.FiniteType)
+
 This file restricts the anti-equivalence between commutative Hopf algebras and affine group
 schemes to the finite-type objects. On the coordinate side, finite type means
 `Algebra.FiniteType R H`. On the scheme side, it means that the structural morphism

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum
 /-!
 # The descent slash sum at the cusps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.Cusps)
+
 Every member of the descent family is the image of a rational matrix (`descendMatrix_eq_map`),
 so the descent slash sum is a finite sum of rational slashes, and a function vanishing, resp.
 bounded, at every cusp keeps that property after it (`OnePoint.isZeroAt_sum_rat_slash`,

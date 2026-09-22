@@ -11,6 +11,8 @@ public import TauCeti.LowDimTopology.Plumbing.NegativeDefinite
 /-!
 # A diagonal-dominance criterion for negative-definite plumbings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.DiagonalDominance)
+
 Némethi's lattice homology takes as its standing hypothesis a **negative-definite** plumbing
 graph: the intersection form of the plumbed four-manifold must be negative definite on the whole
 lattice. Checking this directly means diagonalizing (or completing the square on) the intersection

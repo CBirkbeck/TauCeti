@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Ideal.ArtinMap
 /-!
 # The Artin map away from the ramified primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Discriminant.ArtinMap)
+
 Let `L/K` be a finite abelian extension of number fields. The relative discriminant identifies a
 canonical finite set of excluded primes: outside `NumberField.ramifiedSupport K L`, every prime
 of `L` is unramified over `K`. Specializing the ideal-theoretic Artin map to this set gives the

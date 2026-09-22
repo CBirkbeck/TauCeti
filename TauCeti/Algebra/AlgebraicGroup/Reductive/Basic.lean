@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Basic
 /-!
 # Reductive affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Reductive.Basic)
+
 A finite-type affine group over a field is reductive when it is smooth and geometrically
 connected and, after extension to an algebraic closure, it has no nontrivial connected normal
 smooth unipotent closed subgroup. In coordinate-Hopf-algebra terms, a closed subgroup of the

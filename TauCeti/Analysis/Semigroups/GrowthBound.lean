@@ -12,6 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # Growth bounds for strongly continuous semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.GrowthBound)
+
 This file contains exponential growth bounds for C₀-semigroups, including the
 contraction case and the existence of a finite exponential type.
 

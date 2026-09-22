@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorProduct.Range
 /-!
 # Descent of bracket equations after extension of scalars
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.BaseChange.Range)
+
 The adjoint endomorphism of a Lie algebra commutes with extension of scalars.  Consequently, a
 bracket equation `x = ⁅x, y⁆` that has a solution after a faithfully flat extension already has a
 solution over the original coefficient ring.  In particular, passing to an algebraic closure cannot

@@ -12,6 +12,8 @@ public import TauCeti.Probability.Process.MarkovChain
 /-!
 # Mixtures of Markov chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.MixedMarkovChain)
+
 A process `X : ℕ → Ω → α` on a countable state space is a **mixture of Markov chains** when its
 finite-path `μ`-masses are integrals of Markov-chain path masses against `μ`: there is a measurable
 initial-law witness `ν : Ω → ProbabilityMeasure α` and a measurable transition-matrix witness

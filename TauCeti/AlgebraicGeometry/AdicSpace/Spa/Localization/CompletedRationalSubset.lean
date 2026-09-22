@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.DenseRange
 /-!
 # Rational subsets of the completed rational localization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.CompletedRationalSubset)
+
 For a rational subset `R(T/s)` of `Spa (A, A⁺)`, `spaCompletedLocalizationHomeomorph` identifies
 `Spa (A⟨T/s⟩, A_U⁺)` with `R(T/s)`. This file shows that the identification matches rational
 subsets: pullback along the structure map `ρ : A → A⟨T/s⟩` is a bijection between the rational

@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Classification.RecoveredS
 /-!
 # Aspherical spaces through the universal cover and its subgroup quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.EilenbergMacLane)
+
 Under the standing hypotheses of this development — `X` path-connected, locally
 path-connected and semilocally simply connected — every homotopy group of `X` in a dimension
 at least two is a homotopy group of the universal cover. Asphericity of `X` is therefore a

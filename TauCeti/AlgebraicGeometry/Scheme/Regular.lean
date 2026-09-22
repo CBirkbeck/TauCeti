@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
 /-!
 # Rational functions without poles are regular
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Scheme.Regular)
+
 On a locally Noetherian integral scheme a regular function has nonnegative order at every point
 where it is defined (`TauCeti.AlgebraicGeometry.Scheme.ord_germToFunctionField_nonneg`). This file
 proves the converse for a scheme of dimension at most one whose codimension-one local rings on an

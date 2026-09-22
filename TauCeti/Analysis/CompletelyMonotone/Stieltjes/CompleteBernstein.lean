@@ -10,6 +10,8 @@ public import TauCeti.Analysis.CompletelyMonotone.Stieltjes.Bernstein
 /-!
 # Complete Bernstein functions and Stieltjes functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.CompletelyMonotone.Stieltjes.CompleteBernstein)
+
 A complete Bernstein function has a representation
 
 `g(t) = a + b t + ∫ x, t / (t + x) ∂μ`,

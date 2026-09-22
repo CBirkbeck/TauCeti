@@ -15,6 +15,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.IsCone
 /-!
 # Abstract simplices and their boundaries
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.Simplex.Basic)
+
 This file defines the abstract simplex spanned by a finite set of vertices and its boundary.
 Both are `PreAbstractSimplicialComplex`es on the original ambient vertex type: this lets the
 construction remember exactly which vertices occur, unlike `AbstractSimplicialComplex`, which

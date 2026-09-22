@@ -11,6 +11,8 @@ public import TauCeti.Analysis.PDE.SymmetricEnergy
 /-!
 # Symmetry of integrated zero-drift energy forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.EnergyForm.Integrated.Symmetry)
+
 Lane D of the PDE roadmap needs symmetric bilinear forms for the energy method and the
 Dirichlet spectrum.  `TauCeti.Analysis.PDE.SymmetricEnergy` proves the corresponding
 finite-dimensional facts for the pointwise jet integrand.  This file passes those facts

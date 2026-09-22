@@ -11,6 +11,8 @@ import Mathlib.Geometry.Manifold.BumpFunction
 /-!
 # Testing smooth bundle homomorphisms on sections
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.Hom)
+
 A section of a hom bundle with finite-dimensional source fibres is smooth if and only if
 it sends every globally smooth section to a smooth section. This turns smoothness of
 tensorial operations on sections into smoothness of the associated tensor field, by

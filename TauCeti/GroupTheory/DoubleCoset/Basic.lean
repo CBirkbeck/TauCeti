@@ -12,6 +12,8 @@ import Mathlib.Tactic.Group
 /-!
 # Double cosets: the left-coset decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Basic)
+
 A double coset `HaK` decomposes as the union of the left cosets `(h * a) • K`, where `h`
 ranges over representatives of the quotient of `H` by the stabiliser `H ∩ aKa⁻¹`. The
 decomposition indexes the left cosets

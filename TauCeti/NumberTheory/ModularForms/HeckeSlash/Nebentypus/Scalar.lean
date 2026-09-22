@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Action
 /-!
 # Scalar cosets in the nebentypus Hecke action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Scalar)
+
 This file identifies the action of the scalar double coset
 `Γ₀(N) diag(c, c) Γ₀(N)` on functions, modular forms, and cusp forms of nebentypus `χ`.
 Since the scalar matrix

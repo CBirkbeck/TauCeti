@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Regroup
 /-!
 # Derivatives of ideal-indexed Dirichlet series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.Deriv)
+
 Differentiating an ideal term `idealTerm K f s I = f I / N(I) ^ s` in `s` returns the same term
 weighted by `-log N(I)`.  Summing over the nonzero integral ideals, the derivative of the
 norm-regrouped `L`-series is therefore, up to a sign, the ideal-indexed Dirichlet series of the

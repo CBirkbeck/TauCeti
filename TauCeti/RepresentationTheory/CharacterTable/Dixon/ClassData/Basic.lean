@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.ClassSum.Multiplicatio
 /-!
 # Executable conjugacy-class data
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.ClassData.Basic)
+
 The class-algebra theory of a finite group is indexed by `ConjClasses G`, a quotient type: perfect
 for stating theorems, useless for computing with, since nothing picks a representative of a class
 or orders the classes. The Burnside--Dixon--Schneider character-table algorithm needs both, because

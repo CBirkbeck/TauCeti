@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.Brauer.Diagram
 /-!
 # The boundary points of a Brauer diagram
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Brauer.Boundary)
+
 Every boundary point of a Brauer diagram lies on exactly one of a through strand, a cap or a
 cup. This file sorts the boundary points accordingly -- the bottom and top endpoints of the
 through strands, the bottom endpoints of the caps and the top endpoints of the cups -- and

@@ -12,6 +12,8 @@ import TauCeti.Algebra.Group.Subgroup.Cover
 /-!
 # Primitive actions from extremal blocks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.Blocks)
+
 For a transitive group action, the blocks containing a chosen point are order-isomorphic to the
 subgroups containing its stabilizer. This file applies that correspondence at the two ends of the
 block lattice.

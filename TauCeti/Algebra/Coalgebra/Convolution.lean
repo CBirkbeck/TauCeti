@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Bialgebra.TensorProduct
 /-!
 # Comultiplication as a convolution product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Convolution)
+
 Let `C` be an `R`-algebra carrying a comultiplication. This file records that, in the convolution
 monoid of linear maps `C →ₗ[R] C ⊗[R] C`, comultiplication is the convolution product of the two
 canonical inclusions `c ↦ c ⊗ₜ 1` and `c ↦ 1 ⊗ₜ c` of `C` into its tensor square.

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.ExteriorAlgebra.Contraction
 /-!
 # The coordinate integral lattice in an exterior algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.ExteriorAlgebra.IntegralLattice)
+
 Let `b : Basis ι ℚ M`. The exterior basis `b.ExteriorAlgebra`, indexed by finite subsets of `ι`,
 defines a canonical integral form of `ExteriorAlgebra ℚ M`: take the `ℤ`-span of its basis vectors.
 This file constructs that lattice and proves that it is closed under the exterior product.

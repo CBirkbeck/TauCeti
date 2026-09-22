@@ -15,6 +15,8 @@ import TauCeti.Data.Finset.Basic
 /-!
 # Duhamel formulas for the Banach-algebra exponential
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Exponential)
+
 This file expresses a finite increment of the exponential in a possibly noncommutative real
 Banach algebra as an integral. Unlike a first-order derivative formula, the identity is exact for
 every increment. It also derives the corresponding integral formula for the Fréchet derivative.

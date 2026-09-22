@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.IntermediateField.Basic
 /-!
 # Scalar towers one step below an intermediate field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.ScalarTower)
+
 Mathlib's `IntermediateField.isScalarTower_mid` supplies `IsScalarTower K E L` for an intermediate
 field `E` of `L / K`.  The same statement holds one step further down: any commutative semiring
 acting compatibly below `K` also acts compatibly through `E`.

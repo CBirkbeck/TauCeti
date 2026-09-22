@@ -14,6 +14,8 @@ public import TauCeti.Algebra.WordFiltration.AssociatedGraded
 /-!
 # The degree filtration of a Clifford algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Filtration)
+
 A Clifford algebra carries two different degree structures, one grading and one filtration, and it
 is worth keeping them apart. Mathlib already has the `ℤ/2`-grading `CliffordAlgebra.evenOdd`, which
 is a genuine `GradedAlgebra`: the Clifford relation `ι Q m * ι Q m = Q m` preserves the parity of

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.PrimeDecomposition
 /-!
 # Generators of the `p`-local Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.PolynomialRing.Basic)
+
 Towards **Shimura's Theorem 3.20**, that the `p`-local Hecke ring `pLocalSubring` of `GL_n` is a
 polynomial ring `ℤ[X₁, …, Xₙ]` on the `n` diagonal prime cosets. This file sets up the
 generators and proves the surjectivity half for `n = 1` and `n = 2`. The injectivity half —

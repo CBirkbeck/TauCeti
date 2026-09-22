@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.PermutationTriple.Examples
 /-!
 # Examples of regular triples and triangle groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TriangleGroup.Examples)
+
 This file applies the triangle-group regularity API to the concrete permutation triples from
 `TauCeti.Combinatorics.PermutationTriple.Examples`.
 

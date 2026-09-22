@@ -12,6 +12,8 @@ import TauCeti.Topology.Algebra.Module.ContinuousLinearMap.Invertible
 /-!
 # Inverting and differentiating continuous linear maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ContinuousLinearMapInverse)
+
 This file collects two kinds of facts about inverting continuous linear maps. The first is a
 perturbation criterion: a map differing from a continuous linear equivalence `L` by less than
 `‖L⁻¹‖⁻¹` in operator norm is again invertible, by a Neumann series. The second packages the

@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Induction.Basic
 /-!
 # Finite-dimensional induced representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.FiniteDimensional.Basic)
+
 This file constructs the finite-dimensional representation induced from a finite-index subgroup.
 The main input is a linear equivalence between coinduction and a product indexed by right cosets.
 Composing it with Mathlib's finite-index isomorphism from induction to coinduction gives the
@@ -283,7 +285,10 @@ private noncomputable def indSmallModel {k : Type u} {G : Type v} [Field k] [Gro
   -- identification as `FDRep.forget₂_ρ` for rewriting outside this construction.
   exact { object := FDRep.ofShrink V.ρ, equiv := FDRep.ofShrinkEquiv V.ρ }
 
-/-- The finite-dimensional representation induced from a finite-index subgroup. -/
+/-- The finite-dimensional representation induced from a finite-index subgroup.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.indFDRep) -/
 noncomputable def indFDRep {k : Type u} {G : Type v} [Field k] [Group G] {S : Subgroup G}
     [S.FiniteIndex] (A : FDRep k S) : FDRep k G :=
   (indSmallModel A).object

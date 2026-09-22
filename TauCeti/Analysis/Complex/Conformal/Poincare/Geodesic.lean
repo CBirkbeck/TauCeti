@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Complex.Conformal.Poincare.Isometry.Equiv
 /-!
 # The Poincaré disc is a geodesic metric space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.Geodesic)
+
 `Poincare/MetricSpace.lean` makes the complex open unit disc a metric space `TauCeti.PoincareDisc`
 for the hyperbolic distance `TauCeti.hyperbolicDist`, and `Poincare/Topology.lean` shows the
 resulting metric is proper. This file adds the remaining basic geometric fact about that metric:

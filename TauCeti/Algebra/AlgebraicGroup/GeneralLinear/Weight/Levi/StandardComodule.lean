@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Coordinate
 /-!
 # The standard representation of a weight Levi
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Levi.StandardComodule)
+
 Restricting the standard representation of `GL_N` to the block-diagonal subgroup attached to
 an integer weight gives a faithful, completely reducible comodule over every field. Invariant
 subspaces are sums of whole weight blocks, and the remaining blocks give invariant complements.

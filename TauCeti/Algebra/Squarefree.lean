@@ -19,6 +19,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Squarefree elements, squares, and squarefree parts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Squarefree)
+
 This file records a few general facts about squarefree elements, squares, and rational squares
 that Mathlib does not provide directly, used across the multiquadratic development.
 

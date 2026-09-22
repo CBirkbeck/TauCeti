@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Ideles.Basic
 /-!
 # Local compactness of ideles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Ideles.LocallyCompact)
+
 The idele group has the topology induced by `x ↦ (x, x⁻¹)`, so it inherits local compactness as
 the unit group of the locally compact adele ring.
 

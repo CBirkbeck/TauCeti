@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.Noetherian.Basic
 /-!
 # Transport principles for integral closures and their finiteness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.Transfer)
+
 Two general facts that the finiteness of integral closures is assembled from, each stated in the
 abstract typeclass form `IsIntegralClosure`, and independent of each other.
 

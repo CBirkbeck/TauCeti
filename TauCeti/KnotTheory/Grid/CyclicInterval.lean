@@ -15,6 +15,8 @@ public import TauCeti.Data.Fin.Basic
 /-!
 # Complementary cyclic intervals in finite grids
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.CyclicInterval)
+
 This file records finite-set bookkeeping for the clockwise cyclic intervals used by toroidal
 grid rectangles. For distinct endpoints `a` and `b`, the two open arcs `cIoo a b` and `cIoo b a`
 are disjoint and together contain exactly the points other than `a` and `b`. The half-open arc

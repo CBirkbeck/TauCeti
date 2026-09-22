@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 /-!
 # The vanishing order of a modular form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Order.OfVanishing)
+
 `TauCeti.orderOfVanishingAt f z` is the order of vanishing of `f : ℍ → ℂ` at `z ∈ ℍ`, read
 as the meromorphic order of `f ∘ ofComplex` at `z`. For a nonzero holomorphic function it
 detects vanishing (`orderOfVanishingAt_eq_zero_iff`), and it transports along the slash

@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Disjoint
 /-!
 # Side-column overlap in two-step rectangle decompositions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.SideOverlap)
+
 A term in the square of the grid differential is a pair of composable rectangles. The
 juxtaposition proof of `∂² = 0` splits according to how the two pairs of vertical sides meet.
 This file makes that split exact: the pairs are disjoint, have one common column, or coincide.

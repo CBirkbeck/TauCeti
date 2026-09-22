@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.Finite.SepClosedSubfield
 /-!
 # Frobenius-fixed points of the full-weight type-B spin carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.SpinCarrier.FixedPoints)
+
 `TauCeti.TypeBSpinCarrier.frobenius n p k A` is the `p ^ k`-power Frobenius endomorphism of the
 full-weight type-`Bₙ₊₁` spin carrier over a commutative ring `A` of exponential characteristic
 `p`. This file identifies its fixed-point group with the carrier's points over the

@@ -12,6 +12,8 @@ import Mathlib.RingTheory.IntegralDomain
 /-!
 # The Frobenius-Schur indicator of a character induced from an index-two subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.Induced)
+
 Let `N` be a subgroup of index two in a finite group `G` on which some element `s` outside `N` acts
 by inversion, `s * x * s⁻¹ = x⁻¹`, and let `ψ` be a linear character of `N`, valued in a field `k`
 in which the order of `G` is invertible, that is not its own inverse.  Inducing `ψ` gives a

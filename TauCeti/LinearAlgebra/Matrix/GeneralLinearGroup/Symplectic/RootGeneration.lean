@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Weyl
 /-!
 # Generating long and sum roots in the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.RootGeneration)
+
 This file develops the root-subgroup generation step for the standard type-`C` symplectic group
 beyond its type-`A` subsystem of difference roots. Over an arbitrary commutative ring, the
 difference-root subgroups and one pair of opposite long-root subgroups generate every long and sum

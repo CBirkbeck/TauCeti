@@ -10,6 +10,8 @@ public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 /-!
 # Parameter measurability of multivariate Gaussian distributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Measurability)
+
 This file records joint measurability of the multivariate Gaussian law when its raw matrix
 parameter is supplied by its entries.  This coordinate form lets a measurable random mean and
 matrix-valued parameter define a measure-valued kernel without first bundling the matrix.

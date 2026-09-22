@@ -15,6 +15,8 @@ public import TauCeti.AlgebraicGeometry.GroupScheme.ClosedSubgroup
 /-!
 # Diagonal split-torus representations and the Kostant weight torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Torus)
+
 A basis `b` of an integral module together with weights `wt` gives a diagonal representation of
 the split torus `𝔾ₘ^κ`: a point `s : κ → Aˣ` scales the basis vector `b x` by the value
 `∏ⱼ sⱼ ^ wt x j` of its weight character. This file packages that representation as a morphism of

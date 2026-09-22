@@ -16,6 +16,8 @@ import TauCeti.MeasureTheory.Constructions.Pi
 /-!
 # Congruence images and marginals of the nonsingular Wishart law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Wishart.Marginal)
+
 Congruence `A ↦ M * A * Mᵀ` by a `q × p` matrix `M` of full row rank carries the nonsingular
 Wishart law of degree `n` and positive-definite scale `S` to the nonsingular Wishart law of the
 same degree and scale `M * S * Mᵀ`. Full row rank is what keeps the new scale positive definite,

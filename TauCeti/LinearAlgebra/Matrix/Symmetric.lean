@@ -15,6 +15,8 @@ import TauCeti.Algebra.BigOperators.Finset.OffDiagonal
 /-!
 # Parity of the diagonal of a symmetric integer matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Symmetric)
+
 For a symmetric integer matrix `A` and an integer vector `m`, the quadratic form
 `mᵀ A m = ∑ᵢⱼ mᵢ mⱼ aᵢⱼ` agrees modulo two with `∑ᵢ mᵢ aᵢᵢ`: its off-diagonal part is even
 because the summand is symmetric under swapping the indices, and `mᵢ² ≡ mᵢ` modulo two. In

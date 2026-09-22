@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.Multiquadratic.Quadratic.Ramification
 /-!
 # The candidate genus field has degree `2 ^ t`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.RamifiedPrimes)
+
 For a squarefree integer `d`, the degree of `candidateGenusField hd` over `ℚ` was computed in
 `CandidateGenusField/Degree.lean` as `2 ^ (genusPrimeDiscriminants hd).card`, and its degree over
 the embedded copy of `ℚ(√d)` in `CandidateGenusField/Relative/Degree.lean` as `2 ^ (t - 1)` for the

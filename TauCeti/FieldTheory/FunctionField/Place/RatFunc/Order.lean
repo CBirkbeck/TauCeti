@@ -10,6 +10,8 @@ public import TauCeti.FieldTheory.FunctionField.Place.RatFunc.Basic
 /-!
 # Orders at the finite places of the rational function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.RatFunc.Order)
+
 This file computes the order of a rational function at the finite place associated to an
 irreducible polynomial. For `q : k[X]` irreducible and nonzero `f : k(X)`, the answer is the
 exponent of `q` in the numerator of `f` minus its exponent in the denominator. This complements

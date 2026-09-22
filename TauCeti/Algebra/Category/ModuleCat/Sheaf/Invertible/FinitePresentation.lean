@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.Basic
 /-!
 # Finite presentation of invertible sheaves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.FinitePresentation)
+
 An invertible sheaf is locally free on a one-element basis, so it is locally finitely presented.
 This file makes that implication available to the scheme-level sheaf API.
 

@@ -12,6 +12,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # A circular crosscut with a short image
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.ShortCrosscut)
+
 `Conformal/LengthArea.lean` proves Wolff's lemma — among the circles `‖z - ζ‖ = ρ` with
 `r < ρ < R`, one has small `TauCeti.circleImageLength f s ζ ρ` — and the chord bound
 `TauCeti.ofReal_dist_le_circleImageLength`, which controls the distance between the images of the

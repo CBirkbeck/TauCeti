@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Bialgebra.GroupLike.Map
 /-!
 # Closed subgroups of diagonalizable affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.ClosedSubgroup)
+
 A finite-type commutative Hopf algebra over a field is the coordinate algebra of a
 diagonalizable group exactly when its group-like elements span it. This condition passes to a
 Hopf quotient: the quotient morphism is surjective and sends every group-like element to a

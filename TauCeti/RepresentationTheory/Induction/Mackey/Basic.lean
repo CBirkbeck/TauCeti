@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.Subgroup
 /-!
 # The Mackey decomposition formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Basic)
+
 Let `H` and `K` be subgroups of a group `G`, with `H` of finite index.  Restricting to `K` a
 representation induced from `H` decomposes as a sum indexed by the double cosets `K \ G / H`: the
 summand attached to a representative `s` is the conjugate `{}^s A`, a representation of `sHs⁻¹`,

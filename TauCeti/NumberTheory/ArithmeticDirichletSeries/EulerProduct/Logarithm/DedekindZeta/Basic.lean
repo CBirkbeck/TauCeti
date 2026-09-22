@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.ArithmeticDirichletSeries.Counting
 /-!
 # The real Euler product of the Dedekind zeta function in exponential form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.DedekindZeta.Basic)
+
 For real `s > 1`, every local ratio `x = N(𝔭) ^ (-s)` of a height-one prime lies in `(0, 1/2]`,
 because `N(𝔭) ≥ 2`. The principal logarithm of each Euler factor is then the real number
 `-log (1 - x)`, and the exponential form

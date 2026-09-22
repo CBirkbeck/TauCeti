@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.Crossing.Excision
 /-!
 # Simultaneous excision of finitely many crossing windows
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.FiniteExcision)
+
 Hungerbühler–Wasem Proposition 2.2 replaces every crossing of a closed piecewise-`C¹`
 immersion by a circular cap. `Crossing.Excision` constructs this replacement for one window;
 this file iterates that construction over a finite list of pairwise disjoint windows.

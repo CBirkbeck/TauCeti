@@ -15,6 +15,8 @@ import Mathlib.Topology.Order.LiminfLimsup
 /-!
 # The Gauss norm of restricted power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.GaussNorm)
+
 A restricted power series has finite Gauss norm. At a positive radius, a nonzero restricted
 series has a last coefficient attaining that norm; the degree of that coefficient is the
 *distinguished degree* of the series, and `IsDistinguished` names the property. Over a

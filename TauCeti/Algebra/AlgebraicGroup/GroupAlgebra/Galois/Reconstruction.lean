@@ -15,6 +15,8 @@ public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 /-!
 # Reconstructing a group from its Galois module of characters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Reconstruction)
+
 Let `H` be a commutative Hopf algebra over `k` which becomes spanned by group-like elements
 over a finite Galois extension `L/k`. Its coordinate algebra is recovered from the invariants
 of the group algebra on its characters over `L`, with the simultaneous Galois action on

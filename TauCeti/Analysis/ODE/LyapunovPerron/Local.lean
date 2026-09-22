@@ -11,6 +11,8 @@ public import TauCeti.Analysis.ODE.LyapunovPerron.Graph
 /-!
 # The local stable set at a hyperbolic equilibrium
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.ODE.LyapunovPerron.Local)
+
 `TauCeti/Analysis/ODE/LyapunovPerron/Graph.lean` describes the stable set of the equilibrium `0`
 of `y' = A y + N y` for a nonlinearity `N` that is **globally** Lipschitz with a constant small
 compared to the spectral gap of `A`. A nonlinearity coming from a vector field with a hyperbolic

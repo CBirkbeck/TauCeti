@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.Completion.Basic
 /-!
 # Ring homomorphisms between completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.Completion.RingHom)
+
 This file provides transport lemmas for ring homomorphisms between completions, or from a fixed ring
 into a completion, when the uniformities involved are equal. The resulting completion types and ring
 structures are only heterogeneously equal before those equalities are eliminated, so the map

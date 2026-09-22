@@ -16,6 +16,8 @@ import TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Slice.Measure
 /-!
 # Berg--Christensen--Ressel representing measures as time kernels
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.FourierLaplace.Kernel)
+
 Let `V` be a finite-dimensional real inner-product space. A measure `μ` on `V` together with a
 kernel `κ` from `V` to `ℝ≥0` assembles into a measure `TauCeti.swapCompProd μ κ` on `ℝ≥0 × V`,
 and conversely every *finite* measure on `ℝ≥0 × V` admits such a disintegration over its spatial

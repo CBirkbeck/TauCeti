@@ -15,6 +15,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Integral
 /-!
 # `[n]` maps infinity to infinity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfinity)
+
 `Isogeny/MulByInt/Basic.lean` builds the coordinate pullback of `[n]` and records that the
 `MapsInfinity` condition — and so `[n]` as an `Isogeny W W` — is not proved there. This file
 proves it, for every `n` with `ψₙ` nonvanishing at the generic point.

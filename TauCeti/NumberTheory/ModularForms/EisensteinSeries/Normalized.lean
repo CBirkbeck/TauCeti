@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # Normalized Eisenstein series with character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.EisensteinSeries.Normalized)
+
 For a Dirichlet character `psi` modulo `u` and a primitive character `phi` modulo `v`, with the
 parity required in weight `k`, this file normalizes the character Eisenstein series so that its
 first Fourier coefficient is `1`. Thus its positive Fourier coefficients are exactly the twisted

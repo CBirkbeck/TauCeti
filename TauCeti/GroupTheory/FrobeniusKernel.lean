@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.TrivialIntersection
 /-!
 # The Frobenius kernel, its size, and the free action of the complement on it
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.FrobeniusKernel)
+
 The **Frobenius kernel** of a subgroup `H` of `G` is the identity together with the elements of `G`
 lying in no conjugate of `H`,
 

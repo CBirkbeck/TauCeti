@@ -16,6 +16,8 @@ import TauCeti.MeasureTheory.Measure.GiryMonad
 /-!
 # Coupled row coding for separately exchangeable arrays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.RowCoding)
+
 The first functional representation of a separately exchangeable array writes each row as a
 sample from one random path law, using independent uniform noise for the rows.  For the second
 level of the Aldous--Hoover argument, it is essential to retain that random path law as a

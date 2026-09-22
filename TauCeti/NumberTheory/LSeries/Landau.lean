@@ -17,6 +17,8 @@ public import TauCeti.NumberTheory.LSeries.EntireExtension
 /-!
 # Landau's theorem on Dirichlet series with nonnegative coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.Landau)
+
 A Dirichlet series whose coefficients are nonnegative real numbers is singular at the real point
 of its abscissa of absolute convergence. Writing `σ` for that abscissa, no function analytic on a
 disc around `σ` can agree with `LSeries a` immediately to the right of `σ`: the series would then

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.LinearPMap.RestrictScalars
 /-!
 # Resolvents and restriction of scalars
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Resolvent.RestrictScalars)
+
 An unbounded operator `A : X →ₗ.[𝕜'] X` over a normed algebra `𝕜'` can also be read over a
 smaller field `𝕜`, as `A.restrictScalars 𝕜`. This file shows that the two resolvent notions
 agree at the points of `𝕜`: for `mu : 𝕜`,

@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.DividedPowers.Associative
 /-!
 # Primitive elements in a bialgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.Primitive)
+
 This file records integral-coefficient formulas for the comultiplication of powers, divided
 powers, and binomial coefficients of a primitive element. The two tensor factors commute even
 when the bialgebra itself is noncommutative. It also computes the counit of the latter two

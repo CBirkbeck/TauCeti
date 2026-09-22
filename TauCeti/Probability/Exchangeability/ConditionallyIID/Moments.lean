@@ -14,6 +14,8 @@ import TauCeti.Probability.Process.BlockAverage
 /-!
 # Conditional moment identities and the empirical-frequency rate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Moments)
+
 The second-moment consequences of the joint-law disintegration `ConditionallyIIDWith`, culminating
 in an exact finite-sample formula for the integrated squared error of an empirical frequency.
 

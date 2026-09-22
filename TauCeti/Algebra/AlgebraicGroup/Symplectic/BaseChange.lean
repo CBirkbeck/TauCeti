@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Symplectic.Basic
 /-!
 # Base change of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.BaseChange)
+
 For a morphism of commutative rings `R → K`, scalar extension of the coordinate Hopf algebra
 of `Sp₂ₘ` is canonically the coordinate Hopf algebra constructed directly over `K`.
 

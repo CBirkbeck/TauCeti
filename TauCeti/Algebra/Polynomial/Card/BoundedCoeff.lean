@@ -14,6 +14,8 @@ public import Mathlib.Data.Set.Card
 /-!
 # Counting polynomials of bounded degree and bounded coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Card.BoundedCoeff)
+
 For a (semi)ring `R` and a finite set `U` of allowed coefficient values, the polynomials of
 degree at most `d` all of whose coefficients lie in `U` form a set of cardinality at most
 `#U ^ (d + 1)`: a polynomial of degree `≤ d` is determined by its `d + 1` coefficients

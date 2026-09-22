@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Diagram
 /-!
 # A simply-laced finite-type diagram without a branch node is of type `Aₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.TypeA)
+
 The classification of finite-type Cartan matrices eliminates every shape outside the Dynkin list
 and is then left with the task of *naming* the shapes that survive: a diagram known to be a chain
 of single edges has to be reindexed onto the standard Cartan matrix `DynkinType.cartanMatrix (.A n)`

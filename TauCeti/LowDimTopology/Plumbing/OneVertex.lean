@@ -13,6 +13,8 @@ import TauCeti.LowDimTopology.Plumbing.Weight.Polarization
 /-!
 # The lattice homology of a one-vertex plumbing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.OneVertex)
+
 Némethi's lattice homology of a plumbing graph `P` with a characteristic covector `k` is the
 homology of the free `𝔽₂[U]`-module on the cubes of the lattice `V → ℤ`, each codimension-one
 face in the differential weighted by the drop in the characteristic cube weight. This file

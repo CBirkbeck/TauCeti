@@ -14,6 +14,8 @@ import Mathlib.FieldTheory.SeparableDegree
 /-!
 # The function field of a Weierstrass curve is a separable extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Separable)
+
 The Weierstrass polynomial, read over a fraction field `L` of `F[X]`, is the minimal polynomial
 of the generic `y`-coordinate, and on an elliptic curve it is separable. Since `y` generates,
 `F(W)` is a separable extension of `L`.

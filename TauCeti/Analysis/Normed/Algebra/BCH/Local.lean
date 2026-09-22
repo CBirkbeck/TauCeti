@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Normed.Algebra.LogOneAdd.Naturality
 /-!
 # The local Baker--Campbell--Hausdorff map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Algebra.BCH.Local)
+
 This file defines the germ at `(0, 0)` represented by
 `logOneAdd (exp x * exp y - 1)` in a complete real normed algebra. Using a germ records
 that this expression is a local logarithm; its values away from the origin

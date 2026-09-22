@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.ConstMulAction
 /-!
 # Rings with a zero sequence of units
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.ZeroSequenceOfUnits)
+
 Henkel's open mapping theorem is stated for a topological ring carrying a *zero sequence of
 units*: a sequence of units converging to zero. This file isolates that hypothesis and proves the
 absorption property it exists for — every element is carried into every neighbourhood of zero by

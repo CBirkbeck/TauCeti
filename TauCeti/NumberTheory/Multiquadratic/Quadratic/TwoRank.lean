@@ -20,6 +20,8 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # The `2`-rank of a quadratic class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Quadratic.TwoRank)
+
 For a squarefree integer `d` let `K = ℚ(√d)` and let `t` be the number of rational primes that
 ramify in `K`. Genus theory computes the `2`-rank of the *narrow* class group `Cl⁺(K)`,
 the dimension over `𝔽₂` of `Cl⁺(K)/Cl⁺(K)²`, to be exactly `t - 1`. This file proves that formula,

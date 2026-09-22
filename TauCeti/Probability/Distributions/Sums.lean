@@ -15,6 +15,8 @@ import Mathlib.Probability.Independence.CharacteristicFunction
 /-!
 # Sums and differences of classical distributions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Sums)
+
 This file identifies three laws obtained from independent scalar random variables. The difference
 of two exponential variables with common rate `b⁻¹` has the centered Laplace law of scale `b`.
 A finite sum of geometric variables with nonzero success probability has a negative-binomial law,

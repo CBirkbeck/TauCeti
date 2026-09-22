@@ -15,6 +15,8 @@ public import Mathlib.RingTheory.Int.Basic
 /-!
 # Multiquadratic fields with pairwise-coprime squarefree integer radicands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CoprimeSquarefree)
+
 The field-generic degree theorem `TauCeti.Multiquadratic.finrank_adjoin_range` gives a
 multiquadratic field degree `2ⁿ` once its radicands are **square-class independent**: no nonempty
 subset product of them is a square. The genus theory the roadmap targets works with the rational

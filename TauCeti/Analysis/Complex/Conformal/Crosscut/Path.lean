@@ -15,6 +15,8 @@ import TauCeti.Topology.Path.ExtendIoo
 /-!
 # A finite-length image crosscut as a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Crosscut.Path)
+
 `Conformal/Crosscut/EndpointLimit.lean` proves that the image of a circular crosscut of finite
 length has an honest limit at each of its two ends, and identifies its closure set-theoretically as
 the open image crosscut together with those ends. This file packages the same curve as a

@@ -13,6 +13,8 @@ public import Mathlib.LinearAlgebra.Prod
 /-!
 # Salience of images and products of cones, and the line spanned by a ray
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Convex.Cone.Basic)
+
 Mathlib's `ConvexCone.Salient` records that a convex cone contains no line. This file proves the
 two closure properties of salience that concern standard cone constructions: the image under an
 injective linear map, and the product of two pointed cones. It also computes the dimension of the

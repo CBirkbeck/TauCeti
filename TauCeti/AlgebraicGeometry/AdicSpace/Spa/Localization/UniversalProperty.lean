@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Integral
 /-!
 # The geometric universal property of a rational localisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.UniversalProperty)
+
 The coordinate ring `A⟨T/s⟩` of a rational subset has an *algebraic* universal property: a
 continuous `φ : A → B` into a complete `B` extends across `ρ : A → A⟨T/s⟩` as soon as `φ s` is a
 unit and every fraction `φ t / φ s` is power-bounded

@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.Monoidal.SemidirectProduct.Normal
 /-!
 # Products with a normal closed affine subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Product.Basic)
+
 Let `I` and `J` be Hopf ideals in a commutative Hopf algebra `H`, with `I` normal. Conjugation
 of the subgroup defined by `J` on the normal subgroup defined by `I` equips their product scheme
 with a semidirect-product group structure, for which multiplication into `Spec H` is a group

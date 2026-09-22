@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Exact.Stable.Functor.Basic
 /-!
 # Stable functors commute with suspension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Stable.Functor.Suspension)
+
 An exact functor between Frobenius exact categories which preserves projective-injective objects
 descends to their stable categories. This file constructs the canonical comparison between that
 stable functor and suspension.

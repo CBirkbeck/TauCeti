@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.ZMod.UnitsCyclic
 /-!
 # Order and cyclicity of a cyclotomic Galois group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Cyclotomic.Aut)
+
 For an `n`-th cyclotomic extension `L / K` whose cyclotomic polynomial `Φ_n` is irreducible over
 `K`, the Galois group has exactly `φ n` elements, and it is cyclic whenever the unit group
 `(ZMod n)ˣ` is — for instance whenever `n` is prime.

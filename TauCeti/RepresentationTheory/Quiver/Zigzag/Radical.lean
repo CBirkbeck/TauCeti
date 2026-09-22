@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Jacobson.MulOpposite
 /-!
 # The radical filtration of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Radical)
+
 For a finite simple graph without isolated vertices over a field, the Jacobson radical of the
 zigzag relation quotient is its positive-length part.  This file makes that statement intrinsic:
 `TauCeti.zigzagTrivialCoeff` reads off the coefficients of the vertex idempotents, and the radical

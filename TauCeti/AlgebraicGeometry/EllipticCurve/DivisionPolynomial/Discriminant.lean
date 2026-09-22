@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 /-!
 # A common divisor of `Ψ₂Sq(x)` and `4·Ψ₃(x)` divides `4Δ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Discriminant)
+
 The headline is a divisibility transfer between Mathlib's division polynomials: for any
 commutative ring, any `x`, and any `d`,
 

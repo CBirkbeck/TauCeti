@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.Order.Orbits
 /-!
 # Orders along the norm map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Norm.Order)
+
 The general-level valence formula reads the level-one formula off the norm
 `ModularForm.norm`, so it needs the orders of a form to distribute over the norm's coset
 product. This file records that distribution at interior points, for a form on any subgroup

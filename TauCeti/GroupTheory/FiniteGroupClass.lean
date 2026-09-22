@@ -14,6 +14,8 @@ import TauCeti.GroupTheory.PGroup
 /-!
 # Classes of finite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.FiniteGroupClass)
+
 A **class of finite groups** in the sense of profinite group theory is a collection `C` of
 finite groups that is closed under isomorphism, subgroups, quotients and extensions, and
 contains the trivial group. Finite `p`-groups, finite solvable groups and all finite groups are

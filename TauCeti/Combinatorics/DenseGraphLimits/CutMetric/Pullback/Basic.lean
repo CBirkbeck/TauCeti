@@ -13,6 +13,8 @@ import TauCeti.Combinatorics.DenseGraphLimits.Kernel.Pullback
 /-!
 # The map form of the cut distance, and its agreement with the coupling form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Pullback.Basic)
+
 The **map form** of the cut distance is the classical one: read both graphons on the canonical
 carrier `(I, volume)` through measure-preserving maps, and take the infimum of the cut norm of the
 difference of the two pullbacks,
@@ -140,7 +142,10 @@ difference of the two pullbacks.
 
 This is the classical definition. Over standard Borel carriers it agrees with the
 coupling-primary `cutDist` (`cutDist_eq_cutDistPullback`); off them it can be a junk `0`, since the
-infimum is then taken over an empty set. -/
+infimum is then taken over an empty set.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.cutDistPullback) -/
 def cutDistPullback (U : Graphon Ω₁ μ₁) (W : Graphon Ω₂ μ₂) : ℝ := sInf (pullbackCutNorms U W)
 
 /-- The defining infimum of the map form of the cut distance, with its index set spelled out in

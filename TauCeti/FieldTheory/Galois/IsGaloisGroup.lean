@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Galois.IsGaloisGroup
 /-!
 # The index of a subgroup of a Galois group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Galois.IsGaloisGroup)
+
 For a tower of fields `E ⊆ F ⊆ K` in which `K` is Galois over `E` with Galois group `G` and
 Galois over `F` with Galois group a subgroup `H` of `G`, the index of `H` in `G` is the degree
 `[F : E]`. This is the counting half of the Galois correspondence, in the `IsGaloisGroup` form:

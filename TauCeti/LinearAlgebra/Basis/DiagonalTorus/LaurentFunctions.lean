@@ -16,6 +16,8 @@ import Mathlib.LinearAlgebra.LinearIndependent.Basic
 /-!
 # Laurent functions on a split torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Basis.DiagonalTorus.LaurentFunctions)
+
 The characters of the split torus `𝔾ₘ^κ` span a subalgebra of the `R`-valued functions on its
 points, the **Laurent functions** `TauCeti.laurentFunctions R κ`: over a field these are exactly
 the functions given by a Laurent polynomial in the coordinates. This file builds that subalgebra

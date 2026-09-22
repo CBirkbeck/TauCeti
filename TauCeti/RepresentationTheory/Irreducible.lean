@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Semisimple.Schur
 /-!
 # Criteria for irreducibility
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Irreducible)
+
 This file collects three ways of recognising an irreducible representation from outside, without
 inspecting its subrepresentations one by one, and the finite-dimensional existence statement that
 makes the second of them usable.

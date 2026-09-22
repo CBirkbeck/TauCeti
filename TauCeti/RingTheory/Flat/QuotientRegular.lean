@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 /-!
 # Flatness of `B ⧸ (g)` when `g` acts injectively on each `(R ⧸ I) ⊗[R] B`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Flat.QuotientRegular)
+
 Let `B` be a flat algebra over a commutative ring `R` and `g ∈ B`. If multiplication by `g` on
 `(R ⧸ I) ⊗[R] B` is injective for every finitely generated ideal `I` of `R`, then `B ⧸ (g)` is a
 flat `R`-module.

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 /-!
 # Compact operators and bounded sequences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Compact.Basic)
+
 This file records sequential consequences of compactness for bounded sequences in normed spaces.
 
 ## Main declarations

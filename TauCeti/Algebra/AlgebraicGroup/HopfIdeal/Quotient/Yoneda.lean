@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Categorical
 /-!
 # Generalized points of Hopf-ideal quotient inclusions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Yoneda)
+
 This file identifies composition with the categorical closed-subgroup inclusion represented by a
 Hopf-ideal quotient with the usual precomposition map on algebra-valued points.
 

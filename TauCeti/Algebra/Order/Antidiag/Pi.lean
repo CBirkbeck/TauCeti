@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Order.Antidiag.Pi
 /-!
 # Vanishing off the index set of a function antidiagonal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.Antidiag.Pi)
+
 `Finset.piAntidiag s n` is the finset of functions with support contained in `s` whose values sum
 to `n` over `s`.  Such a function therefore vanishes at every point outside `s`.
 

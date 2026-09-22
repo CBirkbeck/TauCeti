@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.Generated
 /-!
 # The torus of the Suzuki group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.Torus)
+
 The standard generators of `TauCeti.suzukiGroup m` are the lower unitriangular matrices `u(a, b)`
 and the antidiagonal Weyl element `w`. This file adds the diagonal torus
 

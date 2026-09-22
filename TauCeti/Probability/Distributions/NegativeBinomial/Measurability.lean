@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.Measurability
 /-!
 # Parameter measurability of the negative-binomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.NegativeBinomial.Measurability)
+
 This file proves that the negative-binomial law is a measurable function of its real shape and
 success-probability parameters. Consequently, a measurable pair of parameters can be used to form
 a probability kernel with negative-binomial fibres whenever the parameters lie in the classical

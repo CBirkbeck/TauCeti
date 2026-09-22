@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Irreducible
 /-!
 # The standard representation of the symmetric group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Standard)
+
 The symmetric group on a finite type `α` acts on `k[α]` by permuting the standard basis.  Inside
 that permutation representation sit the invariant line spanned by the sum of the basis, carrying the
 trivial representation, and the **standard representation**, the subrepresentation of dimension

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.CofinalIdeal.Greatest
 /-!
 # The subspace `Spv (A, I)` of the valuation spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.SpvOfIdeal.Basic)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.1.** For an ideal `I` satisfying the
 standing hypothesis of §7.1 — that `I` has the same radical as some finitely generated ideal —
 Wedhorn carves out of the valuation spectrum the set

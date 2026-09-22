@@ -14,6 +14,8 @@ public import Mathlib.RingTheory.Jacobson.Semiprimary
 /-!
 # Semiperfect rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Jacobson.Semiperfect)
+
 A ring is **semiperfect** when its radical quotient `R ⧸ Ring.jacobson R` is a semisimple ring and
 idempotents lift modulo the radical. This is the hypothesis under which projective covers of
 finitely generated modules exist, and it is the property of a finite-dimensional algebra that

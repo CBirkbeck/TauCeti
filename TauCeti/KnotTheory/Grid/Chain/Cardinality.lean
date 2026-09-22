@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.StateCardinality
 /-!
 # Cardinality of fully blocked grid chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Chain.Cardinality)
+
 The fully blocked grid chain module is the finite free `ZMod 2`-module on grid states. Since
 `GridState n` has `n!` elements, the underlying finite set of chains has `2^(n!)` elements.
 This file records that bookkeeping, together with a generic finite-coefficient form.

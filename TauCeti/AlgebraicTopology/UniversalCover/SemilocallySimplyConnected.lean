@@ -12,6 +12,8 @@ import TauCeti.Topology.IsLocalHomeomorph
 /-!
 # The local hypotheses for existence of a universal cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.SemilocallySimplyConnected)
+
 The universal cover of `X` is built over a base assumed path-connected, locally path-connected,
 and semilocally simply connected. Semilocal simple connectivity is not merely convenient there:
 by the local-homeomorphism results in

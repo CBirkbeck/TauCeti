@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.LocalRing.Basic
 /-!
 # Indecomposable modules and Fitting's lemma
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.KrullSchmidt.Indecomposable)
+
 A module is *indecomposable* when it is nonzero and is not the internal direct sum of two nonzero
 submodules. This file introduces the predicate, records its idempotent reformulation, and proves
 **Fitting's lemma**: an endomorphism of an indecomposable module of finite length is either

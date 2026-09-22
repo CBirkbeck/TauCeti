@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Category.ModuleCat.Injective
 /-!
 # Injective finitely generated modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.FGModuleCat.Injective)
+
 A monomorphism of finitely generated modules is an injective linear map, so the inclusion of
 `FGModuleCat R` into `ModuleCat R` preserves monomorphisms. Consequently, a finitely generated
 module that is injective as a module is an injective object of `FGModuleCat R`.

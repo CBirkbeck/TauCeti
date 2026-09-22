@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 /-!
 # The standard representation restricted to the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Restriction)
+
 This file restricts the standard representation of `GL n k` along the canonical inclusion of
 `SL n k`.  It records the action and character formulas in the special-linear presentation,
 which are the input for the volume-preserving part of the classical-groups roadmap.

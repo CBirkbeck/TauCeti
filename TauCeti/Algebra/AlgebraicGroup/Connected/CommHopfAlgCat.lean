@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Flat.Basic
 /-!
 # Geometric connectedness of commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.CommHopfAlgCat)
+
 For a commutative Hopf algebra `H` over a field `k`, geometric connectedness means that after
 every extension `K / k` of the base field, the base-changed coordinate ring `H ⊗[k] K` has
 connected prime spectrum. This is equivalent to saying that every such base change has no

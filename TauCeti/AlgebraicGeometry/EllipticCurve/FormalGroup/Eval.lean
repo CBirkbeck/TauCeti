@@ -16,6 +16,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries
 /-!
 # Evaluating the `w`-expansion and the formal inverse at a parameter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Eval)
+
 For a Weierstrass curve `W` over a complete linearly topologised ring `O`, the `w`-expansion of
 `FormalGroup/WExpansion.lean` and the formal inverse of `FormalGroup/Inverse.lean` can both be
 evaluated at a parameter `t` for which the evaluation converges. This file provides those

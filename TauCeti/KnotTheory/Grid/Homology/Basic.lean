@@ -18,6 +18,8 @@ import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 /-!
 # The fully blocked grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Homology.Basic)
+
 This file introduces the homology of the fully blocked grid complex as the subquotient of the
 finite free grid chain module by cycles over boundaries, and evaluates it on the smallest grids.
 

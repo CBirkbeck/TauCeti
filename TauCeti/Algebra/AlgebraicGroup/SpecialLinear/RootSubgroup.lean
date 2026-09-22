@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Scheme
 /-!
 # The root subgroups of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.RootSubgroup)
+
 For distinct indices `i ≠ j`, the elementary matrices
 
 `xᵢⱼ(c) = 1 + c Eᵢⱼ`

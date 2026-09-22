@@ -16,6 +16,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The tripled type-D4 carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.GroupScheme)
+
 This file feeds the explicit `24`-dimensional type-`D₄` representation `V(ϖ₁) ⊕ V(ϖ₃) ⊕ V(ϖ₄)`,
 its admissible coordinate lattice, and its full set of weights into the Kostant toral-closure
 construction. The result is an explicit affine group scheme over `ℤ`, cut out inside `GL₂₄` by

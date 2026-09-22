@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Submodule.Prod
 /-!
 # Products of Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Prod)
+
 This file proves that the Cartesian product of two Fredholm operators is Fredholm and that its
 index is the sum of the two indices. This is elementary bookkeeping needed for the block
 decompositions and finite-dimensional reductions in the Fredholm substrate of the analytic

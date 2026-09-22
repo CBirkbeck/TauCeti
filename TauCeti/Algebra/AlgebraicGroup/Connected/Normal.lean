@@ -16,6 +16,8 @@ import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Normality of the identity component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.Normal)
+
 Let `H` be a commutative Hopf algebra of finite type over an algebraically closed field. The
 connected component of the counit point is preserved by conjugation, so its defining Hopf ideal
 is normal.

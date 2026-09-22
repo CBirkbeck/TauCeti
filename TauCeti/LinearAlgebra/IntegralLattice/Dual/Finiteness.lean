@@ -11,6 +11,8 @@ import TauCeti.Data.Int.CongrAllPrimes
 /-!
 # Finiteness of dual integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Dual.Finiteness)
+
 The dual carrier of an integral lattice always spans the ambient rational vector space: it
 contains the original full carrier. Its finite generation is subtler. It is finitely generated
 over `ℤ`, and hence a full lattice, exactly when the ambient bilinear form is nondegenerate.

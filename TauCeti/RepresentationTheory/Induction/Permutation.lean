@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Projection
 /-!
 # The permutation representation as an induced representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Permutation)
+
 For a subgroup `H` of a group `G`, inducing the trivial `H`-representation along `H.subtype`
 gives the permutation representation of `G` on the left cosets `G ⧸ H`, and its character is the
 number of fixed cosets, cast into the coefficient field.

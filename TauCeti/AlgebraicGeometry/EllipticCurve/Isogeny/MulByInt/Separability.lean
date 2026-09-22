@@ -17,6 +17,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.InvariantDifferenti
 /-!
 # Separability of multiplication by `n`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability)
+
 Whether `[n]` is separable is decided by its differential, and `[n] = n • id` computes that: the
 pullback of the invariant differential along `[n]` is `n • ω`, which vanishes exactly when `n`
 does in the base field. In characteristic zero, and in characteristic `p` for `p ∤ n`, `[n]` is

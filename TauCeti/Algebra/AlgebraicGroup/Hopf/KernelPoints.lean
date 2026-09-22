@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.Kernel
 /-!
 # Points of kernel quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.KernelPoints)
+
 For a surjective morphism of Hopf algebras `f : H →ₐc[R] K`, the quotient by the Hopf-ideal
 kernel is bialgebra-equivalent to `K`. This file transports that first isomorphism theorem to
 functors of points: for every commutative `R`-algebra `A`, the convolution group of `A`-points

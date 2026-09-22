@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Toric.Algebraic.Ray.Generation
 /-!
 # The faces of a regular cone are indexed by subsets of its rays
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Algebraic.Ray.Face)
+
 A regular cone is the cone hull of the images of its primitive ray generators, and those images
 are part of a real basis of the ambient space. The faces of such a cone are therefore exactly the
 cones spanned by subfamilies of the primitive ray generators, and the assignment is an order

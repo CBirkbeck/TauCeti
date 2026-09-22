@@ -12,6 +12,8 @@ import TauCeti.Analysis.Semigroups.Generator.Uniqueness
 /-!
 # The generator of a similar semigroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generator.Similarity)
+
 The transported semigroup `S.similar e` of `TauCeti.Analysis.Semigroups.Similarity` has the
 transported generator: the domain is the image of `D(A)` under `e`, and the action is
 `e ∘ A ∘ e⁻¹`.

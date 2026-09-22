@@ -11,6 +11,8 @@ public import TauCeti.Probability.Process.EmpiricalMeasure
 /-!
 # Empirical measures of conditionally i.i.d. processes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.EmpiricalMeasure)
+
 This file expresses the empirical-frequency estimates for a conditionally i.i.d. process in terms
 of the empirical probability measure.  For every measurable set, evaluation of the empirical
 measure converges in `L² μ` to evaluation of the directing measure, with the exact finite-sample

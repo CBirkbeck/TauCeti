@@ -14,6 +14,8 @@ import TauCeti.Topology.Spectral.PatchCriterion
 /-!
 # `Spv (A, I)` is a spectral space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.SpvOfIdeal.Spectral)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.5(1).**
 
 Wedhorn gives `Spv (A, I)` the subspace topology of `Spv A` (§7.1, after (7.1.1)) and proves it

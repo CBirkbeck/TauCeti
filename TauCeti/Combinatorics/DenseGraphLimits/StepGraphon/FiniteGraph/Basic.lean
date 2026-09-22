@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.Constructions.UnitInterval
 /-!
 # A finite graph as a graphon
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.FiniteGraph.Basic)
+
 `finiteGraphGraphon G` is the graphon `W_G` of a finite graph `G` on `Fin m`: the step graphon on
 the `m` equal cells of `(I, volume)` taking the value `1` on the rectangle `cell i × cell j` when
 `i ~ j` in `G`, and `0` otherwise.

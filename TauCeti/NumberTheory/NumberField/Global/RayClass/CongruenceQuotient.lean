@@ -14,6 +14,8 @@ import TauCeti.GroupTheory.QuotientGroup.KerEquiv
 /-!
 # The residue-and-sign presentation of the congruence quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.CongruenceQuotient)
+
 Let `𝔪` be a modulus of a number field `K`.  Congruence to one modulo `𝔪` is two independent
 conditions on an element of `primeToSubgroup 𝔪`: reduction to one in `(𝓞 K ⧸ 𝔪.finitePart)ˣ`, and
 positivity at each real place selected by `𝔪.infinitePart`.  This file packages the two conditions

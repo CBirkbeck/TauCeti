@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.LinearlyReductive
 /-!
 # Linear reductivity of diagonalizable group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Scheme.LinearlyReductive)
+
 Every finite-type diagonalizable group scheme over a field is linearly reductive. On the
 canonical object `D(G) = Spec k[G]`, this follows from complete reducibility of comodules over a
 monoid-algebra coalgebra. Isomorphism invariance then extends the result to the full

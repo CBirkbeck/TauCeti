@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.ClassGroup.Basic
 /-!
 # Divisibility by an invertible ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.FractionalIdeal.Divisibility)
+
 An ideal of a domain which is invertible as a fractional ideal divides every principal ideal it
 contains, the cofactor being the integral ideal representing `⟨a⟩ * I⁻¹`.
 

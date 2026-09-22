@@ -12,6 +12,8 @@ import Mathlib.Tactic.Linarith
 /-!
 # The topological genus of a numerical type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Curves.StableReduction.NumericalType.Topology)
+
 The intersection matrix of a numerical type determines a finite simple graph: its vertices are
 the components, and two distinct vertices are joined when the corresponding components meet.  This
 file records the first Betti number of that connected graph,

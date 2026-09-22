@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Galois.Connected
 /-!
 # Transporting the Galois-category axioms along an equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Galois.Transport)
+
 Being a Galois category is a property of a category, not of a presentation of it, so it should
 transfer along an equivalence. Mathlib states the axioms (SGA1's (G1)–(G3), and (G4)–(G6) for a
 fibre functor) in terms of limits, colimits and monomorphisms, all of which are preserved and

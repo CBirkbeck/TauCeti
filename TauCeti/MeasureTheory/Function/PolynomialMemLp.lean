@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Polynomial
 /-!
 # Integrability and `L²` membership of polynomials against a finite-moment measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.PolynomialMemLp)
+
 This file proves that a real polynomial, evaluated pointwise, is integrable and square-integrable
 against any measure on `ℝ` all of whose polynomial moments are finite:
 

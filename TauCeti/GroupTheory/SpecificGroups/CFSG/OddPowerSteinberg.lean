@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.HalfFrobenius
 /-!
 # The odd power of a half-Frobenius on a group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.OddPowerSteinberg)
+
 The Steinberg endomorphism of a Suzuki, Ree or Tits group is not a Frobenius but an odd power of
 a *half-Frobenius*: an endomorphism `τ` of the ambient group whose square is the prime-field
 Frobenius `φ`. A `TauCeti.SuzukiReeIndex` records the exponent of that power, its field exponent

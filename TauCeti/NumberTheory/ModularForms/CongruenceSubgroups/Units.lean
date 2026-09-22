@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Basic
 /-!
 # The diamond label of `Γ₀(N)` under reduction of the level
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units)
+
 `CongruenceSubgroup.Gamma0Map` reads off the lower-right entry of a matrix of `Γ₀(N)` in
 `ZMod N`, and `Gamma0Map_toHomUnits` is its unit-valued form. This file records the one fact
 about that label which needs the reduction map `ZMod.unitsMap`: for `M ∣ N`, reading a matrix

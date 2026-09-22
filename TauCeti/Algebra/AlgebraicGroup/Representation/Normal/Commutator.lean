@@ -11,6 +11,8 @@ import Mathlib.LinearAlgebra.Determinant
 /-!
 # Joint weights of the commutator subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Normal.Commutator)
+
 For a reduced connected affine group of finite type over an algebraically closed field, every
 nonzero joint weight of the commutator subgroup in a finite-dimensional rational representation
 is trivial.

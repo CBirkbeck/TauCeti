@@ -13,6 +13,8 @@ import Mathlib.Analysis.Convex.Contractible
 /-!
 # The convex Schwarz--Christoffel polygon mapping theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Polygon.Mapping)
+
 For strictly ordered real prevertices and turning exponents in `(-1, 0)` summing to `-2`, the
 Schwarz--Christoffel primitive maps the upper half-plane bijectively onto the interior of the
 closed convex hull of its polygonal boundary.

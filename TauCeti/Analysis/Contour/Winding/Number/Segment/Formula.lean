@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 /-!
 # The winding number of a straight segment
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Segment.Formula)
+
 The winding number of the straight segment `t ↦ v · t + z₀` about a point not on it is the
 logarithmic increment `(2πi)⁻¹ (log (b - q) - log (a - q))`, valid whenever
 `(t : ℂ) ≠ q` for `t ∈ [a, b]`.

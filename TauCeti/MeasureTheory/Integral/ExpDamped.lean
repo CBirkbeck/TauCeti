@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # Vanishing exponential damping of a half-line integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.ExpDamped)
+
 Damping an integrand on the half-line `u ≥ -log x` by `exp (-u (sigma - 1))` and normalizing by
 `x ^ (1 - sigma)`, the reciprocal of the damping at the left endpoint, leaves the integral of
 an integrable function unchanged in the limit `sigma → 1⁺`: the damping factor is bounded on

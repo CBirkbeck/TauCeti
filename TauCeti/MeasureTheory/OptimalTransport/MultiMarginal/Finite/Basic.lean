@@ -12,6 +12,8 @@ public import TauCeti.Probability.ProbabilityMassFunction.Finite
 /-!
 # Finite multi-marginal couplings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Finite.Basic)
+
 For finitely many finite spaces, a multi-marginal transport plan can be represented by a
 probability mass function on the dependent product whose coordinate pushforwards are prescribed.
 This file packages that finite model, its independent product coupling, its real-valued cost, and

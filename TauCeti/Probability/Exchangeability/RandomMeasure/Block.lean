@@ -14,6 +14,8 @@ import TauCeti.Probability.Exchangeability.Map
 /-!
 # Finite block marginals of an invariant random path measure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.RandomMeasure.Block)
+
 A law on random probability measures on path space may be invariant under coordinate
 permutations even though a sampled measure is not itself exchangeable. `RandomMeasure.Basic`
 extracts the resulting exchangeable sequence of one-coordinate marginals. Here the same argument

@@ -12,6 +12,8 @@ import TauCeti.MeasureTheory.Function.Lp.Restriction
 /-!
 # Restriction of first-order Sobolev functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.W1p.Restriction)
+
 A weakly differentiable function on an open set remains weakly differentiable on every smaller
 open set.  This file packages that operation as the contractive continuous linear map
 `TauCeti.W1p.restrictL`.  Its value and weak gradient are represented by the same functions on

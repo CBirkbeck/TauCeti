@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 /-!
 # Closed forms for the hyperbolic distance on the unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Hyperbolic.ClosedForm)
+
 The hyperbolic (Poincaré) distance of `Conformal/Hyperbolic/Distance.lean` is defined as
 `hyperbolicDist z w = Real.artanh (pseudoHyperbolicExpr z w)`, a reparametrisation of the
 pseudo-hyperbolic expression `p = ‖(z - w) / (1 - conj w * z)‖`. That definition is the one that

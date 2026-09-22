@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.GraphPlan
 /-!
 # The transport cost of two measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.Basic)
+
 Given a cost `c : X × Y → ℝ≥0∞`, the *transport cost* of `μ` and `ν` is the infimum of
 `∫⁻ z, c z ∂π` over the couplings `π` of `μ` and `ν`. This is the value of the primal
 Kantorovich problem, and it is the root definition of optimal transport: every later notion —

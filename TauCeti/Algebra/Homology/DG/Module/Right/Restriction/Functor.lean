@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.Restriction.Basic
 /-!
 # Restriction functors for differential graded right modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Restriction.Functor)
+
 Restriction along a DG algebra morphism defines a faithful linear functor between the categories
 of right DG modules. Restriction along the identity is naturally isomorphic to the identity
 functor, and restriction along a composite is naturally isomorphic to successive restriction.

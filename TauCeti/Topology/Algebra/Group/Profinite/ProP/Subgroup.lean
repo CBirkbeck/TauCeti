@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic
 /-!
 # Subgroups of pro-p groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Subgroup)
+
 The pro-`p` property passes from a profinite group to each of its subgroups. Given an open normal
 subgroup `V` of a subgroup `H`, profiniteness supplies an open normal subgroup `N` of the ambient
 group whose pullback to `H` lies in `V`. The quotient `H / V` is then a quotient of a subgroup of

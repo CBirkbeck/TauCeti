@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.Diagonal
 /-!
 # The diagonal torus in the standard representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Torus)
+
 The **diagonal torus** `TauCeti.diagonalTorus k n` of `GL n k`, the subgroup of invertible
 diagonal matrices, is built in
 `TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Basic`, where its three descriptions —

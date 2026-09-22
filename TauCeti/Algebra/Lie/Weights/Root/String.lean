@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.InvariantForm.RootString
 /-!
 # Structure constants along a root string
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Root.String)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero, let `H` be a splitting Cartan subalgebra, and let `α` and `β` be roots with
 `α` non-zero. Writing the `α`-string through `β` as `β - pα, …, β, …, β + qα`, so that

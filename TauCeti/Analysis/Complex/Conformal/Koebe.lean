@@ -16,6 +16,8 @@ import TauCeti.Analysis.Complex.Conformal.Schwarz
 /-!
 # The Koebe square-root step
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Koebe)
+
 The Riemann mapping theorem is proved by maximizing `‖deriv f z₀‖` over the holomorphic injections
 of a domain into the unit disc that fix a base point. Compactness (`ExtremalFamily.lean`) produces a
 maximizer; this file supplies the other half: a maximizer cannot omit a value of the disc.

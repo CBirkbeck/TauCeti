@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Basic
 /-!
 # Base change of comodules and their coefficient coalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.BaseChange)
+
 Let `H` be a coalgebra over a commutative semiring `R`, let `A` be a commutative
 `R`-algebra, and let `M` be a right `H`-comodule. Extending scalars in both the coefficient
 coalgebra and the underlying module gives a right comodule

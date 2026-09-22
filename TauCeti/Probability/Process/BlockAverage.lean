@@ -14,6 +14,8 @@ import Mathlib.Algebra.BigOperators.Fin
 /-!
 # Block averages of a real-valued process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Process.BlockAverage)
+
 The empirical mean of a process over a finite selection of coordinates, with its elementary
 algebra. Nothing here involves a measure: `blockAverage X k` is a function of `ω`, and the three
 lemmas below are the pointwise formula, the scaled-sum normal form, and the value on a constant

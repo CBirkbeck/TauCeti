@@ -13,6 +13,8 @@ public import TauCeti.CategoryTheory.Sites.CoversTop
 /-!
 # Tensor products of invertible sheaves
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.Invertible.TensorProduct.Closure)
+
 The tensor product of two locally free rank-one sheaves is again locally free of rank one. The
 result gives closure of invertible sheaves under tensor product.
 

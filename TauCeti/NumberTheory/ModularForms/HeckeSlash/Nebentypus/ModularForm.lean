@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independen
 /-!
 # The twisted slash sum descends to the nebentypus character spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.ModularForm)
+
 `HeckeSlash/ModularForm.lean` carries the *unweighted* slash sum from functions to
 `ModularForm` and `CuspForm`, and bundles it as a `Module.End ℂ`. This file is the
 nebentypus-twisted counterpart, and it lands on a different carrier.

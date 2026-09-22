@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Homology.Embedding.Restriction
 /-!
 # Mapping restricted homological complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Embedding.Restriction)
+
 This file provides the comparison between first restricting a homological complex along an
 embedding of complex shapes and then mapping it, and first mapping the complex and then
 restricting it. This transports mapped or forgotten complexes through shape reindexing, allowing

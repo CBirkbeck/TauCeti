@@ -12,6 +12,8 @@ import Mathlib.Geometry.Manifold.Algebra.SMul
 /-!
 # Smooth circle presentations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.SmoothCircle)
+
 The geometric presentation of an oriented knot in a manifold is a smooth embedding of the
 standard oriented circle into that manifold.  This file specializes `TauCeti.SmoothEmbedding` to
 that source, without introducing a privileged `Knot` type, and supplies the two canonical kinds

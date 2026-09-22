@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Solver
 /-!
 # The rational Dixon computation for the dihedral group of order eight
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Dihedral.Four)
+
 This file runs the rational stage of the Dixon--Schneider character-table algorithm for
 `DihedralGroup 4`.  The class data are numbered by `TauCeti.dihedralClassData 4`, whose class sizes
 are `[1, 1, 2, 2, 2]`.  Reducing modulo the certified good prime `5`, the simultaneous eigenvector

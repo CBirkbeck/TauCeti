@@ -14,6 +14,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # Decomposing a ring by its connected components
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Idempotents.Connected.Components)
+
 Let `R` be a commutative ring for which the connected-components quotient of its prime spectrum is
 discrete. Each connected component is selected by a canonical idempotent. This discreteness holds
 in particular when the prime spectrum is locally connected or has finitely many connected

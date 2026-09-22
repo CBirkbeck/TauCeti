@@ -10,6 +10,8 @@ public import Mathlib.Topology.Covering.Quotient
 /-!
 # Intermediate quotients of a quotient covering map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.Quotient)
+
 Let a group `G` act on a space `E` so that `q : E → X` presents `X` as the quotient `E / G` in
 the strong sense of Mathlib's `IsQuotientCoveringMap`: the fibres of `q` are the orbits, and every
 point of `E` has a neighbourhood whose `G`-translates are pairwise disjoint. Let `H` be a subgroup

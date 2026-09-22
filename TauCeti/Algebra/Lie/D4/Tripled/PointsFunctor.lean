@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.D4.Tripled.GroupScheme
 /-!
 # The points of the tripled type-D4 carrier, functorially
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.PointsFunctor)
+
 `TauCeti.D4Tripled.groupScheme` is the explicit tripled type-`D₄` carrier over `ℤ`, and
 `TauCeti.D4Tripled.points A` realizes its `A`-valued points as a subgroup of `GL₂₄(A)`. This file
 supplies the homomorphism induced by an arbitrary homomorphism of value rings and assembles these

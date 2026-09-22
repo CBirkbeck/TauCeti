@@ -13,6 +13,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Map
 /-!
 # Normal Hopf ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Normal.Basic)
+
 A Hopf ideal `I` in a commutative Hopf algebra `H` defines a closed subgroup of the affine
 group represented by `H`. This file defines normality of that closed subgroup in Hopf-algebra
 coordinates: the ideal is stable under the coordinate morphism of conjugation,

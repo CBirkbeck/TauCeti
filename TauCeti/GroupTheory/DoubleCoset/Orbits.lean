@@ -13,6 +13,8 @@ public import Mathlib.GroupTheory.DoubleCoset
 /-!
 # Double cosets as orbits
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset.Orbits)
+
 For subgroups `H` and `K` of a group `G`, a double coset is an orbit in two ways.
 
 The double coset `KsH` is the preimage in `G` of the `K`-orbit of the coset `sH`

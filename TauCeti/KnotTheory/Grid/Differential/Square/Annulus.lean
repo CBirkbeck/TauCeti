@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Unblocked
 /-!
 # The annular terms of the unblocked grid differential square vanish
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Differential.Square.Annulus)
+
 The square of the unblocked grid differential `∂⁻` of `Unblocked.lean` is a sum over pairs of
 composable rectangles. The juxtaposition argument for `∂⁻ ∘ ∂⁻ = 0` splits those pairs according
 to how the two rectangles meet, and the *annular* case is the one in which the second rectangle

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Product
 /-!
 # Products of finite-type commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.FiniteType.Product)
+
 This file packages the tensor product of two finite-type commutative Hopf algebras as another
 object of `FiniteTypeCommHopfAlgCat`. On affine group schemes this is the coordinate algebra
 of the direct product. The Hopf-algebra structure is Mathlib's tensor-product Hopf algebra;

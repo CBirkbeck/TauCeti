@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Category.Preorder
 /-!
 # The refinement category of presentations, and its functor to complete separated rings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.RefinementCategory)
+
 The refinement preorder on `Presentation` (`LocalizationTopology/Presentation.lean`) has an
 associated category; this file makes the assignment `p ↦ A⟨p.num / p.den⟩` a functor from it
 into `CompleteSeparatedTopCommRingCat`, with the restriction morphisms of

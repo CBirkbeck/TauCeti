@@ -12,6 +12,8 @@ import Mathlib.RingTheory.Norm.Basic
 /-!
 # Evaluating the coordinate ring of a Weierstrass curve at a point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Eval)
+
 The coordinate ring `R[W]` of an affine Weierstrass curve `W` is `AdjoinRoot W.polynomial`, so at a
 point `(x, y)` satisfying the Weierstrass equation the evaluation map `Polynomial.evalEval x y`
 factors through it, by Mathlib's `AdjoinRoot.evalEval`. The same holds one level up: a point with

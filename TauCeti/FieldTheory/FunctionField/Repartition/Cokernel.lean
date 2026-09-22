@@ -11,6 +11,8 @@ import TauCeti.LinearAlgebra.Dimension.Tower
 /-!
 # The exact sequence of one step of the repartition filtration
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Repartition.Cokernel)
+
 For divisors `D ≤ E` of an algebraic function field `F / k` the two subspaces `A_F(D) + F` and
 `A_F(E) + F` of the repartition space sit inside one another, and the quotient
 `(A_F(E) + F) / (A_F(D) + F)` is what measures the difference between the cokernels of

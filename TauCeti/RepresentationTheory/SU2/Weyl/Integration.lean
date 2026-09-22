@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.SU2.Weyl.Orthogonality
 /-!
 # The Weyl integration formula for `SU(2)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Weyl.Integration)
+
 For a continuous class function `f` on `SU(2)`, integration against the Haar probability measure
 reduces to an integral over the Weyl chamber `[0, π]` of the maximal torus, against the Weyl
 density `(2π)⁻¹ · 4 sin²θ dθ`:

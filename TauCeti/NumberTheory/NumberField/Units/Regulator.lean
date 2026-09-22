@@ -10,6 +10,8 @@ public import Mathlib.NumberTheory.NumberField.Units.Regulator
 /-!
 # Evaluating a rank-one regulator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Units.Regulator)
+
 For a number field of unit rank one, a unit generating the units modulo torsion computes the
 regulator at any infinite place `w` as `w.mult * |Real.log (w u)|`. In particular, at a place
 where `1 < w u`, the absolute value can be removed. The multiplicity is essential at a complex

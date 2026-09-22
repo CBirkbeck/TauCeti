@@ -16,6 +16,8 @@ public import TauCeti.RingTheory.Jacobson.Semiprimary
 /-!
 # Existence of projective covers over a semiprimary ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.ProjectiveCover.Existence)
+
 `TauCeti/Algebra/Module/ProjectiveCover/Basic.lean` develops the projective cover of a module as a
 *given* datum: it is unique, and it receives every projective presentation, but nothing there
 produces one. This file supplies the existence theorem. Over a **semiprimary** ring — Mathlib's

@@ -14,6 +14,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace
 /-!
 # Adding coordinate pullbacks
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PullbackAdd)
+
 A coordinate pullback `W₂.CoordinateRing →ₐ[F] W₁.FunctionField` is the same thing as a point of
 `W₂` over `F(W₁)` — its tautological point — so two of them can be added by adding those points
 in the group law of `W₂⁄F(W₁)` and evaluating the coordinate ring at the result. This is the

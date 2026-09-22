@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Localization.Integral
 /-!
 # The integral closure of a Dedekind domain is Dedekind, with no separability
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.IntegralClosure)
+
 Let `A` be a Dedekind domain with fraction field `K`, let `L` be a finite extension of `K`, and let
 `C` be an integral closure of `A` in `L`. Then `C` is again a Dedekind domain. **No separability of
 `L / K` is assumed**, so inseparable extensions are covered, and with them the Frobenius isogeny of

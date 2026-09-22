@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.RootsOfUnity.Adjoin
 /-!
 # The average of a multiset of complex roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.RootsOfUnity.Complex)
+
 A sum of `d` complex roots of unity has absolute value at most `d`. This file proves an arithmetic
 sharpening: if the **average** of the summands happens to be an algebraic integer, then the sum is
 either `0` or of absolute value exactly `d`, with nothing in between possible.

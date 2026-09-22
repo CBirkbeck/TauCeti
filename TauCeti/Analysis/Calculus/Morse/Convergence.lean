@@ -19,6 +19,8 @@ import Mathlib.Topology.UniformSpace.HeineCantor
 /-!
 # Convergence of a negative gradient trajectory
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.Convergence)
+
 A negative gradient trajectory `γ` of `f`, followed forward in time and never leaving a compact
 set `K`, **converges** to a critical point of `f` provided that `f` has only finitely many critical
 points in `K`:

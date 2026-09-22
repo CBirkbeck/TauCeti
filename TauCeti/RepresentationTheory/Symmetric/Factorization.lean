@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Vanishing
 /-!
 # The row-column factorization of a permutation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Factorization)
+
 For a `μ`-tableau `t` with row group `Row(t)` and column group `Col(t)`, the key vanishing lemma
 of `TauCeti.RepresentationTheory.Symmetric.Vanishing` kills the sandwich `a_t σ b_t` whenever a
 row of `t` meets a column of `relabel σ t` twice, and the converse direction there shows that the

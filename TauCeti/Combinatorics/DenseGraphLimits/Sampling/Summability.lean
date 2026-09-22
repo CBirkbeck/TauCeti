@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.DenseGraphLimits.Sampling.Concentration
 /-!
 # Summable tails for sampled homomorphism densities
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Sampling.Summability)
+
 For a fixed finite graph and a positive tolerance, the probabilities that its homomorphism
 density in a graphon sample deviates from the graphon density have finite total mass. This is the
 summability input needed to apply the first Borel--Cantelli lemma to the restrictions of a single

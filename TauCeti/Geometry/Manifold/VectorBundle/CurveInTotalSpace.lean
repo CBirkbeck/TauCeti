@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.MDifferentiable
 /-!
 # Differentiating a curve into the total space of a fibre bundle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CurveInTotalSpace)
+
 A curve `z` into the total space of a fibre bundle is read, near a parameter `t`, in the chart of
 the total space centred at `z t`.  By `FiberBundle.extChartAt` that chart is the trivialization at
 the base point `(z t).proj` followed by the base chart there, so the reading of `z` is the pair of

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Pi
 /-!
 # Hamming data under coordinate decompositions and reindexing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Hamming)
+
 This file records that Hamming weight and distance on a function whose domain is a disjoint union
 split as sums over the two coordinate types. Weight also splits over a retained coordinate set
 and its complement. These identities let constructions assembled from

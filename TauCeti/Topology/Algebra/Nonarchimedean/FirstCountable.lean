@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.OpenAddSubgroupBasis
 /-!
 # A first-countable nonarchimedean group has a decreasing basis of open subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.FirstCountable)
+
 Henkel's open mapping theorem runs a successive-approximation argument down a *sequence* of
 neighbourhoods of zero, each one absorbing the previous error. Two properties of that sequence are
 used and neither comes for free: its terms must be **subgroups**, so that a sum of errors drawn

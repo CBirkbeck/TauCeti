@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.NumberField.FixedField
 /-!
 # The double coset law for splitting in a non-Galois subfield
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.RamificationInertia.DoubleCoset.Basic)
+
 Let `M / K` be a finite Galois extension of number fields with group `G`, let `H` be a subgroup of
 `G`, and let `E = M ^ H` be its fixed field, an intermediate field that need not be Galois over
 `K`.  Fix a prime `p` of `𝓞 K` and a prime `Q` of `𝓞 M` above it, and let `D` be the

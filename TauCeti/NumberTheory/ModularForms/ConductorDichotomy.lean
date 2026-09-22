@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.CuspDescent
 /-!
 # The level-lowering dichotomy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.ConductorDichotomy)
+
 `CuspDescent.lean` builds the descent half of the conductor theorem: when the nebentypus `χ` is
 trivial on the kernel of `(ZMod N)ˣ → (ZMod (N / l))ˣ`, the function `f` whose level-raise is a
 cusp form of level `N` is itself a cusp form of level `N / l`. That is one horn of a dichotomy.

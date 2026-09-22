@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SplitTorus.RootDatum.Basic
 /-!
 # Coordinate roots for the diagonal torus in the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Root.Datum)
+
 This file specializes `SplitTorus.coordinateRootDatum` to the coordinate lattice
 `ULift (Fin n)`. Its roots and coroots are the vectors `e_i - e_j`, and reflections transpose the
 two coordinates indexed by the reflecting root.

@@ -14,6 +14,8 @@ import Mathlib.Analysis.Normed.Module.Normalize
 /-!
 # Compactness of compact real Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Spin.Compact)
+
 Every element of a positive-dimensional compact real Spin group is a product of uniformly many
 normalized reflection-pair lifts. The normalized vectors range over a Euclidean unit sphere, so a
 fixed finite product of pairs of spheres maps continuously and surjectively onto the Spin group.

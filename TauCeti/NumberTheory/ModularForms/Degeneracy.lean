@@ -21,6 +21,8 @@ import TauCeti.NumberTheory.ModularForms.Cusps.Basic
 /-!
 # The level-raising degeneracy maps `V_d`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Degeneracy)
+
 For a positive integer `d`, the *level-raising* (or *degeneracy*) map `V_d` sends a function on
 the upper half-plane to `τ ↦ f (d τ)`. It is the slash action by `diag(d, 1)`, renormalized by
 `d ^ (1 - k)` so that no power of `d` is introduced.

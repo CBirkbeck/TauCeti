@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Symmetric.Specht.Module
 /-!
 # James's submodule theorem, and the irreducibility of the Specht module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Symmetric.Specht.SubmoduleTheorem)
+
 Every subrepresentation `U` of the Young permutation module `M^μ` is comparable with the Specht
 module `S^μ` in a very strong sense: either `S^μ ≤ U`, or `U` is orthogonal to `S^μ` for the
 tabloid form.  This dichotomy is **James's submodule theorem**, and it is proved here

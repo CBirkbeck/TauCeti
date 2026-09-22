@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Ideal.Quotient.Operations
 /-!
 # The row `0 → A → A⟨ζ⟩ × A⟨η⟩ → A⟨ζ, ζ⁻¹⟩ → 0`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Laurent.Basic)
+
 Let `A` be a nonarchimedean commutative ring. For the full short exact row, assume moreover that
 `A` is complete and separated; the individual constructions and injectivity use weaker
 hypotheses. Wedhorn's ring of the overlap of a two-piece Laurent cover is

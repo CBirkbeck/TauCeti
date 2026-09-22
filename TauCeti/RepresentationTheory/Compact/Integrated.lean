@@ -13,6 +13,8 @@ import TauCeti.RepresentationTheory.Irreducible
 /-!
 # A class function acts on an irreducible representation by a scalar
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Integrated)
+
 A continuous function `f` on a compact group `G` acts on a continuous representation `π` on `V`
 by the **integrated operator**
 

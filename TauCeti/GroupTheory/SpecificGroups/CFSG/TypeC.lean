@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Frobenius
 /-!
 # The standard symplectic carrier and the candidate group of a validated type-`C` index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeC)
+
 The type-`C` branch of the classification list is built on the type-`C` diagram of rank `n`, and
 Tau Ceti's explicit full-weight Chevalley carrier for that diagram is `TauCeti.SpStd.groupScheme`,
 the Kostant toral closure of the standard representation of `sp_(2n)` inside `GL_(2n)` over `ℤ`.

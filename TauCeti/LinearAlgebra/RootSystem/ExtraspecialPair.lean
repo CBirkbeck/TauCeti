@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Positive
 /-!
 # Special and extraspecial pairs of roots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.ExtraspecialPair)
+
 Fix a base `b` of a reduced crystallographic root pairing together with a linear order on the root
 indices that is *additive*: adding a positive root to a positive root moves an index strictly
 upwards. A **special pair** is a pair of positive roots `α ≺ β` whose sum is again a root, and a

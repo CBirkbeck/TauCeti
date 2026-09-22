@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Frobenius
 /-!
 # Frobenius elements for a group acting on a ring extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Frobenius)
+
 This file supplements Mathlib's `IsArithFrobAt` API with facts about a monoid or group acting on
 a commutative ring extension `S/R`. All of them are stated at ring level, so they are available
 independently of any number-field or Legendre-symbol specialization.

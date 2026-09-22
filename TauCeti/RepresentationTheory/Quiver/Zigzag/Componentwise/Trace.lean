@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.Trace
 /-!
 # The trace of the componentwise zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.Componentwise.Trace)
+
 The public zigzag algebra is a product over the connected components of a finite simple graph.
 This file equips each factor with its canonical trace and sums those traces over the product. On a
 component containing an edge this is `TauCeti.zigzagTrace`, transported from the relation-quotient

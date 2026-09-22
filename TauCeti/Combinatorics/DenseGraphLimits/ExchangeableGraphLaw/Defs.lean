@@ -13,6 +13,8 @@ import TauCeti.MeasureTheory.Measure.FiniteOrder
 /-!
 # Exchangeable graph laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.ExchangeableGraphLaw.Defs)
+
 An exchangeable random graph on an unbounded label set is presented here by its finite marginals:
 a probability law on `SimpleGraph (Fin k)` for every `k`, consistent under pulling a graph back
 along every injection of labels `Fin k ↪ Fin l`. Consistency along *all* injections is a single

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Bialgebra.TensorProduct
 /-!
 # Base change of coalgebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.BaseChange)
+
 This file records formulas for the coalgebra structure on a scalar extension `A ⊗[R] H`.
 
 ## Main declarations

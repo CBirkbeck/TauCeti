@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.Measure.Coupling.Basic
 /-!
 # The overlaid difference of two graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.CutMetric.Coupling)
+
 Given a coupling of two probability spaces, two graphons living on *different* carriers can be
 compared: read `U` through the first coordinate, read `W` through the second, and subtract. The
 result is the **overlaid difference kernel** `overlayDiff U W π`, a symmetric kernel on the coupled

@@ -13,6 +13,8 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Restriction
 /-!
 # Maps between abelianized Galois groups of finite normal layers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.GaloisMaps)
+
 The functoriality of the Artin map compares operations on formation levels with three canonical
 homomorphisms between the abelianizations of finite-layer Galois groups, and with the equivalence
 induced directly by conjugation. This file constructs the homomorphisms and proves coherence laws

@@ -12,6 +12,8 @@ import TauCeti.KnotTheory.Grid.StateCardinality
 /-!
 # The grid differentials on grids of size at most two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.SmallGrid.Differential)
+
 This file records the small-grid computations for the grid differentials.
 
 For the fully blocked differential the whole differential vanishes. An oriented rectangle needs

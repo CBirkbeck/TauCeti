@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Convex.ConvexSpace.Dist
 /-!
 # Iterated barycentric subdivision produces small simplices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.Small.Basic)
+
 Points of the standard simplex `StdSimplex ℝ N` on a finite type `N` are measured by their weight
 vectors `⇑w.weights : N → ℝ` with the sup metric, which induces the topology of the simplex. If the
 vertices of an affine `k`-simplex are pairwise at distance at most `d`, then the vertices of each

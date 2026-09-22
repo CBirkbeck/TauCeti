@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.Projective.Basi
 /-!
 # The Euler form against the dimension vector of a vertex projective
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.Projective.EulerForm)
+
 The Euler form of a finite quiver is the numerical shadow of the homological pairing: for
 finite-dimensional representations of an acyclic quiver, `⟨dim M, dim N⟩` is
 `dim Hom(M, N) - dim Ext¹(M, N)`. On the projective `Pᵢ` that identity needs no `Ext`, because

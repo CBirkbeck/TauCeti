@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Solvable.Basic
 /-!
 # Extensions of geometrically solvable affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Solvable.Extension)
+
 Let `f : H ⟶ K` be a morphism of commutative Hopf algebras over a field `k`. Contravariantly,
 it represents a homomorphism from the affine group represented by `K` to the one represented by
 `H`. This file proves that the source group of geometric points is solvable when the target and

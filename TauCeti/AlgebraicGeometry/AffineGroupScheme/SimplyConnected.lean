@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.GroupScheme.CentralIsogeny.Isomorphism
 /-!
 # Simply connected semisimple affine group schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.SimplyConnected)
+
 A semisimple affine group scheme `G` over a field is **simply connected** when every central
 isogeny `G' ⟶ G` from another semisimple affine group scheme is an isomorphism. Restricting the
 source to semisimple affine group schemes is essential: the ambient category of all group schemes

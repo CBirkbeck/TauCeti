@@ -15,6 +15,8 @@ public import TauCeti.KnotTheory.Grid.XHomotopy.Complex
 /-!
 # The variables act trivially on simply blocked grid homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.XHomotopy.SimplyBlocked)
+
 Blocking the `O`-marking of column `i` specializes the unblocked grid complex `GC⁻` at `V_i = 0`
 to the simply blocked complex `GC^`, a complex over `R[V_c | c ≠ i]`. The `X`-marking homotopy
 `H_k` of `GC⁻` specializes in the same way to a map `hat H_k` of `GC^`

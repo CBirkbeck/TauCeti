@@ -13,6 +13,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # The special linear group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Scheme)
+
 This file presents the special linear group scheme `SLₙ` as the closed subgroup scheme of
 `GeneralLinear.groupScheme R n` cut out by the determinant-one condition.
 

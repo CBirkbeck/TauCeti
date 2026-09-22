@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic
 /-!
 # Products of pro-p groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Product)
+
 The class of pro-`p` groups is stable under products: if each factor is pro-`p`, then so is
 their product with the product topology. Together with stability under continuous surjective
 images from `ProP.Basic`, this is part of the basic closure API for `IsProP`, and lets new pro-`p`

@@ -15,6 +15,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Power coordinates at a polygonal corner
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Reflection.Corner)
+
 A holomorphic injection meeting the two rays of a sector of opening `β * π`, with
 `0 < β < 2`, has a power representation `f = h ^ β`, where `h` extends holomorphically
 across the source boundary and has a simple zero at the prevertex. The sector is centered on

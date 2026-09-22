@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.Triangular
 /-!
 # The upper-unitriangular coordinate bialgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Coordinate.Bialgebra)
+
 For a commutative semiring `R`, the coordinate ring of the upper-unitriangular matrix monoid
 `U_m` is the polynomial algebra on entries strictly above the diagonal. Its generic matrix has
 ones on the diagonal and zeros below it. Matrix multiplication and the identity matrix give its

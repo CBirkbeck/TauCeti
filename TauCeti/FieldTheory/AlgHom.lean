@@ -12,6 +12,8 @@ import TauCeti.FieldTheory.Minpoly
 /-!
 # Algebra homomorphisms between finite-dimensional fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.AlgHom)
+
 This file contains dimension and conjugacy criteria for algebra homomorphisms between fields.
 -/
 

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Subcomodule.Multiplication
 /-!
 # Multiplicativity of Tannakian local functionals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Tannaka.Multiplication)
+
 Let `H` be a bialgebra over a commutative semiring `k`, let `A` be a commutative `k`-algebra,
 and let `η` be a tensor automorphism of scalar extension on finitely generated `H`-comodules.
 The functional extracted from `η` on a finite subcomodule of the regular comodule is compatible

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace
 /-!
 # The factorisation of an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Factorisation)
+
 The pointedness criterion in `Isogeny/InfinityPlace.lean` discharges the pointedness of a factor.
 If two isogenies `φ : W₁ → W₂` and
 `ψ : W₁ → W₃` satisfy `ψ^*F(W₃) ⊆ φ^*F(W₂)` as subfields of `F(W₁)`, then inverting `φ^*` on its

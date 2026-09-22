@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.LegendreSymbol.SquareClass
 /-!
 # Prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Prime.Discriminants)
+
 The genus-field layer of the multiquadratic roadmap uses the **prime discriminants**
 `-4`, `8`, `-8`, and `p* = (-1)^((p - 1) / 2) p` for odd primes `p`. The files
 `PrimeDiscriminant` and `EvenPrimeDiscriminant` develop the odd and 2-adic pieces separately;
@@ -109,7 +111,10 @@ theorem not_isEvenPrimeDiscriminant_oddPrimeDiscriminant {p : ℕ} (hodd : Odd p
     exact hp_ne_eight hnat
 
 /-- The squarefree radicand attached to a prime discriminant. In the even cases this divides by
-`4`; in the odd cases the discriminant is already squarefree and is used as its own radicand. -/
+`4`; in the odd cases the discriminant is already squarefree and is used as its own radicand.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Multiquadratic.primeDiscriminantRadicand) -/
 @[expose] def primeDiscriminantRadicand (D : ℤ) : ℤ :=
   if D = -4 ∨ D = 8 ∨ D = -8 then evenPrimeDiscriminantRadicand D else D
 

@@ -13,6 +13,8 @@ import TauCeti.Algebra.DualNumber.Convolution
 /-!
 # The infinitesimal adjoint action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Adjoint.Infinitesimal)
+
 The differential of the adjoint representation is the adjoint representation of the Lie
 algebra. Concretely, the dual-number point associated to a tangent vector `d` acts on a
 constant tangent vector `e` by `e + ε[d,e]`. This identifies the convolution commutator

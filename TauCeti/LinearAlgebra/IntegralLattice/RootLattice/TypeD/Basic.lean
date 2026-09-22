@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Signature
 /-!
 # The checkerboard lattice and the type `Dₙ` discriminant form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.RootLattice.TypeD.Basic)
+
 This file constructs the *checkerboard lattice* `{x ∈ ℤⁿ | ∑ xᵢ is even}` inside `ℚⁿ`, computes
 its dual lattice, and identifies its discriminant form.  For `n ≥ 4` this is the positive root
 lattice of type `Dₙ` in the Conway--Sloane coordinate model, and the discriminant form computed

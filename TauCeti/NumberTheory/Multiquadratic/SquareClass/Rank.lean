@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.Multiquadratic.SquareClass.Independence
 /-!
 # The degree of a multiquadratic field with arbitrary unit radicands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.SquareClass.Rank)
+
 `TauCeti.Multiquadratic.finrank_adjoin_range` computes `[K(rootᵢ : i) : K] = 2^|ι|` for
 **square-class independent** radicands. Without that hypothesis the degree is still a power of
 two, and the exponent measures how independent the radicands are: it is the rank of the subgroup

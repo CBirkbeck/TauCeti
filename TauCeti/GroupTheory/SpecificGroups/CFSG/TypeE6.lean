@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # The untwisted family `E₆(q)` on the minuscule carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeE6)
+
 The untwisted exceptional family `E₆(q)` is built on the `E₆` diagram, and Tau Ceti's explicit
 full-weight Chevalley carrier for that diagram is `TauCeti.E6Minuscule.groupScheme`, the Kostant
 toral closure of the `27`-dimensional minuscule representation inside `GL₂₇` over `ℤ`. This file

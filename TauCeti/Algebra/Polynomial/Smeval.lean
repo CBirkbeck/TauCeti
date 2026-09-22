@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Polynomial.Smeval
 /-!
 # Scalar-multiple polynomial evaluation in an opposite monoid
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Smeval)
+
 `Polynomial.smeval` evaluates a polynomial at an element of an additive commutative monoid with
 natural number powers and an action of the coefficient semiring. All three of those structures
 are inherited by the opposite monoid, and `MulOpposite.unop` respects each of them, so evaluation

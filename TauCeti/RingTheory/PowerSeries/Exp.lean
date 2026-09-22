@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.PowerSeries.Exp
 /-!
 # The exponential specialization of a monoid algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.PowerSeries.Exp)
+
 The functional equation `e^{aX} e^{bX} = e^{(a+b)X}` of the exponential power series
 (`PowerSeries.exp_mul_exp_eq_exp_add`) says that `a ↦ e^{aX}` is a homomorphism from the additive
 group of a `ℚ`-algebra `R` to the multiplicative monoid of `R⟦X⟧`. Composed with an additive map

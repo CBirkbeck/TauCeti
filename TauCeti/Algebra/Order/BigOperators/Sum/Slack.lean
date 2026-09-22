@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 /-!
 # A term-by-term lower bound, summed with an error budget
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Order.BigOperators.Sum.Slack)
+
 If every term of a family `a` is within `η'` below its counterpart in `d`, then summing over a
 finite set accumulates that slack at most once per index, so the sum of `a` falls short of the sum
 of `d` by at most `#s • η'`.

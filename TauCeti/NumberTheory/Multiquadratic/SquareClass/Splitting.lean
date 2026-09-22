@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.Multiquadratic.SquareClass.Rational
 /-!
 # Frobenius and the splitting law for rational radicands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.SquareClass.Splitting)
+
 The multiquadratic splitting law `NumberField.ncard_primesOver_multiquadratic_iff` and its
 Frobenius refinements `NumberField.exists_isArithFrobAt_multiquadratic` and
 `NumberField.isArithFrobAt_multiquadratic_eq_one_iff` are stated for integer radicands: `K` is

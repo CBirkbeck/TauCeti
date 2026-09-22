@@ -14,6 +14,8 @@ public import TauCeti.Analysis.Fredholm.Criteria
 /-!
 # Regular level sets of a Fredholm map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.LevelSet.Basic)
+
 Let `f : E → F` be a map between Banach spaces which is strictly differentiable at a point `a` of
 the level set `{x | f x = c}`, and whose derivative `f'` there is a **surjective Fredholm
 operator**. This file shows that the level set is, near `a`, homeomorphic to an open subset of

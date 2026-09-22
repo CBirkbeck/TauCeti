@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 /-!
 # Hecke slash sums as traces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Trace)
+
 A double-coset operator is the trace of a translate. The rational cosets used by
 `HeckeRing.GL2.heckeSlashSum` and the real cosets used by Mathlib's trace correspond under
 extension of scalars. Consequently the two constructions agree, with no extra determinant

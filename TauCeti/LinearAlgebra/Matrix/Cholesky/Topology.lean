@@ -11,6 +11,8 @@ public import Mathlib.Topology.Maps.Proper.CompactlyGenerated
 /-!
 # Continuity and measurability of the Cholesky equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Cholesky.Topology)
+
 This file proves that Cholesky factorization is a homeomorphism between the positive-definite
 symmetric matrices and the positive-diagonal lower-triangular matrices, both carrying their
 subtype topologies, and hence a measurable equivalence for the corresponding Borel structures.

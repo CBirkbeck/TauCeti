@@ -15,6 +15,8 @@ import Mathlib.Topology.Algebra.Module.FiniteDimension
 /-!
 # Topology on Clifford Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Spin.Basic)
+
 This file uses the canonical subtype topology on a Spin group inside a topological Clifford
 algebra. The surrounding Clifford algebra has its module topology from
 `TauCeti.Topology.Algebra.CliffordAlgebra.Basic`. A special orthogonal group in coordinates has the

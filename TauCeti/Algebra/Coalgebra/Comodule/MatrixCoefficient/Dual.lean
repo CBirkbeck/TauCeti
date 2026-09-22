@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Product
 /-!
 # Matrix coefficients of dual comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Dual)
+
 For a finite projective right comodule `M` over a Hopf algebra, this file identifies the matrix
 coefficients of Tau Ceti's explicit right dual with the antipode images of the coefficients of
 `M`. The pointwise formula uses evaluation to turn `m : M` into a functional on the dual:

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # The slope of the real exponential at zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.ExponentialSlope)
+
 This file records the parameterized right-sided slope limit for `t ↦ exp (a * t)`.  It is a
 small shared calculus fact used by both semigroup generator shifts and resolvent calculations.
 

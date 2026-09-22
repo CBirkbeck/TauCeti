@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Basic
 /-!
 # The tensor product of comodules over a bialgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.TensorProduct)
+
 This file constructs the tensor product of two right comodules over a bialgebra `C`. If `M`
 and `N` are right `C`-comodules, the coaction on `M ⊗ N` is the usual diagonal formula
 

@@ -15,6 +15,8 @@ import TauCeti.Topology.Homeomorph.SetCongr
 /-!
 # Locally flat embeddings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.LocallyFlat.Basic)
+
 Topological manifolds admit embeddings that no smooth embedding can imitate: the Alexander horned
 sphere is a topologically embedded `2`-sphere in `S³` bounding a non-simply-connected region, and a
 wild arc in `ℝ³` is knotted although its domain is an interval. Theorems about topological

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.FromMatrix
 /-!
 # Coordinate morphisms out of `GLₙ` determined by a multiplicative matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.MultiplicativeMatrix)
+
 A square matrix `Y` over a commutative Hopf algebra `S` is **multiplicative** when
 
 ```text

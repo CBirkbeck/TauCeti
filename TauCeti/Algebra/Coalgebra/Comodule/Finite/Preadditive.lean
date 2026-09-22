@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Preadditive
 /-!
 # Preadditive structure on finitely generated comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Preadditive)
+
 This file makes the preadditive structure on the category of finitely generated right
 comodules over a coalgebra over a commutative ring available from a finite-comodule import.
 The category is a full subcategory of all comodules, so Mathlib transfers the preadditive

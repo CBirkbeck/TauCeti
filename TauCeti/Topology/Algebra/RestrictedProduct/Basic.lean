@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Integral subgroups of restricted products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.RestrictedProduct.Basic)
+
 This file packages the everywhere-integral part of a restricted product of groups equipped
 with topologies.  The reference family used to form the restricted product and a second family of
 subgroups are kept separate, so changing the integral model at finitely many indices is

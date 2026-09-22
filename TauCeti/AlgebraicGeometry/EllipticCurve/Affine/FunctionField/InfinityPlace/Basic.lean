@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Norm
 /-!
 # The valuation at infinity on the function field of a Weierstrass curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Basic)
+
 The function field `F(W)` of an affine Weierstrass curve is a quadratic extension of the rational
 function field `F(x)` (`WeierstrassCurve.Affine.finrank_functionField`), so every function has an
 algebra norm there. Composing that norm with Mathlib's place at infinity of `F(x)` gives the place

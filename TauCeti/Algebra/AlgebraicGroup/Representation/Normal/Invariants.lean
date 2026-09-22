@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.PointsAction
 /-!
 # Invariants of normal closed subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.Normal.Invariants)
+
 Let `H` be a commutative Hopf algebra and `M` an `H`-comodule. A point of the affine group
 represented by `H` acts naturally on `M` itself when its value algebra is the base ring. For a
 Hopf ideal `I`, this file defines the submodule fixed by the base-valued points of the closed

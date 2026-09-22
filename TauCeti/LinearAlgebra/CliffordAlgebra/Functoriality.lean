@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Flat.Basic
 /-!
 # Functoriality of Clifford algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Functoriality)
+
 This file records structural properties of the algebra map induced by a quadratic isometry. Such
 maps commute with Clifford conjugation and preserve the even subalgebra. For an orthogonal product,
 the map induced by the left-summand inclusion is injective when the left Clifford algebra is flat

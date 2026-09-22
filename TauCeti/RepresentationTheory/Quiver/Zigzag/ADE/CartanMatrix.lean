@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.Zigzag.CartanMatrix
 /-!
 # Graded Cartan matrices of the named ADE zigzag algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.ADE.CartanMatrix)
+
 This file specializes the graded Cartan formula for zigzag algebras to the Bourbaki-labelled
 `D₄` and `E₈` graphs and to the arm-labelled affine `E₈ = T_{2,3,6}` graph.  In each case the
 matrix is

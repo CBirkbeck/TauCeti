@@ -17,6 +17,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Degrees of factors modulo a prime
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.FactorDegrees)
+
 This module works out `Polynomial.factorDegrees` explicitly for `X ^ 5 - X - 1`, whose reduction
 splits as a cubic times a quadratic modulo `2` and stays irreducible modulo `5`. The generic
 polynomial carrier and API live in `TauCeti/RingTheory/Polynomial/FactorDegrees.lean`.

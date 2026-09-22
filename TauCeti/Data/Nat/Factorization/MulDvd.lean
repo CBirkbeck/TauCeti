@@ -11,6 +11,8 @@ public import Mathlib.Algebra.BigOperators.Finsupp.Basic
 /-!
 # The prime powers that decide whether a divisor fits beside a fixed factor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.Factorization.MulDvd)
+
 Let `f` and `d` both divide `h`. Whether the product `f * d` still divides `h` is decided one
 prime at a time, and only at the primes of `f`: room for `f * d` fails at `p` exactly when `d`
 carries `p` to a power that exceeds the room `h` leaves after `f`, which is `v_p h - v_p f`. So

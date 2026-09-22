@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Table
 /-!
 # The Frobenius-Schur involution count
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.InvolutionCount)
+
 Let `G` be a finite group and `k` an algebraically closed field in which `|G|` is invertible.
 Counting the square roots of a group element,
 

@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Levi.BaseChang
 /-!
 # Geometry of general-linear weight Levis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Levi.Geometry)
+
 For a weight `w : Fin N → ℤ`, the weight Levi in `GL_N` consists of the invertible matrices
 whose entries between distinct weight spaces vanish. Its coordinate algebra is the localization
 at the determinant of the polynomial algebra on the entries within equal-weight blocks.

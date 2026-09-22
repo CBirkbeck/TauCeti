@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Jacobson.Module
 /-!
 # Superfluous submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.Submodule.Superfluous)
+
 A submodule `N` of `M` is **superfluous** (also called *small*) when it is dispensable for
 generating `M`: whenever `N ⊔ K = ⊤` for a submodule `K`, already `K = ⊤`. Superfluous submodules
 are the dual notion to essential submodules, and an epimorphism `P ↠ M` is a projective cover

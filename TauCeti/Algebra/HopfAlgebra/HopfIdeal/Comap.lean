@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.Kernel
 /-!
 # Inverse images of Hopf ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.HopfIdeal.Comap)
+
 This file records inverse images of Hopf ideals. Over a general commutative base, a surjective
 bialgebra morphism supplies the tensor exactness needed for the construction. Alternatively,
 flatness of `K/I` and `H/f⁻¹(I)` lets us take the kernel of the composite `H → K → K/I`.

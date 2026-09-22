@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Smooth.Basic
 /-!
 # Smoothness of the identity component
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Smooth.IdentityComponent)
+
 The identity component of a smooth affine group of finite type over an algebraically closed
 field is smooth. Its coordinate algebra is the localization at the idempotent selecting the
 identity component. This supplies smooth connected subgroups to which radical and

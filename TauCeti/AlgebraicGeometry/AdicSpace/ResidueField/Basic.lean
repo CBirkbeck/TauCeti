@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
 /-!
 # The residue field of a point of the valuation spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.ResidueField.Basic)
+
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §2.4.**
 
 A point `v : Spv A` determines a valuation `v.valuation` on `A`, but not one on a field. This file

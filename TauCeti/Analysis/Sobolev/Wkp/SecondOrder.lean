@@ -11,6 +11,8 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Second-order weak differentiability from directional derivatives
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Sobolev.Wkp.SecondOrder)
+
 An element of `W^{2,p}(Ω)` is an element of `W^{1,p}(Ω)` together with an `Lᵖ` weak Fréchet
 derivative of its weak gradient. Checking that a given `u ∈ W^{1,p}(Ω)` has one means producing
 a single `Lᵖ` field of linear maps; this file reduces that to the componentwise data that a

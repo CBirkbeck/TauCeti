@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Group.Matrix
 /-!
 # Topology on special orthogonal groups in coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.QuadraticForm.SpecialOrthogonal)
+
 For a quadratic map `Q` on a finite coordinate space `n → R`, this file induces the
 standard coordinate topology from the faithful map of `specialOrthogonalGroup Q` into `GL(n, R)`
 defined in `TauCeti.LinearAlgebra.QuadraticForm.OrthogonalGroup`. Over a topological ring the

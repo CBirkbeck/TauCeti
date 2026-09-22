@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Induction.Projection
 /-!
 # The projection formula on finite-dimensional representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.FiniteDimensional.Projection)
+
 For a finite-index subgroup `S ≤ G` over a field `k`, this file specializes the projection formula
 `TauCeti.indProjection` of `TauCeti/RepresentationTheory/Induction/Projection.lean` to
 finite-dimensional representations, as

@@ -12,6 +12,8 @@ public import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
 /-!
 # The `S`-transformation of the complex extension of a slash-invariant form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.STransform)
+
 For a weight-`k` slash-invariant form `f` whose group contains `S = !![0, -1; 1, 0]`, the
 transformation law `f (S • τ) = τ ^ k * f τ` transports through `ofComplex` to the
 identity `(⇑f ∘ ofComplex) (-1 / w) = w ^ k * (⇑f ∘ ofComplex) w` on the open upper

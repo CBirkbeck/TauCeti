@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Semigroups.Generation.HilleYosida.Approximation
 /-!
 # Compact-time convergence of the Hille--Yosida approximations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Generation.HilleYosida.Convergence)
+
 This file assembles the two halves of the exponent-zero, general-`M` Hille--Yosida construction
 that are already available: the uniform bound `‖exp (t A_lambda)‖ ≤ M` on the Yosida exponentials
 proved in `TauCeti/Analysis/Semigroups/Generation/HilleYosida/Approximation.lean`, and the

@@ -13,6 +13,8 @@ import Mathlib.Tactic.Module
 /-!
 # Normal ordering divided powers with a central commutator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DividedPowers.NormalOrdering)
+
 Let `x`, `y`, and `z` belong to an associative algebra over `ℚ`, with
 `x * y = y * x + z`. When `z` commutes with both `x` and `y`, the divided powers admit the
 coefficient-one normal-ordering formula

@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.CompositionSeries.Additivity
 /-!
 # Simple classes in the Grothendieck group of finite-length modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GrothendieckGroup.SimpleBasis)
+
 Let `R` be an Artinian ring. Every finitely generated left `R`-module has finite length, and its
 Jordan--Hölder multiplicities are additive in short exact sequences. Consequently, multiplicity
 of a fixed simple module descends to an integer-valued coordinate on the exact Grothendieck group

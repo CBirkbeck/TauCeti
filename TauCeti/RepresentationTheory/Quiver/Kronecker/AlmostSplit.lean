@@ -14,6 +14,8 @@ import Mathlib.LinearAlgebra.Basis.VectorSpace
 /-!
 # The almost-split sequence of the `A₂` quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.AlmostSplit)
+
 The `A₂` quiver `• → •` is the generalized Kronecker quiver on a one-element arrow type, and it has
 exactly three indecomposable representations: the two vertex simples `S₁ = (k → 0)` and
 `S₂ = (0 → k)` and the vertex projective `P₁ = (k →^{id} k)`, classified in

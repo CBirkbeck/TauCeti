@@ -11,6 +11,8 @@ public import Mathlib.FieldTheory.RatFunc.IntermediateField
 /-!
 # Power subfields of a rational function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.RatFunc.PowerTower)
+
 For a field `K` and an exponent `n`, this file computes the degree of `K(X)` over the subfield
 `K(X ^ n)`, and records that `K(X)` is purely inseparable over `K(X ^ q)` when `q` is the
 exponential characteristic of `K`.

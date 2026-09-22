@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Convex.Segment
 /-!
 # Betweenness in the Poincaré disc: the hyperbolic geodesic is unique
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Poincare.Betweenness)
+
 `Poincare/Geodesic.lean` shows that the Poincaré disc is a **geodesic** metric space: the
 Euclidean diameters, reparametrised by `Real.tanh`, are unit-speed geodesic lines, and moving one
 of them by a disc automorphism joins any prescribed pair of points. It leaves open the converse —

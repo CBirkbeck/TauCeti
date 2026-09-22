@@ -10,6 +10,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 /-!
 # Connectedness of a graph numbered so that neighbours descend
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.SimpleGraph.Connected)
+
 A graph on `Fin n` whose every vertex other than `0` has a neighbour with a smaller number is
 connected: a strong induction on the number of a vertex walks it down to `0`. Numbering the
 vertices of a diagram this way is what makes connectedness of the Dynkin diagrams, finite and

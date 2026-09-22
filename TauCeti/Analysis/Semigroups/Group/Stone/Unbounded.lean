@@ -15,6 +15,8 @@ import TauCeti.Analysis.Semigroups.Generation.LumerPhillips
 /-!
 # Stone's theorem for unbounded self-adjoint operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Group.Stone.Unbounded)
+
 A self-adjoint operator `A` on a complex Hilbert space is `-i` times the complex generator of
 exactly one unitary C₀-group, the group `e^{itA}`.  This completes the converse direction of
 Stone's theorem, begun for bounded `A` in `TauCeti.Analysis.Semigroups.Group.Stone.Basic`.

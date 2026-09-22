@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Isometry
 /-!
 # Norms of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Norm)
+
 The norm of a vector in an integral lattice is its self-pairing under the lattice bilinear form.
 On lattice vectors this rational value has a canonical integral lift, the integral norm.
 

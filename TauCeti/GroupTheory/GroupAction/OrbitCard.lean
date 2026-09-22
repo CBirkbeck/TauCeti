@@ -12,6 +12,8 @@ import Mathlib.Data.Multiset.MapFold
 /-!
 # The multiset of orbit sizes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupAction.OrbitCard)
+
 For a group `G` acting on a finite type `X`, the multiset of the sizes of the orbits of `G` on
 `X` is a basic invariant of the action. This file records two ways in which it is preserved: by a
 change of the acting group that does not change the orbits, and by an equivariant bijection of

@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.SpecificGroups.Alternating
 /-!
 # Transporting permutation groups along an equivalence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.PermCongr)
+
 An equivalence `e : α ≃ β` induces the group isomorphism `Equiv.permCongrHom e` from
 `Equiv.Perm α` to `Equiv.Perm β`, and so carries a subgroup `G ≤ Equiv.Perm α` to the subgroup
 `G.map e.permCongrHom.toMonoidHom ≤ Equiv.Perm β`. The two subgroups are the same permutation

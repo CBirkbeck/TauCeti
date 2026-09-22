@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Derivation
 /-!
 # The pullback of the invariant differential is additive in the morphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Hom.Differential)
+
 A morphism `f : W₁ → W₂` of elliptic curves pulls the invariant differential `ω₂` of `W₂` back to a
 differential `f^*ω₂` on `W₁`: along the isogeny when `f` is nonzero, and to `0` when `f = 0`. This
 file proves that the assignment `f ↦ f^*ω₂` is additive (Silverman III.5.2),

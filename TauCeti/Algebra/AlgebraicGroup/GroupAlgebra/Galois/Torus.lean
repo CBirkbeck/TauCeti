@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Torus.Splitting
 /-!
 # Galois descent produces a torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Torus)
+
 Let `L / k` be a finite Galois extension and let `M` be a lattice, that is, a torsion-free
 finitely generated abelian group, carrying an integral representation of `Gal(L/k)`. The
 invariants of the simultaneous semilinear action on `L[M]` form a finite-type commutative Hopf

@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.NumberField.Frobenius
 /-!
 # Restriction of arithmetic Frobenius
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius.Restriction)
+
 An arithmetic Frobenius in a field extension remains an arithmetic Frobenius after restriction
 to a normal intermediate extension. More precisely, if `L/M/K` is a tower with `M/K` normal and
 `σ ∈ Gal(L/K)` is an arithmetic Frobenius at `Q`, then `σ|_M` is an arithmetic Frobenius at the

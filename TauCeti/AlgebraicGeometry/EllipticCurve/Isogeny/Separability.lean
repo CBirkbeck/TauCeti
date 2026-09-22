@@ -15,6 +15,8 @@ import TauCeti.FieldTheory.IntermediateField.FieldRange
 /-!
 # Separable and inseparable degrees of an isogeny
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Separability)
+
 `TauCeti.Isogeny.degree` is the dimension of `W₁.FunctionField` over the image of `fieldPullback`.
 That extension is finite, so it splits the degree into a separable and an inseparable part, and
 this file names those two parts and records that they multiply to the degree.

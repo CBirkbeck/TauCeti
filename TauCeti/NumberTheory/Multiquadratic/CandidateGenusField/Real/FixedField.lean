@@ -13,6 +13,8 @@ import Mathlib.FieldTheory.Galois.Basic
 /-!
 # The real candidate genus field as a fixed field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Real.FixedField)
+
 The candidate genus field is an abelian Galois subfield of `ℂ`. Complex conjugation preserves
 it: each chosen generator has rational square, so its conjugate is that generator or its negative.
 This gives an automorphism `candidateGenusFieldConj hd` of the candidate field.

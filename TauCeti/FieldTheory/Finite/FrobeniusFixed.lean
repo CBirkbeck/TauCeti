@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.Finite.GaloisField
 /-!
 # The fixed points of the `q`-power map over a finite field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.FrobeniusFixed)
+
 For a finite field `K` with `q` elements and any commutative domain `L` that is a `K`-algebra, an
 element of `L` is fixed by the `q`-power map exactly when it comes from `K`:
 

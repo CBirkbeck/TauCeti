@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
 /-!
 # The division polynomial `ψ` as a normalised EDS
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NormEDS)
+
 Mathlib defines `WeierstrassCurve.ψ` as `normEDS` at the curve's division-polynomial parameters,
 but keeps the body unexposed, so no importing module can see the identification by unfolding.
 This file states it, at the level of functions, and draws the one consequence that needs nothing

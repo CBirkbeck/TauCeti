@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.ClassicalGroups.WeylDimension
 /-!
 # The hook-content formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.HookContent)
+
 `TauCeti.weylDimension` is the value `∏_{i < j} (λᵢ - λⱼ + j - i) / (j - i)` of the Weyl dimension
 formula for `GL n`, a product over the pairs of *rows*.  For a polynomial weight — a Young diagram
 `μ` with at most `n` rows, read as a weight by `TauCeti.weightOfShape` — the same number is a

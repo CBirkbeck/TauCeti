@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Constructions
 /-!
 # The measurable structure of the standard simplex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.MeasurableSpace.StdSimplex)
+
 A point of the standard simplex `StdSimplex R ι` is determined by its weight vector `ι → R`.
 This file gives the simplex the σ-algebra induced by that weight vector, for any coefficient type
 `R` carrying a measurable structure, so that a probability vector is a measurable parameter: the

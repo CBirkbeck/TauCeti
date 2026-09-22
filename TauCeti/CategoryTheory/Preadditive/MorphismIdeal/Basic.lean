@@ -12,6 +12,8 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 /-!
 # Two-sided ideals of a preadditive category and their quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Basic)
+
 A **two-sided ideal** `I` of a preadditive category `C` assigns to every pair of objects an
 additive subgroup `I(X, Y)` of the hom group `X ⟶ Y`, stable under composition with arbitrary
 morphisms on either side. Two parallel morphisms are congruent modulo `I` when their difference

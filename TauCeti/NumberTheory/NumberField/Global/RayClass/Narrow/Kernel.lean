@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.QuotientGroup.KerEquiv
 /-!
 # The kernel of the narrow-to-wide class map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Narrow.Kernel)
+
 The difference between the narrow and ordinary class groups is controlled by signs at the real
 places.  The signature of every field unit is realized, while the signatures of integer units
 act trivially on principal ideals.  Consequently the quotient of all real sign patterns by the

@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # Galois duals of linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.GaloisDual)
+
 A code is a submodule of a finite coordinate space. Its Galois dual uses the form
 `h(x,y) = ∑ i, x i * σ (y i)`, with a specified semiring automorphism `σ`. A generator
 matrix becomes a parity-check matrix for the dual after applying `σ.symm` entrywise;

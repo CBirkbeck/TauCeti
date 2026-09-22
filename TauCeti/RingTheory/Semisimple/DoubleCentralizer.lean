@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.SimpleModule.Basic
 /-!
 # The double centralizer theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.DoubleCentralizer)
+
 Mathlib's Jacobson density theorem (`Module.Finite.toModuleEnd_moduleEnd_surjective`) says that for
 a semisimple `R`-module `M` which is finite over its endomorphism ring `D = Module.End R M`, the
 natural map `R → Module.End D M` is **surjective**. This file sharpens that to a **bijection** for

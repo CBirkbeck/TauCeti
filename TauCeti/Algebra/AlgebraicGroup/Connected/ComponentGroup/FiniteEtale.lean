@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.Representa
 /-!
 # The component group is finite etale
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.ComponentGroup.FiniteEtale)
+
 Let `H` be the coordinate Hopf algebra of a finite-type affine group over an algebraically
 closed field. The existing group-object representation of the fppf quotient by the identity
 component uses the constant group scheme on the finite group of connected components of `Spec H`.

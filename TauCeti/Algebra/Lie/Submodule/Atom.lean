@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.Semisimple.Basic
 /-!
 # Irreducible Lie submodules are the atoms of the submodule lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Submodule.Atom)
+
 `LieModule.IsIrreducible R L N` is a statement about the lattice `LieSubmodule R L N` of the Lie
 submodules of `N` itself, whereas `IsAtom N` is a statement about the position of `N` in the
 lattice `LieSubmodule R L M` of the Lie submodules of the ambient module. This file proves that the

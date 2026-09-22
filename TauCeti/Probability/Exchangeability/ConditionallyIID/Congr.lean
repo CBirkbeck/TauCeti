@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.MixedIID.Congr
 /-!
 # Conditional i.i.d.-ness under almost-everywhere changes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.Congr)
+
 `ConditionallyIIDWith μ X ν` constrains the joint law of `(ν, block)`, a `Measure.map` of `μ`
 compared against a `Measure.bind` over `μ`. Both sides see `X` and `ν` only modulo `μ`-a.e.
 equality, so the predicate transports along a coordinatewise a.e. change of the process and along

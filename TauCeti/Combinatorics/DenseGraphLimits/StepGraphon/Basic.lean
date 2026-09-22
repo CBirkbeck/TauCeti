@@ -12,6 +12,8 @@ import Mathlib.Data.Setoid.Partition
 /-!
 # Step graphons
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.StepGraphon.Basic)
+
 A step graphon is specified by a measurable finite partition of its probability carrier and a
 symmetric matrix of values in `[0, 1]`, indexed by the parts.  The resulting graphon is constant
 on every rectangle cut out by the partition.

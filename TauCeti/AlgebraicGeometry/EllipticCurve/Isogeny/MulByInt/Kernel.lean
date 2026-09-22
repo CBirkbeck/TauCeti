@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Module.ZMod
 /-!
 # The kernel of multiplication by `n` is the `n`-torsion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Kernel)
+
 An isogeny in this development has no point map, so its kernel is the subgroup of points whose
 translation fixes the pulled-back field (`Isogeny.ker`). For `[n]` that subgroup is the one the
 classical statement names: the `n`-torsion of `W` over the base field.

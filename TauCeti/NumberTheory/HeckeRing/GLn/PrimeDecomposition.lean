@@ -14,6 +14,8 @@ import Mathlib.Data.Nat.Factorization.Basic
 /-!
 # Prime decomposition of diagonal Hecke operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.PrimeDecomposition)
+
 The `p`-adic decomposition of the diagonal Hecke operators: every `T(a₁,...,aₙ)` with
 entrywise nonzero `a` splits off its `p`-power part,
 `T(a) = T(p-part) · T(p-free part)`, by the coprime product theorem. Nonvanishing is what is

@@ -10,6 +10,8 @@ public import Mathlib.CategoryTheory.Endomorphism
 /-!
 # Automorphisms in a category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Aut.Basic)
+
 This file contains general bookkeeping lemmas for automorphisms of objects in a category.
 
 ## Main results

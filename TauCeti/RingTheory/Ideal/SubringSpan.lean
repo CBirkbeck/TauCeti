@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Ideal.Operations
 /-!
 # Bounding a product of ideals by a span over a subsemiring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Ideal.SubringSpan)
+
 Let `S` be a subsemiring of `R`, let `G ⊆ R`, and let `J` be an ideal of `R` whose elements lie
 in `S`. Then
 

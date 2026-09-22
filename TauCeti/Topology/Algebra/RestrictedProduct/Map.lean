@@ -10,6 +10,8 @@ public import TauCeti.Topology.Algebra.RestrictedProduct.Basic
 /-!
 # Componentwise maps of restricted products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.RestrictedProduct.Map)
+
 A family of coordinate homomorphisms induces a homomorphism of restricted products when it
 preserves the reference subgroups at all but finitely many indices. This file records that map,
 its continuity and functoriality, and the stronger everywhere-preserving specialization that maps

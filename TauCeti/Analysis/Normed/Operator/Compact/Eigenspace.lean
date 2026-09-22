@@ -12,6 +12,8 @@ import Mathlib.RingTheory.Finiteness.Finsupp
 /-!
 # Finite-dimensional eigenspaces of compact operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Compact.Eigenspace)
+
 This file develops Riesz--Schauder input used for compact perturbations of Fredholm operators. A
 compact operator on a normed space has a finite-dimensional eigenspace at every nonzero scalar.
 More generally, every finite stage of the corresponding generalized eigenspace is finite

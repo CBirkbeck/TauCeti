@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.Boundary.Collar.Local
 /-!
 # Smooth local collars of a manifold with boundary
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Boundary.Collar.Diffeomorph)
+
 `Boundary.Collar.Local` shrinks collar coordinates around a boundary point to a product box and
 splits the source of the resulting chart as a product, `IsProductCollarChart.homeomorphProdOpens`,
 whose three factors — the source, its part of the boundary, and the normal interval — are read as

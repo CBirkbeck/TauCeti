@@ -14,6 +14,8 @@ public import TauCeti.Probability.Distributions.PDFInstances
 /-!
 # The chi-squared distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.ChiSquared)
+
 The chi-squared law with `k` degrees of freedom is the gamma law of shape `k / 2` and rate `1 / 2`.
 This file defines it for every real `k`, records its three parameter regimes, and transports the
 elementary theory of the gamma law across the bridge: the density, the cumulative distribution

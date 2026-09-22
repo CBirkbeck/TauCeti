@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Cat
 /-!
 # The zero comodule
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Zero)
+
 This file adds the zero object for right comodules over a coalgebra. This is Layer 1
 infrastructure for the reductive-groups roadmap target "Comodules over a coalgebra/Hopf
 algebra": before the finite-dimensional comodule category can be used as the additive

@@ -12,6 +12,8 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # Information sets of linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.InformationSet)
+
 An information set is a set of retained coordinates on which restriction gives a linear
 isomorphism from the code to the full word space. Thus every message on these coordinates
 extends to exactly one codeword. The inverse is a systematic encoder, without making a

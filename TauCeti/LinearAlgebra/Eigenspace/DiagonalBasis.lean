@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Basis.Basic
 /-!
 # Invariant subspaces of an endomorphism diagonal in a basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.DiagonalBasis)
+
 An endomorphism `f` of a module that is diagonal in a basis `b`, so `f (b i) = a i • b i`, scales
 the `i`-th coordinate of every vector by the eigenvalue `a i`.  When the eigenvalues are pairwise
 distinct, that is when `a` is injective, this pins down the invariant subspaces: an `f`-invariant

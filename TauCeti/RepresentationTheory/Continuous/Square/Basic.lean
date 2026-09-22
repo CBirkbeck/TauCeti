@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Continuous.TensorProduct
 /-!
 # The symmetric and exterior squares of a continuous representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Square.Basic)
+
 The tensor square `TauCeti.ContRepresentation.tprod π π` of a continuous representation acts on
 `V ⊗[𝕜] V` by `π g ⊗ π g`, which commutes with the flip `x ⊗ y ↦ y ⊗ x`. The two eigenspaces of
 that flip, `TauCeti.symmetricTensors` and `TauCeti.antisymmetricTensors`, are therefore invariant

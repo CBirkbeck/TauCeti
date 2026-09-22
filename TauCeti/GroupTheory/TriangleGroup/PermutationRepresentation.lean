@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.TriangleGroup.Basic
 /-!
 # Permutation triples as permutation representations of triangle groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TriangleGroup.PermutationRepresentation)
+
 A permutation triple `t` of degree `n` whose components satisfy `t.σ0 ^ a = 1`, `t.σ1 ^ b = 1`
 and `t.σinf ^ c = 1` is the same thing as a homomorphism `Δ(a, b, c) →* Equiv.Perm (Fin n)`: the
 product relation `σinf * σ1 * σ0 = 1` of the triple is the product relator `z * y * x` of the

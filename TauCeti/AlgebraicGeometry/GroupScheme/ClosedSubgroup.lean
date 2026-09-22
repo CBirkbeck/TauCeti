@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Monoidal.Cartesian.CommGrp_
 /-!
 # Closed subgroup schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.GroupScheme.ClosedSubgroup)
+
 This file defines closed subgroup schemes of a group scheme over an arbitrary base scheme. A
 closed subgroup scheme is a categorical subobject whose representative arrow is a closed
 immersion on underlying schemes. Pulling the closed-immersion property back through the two

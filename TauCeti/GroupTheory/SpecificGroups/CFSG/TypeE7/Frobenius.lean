@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.TypeE7.Basic
 /-!
 # The Steinberg endomorphism and candidate group of `E₇(q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.TypeE7.Frobenius)
+
 `TauCeti/GroupTheory/SpecificGroups/CFSG/TypeE7/Basic.lean` attaches to a validated `E₇` index the
 points of the explicit full-weight minuscule carrier `TauCeti.E7Minuscule.groupScheme`, with its
 Bourbaki-numbered simple root subgroups. This file forms the Steinberg endomorphism of the

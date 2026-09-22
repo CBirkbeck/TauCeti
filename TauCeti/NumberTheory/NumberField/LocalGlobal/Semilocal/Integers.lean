@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.IntegralClosure
 /-!
 # The integral semi-local decomposition of a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Semilocal.Integers)
+
 Let `L/K` be an extension of number fields and let `v` be a finite place of `K`. The scalar
 extension of the ring of integers of `L` to the completed integer ring at `v` decomposes as the
 product of the completed integer rings at the places above `v`:

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.Multiquadratic.MinusTwentyOne.ClassNumber
 /-!
 # The `2`-rank of the class group of `ℚ(√-21)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusTwentyOne.TwoRank)
+
 Applying the genus-theoretic `2`-rank formula `2-rank Cl(K) = t - 1` to `K = ℚ(√-21)`. The
 fundamental discriminant is `-84 = (-4) · (-3) · (-7)`, a product of three prime discriminants, so
 `t = 3` rational primes ramify (`2`, `3` and `7`) and the `2`-rank of the class group is `2`.

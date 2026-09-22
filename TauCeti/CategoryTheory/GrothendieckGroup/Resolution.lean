@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Exact
 /-!
 # The Euler class of a finite resolution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Resolution)
+
 For a finite `P`-resolution of an object `X` of an exact category, the *Euler class* is the
 alternating sum
 

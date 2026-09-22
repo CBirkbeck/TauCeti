@@ -12,6 +12,8 @@ public import Mathlib.Order.Preorder.Finite
 /-!
 # Greatest elements of finite chains
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Order.Chain)
+
 A chain need not have a greatest element, and a finite set need not have one either, but a finite
 chain always does: comparability upgrades a maximal element to a greatest one.
 

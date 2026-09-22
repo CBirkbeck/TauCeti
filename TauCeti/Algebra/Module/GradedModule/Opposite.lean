@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Module.GradedModule.Internal
 /-!
 # Opposites of internally graded modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.Opposite)
+
 This file applies transport of an internal grading across a linear equivalence to the multiplicative
 opposite. The degree of an element is unchanged by `MulOpposite.op`, and an internal graded algebra
 therefore induces an internal graded algebra on its opposite. The order of homogeneous factors

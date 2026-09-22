@@ -11,6 +11,8 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Sums over ordered pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BigOperators.Finset.Pairs)
+
 A sum of `F : l × l → M` over all ordered pairs, for `l` a finite linear order, can be folded onto
 the increasing pairs by adding each term to its transpose. When `F` vanishes on the diagonal the
 diagonal contributes nothing and the fold is exact, which is

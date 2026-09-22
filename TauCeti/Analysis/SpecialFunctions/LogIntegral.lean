@@ -12,6 +12,8 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 /-!
 # The logarithmic integral
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.LogIntegral)
+
 This file defines the offset logarithmic integral `Li x = ∫ t in 2..x, (log t)⁻¹` and proves the
 prime-number-theorem normalisation `Li x ~ x / log x` as `x → ∞`.
 

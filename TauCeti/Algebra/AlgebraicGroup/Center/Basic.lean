@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Basic
 /-!
 # The center of an affine group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Center.Basic)
+
 Let `H` be a commutative Hopf algebra over a field `k`. This file constructs the center of
 `Spec H` as a closed subgroup scheme. The defining equations are the coefficients, in the second
 tensor factor, of the cocommutativity defect

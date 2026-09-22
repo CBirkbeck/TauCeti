@@ -14,6 +14,8 @@ import Mathlib.RingTheory.Trace.Basic
 /-!
 # Injectivity in semilinear Galois descent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GaloisDescent.Injective)
+
 Over a finite Galois extension `L/k`, an injective `k`-linear map into the invariant vectors
 of a semilinear representation stays injective after extending scalars to `L`. Together with
 the spanning theorem for invariant vectors, this identifies a semilinear representation with

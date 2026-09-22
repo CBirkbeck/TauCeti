@@ -11,6 +11,8 @@ public import Mathlib.Probability.Distributions.Bernoulli
 /-!
 # Exchangeable coin flips: the worked example of a random bias
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.ConditionallyIID.CoinFlips)
+
 This file discharges the second worked example of the Exchangeability roadmap
 (`TauCetiRoadmap/Exchangeability/README.md`, "Worked examples"):
 

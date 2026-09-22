@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Polynomial.Laurent.Specialization
 /-!
 # Specializing q-sesquilinear forms at a unit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SesquilinearForm.LaurentSpecialization)
+
 Let `R` be a commutative ring.  For a unit `ε` of `R` and a module `N` over `R[q,q⁻¹]`, the
 specialization `N_ε = TauCeti.LaurentSpecialization ε N` is the base change of `N` along
 evaluation at `q = ε`; on it `q` acts as `ε`.

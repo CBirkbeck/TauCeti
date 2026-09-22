@@ -10,6 +10,8 @@ public import Mathlib.Geometry.Manifold.ContMDiff.Defs
 /-!
 # Smooth maps from product model spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ContMDiff.Prod)
+
 Mathlib equips a product of model vector spaces both with the product of their self-models and
 with the self-model of the product. This file provides the `C^n` bridge between those
 definitionally distinct presentations.

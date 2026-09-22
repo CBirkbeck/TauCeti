@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.FirstCountable
 /-!
 # Henkel's open mapping theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.OpenMapping.Henkel)
+
 A surjective equivariant additive map out of a complete first-countable nonarchimedean group is
 open, provided the scalars carry a zero sequence of units and the target is a Baire space. This
 file assembles that statement from the pieces built around it.

@@ -11,6 +11,8 @@ public import TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.HilbertB
 /-!
 # Parseval and expansions for the Chebyshev `T` basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Parseval)
+
 `TauCeti.chebyshevTHilbertBasis` exhibits the normalized Chebyshev polynomials
 `Tₙ / √cₙ`, where `c₀ = π` and `cₙ = π / 2` for `n ≠ 0`, as a Hilbert basis of
 `L²(Polynomial.Chebyshev.measureT)`. This file supplies the coefficient, Parseval, and

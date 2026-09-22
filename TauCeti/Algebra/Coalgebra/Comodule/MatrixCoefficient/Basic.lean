@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Trivial
 /-!
 # Matrix coefficients of comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MatrixCoefficient.Basic)
+
 For a right comodule `M` over a coalgebra `C`, a linear functional `φ : M →ₗ[R] R` and a
 vector `m : M` define a coefficient element of `C` by applying `φ` to the vector component
 of the coaction:

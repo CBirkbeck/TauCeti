@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 /-!
 # Smoothness of the tangent adjoint action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Adjoint.Smooth)
+
 The differential of conjugation depends smoothly on the conjugating group element. Mathlib's
 smoothness theorem for manifold derivatives expresses the derivative in a moving chart frame. Since
 conjugation fixes the identity, this file cancels the resulting fixed tangent trivialization to

@@ -14,6 +14,8 @@ import Mathlib.NumberTheory.Padics.PadicVal.Basic
 /-!
 # Indices of subgroups of profinite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Index.Basic)
+
 The index of a subgroup of a profinite group is a supernatural number. Its exponent at a
 prime `ℓ` is the supremum of the `ℓ`-adic valuations of the indices of the subgroup's images
 in all finite continuous quotients.

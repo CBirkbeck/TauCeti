@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Basic
 /-!
 # Joint eigenspaces for normal subgroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Normal.Basic)
+
 If `N` is a normal subgroup of `G`, conjugation by `g : G` permutes the characters of `N`.
 For a representation `ρ` of `G`, the operator `ρ g` carries the joint `N`-eigenspace of a
 character `χ` onto the joint eigenspace of the conjugated character

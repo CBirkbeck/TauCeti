@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.NormalizerQuotient.Basic
 /-!
 # The normalizer of the diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Normalizer)
+
 Over a field with at least two units, an invertible matrix normalizes the diagonal torus exactly
 when it is monomial: it is a diagonal matrix followed by a permutation matrix.  The permutation
 is unique, and multiplication of monomial matrices multiplies these permutations.  Consequently

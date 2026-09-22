@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Unipotence of normal products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.NormalProduct)
+
 Let `I` and `J` cut out smooth unipotent closed subgroups of a finite-type affine group, with
 `I` normal. Multiplication is a homomorphism from their conjugation semidirect product into the
 ambient group, and `CommHopfAlgCat.productOfNormal` is its scheme-theoretic image.

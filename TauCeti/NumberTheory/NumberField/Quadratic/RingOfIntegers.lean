@@ -16,6 +16,8 @@ import TauCeti.NumberTheory.NumberField.IntegralSqrt
 /-!
 # The ring of integers of a quadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.RingOfIntegers)
+
 For a quadratic number field `K = ℚ(√d)` — presented by an algebraic integer `θ : 𝓞 K` with
 `minpoly ℤ θ = X² - d` and `Algebra.adjoin ℚ {θ} = ⊤` — with `d` squarefree, the ring of integers
 depends on `d mod 4`:

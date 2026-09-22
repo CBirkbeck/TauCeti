@@ -11,6 +11,8 @@ public import TauCeti.Analysis.PDE.FredholmAlternative
 /-!
 # The Dirichlet spectrum of a divergence-form elliptic operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.Spectrum)
+
 For a divergence-form operator `L u = -∂ⱼ(aⁱʲ ∂ᵢu) + bⁱ ∂ᵢu + c u` on an open set
 `Ω ⊆ ℝⁿ`, a real number `κ` is a **Dirichlet eigenvalue** when the homogeneous Dirichlet
 problem `L u = κ u` in `Ω`, `u = 0` on `∂Ω`, has a nonzero weak solution: some

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Cartier.Basic
 /-!
 # The Weil divisor associated with a Cartier divisor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.Cartier.Inverse)
+
 On a Noetherian integral curve, a Cartier divisor has an order at every codimension-one point:
 choose a rational local equation and take its order of vanishing. This does not depend on the
 equation, since two equations differ by a regular unit near the point. Only finitely many orders

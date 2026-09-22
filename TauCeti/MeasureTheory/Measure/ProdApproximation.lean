@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # Approximation by measurable rectangles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ProdApproximation)
+
 Every measurable subset of a product measurable space equipped with a finite measure can be
 approximated in measure by a finite disjoint union of measurable rectangles.  The statement is
 valid for arbitrary measurable spaces: no countable-generation or standard-Borel hypothesis is

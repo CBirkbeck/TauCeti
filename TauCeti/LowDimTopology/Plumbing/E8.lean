@@ -14,6 +14,8 @@ public import TauCeti.LowDimTopology.Plumbing.Tower
 /-!
 # The negative-definite E₈ plumbing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.E8)
+
 This file defines the `E₈` plumbing used as the first concrete calculation in the lattice-homology
 lane. Its eight vertices all have framing `-2`; vertices `0, ..., 6` form a chain and vertex `7`
 is attached to vertex `2`. Thus the negative of its intersection matrix is the `E₈` Cartan

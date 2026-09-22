@@ -16,6 +16,8 @@ import TauCeti.Algebra.Coalgebra.Subcomodule.Induced
 /-!
 # The weight decomposition of a comodule over a monoid algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.MonoidAlgebra.Basic)
+
 Let `R[G]` be the monoid algebra of a type `G` over a commutative semiring `R`. Its coalgebra
 structure makes every `single g 1` a group-like element. This file proves that a right
 `R[G]`-comodule `V` is the internal direct sum of its weight submodules

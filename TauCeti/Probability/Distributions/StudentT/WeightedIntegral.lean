@@ -11,6 +11,8 @@ import TauCeti.Analysis.Calculus.RealCharts
 /-!
 # The square chart for weighted half-line integrals of Student's t law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.StudentT.WeightedIntegral)
+
 The substitution `w = z ^ 2 / ν` reduces weighted integrals of the even Student t density over the
 positive half-line to Euler integrals on `(0, ∞)`. This file collects the Student-t beta-kernel
 normal form of the transformed density and the kernel itself; the general square-chart facts live in

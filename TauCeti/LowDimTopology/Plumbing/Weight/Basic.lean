@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Characteristic
 /-!
 # The characteristic weight function of a plumbing lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Weight.Basic)
+
 This file adds the integer-valued quadratic weight attached to a characteristic covector on the
 integral lattice of a plumbing graph. For a characteristic covector `k` and a lattice point
 `x : V → ℤ`, the numerator

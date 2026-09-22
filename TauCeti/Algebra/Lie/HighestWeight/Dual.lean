@@ -15,6 +15,8 @@ public import TauCeti.Algebra.Lie.Weights.Diagonalizable
 /-!
 # Self-duality of a finite-dimensional irreducible highest weight module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.HighestWeight.Dual)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over an algebraically
 closed field of characteristic zero, let `H` be a Cartan subalgebra and `b` a base of its root
 system, and let `M` be a finite-dimensional irreducible `L`-module with a highest weight vector of

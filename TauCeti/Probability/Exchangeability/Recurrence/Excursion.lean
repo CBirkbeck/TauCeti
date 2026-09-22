@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Measure.Dirac.Basic
 /-!
 # The excursion process of a recurrent Markov exchangeable process
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.Excursion)
+
 A recurrent process that starts at a state `a₀` returns to it infinitely often, so its path splits
 into an infinite sequence of excursions away from `a₀`. This file assembles that sequence into the
 **excursion process** `excursionProcess X a₀`, a process valued in the finite words `List α`, and

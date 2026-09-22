@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Semisimple.CenterDimension
 /-!
 # A finite group has at most as many irreducibles as conjugacy classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.SimpleModuleCount)
+
 Over a **splitting** field the irreducible representations of a finite group are exactly as many as
 its conjugacy classes, and that equality is proved in
 `TauCeti/RepresentationTheory/CharacterTable/Completeness.lean` over an algebraically closed field.

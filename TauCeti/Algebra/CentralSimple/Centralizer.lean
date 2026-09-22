@@ -45,6 +45,8 @@ import TauCeti.RingTheory.Semisimple.EndAlgebra
 /-!
 # The centralizer of a central simple subalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.CentralSimple.Centralizer)
+
 Let `K` be a field, let `A` be a finite-dimensional **simple** `K`-algebra and let `B ⊆ A` be a
 **central simple** `K`-subalgebra. The centralizer theorem says that
 

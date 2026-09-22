@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Valuation.Continuous.Valued
 /-!
 # Continuous valuations extend to the completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Completion.Basic)
+
 Let `A` be a commutative topological ring with a compatible uniform structure, and let `ι : A → Â`
 be its Hausdorff completion. Every continuous point of `Spv A` is the pullback along `ι` of a
 continuous point of `Spv Â`, and consequently pullback along `ι` maps `Spa (Â, Â⁺)` onto

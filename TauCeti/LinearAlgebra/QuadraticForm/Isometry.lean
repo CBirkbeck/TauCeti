@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.QuadraticForm.Radical
 /-!
 # Isometries of quadratic maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Isometry)
+
 This file records general properties of quadratic-map isometries.  It also reindexes a weighted
 sum of squares along an equivalence of its index type, which complements Mathlib's
 `QuadraticForm.weightedSumSquaresCongr` for equal weights and

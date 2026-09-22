@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.CartanDieudonne.Basic
 /-!
 # Cartan--Dieudonné for Lipschitz and Pin actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.CartanDieudonne)
+
 Over a field of characteristic other than two, Cartan--Dieudonné and the action of a generating
 vector show that the Lipschitz action is onto the orthogonal group.
 

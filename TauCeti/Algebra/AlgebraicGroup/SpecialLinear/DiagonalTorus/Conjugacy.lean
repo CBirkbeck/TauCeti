@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.Maximal
 /-!
 # Conjugating diagonalizable subgroups of `SL_{r+1}` into the diagonal torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.DiagonalTorus.Conjugacy)
+
 Over a field `k`, every diagonalizable closed subgroup of `SL_{r+1}` is conjugate, by a rational
 point of `SL_{r+1}`, into the diagonal torus. In Hopf coordinates, a closed subgroup is
 diagonalizable when the group-like elements span its quotient coordinate Hopf algebra, and

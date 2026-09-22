@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Comultiplication
 /-!
 # The Kostant form as a Hopf algebra over the integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.HopfAlgebra)
+
 The comultiplication, counit, and antipode of a rational universal enveloping algebra preserve
 its Kostant integral form. This file assembles those three restrictions into a genuine
 `HopfAlgebra ℤ` instance on the form. In particular, all coalgebra and antipode identities hold

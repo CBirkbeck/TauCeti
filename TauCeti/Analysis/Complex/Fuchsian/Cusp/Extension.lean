@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 /-!
 # Extension of invariant functions at a Fuchsian cusp
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.Extension)
+
 Let `D` be normalized cusp data for a subgroup of `PSL(2, ℝ)`. Pulling a function on the
 upper half-plane back by `D.scaling⁻¹` turns invariance under the cusp stabilizer into
 periodicity by `D.width`. Mathlib's periodic cusp function therefore descends the function to

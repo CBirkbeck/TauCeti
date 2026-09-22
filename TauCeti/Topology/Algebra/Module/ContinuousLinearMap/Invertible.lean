@@ -11,6 +11,8 @@ public import Mathlib.Topology.Algebra.Module.Spaces.ContinuousLinearMap
 /-!
 # Persistence of invertibility from convergence of inverses
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Module.ContinuousLinearMap.Invertible)
+
 The totalized inverse of a continuous linear map is zero when the map is not invertible.
 Consequently, convergence of inverse maps to any nonzero map forces eventual invertibility.
 The inverse of an invertible map also suffices, including on trivial spaces. These results apply

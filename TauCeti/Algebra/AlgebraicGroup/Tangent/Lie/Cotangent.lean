@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Lie.TransferInstance
 /-!
 # The cotangent-dual model of the tangent Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Cotangent)
+
 For a commutative bialgebra `H` over `R`, the tangent space at the identity has two models:
 counit-valued derivations of `H`, and the linear dual of the augmentation cotangent space
 `ker(ε) / ker(ε)²`. The existing linear equivalence between them transports the convolution

@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deri
 /-!
 # The excised logarithmic telescope for a branch adapted to a crossing point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner.Basic)
+
 The engine shared by the non-corner winding computations (`Winding/NonCorner/Vertical.lean`
 and `Winding/NonCorner/Arc.lean`): running the excised logarithmic telescope on the branch
 `log ((γ t - w) · c)` for a unit `c` that rotates the branch cut into a ray from `w` missing

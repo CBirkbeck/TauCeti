@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.Radical
 /-!
 # Gradings of a path algebra by arrow weights
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.PathAlgebra.Grading)
+
 The path algebra `kQ` is free on the paths of `Q`. Give every arrow `e` a weight `wt e` in an
 additive monoid `M`, and give a path the sum `Quiver.Path.addWeight wt` of the weights of its
 arrows. Concatenating paths adds their weights, so the span `TauCeti.PathAlgebra.gradeBy k wt m` of

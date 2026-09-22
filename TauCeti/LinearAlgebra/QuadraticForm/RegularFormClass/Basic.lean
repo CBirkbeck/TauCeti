@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.Radical
 /-!
 # Isometry classes of regular quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Basic)
+
 Over a field in which `2` is invertible, every nondegenerate quadratic form on a
 finite-dimensional space is isometric to a weighted sum of squares whose weights are units. This
 file turns that diagonalization into a carrier for the isometry classes themselves: a *diagonal
@@ -167,7 +169,10 @@ noncomputable def _root_.QuadraticForm.orthogonalPairIsometryEquiv
 /-- Two presentations are related when the forms they present are isometric. Mathlib's
 `QuadraticMap.Equivalent` already compares forms on different spaces, so presentations of
 different ranks may be compared; `TauCeti.fst_eq_of_presentedForm_equivalent` shows that only
-presentations of equal rank are ever related. -/
+presentations of equal rank are ever related.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.regularFormSetoid) -/
 instance regularFormSetoid (K : Type u) [Field K] : Setoid (RegularFormPresentation K) where
   r p q := (presentedForm p).Equivalent (presentedForm q)
   iseqv :=

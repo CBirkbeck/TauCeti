@@ -13,6 +13,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Image.Smooth
 /-!
 # Unipotent radicals and reductive quotients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Reductive.Quotient)
+
 This file applies ground-field triviality of the radical of a reductive group to an exact-sequence
 criterion. Suppose a homomorphism of affine groups is represented contravariantly by an injective
 coordinate map `f : D ⟶ H`. If its

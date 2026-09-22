@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Tate.Corestriction
 /-!
 # Restriction of finite-layer Tate cohomology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ClassFieldTheory.Formation.Tate.Restriction)
+
 For a restriction of finite normal layers `K/E` inside `K/F`, this file defines restriction
 
 `Hhatʳ(Gal(K/F), A^V) ⟶ Hhatʳ(Gal(K/E), A^V)`

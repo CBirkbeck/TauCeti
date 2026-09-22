@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Algebraic.LinearIndependent
 /-!
 # Linear independence over a simple transcendental extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.IntermediateField.Adjoin.Transcendental)
+
 Combined with the tower rule for linear independence, a family that is linearly independent over
 the simple extension `k⟮x⟯` stays linearly independent over `k` after multiplying by arbitrary
 powers of a transcendental element `x`.

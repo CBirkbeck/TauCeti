@@ -13,6 +13,8 @@ public import TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Basic
 /-!
 # Time differences of bounded semigroup-group positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Time.Difference)
+
 This file proves the alternating finite-difference property needed for the existence half of the
 Berg--Christensen--Ressel representation theorem. If `F` is bounded and positive definite on the
 involutive semigroup `ℝ≥0 × V`, then every iterated time difference built from

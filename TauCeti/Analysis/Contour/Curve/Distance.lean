@@ -13,6 +13,8 @@ import Mathlib.Topology.Order.Compact
 /-!
 # Uniform distance from an avoided point to a continuous curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.Distance)
+
 For a curve `γ : ℝ → ℂ` continuous on a compact interval `[a, b]` and avoiding a point `w`, the
 image `γ '' [a, b]` is compact and misses `w`, so `w` stays a positive distance from it; this gives
 a uniform positive lower bound `ρ` on `‖γ t - w‖` over `[a, b]`.

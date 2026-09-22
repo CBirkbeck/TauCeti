@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 /-!
 # The boundary contour at the ceiling corner
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Ceiling.Corner)
+
 The contour passes through the ceiling's left corner `-1/2 + H·i` only at the parameter
 `t = 4`, an interior parameter, so the Cauchy-kernel principal value there exists. The
 corner is the junction of the left vertical with the truncation ceiling; it is the one

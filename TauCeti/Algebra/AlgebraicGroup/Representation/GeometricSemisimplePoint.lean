@@ -14,6 +14,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.SemisimplePoint
 /-!
 # Geometric semisimple points of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.GeometricSemisimplePoint)
+
 This file packages the condition that every algebraic-closure-valued point of a commutative Hopf
 algebra is semisimple. It also uses the generic transport and product results to prove
 that this object property is invariant under isomorphisms and closed under tensor products.

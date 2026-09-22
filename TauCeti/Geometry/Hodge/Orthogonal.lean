@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Hodge.RationalSubstructure
 /-!
 # Orthogonal complements of rational Hodge substructures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Orthogonal)
+
 A polarization of a pure Hodge structure splits off every rational Hodge substructure: the
 orthogonal complement of the substructure for the rationalified polarizing form is again a rational
 Hodge substructure, and the two are complementary both over `ℚ` and after complexification. This is

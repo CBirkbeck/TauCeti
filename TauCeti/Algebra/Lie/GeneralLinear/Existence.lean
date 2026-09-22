@@ -14,6 +14,8 @@ import TauCeti.Algebra.Lie.Sl2.Basic
 /-!
 # Every finite-dimensional `gl n`-module has a dominant highest weight vector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Existence)
+
 Let `K` be a field of characteristic zero and let `M` be a nonzero finite-dimensional module over
 `gl n K = Matrix n n K`. This file proves that `M` carries a highest weight vector for the matrix
 unit positive system, and that the weight of any highest weight vector of a finite-dimensional

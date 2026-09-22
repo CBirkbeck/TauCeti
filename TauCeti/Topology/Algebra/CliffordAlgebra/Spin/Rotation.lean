@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Convex.PathConnected
 /-!
 # Rotation paths in real Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Spin.Rotation)
+
 An orthonormal pair `x, y` determines a path in the Spin group.  At angle `t` the path is the
 product of the Clifford generators of `x` and `cos(t) x + sin(t) y`.  The rotating vector has
 norm one, so the product belongs to Spin; at angles zero and `π` it is respectively `1` and the

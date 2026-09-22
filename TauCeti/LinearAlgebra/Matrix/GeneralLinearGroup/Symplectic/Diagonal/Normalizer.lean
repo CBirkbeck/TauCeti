@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Diagonal.Normalize
 /-!
 # The symplectic diagonal normalizer acts faithfully modulo the torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Diagonal.Normalizer)
+
 Over a field with a unit different from its inverse, the normalizer of the paired diagonal
 torus consists exactly of the symplectic monomial matrices. Its permutation action on the
 `2m` coordinate lines has kernel the diagonal torus, and therefore induces an injective

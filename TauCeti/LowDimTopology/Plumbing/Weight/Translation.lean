@@ -10,6 +10,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Polarization
 /-!
 # Spin^c translation equivariance of the plumbing-lattice weight function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Weight.Translation)
+
 Némethi's lattice homology is built from the local weight function `χ_k(x)` for a characteristic
 covector `k` and lattice point `x`. Two characteristic covectors index the *same* spin^c structure
 exactly when they differ by an element of `2 · A(V)`, where `A` is the intersection form: the

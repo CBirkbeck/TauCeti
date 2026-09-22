@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.MvPowerSeries.Substitution
 /-!
 # The chord construction along an arbitrary pair of parameters
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Add.PairSubst)
+
 `FormalGroup/Chord.lean` builds the chord data — the slope `λ`, the intercept `ν`, the third
 root `z₃` and the addition series `F` — as two-variable series in `MvPowerSeries (Unit ⊕ Unit) O`,
 and states their defining identities in the two variables themselves. This file substitutes an

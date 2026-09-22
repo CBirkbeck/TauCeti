@@ -15,6 +15,8 @@ import TauCeti.Probability.Exchangeability.Recurrence.Reconstruction
 /-!
 # The excursions of a recurrent Markov chain are i.i.d.
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Recurrence.MarkovChain)
+
 Fix a transition kernel `κ` on a countable discrete state space and a state `a₀` that the chain
 started at `a₀` returns to infinitely often almost surely. Cutting a path at its returns to `a₀`
 turns it into the sequence of its excursions, and this file proves that **that sequence is

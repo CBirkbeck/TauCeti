@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.IntegralLattice.Basic
 /-!
 # Rationalizing an integral lattice form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Rationalization)
+
 Let `L` be a full integral lattice in a rational vector space `V`. The carrier's canonical
 base-change equivalence identifies `V` with the scalar extension `ℚ ⊗[ℤ] L`. This file proves
 that this equivalence identifies the scalar extension of `L.integralForm` with the ambient rational

@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Symplectic.AlmostComplex
 /-!
 # Smooth almost complex structures on manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Manifold.AlmostComplex)
+
 This file lifts the pointwise linear algebra of `TauCeti.AlmostComplexStructure` to smooth
 manifolds. A smooth almost complex structure is a smooth section of the endomorphism bundle of
 the tangent bundle whose square is fiberwise minus the identity. Its value at each point is the

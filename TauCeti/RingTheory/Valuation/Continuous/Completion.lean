@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Ring.Completion
 /-!
 # Proper ideals supplied by continuous valuations survive completion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Valuation.Continuous.Completion)
+
 Let `v` be a continuous valuation on a topological ring `A`. Its support is closed because
 `v` is locally constant away from its support.
 

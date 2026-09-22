@@ -14,6 +14,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # The ordered span of the rank-one Kostant form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Sl2.Kostant.Span)
+
 Let `H`, `E`, and `F` satisfy the `sl₂` commutator relations in an associative algebra over `ℚ`.
 The rank-one Kostant form is generated over `ℤ` by the divided powers of `E` and `F` and the
 generalized binomial coefficients in `H`. This file proves the spanning half of its integral PBW

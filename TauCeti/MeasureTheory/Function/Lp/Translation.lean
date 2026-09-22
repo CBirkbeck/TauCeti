@@ -17,6 +17,8 @@ import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # The `Lᵖ` translation estimate
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Function.Lp.Translation)
+
 This file defines translation of `Lᵖ` classes as a linear isometric equivalence, proves its strong
 continuity for `p < ∞`, and proves the translation estimate for a `C¹` function on a
 finite-dimensional real normed space carrying an additive Haar measure:

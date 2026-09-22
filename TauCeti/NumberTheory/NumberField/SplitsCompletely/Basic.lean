@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.RamificationInertia.Splitting
 /-!
 # A counting criterion for a prime to split completely in a number field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.SplitsCompletely.Basic)
+
 For a finite Galois number field `K / ℚ`, a rational prime `p` splits completely — meaning
 there are exactly `[K : ℚ]` primes of `𝓞 K` above `p` — if and only if `p` is unramified with
 residue degree one, i.e. both the ramification index `e` and the inertia degree `f` (which are

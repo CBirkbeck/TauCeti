@@ -17,6 +17,8 @@ import TauCeti.Analysis.Calculus.Gradient
 /-!
 # Linearization of the negative-gradient field at a Morse critical point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.Linearization)
+
 The stable-manifold theorem starts with the derivative of the vector field at an equilibrium. For
 a gradient field on a real Hilbert space, the second derivative of the function naturally takes
 values in the continuous dual. The Riesz equivalence turns it into an endomorphism of the original

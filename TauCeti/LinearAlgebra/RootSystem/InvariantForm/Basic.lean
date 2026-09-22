@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.RootSystem.RootPositive
 /-!
 # The normalisation of an invariant form against the coroots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.InvariantForm.Basic)
+
 Mathlib's `RootPairing.InvariantForm.two_mul_apply_root_root` computes an invariant form on two
 roots through the Cartan integers: `2 ⟨αᵢ, αⱼ⟩ = ⟨αᵢ, αⱼ^∨⟩ ⟨αⱼ, αⱼ⟩`. Nothing in that argument
 uses that the first argument is a root, and this file records the identity for an arbitrary

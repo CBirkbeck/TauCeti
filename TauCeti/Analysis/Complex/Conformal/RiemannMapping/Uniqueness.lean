@@ -11,6 +11,8 @@ import TauCeti.Analysis.Complex.Conformal.Inverse.Function
 /-!
 # Uniqueness in the Riemann mapping theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.RiemannMapping.Uniqueness)
+
 This file proves the uniqueness companion to the Riemann mapping theorem. Two biholomorphic maps
 from the same open subset of `ℂ` onto the unit disc differ by a standard disc automorphism. If
 both maps send the same base point to zero, that automorphism is a rotation.

@@ -26,6 +26,8 @@ import TauCeti.Analysis.Contour.FlatnessOne
 /-!
 # The Hungerbühler–Wasem generalized residue theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.HungerbuhlerWasem)
+
 The summit of the contour-integration roadmap (HW Thm 3.3): for `f` holomorphic on `U ∖ S`
 and meromorphic at each point of the finite `S ⊆ U`, and a **null-homologous, closed**
 piecewise-`C¹` **immersion** `γ` in `U` rooted off the poles, under the regularity conditions

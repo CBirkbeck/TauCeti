@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Smooth.GeometricallyReduced
 /-!
 # Smooth morphisms are geometrically reduced
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Morphisms.Smooth.GeometricallyReduced)
+
 A smooth morphism of schemes has geometrically reduced fibres. After base change to a field,
 smoothness is preserved, and an affine cover of the source has smooth coordinate algebras over
 the ring of global functions of the target. That ring is isomorphic to the field, so the

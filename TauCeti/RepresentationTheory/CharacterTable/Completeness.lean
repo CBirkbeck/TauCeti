@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 /-!
 # Completeness of the irreducible characters, and the second orthogonality relation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Completeness)
+
 Let `G` be a finite group and `k` an algebraically closed field in which `|G|` is invertible. The
 characters of pairwise inequivalent irreducible representations of `G` are orthonormal, hence
 linearly independent, and there are at most as many of them as `G` has conjugacy classes

@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Compact.Character.Basic
 /-!
 # The orthonormal systems cut out by Schur orthogonality
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.Orthonormal)
+
 Fix a family `π i` of pairwise inequivalent finite-dimensional irreducible unitary representations
 of a compact group `G`, one for each index `i`. This file assembles the two orthogonality relations
 of `TauCeti/RepresentationTheory/Compact/SchurOrthogonality.lean` and

@@ -12,6 +12,8 @@ import TauCeti.Topology.KrullDimension
 /-!
 # Locally principal Weil divisors on a scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LocallyPrincipal)
+
 Let `X` be a locally Noetherian integral scheme. A Weil divisor `D` on `X` is locally principal when
 every point has an open neighbourhood on which the coefficients of `D` agree with the orders of one
 nonzero rational function. On a scheme regular in codimension one (expressed in

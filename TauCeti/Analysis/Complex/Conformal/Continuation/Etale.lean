@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.HolomorphicSheaf
 /-!
 # Analytic continuation as a lift to the étalé space of holomorphic germs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Continuation.Etale)
+
 `Conformal/Continuation/Basic.lean` defines `TauCeti.IsAnalyticContinuationAlong` — a family `f`
 of functions carrying, at each parameter time `t`, a germ at `γ t`, locally represented by a
 single holomorphic function — and its docstring records, without proof, that

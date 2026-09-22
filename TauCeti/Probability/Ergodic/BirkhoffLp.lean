@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 /-!
 # Birkhoff averages of the `Lᵖ` composition operator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Ergodic.BirkhoffLp)
+
 The Birkhoff sums and averages of the composition (Koopman) operator of a measure-preserving map
 `T` on `Lᵖ` are elements of `Lᵖ`, while the ergodic theorems a probabilist states are about the
 pointwise Birkhoff averages `birkhoffAverage ℝ T f n` of an observable. This file records that the

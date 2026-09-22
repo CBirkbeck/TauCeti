@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 /-!
 # Cancelling iterated base change for Lie algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.BaseChange.Cancel)
+
 This file upgrades the linear equivalence
 `TensorProduct.AlgebraTensorModule.cancelBaseChange` to a Lie algebra equivalence.
 -/

@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 /-!
 # The standard representation of the orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.Orthogonal)
+
 This file restricts the standard representation of the general linear group to the orthogonal
 group. It records the matrix action, its faithfulness, preservation of the standard symmetric
 bilinear pairing, and the corresponding character formulas.

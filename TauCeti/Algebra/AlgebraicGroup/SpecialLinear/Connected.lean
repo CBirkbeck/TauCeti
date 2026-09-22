@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 /-!
 # Geometric connectedness of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Connected)
+
 The coordinate Hopf algebra of `SLₙ` is geometrically connected over every field. The proof
 uses idempotents and algebraically closed points, so it does not depend on an irreducibility
 theorem for the generic determinant polynomial.

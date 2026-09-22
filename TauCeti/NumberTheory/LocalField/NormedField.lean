@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.LocalField.NormalizedValuation
 /-!
 # The normed-field structure of a nonarchimedean local field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.NormedField)
+
 A nonarchimedean local field `K` is presented in Mathlib by a valuative relation together with a
 topology (`IsNonarchimedeanLocalField K`), whereas the analytic library (power series, the
 spectral norm, Krasner's lemma) consumes a `NormedField`. This file supplies the bridge: the

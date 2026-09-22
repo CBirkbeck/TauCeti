@@ -20,6 +20,8 @@ public import TauCeti.Probability.Distributions.Dirac
 /-!
 # Elementary theory of the Cauchy law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Cauchy)
+
 This file develops the elementary transform theory of Mathlib's Cauchy law. For nonzero scale
 `γ` the cumulative distribution function at `x` is
 

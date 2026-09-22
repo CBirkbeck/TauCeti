@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups.Units
 /-!
 # The descent slash sum is `Γ₀(N / p)`-invariant
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.Descent.Sum)
+
 `Newforms/Descent/Action.lean` shows that, at a prime `p ∣ N`, right multiplication by
 `γ ∈ Γ₀(N / p)` permutes the family `descendMatrix p N` up to `Γ₀(N)` — by `descendShift` when
 `p² ∣ N`, by `descendIndexShift` when `p` exactly divides `N`. This file draws the consequence

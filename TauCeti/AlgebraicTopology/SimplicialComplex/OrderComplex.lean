@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.Maps
 /-!
 # Order complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.OrderComplex)
+
 The order complex of a preordered type has the elements of the type as vertices and the
 nonempty finite chains as faces. This is the general construction underlying barycentric
 subdivision: applying it to the face poset of a simplicial complex gives its first barycentric

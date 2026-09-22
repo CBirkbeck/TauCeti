@@ -13,6 +13,8 @@ public import Mathlib.Data.Fintype.Option
 /-!
 # The `D₄` quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.D4.Basic)
+
 The `D₄` quiver has a central vertex and three outer vertices, with one arrow running from each
 outer vertex into the centre. Its underlying graph is the simply-laced Dynkin diagram `D₄`, the
 smallest one that is not of type `A`, which makes it the standard test of the positive-root count

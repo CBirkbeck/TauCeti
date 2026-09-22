@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.VectorBundle.LocalFrame
 /-!
 # Tangent-bundle trivializations, coordinate changes on `T(TM)`, and open submanifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.Tangent)
+
 The canonical tangent-bundle trivialization at a point `x` is built from the chart at `x`, so on
 the fibre over `x` itself it is the identity.  This file records that fact in both directions, and
 notes that reading a tangent vector through the preferred trivializations of two charts is the

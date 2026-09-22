@@ -12,6 +12,8 @@ public import Mathlib.FieldTheory.Finiteness
 /-!
 # Euclidean duals of linear codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.EuclideanDual)
+
 A linear code on a finite coordinate type is a submodule of the corresponding function space.
 Its Euclidean dual consists of the words whose dot product with every codeword vanishes. This
 file gives that construction its order-theoretic API and proves that dot-product duality is an

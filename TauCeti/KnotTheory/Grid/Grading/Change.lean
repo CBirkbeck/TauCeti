@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Swap
 /-!
 # Grading changes across a rectangle move
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.Change)
+
 This file records how the Maslov and Alexander gradings of two grid states differ, first as a
 pure identity between the grading formulas of any two states, then localized to the four corners
 of a rectangle move.

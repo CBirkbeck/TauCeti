@@ -11,6 +11,8 @@ public import TauCeti.Topology.Homotopy.Monodromy.Basic
 /-!
 # Basepoint change for the subgroup recovered by a cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Monodromy.BasepointChange)
+
 Let `p : E → X` be a covering map, let `γ : Path x₀ x₁`, and let `e₀` lie over `x₀`. The
 lifted endpoint `hp.monodromy ⟦γ⟧ e₀` lies over `x₁`, and the subgroup recovered from that
 pointed lift is the transport of the subgroup recovered from `e₀` along `γ`:

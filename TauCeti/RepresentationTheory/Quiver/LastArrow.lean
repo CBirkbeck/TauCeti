@@ -13,6 +13,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # The last arrow of a path
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.LastArrow)
+
 A path `i → b` in a quiver is either trivial, which forces `i = b`, or a path `i → a` followed by a
 last arrow `a ⟶ b`. This file records that dichotomy as an equivalence and reads off the resulting
 recursion for the number of paths out of a fixed vertex.

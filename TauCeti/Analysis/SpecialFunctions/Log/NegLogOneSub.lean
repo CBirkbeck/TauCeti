@@ -14,6 +14,8 @@ import TauCeti.Analysis.SpecialFunctions.Pow.Bounds
 /-!
 # Elementary bounds on `-log (1 - x)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Log.NegLogOneSub)
+
 This file bounds the quadratic remainder `-log (1 - x) - x`, then specializes the estimate to
 `x = y ^ (-s)`. The sharp factor `2` in the denominator comes from reading Mathlib's complex
 logarithm bound along the reals. It also records the coarser estimate

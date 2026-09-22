@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.Echelon.Pivot
 /-!
 # Computable Gauss-Jordan elimination
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Echelon.RowReduce)
+
 Mathlib says what it means for a matrix to be in (reduced) row echelon form
 (`Matrix.IsRowEchelon`, `Matrix.IsReducedRowEchelon`, `Matrix.IsPivotedBy`) but has no algorithm
 producing one. This file supplies the algorithm, as a genuine `def` on

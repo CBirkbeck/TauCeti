@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Formula.VariableChange
 /-!
 # The point count of a Weierstrass model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.PointCount)
+
 `pointCount` counts the `F`-points of the projective Weierstrass model: the solutions of the
 affine equation, singular or not, together with the point at infinity, `[0 : 1 : 0]` being the only
 point on `z = 0`. It is `Nat.card` of the solutions plus one, so it is the honest number of points

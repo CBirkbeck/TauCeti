@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.RootSystem.Defs
 /-!
 # Reflection-invariant submodules of a root pairing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.InvariantSubmodule)
+
 A submodule of the root space invariant under the reflection at `v` absorbs, from any root it
 already contains, every root whose pairing with `v` is nonzero. Reflecting `u` in `v` stays inside
 the submodule, and subtracting leaves a multiple of the root at `v` whose coefficient is exactly

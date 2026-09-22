@@ -13,6 +13,8 @@ import TauCeti.Geometry.Manifold.VectorField.LieBracket
 /-!
 # Curvature of a metric-compatible connection
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Curvature.Metric)
+
 The curvature endomorphisms of a metric-compatible connection are skew-adjoint:
 `⟪R(X,Y)σ, τ⟫ = -⟪σ, R(X,Y)τ⟫`. The first theorem applies to `C^n` fields and
 `C^(n + 1)` sections for `1 ≤ n`, under the corresponding finite regularity hypotheses;

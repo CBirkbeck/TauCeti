@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.ProjectiveCover.Existence
 /-!
 # Existence of minimal projective presentations over a semiprimary ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.MinimalProjectivePresentation.Existence)
+
 `TauCeti/Algebra/Module/MinimalProjectivePresentation/Basic.lean` develops a minimal projective
 presentation `P₁ → P₀ → M → 0` as a *given* datum: it is a quotient of every projective
 presentation, and it is unique up to isomorphism of the whole diagram, but nothing there produces

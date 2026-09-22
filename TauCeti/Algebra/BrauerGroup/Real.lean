@@ -22,6 +22,8 @@ import TauCeti.Algebra.CentralSimple.Real
 /-!
 # The Brauer group of the reals is `ℤ/2`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.BrauerGroup.Real)
+
 `TauCeti/Algebra/BrauerGroup/Quaternion.lean` shows that the Brauer class of `ℍ[ℝ]` has order `2`.
 This file shows that it is the only class besides the identity, so `BrauerGroup ℝ` is cyclic of
 order `2`.

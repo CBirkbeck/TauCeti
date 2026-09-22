@@ -10,6 +10,8 @@ public import Mathlib.GroupTheory.Perm.Fin
 /-!
 # The sign of a permutation of `Fin n` as the parity of its inversions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.Inversion)
+
 An *inversion* of `σ : Equiv.Perm (Fin n)` is a pair of indices `i < j` with `σ j < σ i`. The
 sign of `σ` is `(-1)` raised to the number of inversions. Mathlib exposes the sign as the product
 `Equiv.Perm.sign_eq_prod_prod_Ioi`; this file turns that product into the cardinality of the

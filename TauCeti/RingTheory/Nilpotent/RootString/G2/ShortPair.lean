@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Nilpotent.BaseChangeAction
 /-!
 # The exponential relation for the short pair in type `G₂`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Nilpotent.RootString.G2.ShortPair)
+
 For Chevalley root vectors `x`, `y`, `z`, `w`, `s` at the roots `α`, `α + β`,
 `2α + β`, `3α + β`, `3α + 2β`, choose signs such that
 

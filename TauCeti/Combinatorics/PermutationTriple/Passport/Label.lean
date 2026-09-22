@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Basic
 /-!
 # Stable label data for permutation-triple passports
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Passport.Label)
+
 The stable mathematical part of a passport label consists of its degree, a transitive-group
 label, and the three ordered full cycle partitions at `0`, `1`, and `∞`. The degree is the
 index of `TauCeti.PassportLabel`; the group index is zero-based internally, so an index `j` is

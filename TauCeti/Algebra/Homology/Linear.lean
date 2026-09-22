@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Homology.ShortComplex.Linear
 /-!
 # Homology commutes with scalar multiplication of chain maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Linear)
+
 For a linear category `C`, the map induced on homology by a chain map is linear in the chain
 map: `homologyMap (a • φ) i = a • homologyMap φ i`. This is the homological-complex version of
 Mathlib's `ShortComplex.homologyMap_smul`, recorded as a TODO in

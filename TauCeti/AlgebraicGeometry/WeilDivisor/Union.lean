@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Common
 /-!
 # The union of two fixed-degree effective Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Union)
+
 This file packages the pointwise maximum of two effective fixed-degree Weil divisors as their
 union.  If `D` and `E` are effective divisors, `D ⊔ E` is the smallest divisor lying above both;
 its coefficient at a point is the larger of the two multiplicities.  This complements the common

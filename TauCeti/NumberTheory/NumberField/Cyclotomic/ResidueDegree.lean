@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup
 /-!
 # The residue degree in a cyclotomic extension
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Cyclotomic.ResidueDegree)
+
 The classical cyclotomic splitting law: at a prime `𝔭` not dividing `m`, the residue degree of a
 prime of `F` above `𝔭` is the multiplicative order of `𝔑𝔭` modulo `m`. Over `ℚ` this is the
 familiar statement that `f(p)` is the order of `p` in `(ZMod m)ˣ` — so `p` splits completely

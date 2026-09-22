@@ -11,6 +11,8 @@ import Mathlib.NumberTheory.RamificationInertia.Galois
 /-!
 # A conjugation-stable prime over an unramified rational prime is inert
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Inert)
+
 Let `K` be a number field of degree `2` over `ℚ`. Such a field is Galois by Mathlib's
 `Algebra.IsQuadraticExtension.isGalois` instance, and its Galois group has order `2`.
 Consequently the two elements of that group act on the primes of `𝓞 K` above a rational prime `p`

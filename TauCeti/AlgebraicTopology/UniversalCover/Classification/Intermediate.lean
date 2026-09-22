@@ -14,6 +14,8 @@ import TauCeti.Topology.IsLocalHomeomorph
 /-!
 # The Galois correspondence is a correspondence of towers of covers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.Intermediate)
+
 Pointed connected covers of `(X, x)` are classified by the subgroup of `π₁(X, x)` they recover,
 and `IsCoveringMap.exists_continuousMap_comp_eq_iff_range_le` already says that a map of
 pointed covers exists exactly when the recovered subgroups are nested. What that statement leaves

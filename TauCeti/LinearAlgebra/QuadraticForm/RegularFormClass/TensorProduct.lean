@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.TensorProduct
 /-!
 # Tensor products of regular-form classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.TensorProduct)
+
 The tensor product of diagonal forms is diagonal: if `p` has weights `a i` and `q` has weights
 `b j`, their tensor product has weights `a i * b j`. This file packages that operation on
 `TauCeti.RegularFormPresentation`, proves that it presents Mathlib's

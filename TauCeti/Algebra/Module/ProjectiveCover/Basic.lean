@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Module.Submodule.Superfluous
 /-!
 # Projective covers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.ProjectiveCover.Basic)
+
 A **projective cover** of a module `M` is a surjection `f : P →ₗ[R] M` from a projective module
 whose kernel is superfluous in `P` (`TauCeti.IsSuperfluous`). Mathlib has projective objects but no
 projective covers; this file supplies the predicate and the two facts everything downstream rests

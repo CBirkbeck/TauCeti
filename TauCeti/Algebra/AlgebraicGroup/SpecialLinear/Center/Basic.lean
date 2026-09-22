@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 /-!
 # The center of the special linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialLinear.Center.Basic)
+
 For a field `k` and a positive integer `n`, this file identifies the center of the special
 linear group scheme `SLₙ` with the roots-of-unity group scheme `μₙ`. A root of unity acts by
 its scalar matrix. Mathlib's equivalence

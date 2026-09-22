@@ -12,6 +12,8 @@ import TauCeti.Topology.Algebra.Group.OpenSubgroup
 /-!
 # Finite generation and the Frattini quotient
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.FiniteGeneration)
+
 A profinite pro-`p` group is topologically finitely generated if and only if its Frattini
 quotient is finite, equivalently if and only if its Frattini subgroup is open. This turns
 topological finite generation into a finiteness condition on the maximal elementary abelian

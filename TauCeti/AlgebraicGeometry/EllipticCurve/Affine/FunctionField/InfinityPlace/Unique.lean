@@ -21,6 +21,8 @@ import TauCeti.RingTheory.Valuation.IsTrivialOn
 /-!
 # The place at infinity is the only place of `F(W)` where `x` has a pole
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Unique)
+
 `FunctionField/InfinityPlace/Basic.lean` builds the valuation `W.infinityPlace` of the function
 field of an affine Weierstrass curve and computes `v_∞ x = exp 2`, so `x` has a pole there. This
 file proves the converse, and with it the uniqueness of that place: **a valuation of `F(W)` which

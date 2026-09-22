@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Basic
 /-!
 # The trace-form Casimir on the CAR module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.Casimir)
+
 Let `Fᵢⱼ` be the normal-ordered quadratic lift of the matrix unit `Eᵢⱼ` to the Clifford
 algebra of the trace form. The trace-form Casimir acts on the left-regular CAR module by left
 multiplication with `∑ i, j, Fᵢⱼ Fⱼᵢ`. This file proves that this Clifford element is the scalar

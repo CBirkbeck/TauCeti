@@ -12,6 +12,8 @@ import TauCeti.RepresentationTheory.AsModule
 /-!
 # The inertia group of a representation of a normal subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Inertia)
+
 Let `N` be a normal subgroup of `G`.  Conjugation makes `G` act on `FDRep k N`
 (`TauCeti.conjNormalFDRepMulAction`), and the *inertia group* of `A : FDRep k N` is the stabilizer
 of the isomorphism class of `A`,
@@ -84,7 +86,10 @@ variable [Ring k]
 isomorphism class of `A` under `conjNormalFDRepSkeletonMulAction`.
 
 See `TauCeti.mem_inertia_iff` for the description as `{g | {}^g A ≅ A}`, and
-`TauCeti.stabilizer_le_inertia` for the comparison with the stabilizer of `A` itself. -/
+`TauCeti.stabilizer_le_inertia` for the comparison with the stabilizer of `A` itself.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.inertia) -/
 noncomputable def inertia (A : FDRep k N) : Subgroup G :=
   MulAction.stabilizer G (toSkeleton A)
 

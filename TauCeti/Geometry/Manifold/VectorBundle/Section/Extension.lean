@@ -12,6 +12,8 @@ import Mathlib.Geometry.Manifold.BumpFunction
 /-!
 # Smooth sections with a prescribed value
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.VectorBundle.Section.Extension)
+
 Every vector in a smooth real vector bundle over a finite-dimensional Hausdorff smooth
 manifold is the value of a globally smooth section. This lets tensorial operations on
 globally smooth sections define maps on individual fibres. The construction cuts off

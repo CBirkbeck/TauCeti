@@ -11,6 +11,8 @@ public import Mathlib.Geometry.Manifold.Algebra.LieGroup
 /-!
 # Basic facts about Lie groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Basic)
+
 This file records lightweight consequences of the Lie-group regularity hierarchy.
 
 ## Main results

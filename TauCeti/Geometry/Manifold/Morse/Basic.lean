@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Calculus.Morse.Basic
 /-!
 # Morse functions on smooth manifolds
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Morse.Basic)
+
 This file lifts nondegenerate critical points and Morse functions from normed spaces to smooth
 manifolds without boundary. A critical point is nondegenerate when the coordinate expression of
 the function in the preferred extended chart has a nondegenerate critical point in the sense of

@@ -15,6 +15,8 @@ import Mathlib.LinearAlgebra.Span.Basic
 /-!
 # Subcoalgebras spanned by group-like elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcoalgebra.GroupLike)
+
 This file defines the subcoalgebra spanned by a set of group-like elements, together with the
 singleton span, a finite-generation theorem for finite sets of group-like elements, and a
 `Module.Finite` instance for singleton spans.

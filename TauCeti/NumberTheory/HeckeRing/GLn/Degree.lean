@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 /-!
 # The degree of a constant diagonal double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.Degree)
+
 A constant tuple `a = (c, ..., c)` has `natDiagGL n a` a scalar matrix, which is central in
 `GL_n(ℚ)` and so normalizes `SL_n(ℤ)`; the double coset `T(c, ..., c)` is therefore a single
 coset and `deg T(c, ..., c) = 1`, at every rank.

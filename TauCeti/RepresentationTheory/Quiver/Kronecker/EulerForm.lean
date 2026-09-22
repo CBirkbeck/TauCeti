@@ -13,6 +13,8 @@ import Mathlib.Tactic.Linarith
 /-!
 # The Euler and Tits forms of the generalized Kronecker quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.EulerForm)
+
 This file evaluates the Euler and Tits forms of the generalized Kronecker quiver in the
 coordinates of its two vertices. The arithmetic of the Tits form pins down exactly where the
 boundary of Gabriel's theorem lies: writing `n` for the number of arrows,

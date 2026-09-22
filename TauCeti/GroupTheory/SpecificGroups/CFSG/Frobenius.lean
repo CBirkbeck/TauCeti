@@ -11,6 +11,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Closure
 /-!
 # The field Frobenius of a Lie-type index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Frobenius)
+
 On the ordinary and graph-twisted branches of the CFSG list the Steinberg endomorphism starts from
 the map `x ↦ x ^ q` on the algebraic closure of the prime field, where `q` is the Frobenius
 parameter recorded by the index; on the Suzuki--Ree and Tits branches the Steinberg map is instead

@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 /-!
 # Geometric connectedness of affine products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Geometrically.Connected)
+
 This file proves that the spectrum of a tensor product of commutative algebras over a field is
 geometrically connected when the spectra of both factors are geometrically connected. The tensor
 product spectrum is identified with the fibre product of the two spectra over the ground field.

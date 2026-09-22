@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.GradedAlgebra.Trivial
 /-!
 # Augmented differential graded algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Augmentation)
+
 An augmentation of a differential graded algebra `A` over `R` is a morphism of DG algebras from
 `A` to the ground ring, placed in degree zero with zero differential.  Its kernel is the reduced
 augmentation ideal.  It is homogeneous, stable under the differential and multiplication from

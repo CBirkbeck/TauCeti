@@ -14,6 +14,8 @@ import Mathlib.RingTheory.LocalRing.ResidueField.Ideal
 /-!
 # Emptiness of the analytic locus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Discreteness)
+
 This file completes Wedhorn's criterion for the analytic locus of a Huber pair to be empty.
 For a pair of definition `(A₀, I)`, the difficult implication starts with two prime ideals
 `p ⊆ q` of `A₀`, where `q` contains `I`. If `p` did not contain `I`, a valuation ring of

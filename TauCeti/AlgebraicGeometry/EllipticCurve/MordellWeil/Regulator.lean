@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.BilinearMap.GramCongruence
 /-!
 # The regulator of an elliptic curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.Regulator)
+
 The regulator is the absolute value of the determinant of the Néron-Tate pairing's Gram matrix
 on a basis of the points modulo torsion. It does not depend on the basis chosen: a change of
 basis transforms the Gram matrix by congruence, `G' = Mᵀ G M`, along the integer change-of-basis

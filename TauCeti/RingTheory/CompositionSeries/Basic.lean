@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.SimpleModule.Basic
 /-!
 # Transporting a composition series along a linear map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.CompositionSeries.Basic)
+
 An injective linear map `f : M →ₗ[R] N` carries the submodules of `M` to submodules of `N` and
 preserves coverings (`Submodule.map_covBy_of_injective`), and a surjective one pulls the submodules
 of `N` back and preserves coverings (`Submodule.comap_covBy_of_surjective`), so each carries a

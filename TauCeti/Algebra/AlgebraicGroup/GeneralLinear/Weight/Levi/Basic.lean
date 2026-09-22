@@ -12,6 +12,8 @@ import TauCeti.CategoryTheory.Comma.Over
 /-!
 # Weight-Levi subgroup schemes of the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Levi.Basic)
+
 An integer weight `w i` on each coordinate of `GL_N` decomposes the standard representation into
 its weight spaces. The corresponding Levi subgroup consists of the invertible matrices preserving
 every weight space, so its `(i,j)` entry vanishes whenever `w i ≠ w j`.

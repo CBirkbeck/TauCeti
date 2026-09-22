@@ -11,6 +11,8 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 /-!
 # Weighted geometric majorants over an index and an exponent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.InfiniteSum.Real)
+
 For a family `r : ι → E` in a seminormed additive group whose norms are less than one, and
 eventually at most `1 - ε`, wherever the weight `w` is nonzero, the double family
 `(i, e) ↦ w i * ‖r i‖ ^ (e + 1)` is summable over `ι × ℕ` as soon as `i ↦ w i * ‖r i‖` is

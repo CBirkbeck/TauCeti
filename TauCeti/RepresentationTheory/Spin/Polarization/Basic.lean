@@ -15,6 +15,8 @@ import Mathlib.LinearAlgebra.Dual.Lemmas
 /-!
 # Polarization data for quadratic spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.Basic)
+
 This file packages the decomposition used to construct spinor modules: two isotropic subspaces
 in a left- and right-nondegenerate polar pairing and an orthogonal remainder embedded in the
 scalar line. It also records the two elementary consequences that every consumer needs: the polar

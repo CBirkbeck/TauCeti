@@ -14,6 +14,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The divisor multiplication table of a prime-power-multiplicative family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.Factorization.PrimePowerProd.DivisorTable)
+
 Fix a commutative semiring `R` and two block maps `D S : ℕ → ℕ → R`, and assemble each over a
 prime factorisation with `TauCeti.Nat.primePowerProd`. Suppose the assembled `D` obeys the
 *per-prime* table: for a prime `p` and `r ≤ s`,

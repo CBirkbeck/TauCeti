@@ -18,6 +18,8 @@ import TauCeti.Analysis.Contour.PerWindow.HigherOrder
 /-!
 # The principal value of a higher-order polar term along an immersed curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.HigherOrder.CPV)
+
 For a piecewise-`C¹` immersed curve `γ` on `[a, b]` whose value-`s` parameters are interior,
 flat of order `n ≥ k`, and sector-compatible, the single-point Cauchy principal value of the
 order-`k ≥ 2` polar term `t ↦ c / (γ t - s) ^ k * deriv γ t` exists on `[a, b]` and equals the

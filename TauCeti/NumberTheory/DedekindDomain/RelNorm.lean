@@ -10,6 +10,8 @@ public import Mathlib.RingTheory.Ideal.Norm.RelNorm
 /-!
 # Recovering an ideal from its relative norm
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.DedekindDomain.RelNorm)
+
 For a finite torsion-free extension `A → B` of Dedekind domains, the relative norm
 `Ideal.relNorm A : Ideal B →*₀ Ideal A` is monotone but far from injective. It is, however,
 injective on any chain: two nested ideals with the same relative norm are equal.

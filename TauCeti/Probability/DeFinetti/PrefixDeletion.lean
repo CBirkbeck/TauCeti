@@ -17,6 +17,8 @@ import TauCeti.Probability.Process.Tail.Basic
 /-!
 # Prefix-deletion conditional-expectation identity (Kallenberg 1.3 input)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.PrefixDeletion)
+
 For a contractable process `X`, this file proves the "prefix-deletion" conditional-expectation
 identity feeding the de Finetti martingale route: for `r ≤ m` and a measurable `B`,
 ```

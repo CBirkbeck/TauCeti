@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.Basic
 /-!
 # The kernel coordinate ring as a base change
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.BaseChange)
+
 The coordinate ring of the kernel of an affine group-scheme morphism is the quotient by
 the kernel Hopf ideal `K·f(H⁺)`. This file identifies it with the base change
 `K ⊗[H] R`, where `K` is an `H`-algebra through `f` and `R` an `H`-algebra through the

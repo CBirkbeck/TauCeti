@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.MvPolynomial.Basic
 /-!
 # The universal normalised elliptic divisibility sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.EllipticDivisibilitySequence.Universal)
+
 A normalised EDS over a commutative ring `R` is determined by three parameters `b, c, d : R`.
 Taking those parameters to be three indeterminates gives the **universal** `normEDS` family
 

@@ -16,6 +16,8 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 /-!
 # The highest weight of a `gl n`-module determines it
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.Uniqueness)
+
 A highest weight vector `v` of weight `μ` for the matrix unit positive system
 (`TauCeti.IsGlHighestWeightVector`) generates a module in which `v` is, up to a scalar, the *only*
 vector of weight `μ`: this file proves

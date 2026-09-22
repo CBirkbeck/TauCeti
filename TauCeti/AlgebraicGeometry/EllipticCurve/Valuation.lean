@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.Discrete.Order
 /-!
 # Valuations of Weierstrass invariants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Valuation)
+
 This file records how additive valuations of Weierstrass-curve invariants behave under admissible
 changes of variables.
 

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Basic
 /-!
 # The enveloping algebra of an abelian Lie algebra is its symmetric algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Abelian)
+
 Let `L` be an abelian Lie algebra over a commutative ring `R`, that is, one whose bracket vanishes
 identically (`IsLieAbelian L`). This file proves that the canonical map
 `ι : L → UniversalEnvelopingAlgebra R L` exhibits `U(L)` as the **symmetric algebra** of the

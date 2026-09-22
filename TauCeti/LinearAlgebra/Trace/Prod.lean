@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Trace
 /-!
 # Block upper triangular endomorphisms of a product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Trace.Prod)
+
 An endomorphism `F` of `A × C` that preserves the first summand, acting there as `fA`, and covers
 `fC` on the second is *block upper triangular*: its only off-diagonal block is the `C → A` map
 `fst ∘ F ∘ inr`. This file records that normal form and the resulting trace identity.

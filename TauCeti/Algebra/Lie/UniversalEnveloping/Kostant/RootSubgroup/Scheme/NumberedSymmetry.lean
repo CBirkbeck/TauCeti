@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Schem
 /-!
 # The ambient coordinate automorphism of a numbered Kostant symmetry
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.NumberedSymmetry)
+
 A symmetry of numbered Kostant data is a self-map `σ` of the index set together with a rational
 automorphism `θ` of the representation which preserves the integral lattice `M` and carries the
 action of `eᵢ` to the action of `e_{σ i}`. Conjugating by the scalar extension of `θ` is then an

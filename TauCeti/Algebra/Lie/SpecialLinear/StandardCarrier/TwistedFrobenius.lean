@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.GraphAutomorphis
 /-!
 # The graph-twisted Frobenius of the full-weight type-A carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.TwistedFrobenius)
+
 `TauCeti.SlStd.groupScheme r` is the explicit full-weight Chevalley carrier of type `A_r`, and its
 point group over a commutative ring `A` of exponential characteristic `p` carries two pinned
 endomorphisms: the `p ^ k`-power Frobenius `TauCeti.SlStd.frobenius`, which raises every matrix

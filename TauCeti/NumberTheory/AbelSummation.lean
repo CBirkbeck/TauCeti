@@ -11,6 +11,8 @@ public import Mathlib.NumberTheory.AbelSummation
 /-!
 # Consequences of Abel summation for partial sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.AbelSummation)
+
 Mathlib's `Mathlib/NumberTheory/AbelSummation.lean` proves the summation-by-parts identity
 `∑_{k ≤ x} f k c k = f x ∑_{k ≤ x} c k - ∫ f' (t) ∑_{k ≤ t} c k dt` and derives convergence
 criteria from it. This file draws two further consequences from a growth hypothesis on the

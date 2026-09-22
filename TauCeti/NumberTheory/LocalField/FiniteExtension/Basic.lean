@@ -14,6 +14,8 @@ import TauCeti.RingTheory.Valuation.RootMonic
 /-!
 # Finite extensions of a nonarchimedean local field are local fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.FiniteExtension.Basic)
+
 Let `K` be a nonarchimedean local field and let `M` be a field that is a finite-dimensional
 `K`-algebra, with no topology or valuative relation assumed on `M`. Since `K` is complete for its
 normalized absolute value (`TauCeti.normalizedNormedField`), the spectral norm of `M/K` is a

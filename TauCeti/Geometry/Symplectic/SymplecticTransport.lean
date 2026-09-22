@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Symplectic.Transport
 /-!
 # Transporting symplectic forms along linear equivalences
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.SymplecticTransport)
+
 A real-linear isomorphism `e : V ≃ₗ[ℝ] W` carries a symplectic form `ω` on `V` to one on `W` by
 pushing the arguments back along `e.symm`: `(ω.transport e)(v, w) = ω(e.symm v, e.symm w)`. This
 is the symplectic companion of `TauCeti.AlmostComplexStructure.transport`

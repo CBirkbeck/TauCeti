@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.RootSystem.FiniteType.TwoDoubleEdges
 /-!
 # The branchless double-edge case of the finite-type classification
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.FiniteType.DoubleEdge.Branchless)
+
 A connected finite-type Cartan diagram of maximum degree two is a path. If one edge of that path is
 double, `TauCeti.IsFiniteType.exists_equiv_forall_eq_doubleEdgeCartanMatrix` reindexes the diagram
 onto `TauCeti.doubleEdgeCartanMatrix p q`, and the double-edge bound

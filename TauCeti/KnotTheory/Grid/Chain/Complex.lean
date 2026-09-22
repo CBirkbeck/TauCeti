@@ -12,6 +12,8 @@ public import TauCeti.KnotTheory.Grid.Differential.Square.Zero
 /-!
 # Grid differentials as homological complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Chain.Complex)
+
 This file packages the three grid chain modules and their square-zero differentials as
 homological complexes in Mathlib's sense. Each uses the one-object circular shape
 `ComplexShape.refl Unit`: its sole object is the total chain module and its sole differential is

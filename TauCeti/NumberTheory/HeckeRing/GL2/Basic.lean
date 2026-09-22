@@ -13,6 +13,8 @@ import Mathlib.Data.Finset.NatDivisors
 /-!
 # The `GL₂` Hecke operators `T(a, d)` and `T(m)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Basic)
+
 The specialization of the `GL_n` Hecke ring to `n = 2`: the basis operators `T(a, d)` for
 divisor pairs `a ∣ d`, the scalar operators `T(c, c)`, and Shimura's summed operator
 `T(m) = ∑_{a ∣ m} T(a, m / a)`.

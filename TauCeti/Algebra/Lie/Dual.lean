@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.Schur
 /-!
 # The dual of a finite-dimensional irreducible Lie module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Dual)
+
 The dual `M* = Module.Dual R M` of a Lie module carries the contragredient action
 `⁅x, f⁆ m = - f ⁅x, m⁆` (Mathlib's `Module.Dual.instLieRingModule`). This file records the two
 facts about it that a self-duality statement needs. Nothing here mentions weights, so both are

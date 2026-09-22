@@ -13,6 +13,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Invariants
 /-!
 # The shift-invariant σ-algebra: its place below the path tail, and its stability under reindexing
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Invariant.Tail)
+
 For the one-sided shift on path space `ℕ → α`, an ambient-measurable event fixed by the shift is
 fixed by every iterate of the shift, and therefore depends only on the coordinates from an
 arbitrarily late time onward.  This file proves that comparison,

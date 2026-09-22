@@ -13,6 +13,8 @@ import Mathlib.MeasureTheory.Integral.Prod
 /-!
 # Basic facts about moment-generating functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Moments.Basic)
+
 This file supplements Mathlib's basic moment-generating-function API.
 
 ## Main results

@@ -17,6 +17,8 @@ import TauCeti.GroupTheory.Index.Basic
 /-!
 # Isogenies of root pairings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Isogeny.Basic)
+
 A morphism of root pairings carries each root to a root. An *isogeny* is allowed to rescale: it
 carries each root to a positive integer multiple of a root, with the multiple depending on the
 root. This is the notion of SGA III, Exposé XXI, 6.8, and it is what an isogeny of reductive group
@@ -177,7 +179,10 @@ theorem exponent_mul_pairing (f : RootPairingIsogeny P Q) (i j : ι) :
     _root_.RootPairing.root_coroot_eq_pairing] using h
 
 /-- Multiplication by a positive integer, as an isogeny of a finite free `ℤ`-root pairing with
-itself. At a prime `p` this is the isogeny of root data underlying the `p`-power Frobenius. -/
+itself. At a prime `p` this is the isogeny of root data underlying the `p`-power Frobenius.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.RootPairingIsogeny.smulId) -/
 def smulId [Module.Free ℤ M] [Module.Finite ℤ M] [Module.Free ℤ N] [Module.Finite ℤ N]
     (P : RootPairing ι ℤ M N) (c : ℕ+) : RootPairingIsogeny P P where
   weightMap := (c : ℕ) • LinearMap.id

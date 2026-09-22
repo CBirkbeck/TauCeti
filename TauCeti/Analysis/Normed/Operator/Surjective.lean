@@ -10,6 +10,8 @@ public import Mathlib.Analysis.Normed.Module.FiniteDimension
 /-!
 # Surjective continuous linear maps onto a finite-dimensional space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Operator.Surjective)
+
 Surjectivity onto a finite-dimensional space is stable under small perturbations in the operator
 norm: the surjective maps form an open subset of the space of continuous linear maps. The source
 is an arbitrary normed space over a complete nontrivially normed field.

@@ -11,6 +11,8 @@ import Mathlib.LinearAlgebra.Determinant
 /-!
 # Gram determinants of integral lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.IntegralLattice.Gram)
+
 This file attaches an integral Gram matrix to every basis of an integral lattice. Its determinant
 is independent of the carrier basis: an integral change-of-basis matrix has determinant `1` or
 `-1`, and the Gram matrix changes by multiplication by that matrix and its transpose. The resulting

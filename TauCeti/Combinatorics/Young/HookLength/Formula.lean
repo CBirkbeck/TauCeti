@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.Vandermonde
 /-!
 # The Frobenius determinant formula and the hook-length formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.HookLength.Formula)
+
 Let `μ` be a Young diagram with `n = μ.card` cells and let `f^μ = TauCeti.standardCount μ` be its
 number of standard Young tableaux. This file proves the **multiplicative hook-length formula**
 

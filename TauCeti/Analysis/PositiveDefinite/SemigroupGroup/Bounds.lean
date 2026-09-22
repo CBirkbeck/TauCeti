@@ -10,6 +10,8 @@ public import TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Basic
 /-!
 # Bounds for semigroup-group positive-definite functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PositiveDefinite.SemigroupGroup.Bounds)
+
 This file records the Cauchy--Schwarz consumer API for Berg--Christensen--Ressel
 positive-definite functions on `ℝ≥0 × V`. The associated kernel is
 `K(p, q) = F (p.1 + q.1, p.2 - q.2)`, so the generic positive-definite-kernel estimates give

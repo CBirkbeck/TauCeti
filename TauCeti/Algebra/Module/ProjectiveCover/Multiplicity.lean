@@ -15,6 +15,8 @@ import TauCeti.RingTheory.Semisimple.Schur
 /-!
 # Hom out of a projective cover counts composition factors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.ProjectiveCover.Multiplicity)
+
 Let `k` be a field, `A` a `k`-algebra, `S` a simple `A`-module and `f : P →ₗ[A] S` a projective
 cover of `S`. This file proves the multiplicity formula
 

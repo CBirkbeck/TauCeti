@@ -13,6 +13,8 @@ import Mathlib.Topology.Order.IntermediateValue
 /-!
 # Locally constant functions on a preconnected set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.LocallyConstant.Preconnected)
+
 A function that is locally constant along a preconnected set takes the same value everywhere on
 it. Mathlib's `IsLocallyConstant.apply_eq_of_preconnectedSpace` says this for a locally constant
 function on a preconnected *space*; the statement below is the relative form, for a preconnected

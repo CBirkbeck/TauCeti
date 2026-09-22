@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Map
 /-!
 # Surjectivity of the Lie differential of a formally smooth morphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.FormallySmooth)
+
 A formally smooth morphism of affine monoid schemes induces a surjective Lie algebra
 morphism on tangent spaces at the identity, with values in any commutative coefficient
 algebra. For affine groups, this gives the surjectivity needed for the Lie-dimension

@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.CentralCharacter
 /-!
 # The primitive central idempotents of a group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.CentralIdempotent)
+
 Attached to a representation `ρ` of a finite group `G` over a field `k`, with character `χ`, is the
 group-algebra element `∑_g χ(g⁻¹) g`, called `TauCeti.Representation.characterSum` here. Because the
 character is a class function, this element is a combination of class sums, and it is built as one

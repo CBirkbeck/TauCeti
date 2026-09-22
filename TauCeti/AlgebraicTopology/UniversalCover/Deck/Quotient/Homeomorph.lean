@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Quotient.Basic
 /-!
 # The orbit quotient of a regular open map is homeomorphic to the base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Quotient.Homeomorph)
+
 For a regular deck action, `Deck.IsRegular.orbitQuotientEquivBase` already identifies the
 deck-orbit quotient `E / deck p` with the base `B` as a bare equivalence. This file upgrades
 that equivalence to a homeomorphism when `p` is continuous and open.

@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 /-!
 # Orthogonality of the sine system on `[0, π]`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Trigonometric.Orthogonality)
+
 The functions `θ ↦ sin (k θ)`, for `k` a positive natural number, are pairwise orthogonal on the
 interval `[0, π]`, each of square norm `π / 2`:
 

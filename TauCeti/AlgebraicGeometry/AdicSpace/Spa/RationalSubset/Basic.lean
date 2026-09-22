@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Presentation
 /-!
 # Rational subsets of the adic spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic)
+
 
 **The set-level constructions beneath Wedhorn, *Adic Spaces* (arXiv:1910.05934v1),
 Definition 7.29 and Remark 7.30.**

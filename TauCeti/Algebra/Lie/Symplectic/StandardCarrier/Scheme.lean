@@ -15,6 +15,8 @@ import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.Toral
 /-!
 # The full-weight type-C carrier scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Symplectic.StandardCarrier.Scheme)
+
 This file feeds the standard type-C Chevalley generators, integral lattice, and full set of
 weights into the Kostant toral-closure construction. It defines the carrier, its numbered root
 subgroups and weight torus, their bundled matrix-valued points, and the scheme-level pinning

@@ -12,6 +12,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Integral
 /-!
 # Integration in polar coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Constructions.HaarToSphere)
+
 Let `E` be a nontrivial finite-dimensional real normed space of dimension `d` with an additive
 Haar measure `μ`.  Mathlib's `MeasureTheory.Measure.measurePreserving_homeomorphUnitSphereProd`
 identifies `μ` on `E \ {0}` with the product of the surface measure `μ.toSphere` on the unit

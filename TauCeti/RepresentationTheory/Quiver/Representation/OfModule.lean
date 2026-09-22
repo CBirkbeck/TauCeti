@@ -24,6 +24,8 @@ public import Mathlib.Algebra.Category.ModuleCat.Algebra
 /-!
 # The representation of a quiver carried by a module over its path algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Representation.OfModule)
+
 `TauCeti.RepresentationTheory.Quiver.ModuleDecomposition` equips a left module `M` over the path
 algebra `kQ` of a finite quiver with the data of a representation of `Q`: the `k`-subspace
 `eᵥ M = TauCeti.vertexComponent k M v` at each vertex, the `k`-linear map `TauCeti.pathMap` along

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.AbelSummation
 /-!
 # Summability at `s = 1` of a logarithmically damped Dirichlet series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LSeries.Summable)
+
 A Dirichlet series whose coefficients have `O(t log t)` partial sums need not converge on the line
 `Re s = 1`, but it does converge there once each coefficient is weighted by a factor of size
 `O((1 + log n) ^ (-3))`: in the Abel-summation bound

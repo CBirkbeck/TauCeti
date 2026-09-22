@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Ring.Ideal
 /-!
 # The map induced on a quotient of `A⟨X⟩_T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Quotient)
+
 Wedhorn's Example 6.38(a) presents a rational localisation `A⟨T/s⟩` as a quotient `C ⧸ 𝔞` of a
 ring of restricted power series, and one of the two maps that identify them goes *out* of that
 quotient. This file supplies it: an evaluation `A⟨X⟩_T →+* B` that kills an ideal `𝔞` factors

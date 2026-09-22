@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.FreeAbelianCharacter
 /-!
 # Base change of split-torus points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SplitTorus.BaseChange)
+
 The rank-`σ` split torus over `k` is the diagonalizable group
 `D(Multiplicative (σ →₀ ℤ))`, represented by the group algebra
 `k[Multiplicative (σ →₀ ℤ)]`. This file records the base-changed functor-of-points

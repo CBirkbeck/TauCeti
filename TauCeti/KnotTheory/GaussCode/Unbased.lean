@@ -12,6 +12,8 @@ import TauCeti.GroupTheory.Perm.Basic
 /-!
 # Unbased oriented Gauss codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.GaussCode.Unbased)
+
 A based oriented Gauss code records a linear traversal beginning immediately after a chosen point
 of the knot diagram. The underlying cyclic traversal has no preferred beginning. This file removes
 that artificial choice by quotienting based codes by cyclic rotation of their visit indices.

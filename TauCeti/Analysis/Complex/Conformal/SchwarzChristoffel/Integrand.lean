@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Cpow
 /-!
 # The Schwarz--Christoffel integrand
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.SchwarzChristoffel.Integrand)
+
 The derivative in the Schwarz--Christoffel formula is, up to a nonzero constant, a finite
 product
 

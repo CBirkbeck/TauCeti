@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Spin.Polarization.TypeD.RootBivectors
 /-!
 # Type-D root generators in the quadratic Clifford model
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.RootGenerators)
+
 An even polarization identifies the split orthogonal Lie algebra of type `D` with the quadratic
 Lie subalgebra of its Clifford algebra. This file evaluates that equivalence on the
 Bourbaki-numbered root and coroot generators.

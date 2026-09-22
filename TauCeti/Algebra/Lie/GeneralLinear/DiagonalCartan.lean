@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.IsDiag
 /-!
 # The diagonal Cartan subalgebra of `gl n R`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.DiagonalCartan)
+
 The general linear Lie algebra `gl n R` is `Matrix n n R` with the commutator bracket. This file
 builds its *diagonal Cartan subalgebra*: the diagonal matrices form an abelian, self-normalizing
 Lie subalgebra, hence a Cartan subalgebra in the sense of `LieSubalgebra.IsCartanSubalgebra`. It

@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Basic
 /-!
 # Lifting special orthogonal matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Lift)
+
 When `2` is invertible, a special orthogonal matrix lifts across a quotient by a square-zero
 ideal. Starting from arbitrary lifts of its entries, let `E = M Mᵀ - 1` be the error in the
 orthogonality equation. Its entries lie in the ideal and `E` is symmetric. Multiplication by

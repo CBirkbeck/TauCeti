@@ -11,6 +11,8 @@ public import TauCeti.Combinatorics.Young.Diagram
 /-!
 # Partitions and Young diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.Partitions)
+
 This file relates partitions of `n` and Young diagrams with `n` cells by a pair of direct
 constructions: `TauCeti.diagramOf` builds the Young diagram whose rows are the decreasingly
 sorted parts of a partition, and `TauCeti.toPartition` reads the row lengths of a sized diagram

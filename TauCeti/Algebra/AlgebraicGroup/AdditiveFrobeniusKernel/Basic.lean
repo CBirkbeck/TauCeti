@@ -14,6 +14,8 @@ public import TauCeti.Algebra.HopfAlgebra.SymmetricAlgebra.Augmentation
 /-!
 # The Frobenius kernel group scheme `αₚ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.AdditiveFrobeniusKernel.Basic)
+
 Over a base ring `R` of prime characteristic `p`, the additive group `𝔾ₐ = Spec R[x]`
 (here `x = ι R R 1` in `SymmetricAlgebra R R`) has a closed subgroup scheme `αₚ`, the kernel of
 the Frobenius endomorphism `x ↦ xᵖ`. Its coordinate ring is the quotient Hopf algebra

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 /-!
 # Upper-triangular representatives for a diagonal double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.CosetDecomposition)
+
 For an arbitrary tuple `a` of naturals, this file exhibits a family of elements of the double
 coset `SL_n(ℤ) · diag(a) · SL_n(ℤ)`, indexed by the bounded entry assignments
 `B_{ij} ∈ {0, …, a_j / a_i - 1}` for `i < j`. The construction, its membership in the double

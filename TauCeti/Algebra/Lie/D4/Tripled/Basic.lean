@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.D.Triple
 /-!
 # A tripled weight representation of the type-D4 Serre presentation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.D4.Tripled.Basic)
+
 This file constructs a `24`-dimensional integral representation of the type-`D₄` Serre
 presentation. Its coordinate basis is indexed by the table
 `TauCeti.DynkinType.d4TripledWeight`, whose three blocks are the weights of the natural and two

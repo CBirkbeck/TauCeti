@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Center
 /-!
 # The projective general linear point functor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Projective)
+
 The represented center of `GLₙ` maps isomorphically onto the ordinary center of its group of
 points. Consequently, its pointwise center quotient is Mathlib's projective general linear group
 `PGL(n, A)` over every commutative value algebra `A`. This file proves that identification and

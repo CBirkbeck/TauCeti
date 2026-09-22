@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.Basic
 /-!
 # Matrix equations for the Suzuki fixed points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Suzuki.MatrixEquations)
+
 For a validated Suzuki index with field order `q = 2^(2m+1)`, the fixed points of the
 Steinberg map `τ^(2m+1)` are exactly the symplectic matrices satisfying
 

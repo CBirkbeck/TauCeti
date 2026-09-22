@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.FintypeCat
 /-!
 # Finite `G`-sets, as a subcategory of all `G`-sets and as actions in `FintypeCat`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Action.FintypeCat)
+
 Mathlib has two descriptions of a finite set with a `G`-action: an object of
 `Action FintypeCat G`, an action internal to the category of finite types, and an object of
 `Action (Type u) G` whose underlying type happens to be finite. The first is the one carrying the

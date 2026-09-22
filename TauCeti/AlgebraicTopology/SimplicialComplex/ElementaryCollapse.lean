@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.LinkStar
 /-!
 # Elementary collapses of simplicial complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.SimplicialComplex.ElementaryCollapse)
+
 An elementary simplicial collapse deletes a free face together with its unique proper coface.
 This file supplies that local move for `PreAbstractSimplicialComplex`, Mathlib's type of
 downward-closed collections of nonempty finite faces.  This is the elementary substrate for the

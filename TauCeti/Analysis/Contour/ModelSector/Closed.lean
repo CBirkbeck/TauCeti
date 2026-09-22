@@ -14,6 +14,8 @@ public import TauCeti.Analysis.Contour.Winding.Number.Reparam
 /-!
 # The Hungerbühler–Wasem model sector
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.ModelSector.Closed)
+
 The model sector of opening angle `α` at `z₀` is the closed curve made of a radial segment
 inward to `z₀` along direction `φ + α`, a radial segment back out along direction `φ`, and a
 circular arc of radius `r` sweeping `α` from `φ` round to `φ + α`, which closes the curve at the

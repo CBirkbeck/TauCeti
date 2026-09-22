@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.Young.HookLength.Basic
 /-!
 # Hook lengths after erasing a corner
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Young.HookLength.Erase)
+
 Erasing a corner `c` from a Young diagram shortens precisely the hooks based strictly to the left
 of `c` in its row and strictly above `c` in its column. The row- and column-length comparisons
 live with the erasure API in `TauCeti.Combinatorics.Young.Corner`; this file applies them to hook

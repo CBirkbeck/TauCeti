@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Construction
 /-!
 # Isomorphism invariance of the unipotent radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Isomorphism)
+
 An isomorphism of finite-type commutative Hopf algebras carries connected normal smooth
 unipotent closed subgroups to such subgroups. Consequently it carries the greatest one to the
 greatest one: the defining Hopf ideal of the unipotent radical pulls back to the defining ideal

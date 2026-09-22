@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.LocallyFlat.Bicollar
 /-!
 # Brown's bicollaring theorem for locally flat spheres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.LocallyFlat.Sphere)
+
 A locally flat codimension-one sphere in a sphere has a global bicollar.  This is the global
 collaring theorem that turns the local product charts in `TauCeti.IsLocallyFlat` into one product
 neighbourhood of the entire embedded sphere.  It is the structural input to the annulus theorem:

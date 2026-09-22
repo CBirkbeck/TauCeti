@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Compact.PeterWeyl
 /-!
 # Fourier series as Peter--Weyl theory for the circle
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Compact.FourierPeterWeyl)
+
 The Peter--Weyl basis of a compact group consists of normalized matrix coefficients of a skeleton
 of its irreducible unitary representations; for the circle it is the Fourier basis.  The
 irreducible representations of `Multiplicative (AddCircle T)` were classified in

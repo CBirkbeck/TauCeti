@@ -11,6 +11,8 @@ import TauCeti.MeasureTheory.MeasurableSpace.CountablyGenerated
 /-!
 # Every graphon is pulled back from a standard Borel carrier
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.Graphon.StandardBorelModel)
+
 A graphon is jointly measurable, so it depends on only countably many measurable sets of each
 argument: it factors as `W x y = V (q x) (q y)` through a measurable `q : Ω → ℕ → Bool` into the
 Cantor space, and the factor `V` is again symmetric and `[0, 1]`-valued

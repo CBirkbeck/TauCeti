@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Subsy
 /-!
 # The adjoint elementary Chevalley group of a Chevalley system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Adjoint.Elementary)
+
 The Kostant root-subgroup machinery is parameterized over a quadruple `(e, h, ρ, M)`: a family of
 distinguished nilpotent root vectors, a family of distinguished Cartan vectors, a rational
 representation, and a lattice in it stable under the Kostant integral form. Every consumer so far

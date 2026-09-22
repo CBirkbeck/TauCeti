@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Weights.Root.IntegralLattice
 /-!
 # Rationalizing the Chevalley Lie lattice
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Root.Rationalization)
+
 A Chevalley system supplies the integral root--coroot Lie lattice
 `IsChevalleySystem.chevalleyLieLattice`. Its underlying integer module is finite and free, and its
 rational span is the whole ambient Lie algebra. This file packages those facts as a full lattice

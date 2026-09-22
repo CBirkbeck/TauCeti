@@ -12,6 +12,8 @@ public import TauCeti.Combinatorics.Quiver.Prefunctor
 /-!
 # Reorienting a quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Quiver.Reorient)
+
 A `Bool`-valued labelling `σ` of the arrows of a quiver `Q` specifies a change of orientation: this
 file builds the quiver `TauCeti.Reorient Q σ`, whose arrows are those of `Q` with the ones labelled
 `true` turned around.

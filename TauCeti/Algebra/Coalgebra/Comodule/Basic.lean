@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.TensorProduct.Basic
 /-!
 # Comodules over a coalgebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Basic)
+
 This file defines right comodules over an `R`-coalgebra `C` and their morphisms. A right
 comodule is an `R`-module `M` equipped with a coaction `ρ : M →ₗ[R] M ⊗[R] C` satisfying
 the usual coassociativity and counit identities.

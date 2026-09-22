@@ -14,6 +14,8 @@ public import TauCeti.Topology.Homotopy.HomotopyGroup.Covering
 /-!
 # Asphericity and covering spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.EilenbergMacLane.Covering)
+
 A covering map `p : E → X` is an isomorphism on homotopy groups in every dimension at least
 two, so the higher homotopy of a cover and of its base are the same. Asphericity is therefore
 inherited in both directions along a covering map, the only extra input being

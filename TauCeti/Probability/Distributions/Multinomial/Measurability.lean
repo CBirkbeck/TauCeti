@@ -12,6 +12,8 @@ import Mathlib.MeasureTheory.Measure.GiryMonad
 /-!
 # Parameter measurability of the multinomial distribution
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Multinomial.Measurability)
+
 The multinomial law is a measurable function of its parameters, the sample size `n : ℕ` and the
 probability vector `p : StdSimplex ℝ≥0 ι`, the simplex carrying the σ-algebra induced by its
 weight vector. This is what lets the multinomial law be used with random parameters: it is a

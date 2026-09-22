@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.GroupExtension.Basic
 /-!
 # The dynamic Levi decomposition as a semidirect product
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Dynamic.LeviDecomposition.Basic)
+
 Let `l : 𝔾ₘ → G` be a cocharacter of an affine group. The dynamic parabolic `P(l)` has a
 limit homomorphism onto its Levi subgroup `Z(l)`, whose kernel is the dynamic unipotent subgroup
 `U(l)`. The inclusion of `Z(l)` in `P(l)` splits this homomorphism.

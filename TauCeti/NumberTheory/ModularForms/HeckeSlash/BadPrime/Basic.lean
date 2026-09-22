@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Operators
 /-!
 # The bad-prime operator `U_p`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.BadPrime.Basic)
+
 For a prime `p` dividing the level `N`, the classical operator often denoted `U_p` is not a
 second Hecke operator: it is the bad-prime specialization of the uniform operator `T_p`. This
 file introduces `heckeUNat` and `heckeUCuspNat` as aliases of `heckeTNat` and

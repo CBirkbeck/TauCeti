@@ -14,6 +14,8 @@ import TauCeti.KnotTheory.Grid.Rectangle.Swap
 /-!
 # Fully blocked empty rectangles in grid diagrams
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.BlockedRectangle)
+
 This file packages the finite rectangle counts used by the fully blocked grid differential.
 For grid states `x` and `y`, the already-defined `GridRectangleBetween x y` records an
 oriented toroidal rectangle from `x` to `y`. Here we filter the generic empty-rectangle

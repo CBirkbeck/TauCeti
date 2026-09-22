@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Borel
 /-!
 # Points of the toral Kostant closure
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.RootSubgroup.Scheme.ToralClosure.Points)
+
 The closed group scheme `kostantToralGroupScheme` is generated inside `GLₙ` by the represented
 Kostant root subgroups together with the represented weight torus. This file identifies the
 corresponding formal inclusion on algebra-valued points. Its point subgroup contains both the

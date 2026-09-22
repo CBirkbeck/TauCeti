@@ -13,6 +13,8 @@ import TauCeti.Algebra.BigOperators.Finset.Fiber
 /-!
 # Finite multi-marginal duality and complementary slackness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.MultiMarginal.Finite.Duality)
+
 For finitely many finite spaces, the multi-marginal dual problem has one real-valued potential
 per marginal, constrained so that their pointwise sum never exceeds the cost.
 

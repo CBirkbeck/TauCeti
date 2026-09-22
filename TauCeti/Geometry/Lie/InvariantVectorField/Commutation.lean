@@ -14,6 +14,8 @@ public import TauCeti.Geometry.Lie.Interior
 /-!
 # Commutation of left- and right-invariant vector fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.InvariantVectorField.Commutation)
+
 This file proves that left- and right-invariant differentiation commute. The proof uses Clairaut
 symmetry for a smooth scalar function evaluated on two multiplied exponential lines, then uses
 the tangent-vector/point-derivation equivalence to identify the vector-field bracket.

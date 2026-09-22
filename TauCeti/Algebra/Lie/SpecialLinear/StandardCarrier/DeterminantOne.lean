@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Basic
 /-!
 # The type A full-weight carrier has determinant one
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.DeterminantOne)
+
 The standard Chevalley generators of `sl_{r+1}` act as matrix units, so their divided-power
 exponentials are transvections.  The product of the weights of the standard representation is the
 trivial character.  Consequently every generator used to define `TauCeti.SlStd.groupScheme r`

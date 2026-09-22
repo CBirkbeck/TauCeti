@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Matrix.Block
 /-!
 # Coordinate subcomodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Subcomodule.Coordinate)
+
 A subset of a finite basis spans a subcomodule exactly when the corresponding columns of the
 coefficient matrix have no entries outside that subset. This is a scheme-level criterion: it
 uses the universal coaction and requires no separation hypothesis on algebra-valued points.

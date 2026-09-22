@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Basic
 /-!
 # Associativity of the tensor product of sheaves of modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Associator)
+
 Let `R` be a sheaf of commutative rings on a small site. The tensor product of sheaves of
 `R`-modules `SheafOfModules.tensorProduct R M N` is the sheafification of the sectionwise tensor
 product `M ⊗ N` of the underlying presheaves of modules. This file constructs the associativity

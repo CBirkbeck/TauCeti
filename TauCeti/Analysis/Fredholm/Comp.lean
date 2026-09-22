@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Fredholm.Index
 /-!
 # Composition of Fredholm operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Fredholm.Comp)
+
 This file proves that the index of a composite of Fredholm operators between normed spaces is the
 sum of their indices, over an arbitrary nontrivially normed scalar field. It also records the
 corresponding statements for powers of a Fredholm endomorphism, which do assume a complete scalar

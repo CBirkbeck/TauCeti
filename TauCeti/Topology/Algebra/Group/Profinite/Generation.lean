@@ -15,6 +15,8 @@ import TauCeti.Topology.Algebra.Group.Profinite.Section
 /-!
 # Topological generation of profinite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.Generation)
+
 A subset of a topological group *generates it topologically* when the subgroup it generates is
 dense, that is when `(Subgroup.closure s).topologicalClosure = ⊤`. For a profinite group this
 is a condition on the finite quotients alone: a subgroup is dense exactly when it surjects onto

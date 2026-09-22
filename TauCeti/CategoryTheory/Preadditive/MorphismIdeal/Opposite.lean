@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Preadditive.Opposite
 /-!
 # Opposites of morphism ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Preadditive.MorphismIdeal.Opposite)
+
 Taking opposites reverses every morphism in a two-sided ideal. This operation is involutive, and
 the quotient by the opposite ideal is canonically equivalent to the opposite of the quotient.
 The equivalence identifies the class of an opposite morphism with the opposite of its class.

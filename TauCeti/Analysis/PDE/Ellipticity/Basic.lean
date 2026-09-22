@@ -16,6 +16,8 @@ public import TauCeti.LinearAlgebra.Matrix.ToQuadraticForm
 /-!
 # Uniform ellipticity for divergence-form PDE coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.Ellipticity.Basic)
+
 This file records the explicit-constant matrix inequalities used for uniformly elliptic
 divergence-form operators. For a coefficient field
 `a : X → Matrix n n ℝ` on a domain `Ω : Set X`, the predicate

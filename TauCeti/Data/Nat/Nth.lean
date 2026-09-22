@@ -10,6 +10,8 @@ public import Mathlib.Data.Nat.Nth
 /-!
 # Recognizing `Nat.nth` from counts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.Nat.Nth)
+
 `Nat.nth p k` is the `k`-th natural number satisfying `p`, and `0` when `p` holds at most `k`
 times. Mathlib's `Nat.nth_count` identifies it whenever a witness is available: if `p n` holds and
 `p` has exactly `k` predecessors below `n`, then `nth p k = n`. What is missing is the converse

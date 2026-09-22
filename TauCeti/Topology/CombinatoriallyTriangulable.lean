@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.SimplicialComplex.CombinatorialManifold
 /-!
 # Combinatorially triangulable spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.CombinatoriallyTriangulable)
+
 This predicate records the stronger witness needed when a triangulation is required to carry
 the link condition of a combinatorial manifold.  It is kept separate from `IsTriangulable`:
 an arbitrary simplicial complex can realize a triangulable space without presenting a PL

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Group.Subgroup.Map
 /-!
 # Functorial matrix points cut out by a Hopf ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.HopfIdealPoints.Functor)
+
 For a Hopf ideal `I` in the coordinate ring of `GLₙ` over a commutative ring `R`,
 `TauCeti.GeneralLinear.hopfIdealPointsSubgroup n I A` is the group of `A`-valued points of the
 corresponding closed subgroup scheme, in its matrix realization. This file assembles the existing

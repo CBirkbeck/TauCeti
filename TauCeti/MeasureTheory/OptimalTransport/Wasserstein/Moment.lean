@@ -13,6 +13,8 @@ public import TauCeti.Topology.MetricSpace.DisplacementTail
 /-!
 # Wasserstein convergence and convergence of moments
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Moment)
+
 For a finite exponent `1 ≤ p < ∞`, convergence in the `p`-Wasserstein distance is weak convergence
 of probability measures together with convergence of the `p`-moments. This file proves both
 halves of this classical characterization and assembles them on the finite-moment Wasserstein

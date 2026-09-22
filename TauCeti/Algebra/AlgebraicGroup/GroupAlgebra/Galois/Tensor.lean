@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Flat.Basic
 /-!
 # Tensor products of invariant group algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Tensor)
+
 For a finite Galois extension `L/k`, the tensor square over `k` of the invariant group algebra
 is the invariant subalgebra of the tensor square over `L` of the split group algebra. The
 comparison sends `x ⊗ y` to the tensor of their inclusions. Its inverse converts the

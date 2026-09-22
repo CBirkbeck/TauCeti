@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Complex.Conformal.Continuation.Basic
 /-!
 # Analytic continuation along a concatenation of paths
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Continuation.Trans)
+
 `Continuation/Basic.lean` carries a holomorphic germ along a single path and proves that the
 result is determined by the initial germ. This file supplies the other half of the basic calculus
 of analytic continuation: continuing along `γ` and then along `δ` is continuing along the

@@ -14,6 +14,8 @@ import TauCeti.Analysis.Semigroups.Generator.Invariance
 /-!
 # The generator of a strongly continuous group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Group.Generator)
+
 The generator of a C₀-group `U` is the generator of its forward semigroup. What is new on a
 group is that the difference quotient converges from *both* sides: the time-reversed group
 `U.reflect` has the same generator domain and the negated generator

@@ -10,6 +10,8 @@ public import Mathlib.Data.Matrix.Mul
 /-!
 # The identity forced by the character-lattice matrix of a special map
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialMap)
+
 At the level of a root datum, a special isogeny is pinned by a square matrix `A` together with a
 permutation `σ` of the root indices and a rescaling exponent `ℓ`, subject to the two equations
 

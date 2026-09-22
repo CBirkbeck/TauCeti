@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.TensorProduct
 /-!
 # The semiring of regular-form classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.RegularFormClass.Semiring)
+
 Orthogonal sum and tensor product make the isometry classes of regular finite-dimensional
 quadratic forms over a field of characteristic different from two into a commutative semiring.
 The essential compatibility is the isometry distributing tensor product over orthogonal product.

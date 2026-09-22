@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Circle.EilenbergMacLane
 /-!
 # Tori as Eilenberg--Mac Lane spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Torus.EilenbergMacLane)
+
 An arbitrary indexed product of real additive circles with nonzero periods is a
 `K(Π i, ℤ, 1)`.
 

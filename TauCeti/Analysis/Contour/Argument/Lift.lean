@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Curve.Distance
 /-!
 # Continuous argument lift for a point-avoiding curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Argument.Lift)
+
 For a curve `γ : ℝ → ℂ` continuous on `[a, b]` and avoiding a point `w`, the function
 `t ↦ γ t - w` is nowhere zero there, so on `[a, b]` it admits a real-valued *argument lift* `θ`,
 continuous on `[a, b]`, with `γ t - w = ‖γ t - w‖ · exp (i θ t)` for `t ∈ [a, b]`. This is the

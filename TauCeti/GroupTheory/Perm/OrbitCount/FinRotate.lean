@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Perm.Fin
 /-!
 # Orbits of cyclic rotation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.OrbitCount.FinRotate)
+
 Cyclic rotation of a nonempty finite ordinal is a single cycle through every point, including the
 singleton case where the rotation is the identity: its full cycle partition has the one part `n`,
 so it has one orbit and order `n`. The orbit count includes fixed points. The formula is useful

@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 /-!
 # The Cesàro limit of an observable of a contractable process is tail-measurable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.L2.TailMeasurability)
+
 Layer 3 of the Exchangeability roadmap reaches `weighted_sums_converge_L1_of_memLp`: the block
 averages of a square-integrable observable of a contractable process converge in `L¹` to a common
 limit, along every eventually-injective selection — fixed-start windows and disjoint windows

@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Composite
 /-!
 # Fourier coefficients of composite Hecke operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.CoefficientFormula)
+
 For every nonzero index `n`, each positive Fourier coefficient of the action of the composite
 Hecke-ring element `T_n` on `M_k(N, χ)` has the classical divisor-sum formula
 

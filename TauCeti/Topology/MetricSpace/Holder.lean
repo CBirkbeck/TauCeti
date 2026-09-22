@@ -13,6 +13,8 @@ import Mathlib.Topology.UniformSpace.UniformEmbedding
 /-!
 # Extending a Hölder function from a dense set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.MetricSpace.Holder)
+
 A function which is Hölder continuous, with positive exponent, on a dense subset `s` of a
 pseudo-emetric space and takes values in a complete emetric space extends to a function which is
 Hölder continuous on the whole space, with the same constant and exponent.

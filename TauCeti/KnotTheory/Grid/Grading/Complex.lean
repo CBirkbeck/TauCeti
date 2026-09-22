@@ -13,6 +13,8 @@ import TauCeti.KnotTheory.Grid.Differential.Square.Zero
 /-!
 # The graded fully blocked grid complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.Complex)
+
 For each Alexander degree, the fully blocked differential restricts to a chain complex indexed
 by the integer Maslov grading. Its objects are the homogeneous pieces of the grid chain module,
 and its differential is the restriction of the rectangle-counting differential. Inclusion into

@@ -10,6 +10,8 @@ public import TauCeti.LinearAlgebra.TensorCoalgebra.Basic
 /-!
 # Collapsing a block of a tensor word to a single letter
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.TensorCoalgebra.Splice)
+
 For an `R`-module `M`, `TauCeti.ReducedTensorWords.splice x a b p d e` is the tensor word obtained
 from the block `x a ⋯ x (a + b - 1)` by deleting its `d` letters at relative offset `p` and putting
 the single letter `e` in their place.  It is the shape of every summand of a coderivation of the

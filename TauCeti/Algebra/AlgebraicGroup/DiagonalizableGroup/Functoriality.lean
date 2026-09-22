@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.Map
 /-!
 # Functoriality of the diagonalizable group in the abelian group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Functoriality)
+
 `TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Basic` computes the functor of points of the
 diagonalizable group `D(G) = Spec R[G]`: for every commutative `R`-algebra `A`, the
 convolution group of `R`-algebra maps `R[G] →ₐ[R] A` is the character group `G →* Aˣ`. This

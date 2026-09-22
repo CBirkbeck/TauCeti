@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.NumberField.Global.Ideles.Norm.Basic
 /-!
 # The norm-one idele class group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.Ideles.Norm.One)
+
 The idele norm `‖·‖ : 𝕀_K → ℝ>0` of a number field `K` is trivial on the principal ideles by the
 product formula, so it descends to a continuous surjective homomorphism
 `ideleClassNorm : C_K → ℝ>0` on the idele class group `C_K = 𝕀_K / Kˣ`.  Its kernel is the

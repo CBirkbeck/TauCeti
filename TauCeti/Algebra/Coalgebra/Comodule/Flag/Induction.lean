@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Flag.Triangular
 /-!
 # Building upper-unitriangular bases from fixed vectors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Flag.Induction)
+
 Suppose every nonzero finite-dimensional comodule over a coalgebra with a distinguished element
 `1` has a nonzero fixed vector, that is, a vector `v` with coaction `v ↦ v ⊗ 1`. Then every
 finite-dimensional comodule has a basis whose coefficient matrix is upper unitriangular: this is

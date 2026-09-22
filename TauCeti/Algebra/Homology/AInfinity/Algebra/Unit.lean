@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Homology.AInfinity.Algebra
 /-!
 # Strict units for `A∞` algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.AInfinity.Algebra.Unit)
+
 This file records strict units for the uncurved `A∞` algebras of
 `TauCeti.Algebra.Homology.AInfinity.Algebra`.  A strict unit is a degree-zero cycle whose binary
 operation is a two-sided unit and whose other operations vanish whenever one input is the unit.

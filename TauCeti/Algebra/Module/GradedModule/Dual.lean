@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Module.GradedModule.Internal
 /-!
 # Duals of internally graded modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Module.GradedModule.Dual)
+
 This file gives the linear dual of an internally graded module its canonical grading. A functional
 has degree `p` when it is supported on the original degree `-p` piece, and restriction identifies
 that degree with the linear dual of `G.piece (-p)`. Consequently, evaluation can be nonzero only on

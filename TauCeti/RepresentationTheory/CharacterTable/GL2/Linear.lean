@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.GL2.CharacterValues
 /-!
 # Linear characters and Steinberg twists of `GL₂(𝔽_q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.Linear)
+
 Every multiplicative character `α : Fˣ →* ℂˣ` gives a one-dimensional representation of
 `GL₂(F)` by precomposition with the determinant. This file packages that representation as
 `TauCeti.GL2Linear F α`, proves that distinct `α` give distinct character rows, and computes its

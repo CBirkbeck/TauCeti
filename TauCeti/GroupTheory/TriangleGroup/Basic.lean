@@ -13,6 +13,8 @@ import Mathlib.Tactic.FinCases
 /-!
 # The oriented triangle groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.TriangleGroup.Basic)
+
 For natural numbers `a b c`, the (oriented, von Dyck) triangle group `Δ(a, b, c)` is the group
 presented by three generators `x, y, z` subject to
 

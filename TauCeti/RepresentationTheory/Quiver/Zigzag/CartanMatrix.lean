@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.Idempotents.Corner
 /-!
 # The graded Cartan matrix of a zigzag algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Zigzag.CartanMatrix)
+
 For a finite simple graph without isolated vertices, the vertex idempotents `e_i` of the zigzag
 relation quotient `Z` are primitive, so `Z e_i` is the indecomposable projective at `i` and the
 corner `e_i Z e_j` records the homomorphisms from `Z e_i` to `Z e_j`.  This file computes those

@@ -15,6 +15,8 @@ import Mathlib.Topology.Order.Compact
 /-!
 # The Cauchy principal value of a contour integral at a point (Hungerbühler–Wasem)
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic)
+
 For a curve `γ : ℝ → ℂ` on `[a, b]`, an integrand `f : ℂ → ℂ`, and a point `z₀ ∈ ℂ`, this file
 defines the **Cauchy principal value** of the contour integral `∮_γ f` *excising a symmetric
 `ε`-ball about `z₀`*: the limit as `ε → 0⁺` of the truncated integral

@@ -15,6 +15,8 @@ import TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Solvable
 /-!
 # Solvability of a quintic from its resolvent sextic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Quintic.Solvable)
+
 Let `f` be a monic irreducible separable quintic over a field `F`.  The Galois group of `f` is
 solvable exactly when its permutation image on the five roots lies in a conjugate of the
 Frobenius group `F₂₀ = 5T3`.  The resolvent attached to

@@ -15,6 +15,8 @@ import Mathlib.Data.Nat.Squarefree
 /-!
 # The `AdjoinRoot (X² + 21)` model of `ℚ(√-21)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusTwentyOne.Basic)
+
 The concrete number field `AdjoinRoot (X² + 21)` serving as the canonical model of `ℚ(√-21)`,
 together with its integral generator. This presentation datum is foundational: it is shared by both
 the class-number and the `2`-rank worked examples for this field, so it lives here rather than in

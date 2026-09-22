@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.VolumeElement
 /-!
 # Simple-root bivectors for the type-D spin representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.RootBivectors)
+
 Let `P` be a polarization of a quadratic space over a commutative ring and let `b` be a basis of
 its first isotropic summand, indexed by `Fin n`. This file defines integral Clifford
 representatives with the coordinate formulas for the positive and negative Bourbaki simple roots

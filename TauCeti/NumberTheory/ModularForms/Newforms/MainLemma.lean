@@ -14,6 +14,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.QSupport
 /-!
 # The Main Lemma, per character
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.MainLemma)
+
 Miyake's Lemma 4.6.8: a cusp form `f ∈ S_k(Γ₁(N), χ)` whose Fourier coefficients vanish at every
 index coprime to `N` is a sum, over the primes `p ∣ N`, of forms in `S_k(Γ₁(N), χ)` supported on
 the multiples of `p`; each such summand is old. This file assembles the descent witness

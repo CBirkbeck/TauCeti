@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Semisimple.Schur
 /-!
 # The central character of a simple module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Semisimple.CentralCharacter)
+
 A central element `z` of a `k`-algebra `A` acts on an `A`-module `M` by an `A`-linear map, because
 `z` commutes with every scalar; this is the algebra homomorphism `TauCeti.centerToEnd`. When `M` is
 a finite-dimensional simple module over an algebraically closed field `k`, Schur's lemma collapses

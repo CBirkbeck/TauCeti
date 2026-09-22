@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Quiver.Reflection.Basic
 /-!
 # Iterating the reflection of a quiver along a list of vertices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Reflection.Iterate)
+
 Reflecting a quiver at a vertex reverses the arrows meeting that vertex. Iterating a reflection
 changes the quiver, not the vertex type, so the carrier here is the quiver *structure* rather than
 the type synonym `TauCeti.Quiver.Reflect`: the reflection at the second vertex has to be taken with

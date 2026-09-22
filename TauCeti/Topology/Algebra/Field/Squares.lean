@@ -12,6 +12,8 @@ import Mathlib.Topology.Algebra.IsOpenUnits
 /-!
 # Continuous functions and open square classes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Field.Squares)
+
 If the square subgroup of a topological field's unit group is open, a continuous function
 that is nonzero at a point has locally constant square class near that point. This packages
 the topological argument used to preserve nonzero represented values under approximation.

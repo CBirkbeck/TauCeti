@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.Dual.RightAction
 /-!
 # The dual of the regular module as a cogenerator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Dual.Cogenerator)
+
 For a finite-dimensional module `M` over an algebra `A`, its linear dual has a finite basis.
 Evaluating the action of `A` against the coordinate functionals of that basis embeds `M` into a
 finite power of the dual `D(A_A)` of the right regular module.

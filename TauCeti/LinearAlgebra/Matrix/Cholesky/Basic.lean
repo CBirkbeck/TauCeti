@@ -13,6 +13,8 @@ import TauCeti.Analysis.Matrix.LDL
 /-!
 # Cholesky factors of positive-definite real matrices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Cholesky.Basic)
+
 This file constructs the lower-triangular Cholesky factor of a positive-definite real matrix
 from Mathlib's LDL decomposition.  The diagonal of the LDL factor is positive, so taking its
 entrywise square root and absorbing it into the lower factor gives `S = L * Lᵀ`, with `L` lower

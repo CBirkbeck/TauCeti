@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.RamificationInertia.Galois
 /-!
 # The Frobenius, the inertia subgroup, and the decomposition group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius.DecompositionGroup)
+
 Let `L / K` be a finite Galois extension of number fields with Galois group `G = Gal(L/K)`, and
 let `Q` be a nonzero prime of `𝓞 L` lying over `𝔭 = Q ∩ 𝓞 K`. Mathlib's `IsArithFrobAt`
 expresses that an element `σ ∈ G` satisfies `σ x ≡ x ^ #(𝓞 K ⧸ 𝔭) (mod Q)`. Tau Ceti's

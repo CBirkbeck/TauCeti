@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Hodge.Polarization
 /-!
 # The category of polarizable rational Hodge structures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Hodge.Category)
+
 This file bundles polarizable pure Hodge structures of a fixed weight whose integral, rational,
 and complex models live in one universe. Morphisms are rational linear maps whose
 complexifications preserve the Hodge filtration. Thus the polarization is a property of an object,

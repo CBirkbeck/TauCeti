@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.TensorProduct.IncludeLeftSubRight
 /-!
 # Faithfully flat descent for the functor of points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.FaithfullyFlatDescent)
+
 Let `A → B` be a faithfully flat extension of commutative `R`-algebras. The two maps
 `B ⇉ B ⊗[A] B` give two restriction maps on the `B`-points represented by a Hopf algebra `H`.
 This file proves that the `A`-points are exactly the `B`-points on which those restrictions agree,

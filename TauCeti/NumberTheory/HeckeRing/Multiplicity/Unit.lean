@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Basic
 /-!
 # Hecke rings: the multiplicity of the identity double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Multiplicity.Unit)
+
 For `e ∈ Γ₂` the double coset `Γ₂eΓ₂` is `Γ₂` itself, the identity of the Hecke ring of `Γ₂`;
 this file proves the two computations expressing this at the level of Shimura's multiplicity:
 multiplying by such an `e` on either side, the multiplicity is `1` exactly on the diagonal

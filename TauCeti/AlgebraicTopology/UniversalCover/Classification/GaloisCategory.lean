@@ -14,6 +14,8 @@ public import TauCeti.Topology.Covering.Finite
 /-!
 # Finite covering spaces form a Galois category
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Classification.GaloisCategory)
+
 Let `X` be path connected, locally path connected and semilocally simply connected, and fix a
 basepoint `x₀`. This file proves that the finite covering spaces of `X` form a Galois category in
 the sense of SGA1, with fibre functor the fibre over `x₀`:

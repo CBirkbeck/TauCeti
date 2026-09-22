@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.Ext.DualNumbers
 /-!
 # The dual numbers: `Ext`-finite but not `Ext`-bounded
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.ExtEuler.DualNumbers)
+
 Let `k` be a field, let `A = k[ε]` be the dual numbers `k[ε]/(ε²)`, and let `S = A/(ε)` be the
 residue field of `A`, viewed as an `A`-module. Every `Ext` group of the pair `(S, S)` is a
 one-dimensional `k`-vector space (`TauCeti.extDualNumberResidueEquiv`), so `TauCeti.IsExtFinite`

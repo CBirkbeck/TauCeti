@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Smooth.Product
 /-!
 # Geometric reducedness of products of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeometricallyReduced.Product)
+
 The coordinate algebra of a direct product of affine groups is the tensor product of their
 coordinate algebras. For affine groups of finite type over a field, geometric reducedness is
 equivalent to smoothness, and smoothness is preserved by products. It follows that the tensor

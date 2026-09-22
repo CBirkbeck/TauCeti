@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Contraction
 /-!
 # Contracting the tensor square of an inner product space against an orthonormal basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.OrthonormalContraction)
+
 An orthonormal basis `e` of an inner product space `V` identifies `V` with its dual, through
 `Module.Basis.toDualEquiv` of the underlying basis: the dual vector of `v` is `u ↦ ∑ vᵢ uᵢ` in the
 coordinates of `e`. That pairing is the **bilinear** form `⟪J v, u⟫`, for `J` the coordinatewise

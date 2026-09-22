@@ -12,6 +12,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.NodePolynomial
 /-!
 # Minimal models: a criterion, their comparison, and what transfers between them
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MinimalModel.Basic)
+
 Mathlib defines `WeierstrassCurve.IsMinimal` by a maximality property — the valuation of the
 discriminant is maximal among all integral models isomorphic to the given one — and derives
 minimality only from that property or from a class that already extends it. Establishing it for a

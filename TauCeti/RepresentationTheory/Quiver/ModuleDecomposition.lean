@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Idempotents.Module
 /-!
 # A module over a path algebra is a representation of the quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.ModuleDecomposition)
+
 A left module `M` over the path algebra `kQ` of a finite quiver carries one `k`-subspace for each
 vertex, `Mᵥ = eᵥ M`, and one `k`-linear map for each path, the action of that path. This file
 builds that data and proves the three facts that make it a representation of `Q`:

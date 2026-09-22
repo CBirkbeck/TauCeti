@@ -11,6 +11,8 @@ public import Mathlib.Topology.Homotopy.Lifting
 /-!
 # Covering maps, lifting criteria, and fundamental-group monodromy
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Covering)
+
 This file records generic covering-space consequences of Mathlib's path-lifting and
 monodromy API. For a covering map `p : E → X` whose total space is simply connected,
 choosing a lift `e` over `x` identifies `π₁(X, x)` with the fibre over `x` by sending a

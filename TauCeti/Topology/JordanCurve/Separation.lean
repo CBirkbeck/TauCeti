@@ -10,6 +10,8 @@ public import TauCeti.Topology.JordanCurve.Basic
 /-!
 # Two points cut a Jordan curve into two arcs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.JordanCurve.Separation)
+
 Removing one point from a Jordan curve leaves a path-connected set; removing two leaves exactly two
 pieces. This file proves both, first for the model curve `Circle` and then for an arbitrary Jordan
 curve by transport along the homeomorphism that `TauCeti.IsJordanCurve` provides.

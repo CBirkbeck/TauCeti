@@ -12,6 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.Artanh
 /-!
 # The hyperbolic (Poincaré) distance on the unit disc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.Hyperbolic.Distance)
+
 This file defines the hyperbolic (Poincaré) distance on the complex open unit disc,
 `hyperbolicDist z w = Real.artanh p` where `p = pseudoHyperbolicExpr z w` is the
 pseudo-hyperbolic expression `‖(z - w) / (1 - conj w * z)‖`.  The inverse hyperbolic tangent

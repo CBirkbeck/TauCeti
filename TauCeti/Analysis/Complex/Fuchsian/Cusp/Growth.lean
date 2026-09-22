@@ -12,6 +12,8 @@ public import Mathlib.Analysis.Meromorphic.Order
 /-!
 # Meromorphic extension of functions of controlled growth at a cusp
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Fuchsian.Cusp.Growth)
+
 Let `D` be normalized cusp data of width `w`. If an invariant holomorphic function grows no
 faster than `exp (2 * π * n * y / w)` in the scaling coordinate, multiplication by `q^n`
 makes it bounded. The removable-singularity theorem then gives an analytic numerator in the

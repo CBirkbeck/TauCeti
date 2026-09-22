@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
 /-!
 # Products over a finite set of primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.UniqueFactorizationDomain.SubsetProduct)
+
 In a unique factorization monoid whose only unit is `1`, the passage from a finite set `S` of
 primes to the product `∏ p ∈ S, p` loses no information: the normalized factors of the product
 are exactly the elements of `S`, distinct sets of primes have distinct products, and every

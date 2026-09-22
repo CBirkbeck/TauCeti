@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Operator.Banach
 /-!
 # Uniformly continuous semigroups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.UniformlyContinuous)
+
 This file proves the bounded-generator characterization of uniformly continuous semigroups. In
 the standard semigroup terminology, "uniformly continuous" means that the semigroup is continuous
 in operator norm (it does not mean uniform continuity on the unbounded time interval).

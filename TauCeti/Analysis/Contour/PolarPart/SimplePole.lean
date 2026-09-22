@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.PolarPart.Decomposition
 /-!
 # Decomposition at finitely many simple poles
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.PolarPart.SimplePole)
+
 A meromorphic function whose poles in a finite set `S` have order at most one splits, away from
 `S`, as a function holomorphic on the ambient open set plus the sum of its elementary principal
 parts

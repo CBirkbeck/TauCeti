@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divis
 /-!
 # The function with divisor `n(T) - n(O)` at an `n`-torsion point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.TorsionDivisor)
+
 The sum of `(T) - (O)` is `T`, so the sum of `n(T) - n(O)` is `n • T`, and a degree-zero divisor is
 principal exactly when its sum is `O`. At an `n`-torsion point, therefore, `n(T) - n(O)` is
 principal.

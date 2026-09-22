@@ -11,6 +11,8 @@ public import Mathlib.LinearAlgebra.Matrix.Cartan
 /-!
 # Cartan action on the split type-B root generators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Orthogonal.TypeB.GeneratorRelations)
+
 This file records the coordinates of the Bourbaki simple coroots in the split diagonal Cartan and
 uses them to compute their action on both signs of every simple root. If `dᵢ` is the coordinate
 vector of the `i`th simple coroot, the formulas are

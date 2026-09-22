@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.Localization.DenIdeal
 /-!
 # The ring of `S`-integers of a Dedekind domain is a Dedekind domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.SInteger.Basic)
+
 Let `R` be a Dedekind domain with fraction field `K` and `S` a set of height-one primes of `R`.
 `Mathlib/RingTheory/DedekindDomain/SInteger.lean` defines the subalgebra of `S`-integers
 `{x : K | ∀ v ∉ S, v x ≤ 1}` as `Set.integer S K`, but proves nothing about its ring

@@ -15,6 +15,8 @@ import Mathlib.MeasureTheory.Measure.Prokhorov
 /-!
 # The transport plans of two probability measures form a compact set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Compactness)
+
 The couplings of two fixed probability measures form a subset of the probability measures on the
 product, and the weak topology restricts to it. This file proves that this set is weakly **closed**
 and, on a Polish factor pair, weakly **compact**. Compactness is what makes the primal transport

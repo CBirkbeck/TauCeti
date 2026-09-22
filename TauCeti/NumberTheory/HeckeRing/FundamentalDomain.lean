@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.HeckeRing.Basic
 /-!
 # The Hecke coset representatives tile a fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.FundamentalDomain)
+
 If `S` is a fundamental domain for `φ(Γ₂)`, the translates of `S` by the images of the
 representatives `aᵥ = rightCosetRep D v = δ τᵥ⁻¹` tile one for `φ(Γ₁) ⊓ φ(δ) φ(Γ₂) φ(δ)⁻¹`.
 

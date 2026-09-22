@@ -12,6 +12,8 @@ import TauCeti.Algebra.Lie.Submodule.Finrank
 /-!
 # Étale kernels and injective differentials
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.Etale)
+
 The scheme-theoretic kernel of a morphism of affine groups of finite type over a field is
 étale exactly when the differential at the identity is injective. In particular this detects
 whether the kernel of an isogeny has infinitesimal structure. Neither the source nor the target

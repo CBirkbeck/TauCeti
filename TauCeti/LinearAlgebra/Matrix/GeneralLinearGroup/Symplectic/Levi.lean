@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 /-!
 # The standard general-linear subgroup of the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Levi)
+
 For a commutative ring `R`, an invertible matrix `A` acts on a free module and contragrediently
 on its dual.  On the direct sum this gives the symplectic matrix
 

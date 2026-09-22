@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Homology.HomotopyCategory.HomComplex
 /-!
 # Contractions of cochain complexes and their normalization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Contraction)
+
 A *contraction* of a cochain complex `K` onto a cochain complex `L` consists of an inclusion
 `i : L ⟶ K`, a projection `p : K ⟶ L` with `p i = 1`, and a degree `-1` cochain `h` on `K` with
 

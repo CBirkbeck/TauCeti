@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.Basic
 /-!
 # Effective divisors and integral fractional ideals
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.Effectivity)
+
 For a Dedekind domain `R` with fraction field `K`,
 `fractionalIdealDivisorAddEquiv R K` identifies invertible fractional ideals with Weil divisors
 on the height-one spectrum of `R`. This file proves that the equivalence respects the positive

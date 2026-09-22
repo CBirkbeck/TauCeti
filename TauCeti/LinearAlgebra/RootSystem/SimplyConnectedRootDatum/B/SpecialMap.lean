@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.RankTw
 /-!
 # The special length-exchanging map of the pinned type `B₂` root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.B.SpecialMap)
+
 In characteristic two, the Suzuki construction uses a special isogeny of the simply connected
 group of type `B₂`. At the root-datum level its character-lattice map exchanges the two Bourbaki
 nodes and multiplies in the long-root direction. In the fundamental-weight coordinates of

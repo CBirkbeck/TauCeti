@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.CFSG.Tits.Index
 /-!
 # The algebraic closure for the Tits construction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Tits.Closure)
+
 This file records that the algebraic closure attached to the validated Tits index has
 characteristic two, and equips it with the resulting structure of an algebra over the field of two
 elements. These are the structures through which the index reaches the explicit type-`F₄` carrier

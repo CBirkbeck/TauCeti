@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Continuous.MatrixCoefficient
 /-!
 # The conjugate of a continuous representation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Continuous.Conjugate)
+
 Complex conjugation of the matrix entries of a representation gives another representation, the
 **conjugate** (equivalently, for a unitary representation, the contragredient). It is what the span
 of the matrix coefficients needs in order to be closed under the involution of `C(G, 𝕜)`:

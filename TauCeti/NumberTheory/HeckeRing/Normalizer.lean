@@ -13,6 +13,8 @@ import Mathlib.Tactic.Group
 /-!
 # Hecke double cosets at a normalizing element
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.Normalizer)
+
 `GroupTheory/DoubleCoset/Normalizer.lean` collapses a double coset `ΓgΓ` to the single right
 coset `Γg` when `g` normalizes `Γ`. This file draws the Hecke-ring consequences, for a Hecke
 triple `(Δ, Γ, Γ)` and an `x : Δ` normalizing `Γ`:

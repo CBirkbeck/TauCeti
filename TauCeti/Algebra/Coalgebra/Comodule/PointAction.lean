@@ -13,6 +13,8 @@ import TauCeti.RingTheory.FiniteType.PointSeparation
 /-!
 # Detecting comodule fixed vectors on geometric points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.PointAction)
+
 Let `H` be a reduced commutative bialgebra of finite type over a field `k`, and let `M` be an
 `H`-comodule. A vector `m : M` is fixed by the coaction if and only if every point of `H` valued in
 an algebraically closed extension fixes `1 ⊗ m` in the scalar extension.

@@ -11,6 +11,8 @@ public import Mathlib.GroupTheory.Index
 /-!
 # Transitive actions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.GroupAction.Transitive)
+
 Mathlib's `MulAction.ofQuotientStabilizer` sends the coset of `g` in `G ⧸ stabilizer G b` to
 `g • b`; it is injective by `MulAction.injective_ofQuotientStabilizer`, and its image is the orbit
 of `b`, which is the orbit-stabiliser theorem. When the action is transitive that orbit is all of

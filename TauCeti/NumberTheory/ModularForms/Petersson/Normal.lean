@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Prime.Basi
 /-!
 # Normality of the good Hecke operators
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Petersson.Normal)
+
 For an index `n` coprime to the level, the Petersson adjoint of `Tₙ` on
 `S_k(Γ₁(N))` is `⟨n⟩⁻¹ Tₙ`.  The inverse diamond operator commutes with `Tₙ`, so this adjoint
 commutes with `Tₙ`: the good Hecke operator is normal for the Petersson product.

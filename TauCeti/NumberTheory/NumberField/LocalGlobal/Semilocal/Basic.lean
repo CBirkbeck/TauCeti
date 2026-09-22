@@ -13,6 +13,8 @@ public import TauCeti.RingTheory.DedekindDomain.PrimesAbove
 /-!
 # The semi-local map `K_v ⊗[K] L → ∏_{w ∣ v} L_w`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.LocalGlobal.Semilocal.Basic)
+
 Let `L/K` be an extension of number fields and `v` a finite place of `K`. Every finite place `w`
 of `L` above `v` gives a completion `L_w`, which is a `K_v`-algebra through the canonical
 completion map `completionAlgHom v w`. Together these give the semi-local map

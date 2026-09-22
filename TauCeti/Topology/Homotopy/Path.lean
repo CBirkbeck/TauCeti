@@ -15,6 +15,8 @@ import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
 /-!
 # Path homotopy helpers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homotopy.Path)
+
 Small path and path-homotopy lemmas, mostly for the universal-cover construction. The
 quotient subpath identities are adapted from Kim Morrison's Mathlib universal-cover drafts,
 especially [#31576](https://github.com/leanprover-community/mathlib4/pull/31576) and

@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Group.Subgroup.Lattice
 /-!
 # Minimum Hamming distance
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.InformationTheory.Coding.MinimumDistance.Basic)
+
 The minimum distance of a set of words is the least Hamming distance between distinct
 words, with value zero for a set containing at most one word. It agrees with `Set.infsep`
 after transport to Mathlib's `Hamming` metric space. For an additive code it is also the

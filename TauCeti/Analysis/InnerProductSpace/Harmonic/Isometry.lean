@@ -12,6 +12,8 @@ public import TauCeti.Analysis.InnerProductSpace.Laplacian.Basic
 /-!
 # Geometric invariance of harmonic functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.InnerProductSpace.Harmonic.Isometry)
+
 `TauCeti/Analysis/InnerProductSpace/Laplacian/Basic.lean` proves that the Laplacian `Δ` is invariant
 under the rigid motions of a Euclidean space — affine isometry equivalences, with linear
 isometry equivalences and translations as special cases. This file transports that invariance to

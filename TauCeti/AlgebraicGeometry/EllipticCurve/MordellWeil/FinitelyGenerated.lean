@@ -15,6 +15,8 @@ public import TauCeti.NumberTheory.NumberField.IntegralClosure
 /-!
 # Finite generation of the group of rational points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.FinitelyGenerated)
+
 The descent is complete: the weak Mordell–Weil theorem gives that `E(K)/2E(K)` is finite, the
 naïve height satisfies the approximate parallelogram law and the Northcott property, and Mathlib's
 descent engine `AddCommGroup.fg_of_descent'` turns those two into finite generation of `E(K)`.

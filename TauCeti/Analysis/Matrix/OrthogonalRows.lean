@@ -10,6 +10,8 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 /-!
 # Extending orthonormal rows to an orthogonal matrix
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Matrix.OrthogonalRows)
+
 A real `q × p` matrix `V` with `V * Vᵀ = 1` has orthonormal rows, and `q ≤ p` leaves room for
 `p - q` more.  Extending those rows to an orthonormal basis of `ℝ ^ p` and reading the basis as
 the rows of a square matrix exhibits `V` as the first `q` rows of an orthogonal matrix.

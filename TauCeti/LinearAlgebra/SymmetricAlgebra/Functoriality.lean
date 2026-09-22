@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 /-!
 # Functoriality of symmetric algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.SymmetricAlgebra.Functoriality)
+
 A linear map induces an algebra homomorphism between symmetric algebras. This file constructs the
 map from the universal property, proves its identity and composition laws, and packages linear
 equivalences as algebra equivalences.

@@ -11,6 +11,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Linear fractional transformations over a field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Field.LinearFractional)
+
 A linear fractional transformation `t ↦ (a * t + b) / (c * t + d)` over a field `𝕜` is
 determined by its coefficient matrix `!![a, b; c, d]`, and the determinant `a * d - b * c`
 controls how it separates points. This file records the algebraic identity behind that: if the

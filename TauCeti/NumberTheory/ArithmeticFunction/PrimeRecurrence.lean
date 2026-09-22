@@ -14,6 +14,8 @@ import Mathlib.Tactic.Ring
 /-!
 # Sequences with a Hecke-type recurrence at the primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ArithmeticFunction.PrimeRecurrence)
+
 A sequence `a : ℕ → R` satisfying, at every prime `p` coprime to an auxiliary `L` and every `m`
 coprime to `L`, a recurrence `a_{pm} = c · a_m − d · a_{m/p}` (the last term present only when
 `p ∣ m`) for some scalars `c`, `d`, vanishes at every `n ≠ 0` coprime to `L` as soon as `a₁ = 0`.

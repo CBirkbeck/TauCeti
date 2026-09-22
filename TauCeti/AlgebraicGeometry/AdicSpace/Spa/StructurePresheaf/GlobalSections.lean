@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Trivial
 /-!
 # Global sections of the presentation limit are `A`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.GlobalSections)
+
 Let `A` be a complete Hausdorff Huber ring and `A⁺` a subring of power-bounded elements. This file
 identifies the value of `presentationLimitPresheaf` on the whole adic spectrum `X = Spa(A,A⁺)`
 with `A` itself, as an isomorphism of complete separated topological rings, and says which map

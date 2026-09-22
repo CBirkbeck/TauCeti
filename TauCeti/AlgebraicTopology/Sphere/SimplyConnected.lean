@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicTopology.Sphere.Puncture
 /-!
 # The unit sphere is simply connected above rank two
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Sphere.SimplyConnected)
+
 The unit sphere of a real normed space `E` with `2 < Module.rank ℝ E` is simply connected;
 in particular `Sⁿ` is simply connected for `2 ≤ n`.
 

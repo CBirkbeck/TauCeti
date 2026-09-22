@@ -11,6 +11,8 @@ public import TauCeti.Geometry.Manifold.LocalDiffeomorph
 /-!
 # Complementary exponential-product charts
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Lie.Exponential.ProductChart)
+
 For linear subspaces `p` and `q` of the Lie algebra of a finite-dimensional real Lie group, define
 the ordered product
 

@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Coxeter.Length
 /-!
 # The Poincaré polynomial of a finite Coxeter system
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Coxeter.Poincare)
+
 For a Coxeter system `cs : CoxeterSystem M W` with `W` finite, the **length generating function**
 `∑_{w ∈ W} q^{ℓ(w)}` is a genuine polynomial with integer coefficients, the **Poincaré polynomial**
 of `cs`. This file introduces it and proves the elementary facts that make it a generating

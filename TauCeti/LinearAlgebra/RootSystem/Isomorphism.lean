@@ -14,6 +14,8 @@ public import TauCeti.LinearAlgebra.RootSystem.DynkinType
 /-!
 # Root systems of the same Dynkin type are isomorphic
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Isomorphism)
+
 The Cartan-Killing classification has two halves. One is combinatorial: the Cartan matrix of a base
 of an irreducible reduced crystallographic finite root system is, after relabelling the nodes, one
 of the standard matrices `TauCeti.DynkinType.cartanMatrix`. The other is the rigidity statement

@@ -13,6 +13,8 @@ public import TauCeti.LinearAlgebra.CliffordAlgebra.Pin.Action
 /-!
 # Lifting reflections to the Pin and Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.ReflectionLift)
+
 When the inverse negative norm of a vector is a square, the vector can be rescaled to have norm
 `-1`. It therefore defines an element of the Pin group whose twisted-conjugation action is the
 reflection in the original vector. A pair of reflections needs only that the product of the

@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialOrthogonalGroup.Lift
 /-!
 # Smoothness of the special orthogonal group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.SpecialOrthogonal.Smooth)
+
 When `2` is invertible in the ground ring, the coordinate algebra of the standard special
 orthogonal group `SOₙ` is smooth. The infinitesimal lifting criterion turns a lift of a
 coordinate-algebra map through a square-zero quotient into a lift of the corresponding special

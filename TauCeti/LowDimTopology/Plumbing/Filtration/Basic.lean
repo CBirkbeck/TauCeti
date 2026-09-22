@@ -12,6 +12,8 @@ public import TauCeti.LowDimTopology.Plumbing.Cube.Sublevel
 /-!
 # The weight filtration on the lattice chain complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Filtration.Basic)
+
 For a characteristic covector `k` and an integer `N`, this file restricts Némethi's lattice
 chain complex to the plumbing cubes whose characteristic cube weight is at most `N`. The lower
 and upper faces of such a cube have no larger weight, so the weighted lattice differential

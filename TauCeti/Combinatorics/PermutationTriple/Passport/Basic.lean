@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Perm.PermCongr
 /-!
 # Passports of permutation triples
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Passport.Basic)
+
 A passport records the coarse invariants of a connected permutation triple: the conjugacy class
 of its monodromy subgroup in the ambient symmetric group and the ordered full cycle partitions at
 the three branch points.  This file introduces connected triples as a carrier, their relabeling

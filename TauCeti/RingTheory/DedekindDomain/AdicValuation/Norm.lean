@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.LocalDegree
 /-!
 # Normalized absolute values under extension of adic completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.Norm)
+
 Let `R ⊆ B` be infinite Dedekind domains with finite quotients and fraction fields `K ⊆ L`.
 For height-one primes `w ∣ v`, the canonical map `K_v → L_w` raises the residue-cardinality
 normalized absolute value to the local degree `[L_w : K_v]`. In particular, this map need

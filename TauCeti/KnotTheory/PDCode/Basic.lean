@@ -14,6 +14,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # PD-codes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.PDCode.Basic)
+
 A PD-code records finite combinatorial crossing data for a link. The `halfEdge` permutation lists
 the four visits at each crossing, while the perfect matching `edgePair` joins the two visits of
 each arc. Opposite slots form the two local strands, one of which is selected by `overPair`.

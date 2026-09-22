@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.LegendreSymbol.SquareClass
 /-!
 # Legendre symbols of even prime discriminants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Legendre.EvenPrimeDiscriminant)
+
 The genus-field layer of the multiquadratic roadmap normalizes the radicands of a quadratic
 discriminant to **prime discriminants**. The odd prime discriminants `p* = (-1)^((p-1)/2) p`
 are handled in `TauCeti.NumberTheory.Multiquadratic.Legendre.PrimeDiscriminant.Basic`, where the

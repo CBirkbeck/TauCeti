@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Isogeny.Power
 /-!
 # The root-datum Steinberg map of a graph-twisted index
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.CFSG.Datum.Steinberg)
+
 The Steinberg endomorphism attached to a Lie-type index that is not of Suzuki--Ree type is
 `γ ∘ Frob_q`, the `q`-power Frobenius of the pinned Chevalley--Demazure group followed by the graph
 automorphism realizing the pinned diagram permutation. This file builds the shadow that composite

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Splitting
 /-!
 # The degree image and quotient at a weight-one base point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Image.Splitting)
+
 This file gives the weight-one counterparts of the general degree-image and degree-quotient
 results of `TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Image.Basic`, using the splitting theory of
 `TauCeti.AlgebraicGeometry.WeilDivisor.Degree.Splitting`. These corollaries specialise to a

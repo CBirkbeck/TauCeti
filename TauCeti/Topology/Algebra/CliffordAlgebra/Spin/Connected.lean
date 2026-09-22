@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.QuadraticForm.Real
 /-!
 # Path-connectedness of compact real Spin groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.CliffordAlgebra.Spin.Connected)
+
 For the positive-definite real Clifford form in dimension at least two, the identity path
 component contains the scalar `-1` and every normalized reflection-pair lift. Every anisotropic
 vector can be normalized without changing its reflection, so reflection-pair generation forces

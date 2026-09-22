@@ -11,6 +11,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Coupling
 /-!
 # Disintegrating transport plans
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Disintegration)
+
 A coupling can be read in two equivalent ways: as a measure on a product with prescribed
 marginals, or as a source measure followed by a probability kernel whose averaged law is the
 target. This file connects the coupling API to Mathlib's composition-product and regular

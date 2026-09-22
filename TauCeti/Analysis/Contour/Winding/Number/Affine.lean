@@ -11,6 +11,8 @@ public import TauCeti.Analysis.Contour.Winding.Number.Translate
 /-!
 # Affine coordinate changes for contour winding numbers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Affine)
+
 This file packages the translation and nonzero-scaling invariance of the generalized winding
 number into the affine-coordinate form used by local contour geometry. A sector or crossing is
 typically normalized by sending its distinguished point to the origin and rescaling the tangent

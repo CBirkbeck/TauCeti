@@ -12,6 +12,8 @@ public import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.HalfResidue
 /-!
 # An improper integral evaluated by the generalized residue theorem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Dirichlet)
+
 The Hungerbühler–Wasem motivating example: the integrand `e^{iaz} / z` (`a > 0`) has a simple
 pole sitting **on** the contour, so the classical residue theorem does not apply, and the
 integral along the real axis exists only as a Cauchy principal value.

@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.TwoSidedIdeal.Homogeneous
 /-!
 # The path-length grading of the preprojective algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.Grading)
+
 Every preprojective relator of a quiver is homogeneous for the path-length grading of the path
 algebra of the doubled quiver: the head backtrack and the tail backtrack of an arrow are the
 basis elements of single length-two paths, so the local relator at a vertex and the global

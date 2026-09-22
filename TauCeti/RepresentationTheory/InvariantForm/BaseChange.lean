@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.InvariantForm
 /-!
 # Base change of an invariant bilinear form
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.InvariantForm.BaseChange)
+
 Extending the scalars of a representation along an algebra `R → A` extends the scalars of its
 invariant forms: the base change `LinearMap.BilinForm.baseChange` of an invariant form is invariant
 for the base-changed representation `Representation.baseChange`.  Invariance is elementwise the

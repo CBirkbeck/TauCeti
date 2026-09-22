@@ -13,6 +13,8 @@ public import TauCeti.Geometry.Symplectic.Transport
 /-!
 # Direct sums of almost complex structures and symplectic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.Prod.Basic)
+
 Given almost complex structures `J₁` on `V` and `J₂` on `W`, the product `V × W` carries the
 direct-sum almost complex structure acting componentwise, `(v, w) ↦ (J₁ v, J₂ w)`. Likewise two
 symplectic forms `ω₁`, `ω₂` assemble into the direct-sum symplectic form

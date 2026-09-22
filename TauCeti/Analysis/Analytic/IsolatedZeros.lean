@@ -15,6 +15,8 @@ import Mathlib.Analysis.Analytic.Order
 /-!
 # The zero set of an analytic function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Analytic.IsolatedZeros)
+
 An analytic function that does not vanish identically has isolated zeros, and this file records
 what that gives on a compact set: only finitely many zeros lie there. It is the fact any zero
 count rests on, and it mentions neither the analytic order nor any particular field, so it lives

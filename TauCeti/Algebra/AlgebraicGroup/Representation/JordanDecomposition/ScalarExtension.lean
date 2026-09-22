@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Representation.UnipotentPoint.Natur
 /-!
 # Scalar extension of Jordan decomposition for algebraic-group points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Representation.JordanDecomposition.ScalarExtension)
+
 For a morphism `f : K →ₐ[k] L` between perfect value fields, postcomposition sends the
 Jordan decomposition of a `K`-valued point to the Jordan decomposition of its resulting
 `L`-valued point. The proof compares point actions before and after scalar extension. Their

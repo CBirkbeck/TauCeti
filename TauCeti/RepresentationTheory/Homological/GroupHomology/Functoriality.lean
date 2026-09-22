@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Homological.GroupHomology.Functoriali
 /-!
 # Additivity of the group-homology chains functor
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.GroupHomology.Functoriality)
+
 Mathlib shows that the functor `groupHomology.chainsFunctor k G` sending a representation to its
 complex of inhomogeneous chains preserves zero morphisms. This file shows that it is additive,
 matching Mathlib's instance for its cohomological counterpart `groupCohomology.cochainsFunctor`.

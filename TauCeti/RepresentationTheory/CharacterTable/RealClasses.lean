@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.VirtualCharacter
 /-!
 # Real conjugacy classes and inversion-invariant rows of the character table
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.RealClasses)
+
 A conjugacy class of a group is **real** (`TauCeti.IsRealClass`, defined with the inversion
 involution it is about in `TauCeti/Algebra/Group/Conj.lean`) when it contains an element conjugate
 to its own inverse. A row of the character table is **inversion-invariant** when the character it

@@ -16,6 +16,8 @@ import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Idempotent
 /-!
 # Spectral splitting at a Morse critical point
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Morse.SpectralSplitting)
+
 At a nondegenerate critical point on a finite-dimensional real Hilbert space, the Hessian is an
 invertible self-adjoint operator. Its positive and negative spectral subspaces therefore give a
 direct-sum decomposition of the tangent space. For the negative-gradient vector field, the

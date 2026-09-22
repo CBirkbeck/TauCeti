@@ -11,6 +11,8 @@ public import Mathlib.RingTheory.RootsOfUnity.Basic
 /-!
 # The unit group of a finite field is its group of roots of unity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.Finite.RootsOfUnity)
+
 For a finite field `F` with `q` elements, every unit satisfies `x ^ (q - 1) = 1`, so the group
 `μ_{q-1}` of `(q-1)`-st roots of unity is all of `Fˣ`. This file records that identification and
 the accompanying cast computation `(q - 1 : F) = -1`, which is what makes `q - 1` invertible in

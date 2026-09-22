@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.Algebra.SMul
 /-!
 # Smooth monoid morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Algebra.Monoid)
+
 Identity, composition, and their laws for bundled smooth multiplicative and additive monoid
 morphisms. It also propagates the regularity of multiplicative and additive maps from a group
 at any one point to the whole group.

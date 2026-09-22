@@ -16,6 +16,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Dimension
 /-!
 # Isotypy of the left-regular CAR module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.GeneralLinear.CAR.Isotypic)
+
 Over an algebraically closed field of characteristic zero, the left-regular Clifford algebra of
 the trace form is an isotypic `gl_N`-module. Its simple type has the half-shifted staircase highest
 weight

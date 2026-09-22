@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.PiecewiseC1On
 /-!
 # Integrability of contour integrands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Curve.Integrability)
+
 A piecewise-`C¹` curve has interval-integrable derivative. Multiplying that derivative by a
 continuous function along the compact curve image therefore gives an interval-integrable contour
 integrand. This file packages that Layer 0 conclusion of the contour-integration roadmap for

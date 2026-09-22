@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Basic
 /-!
 # Additive structure on comodule morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Hom)
+
 This file records the pointwise additive-monoid structure on morphisms of right comodules.
 The underlying linear maps already have zero, addition, natural-number scalar
 multiplication, and finite sums; the only point to check is that these operations still

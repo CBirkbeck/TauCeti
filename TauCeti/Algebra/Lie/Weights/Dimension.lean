@@ -15,6 +15,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Positive
 /-!
 # The dimension count of the root-space decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Dimension)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field of
 characteristic zero, and let `H` be a splitting Cartan subalgebra. The root-space decomposition
 writes `L` as the internal direct sum of one root space for each weight of `H` on `L`; the zero

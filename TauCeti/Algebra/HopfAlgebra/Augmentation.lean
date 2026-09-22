@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Bialgebra.Augmentation
 /-!
 # The augmentation point of a commutative Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.Augmentation)
+
 The antipode fixes the augmentation point of a commutative Hopf algebra. This is the
 prime-spectrum form of the identity saying that the counit composed with the antipode is the
 counit.

@@ -13,6 +13,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Integral
 /-!
 # The distribution induced by the Euclidean Newtonian kernel
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.PDE.FundamentalSolution.Euclidean.Distribution)
+
 The totalized `n`-dimensional Newtonian kernel and its Fréchet derivative are locally integrable
 in every dimension: the kernel and derivative are zero in dimensions zero and two, the
 one-dimensional kernel is continuous, and the higher-dimensional singularities are integrable.

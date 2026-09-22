@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.Perm.SylowFive
 /-!
 # Transitive subgroups of `S₃`, `S₄` and `S₅`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Perm.TransitiveGroupLabel.Classification)
+
 This file classifies the transitive subgroups of the symmetric groups on three, four and five
 points up to conjugacy: each of them is conjugate to exactly one of the reference subgroups of
 `TauCeti.referenceSubgroup`, so it carries exactly one of the labels `3T1`, `3T2`, respectively

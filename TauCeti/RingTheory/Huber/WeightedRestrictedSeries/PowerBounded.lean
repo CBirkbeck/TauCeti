@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
 /-!
 # Power-bounded elements of `A⟨X₁, …, Xₖ⟩_T`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.PowerBounded)
+
 The variables `Xᵢ` and the power-bounded constants of a weighted restricted power-series ring are
 power-bounded in it. Together they exhibit the image of `A°[X₁, …, Xₖ]` inside `A⟨X₁, …, Xₖ⟩°`,
 the plus ring `TauCeti.ValuationSpectrum.closedPolydisc` designates for the closed polydisc; they

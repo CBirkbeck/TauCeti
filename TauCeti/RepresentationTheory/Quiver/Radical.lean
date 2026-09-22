@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # The arrow ideal of a path algebra, and its radical
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Radical)
+
 The path algebra of a quiver is filtered by path length: `pathSpan k Q n` is the `k`-span of the
 paths of length at least `n`. Concatenation adds lengths, so the filtration is multiplicative,
 `pathSpan k Q m * pathSpan k Q n ⊆ pathSpan k Q (m + n)`, and its first step is a two-sided ideal,

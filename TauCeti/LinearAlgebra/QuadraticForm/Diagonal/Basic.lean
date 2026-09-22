@@ -11,6 +11,8 @@ import Mathlib.LinearAlgebra.Determinant
 /-!
 # Diagonal quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.QuadraticForm.Diagonal.Basic)
+
 This file provides general infrastructure for diagonal quadratic forms expressed as weighted sums
 of squares.
 

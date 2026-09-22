@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Integrals of unbounded functions along weakly convergent probability measures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ProbabilityMeasure.UniformIntegrable)
+
 Weak convergence `μᵢ ⇀ μ` of probability measures is defined by convergence of the integrals of
 bounded continuous functions. For an *unbounded* continuous function `g : Ω → ℝ≥0` the integrals
 `∫⁻ g ∂μᵢ` need not converge to `∫⁻ g ∂μ`: mass escaping to the region where `g` is large can

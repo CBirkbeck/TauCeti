@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.Measure.Dirac
 /-!
 # Laws of maps and source atoms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.HasLaw)
+
 A finite-mass measurable atom of a source measure is an obstruction to a prescribed law: every
 almost-everywhere measurable map sends its whole mass to a single point of a standard Borel target.
 For singleton atoms this needs no condition on the target measurable space, since their image is

@@ -15,6 +15,8 @@ import TauCeti.Algebra.Coalgebra.Subcomodule.Comap
 /-!
 # Complete reducibility and linear reductivity
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.LinearlyReductive)
+
 An affine group over a field is linearly reductive when every finite-dimensional rational
 representation is completely reducible. On coordinate rings, rational representations are
 comodules, and complete reducibility says that every subcomodule has a subcomodule complement.

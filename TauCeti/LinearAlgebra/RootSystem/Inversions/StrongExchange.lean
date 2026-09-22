@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimpleReflections
 /-!
 # The strong exchange condition and the identity criterion for inversion sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Inversions.StrongExchange)
+
 If a word in the simple reflections spells a Weyl-group element sending a positive root to a
 negative root, then appending the reflection in that root to the word is spelled by the word with
 one of its letters deleted. This is the strong exchange condition, and it is the missing half of

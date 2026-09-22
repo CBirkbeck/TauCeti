@@ -13,6 +13,8 @@ public import TauCeti.Topology.VectorBundle.Riemannian
 /-!
 # Metric completeness gives geodesic completeness
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.Riemannian.Geodesic.Completeness)
+
 A maximal geodesic travels at constant speed, so on its maximal interval it is a Lipschitz curve
 for the Riemannian distance.  If that interval had a finite endpoint, the image of the curve would
 therefore be totally bounded, hence relatively compact once the manifold is metrically complete;

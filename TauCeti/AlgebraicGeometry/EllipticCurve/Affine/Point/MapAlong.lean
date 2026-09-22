@@ -10,6 +10,8 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 /-!
 # The point map induced by a ring homomorphism
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.MapAlong)
+
 Mathlib's `WeierstrassCurve.Affine.Point.map` moves the points of a *fixed* curve between two
 **field** extensions of a base, along an `AlgHom` in a scalar tower — which covers the `q`-power
 Frobenius, Mathlib bundling that as `FiniteField.frobeniusAlgHom`. This file supplies the other

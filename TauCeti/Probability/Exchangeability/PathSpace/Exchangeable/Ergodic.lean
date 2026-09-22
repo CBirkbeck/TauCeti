@@ -11,6 +11,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.HewittSavage
 /-!
 # Exchangeable laws and ergodicity of the finitely supported permutation action
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Exchangeable.Ergodic)
+
 An exchangeable path law is invariant under the group of finitely supported permutations of the
 time index.  This file records the resulting **group action** on path space and identifies
 ergodicity of that action with triviality of the exchangeable σ-algebra:

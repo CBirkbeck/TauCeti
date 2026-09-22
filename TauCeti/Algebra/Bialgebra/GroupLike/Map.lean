@@ -13,6 +13,8 @@ public import TauCeti.Algebra.Coalgebra.Subcoalgebra.GroupLike
 /-!
 # Functoriality of group-like elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Bialgebra.GroupLike.Map)
+
 A bialgebra morphism sends group-like elements to group-like elements and respects their
 multiplication. This file bundles that operation as a monoid homomorphism and records that a
 bialgebra equivalence induces a multiplicative equivalence of group-like elements.

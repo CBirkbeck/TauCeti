@@ -18,6 +18,8 @@ import TauCeti.Probability.Exchangeability.PathSpace.Exchangeable.ToContractable
 /-!
 # Extreme exchangeable laws
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.PathSpace.Law.Extreme)
+
 The extreme points of the convex set of exchangeable probability measures on `ℕ → α` are exactly
 the i.i.d. product laws. The main theorem `exchangeable_extreme_iff_iid` states this using Mathlib's
 `Set.extremePoints` for the natural `ℝ≥0∞`-module structure on measures.

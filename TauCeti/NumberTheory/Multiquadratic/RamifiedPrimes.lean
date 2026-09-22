@@ -12,6 +12,8 @@ import TauCeti.NumberTheory.NumberField.Inertia
 /-!
 # The ramified primes of a multiquadratic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.RamifiedPrimes)
+
 Let `d₁, …, dₙ` be squarefree integers and let `M = ℚ(√d₁, …, √dₙ)`. A rational prime `p`
 ramifies in `M` exactly when it ramifies in one of the possibly trivial square-root-generated
 factors `ℚ(√dᵢ)`, that is, when it divides one of the fundamental discriminants

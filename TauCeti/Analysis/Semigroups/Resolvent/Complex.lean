@@ -15,6 +15,8 @@ import TauCeti.Analysis.Semigroups.Resolvent.PowerBounds
 /-!
 # The complex resolvent of a strongly continuous semigroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Semigroups.Resolvent.Complex)
+
 A C₀-semigroup acting by complex-linear operators on a complex Banach space `X` has a complex
 generator `A` (`TauCeti.Semigroups.StronglyContinuousSemigroup.complexGenerator`), an unbounded
 operator over `ℂ`. This file locates the **open half-plane** `{lambda | omega < re lambda}` of a

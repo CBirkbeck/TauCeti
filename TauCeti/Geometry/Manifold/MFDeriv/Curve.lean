@@ -13,6 +13,8 @@ public import Mathlib.Geometry.Manifold.VectorBundle.Basic
 /-!
 # Differentiating along a curve in a manifold
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.MFDeriv.Curve)
+
 A curve `γ : 𝕜 → M` in a manifold has a one-dimensional parameter, so a function on `M`
 restricted along it has an honest `HasDerivWithinAt` derivative rather than only a manifold
 differential.  Mathlib's composition lemmas for `mvfderiv` are stated for a manifold source, and

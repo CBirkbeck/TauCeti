@@ -11,6 +11,8 @@ import Mathlib.Analysis.Analytic.Uniqueness
 /-!
 # Boundary uniqueness across a circular arc
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Complex.Conformal.ArcConstancy)
+
 A holomorphic function on a disc that extends continuously to a relatively open piece of the
 bounding circle and is constant there is constant on the whole disc. That piece is
 `V ∩ sphere c r` for an open `V ⊆ ℂ` meeting the circle, and no hypothesis whatever is placed on

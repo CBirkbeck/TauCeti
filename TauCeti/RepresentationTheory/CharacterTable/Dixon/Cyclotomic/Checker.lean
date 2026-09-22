@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Cyclotomic.Conjugation
 /-!
 # An exact checker for cyclotomic character tables
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Cyclotomic.Checker)
+
 The general stage of the Burnside--Dixon--Schneider algorithm returns central-character and
 ordinary character tables in the computable coefficient-vector ring `TauCeti.Cyclotomic e`.
 This file specializes the generic exact character-table certificate to that ring.  All certificate

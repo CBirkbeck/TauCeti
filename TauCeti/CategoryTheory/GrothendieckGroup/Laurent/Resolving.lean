@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Resolving
 /-!
 # The graded resolution theorem for resolving subcategories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Laurent.Resolving)
+
 Let `E` be a graded exact category and let `P` be a resolving property for its underlying exact
 structure. If `P` is stable under the grading shift, then its induced exact structure is graded,
 and the inclusion of `P` into the ambient category induces an isomorphism

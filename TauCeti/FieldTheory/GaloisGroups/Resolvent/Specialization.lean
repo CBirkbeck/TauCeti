@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Polynomial.Vieta
 /-!
 # Specializing the universal resolvent at a polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.Resolvent.Specialization)
+
 The universal resolvent of an invariant `Φ` in `n` formal roots is the product of `X - Ψ` over
 the permutation orbit of `Φ`, and it is a polynomial in the elementary symmetric polynomials of
 the formal roots: `MvPolynomial.existsUnique_orbitProduct` provides the unique integral

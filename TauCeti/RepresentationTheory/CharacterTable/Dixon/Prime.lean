@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.ZMod.Torsion
 /-!
 # Good Dixon primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Prime)
+
 The Burnside--Dixon--Schneider algorithm computes the complex character table of a finite group
 `G` by working over a finite prime field `ZMod p` and lifting the answer back. The prime it works
 over cannot be arbitrary: it has to make `ZMod p` behave, for the purposes of the computation, like

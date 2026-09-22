@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Chain.Complex
 /-!
 # The bigraded simply blocked grid complex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.SimplyBlocked)
+
 Setting one variable `V_i` to zero preserves the bigrading of the unblocked grid complex.
 The surviving monomial `V^e x` has bidegree `(M_O(x) - 2 |e|, A(x) - |e|)`.
 The homogeneous pieces are submodules over the ground ring, since the remaining variables

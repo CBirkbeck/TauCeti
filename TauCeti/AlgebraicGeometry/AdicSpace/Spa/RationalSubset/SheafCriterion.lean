@@ -11,6 +11,8 @@ public import TauCeti.CategoryTheory.Sites.TopologicalBasis
 /-!
 # Sheaves on `Spa(A,A⁺)` are detected on rational covers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.SheafCriterion)
+
 Rational subsets form a basis of `Spa(A,A⁺)` (`isTopologicalBasis_spaRationalFamily`), and a
 presheaf on a space is a sheaf exactly when it is a sheaf for covers by basis elements
 (`isSheaf_iff_isSheafFor_basisCoverage_comp`). Putting the two together, sheafhood on the adic

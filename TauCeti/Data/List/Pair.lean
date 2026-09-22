@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Group.Nat.Even
 /-!
 # Grouping consecutive list elements into pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Data.List.Pair)
+
 This file provides the elementary list operation that groups consecutive elements into disjoint
 ordered pairs, dropping a possible final unpaired element.
 

@@ -10,6 +10,8 @@ public import TauCeti.Analysis.SpecialFunctions.Hermite.Function.Schwartz
 /-!
 # Ladder and harmonic-oscillator operators on Schwartz space
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Hermite.Function.Operator)
+
 This file packages the Hermite creation and annihilation operators as continuous linear
 operators on the real Schwartz space `𝓢(ℝ, ℝ)`, proves their canonical commutation relation
 (CCR) `[a, a†] = id`, and establishes their spectral properties on the family of Hermite Schwartz

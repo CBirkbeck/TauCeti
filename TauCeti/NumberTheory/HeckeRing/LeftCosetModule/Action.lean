@@ -13,6 +13,8 @@ import Mathlib.Tactic.Group
 /-!
 # The action of the Hecke ring on the left-coset module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.LeftCosetModule.Action)
+
 The scalar operations of `LeftCosetModule` (defined with the module itself) satisfy the
 compatibility law of [Shimura][shimura1971], Proposition 3.4: acting by a convolution
 product is acting by its factors in sequence. Since `HgH` sends `βH` to `Σᵢ βσᵢgH` by right

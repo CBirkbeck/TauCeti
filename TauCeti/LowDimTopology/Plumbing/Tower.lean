@@ -12,6 +12,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Sublevel
 /-!
 # The `U`-tower in characteristic-two lattice homology
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Tower)
+
 This file proves that the lattice homology of a negative-definite plumbing graph is nonzero, and
 locates a free `𝔽₂[U]`-tower inside it.
 

@@ -10,6 +10,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Laurent.Basic
 /-!
 # Forgetting the grading on a Grothendieck group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.ForgetGrading)
+
 Let `E` be a graded exact category and let `F` be a conflation-exact functor from its underlying
 exact category to an ungraded exact category.  If `F` identifies the grading shift with itself,
 then the induced map on exact Grothendieck groups identifies `[M{1}]` with `[M]`.  Consequently it

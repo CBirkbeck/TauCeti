@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 /-!
 # The functor of points of a Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.PointsFunctor)
+
 This file packages the convolution group of algebra homomorphisms out of a Hopf algebra as a
 functor from commutative algebras to groups. For a Hopf algebra `H` over `R`, an object
 `A : CommAlgCat R` is sent to the convolution group on `H →ₐ[R] A`; a morphism

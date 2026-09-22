@@ -11,6 +11,8 @@ public import Mathlib.Data.Nat.GCD.BigOperators
 /-!
 # Dirichlet character conductors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.DirichletCharacter.Conductor)
+
 An injective change of coefficient ring preserves the conductor and primitivity of a Dirichlet
 character. The conductor of a product of Dirichlet characters with pairwise coprime conductors is
 the product of their conductors. In particular, primitive characters at pairwise coprime levels

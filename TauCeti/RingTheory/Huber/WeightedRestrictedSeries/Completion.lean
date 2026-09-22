@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.UniformRing
 /-!
 # The completed restricted power-series algebra `A⟨X₁,…,Xₖ⟩`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion)
+
 For a nonarchimedean commutative ring `A`, the separated completion of the ring of restricted
 power series in `k` variables — the weighted ring `TauCeti.Huber.weightedRestrictedSubring`
 at the trivial weight family `Tᵢ = {1}` (Wedhorn *Adic Spaces*, arXiv:1910.05934v1, Example
@@ -99,7 +101,10 @@ variable (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpace A] [Nonarchimedean
 ring `A`: the separated completion of the ring of restricted power series in `k` variables —
 the weighted ring `TauCeti.Huber.weightedRestrictedSubring` at the trivial weight family
 `Tᵢ = {1}` — with respect to the uniformity of its ring topology. For `k = 0` this is the
-separated completion of `A` itself. -/
+separated completion of `A` itself.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.restrictedMvPowerSeriesCompletion) -/
 noncomputable abbrev restrictedMvPowerSeriesCompletion : Type _ :=
   UniformSpace.Completion
     (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight)

@@ -10,6 +10,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 /-!
 # The open subgroups of a nonarchimedean group are a basis of the neighbourhoods of zero
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Nonarchimedean.OpenAddSubgroupBasis)
+
 `NonarchimedeanAddGroup` is stated as an existence property — every neighbourhood of zero contains
 an open subgroup — and the filter-basis form is what consumers actually use. This module records
 that form once.

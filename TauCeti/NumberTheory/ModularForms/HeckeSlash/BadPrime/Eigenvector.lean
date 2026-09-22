@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.LevelSupported
 /-!
 # Eigenvectors of Hecke operators at bad primes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.BadPrime.Eigenvector)
+
 At a bad prime `p ∣ N`, the operator is the alias `U_p = T_p`, and the level-supported
 coefficient characterization in `HeckeSlash/LevelSupported.lean` becomes the familiar
 criterion `U_p f = c f ↔ a_{pm}(f) = c a_m(f)`. This is the bad-prime counterpart of the

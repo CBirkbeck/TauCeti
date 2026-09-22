@@ -13,6 +13,8 @@ public import TauCeti.GroupTheory.OrderOfElement.Basic
 /-!
 # Counting the elements of a cyclic group by a condition on their order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.Cyclic.OrderCount)
+
 In a finite cyclic group, the number of elements whose order satisfies a predicate `p` is the sum
 of `φ d` over the divisors `d` of the group order that satisfy `p`.
 

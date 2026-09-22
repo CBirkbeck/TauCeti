@@ -13,6 +13,8 @@ public import Mathlib.RingTheory.Polynomial.Hermite.Basic
 /-!
 # The probabilists' Hermite polynomials over `ℝ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Polynomial.Hermite.Real)
+
 Mathlib defines `Polynomial.hermite` in `ℤ[X]`. Every analytic consumer in this library wants the
 same family in `ℝ[X]`, and each of them was spelling the cast out inline as
 `(hermite n).map (Int.castRingHom ℝ)`, re-deriving `eval` and `degree` facts about it at the point

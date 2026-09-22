@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Invariance
 /-!
 # The twisted slash sum depends only on the double coset
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independence)
+
 `HeckeSlash/Independence.lean` proves that `heckeSlashSum k D f` is `∑ᵢ f ∣[k] aᵢ` for *any*
 family `(aᵢ)` of representatives of the right cosets of `Γ₁ δ Γ₂`, provided `f` is `Γ₁`-invariant.
 This file is the nebentypus-twisted counterpart.

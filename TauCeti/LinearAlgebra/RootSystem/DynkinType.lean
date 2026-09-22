@@ -12,6 +12,8 @@ import Mathlib.Logic.Equiv.Pairwise
 /-!
 # Dynkin types
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.DynkinType)
+
 The Cartan-Killing classification says that an irreducible reduced crystallographic finite root
 system is described by one of a short list of combinatorial types. This file introduces those types
 as a plain enumeration `TauCeti.DynkinType`, equips it with a rank, a validity predicate carving out

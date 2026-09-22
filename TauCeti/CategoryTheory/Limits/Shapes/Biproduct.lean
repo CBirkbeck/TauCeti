@@ -12,6 +12,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 /-!
 # Binary biproduct squares
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Limits.Shapes.Biproduct)
+
 This file records generic categorical properties of binary biproducts. A biproduct map factors
 through the maps obtained by changing one summand at a time, and the squares obtained by adjoining
 an identity summand are pushouts or pullbacks. The biproduct of two cokernels is the cokernel of

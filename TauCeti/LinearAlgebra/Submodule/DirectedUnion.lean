@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.Span.Defs
 /-!
 # Linear maps out of directed unions of submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Submodule.DirectedUnion)
+
 This file gives the universal property of a directed union of submodules. A compatible family of
 linear maps on the members of a directed family glues to a linear map on any submodule of their
 supremum.

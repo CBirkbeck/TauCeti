@@ -11,6 +11,8 @@ public import TauCeti.KnotTheory.Grid.Rectangle.Basic
 /-!
 # A two-rectangle bound for oriented rectangles between grid states
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Rectangle.Count)
+
 An oriented rectangle `R : GridRectangleBetween x y` is determined by its two side columns
 `R.left`, `R.right`: away from those columns the two states agree, and at those columns they
 exchange rows (`RectangleSwap.lean`). This file pins down the uniform two-rectangle upper bound

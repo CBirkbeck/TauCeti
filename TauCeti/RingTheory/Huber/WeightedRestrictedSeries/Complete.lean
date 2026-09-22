@@ -13,6 +13,8 @@ public import Mathlib.Topology.Algebra.UniformFilterBasis
 /-!
 # Completeness of the weighted restricted power series over a complete base
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Complete)
+
 Over a nonarchimedean ring `A` whose weights `Tν = T₁^ν₁ ⋯ Tₖ^νₖ` are bounded
 (`TauCeti.Huber.IsBounded`), the weighted restricted power-series ring
 `TauCeti.Huber.weightedRestrictedSubring` is Hausdorff whenever `A` is, and complete over a

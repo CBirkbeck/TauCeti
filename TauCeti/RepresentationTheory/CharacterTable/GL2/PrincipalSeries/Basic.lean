@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Induction.FiniteDimensional.Basic
 /-!
 # The principal series of `GL₂(𝔽_q)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.GL2.PrincipalSeries.Basic)
+
 A pair of characters `α, β : Fˣ →* ℂˣ` of the multiplicative group of a field inflates through the
 split torus to a one-dimensional character of the Borel subgroup `B = T U` of upper-triangular
 matrices, on which the unipotent radical acts trivially. Inducing that character up to `GL₂` is

@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Ring.Subring
 /-!
 # Huber pairs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Pair)
+
 A *ring of integral elements* of a Huber ring `A` is an open subring `A⁺` which is integrally
 closed in `A` and consists of power-bounded elements, and a *Huber pair* `(A, A⁺)` is a Huber
 ring together with such a subring. Huber pairs are the affine objects of the theory: the adic

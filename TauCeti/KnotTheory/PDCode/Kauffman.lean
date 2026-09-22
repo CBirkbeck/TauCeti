@@ -13,6 +13,8 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # The Kauffman bracket of a PD-code
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.PDCode.Kauffman)
+
 Smoothing every crossing of a diagram in one of its two ways turns the diagram into a disjoint
 union of circles. A **state** of a PD-code with `n` crossings is such a choice at each crossing,
 recorded as `s : Fin n → Bool`, with `s i = true` selecting the `A`-smoothing at crossing `i`:

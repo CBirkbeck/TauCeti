@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.QuadraticForm.Global.Localization
 /-!
 # Operations on localized quadratic forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.QuadraticForm.Global.Operations)
+
 This file records how the canonical finite, real, and complex localizations of a quadratic form
 interact with orthogonal products, negation, and scalar multiplication.
 

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.TensorProduct.BaseChange
 /-!
 # Splitting the descended group algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GroupAlgebra.Galois.Splitting)
+
 For a finite Galois extension `L/k` and an integral representation on an abelian group `M`,
 scalar extension of the invariant coordinate Hopf algebra recovers `L[M]` as a bialgebra.
 The equivalence sends `a ⊗ x` to `a • x`. Thus it identifies the descended affine group

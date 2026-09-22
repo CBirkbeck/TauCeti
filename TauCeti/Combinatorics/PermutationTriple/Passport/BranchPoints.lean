@@ -12,6 +12,8 @@ import Mathlib.SetTheory.Cardinal.NatCard
 /-!
 # Branch-point action on ordered passports
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.PermutationTriple.Passport.BranchPoints)
+
 Permuting the branch points reorders the three cycle partitions and leaves the reference
 monodromy subgroup unchanged. Reindexing is contravariant, so this is a right action of
 `Perm (Fin 3)`, written as a left action of its opposite group. The action preserves

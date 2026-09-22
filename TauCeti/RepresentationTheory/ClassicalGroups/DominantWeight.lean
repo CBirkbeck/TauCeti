@@ -10,6 +10,8 @@ public import TauCeti.Combinatorics.Young.OfRowLens
 /-!
 # Dominant weights for the general linear group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.ClassicalGroups.DominantWeight)
+
 The irreducible rational representations of `GL n` are indexed by the weakly decreasing integer
 sequences `λ₁ ≥ ⋯ ≥ λₙ`, the **dominant weights** of the diagonal torus.  This file builds that
 index type and its dictionary with Young diagrams, before any representation is attached to a

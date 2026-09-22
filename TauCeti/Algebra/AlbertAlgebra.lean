@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Octonion.Basic
 /-!
 # The split Albert algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlbertAlgebra)
+
 The split Albert algebra `H₃(𝕆)` over a commutative ring `R` in which `2` is invertible is the
 space of `3 × 3` Hermitian matrices over the split octonions `TauCeti.Octonion R`,
 

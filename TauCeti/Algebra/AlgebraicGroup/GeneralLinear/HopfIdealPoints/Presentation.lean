@@ -11,6 +11,8 @@ import TauCeti.Algebra.Algebra.Hom
 /-!
 # Presented matrix points over the integers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.HopfIdealPoints.Presentation)
+
 A subgroup of `GLₙ(A)` presented by a fixed integral Hopf ideal inherits entrywise maps of
 value rings and a representing equivalence with points of the quotient coordinate algebra.
 `IntegralPointsPresentation` records the subgroup and its presentation. Its API supplies these

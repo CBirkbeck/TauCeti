@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Huber.Pair
 /-!
 # The plus ring `A_U⁺` of a rational localisation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Plus)
+
 For a rational subset `U = R(T/s)` of `Spa(A, A⁺)`, Wedhorn (§8.1) completes the affinoid ring
 `(Aₛ, C)`, where `C` is the integral closure of `A⁺[T/s]` in `Aₛ` — a ring of integral elements of
 the localised topology. The plus ring of `A_U = A⟨T/s⟩` is therefore `A_U⁺`, the closure in

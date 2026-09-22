@@ -14,6 +14,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Lift
 /-!
 # The assembled cyclotomic Dixon--Schneider solver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Cyclotomic.Solver)
+
 The modular phase of the Burnside--Dixon--Schneider algorithm returns the unordered set of
 central-character rows over `ZMod p`.  For a character table with values in
 `TauCeti.Cyclotomic e`, reconstructing one exact entry needs its residues at every conjugate

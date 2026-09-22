@@ -11,6 +11,8 @@ public import Mathlib.Algebra.MonoidAlgebra.Basic
 /-!
 # Character sums over a subgroup
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.MonoidAlgebra.SubgroupCharSum)
+
 For a finite subgroup `H` of a group `G` and a multiplicative character `χ : G →* k`, this file
 studies the element `∑_{h ∈ H} χ(h) h` of the group algebra `k[G]`, here
 `TauCeti.subgroupCharSum χ H`.

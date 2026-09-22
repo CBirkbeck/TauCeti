@@ -14,6 +14,8 @@ public import TauCeti.KnotTheory.Grid.StateCardinality
 /-!
 # The bigraded grid chain module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.KnotTheory.Grid.Grading.Chain)
+
 This file turns the integer `O`-Maslov and Alexander gradings of a grid diagram with odd component
 count into a direct-sum decomposition of the grid chain module. The summand in bidegree `(m, a)` is
 the direct sum of one copy of the coefficient ring for each state with `O`-Maslov grading `m` and

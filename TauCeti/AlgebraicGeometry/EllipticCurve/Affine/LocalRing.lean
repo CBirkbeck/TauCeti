@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.DedekindDomain.Dvr
 /-!
 # The local ring at an affine point of a normal coordinate ring is a discrete valuation ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.Affine.LocalRing)
+
 An integrally closed coordinate ring is a Dedekind domain
 (`WeierstrassCurve.Affine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed`), and the ideal of
 a point is maximal and nonzero (`XYIdeal_isMaximal_of_equation`, `XYIdeal_ne_bot`). Localising at

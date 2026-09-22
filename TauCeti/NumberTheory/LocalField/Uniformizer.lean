@@ -10,6 +10,8 @@ public import TauCeti.NumberTheory.LocalField.NormalizedValuation
 /-!
 # Uniformizers of a nonarchimedean local field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.LocalField.Uniformizer)
+
 This file records the uniformizer predicate for a nonarchimedean local field.  It is formulated
 on `Kˣ`, where the normalized valuation is defined.  The characterization below connects it with
 the irreducible elements of the ring of integers, the convention used by the local-fields

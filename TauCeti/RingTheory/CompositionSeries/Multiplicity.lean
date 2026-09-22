@@ -12,6 +12,8 @@ public import TauCeti.RingTheory.CompositionSeries.Basic
 /-!
 # Jordan-Hölder multiplicities of a simple module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.CompositionSeries.Multiplicity)
+
 A composition series of a module `M` cuts `M` into simple subquotients, its *factors*, and the
 Jordan-Hölder theorem says that two composition series with the same endpoints have the same
 factors up to a permutation.  Counting how often a fixed simple module `S` occurs among them is

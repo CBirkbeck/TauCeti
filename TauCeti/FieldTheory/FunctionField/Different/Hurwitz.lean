@@ -12,6 +12,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.RatFunc
 /-!
 # The Hurwitz genus formula
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Different.Hurwitz)
+
 Let `F' / k'` be a finite separable extension of the algebraic function field `F / k`, with exact
 constant fields and `k' / k` finite separable, and write `g` and `g'` for the genera of `F` and
 `F'`.  The **Hurwitz genus formula** (Stichtenoth, Theorem 3.4.13) relates the two genera through

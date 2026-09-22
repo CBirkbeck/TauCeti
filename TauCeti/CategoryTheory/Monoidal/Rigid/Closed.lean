@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.Monoidal.Rigid.Basic
 /-!
 # The internal hom out of a dualizable object
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Monoidal.Rigid.Closed)
+
 Let `C` be a monoidal category in which an object `Y` is closed, so that `(Y ⟶[C] -)` is right
 adjoint to `Y ⊗ -`. If `Y` also admits a left dual, that is, if `ExactPairing D Y` holds for some
 object `D`, then `D ⊗ -` is a second right adjoint of `Y ⊗ -`, and the two agree:

@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Norm.Units
 /-!
 # The residue of a function at a place, and its norm to the constants
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Residue)
+
 A function `f` that is a unit at a place `P` has a nonzero residue `f(P)` in the residue field
 `F_P`, and pushing that residue down to the constants `k` by the field norm gives a value that
 does not depend on `P` for its home. This file builds those two maps and extends the second by

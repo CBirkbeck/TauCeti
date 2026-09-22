@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.E7.Minuscule.Carrier
 /-!
 # Torus characters of the type-E7 minuscule carrier in its named root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E7.Minuscule.RootDatum)
+
 `TauCeti.E7Minuscule.groupScheme` is the full-weight Chevalley carrier obtained from the
 56-dimensional minuscule representation of the type-`E₇` Serre presentation. Its fourteen
 numbered simple root subgroups and rank-seven split weight torus are explicit. The carrier's

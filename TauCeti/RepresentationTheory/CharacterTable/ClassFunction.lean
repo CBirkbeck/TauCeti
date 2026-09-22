@@ -12,6 +12,8 @@ public import Mathlib.RepresentationTheory.Character
 /-!
 # Class functions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.ClassFunction)
+
 This file defines functions on a group that are constant on conjugacy classes. It identifies
 their module with the module of functions on `ConjClasses G`, computes its dimension for finite
 groups, pulls class functions back along a group homomorphism, twists them by a power map of the

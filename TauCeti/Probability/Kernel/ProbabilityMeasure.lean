@@ -11,6 +11,8 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 /-!
 # Markov kernels, bundled fibrewise
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Kernel.ProbabilityMeasure)
+
 `IsMarkovKernel κ` says exactly that every fibre of `κ : Kernel β Ω` is a probability measure.
 Consumers that want a *random probability measure* — a `β → ProbabilityMeasure Ω`, the shape
 predicates like `MixedIIDWith` and `ConditionallyIIDWith` take as their witness — must pair each

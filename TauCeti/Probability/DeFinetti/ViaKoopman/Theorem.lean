@@ -13,6 +13,8 @@ public import TauCeti.Probability.Exchangeability.PathSpace.Law.Bridge
 /-!
 # de Finetti via Koopman operators and the shift-invariant σ-algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.DeFinetti.ViaKoopman.Theorem)
+
 The summit of the Koopman route.
 
 On path space the witness is `invariantConditionalProbabilityMeasure`, the conditional law of the

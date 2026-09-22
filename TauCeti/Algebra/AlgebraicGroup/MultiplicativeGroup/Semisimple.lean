@@ -10,6 +10,8 @@ public import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Semisimple
 /-!
 # Points of the multiplicative group are semisimple
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.MultiplicativeGroup.Semisimple)
+
 Transporting semisimplicity of points of the diagonalizable group `D(ℤ)` across the standard
 bialgebra isomorphism proves that every point of the multiplicative group `𝔾ₘ` is semisimple.
 

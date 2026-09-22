@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Trivial
 /-!
 # The monoidal category of finitely generated comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.Monoidal)
+
 This file equips finitely generated right comodules over a bialgebra with their standard
 monoidal structure. The tensor product is the diagonal comodule constructed in
 `TauCeti.Algebra.Coalgebra.Comodule.Finite.TensorProduct`, and the tensor unit is the base

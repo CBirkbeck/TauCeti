@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.ScalarExtension
 /-!
 # Scalar extension of comodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Coalgebra.Comodule.Finite.ScalarExtension.Basic)
+
 Let `C` be a coalgebra over a commutative semiring `R`, and let `A` be an
 `R`-algebra. This file restricts scalar extension of the underlying-module functor to finitely
 generated comodules:

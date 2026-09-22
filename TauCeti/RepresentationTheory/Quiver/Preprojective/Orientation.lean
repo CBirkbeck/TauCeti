@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Preprojective.Gauge
 /-!
 # Orientation independence of the additive preprojective algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.Orientation)
+
 The additive preprojective algebra `Π_k(Q)` is built from the *doubled* quiver of `Q`, so it ought
 not to depend on which of the two directions of each edge was chosen as the arrow of `Q`. That
 independence is not a formality: the defining relator

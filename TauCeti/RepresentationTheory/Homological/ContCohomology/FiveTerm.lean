@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Inflation
 /-!
 # The invariant term in the five-term sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.FiveTerm)
+
 Let `N` be a normal subgroup of a topological group `G`, and let `M` be a continuous
 `G`-module. Conjugation by `G`, together with the action on `M`, acts on the explicit group
 `H¹(N, M)`. This file defines the subgroup fixed by that action and proves that restriction

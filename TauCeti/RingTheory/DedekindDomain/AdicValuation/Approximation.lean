@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.DedekindDomain.AdicValuation.Completion
 /-!
 # Simultaneous approximation in finitely many adic completions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.DedekindDomain.AdicValuation.Approximation)
+
 Let `R` be a Dedekind domain with fraction field `K`. Given finitely many height one primes `v` of
 `R` and an element of the ring of integers `𝒪_v` of `K_v` at each of them, a single element of `R`
 approximates all of them at once, to any prescribed precision at each place. This combines the

@@ -12,6 +12,8 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # Distance of the boundary contour from `ρ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Geometry)
+
 The geometry of the shifted contour `t ↦ fdBoundary H t - ρ` about the corner `ρ` at
 parameter `t = 3`: the chord distance along the arc, the purely imaginary linear form
 along the left vertical, the norm lower bounds on the far pieces, the slit-plane

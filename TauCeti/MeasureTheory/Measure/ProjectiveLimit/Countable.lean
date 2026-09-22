@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.Measure.ProjectiveLimit.Nat
 /-!
 # Projective limits on countable products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.ProjectiveLimit.Countable)
+
 This file extends the sequence-indexed Kolmogorov extension theorem from
 `TauCeti.MeasureTheory.Measure.ProjectiveLimit.Nat` to an arbitrary countable index type. Finite
 index types are handled directly by the law on all coordinates; infinite countable types are

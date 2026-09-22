@@ -19,6 +19,8 @@ import TauCeti.Analysis.Contour.PerWindow.CPV
 /-!
 # Existence of the Cauchy-kernel principal value along an immersed curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.InvSubCPVExistence)
+
 For a piecewise-`C¹` immersed curve `γ` on `[a, b]` whose value-`s` parameters are all
 interior, the single-point Cauchy principal value of `t ↦ (γ t - s)⁻¹ * deriv γ t` exists on
 `[a, b]` — the integral defining the winding number converges even when the curve passes

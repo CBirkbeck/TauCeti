@@ -14,6 +14,8 @@ public import TauCeti.RingTheory.MvPowerSeries.NonZeroDivisors
 /-!
 # The chord through two points of a Weierstrass curve near the origin
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.Chord)
+
 The `w`-expansion of `WeierstrassCurve.formalW` lives in the coordinates `z = -x/y`, `w = -1/y`
 obtained from the affine coordinates of `W` by `x = z / w`, `y = -1 / w`. In those coordinates
 the point at infinity is the origin, and the curve is parametrised near it by `z ↦ (z, w(z))`,

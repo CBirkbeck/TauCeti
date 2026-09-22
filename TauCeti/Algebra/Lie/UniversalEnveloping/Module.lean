@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Lie.UniversalEnveloping.Basic
 /-!
 # The enveloping-algebra dictionary for Lie modules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Module)
+
 A module over a Lie algebra `L` is the same data as a module over its universal enveloping algebra
 `U(L)`. This file makes that dictionary explicit and, more importantly, extends it to the
 structures built on top of a module: Lie submodules are exactly `U(L)`-submodules, and Lie module

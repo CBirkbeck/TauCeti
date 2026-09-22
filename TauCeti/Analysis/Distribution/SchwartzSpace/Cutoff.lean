@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.ContDiff.Bounds
 /-!
 # Cutting off a Schwartz function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Distribution.SchwartzSpace.Cutoff)
+
 Let `χ : E → ℝ` be a smooth compactly supported function that equals `1` near the origin. For a
 Schwartz function `f`, the truncations `x ↦ χ (R⁻¹ • x) • f x` are smooth and compactly supported,
 and they converge to `f` in the Schwartz topology as `R → ∞`. Consequently the smooth compactly

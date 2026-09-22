@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Group.FreeAbelianCharacter
 /-!
 # Integral characters on the complex torus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Toric.Analytic.Character)
+
 For an additive lattice `N`, its integral character lattice is `N →+ ℤ`.  The
 corresponding complex torus is represented without coordinates as the additive characters of this
 lattice with values

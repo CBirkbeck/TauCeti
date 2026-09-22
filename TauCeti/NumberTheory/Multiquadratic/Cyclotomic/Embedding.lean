@@ -14,6 +14,8 @@ import Mathlib.Analysis.Complex.Polynomial.Basic
 /-!
 # A multiquadratic field lies in a cyclotomic field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.Cyclotomic.Embedding)
+
 This file proves the explicit Kronecker–Weber theorem for multiquadratic fields: the field
 generated over `ℚ` by square roots of rational numbers `d₁, …, dₙ` is contained in a cyclotomic
 field. Concretely, inside any field `L` of characteristic zero holding a primitive `N`-th root of

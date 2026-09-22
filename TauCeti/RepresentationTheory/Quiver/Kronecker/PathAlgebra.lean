@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Quiver.PathAlgebra.Basic
 /-!
 # The path algebra of the generalized Kronecker quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.PathAlgebra)
+
 The generalized Kronecker quiver on `n` arrows has `n + 2` paths: the two trivial paths and the
 arrows themselves. So its path algebra has dimension `n + 2`; for the Kronecker quiver `• ⇉ •`
 itself this is `4`. Finite-dimensionality needs nothing specific to this quiver: it is acyclic, so

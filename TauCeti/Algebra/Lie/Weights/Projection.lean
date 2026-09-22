@@ -12,6 +12,8 @@ import TauCeti.LinearAlgebra.Projection
 /-!
 # The projections attached to the weight-space decomposition
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Projection)
+
 A finite-dimensional triangularizable module `M` over a nilpotent Lie algebra `L` is the internal
 direct sum of its generalized weight spaces (`TauCeti.isInternal_genWeightSpace`). This file names
 the associated family of projections `TauCeti.genWeightSpaceProjection`, one for each weight, and

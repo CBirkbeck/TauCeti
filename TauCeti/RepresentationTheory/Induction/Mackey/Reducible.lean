@@ -10,6 +10,8 @@ public import TauCeti.RepresentationTheory.Induction.Mackey.Irreducible
 /-!
 # An induced representation from a trivially meeting conjugate is never irreducible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Mackey.Reducible)
+
 The Mackey irreducibility criterion `TauCeti.simple_indFDRep_iff` asks the restrictions of `A` and
 of its conjugate `{}^s A` to the Mackey subgroup `H ⊓ sHs⁻¹` to be disjoint for every `s ∉ H`.
 This file records the extreme case in which that condition **fails as badly as possible**: if the

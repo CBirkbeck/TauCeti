@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.Approximation
 /-!
 # Weak approximation for the places of an algebraic function field
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Approximation)
+
 Finitely many distinct places of a function field `F/k` impose independent conditions on `F`:
 given pairwise distinct places `P₁, …, Pₙ`, target functions `f₁, …, fₙ : F` and prescribed
 integers `r₁, …, rₙ`, there is a single `g : F` with `ord_{Pᵢ} (g - fᵢ) = rᵢ` for every `i`.

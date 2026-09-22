@@ -16,6 +16,8 @@ import TauCeti.RingTheory.DividedPowers.Associative
 /-!
 # The type-D spinor lattice is Kostant-stable
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.TypeD.KostantLattice)
+
 This file turns the type-`Dₙ` Clifford Serre system into a rational representation of the
 type-`D` Serre presentation and proves that its coordinate spinor lattice is stable under the
 Serre Kostant form.

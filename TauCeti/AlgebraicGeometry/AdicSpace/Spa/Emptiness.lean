@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Huber.OpenIdeal
 /-!
 # Emptiness of the adic spectrum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Spa.Emptiness)
+
 For a Huber pair `(A, A⁺)`, Wedhorn Proposition 7.49(1) characterizes emptiness of the adic
 spectrum by triviality of the separated quotient:
 

@@ -10,6 +10,8 @@ public import TauCeti.Algebra.Lie.Weights.Basic
 /-!
 # Root vectors normalised against the coroots
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Weights.Sl2System)
+
 Let `L` be a finite-dimensional Lie algebra with non-degenerate Killing form over a field `K` of
 characteristic zero, and let `H` be a splitting Cartan subalgebra. Each root `α` has a
 one-dimensional root space `Lα`, so a root vector is determined by a scalar, and Mathlib's

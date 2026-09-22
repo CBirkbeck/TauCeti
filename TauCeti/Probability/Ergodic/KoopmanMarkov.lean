@@ -10,6 +10,8 @@ public import Mathlib.MeasureTheory.Function.AEEqFun
 /-!
 # The Koopman Markov operator on measurable-function germs
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Ergodic.KoopmanMarkov)
+
 This file supplies the algebraic part of the generic Koopman lane in the Exchangeability roadmap.
 For a measure-preserving endomorphism `T`, composition `g ↦ g ∘ T` is bundled as a real-linear
 operator on almost-everywhere measurable real-valued functions.  It preserves one and

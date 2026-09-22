@@ -11,6 +11,8 @@ public import Mathlib.RepresentationTheory.Rep.Basic
 /-!
 # Integral Galois lattices
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.GaloisLattice.Basic)
+
 An integral Galois lattice over a field is a finite free `ℤ`-module equipped with an action of
 the absolute Galois group for which every vector has an open stabilizer. This is the continuity
 criterion when the module carries the discrete topology.

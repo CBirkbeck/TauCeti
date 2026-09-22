@@ -14,6 +14,8 @@ public import TauCeti.Algebra.Polynomial.Card.BoundedCoeff
 /-!
 # Counting the roots of all polynomials of bounded degree and bounded coefficients
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Polynomial.Card.RootSetUnion)
+
 For a ring hom `m : R →+* S` into a domain `S` and a finite set `U` of allowed coefficient
 values, the set of all roots in `S` of the polynomials of degree at most `d` with every
 coefficient in `U`,

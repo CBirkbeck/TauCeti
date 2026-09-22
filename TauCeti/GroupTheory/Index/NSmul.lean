@@ -13,6 +13,8 @@ import Mathlib.LinearAlgebra.Dimension.Constructions
 /-!
 # The index of `n • G` in a finitely generated commutative group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.Index.NSmul)
+
 Mathlib's `Mathlib/GroupTheory/IndexNSmul.lean` computes the index of the image of the
 multiplication-by-`n` map `nsmulAddMonoidHom n` on a group that is **free** and finitely generated
 as a `ℤ`-module: `AddSubgroup.index_range_nsmul` gives `n ^ finrank ℤ M`. This file drops freeness.

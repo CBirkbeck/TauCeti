@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.NumberField.Quadratic.Norm
 /-!
 # Units and quadratic conjugation
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Units)
+
 This file records two sign and square-class consequences for units in a quadratic number field.
 A unit whose product with its quadratic conjugate is one is, up to sign, totally positive. It
 follows from Dirichlet's unit theorem that a real quadratic field in which every unit has

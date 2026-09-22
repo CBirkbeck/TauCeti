@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Semisimple.Basic
 /-!
 # Central closed subgroups of semisimple affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Semisimple.Center.Basic)
+
 Let `H` be the coordinate Hopf algebra of a semisimple affine group over a field `k`. This file
 proves that every smooth geometrically connected central closed subgroup of the geometric fibre
 is trivial.

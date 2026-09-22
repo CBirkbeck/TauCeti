@@ -15,6 +15,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.EulerCharacteristic
 /-!
 # Euler--Poincaré for finite-dimensional cochain complexes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.EulerCharacteristic.FiniteDimensional)
+
 Mathlib defines the Euler characteristic of a homological complex using `finsum`.  That definition
 is intentionally total: it returns zero when the summand has infinite support, and `finrank` itself
 returns zero for modules that are not finite free.  This file identifies those totalized

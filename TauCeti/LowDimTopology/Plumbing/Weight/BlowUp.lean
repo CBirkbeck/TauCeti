@@ -13,6 +13,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Sublevel
 /-!
 # The plumbing-lattice weight function under a blow-up
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Weight.BlowUp)
+
 `Plumbing/BlowUp.lean` builds the first of Neumann's plumbing moves, blowing up a plumbing graph
 `P` at a vertex `v`, and splits the blown-up lattice and its covectors along the exceptional class:
 the total transform `blowUpVertexEquiv` identifies the blown-up lattice with `(V → ℤ) × ℤ`, under

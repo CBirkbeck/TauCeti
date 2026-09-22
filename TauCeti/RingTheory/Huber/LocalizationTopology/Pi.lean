@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
 /-!
 # The structure map into a family of rational localisations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.LocalizationTopology.Pi)
+
 For a finite set `T` of numerators, the rational localisations `A⟨T/t⟩` for `t ∈ T` carry a single
 structure map out of `A` apiece. This file bundles them into one ring homomorphism
 `A →+* ∀ t : T, A⟨T/t⟩` and records that it is continuous. No hypothesis relating the members of

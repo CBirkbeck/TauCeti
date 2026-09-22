@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.RootSystem.Positive
 /-!
 # The Weyl denominator
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.Weyl.Denominator.Basic)
+
 The **Weyl denominator** of a base of a root pairing is the element `Δ = ∏_{α > 0} (1 - e^{-α})`
 of the integral group algebra `ℤ[M]` of the weight space. It is one of the two universal elements
 that the Weyl character formula compares, the other being the Weyl numerator

@@ -12,6 +12,8 @@ public import TauCeti.MeasureTheory.Integral.PiSystem
 /-!
 # Product-measure helpers
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Integral.Prod)
+
 Small pieces of product-measure theory with no `L²` or inner-product content.
 
 * `TauCeti.ae_of_ae_fst` / `TauCeti.ae_of_ae_snd` transfer an a.e. statement about one factor to the

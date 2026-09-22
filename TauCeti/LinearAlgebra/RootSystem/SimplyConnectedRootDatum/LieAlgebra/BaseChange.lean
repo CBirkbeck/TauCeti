@@ -12,6 +12,8 @@ public import Mathlib.RingTheory.Flat.Basic
 /-!
 # Base change of the pinned Dynkin-type Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.LieAlgebra.BaseChange)
+
 The pinned Lie algebra `TauCeti.DynkinType.lieAlgebra` is Geck's explicit matrix construction over
 `ℚ`. This file extends the underlying pinned root system to an arbitrary characteristic-zero
 domain `K` equipped with a rational algebra structure and identifies the resulting Geck Lie

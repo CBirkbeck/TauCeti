@@ -12,6 +12,8 @@ public import Mathlib.LinearAlgebra.StdBasis
 /-!
 # The standard split odd-dimensional polarization
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.Polarization.Split.Odd)
+
 For a commutative ring `K`, the split odd quadratic space of rank `2n + 1` is
 `(M* × M) × K`, where `M = Fin n → K`, with quadratic form
 

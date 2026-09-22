@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Quiver.Preprojective.Orientation
 /-!
 # The path algebra inside the preprojective algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Preprojective.PathAlgebra)
+
 Let `Q` be a finite quiver. Its path algebra `kQ` maps to the additive preprojective algebra
 `Π_k(Q)`, by including `Q` in the doubled quiver `Quiver.Symmetrify Q` and passing to the quotient.
 In the other direction, killing every formal reverse `a*` is an algebra homomorphism from the

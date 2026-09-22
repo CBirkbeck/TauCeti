@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Ideal.Operations
 /-!
 # A finite product of flat modules is flat, and when it is faithfully flat
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Flat.Pi)
+
 Mathlib knows that an arbitrary direct sum of flat modules is flat (`Module.Flat.directSum`), but
 `∀ i, M i` is not definitionally a direct sum, so nothing fires for a product. Over a finite index
 the two agree, and this file records the resulting instance together with the criterion that

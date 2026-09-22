@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Rep.ChangeOfGroup
 /-!
 # Tate cohomology along an isomorphism of finite groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.TateCohomology.Functoriality)
+
 Mathlib's Tate cohomology of a finite group is functorial in the coefficient representation, but
 the group is fixed throughout. This file supplies the missing variance in the group for the case
 of an isomorphism. A **compatible pair** consists of a group isomorphism `e : G ≃* H` and a

@@ -14,6 +14,8 @@ public import TauCeti.FieldTheory.IntermediateField.Adjoin.Inv
 /-!
 # The degree of a place of an algebraic function field is finite
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.Place.Degree)
+
 The residue field `F_P` of a place `P` of `F / k` is an extension of the constants `k`, and its
 degree `deg P = [F_P : k]` is the weight a place carries in a divisor. This file proves that
 the degree is finite and bounded, which is Stichtenoth,

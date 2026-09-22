@@ -13,6 +13,8 @@ public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Unipotent.Basi
 /-!
 # Geometry of weight-unipotent subgroup schemes
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Unipotent.Geometry)
+
 For an integer weight `w i` on each coordinate of `GL_N`, the weight-unipotent subgroup has
 matrix entries fixed to the identity whenever `w i ≤ w j`. The remaining entries, indexed by
 pairs with `w j < w i`, are free polynomial coordinates. This file identifies its coordinate

@@ -12,6 +12,8 @@ import Mathlib.Analysis.Normed.Module.Ball.Pointwise
 /-!
 # Affine normalizations of metric balls and spheres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Ball)
+
 This file records how the affine map `y ↦ c • y +ᵥ x` pulls metric balls, closed balls, and
 spheres back to their corresponding sets centered at zero.
 

@@ -12,6 +12,8 @@ import TauCeti.FieldTheory.KummerExtension
 /-!
 # The genus field of `ℚ(√-5)`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.MinusFive.GenusField)
+
 The prime-discriminant factorization `-20 = (-4) · 5` identifies the canonical genus field
 with the explicit complex compositum `ℚ(i, √5)`. Consequently this compositum is abelian over
 `ℚ`, everywhere unramified over its quadratic subfield `ℚ(√-5)`, and maximal with these

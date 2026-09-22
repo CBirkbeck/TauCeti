@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Ideal.Quotient.Representative
 /-!
 # Reduction modulo the finite part of a modulus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Residue)
+
 For a modulus `𝔪` of a number field `K`, this file constructs the reduction homomorphism from
 the elements of `Kˣ` that are units at the primes dividing `𝔪.finitePart` to the units of
 `𝓞 K ⧸ 𝔪.finitePart`.

@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.Newforms.Coefficient
 /-!
 # Strong multiplicity one, at fixed level and nebentypus
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.Newforms.StrongMultiplicityOne)
+
 Two newforms of level `N`, weight `k` and the same nebentypus whose eigenvalues agree at every
 index coprime to `N` outside a finite set are equal (Miyake, Theorem 4.6.12). The finite slack is
 what makes the statement *strong*: nothing at all is assumed at the indices dividing the level.

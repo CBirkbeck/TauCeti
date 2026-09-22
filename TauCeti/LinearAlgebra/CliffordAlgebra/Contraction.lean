@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Grading
 /-!
 # Contraction against the `ℤ/2`-grading
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Contraction)
+
 Mathlib's `CliffordAlgebra.contractLeft` lowers the degree of a multivector by one, so it
 exchanges the two halves of the `ℤ/2`-grading. Mathlib records neither half of that sentence:
 `involute` interacts with products (`involute` is an algebra homomorphism) and with the grading,

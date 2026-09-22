@@ -15,6 +15,8 @@ import TauCeti.MeasureTheory.Measure.Haar.NormedSpace
 /-!
 # Sard's lemma in equal dimensions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.Sard.EqualDimension)
+
 This file proves the equal-dimensional case of Sard's theorem for maps between two possibly
 different finite-dimensional real normed spaces.  A differentiable map sends any set on which its
 derivative is nowhere surjective to a set of additive Haar measure zero.  In particular, the

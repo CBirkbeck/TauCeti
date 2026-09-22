@@ -14,6 +14,8 @@ import TauCeti.RingTheory.ClassGroup.Basic
 /-!
 # The ray class exact sequence
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Global.RayClass.Exact)
+
 For a modulus `m` of a number field `K`, forgetting its congruence and sign conditions sends a ray
 class to an ordinary ideal class.  This file constructs the full exact sequence
 

@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Ring.Subring.MulOpposite
 /-!
 # The antipode of a universal enveloping algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.UniversalEnveloping.Antipode)
+
 The universal enveloping algebra of a Lie algebra has a canonical algebra homomorphism to its
 opposite algebra, determined by sending every Lie generator `x` to `-x`. After identifying the
 underlying modules of an algebra and its opposite, this is the usual antipode. It fixes scalars,

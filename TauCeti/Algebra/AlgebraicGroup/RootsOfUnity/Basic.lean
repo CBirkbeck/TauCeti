@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.DiagonalizableGroup.Basic
 /-!
 # The roots-of-unity group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.RootsOfUnity.Basic)
+
 This file records the functor-of-points calculation for the diagonalizable group
 `D(Multiplicative (ZMod n))`. For positive `n`, this is the usual finite diagonalizable group
 scheme `μ_n`: for every commutative `R`-algebra `A`, its convolution group of `A`-points is the

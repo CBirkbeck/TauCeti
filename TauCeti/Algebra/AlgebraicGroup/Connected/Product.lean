@@ -14,6 +14,8 @@ public import TauCeti.AlgebraicGeometry.Geometrically.Connected
 /-!
 # Geometric connectedness of products of affine groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Connected.Product)
+
 The direct product of two affine groups over a field has coordinate Hopf algebra given by the
 tensor product of their coordinate algebras. This file applies the affine tensor-product
 connectedness theorem to show that geometric connectedness is preserved by this construction.

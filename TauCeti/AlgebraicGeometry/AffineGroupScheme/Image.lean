@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.SchemeTheoreticImage
 /-!
 # Scheme-theoretic images of affine group morphisms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Image)
+
 For a morphism `f : H ⟶ K` of commutative Hopf algebras over a field, the represented affine
 group morphism runs from `Spec K` to `Spec H`. Its coordinate image is the quotient
 

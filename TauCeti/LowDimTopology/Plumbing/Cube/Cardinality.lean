@@ -11,6 +11,8 @@ public import Mathlib.Data.Finset.Powerset
 /-!
 # Cardinality of plumbing-lattice cube vertex sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Cube.Cardinality)
+
 This file records the finite combinatorics of the vertex set of a plumbing-lattice cube. A cube
 with direction set `S` has one vertex for each subset of `S`, so its vertex set has cardinality
 `2 ^ S.card`.

@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprima
 /-!
 # The degree of the rational function `Φₙ / ΨSqₙ`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.RatFuncDegree)
+
 `Coprimality.lean` shows that `Φₙ` and `ΨSqₙ` are coprime on a nonsingular curve, so for `n ≠ 0`
 the quotient `Φₙ / ΨSqₙ` is already in lowest terms. This file draws the consequence: it has
 **degree `n²`**, in the sense that adjoining it to `F` inside `F(x)` leaves an extension of

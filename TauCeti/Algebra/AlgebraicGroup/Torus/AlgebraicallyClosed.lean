@@ -11,6 +11,8 @@ import TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.BaseChange
 /-!
 # Tori over algebraically closed fields
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Torus.AlgebraicallyClosed)
+
 Every torus over an algebraically closed field is split. This identifies the geometric torus
 predicate with its split counterpart, so results proved for split tori apply to all tori over
 such a field. In particular, it removes the splitting assumption from conjugacy of maximal

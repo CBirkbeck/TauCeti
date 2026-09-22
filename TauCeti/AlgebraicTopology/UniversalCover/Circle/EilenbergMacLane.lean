@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Circle.HigherHomotopy
 /-!
 # Circles as Eilenberg--Mac Lane spaces
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Circle.EilenbergMacLane)
+
 A real additive circle of nonzero period is a `K(ℤ, 1)`: it is path-connected, its
 fundamental group is infinite cyclic, and all its higher homotopy groups vanish.
 

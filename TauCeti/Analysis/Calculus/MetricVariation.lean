@@ -17,6 +17,8 @@ import Mathlib.Analysis.Calculus.MeanValue
 /-!
 # Metric variation of a continuously differentiable curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Calculus.MetricVariation)
+
 For a continuously differentiable curve in a complete real normed space, its
 metric total variation equals the integral of the norm of its derivative.
 

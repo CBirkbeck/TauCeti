@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.HomologyCauchy
 /-!
 # Cauchy's theorem for null-homotopic contours
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Cauchy.Homotopy)
+
 A closed piecewise-`C¹` path continuously homotopic to its constant path inside an open set is
 null-homologous there. Consequently, the homology form of Cauchy's theorem makes the contour
 integral of every holomorphic function vanish along such a path. This supplies the

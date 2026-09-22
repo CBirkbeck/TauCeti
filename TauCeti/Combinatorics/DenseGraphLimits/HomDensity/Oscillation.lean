@@ -13,6 +13,8 @@ import Mathlib.Tactic.Positivity
 /-!
 # Changing a host graph at one vertex
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.DenseGraphLimits.HomDensity.Oscillation)
+
 If two host graphs on the same finite vertex set `W` agree on every pair of vertices avoiding a
 fixed vertex `w`, then their homomorphism densities of a pattern `F` differ by at most
 `|V(F)| / |W|`.

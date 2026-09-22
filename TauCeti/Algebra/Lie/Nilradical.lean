@@ -11,6 +11,8 @@ public import TauCeti.Algebra.Lie.Basic
 /-!
 # The nilradical of a Lie algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.Nilradical)
+
 The **nilradical** of a Lie algebra `L` is the supremum of its ideals that are nilpotent *as Lie
 algebras*, built here as `TauCeti.LieAlgebra.nilradical R L`, the supremum of the ideals `I` with
 `LieRing.IsNilpotent I`.  As soon as `L` is Noetherian that supremum is itself nilpotent, so it is

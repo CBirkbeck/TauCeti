@@ -12,6 +12,8 @@ public import TauCeti.CategoryTheory.GrothendieckGroup.Resolution
 /-!
 # Graded Grothendieck groups of full subcategories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.GrothendieckGroup.Laurent.FullSubcategory)
+
 This file compares the exact Grothendieck groups associated to the graded and ungraded exact
 structures induced on a shift-stable, extension-closed full subcategory. It also records the
 transport of the Euler class of a finite resolution across this comparison, and the compatibility

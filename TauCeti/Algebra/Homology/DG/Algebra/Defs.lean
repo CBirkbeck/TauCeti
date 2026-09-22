@@ -12,6 +12,8 @@ public import TauCeti.Algebra.DirectSum.Internal
 /-!
 # Nonunital and unital differential graded algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Algebra.Defs)
+
 A nonunital differential graded algebra over a commutative ring `R` is an internally
 `ℤ`-graded nonunital `R`-algebra `A` together with an `R`-linear differential `d` of degree
 `+1` which squares to zero and satisfies the graded Leibniz rule

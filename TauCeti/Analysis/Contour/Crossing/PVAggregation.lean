@@ -13,6 +13,8 @@ import TauCeti.Analysis.Contour.Crossing.Windows
 /-!
 # Aggregating per-window principal values across finitely many crossings
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Crossing.PVAggregation)
+
 If the `ε`-truncated integral of `g (γ t) * deriv γ t` converges on each crossing window
 `[t_i - r, t_i + r]`, the windows have disjoint interiors and lie in `[a, b]`, and the curve
 keeps a positive distance from `s` off the windows, then the truncated integral over all of

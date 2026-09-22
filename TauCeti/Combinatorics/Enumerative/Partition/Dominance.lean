@@ -11,6 +11,8 @@ public import Mathlib.Data.List.Lex
 /-!
 # Dominance order on partitions
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Combinatorics.Enumerative.Partition.Dominance)
+
 This file defines dominance of partitions of a fixed natural number by comparing all partial
 sums of their decreasingly sorted parts. It proves that dominance is a partial order and that
 dominance implies the corresponding lexicographic comparison, strictly for strict dominance.

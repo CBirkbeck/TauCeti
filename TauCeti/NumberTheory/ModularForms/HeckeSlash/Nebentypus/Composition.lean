@@ -12,6 +12,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Independen
 /-!
 # The composite of two nebentypus-twisted slash sums
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Nebentypus.Composition)
+
 `HeckeSlash/Composition.lean` computes the composite of two *unweighted* slash sums. This file is
 the weighted counterpart. It first proves the general multiplicity-weighted formula, by
 partitioning all products according to the double coset they meet, and then specialises to a

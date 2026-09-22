@@ -10,6 +10,8 @@ public import Mathlib.Algebra.Category.CommAlgCat.Basic
 /-!
 # Restriction of scalars for commutative algebra categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Category.CommAlgCat.RestrictScalars)
+
 Given a ring homomorphism `k → K`, a commutative `K`-algebra is in particular a commutative
 `k`-algebra, and a `K`-algebra homomorphism is a `k`-algebra homomorphism. This file packages
 that change of rings as a functor `CommAlgCat K ⥤ CommAlgCat k`.

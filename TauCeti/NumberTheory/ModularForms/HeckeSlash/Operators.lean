@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Prime
 /-!
 # Hecke operators `T_n` on modular forms
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.HeckeSlash.Operators)
+
 For a positive integer `n`, the classical Hecke operator `T_n` at level `Γ₁(N)` is the slash
 operator attached to the double coset
 

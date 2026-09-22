@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.Polynomial.Truncated
 /-!
 # The representation type of the generalized Kronecker quiver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.Kronecker.FiniteRepType)
+
 This file settles the representation type of the generalized Kronecker quiver on both sides of
 Gabriel's boundary: infinite as soon as there are two distinct arrows, finite for the `A₂` quiver
 `• → •` of a single arrow.

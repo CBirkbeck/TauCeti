@@ -19,6 +19,8 @@ import TauCeti.Probability.Distributions.Gamma.Basic
 /-!
 # The nonsingular Wishart family
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Wishart.Nonsingular)
+
 The nonsingular Wishart law `TauCeti.Probability.nonsingularWishartMeasure n S` is the law on the
 symmetric-matrix subspace whose density against `TauCeti.symmetricLebesgue` is
 `(det A) ^ ((n - p - 1) / 2) * exp (-trace (S⁻¹ * A) / 2)`, normalized by

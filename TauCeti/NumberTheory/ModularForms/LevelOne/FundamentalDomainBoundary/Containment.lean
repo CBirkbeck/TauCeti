@@ -11,6 +11,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 /-!
 # The boundary contour lies in the truncated fundamental domain
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment)
+
 The valence-formula contour `fdBoundary H` traces the boundary of the truncated fundamental
 domain, so every point of it lies in that domain's closure. This file records that containment
 and the four coordinate estimates it rests on — a height bound above and below, a bound on the

@@ -11,6 +11,8 @@ import TauCeti.Data.Sym.Basic
 /-!
 # Evaluating the complete homogeneous symmetric polynomial
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPolynomial.Symmetric.Complete)
+
 The complete homogeneous symmetric polynomial `h_d` in variables indexed by a finite type `σ` is
 the sum of all monomials of degree `d`, one for each unordered `d`-tuple of indices.  Evaluating it
 at a family `f : σ → R` therefore sums, over those unordered tuples, the product of the values `f`

@@ -11,6 +11,8 @@ public import Mathlib.Algebra.Lie.OfAssociative
 /-!
 # The left-regular representation of a Lie map into an associative algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.OfAssociative)
+
 Let `q : L →ₗ⁅R⁆ A` be a Lie algebra map from `L` into an associative `R`-algebra `A`, the latter
 bracketed by its ring commutator. Left multiplication by the image of `q` makes `A` itself a
 representation of `L`:

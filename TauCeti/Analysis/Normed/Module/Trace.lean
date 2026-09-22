@@ -12,6 +12,8 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 /-!
 # The trace of a continuous endomorphism as a continuous linear functional
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Normed.Module.Trace)
+
 On a finite-dimensional normed space `V` over a complete nontrivially normed field `𝕜`, the trace
 `T ↦ trace T` of a continuous endomorphism is itself a continuous linear functional
 `TauCeti.traceCLM 𝕜 V : (V →L[𝕜] V) →L[𝕜] 𝕜`. Continuity is not something the algebraic

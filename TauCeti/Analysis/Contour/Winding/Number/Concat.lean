@@ -10,6 +10,8 @@ public import TauCeti.Analysis.Contour.NullHomologous
 /-!
 # Concatenation API for the generalized winding number
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Number.Concat)
+
 This file records the additivity of `Contour.windingNumber` over adjacent parameter intervals.
 The contour-integration roadmap uses finite decompositions of a curve into an avoiding part and
 model sectors in Hungerbühler--Wasem Proposition 2.2; those decompositions need to add the

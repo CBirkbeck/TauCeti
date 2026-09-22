@@ -12,6 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 /-!
 # Functoriality in the coordinate Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Hopf.Map)
+
 `TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints` gives the convolution group on
 `WithConv (H →ₐ[R] A)`, functorial in the value algebra `A`. This file adds the other
 variance needed for the functor-of-points dictionary: a bialgebra morphism

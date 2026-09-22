@@ -17,6 +17,8 @@ import Mathlib.FieldTheory.Perfect
 /-!
 # Dedekind's theorem: the cycle type of a Frobenius is the factorization type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Frobenius.CycleType)
+
 Let `f` be a monic integer polynomial and `p` a prime modulo which `f` is squarefree. Let `M` be
 a number field in which `f` splits, and let `σ ∈ Gal(M/ℚ)` be an arithmetic Frobenius at a prime
 `Q` of `𝓞 M` over `p`. **Dedekind's theorem** says that the permutation `σ` induces on the roots

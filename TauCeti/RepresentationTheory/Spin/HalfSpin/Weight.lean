@@ -14,6 +14,8 @@ import TauCeti.LinearAlgebra.CliffordAlgebra.Grading
 /-!
 # The weights of the half-spin summands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Spin.HalfSpin.Weight)
+
 `TauCeti/RepresentationTheory/Spin/Weight.lean` diagonalizes the spinor module `S = ⋀·W` of a
 polarization under the commuting diagonal bivectors `H i`: the weight spaces are the lines spanned
 by the exterior basis vectors, the weight of the vector indexed by a finite set `s` of coordinates

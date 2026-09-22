@@ -15,6 +15,8 @@ import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Order
 /-!
 # The derived subgroup of an affine group scheme
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Derived.Basic)
+
 Let `H` be a commutative Hopf algebra, representing an affine group scheme `G`. The commutator
 morphism `G × G ⟶ G` need not be a group homomorphism, so its image is not directly represented by
 a quotient Hopf algebra. Instead, this file defines `derivedDefiningIdeal H` to be the largest

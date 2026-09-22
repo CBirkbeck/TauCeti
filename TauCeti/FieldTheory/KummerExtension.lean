@@ -10,6 +10,8 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 /-!
 # Square roots and the binomial `X ^ n - C a`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.KummerExtension)
+
 Mathlib's Kummer theory of `X ^ n - C a` (in `Mathlib/FieldTheory/KummerExtension.lean`) runs
 through a primitive `n`-th root of unity, which is unavailable for `n = 2` in characteristic `2`.
 This file records the elementary facts that need no root of unity: membership in the root set of

@@ -12,6 +12,8 @@ public import TauCeti.Algebra.Homology.DG.Module.Right.Defs
 /-!
 # The cohomology of a differential graded right module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.DG.Module.Right.Cohomology)
+
 Let `M` be a differential graded right module over a differential graded algebra `A`. Its cycles
 are the kernel of the module differential and its boundaries are the image. The cycles form a
 right module over the algebra cycles, the boundaries form a right submodule, and the resulting

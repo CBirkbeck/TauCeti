@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Hopf.InnerConjugation
 /-!
 # Inner conjugation in Hopf coordinates
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.CommHopfAlgCat.InnerConjugation)
+
 An `R`-valued point `g` of an affine group acts on all algebra-valued points by inner
 conjugation. This action is natural in the value algebra and is a group automorphism. Full
 faithfulness of the functor of points therefore recovers a coordinate Hopf-algebra

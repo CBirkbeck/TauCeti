@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Basic
 /-!
 # The assembled rational Dixon--Schneider solver
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.CharacterTable.Dixon.Rational.Solver)
+
 This file assembles the integer-valued stage of the Burnside--Dixon--Schneider character-table
 algorithm. Given executable conjugacy-class data and a prime, it performs the
 modular common-eigenrow search, lifts the rows by signed least representatives, searches the

@@ -11,6 +11,8 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.DeltaNatur
 /-!
 # The connecting maps and the explicit low-degree cup products
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.ConnectingMap)
+
 The Leibniz rule `δ (x ⌣ y) = δ x ⌣ y + (-1)^p (x ⌣ δ y)` is not a statement until one says
 *which* short exact sequences of coefficients the two connecting maps belong to, and how the
 pairing relates them. Cupping with a fixed class in the second variable and cupping with a fixed

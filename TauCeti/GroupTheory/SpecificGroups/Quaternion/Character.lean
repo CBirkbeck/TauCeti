@@ -12,6 +12,8 @@ public import TauCeti.GroupTheory.SpecificGroups.Quaternion.Basic
 /-!
 # Characters of the rotation subgroup of a quaternion group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.SpecificGroups.Quaternion.Character)
+
 The rotation subgroup of `QuaternionGroup n` is cyclic of order `2 * n`, its coordinate
 `TauCeti.quaternionRotationsMulEquiv` identifying it with `Multiplicative (ZMod (2 * n))`.  A
 `(2 * n)`-th root of unity therefore defines a linear character by sending `a i` to the

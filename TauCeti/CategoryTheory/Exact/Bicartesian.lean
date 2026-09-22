@@ -14,6 +14,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Bicartesi
 /-!
 # Bicartesian squares in exact categories
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.CategoryTheory.Exact.Bicartesian)
+
 A pushout of an inflation in an exact category is also a pullback.  Dually, a pullback of a
 deflation is also a pushout.  Thus the base-change squares supplied by Quillen's E2 and E2op
 axioms are bicartesian.

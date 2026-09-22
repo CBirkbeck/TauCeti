@@ -12,6 +12,8 @@ import TauCeti.Analysis.Contour.Curve.IntegralBound
 /-!
 # The winding number vanishes far from a bounded closed curve
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.Contour.Winding.Vanishing)
+
 For a closed curve `γ` continuous on the compact interval `Set.uIcc a b` (so its image is bounded),
 differentiable off a countable set, with interval-integrable derivative, the generalized winding
 number `fun w ↦ windingNumber γ a b w` vanishes for every `w` sufficiently far from the origin:

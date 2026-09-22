@@ -10,6 +10,8 @@ public import Mathlib.RepresentationTheory.Irreducible
 /-!
 # The representation carried by a `k[G]`-module
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.OfModule)
+
 Mathlib's `Representation.ofModule' M` reads a `k[G]`-module `M` whose `k`-module structure is
 already the restriction of its `k[G]`-module structure as a representation of `G` on `M` itself,
 rather than on a type synonym.  That is the convenient form -- a left ideal, say, stays a left

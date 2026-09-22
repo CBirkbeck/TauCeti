@@ -11,6 +11,8 @@ public import Mathlib.Order.SupIndep
 /-!
 # Products of submodules
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Submodule.Prod)
+
 A product submodule `p.prod q : Submodule R (M × N)` is, as a module, the product `p × q`.
 
 Products also preserve indexed suprema and independence of families of submodules.

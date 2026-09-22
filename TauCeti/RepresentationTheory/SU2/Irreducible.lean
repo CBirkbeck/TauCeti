@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.SU2.Weight
 /-!
 # The symmetric powers of the standard representation of `SU(2)` are irreducible
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.SU2.Irreducible)
+
 `TauCeti/RepresentationTheory/SU2/Weight.lean` decomposes `Symᵈ(ℂ²)` under the maximal torus: the
 monomial basis `TauCeti.SU2.weightBasis` consists of weight vectors, the `d + 1` weights are
 pairwise distinct, and consequently a torus-stable subspace is spanned by the weight vectors it

@@ -11,6 +11,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Unipotent.Radical.Faithful
 /-!
 # Triviality of the unipotent radical of a weight Levi
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Weight.Levi.UnipotentRadical)
+
 Over an algebraically closed field, every normal smooth unipotent closed subgroup of a
 general-linear weight Levi is trivial. In particular, the unipotent radical is trivial.
 The statements allow repeated weights, arbitrary characteristic, and rank zero. They provide

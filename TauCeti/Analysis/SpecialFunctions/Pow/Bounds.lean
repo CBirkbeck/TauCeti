@@ -10,6 +10,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Elementary bounds on real powers with a negative exponent
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Analysis.SpecialFunctions.Pow.Bounds)
+
 A base at least `2` raised to a negative exponent of size at least `1` is at most `1 / 2`. This
 is the shape in which the local ratio of an Euler factor is bounded away from `1`, so that the
 denominator `1 - y ^ (-s)` stays bounded below.

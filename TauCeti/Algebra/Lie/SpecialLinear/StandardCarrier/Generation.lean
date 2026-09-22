@@ -12,6 +12,8 @@ import Mathlib.Topology.Algebra.Group.Matrix
 /-!
 # Generation of type A full-weight carrier points
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.SpecialLinear.StandardCarrier.Generation)
+
 This file proves that every elementary transvection over a commutative ring is a matrix point of
 the full-weight type `A_r` carrier. Consequently, whenever elementary transvections generate the
 special linear group over a ring, the carrier points are exactly the image of that special linear

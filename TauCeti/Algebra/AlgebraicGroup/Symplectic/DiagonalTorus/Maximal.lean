@@ -15,6 +15,8 @@ import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Symplectic.Diagonal.Centr
 /-!
 # Maximality of the diagonal torus in the symplectic group
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.Symplectic.DiagonalTorus.Maximal)
+
 Over any field, the paired diagonal torus of `Sp₂ₘ` is a maximal torus. Over an algebraically
 closed field it is more: no reduced commutative closed subgroup scheme properly contains it. That
 is stronger than maximality among tori, because a competing subgroup here need not be a torus, or

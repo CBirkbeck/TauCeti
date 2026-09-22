@@ -13,6 +13,8 @@ import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 /-!
 # Wedhorn Lemma 7.31 and Corollary 7.32: dominating a nonvanishing element by a unit
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AdicSpace.Cont.DominatingUnit)
+
 Let `A` be a Tate ring, `X` a quasi-compact set of continuous points of `Spv A`, and `f : A` an
 element that vanishes at no point of `X`. Wedhorn Corollary 7.32 produces a **unit** of `A` whose
 valuation is everywhere on `X` strictly below that of `f`; Lemma 7.31 is the neighbourhood-of-zero

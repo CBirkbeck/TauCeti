@@ -13,6 +13,8 @@ import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit
 /-!
 # Coprime multiplication in the `GL_n` Hecke ring
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GLn.CoprimeMul)
+
 One row of the multiplication table of the integral Hecke ring of the arithmetic Hecke
 triple (Shimura, Proposition 3.16): when the determinants `∏ aᵢ`, `∏ bᵢ` are coprime, the
 product of the two diagonal double cosets is again a single diagonal coset,

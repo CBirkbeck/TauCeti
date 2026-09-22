@@ -14,6 +14,8 @@ import TauCeti.NumberTheory.NumberField.NarrowClassGroup.TotallyComplex
 /-!
 # The genus field of a quadratic field has Galois group `Cl⁺(K)/Cl⁺(K)²`
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.Multiquadratic.CandidateGenusField.Relative.GenusCharacter)
+
 For a squarefree integer `d` let `K = ℚ(√d)` be the embedded quadratic base of the candidate genus
 field `K_gen = candidateGenusField hd`, the compositum of the quadratic fields of the prime
 discriminants dividing `disc K`. It is the narrow genus field of `K`

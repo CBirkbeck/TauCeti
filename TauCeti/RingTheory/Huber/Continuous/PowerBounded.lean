@@ -11,6 +11,8 @@ public import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 /-!
 # A continuous archimedean valuation is bounded by one on the power-bounded elements
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Continuous.PowerBounded)
+
 **Wedhorn Proposition 7.41.** If `v` is a continuous valuation whose value group is
 archimedean, and some topologically nilpotent `b` has `v b ≠ 0`, then `v a ≤ 1` for every
 power-bounded `a`.

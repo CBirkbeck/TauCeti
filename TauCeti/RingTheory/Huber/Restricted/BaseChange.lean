@@ -16,6 +16,8 @@ import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 /-!
 # Base change for restricted power series
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.Restricted.BaseChange)
+
 Wedhorn's Remark 8.29 compares `M ⊗[A] A⟨T₁, …, Tₖ⟩` with `M⟨T₁, …, Tₖ⟩` for a finitely generated
 module `M` over a complete noetherian Tate ring, and finds them isomorphic. This file builds the
 comparison map in the generality where it exists — writing it down needs no finiteness and no

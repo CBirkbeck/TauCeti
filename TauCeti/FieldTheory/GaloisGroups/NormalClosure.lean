@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.GaloisGroups.Stabilizer
 /-!
 # Polynomial Galois groups and normal closures
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.GaloisGroups.NormalClosure)
+
 For an element `x` in a normal extension `E / F`, the splitting field of `minpoly F x`
 is isomorphic to the normal closure of `F⟮x⟯` inside `E`. Conjugation by that field
 isomorphism identifies the polynomial Galois group with the automorphism group of

@@ -15,6 +15,8 @@ import Mathlib.Tactic.NoncommRing
 /-!
 # Basic Clifford algebra API
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.CliffordAlgebra.Basic)
+
 This file records general scalar properties of a Clifford algebra obtained from Mathlib's
 linear equivalence with the exterior algebra.
 -/

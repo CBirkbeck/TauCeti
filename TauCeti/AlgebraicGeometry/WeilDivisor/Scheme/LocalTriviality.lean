@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LocallyPrincipal
 /-!
 # Line bundles from locally principal Weil divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.WeilDivisor.Scheme.LocalTriviality)
+
 Let `X` be a locally Noetherian integral scheme of dimension at most one whose codimension-one
 local rings are discrete valuation rings. This file proves that a locally principal Weil divisor
 `D` defines a line bundle `𝒪_X(D)`.

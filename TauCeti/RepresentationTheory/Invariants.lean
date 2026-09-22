@@ -12,6 +12,8 @@ import TauCeti.RepresentationTheory.Irreducible
 /-!
 # Invariants of group representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Invariants)
+
 Mathlib names the group sum `∑ g, ρ g` of a finite-group representation `Representation.norm`,
 builds the averaging projection `Representation.averageMap` separately out of the group-algebra
 element `GroupAlgebra.average`, and records that the latter projects onto the invariants

@@ -10,6 +10,8 @@ public import Mathlib.Topology.Covering.Quotient
 /-!
 # The balanced product of a quotient covering map with a discrete set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Covering.BalancedProduct)
+
 Let a group `G` act on a space `E` so that `q : E → X` presents `X` as the quotient `E / G` in
 the strong sense of Mathlib's `IsQuotientCoveringMap`: the fibres of `q` are the orbits, and every
 point of `E` has a neighbourhood whose `G`-translates are pairwise disjoint. For a discrete

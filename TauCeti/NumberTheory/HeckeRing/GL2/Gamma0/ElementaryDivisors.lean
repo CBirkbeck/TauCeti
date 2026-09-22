@@ -13,6 +13,8 @@ import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.CoprimeRepresentative
 /-!
 # `Γ₀(N)` double cosets are determined by their elementary divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.ElementaryDivisors)
+
 Two elements of `Δ₀(N)` whose integral matrices have the same determinant and the same common
 divisors of entries lie in the same `Γ₀(N)`-double coset. No hypothesis relating the
 determinant to the level is needed; this is the form of Shimura's Proposition 3.32 in which the

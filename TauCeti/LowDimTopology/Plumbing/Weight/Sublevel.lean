@@ -14,6 +14,8 @@ public import TauCeti.LowDimTopology.Plumbing.Weight.Translation
 /-!
 # Sublevel sets of the plumbing-lattice weight function
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LowDimTopology.Plumbing.Weight.Sublevel)
+
 Némethi builds lattice homology out of the sublevel sets `S_c = {x | χ_k(x) ≤ c}` of the
 characteristic weight function of a **negative-definite** plumbing: the lattice complex is
 filtered by them, and the invariants read off from that filtration — including the `d`-invariant

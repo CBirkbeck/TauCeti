@@ -11,6 +11,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.AdicTopology
 /-!
 # Evaluating a multivariate power series at arguments from an adic ideal
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.MvPowerSeries.Evaluation)
+
 Let `S` carry the `I`-adic topology for an ideal `I`, and let `f` be a multivariate power series
 evaluated at a family `a : σ → S` through a continuous coefficient map `φ`. This file bounds the
 value `eval₂ φ a f` by a power of `I`, in the three forms the estimate is used in: the value is

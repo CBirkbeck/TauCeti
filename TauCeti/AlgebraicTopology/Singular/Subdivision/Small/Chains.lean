@@ -11,6 +11,8 @@ public import TauCeti.AlgebraicTopology.Singular.Subdivision.Small.Basic
 /-!
 # Singular chains subordinate to an open cover
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.Singular.Subdivision.Small.Chains)
+
 A singular simplex is *small* for a family of subsets when its image is contained in one member
 of the family. Small simplices form a subcomplex of the singular simplicial set: every face and
 degeneracy of a small simplex is still small. Applying Mathlib's simplicial chain-complex functor

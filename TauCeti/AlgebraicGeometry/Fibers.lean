@@ -15,6 +15,8 @@ public import TauCeti.RingTheory.DiscreteValuationRing.FractionRing
 /-!
 # Generic and special fibres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.Fibers)
+
 For a scheme over a ring `R`, this file defines its scalar-extension fibre along a ring map
 `R → K`. For a local ring, it also defines the special fibre obtained by base change to the
 residue field. The projection identities and pullback witnesses expose the defining squares.

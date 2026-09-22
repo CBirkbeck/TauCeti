@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicTopology.UniversalCover.Deck.Fiber.Transport
 /-!
 # Regular deck actions on fibres
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicTopology.UniversalCover.Deck.Regular.Basic)
+
 For a map `p : E → B`, regularity of the deck action is the statement that `p` is
 surjective and the deck transformation group acts transitively on every fibre. This is the
 deck-action formulation of regular covers.

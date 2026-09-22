@@ -14,6 +14,8 @@ import Mathlib.MeasureTheory.Measure.Dirac.Basic
 /-!
 # Measures on a finite partial order are determined by their upper sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.Measure.FiniteOrder)
+
 Mathlib's `MeasureTheory.Measure.ext_of_Ici` says that a finite Borel measure on a second-countable
 linear order is determined by its values on the closed upper rays `Set.Ici a`. On a *finite*
 partial order no topology is needed, and neither is a total order: the ray `Set.Ici a` is the point

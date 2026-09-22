@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Basis.Basic
 /-!
 # Reading a vector off a one-point coordinate support
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Basis.Basic)
+
 A vector whose coordinates in a basis vanish outside a single index is that one coordinate times
 the corresponding basis vector.  This repackages `Module.Basis.repr_symm_single`, which it runs
 through in the same direction, for the common situation where what one holds is a bound on the

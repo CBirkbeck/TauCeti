@@ -10,6 +10,8 @@ public import TauCeti.Geometry.Manifold.ContMDiffMap.Chart.Jet
 /-!
 # The weak Whitney topology for manifold-valued maps
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Manifold.ContMDiffMap.Chart.Topology)
+
 A compact derivative test fixes source and target charts, a compact subset of the source
 chart target, a derivative order, and an open set of multilinear maps. A map passes the
 test when it carries the compact set into the target chart and its coordinate derivative

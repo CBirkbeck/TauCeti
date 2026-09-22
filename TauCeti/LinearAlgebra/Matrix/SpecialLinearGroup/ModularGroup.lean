@@ -10,6 +10,8 @@ public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 /-!
 # The modular-group generator in special linear groups
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.ModularGroup)
+
 This module records the matrix of the standard modular-group generator after scalar extension
 from `SL₂(ℤ)` to `SL₂(R)`.
 

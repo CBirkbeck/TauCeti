@@ -15,6 +15,8 @@ import TauCeti.NumberTheory.NumberField.Index.Exponent
 /-!
 # Dedekind's criterion
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.NumberTheory.NumberField.Index.DedekindCriterion)
+
 Let `θ` be an integral primitive element of a number field `K`, with minimal polynomial
 `f = minpoly ℤ θ`, and let `p` be a prime. Factor the reduction of `f` modulo `p` as
 

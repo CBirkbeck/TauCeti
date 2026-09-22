@@ -18,6 +18,8 @@ import Mathlib.Order.Interval.Finset.Fin
 /-!
 # The Jacobian of Cholesky reconstruction
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.Matrix.Cholesky.Jacobian)
+
 Cholesky reconstruction sends a lower-triangular matrix `L` to the symmetric matrix `L * Lᵀ`.
 Both sides are determined by their on-or-below-diagonal entries, so in the coordinates of
 `TauCeti.lowerTriangle` the reconstruction becomes a quadratic self-map

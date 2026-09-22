@@ -13,6 +13,8 @@ public import TauCeti.Probability.Exchangeability.RandomMeasure.Block
 /-!
 # Coded coordinate marginals of an invariant random row law
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.AldousHoover.InvariantRandomMeasure)
+
 For a separately exchangeable array, de Finetti supplies a random probability measure `ν` on row
 paths. Its law is invariant under permuting the column coordinates, although `ν` itself is not
 generally exchangeable almost surely. The invariant-random-measure API turns the one-coordinate

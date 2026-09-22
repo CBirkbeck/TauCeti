@@ -14,6 +14,8 @@ import Mathlib.RingTheory.IntegralClosure.IsIntegralClosure.Basic
 /-!
 # Changing the base ring of an integrality claim
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.IntegralClosure.IsIntegral.Basic)
+
 Mathlib's `isIntegral_trans` transfers integrality down a scalar tower `R → A → B`. The variant
 here drops the tower: the two candidate base rings are only required to map compatibly into the
 ring where the element lives, which is what happens when both of them sit inside that ring

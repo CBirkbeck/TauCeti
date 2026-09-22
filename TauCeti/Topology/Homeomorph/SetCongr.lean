@@ -10,6 +10,8 @@ public import Mathlib.Topology.Homeomorph.Lemmas
 /-!
 # Evaluating the homeomorphism between equal sets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Homeomorph.SetCongr)
+
 This file records how Mathlib's `Homeomorph.setCongr`, the homeomorphism between the subtypes of
 two equal sets, acts on points.
 

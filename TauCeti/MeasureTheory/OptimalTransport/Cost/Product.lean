@@ -10,6 +10,8 @@ public import TauCeti.MeasureTheory.OptimalTransport.Cost.Basic
 /-!
 # Transport costs of a product problem
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.MeasureTheory.OptimalTransport.Cost.Product)
+
 Two transport problems, one from `μ₁` to `ν₁` with cost `c₁` and one from `μ₂` to `ν₂` with cost
 `c₂`, assemble into a single problem from `μ₁ ⊗ μ₂` to `ν₁ ⊗ ν₂` whose cost is the *additively
 separable* function

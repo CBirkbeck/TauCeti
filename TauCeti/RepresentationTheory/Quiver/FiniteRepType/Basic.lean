@@ -13,6 +13,8 @@ public import TauCeti.RepresentationTheory.Quiver.Representation.FiniteDimension
 /-!
 # Finite representation type
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Quiver.FiniteRepType.Basic)
+
 A quiver has **finite representation type** when it has only finitely many isomorphism classes of
 finite-dimensional indecomposable representations. This file defines `TauCeti.IsFiniteRepType`, the
 finiteness of the skeleton of the full subcategory of finite-dimensional indecomposables, whose

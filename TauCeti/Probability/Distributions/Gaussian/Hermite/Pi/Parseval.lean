@@ -11,6 +11,8 @@ public import TauCeti.Probability.Distributions.Gaussian.Hermite.Pi.Basis
 /-!
 # Parseval and expansions for the multivariate Gaussian Hermite basis
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Distributions.Gaussian.Hermite.Pi.Parseval)
+
 `TauCeti.gaussianHermitePiBasis` exhibits the multi-index Hermite products
 `Ψ_a(x) = ∏ᵢ H_{aᵢ}(xᵢ)/√(aᵢ!)` as a Hilbert basis of `L²(γ^ι)`, `γ = N(0, 1)`. This file supplies
 the coefficient, Parseval, and reconstruction API for that basis: the expansion of an `L²` function

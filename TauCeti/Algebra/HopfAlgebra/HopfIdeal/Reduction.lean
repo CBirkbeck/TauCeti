@@ -11,6 +11,8 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Basic
 /-!
 # Reduction of commutative Hopf algebras
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.HopfAlgebra.HopfIdeal.Reduction)
+
 Let `H` be a commutative Hopf algebra over a reduced commutative ring. Its nilradical is
 automatically stable under the counit and antipode. It is stable under comultiplication provided
 the tensor square of the reduced algebra is reduced: the image of a nilpotent element under

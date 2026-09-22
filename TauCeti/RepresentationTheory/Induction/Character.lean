@@ -12,6 +12,8 @@ public import TauCeti.RepresentationTheory.Induction.FiniteDimensional.Basic
 /-!
 # Characters of induced representations
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RepresentationTheory.Induction.Character)
+
 This file proves the coset-representative formula for the character of a representation induced
 from a finite-index subgroup. The formula is valid over any field and has no division by the
 subgroup order.

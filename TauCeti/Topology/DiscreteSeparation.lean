@@ -12,6 +12,8 @@ import Mathlib.Topology.ClusterPt
 /-!
 # Shrinking an open set to separate part of a non-accumulating set
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.DiscreteSeparation)
+
 If every point of `K ⊆ V` avoids the closure of `Z \ K`, the open ambient set `V`
 shrinks to an open neighbourhood of `K` meeting `Z` in exactly `K ∩ Z`. This is the
 localization step for residue computations — a contour region is

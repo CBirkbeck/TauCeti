@@ -12,6 +12,8 @@ public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Basic
 /-!
 # Pro-`p` groups and supernatural order
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Topology.Algebra.Group.Profinite.ProP.Order)
+
 A profinite group is pro-`p` exactly when its supernatural order is supported at `p`. This
 connects the finite-quotient definition of `IsProP` with the primewise invariant
 `profiniteOrder`: every quotient by an open normal subgroup has prime-power order precisely

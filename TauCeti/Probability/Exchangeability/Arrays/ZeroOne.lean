@@ -16,6 +16,8 @@ import TauCeti.Probability.Exchangeability.PermutationExtension
 /-!
 # Joint dissociation and the corner tail of an array
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Probability.Exchangeability.Arrays.ZeroOne)
+
 A dissociated array has no global randomness left to remember: the events readable from the entries
 `X (i, j)` with both indices arbitrarily large are almost surely trivial.
 

@@ -10,6 +10,8 @@ public import TauCeti.GroupTheory.DoubleCoset.Basic
 /-!
 # Double cosets
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.GroupTheory.DoubleCoset)
+
 Compatibility import for the left-coset decomposition of a double coset
 (`TauCeti.GroupTheory.DoubleCoset.Basic`). It declares nothing of its own, and keeps the import
 path `TauCeti.GroupTheory.DoubleCoset` — which named that theory before it moved into the

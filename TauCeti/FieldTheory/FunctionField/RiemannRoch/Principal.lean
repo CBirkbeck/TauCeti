@@ -11,6 +11,8 @@ public import TauCeti.FieldTheory.FunctionField.RiemannRoch.Basic
 /-!
 # Riemann–Roch spaces and principal divisors
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.FieldTheory.FunctionField.RiemannRoch.Principal)
+
 The Riemann–Roch space `L(D)` of a divisor of an algebraic function field `F / k` is defined by
 a pole bound; the divisor of a function turns that bound into the single inequality
 `div f + D ≥ 0`.  This file reads `L(D)` through the principal-divisor homomorphism

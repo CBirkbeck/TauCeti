@@ -13,6 +13,8 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.Braided
 /-!
 # The monoidal structure of cochain complexes of modules on homogeneous summands
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Homology.Monoidal.Summand)
+
 Mathlib's `HomologicalComplex.monoidalCategory` totalizes the degreewise tensor product, so every
 structural map of `CochainComplex (ModuleCat R) ℤ` is assembled from maps on the homogeneous
 summands `X.X p ⊗ Y.X q` of `X ⊗ Y`.  Mathlib states the component formulas for the auxiliary

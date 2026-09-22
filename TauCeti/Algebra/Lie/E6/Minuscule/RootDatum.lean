@@ -11,6 +11,8 @@ public import TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.Assembly
 /-!
 # Torus characters of the type E6 minuscule carrier in its named root datum
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.Lie.E6.Minuscule.RootDatum)
+
 `TauCeti.E6Minuscule.groupScheme` is the full-weight Chevalley carrier obtained from the
 twenty-seven-dimensional minuscule representation of the type-`E₆` Serre presentation. Its
 numbered raising and lowering subgroups and its rank-six split weight torus are explicit, and

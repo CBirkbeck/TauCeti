@@ -12,6 +12,8 @@ public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Semisimple.Basic
 /-!
 # Semisimple affine group schemes are reductive
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.AlgebraicGeometry.AffineGroupScheme.Semisimple.Reductive)
+
 Every semisimple affine group scheme of finite type over a field is reductive. The coordinate
 Hopf algebra of a semisimple group has no nontrivial connected normal smooth solvable closed
 subgroup after extension to an algebraic closure. In particular it has no nontrivial connected

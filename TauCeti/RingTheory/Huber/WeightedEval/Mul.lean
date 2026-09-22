@@ -10,6 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Map
 /-!
 # The evaluation of a weighted restricted series is multiplicative
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.RingTheory.Huber.WeightedEval.Mul)
+
 `TauCeti/RingTheory/Huber/WeightedEval/Map.lean` gives Wedhorn's evaluation its additive API and
 its values on constants and variables. This file adds multiplicativity,
 `weightedEval (f * g) = weightedEval f * weightedEval g`.

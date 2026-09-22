@@ -12,6 +12,8 @@ public import TauCeti.Geometry.Symplectic.Prod.Basic
 /-!
 # Pointwise energy density for maps from the standard complex line
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Geometry.Symplectic.JHolomorphic.Energy.Basic)
+
 This file adds the first pointwise energy-density bookkeeping for the analytic Heegaard Floer
 roadmap. For a compatible pair `(ω, J)`, the associated metric is
 `g(v, w) = ω(v, J w)`. If a real-linear map `F : ℝ × ℝ → V` is complex-linear, then the

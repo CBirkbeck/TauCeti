@@ -11,6 +11,8 @@ public import Mathlib.Data.Fin.Tuple.Embedding
 /-!
 # The integral roots of type E7
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.Basic)
+
 This file enumerates the 126 roots of type `E7` in the lattices used by the pinned simply connected
 root datum constructed in `TauCeti.LinearAlgebra.RootSystem.SimplyConnectedRootDatum.E7.Datum`.
 Coroots are expressed in the simple-coroot basis and roots in the fundamental-weight basis. The

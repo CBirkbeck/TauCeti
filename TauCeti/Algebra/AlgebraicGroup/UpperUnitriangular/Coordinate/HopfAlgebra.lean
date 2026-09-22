@@ -12,6 +12,8 @@ public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular
 /-!
 # The upper-unitriangular coordinate Hopf algebra
 
+[Reviews and tests of this file](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#m=TauCeti.Algebra.AlgebraicGroup.UpperUnitriangular.Coordinate.HopfAlgebra)
+
 For a commutative ring `R`, inversion of the generic upper-unitriangular matrix equips its
 coordinate bialgebra with an antipode. This file packages that structure as a commutative Hopf
 algebra and records that its polynomial coordinate ring is of finite type.
