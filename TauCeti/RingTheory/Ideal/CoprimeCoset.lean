@@ -19,15 +19,44 @@ be enumerated by translating that subgroup once.
 
 ## Main results
 
-* `TauCeti.Ideal.isCoprime_iff_exists_mem_and_sub_one_mem`: the set is nonempty exactly when `I`
+* `Ideal.isCoprime_iff_exists_mem_and_sub_one_mem`: the set is nonempty exactly when `I`
   and `J` are coprime;
-* `TauCeti.Ideal.setOf_mem_and_sub_one_mem_eq_vadd_inf`: the set is a coset of `I ⊓ J`;
-* `TauCeti.Ideal.setOf_mem_and_sub_one_mem_eq_vadd_mul`: the same coset written over `I * J`.
+* `Ideal.setOf_mem_and_sub_one_mem_eq_vadd_inf`: the set is a coset of `I ⊓ J`;
+* `Ideal.setOf_mem_and_sub_one_mem_eq_vadd_mul`: the same coset written over `I * J`.
 -/
 
 public section
 
-namespace TauCeti.Ideal
+namespace Ideal
+
+section Ring
+
+variable {R : Type*} [Ring R] {I J : Ideal R}
+
+open Pointwise in
+/-- **The set is a coset of `I ⊓ J`.**  The elements of `I` congruent to `1` modulo `J` are a
+translate of `I ⊓ J` by any one of them.  Only the additive structure of the ideals is used. -/
+theorem setOf_mem_and_sub_one_mem_eq_vadd_inf {ξ : R} (hξI : ξ ∈ I) (hξJ : ξ - 1 ∈ J) :
+    {x : R | x ∈ I ∧ x - 1 ∈ J} = ξ +ᵥ ((I ⊓ J : Ideal R) : Set R) := by
+  ext x
+  constructor
+  · rintro ⟨hxI, hxJ⟩
+    -- the difference of two elements is in `I` because both are, and in `J` because both are `1`
+    refine ⟨x - ξ, ⟨I.sub_mem hxI hξI, ?_⟩, add_sub_cancel ξ x⟩
+    simpa using J.sub_mem hxJ hξJ
+  · rintro ⟨d, ⟨hdI, hdJ⟩, rfl⟩
+    refine ⟨I.add_mem hξI hdI, ?_⟩
+    -- `ξ +ᵥ d` is `ξ + d` by definition of the additive action of a ring on itself; no
+    -- simp lemma states this, because `vadd_eq_add` is about the unbundled `+ᵥ` and the goal
+    -- here is the beta-unreduced application left by `rintro`.
+    change ξ + d - 1 ∈ J
+    have : ξ + d - 1 = ξ - 1 + d := by abel
+    rw [this]
+    exact J.add_mem hξJ hdJ
+
+end Ring
+
+section CommRing
 
 variable {R : Type*} [CommRing R] {I J : Ideal R}
 
@@ -35,7 +64,7 @@ variable {R : Type*} [CommRing R] {I J : Ideal R}
 `1` as a sum of an element of each ideal is the same data as such an element. -/
 theorem isCoprime_iff_exists_mem_and_sub_one_mem :
     IsCoprime I J ↔ ∃ x, x ∈ I ∧ x - 1 ∈ J := by
-  rw [_root_.Ideal.isCoprime_iff_exists]
+  rw [isCoprime_iff_exists]
   constructor
   · rintro ⟨a, ha, b, hb, hab⟩
     refine ⟨a, ha, ?_⟩
@@ -49,31 +78,14 @@ theorem isCoprime_iff_exists_mem_and_sub_one_mem :
     exact J.neg_mem hxJ
 
 open Pointwise in
-/-- **The set is a coset of `I ⊓ J`.**  The elements of `I` congruent to `1` modulo `J` are a
-translate of `I ⊓ J` by any one of them. -/
-theorem setOf_mem_and_sub_one_mem_eq_vadd_inf {ξ : R} (hξI : ξ ∈ I) (hξJ : ξ - 1 ∈ J) :
-    {x : R | x ∈ I ∧ x - 1 ∈ J} = ξ +ᵥ ((I ⊓ J : Ideal R) : Set R) := by
-  ext x
-  constructor
-  · rintro ⟨hxI, hxJ⟩
-    -- the difference of two elements is in `I` because both are, and in `J` because both are `1`
-    refine ⟨x - ξ, ⟨I.sub_mem hxI hξI, ?_⟩, add_sub_cancel ξ x⟩
-    simpa using J.sub_mem hxJ hξJ
-  · rintro ⟨d, ⟨hdI, hdJ⟩, rfl⟩
-    refine ⟨I.add_mem hξI hdI, ?_⟩
-    change ξ + d - 1 ∈ J
-    have : ξ + d - 1 = ξ - 1 + d := by ring
-    rw [this]
-    exact J.add_mem hξJ hdJ
-
-open Pointwise in
 /-- **The set is a coset of `I * J`.**  The elements of `I` congruent to `1` modulo `J` are a
 translate of `I * J` by any one of them. -/
 theorem setOf_mem_and_sub_one_mem_eq_vadd_mul {ξ : R} (hξI : ξ ∈ I) (hξJ : ξ - 1 ∈ J) :
     {x : R | x ∈ I ∧ x - 1 ∈ J} = ξ +ᵥ ((I * J : Ideal R) : Set R) := by
   -- the `Ideal R` ascription keeps `*` the ideal product: `open Pointwise` also gives `Set R` one
-  rw [_root_.Ideal.mul_eq_inf_of_isCoprime
-      (isCoprime_iff_exists_mem_and_sub_one_mem.mpr ⟨ξ, hξI, hξJ⟩),
+  rw [mul_eq_inf_of_isCoprime (isCoprime_iff_exists_mem_and_sub_one_mem.mpr ⟨ξ, hξI, hξJ⟩),
     setOf_mem_and_sub_one_mem_eq_vadd_inf hξI hξJ]
 
-end TauCeti.Ideal
+end CommRing
+
+end Ideal
