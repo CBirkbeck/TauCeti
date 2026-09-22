@@ -80,12 +80,6 @@ universe v
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 
-omit [IsTopologicalRing A] in
-private theorem rationalSubset_eq_of_spaBasicOpen_eq {T T' : Finset A} {s s' : A}
-    (h : spaBasicOpen Aplus T s = spaBasicOpen Aplus T' s') :
-    rationalSubset Aplus T s = rationalSubset Aplus T' s' :=
-  (spaBasicOpen_le_spaBasicOpen_iff.mp h.le).antisymm (spaBasicOpen_le_spaBasicOpen_iff.mp h.ge)
-
 /-! ### The presentation chosen for a rational subset -/
 
 /-- **A chosen admissible presentation** of a rational subset of `V`. Every object of
