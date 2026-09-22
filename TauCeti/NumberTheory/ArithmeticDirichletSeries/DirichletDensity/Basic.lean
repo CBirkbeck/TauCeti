@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Algebra.Order.BigOperators.Sum.Erase
+public import TauCeti.Algebra.Order.BigOperators.Sum.Slack
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Convergence
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.ZetaSumPartition
 public import TauCeti.NumberTheory.NumberField.DirichletDensityBounds
@@ -21,10 +21,11 @@ For a number field `K`, Mathlib's `NumberField.Set.HasDirichletDensity S δ` say
 This file proves the elementary calculus of this predicate: uniqueness, the value `1` on all
 primes, monotonicity, additivity on finite disjoint unions, complements, and two squeezes. The first
 squeezes a set between two sets of the same density. The second is the finite-partition squeeze:
-given a finite pairwise disjoint family whose union has a known density, lower bounds on every
-member that already sum to that density leave no room, so each member's density is exactly its
-bound. It also shows that one-sided density bounds move along inclusions of sets, which is what
-makes both squeezes work.
+given a finite pairwise disjoint family whose union has `δ` as an *upper* density bound, lower
+bounds on every member that already sum to `δ` leave no room, so each member's density is exactly
+its bound. It also shows that one-sided density bounds move along inclusions of sets, which is
+what makes the first squeeze work; the second rests instead on splitting the union's ratio exactly
+and spending the summed lower bounds against it.
 
 All of these are statements about the ratio for `s` close to `1` from the right, and on that
 side both inputs they need are available: for `1 < s` each partial sum is a genuine sum rather
@@ -49,8 +50,8 @@ finite set of primes have density zero; the finite-error statements that use it 
 * `NumberField.Set.hasDirichletDensity_of_subset_of_subset`: a set squeezed between two sets of
   density `δ` has density `δ`.
 * `NumberField.Set.isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound`: in a
-  finite disjoint family whose union has density `δ`, lower bounds summing to `δ` bound each
-  member from above as well.
+  finite disjoint family whose union has `δ` as an upper density bound, lower bounds summing to
+  `δ` bound each member from above as well.
 * `NumberField.Set.hasDirichletDensity_of_squeeze`: hence each such
   member has density exactly its lower bound.
 
@@ -226,8 +227,12 @@ private theorem eventually_forall_mem_erase_sub_lt {ι : Type*} [DecidableEq ι]
   eventually_all_finset _ |>.2 fun i hi ↦ isLowerDirichletDensityBound_iff.mp (hlow i hi) η hη
 
 /-- **Lower bounds on the other members bound this one from above.** A finite pairwise disjoint
-family exhausts a union of known density `δ`, so one member's ratio is what the others leave
-behind; if the lower bounds `d` already sum to `δ`, what they leave behind is `d i₀`. -/
+family splits the union's ratio exactly, so one member's ratio is what the others leave behind; if
+the lower bounds `d` already sum to `δ`, and `δ` bounds the union from above, what they leave
+behind is `d i₀`.
+
+Only an upper bound on the union is needed, which is what the proof consumes; a caller holding the
+full density passes `.isUpperDirichletDensityBound`. -/
 theorem isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound {ι : Type*}
     {s : Finset ι} {f : ι → Set (HeightOneSpectrum (𝓞 K))} {d : ι → ℝ} {i₀ : ι}
     (hi₀ : i₀ ∈ s) (hdisj : (s : Set ι).PairwiseDisjoint f)
@@ -247,12 +252,15 @@ theorem isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound {ι 
     hUb, self_mem_nhdsWithin]
     with t ht_oth ht_union (ht1 : 1 < t)
   rw [primeIdealZetaSum_div_univ_eq_sub_sum_erase hdisj ht1 hi₀]
+  -- Erasing `i₀` only shrinks the index set, so the budget `#s * η = ε / 2` still covers it.
+  have hbudget : ((s.erase i₀).card : ℝ) * η ≤ ε / 2 :=
+    hhalf ▸ mul_le_mul_of_nonneg_right (Nat.mono_cast Finset.card_erase_le) hη.le
   -- The union's ratio costs `ε / 2`; the other members' lower bounds cost the other half.
-  linarith [Finset.sub_sub_le_sum_erase_of_forall_sub_le hi₀ hsum
-    (fun i hi ↦ (ht_oth i hi).le) hη.le hhalf.le]
+  linarith [Finset.sum_sub_le_sum_of_forall_sub_le (fun i hi ↦ (ht_oth i hi).le) hbudget,
+    Finset.sum_erase_eq_sub (f := d) hi₀]
 
 /-- **A lower bound on every member of a finite disjoint family is exact once the bounds saturate
-the union's density.**
+the union's upper bound.**
 
 Distinct from `hasDirichletDensity_of_subset_of_subset`, which squeezes a single set between two
 sets of the same density. Here nothing is sandwiched: the upper bound on one member is
