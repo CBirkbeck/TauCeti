@@ -26,8 +26,10 @@ subgroup of the units, so this file states the orbit relation directly.
 
 ## Main results
 
-* `TauCeti.GlobalNumberFields.exists_unitsCongruenceTorsion_smul_iff`: the orbit relation, as a
-  congruence-unit translation.
+* `TauCeti.GlobalNumberFields.exists_mem_unitsCongruenceTorsion_smul_iff`: the orbit relation for
+  any two points of the domain;
+* `TauCeti.GlobalNumberFields.exists_unitsCongruenceTorsion_smul_iff`: the same on
+  `rayIntegerSet 𝔪`, which is the form the count consumes.
 -/
 
 public section
@@ -40,26 +42,32 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- **The orbit relation.**  Two points of `rayIntegerSet 𝔪` lie in one orbit of the congruence
-roots of unity exactly when some unit congruent to one modulo `𝔪` carries one to the other in
-the mixed space.  Since `mixedEmbedding` is injective and multiplicative, that is the same as
-their algebraic integers differing by such a unit.
+/-- **The orbit relation, for any two points of the domain.**  A congruence unit carrying one
+point of `rayFundamentalDomain 𝔪` to another is automatically a root of unity, so the two
+subgroups have the same orbits on the domain.  Only membership of the domain is needed; the
+points need not be images of algebraic integers. -/
+theorem exists_mem_unitsCongruenceTorsion_smul_iff {𝔪 : Modulus K} {a b : mixedSpace K}
+    (ha : a ∈ rayFundamentalDomain 𝔪) (hb : b ∈ rayFundamentalDomain 𝔪) :
+    (∃ ζ ∈ unitsCongruenceTorsion 𝔪, ζ • a = b) ↔
+      ∃ u ∈ unitsCongruenceSubgroup 𝔪, u • a = b := by
+  refine ⟨fun ⟨ζ, hζ, h⟩ ↦ ⟨ζ, (mem_unitsCongruenceTorsion.mp hζ).1, h⟩, fun ⟨u, hu, hsmul⟩ ↦ ?_⟩
+  -- the unit is constrained only by a congruence; membership of both points in the domain is
+  -- what upgrades it to a root of unity
+  exact ⟨u, mem_unitsCongruenceTorsion.mpr ⟨hu,
+    (unitsCongruenceSubgroup_smul_mem_rayFundamentalDomain_iff_mem_torsion ha hu).mp
+      (hsmul ▸ hb)⟩, hsmul⟩
 
-The content is the reverse direction: the right-hand side constrains the unit only by a
-congruence, and it is membership of both points in the ray fundamental domain that upgrades it
-to a root of unity. -/
+/-- **The orbit relation on the ray integer set.**  Two points of `rayIntegerSet 𝔪` lie in one
+orbit of the congruence roots of unity exactly when some unit congruent to one modulo `𝔪` carries
+one to the other in the mixed space.  Since `mixedEmbedding` is injective and multiplicative, that
+is the same as their algebraic integers differing by such a unit, which is the form the ray class
+count consumes. -/
 theorem exists_unitsCongruenceTorsion_smul_iff {𝔪 : Modulus K} (a b : rayIntegerSet 𝔪) :
     (∃ ζ : unitsCongruenceTorsion 𝔪, ζ • a = b) ↔
       ∃ u ∈ unitsCongruenceSubgroup 𝔪, u • (a : mixedSpace K) = (b : mixedSpace K) := by
-  constructor
-  · -- Forward: forget that `ζ` is a root of unity and read the action off in the mixed space.
-    rintro ⟨⟨ζ, hζ⟩, rfl⟩
-    exact ⟨ζ, (mem_unitsCongruenceTorsion.mp hζ).1, by simp⟩
-  · -- Reverse: `u` carries `a` to `b`, both in the domain, so `u` is a root of unity.
-    rintro ⟨u, hu, hsmul⟩
-    have htors : u ∈ NumberField.Units.torsion K :=
-      (unitsCongruenceSubgroup_smul_mem_rayFundamentalDomain_iff_mem_torsion
-        (mem_rayIntegerSet.mp a.prop).1 hu).mp (hsmul ▸ (mem_rayIntegerSet.mp b.prop).1)
-    exact ⟨⟨u, mem_unitsCongruenceTorsion.mpr ⟨hu, htors⟩⟩, Subtype.ext (by simpa using hsmul)⟩
+  rw [← exists_mem_unitsCongruenceTorsion_smul_iff (mem_rayIntegerSet.mp a.prop).1
+    (mem_rayIntegerSet.mp b.prop).1]
+  exact ⟨fun ⟨⟨ζ, hζ⟩, h⟩ ↦ ⟨ζ, hζ, by simpa using congrArg Subtype.val h⟩,
+    fun ⟨ζ, hζ, h⟩ ↦ ⟨⟨ζ, hζ⟩, Subtype.ext (by simpa using h)⟩⟩
 
 end TauCeti.GlobalNumberFields
