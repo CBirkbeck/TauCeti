@@ -253,8 +253,9 @@ theorem isUpperDirichletDensityBound_of_forall_isLowerDirichletDensityBound {ι 
     with t ht_oth ht_union (ht1 : 1 < t)
   rw [primeIdealZetaSum_div_univ_eq_sub_sum_erase hdisj ht1 hi₀]
   -- Erasing `i₀` only shrinks the index set, so the budget `#s * η = ε / 2` still covers it.
-  have hbudget : ((s.erase i₀).card : ℝ) * η ≤ ε / 2 :=
-    hhalf ▸ mul_le_mul_of_nonneg_right (Nat.mono_cast Finset.card_erase_le) hη.le
+  have hbudget : (s.erase i₀).card • η ≤ ε / 2 := by
+    rw [nsmul_eq_mul]
+    exact hhalf ▸ mul_le_mul_of_nonneg_right (Nat.mono_cast Finset.card_erase_le) hη.le
   -- The union's ratio costs `ε / 2`; the other members' lower bounds cost the other half.
   linarith [Finset.sum_sub_le_sum_of_forall_sub_le (fun i hi ↦ (ht_oth i hi).le) hbudget,
     Finset.sum_erase_eq_sub (f := d) hi₀]
