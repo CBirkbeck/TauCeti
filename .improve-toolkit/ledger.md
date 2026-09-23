@@ -42113,3 +42113,14 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 
 #8332 is green on `a32a2f72e` and `awaiting-review`. #8339 is `ready-to-merge` (queued). #8344 is `review-in-progress`. #8381 is on its first build with astra pending
 (waiter running). No merges. Pin `dc4b8d60d5`, main `fe1d9dad6`.
+
+## r944 — 2026-09-23T19:34Z (cron)
+
+* **All three roadmap-rework PRs are approved:** #8332 on `a32a2f72e` (19:34:04Z; `attribution` did **not** re-fire once the roadmap
+  reference was gone, so the r939 rule holds), #8344 on `ba8ab38b9` (19:24:51Z) and #8339 (queued). All are `ready-to-merge`.
+* #8381's first build has been **queued** since 19:19:07Z (the CI queue is busy); its astra and build waiter is running.
+* **Step 5, kind 2: opened draft #8388**, `improve/jointlaw-style` @ `35ba59b71`, from `e1b9c755d`; `Roadmap: Exchangeability` (as
+  #5442). Target: `Probability/Exchangeability/Arrays/JointLaw.lean` (320 lines, 89 `fun … =>`, no chains, no match arms). Edits: 89 arrows
+  (asserted), and under the r939 rule the standalone docstring paragraph "These results advance the exchangeable-arrays milestone in
+  `…/README.md`, Layer 8." is deleted outright. Gate 12/0/0. gpt-6-astra was launched at 19:38Z; a waiter covers astra and the build.
+* In progress: #8381 and #8388. One slot is open. No merges. Pin `dc4b8d60d5`, main `e1b9c755d`.
