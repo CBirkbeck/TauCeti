@@ -38,15 +38,13 @@ correspondence for the finite translation action
 * `TauCeti.Isogeny.mem_fixingSubgroup_fieldRange_mulByIntIsogeny_iff`: the automorphisms of `F(W)`
   over `[n]^*F(W)` are exactly the translations by `n`-torsion points.
 
-## Roadmap
+## Use
 
-`TauCetiRoadmap/EllipticCurves/README.md`, **Layer 1**, the dual isogeny, whose construction
-needs, for the separable part, that "`Kˢᵉᵖ(W₁)/φ^*Kˢᵉᵖ(W₂)` **is** Galois with group
-`ker φ(Kˢᵉᵖ)` acting by translations (AEC III.4.10(b),(c))". This file proves that for `φ = [n]`.
-Layer 2's Weil pairing uses it in both directions: a function whose `n`-th power is pulled back
-along `[n]` is moved by each `n`-torsion translation only by an `n`-th root of unity, which is
-what makes the pairing constant, and a function that no `n`-torsion translation moves is itself
-pulled back along `[n]`, which is the step of AEC III.8.1(c) that makes it nondegenerate.
+The Weil pairing uses these results in both directions. A function whose `n`-th power is pulled
+back along `[n]` is moved by each `n`-torsion translation only by an `n`-th root of unity, which is
+what makes the pairing well defined. A function that no `n`-torsion translation moves is itself
+pulled back along `[n]`, which is the step of AEC III.8.1(c) that makes the pairing
+nondegenerate.
 
 ## References
 
@@ -70,12 +68,15 @@ theorem card_ker_mulByIntIsogeny_eq_degree (hchar : (n : F) ≠ 0) :
 
 /-- **The `n`-torsion translations fix exactly the pullbacks along `[n]`**, over a separably
 closed field in which `n` is invertible: `F(W)^{E[n]} = [n]^*F(W)`. -/
+@[simp]
 theorem translationFixedField_ker_mulByIntIsogeny (hchar : (n : F) ≠ 0) :
     translationFixedField W (mulByIntIsogeny W hn).ker =
       (mulByIntIsogeny W hn).fieldPullback.fieldRange :=
   le_antisymm ((card_ker_eq_degree_iff _).mp (card_ker_mulByIntIsogeny_eq_degree W hchar))
     (by rw [ker_def]; exact le_translationFixedField_translationFixingSubgroup W _)
 
+-- Not `@[simp]`: Mathlib's `AlgHom.mem_fieldRange` rewrites the left-hand side first, so `simpNF`
+-- rejects it as not in simp normal form.
 /-- **A function is a pullback along `[n]` exactly when no `n`-torsion translation moves it**,
 over a separably closed field in which `n` is invertible. -/
 theorem mem_fieldRange_mulByIntIsogeny_iff (hchar : (n : F) ≠ 0) {z : W.FunctionField} :
@@ -93,6 +94,8 @@ theorem isGalois_fieldRange_mulByIntIsogeny (hchar : (n : F) ≠ 0) :
   rw [← translationFixedField_ker_mulByIntIsogeny W hchar]
   infer_instance
 
+-- Not `@[simp]`: Mathlib's `IntermediateField.mem_fixingSubgroup_iff` rewrites the left-hand side
+-- first, so `simpNF` rejects it as not in simp normal form.
 /-- **The automorphisms of `F(W)` over `[n]^*F(W)` are the `n`-torsion translations**, over a
 separably closed field in which `n` is invertible. -/
 theorem mem_fixingSubgroup_fieldRange_mulByIntIsogeny_iff (hchar : (n : F) ≠ 0)
