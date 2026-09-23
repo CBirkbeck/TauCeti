@@ -1,4 +1,4 @@
-# Last round — r935 (2026-09-23T18:13Z)
+# Last round — r936 (2026-09-23T18:15Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -55,7 +55,7 @@ of this session's PRs merged on 2026-09-23.
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `5823cd2a1`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `917f28326`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -147,7 +147,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r935 did
+## What r703–r936 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -387,6 +387,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r933: #8332 was marked ready after astra cleared it (it accepted everything). Kind 2 opened as draft **#8344** (`Slice/Density.lean`; gate 12/0/0; astra pending). The cap is full.
 * r934: **#8332 got an `attribution` finding** (keep the roadmap credit). Fixed, and the same fix applied to #8339 and #8344. All three are rebuilding.
 * r935: the rebuilds are running. Found that r934's proactive push on #8339 superseded a 10/10 approval on its old head, so it now needs a re-review. New trap: read the board before any speculative push.
+* r936: #8332's rebuild is done (`awaiting-review`); #8339 and #8344 are still building.
 
 ## Candidates for a later step 5
 

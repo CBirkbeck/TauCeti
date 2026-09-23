@@ -42031,3 +42031,8 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
   is broken, but it cost an approval and a review cycle.
 * **Rule (standing):** before any *speculative* push (one not answering a finding on that PR), read the PR's current board. If it is
   approved on its head, leave it alone; carry the lesson into the *next* PR instead.
+
+## r936 — 2026-09-23T18:14Z (cron)
+
+#8332 is `awaiting-review` on its credit fix `3c978ac17` (its build is done; only `zulip-pr` pending). #8339 and #8344 are still rebuilding (waiter running).
+No merges. Pin `dc4b8d60d5`, main `d66b14525`.
