@@ -449,14 +449,12 @@ theorem map_normSubgroup_conjugateGroundLevelEquiv :
     (L.normSubgroup F).map (L.conjugateGroundLevelEquiv F g).toLinearMap =
       (L.conjugate g).normSubgroup F := by
   ext y
-  rw [Submodule.mem_map, mem_normSubgroup]
+  simp only [Submodule.mem_map, mem_normSubgroup]
   constructor
-  · rintro ⟨z, hz, rfl⟩
-    obtain ⟨x, rfl⟩ := (L.mem_normSubgroup F).1 hz
+  · rintro ⟨z, ⟨x, rfl⟩, rfl⟩
     exact ⟨L.conjugateCoefficientEquiv F g x, L.norm_conjugateCoefficientEquiv F g x⟩
   · rintro ⟨w, rfl⟩
-    refine ⟨L.norm F ((L.conjugateCoefficientEquiv F g).symm w),
-      (L.mem_normSubgroup F).2 ⟨_, rfl⟩, ?_⟩
+    refine ⟨L.norm F ((L.conjugateCoefficientEquiv F g).symm w), ⟨_, rfl⟩, ?_⟩
     rw [LinearEquiv.coe_coe, ← L.norm_conjugateCoefficientEquiv F g,
       LinearEquiv.apply_symm_apply]
 
@@ -467,29 +465,24 @@ def conjugateNormQuotientEquiv : L.NormQuotient F ≃+ (L.conjugate g).NormQuoti
     (L.map_normSubgroup_conjugateGroundLevelEquiv F g)).toAddEquiv
 
 /-- Conjugation on norm quotients sends the class of a ground-level element to the class of its
-conjugate. -/
-@[simp]
+conjugate.
+
+Not a `simp` lemma: `simp` first rewrites `L.normQuotientMk F x` to `Submodule.Quotient.mk x` by
+`normQuotientMk_apply`, so its left-hand side is not in simp-normal form. -/
 theorem conjugateNormQuotientEquiv_normQuotientMk (x : F.level L.ground) :
     L.conjugateNormQuotientEquiv F g (L.normQuotientMk F x) =
       (L.conjugate g).normQuotientMk F (L.conjugateGroundLevelEquiv F g x) := by
-  rw [normQuotientMk_apply, normQuotientMk_apply, conjugateNormQuotientEquiv,
-    LinearEquiv.coe_toAddEquiv]
-  exact (Submodule.Quotient.equiv_apply (L.normSubgroup F)
-    ((L.conjugate g).normSubgroup F) (L.conjugateGroundLevelEquiv F g)
-    (L.map_normSubgroup_conjugateGroundLevelEquiv F g) (Submodule.Quotient.mk x)).trans
-      (Submodule.mapQ_apply (L.normSubgroup F) ((L.conjugate g).normSubgroup F)
-        (L.conjugateGroundLevelEquiv F g).toLinearMap x)
+  simp [conjugateNormQuotientEquiv]
 
 /-- The inverse norm-quotient equivalence sends the class of a ground-level element to the class
-of its inverse conjugate. -/
-@[simp]
+of its inverse conjugate.
+
+Not a `simp` lemma, for the reason given for `conjugateNormQuotientEquiv_normQuotientMk`. -/
 theorem conjugateNormQuotientEquiv_symm_normQuotientMk
     (y : F.level (L.conjugate g).ground) :
     (L.conjugateNormQuotientEquiv F g).symm ((L.conjugate g).normQuotientMk F y) =
       L.normQuotientMk F ((L.conjugateGroundLevelEquiv F g).symm y) := by
-  apply (L.conjugateNormQuotientEquiv F g).injective
-  rw [AddEquiv.apply_symm_apply, conjugateNormQuotientEquiv_normQuotientMk,
-    LinearEquiv.apply_symm_apply]
+  simp [conjugateNormQuotientEquiv]
 
 /-- In degree zero, conjugation on Tate cohomology is conjugation on the norm quotient. -/
 theorem tateHZeroEquivNormQuotient_conjugateTateIso_apply (x : L.TateH F 0) :

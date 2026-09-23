@@ -96,15 +96,18 @@ representation. Passing instead through `ContRepresentation.toRepresentation` wo
 that typeclass synthesis produces for an integral module, and the two are not definitionally
 equal.
 
-Because `toRep` and `rep` are `abbrev`s for `Rep.of`, `simp` reduces the carriers `F.toRep.V` and
-`(L.rep F).V` to `F.module.V` and `F.level L.top` wherever they occur as implicit type arguments
-(the type of a coercion, of a bundled map, of a membership) before it looks a term up among its
-lemmas. A `simp` lemma is indexed by its left-hand side as elaborated, where these carriers are
-still unreduced, so a lemma stated plainly over `F.toRep.V` is never found. The `simp` lemmas
-about levels, layer coefficients and the norm below therefore state their left-hand sides through
-`dsimp% only`, which puts those implicit arguments in the form `simp` produces. Only the left-hand
-side is wrapped, and with `only`, so that the right-hand side keeps the form it is written in:
-`rw` with these lemmas then leaves terms over `F.toRep`, as the rest of this file states them.
+Because `toRep` and `rep`, like Mathlib's `Rep.trivial`, are `abbrev`s for `Rep.of`, `simp`
+reduces the carriers `F.toRep.V`, `(L.rep F).V` and `(Rep.trivial ℤ L.Gal ℤ).V` to `F.module.V`,
+`F.level L.top` and `ℤ` wherever they occur as implicit type arguments (the type of a coercion, of
+a bundled map, of a membership) before it looks a term up among its lemmas. A `simp` lemma is
+indexed by its left-hand side as elaborated, where these carriers are still unreduced, so a lemma
+stated plainly over one of them, directly or through a level `F.level U` or a cohomology group of
+the layer, is never found. The `simp` lemmas below about levels, layer coefficients, the two low
+Tate degrees, the norm, the norm subgroup and the norm quotient map therefore state their left-hand
+sides through `dsimp% only`, which puts those implicit arguments in the form `simp` produces. Only
+the left-hand side is wrapped, and with `only`, so that the right-hand side keeps the form it is
+written in: `rw` with these lemmas then leaves terms over `F.toRep`, as the rest of this file
+states them.
 
 ## References
 
@@ -422,14 +425,13 @@ def tateHMinusTwoEquivAbelianization :
 `(g, 1)` to the class of `g` in the additive abelianization. -/
 @[simp]
 theorem tateHMinusTwoEquivAbelianization_single_one (g : L.Gal) :
-    L.tateHMinusTwoEquivAbelianization
-      ((TateCohomology.isoGroupHomology (-2) 1 rfl).inv.app
-        (Rep.trivial ℤ L.Gal ℤ)
+    (dsimp% only (L.tateHMinusTwoEquivAbelianization
+      ((TateCohomology.isoGroupHomology (-2) 1 rfl).inv.app (Rep.trivial ℤ L.Gal ℤ)
         (groupHomology.H1π (Rep.trivial ℤ L.Gal ℤ)
           ((groupHomology.cycles₁IsoOfIsTrivial (Rep.trivial ℤ L.Gal ℤ)).inv
-            (Finsupp.single g 1)))) =
-      Additive.ofMul (Abelianization.of g) := by
-  exact TauCeti.TateCohomology.HNegTwoAddEquivAbelianization_single_one g
+            (Finsupp.single g 1)))))) =
+      Additive.ofMul (Abelianization.of g) :=
+  TauCeti.TateCohomology.HNegTwoAddEquivAbelianization_single_one g
 
 /-- The inverse degree `-2` identification sends the abelianization class of `g` to its standard
 first-homology representative with coefficient `1`. -/
@@ -495,9 +497,10 @@ theorem norm_apply_coe_of_mem_level_ground (x : F.level L.top)
 def normSubgroup : Submodule ℤ (F.level L.ground) :=
   LinearMap.range (L.norm F)
 
+/-- An element of the ground level lies in the norm subgroup exactly when it is a norm. -/
 @[simp]
 theorem mem_normSubgroup {y : F.level L.ground} :
-    y ∈ L.normSubgroup F ↔ ∃ x, L.norm F x = y :=
+    (dsimp% only (y ∈ L.normSubgroup F)) ↔ ∃ x, L.norm F x = y :=
   Iff.rfl
 
 /-- The **norm quotient** `A^U / N_{U/V}(A^V)` of a finite normal layer. It is the group that the
@@ -511,9 +514,10 @@ formation is defined on the ground level by composing with this map. -/
 def normQuotientMk : F.level L.ground →ₗ[ℤ] L.NormQuotient F :=
   (L.normSubgroup F).mkQ
 
+/-- `normQuotientMk` sends an element of the ground level to its class in the norm quotient. -/
 @[simp]
 theorem normQuotientMk_apply (x : F.level L.ground) :
-    L.normQuotientMk F x = Submodule.Quotient.mk x :=
+    (dsimp% only (L.normQuotientMk F x)) = Submodule.Quotient.mk x :=
   (rfl)
 
 /-- The image under `groundLevelEquiv` of the norm image inside the invariants is the norm
@@ -524,7 +528,7 @@ theorem map_groundLevelEquiv_submoduleOf :
       L.normSubgroup F := by
   ext y
   simp only [Submodule.mem_map, Submodule.submoduleOf, Submodule.mem_comap,
-    LinearMap.mem_range, normSubgroup, LinearEquiv.coe_coe]
+    LinearMap.mem_range, mem_normSubgroup, LinearEquiv.coe_coe]
   constructor
   · rintro ⟨z, ⟨v, hv⟩, rfl⟩
     refine ⟨v, Subtype.ext ?_⟩
@@ -546,12 +550,12 @@ def tateHZeroEquivNormQuotient : L.TateH F 0 ≃+ L.NormQuotient F :=
 invariant to the class of the corresponding element of the ground level. -/
 @[simp]
 theorem tateHZeroEquivNormQuotient_H0π (x : (L.rep F).ρ.invariants) :
-    L.tateHZeroEquivNormQuotient F (TateCohomology.H0π (L.rep F) x) =
+    (dsimp% only (L.tateHZeroEquivNormQuotient F (TateCohomology.H0π (L.rep F) x))) =
       L.normQuotientMk F (L.groundLevelEquiv F x) := by
   -- The elementwise form of the low-degree identification is bound as a hypothesis first, so
   -- that it is normalised to the application form the goal uses before it rewrites.
   have h := TateCohomology.H0π_comp_H0IsoNormQuotient_hom_apply (L.rep F) x
-  simp [tateHZeroEquivNormQuotient, normQuotientMk, h]
+  simp [tateHZeroEquivNormQuotient, h]
 
 end Norm
 
