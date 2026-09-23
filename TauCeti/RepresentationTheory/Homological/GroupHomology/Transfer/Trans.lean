@@ -15,16 +15,10 @@ import TauCeti.RepresentationTheory.Induction.DimensionShift
 /-!
 # Transitivity of the transfer
 
-For finite-index subgroups `K ≤ H ≤ G`, the transfer `Hₙ(G, M) ⟶ Hₙ(S, Res_S M)` is transitive:
-transferring from `G` to `H` and then from `H` to `K` is the transfer from `G` to `K`, once
-`K.subgroupOf H` is identified with `K`.
-
-The proof is by dimension shifting. In degree zero the transfer is the relative transfer on
-coinvariants (`transfer_zero_H0π`), which is transitive modulo the augmentation submodule
-(`Representation.relTransfer_relTransfer_sub_relTransfer_mem`). In degree `n + 1` the connecting
-map of `Rep.dimensionShiftDownSES` is injective after restriction to a subgroup, because `Ind_⊥^G`
-has no positive-degree homology over any subgroup (`groupHomology.isZero_res_indBot_succ`), and the
-transfer commutes with it (`TauCeti.groupHomology.δ_comp_transfer`).
+For finite-index subgroups `K ≤ H ≤ G`, the transfer in group homology is transitive: transferring
+from `G` to `H` and then from `H` to `K` is the transfer from `G` to `K`, once `K.subgroupOf H` is
+identified with `K`. The proof is by dimension shifting from degree zero, where the transfer is the
+relative transfer on coinvariants.
 
 ## Main results
 
@@ -41,13 +35,11 @@ namespace TauCeti.groupHomology
 
 open _root_.groupHomology
 
-variable {R G G' : Type u} [CommRing R] [Group G] [Group G']
+variable {R G : Type u} [CommRing R] [Group G] {K H : Subgroup G} (hKH : K ≤ H)
 
-section Tower
-
-variable {K H : Subgroup G} (hKH : K ≤ H)
-
--- The inductive step of `transfer_trans`.
+-- The inductive step of `transfer_trans`: the connecting map of `X` restricted to `K` is injective
+-- in degree `n + 1` when `X.X₂` has no homology there over `K`, and the transfer commutes with the
+-- connecting maps (`δ_comp_transfer`).
 private theorem transfer_trans_succ [K.FiniteIndex] [H.FiniteIndex] {X : ShortComplex (Rep.{u} R G)}
     (hX : X.ShortExact) (n : ℕ) (hX₂ : Limits.IsZero (groupHomology (res K.subtype X.X₂) (n + 1)))
     (ih : transfer X.X₁ H n ≫ transfer (res H.subtype X.X₁) (K.subgroupOf H) n ≫
@@ -89,7 +81,8 @@ theorem transfer_trans [K.FiniteIndex] [H.FiniteIndex] (M : Rep.{u} R G) (n : �
   induction n generalizing M with
   | zero =>
     -- On `H₀`, the coinvariants, the transfer is the relative transfer (`transfer_zero_H0π`).
-    refine (cancel_epi (H0π M)).1 <| ModuleCat.hom_ext <| LinearMap.ext fun m => ?_
+    rw [← cancel_epi (H0π M)]
+    ext m
     simp only [ModuleCat.hom_comp, LinearMap.comp_apply]
     rw [transfer_zero_H0π, transfer_zero_H0π, transfer_zero_H0π, H0π_comp_map_apply,
       ← coinvariantsMk_comp_H0Iso_inv, ModuleCat.comp_apply, ModuleCat.comp_apply,
@@ -97,11 +90,11 @@ theorem transfer_trans [K.FiniteIndex] [H.FiniteIndex] (M : Rep.{u} R G) (n : �
     exact congrArg _ <| (Representation.Coinvariants.mk_eq_iff _).2 <|
       Representation.relTransfer_relTransfer_sub_relTransfer_mem hKH m
   | succ n ih =>
-    -- Shift dimension along `dimensionShiftDown M ⟶ Ind_⊥^G M ⟶ M`.
+    -- Shift dimension along `dimensionShiftDown M ⟶ Ind_⊥^G M ⟶ M`. The casts along
+    -- `dimensionShiftDownSES_X₂/X₃` are needed: without them unification times out.
     exact dimensionShiftDownSES_X₃ M ▸
       transfer_trans_succ hKH (dimensionShiftDownSES_shortExact M) n
         (dimensionShiftDownSES_X₂ M ▸ isZero_res_indBot_succ K M.V n) (ih _)
 
-end Tower
 
 end TauCeti.groupHomology
