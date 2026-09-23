@@ -79,14 +79,6 @@ through the periodic-resolution calculations `Rep.FiniteCyclicGroup.groupCohomol
   homology of the periodic complex in an odd, respectively a nonzero even, degree has the
   cardinality of Tate cohomology in degree `0`, respectively `-1`.
 
-## Implementation notes
-
-The simp lemmas computing `tateCohomologyIsoEven` and `tateCohomologyIsoOdd` on a range of degrees,
-and their composites with `periodicIsoOfGenerator`, take the parity hypothesis exactly as it occurs
-on the left-hand side, and derive any other parity fact on the right-hand side. A hypothesis that
-occurs on the left only inside a proof, or only on the right, is not assigned by unification, so
-`simp` would have to prove it for a symbolic degree, which it cannot do.
-
 ## References
 
 * K. S. Brown, *Cohomology of Groups*, Chapter VI, §9.
@@ -235,6 +227,9 @@ theorem tateCohomologyIsoEven_zero (hg : ∀ x, x ∈ Subgroup.zpowers g) (h0 : 
     tateCohomologyIsoEven M g hg 0 h0 = tateCohomologyIso₀ M g hg := by
   rfl
 
+-- These `simp` lemmas take the parity hypothesis exactly as it occurs on the left-hand side and
+-- derive any other parity fact on the right: a hypothesis occurring on the left only inside a
+-- proof is not assigned by unification, and `simp` cannot prove it for a symbolic degree.
 /-- In a positive even degree, the all-degree comparison is the composite through ordinary
 group cohomology. -/
 @[simp]
@@ -317,6 +312,8 @@ def periodicIsoOfGenerator (hg : ∀ x, x ∈ Subgroup.zpowers g) (m n : ℤ)
   · exact (tateCohomologyIsoOdd M g hg m (Int.not_even_iff_odd.mp hm)).trans
       (tateCohomologyIsoOdd M g hg n (Int.not_even_iff_odd.mp (hpar.not.mp hm))).symm
 
+-- The parity of `m` is derived from `hmn` and `hn` on the right-hand side, so that `simp` needs
+-- no hypothesis it cannot assign by unification.
 /-- In even degrees, `periodicIsoOfGenerator` is the comparison obtained by identifying both Tate
 groups with the even homology object of the periodic resolution. Only `n` is assumed even: `m` is
 then even because `m ≡ n [ZMOD 2]`. -/
