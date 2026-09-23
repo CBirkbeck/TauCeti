@@ -513,6 +513,11 @@ theorem Modulus.mem_integralIdealsPrimeTo {𝔪 : Modulus K} {I : Ideal (𝓞 K)
     I ∈ integralIdealsPrimeTo 𝔪 ↔ 𝔪.IsCoprimeTo I :=
   NumberFieldArithmetic.mem_integralIdealsAway_iff.trans Modulus.isCoprimeTo_iff.symm
 
+/-- A member of the prime-to monoid is a nonzero ideal. -/
+theorem ne_bot_of_mem_integralIdealsPrimeTo {𝔪 : Modulus K} {I : Ideal (𝓞 K)}
+    (h : I ∈ integralIdealsPrimeTo 𝔪) : I ≠ ⊥ :=
+  (NumberFieldArithmetic.mem_integralIdealsAway_iff.mp h).1
+
 /-- **The integral prime-to monoid is antitone in the modulus**: the support of a divisor `𝔪` of
 `𝔫` is contained in that of `𝔫`, so an ideal prime to `𝔫` is prime to `𝔪`. -/
 theorem integralIdealsPrimeTo_antitone {𝔪 𝔫 : Modulus K} (h : 𝔪 ∣ 𝔫) :
