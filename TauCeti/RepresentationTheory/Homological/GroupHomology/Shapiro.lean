@@ -155,20 +155,16 @@ theorem indIso_inv_comp_map_counit (B : Rep.{u} k G) (n : ℕ) :
   rfl
 
 /-- **The inverse of Shapiro's isomorphism is natural in the coefficients**: for a morphism
-`φ : A ⟶ B` of `S`-representations, it intertwines the maps induced by `φ` and by `Ind_S^G φ`.
-See `indIso_hom_naturality` for the same statement for Shapiro's isomorphism itself. -/
+`φ : A ⟶ B` of `S`-representations, it intertwines the maps induced by `φ` and by `Ind_S^G φ`. -/
 @[reassoc]
 theorem indIso_inv_naturality {B : Rep.{u} k S} (φ : A ⟶ B) (n : ℕ) :
     map (MonoidHom.id S) φ n ≫ (indIso S B n).inv =
       (indIso S A n).inv ≫ map (MonoidHom.id G) ((indFunctor k S.subtype).map φ) n := by
   rw [indIso_inv, indIso_inv, ← map_comp, ← map_comp]
-  refine map_congr rfl ?_ n
-  exact congrArg (·.hom.toLinearMap) ((indResAdjunction k S.subtype).unit.naturality φ)
+  exact congrArg (map S.subtype · n) ((indResAdjunction k S.subtype).unit.naturality φ)
 
-/-- **Shapiro's isomorphism is natural in the coefficients**: for a morphism `φ : A ⟶ B` of
-`S`-representations, it intertwines the maps induced by `Ind_S^G φ` and by `φ`. See
-`indIso_inv_naturality` for the same statement for its inverse. Rewrite with this lemma before
-`simp`, which normalizes `(indFunctor k S.subtype).map φ` to `indMap S.subtype φ`. -/
+/-- **Shapiro's isomorphism is natural in the coefficients**: `indIso_inv_naturality` for
+`(indIso S A n).hom`. -/
 @[reassoc]
 theorem indIso_hom_naturality {B : Rep.{u} k S} (φ : A ⟶ B) (n : ℕ) :
     map (MonoidHom.id G) ((indFunctor k S.subtype).map φ) n ≫ (indIso S B n).hom =
