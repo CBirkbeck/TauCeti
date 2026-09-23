@@ -41552,3 +41552,8 @@ Board unchanged: #8224, #8233 and #8235 are `awaiting-review`, green, with no bo
 **Kind-3 candidate dropped:** `gammaPDFReal_of_pos` has no occurrence on main (`git grep` finds 0), so #6580 took it; the r853 note is
 obsolete. The remaining queued kind-3 targets are `not_mem_maxAvoid` → `notMem_maxAvoid` (after #8235, same file) and
 `integral_Ioi_eq_Ioc_add_Ioi` (after #8224, same file); both wait on a merge. Fresh scanner runs are needed for anything else.
+
+## r888 — 2026-09-23T10:14Z (cron)
+
+No change. #8224, #8233 and #8235 are `awaiting-review`, green, with no board. #8224's drive clock opens at 10:18Z, so the next
+round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5`, main `99140c78a`.

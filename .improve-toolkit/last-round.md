@@ -1,4 +1,4 @@
-# Last round — r887 (2026-09-23T10:05Z)
+# Last round — r888 (2026-09-23T10:15Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -60,7 +60,7 @@ splits keep order, goals and blocks, column 6 is correct and Mathlib style, and 
 **When a slot frees**, if the pin has not moved: rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
 as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If the pin has moved, run the kind-1 scan first. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `41bed706b`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `38449b5f6`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -146,7 +146,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r887 did
+## What r703–r888 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -346,6 +346,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r885: no change; drive clocks open at 10:18Z (#8224), 10:26Z (#8233) and 10:36Z (#8235).
 * r886: board unchanged. Kind 2 is staged locally as `improve/condindep-conditional-style` @ `dddfd9f96` (`Independence/Conditional.lean`: 82 `↦`, 12 chains split; gate 12/0/0), with astra running.
 * r887: board unchanged; the `gammaPDFReal_of_pos` candidate is gone from main (dropped).
+* r888: no change; #8224's drive clock opens at 10:18Z.
 
 ## Candidates for a later step 5
 
