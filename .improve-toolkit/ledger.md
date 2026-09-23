@@ -41724,3 +41724,12 @@ No new change: #8224 is still MERGING; #8235 (198 min) and #8273 (ready 12:50:19
 
 **#8235 is `review-in-progress`** (an external reviewer picked it up, 228 min after ready). #8273 (34 min) and #8275 (27 min)
 are `awaiting-review`. No merges. Pin `dc4b8d60d5`, main `6333907d5`. The cap is full, and kind 3 stays staged (`26b23a436`).
+
+## r908 — 2026-09-23T13:34Z (cron; step 4 hard-stopped)
+
+* **#8235 approved 10/10 by `sqrt-of-2`** (13:26:53Z, 3 h 50 min after ready) and is `ready-to-merge`, MERGING at pos 3.
+* **Step 5, kind 3 (astra is out, so kind 3 stands in for kind 2): opened draft #8286** from the staged `improve/sc-edgeangle-sub-le`,
+  rebased onto `8f789cae4` → **`d099adbd2`** (+3/−3). `schwarzChristoffelEdgeAngle_sub_eq_neg_pi_mul_sum_Ioc`: `i < j` → `i ≤ j`, and the
+  caller passes `hij.le`. Re-gate **12 ok / 0 failed / 0 UNRUN**. `Roadmap: ConformalMapping` (as #6904). No open PR touches the file. A build
+  waiter is running.
+* In progress (cap full): #8273 (44 min), #8275 (37 min) and #8286 (draft). Pin `dc4b8d60d5`.
