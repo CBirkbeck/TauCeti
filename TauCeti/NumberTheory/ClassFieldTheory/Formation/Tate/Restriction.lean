@@ -244,17 +244,6 @@ theorem galHom_range_map_ofInjective (T : LayerRestriction a b) (T' : LayerRestr
       Subtype.ext ((MonoidHom.ofInjective_apply T'.galHom_injective).trans hx)⟩
 
 
-/-- The identification of coefficient modules along a restriction undoes its own inverse.
-
-This is `CategoryTheory.Iso.inv_hom_id_apply` restated for the `ModuleCat.Hom.toLinearMap`
-coercion. Mathlib's lemma is stated for the `ConcreteCategory.hom` coercion, which is not
-syntactically what a `LinearMap`-valued argument produces, so neither `rw` nor `simp` can fire
-it here; only the coercion form differs, and the proof is Mathlib's lemma itself. -/
-theorem repIso_inv_hom_id_apply (T' : LayerRestriction b c) (F : Formation G)
-    (w : F.level c.top) :
-    (T'.repIso F).hom.hom.toLinearMap ((T'.repIso F).inv.hom w) = w :=
-  (T'.repIso F).inv_hom_id_apply w
-
 /-- Reading an element of the middle layer back to the smallest one directly, or first across to
 the largest and then back along the composite, give the same answer. -/
 theorem repIso_inv_eq_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
@@ -292,7 +281,11 @@ theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRest
     (MonoidHom.ofInjective T'.galHom_injective) ((T'.repIso F).hom.hom.toLinearMap)
     (Rep.hom_comm_apply (T'.repIso F).hom)
     (galHom_range_map_ofInjective T T') ((T'.repIso F).inv.hom w)
-  rw [repIso_inv_hom_id_apply T' F w] at htrans
+  -- `Iso.inv_hom_id_apply` is stated for the `ConcreteCategory.hom` coercion, so it is named
+  -- here at the `ModuleCat.Hom.toLinearMap` form the transport lemma produces.
+  have hid : (T'.repIso F).hom.hom.toLinearMap ((T'.repIso F).inv.hom w) = w :=
+    (T'.repIso F).inv_hom_id_apply w
+  rw [hid] at htrans
   -- Then compose the two transfers inside the largest Galois group.
   have htower := Representation.relTransfer_relTransfer_sub_relTransfer_mem
     (ρ := (c.rep F).ρ) (H := T'.galHom.range) hKH ((y : F.level c.top))
