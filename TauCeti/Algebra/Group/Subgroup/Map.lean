@@ -54,8 +54,8 @@ uses it rather than repeating the composition of `MulEquiv.subgroupMap` with
   induced on quotients.
 * `MonoidHom.subgroupCongr_injective`, `MonoidHom.subgroupCongr_surjective`: transport along
   equalities of the domain and codomain preserves injectivity and surjectivity.
-* `TauCeti.Subgroup.subtype_comp_congrOfMapEq`, `Subgroup.subtype_comp_subgroupOfEquivOfLe`: the
-  isomorphisms `congrOfMapEq` and `subgroupOfEquivOfLe` commute with the inclusions of subgroups.
+* `Subgroup.subtype_comp_subgroupOfEquivOfLe`, `TauCeti.Subgroup.subtype_comp_congrOfMapEq`: the
+  isomorphisms `subgroupOfEquivOfLe` and `congrOfMapEq` commute with the inclusions of subgroups.
 -/
 
 public section
@@ -79,16 +79,12 @@ theorem _root_.MonoidHom.center_le_ker (f : G →* H) (hf : Function.Surjective 
     (hH : Subgroup.center H = ⊥) : Subgroup.center G ≤ f.ker :=
   (Subgroup.map_eq_bot_iff _).mp <| le_bot_iff.mp <| hH ▸ Subgroup.map_center_le_center hf
 
--- Not `@[simp]`, unlike Mathlib's `Subgroup.subtype_comp_inclusion`: the left-hand side is not in
--- simp normal form, since `MulEquiv.toMonoidHom_eq_coe` rewrites its `.toMonoidHom` to a coercion.
 /-- Along `A ≤ B`, the identification `Subgroup.subgroupOfEquivOfLe` of `A.subgroupOf B` with `A`
-commutes with the inclusions into `G`.
-
-This is the homomorphism-level form of Mathlib's pointwise `Subgroup.subgroupOfEquivOfLe_apply_coe`,
-for comparing the two composites `↥(A.subgroupOf B) →* G` as homomorphisms; rewriting from right to
-left routes the inclusion of `A.subgroupOf B` into `G` through `A` instead of through `B`. -/
+commutes with the inclusions into `G`. This is the homomorphism form of Mathlib's pointwise
+`Subgroup.subgroupOfEquivOfLe_apply_coe`. -/
+@[simp]
 theorem _root_.Subgroup.subtype_comp_subgroupOfEquivOfLe {A B : Subgroup G} (h : A ≤ B) :
-    A.subtype.comp (Subgroup.subgroupOfEquivOfLe h).toMonoidHom =
+    A.subtype.comp (Subgroup.subgroupOfEquivOfLe h : A.subgroupOf B →* A) =
       B.subtype.comp (A.subgroupOf B).subtype :=
   rfl
 
@@ -130,16 +126,12 @@ theorem Subgroup.congrOfMapEq_trans (e : G ≃* H) {A : Subgroup G} {B : Subgrou
         (by rw [MulEquiv.coe_monoidHom_trans, ← _root_.Subgroup.map_map, h, h']) :=
   MulEquiv.ext fun _ => Subtype.ext (by simp)
 
--- Not `@[simp]`, unlike Mathlib's `Subgroup.subtype_comp_inclusion`: the left-hand side is not in
--- simp normal form, since `MulEquiv.toMonoidHom_eq_coe` rewrites its `.toMonoidHom` to a coercion.
-/-- Restricting an isomorphism to subgroups commutes with the inclusions of the subgroups.
-
-This is the homomorphism-level form of the pointwise `Subgroup.coe_congrOfMapEq_apply`; read from
-right to left, it factors `e` on `A` through the inclusion of `B`. It cannot be replaced by `rfl`
-outside this module, since `Subgroup.congrOfMapEq` is not `@[expose]`d. -/
+/-- Restricting an isomorphism to subgroups commutes with the inclusions of the subgroups. This is
+the homomorphism form of the pointwise `Subgroup.coe_congrOfMapEq_apply`. -/
+@[simp]
 theorem Subgroup.subtype_comp_congrOfMapEq (e : G ≃* H) {A : Subgroup G} {B : Subgroup H}
     (h : A.map (e : G →* H) = B) :
-    B.subtype.comp (Subgroup.congrOfMapEq e h).toMonoidHom = (e : G →* H).comp A.subtype :=
+    B.subtype.comp (Subgroup.congrOfMapEq e h : A →* B) = (e : G →* H).comp A.subtype :=
   MonoidHom.ext <| Subgroup.coe_congrOfMapEq_apply e h
 
 -- Not `@[simp]`: with this in the simp set, `Subgroup.coe_congrOfMapEq_symm_apply` below is
