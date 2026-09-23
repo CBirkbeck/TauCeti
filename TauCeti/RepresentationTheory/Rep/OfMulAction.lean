@@ -113,6 +113,10 @@ noncomputable def quotientIsoCongr {H K : Subgroup G} (h : H = K) :
     induction q using QuotientGroup.induction_on with
     | H x => rfl
 
+-- Mathlib's `Subgroup.quotientEquivOfEq_mk` is not a `simp` lemma. With it, `simp` evaluates
+-- `quotientIsoCongr` on the basis element of a representative's coset.
+attribute [simp] Subgroup.quotientEquivOfEq_mk
+
 @[simp]
 theorem quotientIsoCongr_hom_hom_single {H K : Subgroup G} (h : H = K) (q : G ⧸ H) (r : k) :
     (dsimp% only ((quotientIsoCongr k h).hom.hom (MonoidAlgebra.single q r))) =
@@ -125,9 +129,9 @@ theorem quotientIsoCongr_inv_hom_single {H K : Subgroup G} (h : H = K) (q : G �
       MonoidAlgebra.single (Subgroup.quotientEquivOfEq h.symm q) r :=
   ofMulActionIsoCongr_inv_hom_single k _ _ q r
 
--- Not `@[simp]`: `simp` first rewrites the left-hand side with `quotientIsoCongr_hom_hom_single`
--- (and `simp [Subgroup.quotientEquivOfEq_mk]` then finishes), so simpNF rejects it. The left-hand
--- side is still stated through `dsimp% only`, so that `simp only [this lemma]` fires.
+-- Not `@[simp]`: `simp` proves it from `quotientIsoCongr_hom_hom_single` and
+-- `Subgroup.quotientEquivOfEq_mk`, so simpNF rejects it. The left-hand side is still stated
+-- through `dsimp% only`, so that `simp only [this lemma]` fires.
 /-- The basis element indexed by the coset of a representative, in the forward direction. -/
 theorem quotientIsoCongr_hom_hom_single_mk {H K : Subgroup G} (h : H = K) (x : G) (r : k) :
     (dsimp% only ((quotientIsoCongr k h).hom.hom (MonoidAlgebra.single (x : G ⧸ H) r))) =
