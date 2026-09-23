@@ -70,13 +70,6 @@ variable {E F : Type*}
   [NormedAddCommGroup F] [NormedSpace ℝ F]
   {f : E → F} {k : ℕ} {s : Set E}
 
-/-- On a segment, the distance to the initial point is bounded by the length of the segment. -/
-private theorem norm_sub_le_of_mem_segment {x y z : E} (hz : z ∈ segment ℝ x y) :
-    ‖z - x‖ ≤ ‖y - x‖ := by
-  have h : dist x z + dist z y = dist x y := dist_add_dist_of_mem_segment hz
-  have h' : dist x z ≤ dist x y := by linarith [dist_nonneg (x := z) (y := y)]
-  simpa only [dist_eq_norm'] using h'
-
 /-- A Hölder bound stated with `dist` upgrades to `HolderOnWith`, which is phrased with `edist`. -/
 private theorem holderOnWith_of_dist_le {X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
     {C r : ℝ≥0} {g : X → Y} {t : Set X}
