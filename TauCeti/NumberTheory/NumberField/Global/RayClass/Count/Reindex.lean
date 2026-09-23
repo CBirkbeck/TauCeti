@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count
+public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count.Basic
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Integral
 
 /-!
