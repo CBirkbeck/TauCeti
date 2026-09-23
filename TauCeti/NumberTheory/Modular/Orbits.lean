@@ -23,8 +23,8 @@ vertical edges and `z ↦ -1/z` folds the unit arc onto itself, fixing `i` and s
 `ρ + 1`. Mathlib's classification `ModularGroup.cases_of_mem_fd_smul_mem_fd` pins these
 identifications down, and here it yields the closed-domain complements: the elliptic orbits of
 `i` and `ρ` meet `𝒟` exactly at `i` and at `{ρ, ρ + 1}`, and the orbit map is injective on the
-part of `𝒟` left of the identifications — `𝒟` without the right vertical edge and the right
-half-arc.
+part of `𝒟` left of the identifications — `𝒟` without the right vertical edge and the part of
+the unit arc right of `i`.
 
 ## Main declarations
 
@@ -37,7 +37,7 @@ half-arc.
   when it is `ρ` or `ρ + 1`.
 * `TauCeti.ModularGroup.orbit_mk_I_ne_orbit_mk_ρ`: the two elliptic orbits are distinct.
 * `TauCeti.ModularGroup.orbit_mk_injOn_fd_left`: the orbit map is injective on `𝒟` minus the
-  right vertical edge and the right half-arc.
+  right vertical edge and the part of the unit arc right of `i`.
 
 ## References
 
@@ -228,42 +228,35 @@ theorem orbit_mk_I_ne_orbit_mk_ρ :
   fun h ↦ I_ne_ρ ((orbit_mk_eq_I_iff _root_.ModularGroup.ρ_mem_fd).mp h.symm).symm
 
 /-- The orbit map is injective on the part of `𝒟` left of the boundary identifications: the
-points with `re < 1/2` which, if on the unit circle, have `re < 0`. `T` moves the right
-vertical edge onto the left one and `S` the right half-arc onto the left one, and this set
-meets what remains of each orbit at most once. -/
+points with `re < 1/2` which, if on the unit circle, have `re ≤ 0`. This drops the right
+vertical edge, which `T` identifies with the left one, and the arc right of `i`, which `S` folds
+onto the arc left of `i` while fixing `i`. -/
 lemma orbit_mk_injOn_fd_left :
     Set.InjOn (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ))
-      {p : ℍ | p ∈ 𝒟 ∧ p.re < 1 / 2 ∧ (‖(p : ℂ)‖ = 1 → p.re < 0)} := by
+      {p : ℍ | p ∈ 𝒟 ∧ p.re < 1 / 2 ∧ (‖(p : ℂ)‖ = 1 → p.re ≤ 0)} := by
   rintro p₁ ⟨hp₁fd, hp₁re, hp₁arc⟩ p₂ ⟨hp₂fd, hp₂re, hp₂arc⟩ h
   obtain ⟨g, rfl⟩ : ∃ g : SL(2, ℤ), g • p₂ = p₁ := Quotient.exact' h
+  have hsign {k : SL(2, ℤ)} (hg : g = k ∨ g = -k) : g • p₂ = k • p₂ := by
+    obtain rfl | rfl := hg
+    · rfl
+    · exact _root_.ModularGroup.SL_neg_smul _ _
   rcases _root_.ModularGroup.cases_of_mem_fd_smul_mem_fd hp₂fd hp₁fd with
-    (rfl | rfl) | ⟨rfl | rfl, hre⟩ | ⟨-, hre⟩ | ⟨rfl | rfl, hnorm⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩ |
-    ⟨-, rfl⟩ | ⟨rfl | rfl, rfl⟩ | ⟨rfl | rfl, rfl⟩ | ⟨rfl | rfl, rfl⟩
-  all_goals try simp only [_root_.ModularGroup.SL_neg_smul] at hp₁re hp₁arc ⊢
-  · exact one_smul _ _
-  · exact one_smul _ _
-  · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re
-    norm_num at hp₁re
-  · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re
+    hg | ⟨hg, hre⟩ | ⟨-, hre⟩ | ⟨hg, hnorm⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩ | ⟨hg, rfl⟩ |
+    ⟨hg, rfl⟩ | ⟨hg, rfl⟩
+  · exact (hsign hg).trans (one_smul _ _)
+  · rw [hsign hg, _root_.ModularGroup.re_T_smul, hre] at hp₁re
     norm_num at hp₁re
   · exact absurd hre hp₂re.ne
-  · have h1 := hp₁arc (norm_coe_S_smul_of_norm_eq_one hnorm)
-    rw [re_S_smul_of_norm_eq_one hnorm] at h1
-    linarith [hp₂arc hnorm]
-  · have h1 := hp₁arc (norm_coe_S_smul_of_norm_eq_one hnorm)
-    rw [re_S_smul_of_norm_eq_one hnorm] at h1
-    linarith [hp₂arc hnorm]
-  · norm_num [re_ρ] at hp₂re
-  · norm_num [re_ρ] at hp₂re
-  · norm_num [re_ρ] at hp₂re
-  · exact ST_smul_ρ
-  · exact ST_smul_ρ
-  · rw [TST_smul_ρ, re_vadd_ρ] at hp₁re
-    norm_num at hp₁re
-  · rw [TST_smul_ρ, re_vadd_ρ] at hp₁re
-    norm_num at hp₁re
-  · exact T_inv_S_smul_ρ
-  · exact T_inv_S_smul_ρ
+  · rw [hsign hg] at hp₁arc ⊢
+    have h1 := hp₁arc (norm_coe_S_smul_of_norm_eq_one hnorm)
+    rw [re_S_smul_of_norm_eq_one hnorm, neg_nonpos] at h1
+    rw [eq_I_of_re_eq_zero hnorm ((hp₂arc hnorm).antisymm h1), S_smul_I]
+  · exact absurd re_vadd_ρ hp₂re.ne
+  · exact absurd re_vadd_ρ hp₂re.ne
+  · exact absurd re_vadd_ρ hp₂re.ne
+  · exact (hsign hg).trans ST_smul_ρ
+  · exact absurd (by rw [hsign hg, TST_smul_ρ, re_vadd_ρ]) hp₁re.ne
+  · exact (hsign hg).trans T_inv_S_smul_ρ
 
 end ModularGroup
 
