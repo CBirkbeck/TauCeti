@@ -42149,3 +42149,21 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 * **#8381 went green at 20:03:07Z**, after about 44 min in the congested queue, and **was marked ready at 20:04:56Z**. Astra had cleared it at
   r945, and the guards held (every check green, head `e64edbfd9` unchanged, pin unchanged, file untouched). #8388 and #8389 are still building
   (waiters running). #8332 and #8344 are queued. No new merges. Pin `dc4b8d60d5`, main `8d9b9b89a`.
+* r947 addendum (#8388 astra): **gpt-6-astra "rejected the exact diff as submitted" because it also deleted
+  `TauCeti/Analysis/Complex/Fuchsian/Elliptic.lean`, and judged the JointLaw edits themselves acceptable.** The deletion was a **phantom from
+  my question**. `git diff origin/main..HEAD` is a *two-dot* diff: once `origin/main` had moved past the branch base (`Elliptic.lean` arrived
+  with #8289 / `38d6ddc00`, which is not in #8388's base `e1b9c755d`), main's newer file appeared "deleted". The PRs are clean, since GitHub diffs
+  from the merge base: #8388, #8389 and #8381 each touch only their own file. **#8388 counts as astra-cleared.** Its build is still queued, so a
+  new waiter is running.
+* **Trap (standing):** build astra questions from `git diff origin/main...HEAD` (three dots = from the merge base), never `..`. Check #8389's
+  pending answer for the same artefact.
+
+## r948 — 2026-09-23T20:14Z (cron)
+
+* **#8381 approved** (20:12:15Z, 7 min after ready) and `ready-to-merge`. #8332 and #8344 are queued. #8388 and #8389 are drafts on queued builds
+  (waiters running). No new merges.
+* **Step 5, kind 2: opened draft #8402**, `improve/rowexch-style` @ `1ffccd0f8`, from `20aa079d5`; `Roadmap: Exchangeability` (as #6639
+  and #6231). Target: `Recurrence/RowExchangeable.lean` (519 lines): 83 `fun … =>` → `↦` (asserted), and nothing else. All three `;` chains
+  are inline terms and stay; there is no roadmap text. Gate 12/0/0. **The astra question uses the three-dot diff `origin/main...HEAD` (the r947
+  trap): exactly 1 `diff --git`, verified.** gpt-6-astra was launched at 20:18Z.
+* In progress (cap full): #8388, #8389 and #8402. Pin `dc4b8d60d5`, main `20aa079d5`.
