@@ -41912,3 +41912,10 @@ slot is open (no eligible target). Pin `dc4b8d60d5`, main `80f9ab2de`.
 
 #8305: its board is BEHIND the head `4f4ff931e` (the `placement` fix is pushed) and CI is pending (waiter running), so nothing to re-fix. #8304 is
 `ready-to-merge`. No new merges. Pin `dc4b8d60d5`, main `4e6d15352`.
+* r924 addendum (waiter): **#8305's rebuild on `4f4ff931e` is green** (16:24:15Z, check run 107268518246). Without the `Affine.Convex`
+  import the file still compiles, as the closure check predicted. It now waits for the re-review triggered by the push.
+
+## r925 — 2026-09-23T16:24Z (cron; step 4 hard-stopped)
+
+No change. #8304 is `ready-to-merge` (queued). #8305 is `awaiting-review` on its green fix `4f4ff931e`; the sweep's PENDING is only the `zulip-pr`
+notification check, not the build. No merges. Pin `dc4b8d60d5`, main `f59cc5333`.
