@@ -24,6 +24,8 @@ be used directly.
 
 ## Main results
 
+* `Ideal.card_units_quotient_pow_mul_absNorm`: `#(R ⧸ P ^ e)ˣ · N P = N (P ^ e) · (N P - 1)` for a
+  maximal ideal `P` and `e ≠ 0`.
 * `Ideal.card_units_quotient_mul_prod_absNorm`: `#(R ⧸ I)ˣ · ∏_{𝔭 ∈ S} N 𝔭 = N I · ∏_{𝔭 ∈ S}
   (N 𝔭 - 1)` in `ℕ`, the analogue of `Nat.totient_mul_prod_primeFactors`.
 * `Ideal.card_units_quotient_eq_absNorm_mul_prod`: `#(R ⧸ I)ˣ = N I · ∏_{𝔭 ∈ S} (1 - (N 𝔭)⁻¹)`
@@ -38,7 +40,10 @@ namespace Ideal
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Infinite R]
 
-private theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] {e : ℕ} (he : e ≠ 0)
+/-- **Units of the quotient by a prime power.** For a maximal ideal `P` and `e ≠ 0`,
+`#(R ⧸ P ^ e)ˣ · N P = N (P ^ e) · (N P - 1)` in `ℕ`: the non-units of the local ring `R ⧸ P ^ e`
+are the residues lying in `P`, which make up `1 / N P` of the quotient. -/
+theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] {e : ℕ} (he : e ≠ 0)
     [Finite (R ⧸ P ^ e)] :
     Nat.card (R ⧸ P ^ e)ˣ * absNorm P = absNorm (P ^ e) * (absNorm P - 1) := by
   classical
