@@ -46,11 +46,9 @@ omit [NumberField K] in
 /-- Multiplication on the mixed space is componentwise, so as an `ℝ`-linear map it is the product
 of the two componentwise multiplications, one on the real places and one on the complex ones. -/
 theorem lmul_eq_prodMap (c : mixedSpace K) :
-    Algebra.lmul ℝ (mixedSpace K) c =
-      LinearMap.prodMap
-        (LinearMap.pi fun w ↦ (Algebra.lmul ℝ ℝ (c.1 w)).comp (LinearMap.proj w))
-        (LinearMap.pi fun w ↦ (Algebra.lmul ℝ ℂ (c.2 w)).comp (LinearMap.proj w)) := by
-  ext x <;> rfl
+    Algebra.lmul ℝ (mixedSpace K) c = LinearMap.prodMap
+      (LinearMap.pi fun w ↦ (Algebra.lmul ℝ ℝ (c.1 w)).comp (LinearMap.proj w))
+      (LinearMap.pi fun w ↦ (Algebra.lmul ℝ ℂ (c.2 w)).comp (LinearMap.proj w)) := rfl
 
 open scoped Classical in
 /-- **The determinant of multiplication on the mixed space.**  Each real coordinate contributes
