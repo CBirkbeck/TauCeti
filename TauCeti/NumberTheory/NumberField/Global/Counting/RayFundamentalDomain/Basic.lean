@@ -95,16 +95,47 @@ translates of the cone below. -/
 def unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :=
   unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K
 
+/-- `unitsCongruenceSubgroupSupTorsion 𝔪` is the join of `unitsCongruenceSubgroup 𝔪` and the roots
+of unity. The definition is not exposed, so this is how another module unfolds it. -/
+theorem unitsCongruenceSubgroupSupTorsion_def (𝔪 : Modulus K) :
+    unitsCongruenceSubgroupSupTorsion 𝔪 =
+      unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K :=
+  (rfl)
+
+/-- The universal property of the join: a subgroup contains `unitsCongruenceSubgroupSupTorsion 𝔪`
+if and only if it contains the units congruent to one modulo `𝔪` and the roots of unity. -/
+theorem unitsCongruenceSubgroupSupTorsion_le_iff {𝔪 : Modulus K} {H : Subgroup (𝓞 K)ˣ} :
+    unitsCongruenceSubgroupSupTorsion 𝔪 ≤ H ↔
+      unitsCongruenceSubgroup 𝔪 ≤ H ∧ NumberField.Units.torsion K ≤ H :=
+  sup_le_iff
+
+/-- The roots of unity lie in `unitsCongruenceSubgroupSupTorsion 𝔪`. -/
+theorem torsion_le_unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) :
+    NumberField.Units.torsion K ≤ unitsCongruenceSubgroupSupTorsion 𝔪 :=
+  le_sup_right
+
+/-- The units congruent to one modulo `𝔪` lie in `unitsCongruenceSubgroupSupTorsion 𝔪`. -/
+theorem unitsCongruenceSubgroup_le_unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) :
+    unitsCongruenceSubgroup 𝔪 ≤ unitsCongruenceSubgroupSupTorsion 𝔪 :=
+  le_sup_left
+
+/-- Membership in `unitsCongruenceSubgroupSupTorsion`: a product of a unit congruent to one
+modulo `𝔪` and a root of unity.  The definition is not exposed, so `Subgroup.mem_sup` cannot see
+through it from another module. -/
+theorem mem_unitsCongruenceSubgroupSupTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
+    u ∈ unitsCongruenceSubgroupSupTorsion 𝔪 ↔
+      ∃ v ∈ unitsCongruenceSubgroup 𝔪, ∃ ζ ∈ NumberField.Units.torsion K, v * ζ = u :=
+  Subgroup.mem_sup
+
 instance unitsCongruenceSubgroupSupTorsion_finiteIndex (𝔪 : Modulus K) :
-    (unitsCongruenceSubgroupSupTorsion 𝔪).FiniteIndex := by
-  rw [unitsCongruenceSubgroupSupTorsion]
-  exact Subgroup.finiteIndex_of_le (H := unitsCongruenceSubgroup 𝔪) le_sup_left
+    (unitsCongruenceSubgroupSupTorsion 𝔪).FiniteIndex :=
+  Subgroup.finiteIndex_of_le (unitsCongruenceSubgroup_le_unitsCongruenceSubgroupSupTorsion 𝔪)
 
 /-- For the trivial modulus the congruence units are already all of `(𝓞 K)ˣ`, so adjoining the
 roots of unity changes nothing and there is a single coset. -/
 @[simp] theorem unitsCongruenceSubgroupSupTorsion_one :
     unitsCongruenceSubgroupSupTorsion (Modulus.one K) = ⊤ := by
-  rw [unitsCongruenceSubgroupSupTorsion]
+  rw [unitsCongruenceSubgroupSupTorsion_def]
   simp
 
 /-! ### The sign conditions prescribed by the infinite part -/
@@ -324,8 +355,7 @@ theorem exists_unitsCongruenceSubgroup_smul_mem_rayFundamentalDomain (𝔪 : Mod
   set r : (𝓞 K)ˣ := rayUnitRepresentative 𝔪 q with hr
   have hmem : r⁻¹ * u⁻¹ ∈ unitsCongruenceSubgroupSupTorsion 𝔪 :=
     QuotientGroup.eq.mp (by rw [hr, rayUnitRepresentative_mk, hq])
-  rw [unitsCongruenceSubgroupSupTorsion] at hmem
-  obtain ⟨v, hv, ζ, hζ, hvζ⟩ := Subgroup.mem_sup.mp hmem
+  obtain ⟨v, hv, ζ, hζ, hvζ⟩ := mem_unitsCongruenceSubgroupSupTorsion.mp hmem
   have hv' : v⁻¹ ∈ unitsCongruenceSubgroup 𝔪 := (unitsCongruenceSubgroup 𝔪).inv_mem hv
   refine ⟨v⁻¹, hv', mem_rayFundamentalDomain_iff.mpr
     ⟨unitSMul_mem_posRegion hpos hv', q, ?_⟩⟩
@@ -388,8 +418,9 @@ theorem unitsCongruenceSubgroup_smul_mem_rayFundamentalDomain_iff_mem_torsion {�
     have hsplit : (rayUnitRepresentative 𝔪 q)⁻¹ * rayUnitRepresentative 𝔪 q'
         = ((rayUnitRepresentative 𝔪 q')⁻¹ * u * rayUnitRepresentative 𝔪 q)⁻¹ * u := by
       simp [mul_comm, mul_left_comm]
-    rw [unitsCongruenceSubgroupSupTorsion, hsplit]
-    exact mul_mem (inv_mem (Subgroup.mem_sup_right htor)) (Subgroup.mem_sup_left hu)
+    rw [hsplit]
+    exact mul_mem (inv_mem (torsion_le_unitsCongruenceSubgroupSupTorsion 𝔪 htor))
+      (unitsCongruenceSubgroup_le_unitsCongruenceSubgroupSupTorsion 𝔪 hu)
   subst hqq
   have hconj : (rayUnitRepresentative 𝔪 q)⁻¹ * u * rayUnitRepresentative 𝔪 q = u := by
     simp [mul_comm, mul_left_comm]
