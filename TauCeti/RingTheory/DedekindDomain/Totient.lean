@@ -58,7 +58,7 @@ private theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] 
     exact Nat.card_congr (Equiv.subtypeEquivRight (p := (· ∈ f.toAddMonoidHom.ker))
       (q := fun x ↦ ¬ IsUnit x) fun x ↦ by simp [hunit])
   simp only [absNorm_apply, Submodule.cardQuot_apply, Nat.mul_sub_one]
-  exact Nat.eq_sub_of_add_eq (by grind)
+  exact Nat.eq_sub_of_add_eq (by nth_rw 2 [← hU]; rw [hA]; ring)
 
 private theorem card_units_quotient_mul_prod_absNorm_of_prod_eq (I : Ideal R) [Finite (R ⧸ I)]
     {S : Finset (HeightOneSpectrum R)} {e : HeightOneSpectrum R → ℕ} (he : ∀ v ∈ S, e v ≠ 0)

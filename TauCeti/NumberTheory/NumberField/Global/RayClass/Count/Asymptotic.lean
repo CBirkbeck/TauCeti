@@ -21,10 +21,6 @@ nonzero integral ideals prime to `𝔪` in a fixed ray class with absolute norm 
 `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - 1 / n))`, with the same main term and the same power
 saving for every class.
 
-The ideals of a class are matched, after multiplying by an ideal of the inverse class, with the
-points of one coset of a congruence lattice in the ray fundamental domain, each ideal accounting
-for the same number of points; the lattice-point count in that domain then gives the estimate.
-
 ## Main results
 
 * `TauCeti.GlobalNumberFields.isBigO_rayClassIdealCountingFunction_sub`: the ray class ideal
@@ -79,8 +75,7 @@ private theorem exists_abs_rayClassIdealCountingFunction_sub_le (𝔪 : Modulus 
   obtain ⟨A, -, hA⟩ := exists_abs_ncard_rayFundamentalDomain_inter_norm_le_inter_vadd_sub_le 𝔪
     (FractionalIdeal.mk0 K ⟨𝔞, h𝔞0⟩)
   set N : ℝ := (Ideal.absNorm (𝔞 : Ideal (𝓞 K)) : ℝ)
-  have hN : 1 ≤ N := Nat.one_le_cast.mpr <| Nat.one_le_iff_ne_zero.mpr <|
-    Ideal.absNorm_ne_zero_of_nonZeroDivisors ⟨_, h𝔞0⟩
+  have hN : 1 ≤ N := Nat.one_le_cast.mpr (Ideal.absNorm_pos_of_nonZeroDivisors ⟨_, h𝔞0⟩)
   have hw : 0 < (Nat.card (unitsCongruenceTorsion 𝔪) : ℝ) := Nat.cast_pos.mpr Nat.card_pos
   refine ⟨A * N ^ (1 - (finrank ℚ K : ℝ)⁻¹) / Nat.card (unitsCongruenceTorsion 𝔪), fun x hx ↦ ?_⟩
   have hcount := hA (mixedEmbedding K (ξ : K)) (x * N) (one_le_mul_of_one_le_of_one_le hx hN)
@@ -90,7 +85,9 @@ private theorem exists_abs_rayClassIdealCountingFunction_sub_le (𝔪 : Modulus 
     mul_left_comm _ x, measureReal_div_covolume_congruenceLattice_mul_absNorm 𝔪 ⟨𝔞, h𝔞0⟩,
     Real.mul_rpow (zero_le_one.trans hx) (zero_le_one.trans hN)] at hcount
   rw [div_mul_eq_mul_div, le_div_iff₀ hw, ← abs_of_pos hw, ← abs_mul]
-  refine le_of_eq_of_le ?_ (hcount.trans_eq ?_) <;> ring_nf
+  refine le_of_eq_of_le ?_ (hcount.trans_eq ?_)
+  · ring_nf
+  · ring
 
 /-- **The ray class ideal count of a single class, with an explicit power saving.**  The number
 of nonzero integral ideals prime to `𝔪` in the ray class `c` with norm at most `x` is

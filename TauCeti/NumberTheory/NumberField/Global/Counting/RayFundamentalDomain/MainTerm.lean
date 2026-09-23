@@ -7,8 +7,8 @@ module
 
 public import TauCeti.NumberTheory.NumberField.Global.Counting.CongruenceLattice
 public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Volume
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.ClassNumber
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.MainTerm
+import TauCeti.NumberTheory.NumberField.Global.RayClass.ClassNumber
 import TauCeti.RingTheory.DedekindDomain.Totient
 
 /-!
@@ -17,11 +17,8 @@ import TauCeti.RingTheory.DedekindDomain.Totient
 Counting the points of a coset of `congruenceLattice 𝔪 (mk0 𝔞)` in the norm-`≤ t` section of
 `rayFundamentalDomain 𝔪` gives a main term `V / covol · t`, where `V` is the volume of the
 norm-one section of the domain and `covol` the covolume of the lattice. This file evaluates the
-coefficient that this produces for the ideals of a ray class, where `t = x · N 𝔞`: the norm of
-`𝔞` cancels against the covolume, and the volume of the domain, the index of the congruence
-units and the ray class number formula combine into the Dedekind-zeta residue, and the
-proportion `#(𝓞 K ⧸ 𝔪₀)ˣ / N 𝔪₀` of residues prime to the finite part `𝔪₀` of `𝔪` becomes the
-product of the local factors `1 - (N 𝔭)⁻¹`.
+coefficient `V / covol · N 𝔞` that this produces for the ideals of a ray class, where
+`t = x · N 𝔞`, in terms of `rayClassIdealMainTerm 𝔪`.
 
 Writing `w_𝔪` for the number of roots of unity congruent to one modulo `𝔪`, the coefficient is
 `V / covol · N 𝔞 = w_𝔪 · rayClassIdealMainTerm 𝔪`.
