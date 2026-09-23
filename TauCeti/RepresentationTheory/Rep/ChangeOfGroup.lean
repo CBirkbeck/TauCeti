@@ -185,6 +185,7 @@ theorem Rep.isIntertwiningMap_res_res_toRes_naturality {K : Type uK} {L : Type u
     (hfg : g₂.comp g₁ = f₂.comp f₁) {N N' : Rep.{uV} R H} (ψ : N ⟶ N') :
     (isIntertwiningMap_res_res N hfg).toRes ≫ (resFunctor g₁).map ((resFunctor g₂).map ψ) =
       (resFunctor f₁).map ((resFunctor f₂).map ψ) ≫ (isIntertwiningMap_res_res N' hfg).toRes := by
-  rfl
+  ext v
+  simp
 
 end RepMorphisms
