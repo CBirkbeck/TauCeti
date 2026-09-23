@@ -39,8 +39,8 @@ proof uses, and the name places the divisibility in Mathlib's operand order.
   along `d ∣ N` have representatives congruent modulo `d`, as integers.
 * `ZMod.intCast_lcm_eq_of_eq_of_eq`: one residue modulo `lcm a b` from the residues modulo `a`
   and `b` — the Chinese remainder theorem for a single integer.
-* `ZMod.natCast_natAbs_eq_of_mul_nonneg`: congruent integers of the same sign have congruent
-  absolute values.
+* `ZMod.natCast_natAbs_eq_of_mul_nonneg`: congruent integers with nonnegative product have
+  congruent absolute values.
 -/
 
 public section
@@ -83,8 +83,8 @@ theorem intCast_lcm_eq_of_eq_of_eq {a b : ℕ} {x y : ℤ} (ha : (x : ZMod a) = 
   rw [hlcm, ← Int.modEq_and_modEq_iff_modEq_lcm]
   exact ⟨ha, hb⟩
 
-/-- **Congruent integers of the same sign have congruent absolute values.** If `z * w ≥ 0` and
-`z ≡ w` modulo `m`, then `|z| ≡ |w|` modulo `m`. -/
+/-- **Congruent integers with nonnegative product have congruent absolute values.** If
+`z * w ≥ 0` and `z ≡ w` modulo `m`, then `|z| ≡ |w|` modulo `m`. -/
 theorem natCast_natAbs_eq_of_mul_nonneg {m : ℕ} {z w : ℤ} (hzw : 0 ≤ z * w)
     (h : (z : ZMod m) = w) : (z.natAbs : ZMod m) = w.natAbs := by
   rcases hzw.lt_or_eq with hzw | hzw
