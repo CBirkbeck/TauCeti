@@ -10,7 +10,11 @@ public import Mathlib.FieldTheory.IsSepClosed
 import Mathlib.Algebra.QuadraticDiscriminant
 
 /-!
-# Quadratics over a separably closed field
+# Separably closed fields
+
+Two small supplements to Mathlib's `IsSepClosed` and `IsSepClosure`.
+
+## Quadratics over a separably closed field
 
 A separably closed field solves every quadratic **except** the inseparable ones. A quadratic
 `a X² + b X + c` with `a ≠ 0` is inseparable exactly when its derivative `2a X + b` vanishes, that
@@ -25,9 +29,21 @@ The excluded case is genuinely excluded: over an imperfect separably closed fiel
 characteristic `2`, such as the separable closure of `𝔽₂(t)`, the equation `X² = t` has no
 solution.
 
+## Separable closures in a tower
+
+A separable closure of `K` is a separable closure of every intermediate extension `L` of the
+tower `K ⊆ L ⊆ E`: separable closedness is a property of the field `E` alone, and an element
+separable over `K` is separable over `L`. Mathlib records `IsSepClosure` only for the base of a
+tower, so this file supplies the step up the tower.
+
+The statement is a theorem rather than an instance because the base field `K` does not appear in
+its conclusion, so instance search could not find it.
+
 ## Main results
 
 * `TauCeti.exists_quadratic_eq_zero_of_isSepClosed`
+* `TauCeti.isSepClosure_tower_top`: `IsSepClosure K E` implies `IsSepClosure L E` for every
+  intermediate extension `L`.
 -/
 
 public section
@@ -47,6 +63,13 @@ theorem exists_quadratic_eq_zero_of_isSepClosed {K : Type*} [Field K] [IsSepClos
     exact ⟨x, by linear_combination hx⟩
   · have : NeZero (2 : K) := ⟨h2⟩
     exact exists_quadratic_eq_zero ha (IsSepClosed.exists_eq_mul_self (discrim a b c))
+
+/-- **A separable closure of `K` is a separable closure of every intermediate extension `L`**:
+separable closedness is a property of the field alone, and separability over `K` implies
+separability over `L`. -/
+theorem isSepClosure_tower_top (K L E : Type*) [Field K] [Field L] [Field E] [Algebra K L]
+    [Algebra K E] [Algebra L E] [IsScalarTower K L E] [IsSepClosure K E] : IsSepClosure L E :=
+  ⟨IsSepClosure.sep_closed K, Algebra.isSeparable_tower_top_of_isSeparable K L E⟩
 
 end TauCeti
 
