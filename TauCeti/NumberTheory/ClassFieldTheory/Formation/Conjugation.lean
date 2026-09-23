@@ -104,10 +104,6 @@ conjugation with the resulting map on norm quotients.
 so that membership in the conjugate subgroups is definitionally the membership condition
 `g⁻¹xg ∈ U` and needs no image lemma to use.
 
-The `simp` lemmas whose left-hand sides involve `F.toRep.V`, directly or through a level
-`F.level U`, state those sides through `dsimp% only`, following #8315; see the implementation
-notes of `Formation/Basic.lean`.
-
 ## References
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §4.
@@ -163,6 +159,8 @@ def levelConjEquiv (g : G) {U U' : OpenSubgroup G}
   left_inv a := Subtype.ext (F.toRep.ρ.inv_self_apply g a)
   right_inv b := Subtype.ext (F.toRep.ρ.self_inv_apply g b)
 
+-- The `simp` lemmas below state their left-hand sides through `dsimp% only`, following #8315;
+-- see the implementation notes of `Formation/Basic.lean`.
 /-- `levelConjEquiv` acts by `g` on underlying elements. -/
 @[simp]
 theorem levelConjEquiv_apply_coe (g : G) {U U' : OpenSubgroup G}
@@ -324,6 +322,8 @@ theorem degree_conjugate : (L.conjugate g).degree = L.degree := by
 def conjugateCoefficientEquiv : F.level L.top ≃ₗ[ℤ] F.level (L.conjugate g).top :=
   F.levelConjEquiv g fun _ ↦ L.conj_mem_top_conjugate g
 
+-- The `simp` lemmas below state their left-hand sides through `dsimp% only`, following #8315;
+-- see the implementation notes of `Formation/Basic.lean`.
 /-- The coefficient equivalence acts by `g` on underlying elements. -/
 @[simp]
 theorem conjugateCoefficientEquiv_apply_coe (x : F.level L.top) :
@@ -334,7 +334,7 @@ theorem conjugateCoefficientEquiv_apply_coe (x : F.level L.top) :
 @[simp]
 theorem conjugateCoefficientEquiv_symm_apply_coe (y : F.level (L.conjugate g).top) :
     (dsimp% only ((L.conjugateCoefficientEquiv F g).symm y : F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
-  (rfl)
+  F.levelConjEquiv_symm_apply_coe g _ y
 
 /-- **Conjugation on the ground level of a layer:** acting by `g` is an isomorphism
 `A^U ≃ A^{gUg⁻¹}`. This is the map the Artin map of a class formation is conjugated by. -/
@@ -351,7 +351,7 @@ theorem conjugateGroundLevelEquiv_apply_coe (x : F.level L.ground) :
 @[simp]
 theorem conjugateGroundLevelEquiv_symm_apply_coe (y : F.level (L.conjugate g).ground) :
     (dsimp% only ((L.conjugateGroundLevelEquiv F g).symm y : F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
-  (rfl)
+  F.levelConjEquiv_symm_apply_coe g _ y
 
 /-- **The isomorphisms of Galois groups and of coefficient modules intertwine:**
 `g · (γ · x) = (gγg⁻¹) · (g · x)`. -/
@@ -470,7 +470,7 @@ def conjugateNormQuotientEquiv : L.NormQuotient F ≃+ (L.conjugate g).NormQuoti
 conjugate. -/
 @[simp]
 theorem conjugateNormQuotientEquiv_normQuotientMk (x : F.level L.ground) :
-    (dsimp% only (L.conjugateNormQuotientEquiv F g (L.normQuotientMk F x))) =
+    L.conjugateNormQuotientEquiv F g (L.normQuotientMk F x) =
       (L.conjugate g).normQuotientMk F (L.conjugateGroundLevelEquiv F g x) := by
   rw [normQuotientMk_apply, normQuotientMk_apply, conjugateNormQuotientEquiv,
     LinearEquiv.coe_toAddEquiv]
@@ -485,9 +485,11 @@ of its inverse conjugate. -/
 @[simp]
 theorem conjugateNormQuotientEquiv_symm_normQuotientMk
     (y : F.level (L.conjugate g).ground) :
-    (dsimp% only ((L.conjugateNormQuotientEquiv F g).symm ((L.conjugate g).normQuotientMk F y))) =
+    (L.conjugateNormQuotientEquiv F g).symm ((L.conjugate g).normQuotientMk F y) =
       L.normQuotientMk F ((L.conjugateGroundLevelEquiv F g).symm y) := by
-  simp [AddEquiv.symm_apply_eq]
+  apply (L.conjugateNormQuotientEquiv F g).injective
+  rw [AddEquiv.apply_symm_apply, conjugateNormQuotientEquiv_normQuotientMk,
+    LinearEquiv.apply_symm_apply]
 
 /-- In degree zero, conjugation on Tate cohomology is conjugation on the norm quotient. -/
 theorem tateHZeroEquivNormQuotient_conjugateTateIso_apply (x : L.TateH F 0) :
