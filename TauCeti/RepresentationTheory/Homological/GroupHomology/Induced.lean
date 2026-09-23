@@ -28,6 +28,7 @@ The statements follow `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.le
 ## References
 
 * K. S. Brown, *Cohomology of Groups*, Chapter III, §6.
+* Charles A. Weibel, *An Introduction to Homological Algebra*, Section 6.3.
 -/
 
 public section
@@ -40,12 +41,12 @@ namespace groupHomology
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Positive-degree homology of a representation induced from the trivial subgroup vanishes.
-Unlike the Tate analogue `TauCeti.TateCohomology.isZero_indBot`, no finiteness is needed. -/
+/-- Positive-degree homology of a representation induced from the trivial subgroup vanishes (Weibel
+6.3.3). Unlike the Tate analogue `TauCeti.TateCohomology.isZero_indBot`, no finiteness is needed. -/
 theorem isZero_indBot_succ (X : Type u) [AddCommGroup X] [Module k X] (n : ℕ) :
     Limits.IsZero (groupHomology (indBot k G X) (n + 1)) := by
   classical
-  -- Shapiro's lemma identifies this with `Hₙ₊₁(⊥, X)`, and the trivial group has no
+  -- Shapiro's lemma (Weibel 6.3.2) identifies this with `Hₙ₊₁(⊥, X)`, and the trivial group has no
   -- positive-degree homology.
   exact (isZero_groupHomology_succ_of_subsingleton _ n).of_iso (indIso _ _ _)
 
