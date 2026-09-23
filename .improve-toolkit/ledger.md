@@ -41489,3 +41489,13 @@ queued for kind 3: `gammaPDFReal_of_pos` (`_of_nonneg` rename, update every call
 after #8224). Main is `2d137180a`.
 
 No toolkit edits.
+
+## r883 — 2026-09-23T09:26Z (cron `4b5d0e55`)
+
+* **#8233 went green at 09:24:57Z** and was **marked ready at 09:26:40Z**. The guards: every latest check green, head
+  `77df94016` unchanged, and pin `dc4b8d60d5` at both the build base `62fc0367c` and main `2d137180a`, which never touched the
+  file. gpt-6-astra had cleared it at r882. Step 4 may drive it only after 10:26Z.
+* #8224 is `awaiting-review` (ready 09:18:43Z), with no board yet; step 4 may drive it only after 10:18Z. #8235 is a draft on its
+  first build.
+* Merges: **#8101** at 09:19:24Z (recorded at r882); no new ones. Nothing is `awaiting-author` or `ci-failed`.
+* The cap is full (#8224, #8233, #8235), so step 5 is shut. No toolkit edits.
