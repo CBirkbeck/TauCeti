@@ -72,12 +72,15 @@ def groundNorm (T : LayerRestriction small big) (F : Formation G) :
     (ContCohomology.explicitCor0Le G F.toRep.V _ _ T.ground_toSubgroup_le).comp
       (F.levelEquivH0 small.ground).toAddMonoidHom
 
+-- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
+-- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
+-- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
 /-- The norm along a restriction is the sum of the translates by coset representatives, read in the
 ambient module: `N_{U/U'} x = ∑ ρ(g) x` over the representatives `g = q.out` of the cosets
 `q ∈ U/U'`. -/
 @[simp]
 theorem groundNorm_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : F.level small.ground) : (T.groundNorm F x : F.toRep.V) =
+    (x : F.level small.ground) : (dsimp% only (T.groundNorm F x : F.toRep.V)) =
       ∑ᶠ q : big.ground.toSubgroup ⧸ small.ground.toSubgroup.subgroupOf big.ground.toSubgroup,
         F.toRep.ρ (q.out : G) x := by
   rw [groundNorm, AddMonoidHom.comp_apply, AddEquiv.coe_toAddMonoidHom,

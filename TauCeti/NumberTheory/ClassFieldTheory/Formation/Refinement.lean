@@ -209,11 +209,14 @@ def repHom (T : LayerRefinement old new) (F : Formation G) :
           rw [galHom_mk, Submodule.coe_inclusion, NormalLayer.rep_ρ_mk_apply_coe,
             NormalLayer.rep_ρ_mk_apply_coe, Submodule.coe_inclusion, Subgroup.coe_inclusion] }
 
+-- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
+-- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
+-- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
 /-- The inclusion of coefficient modules moves no element of the ambient module. -/
 @[simp]
 theorem repHom_hom_apply_coe (T : LayerRefinement old new) (F : Formation G)
     (x : F.level old.top) :
-    (((T.repHom F).hom x : F.level new.top) : F.toRep.V) = (x : F.toRep.V) :=
+    (dsimp% only (((T.repHom F).hom x : F.level new.top) : F.toRep.V)) = (x : F.toRep.V) :=
   (rfl)
 
 /-- The **ground-level identification** of a refinement: both layers have the same ground
@@ -225,7 +228,7 @@ def groundEquiv (T : LayerRefinement old new) (F : Formation G) :
 @[simp]
 theorem groundEquiv_apply_coe (T : LayerRefinement old new) (F : Formation G)
     (x : F.level old.ground) :
-    ((T.groundEquiv F x : F.level new.ground) : F.toRep.V) = (x : F.toRep.V) :=
+    (dsimp% only ((T.groundEquiv F x : F.level new.ground) : F.toRep.V)) = (x : F.toRep.V) :=
   (rfl)
 
 /-- The layers `V ◁ ⊤` of two nested open normal subgroups `V' ≤ V` form a refinement: the finite
