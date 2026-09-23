@@ -41617,3 +41617,10 @@ Pin `dc4b8d60d5`, main `1724b0c80`. The cap is full.
 
 No change. #8224 (error board), #8233 (98 min) and #8235 (88 min) are waiting on external reviewers. No merges; main is
 still `1724b0c80` (unmoved since 10:24Z). The cap is full.
+
+## r894 — 2026-09-23T11:14Z (cron; step 4 hard-stopped)
+
+No change on the board. **External reviewers are active:** 21 boards were updated in the last 45 minutes (`roed-math`, `kim-em`,
+`Robertboy18`), and their targets (#8173–#8222) are all numbered below ours. They seem to work oldest-first, so #8224, #8233 and
+#8235 are queued behind them rather than dropped. Merges are slow (one in the last hour), and main is still `1724b0c80`.
+The cap is full.
