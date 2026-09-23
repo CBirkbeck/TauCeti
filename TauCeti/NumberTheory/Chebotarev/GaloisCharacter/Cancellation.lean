@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ArithmeticDirichletSeries.Cancellation
-public import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Cyclotomic
+public import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Cyclotomic.Basic
 import TauCeti.NumberTheory.NumberField.Global.RayClass.Character.PartialSums
 
 /-!

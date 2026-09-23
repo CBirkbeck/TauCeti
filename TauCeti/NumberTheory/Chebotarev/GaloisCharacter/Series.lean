@@ -9,7 +9,7 @@ public import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Cancellation
 import TauCeti.Analysis.SpecialFunctions.Log.OneDivSub
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.Basic
 import TauCeti.NumberTheory.Chebotarev.Density.SplitsCompletely
-import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.CyclotomicSurjective
+import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Cyclotomic.Surjective
 import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Orthogonality
 
 /-!
@@ -32,10 +32,21 @@ so the series is analytic at `s = 1`, and its value at `s = 1` is nonzero.
 
 * `NumberField.Chebotarev.cyclotomicCharacterSeriesC_eq_LSeries`: on `Re s > 1` it is the
   `L`-series of `galoisCharacterWeight χ`.
+* `NumberField.Chebotarev.differentiableOn_cyclotomicCharacterSeriesC`: for `F = K(μ_m)` and
+  `χ` nontrivial it is holomorphic on `Re s > 1 - 1 / [K : ℚ]`.
 * `NumberField.Chebotarev.cyclotomicCharacterSeriesC_analyticAt_one`: for `F = K(μ_m)` and `χ`
   nontrivial it is analytic at `s = 1`.
 * `NumberField.Chebotarev.cyclotomicCharacterSeriesC_ne_zero_at_one`: for `F = K(μ_m)` and `χ`
   nontrivial it is nonzero at `s = 1`.
+
+## References
+
+* The nonvanishing argument at `s = 1`, in which the logarithm of the product of the `L`-series
+  over all characters is a series with nonnegative coefficients that is unbounded as `s → 1⁺`, is
+  analogous to `Chebotarev.artinLSeries_one_ne_zero` in AINTLIB (`github.com/CBirkbeck/aintlib`
+  at commit `8102fa09bbf570f3e991adfdb2d6d70b48cb5b5e`, Apache-2.0),
+  `projects/Chebotarev/CebotarevDensity/ZetaProduct.lean`, which proves the nonvanishing at
+  `s = 1` of the Artin `L`-series of a nontrivial character of `Gal(K(μ_m)/K)`.
 -/
 
 public section
@@ -70,6 +81,7 @@ variable {K F}
 variable (K F) in
 /-- **The continued `L`-series is the `L`-series on `Re s > 1`.** This holds for every Galois
 extension `F / K` and every character `χ`, with no cyclotomic hypothesis. -/
+@[simp]
 theorem cyclotomicCharacterSeriesC_eq_LSeries (χ : (F ≃ₐ[K] F) →* ℂˣ) {s : ℂ} (hs : 1 < s.re) :
     cyclotomicCharacterSeriesC K F χ s =
       LSeries (normCoeff K χ.galoisCharacterWeight.toIdealArithmeticFunction) s := by
@@ -114,9 +126,11 @@ private theorem exists_differentiableOn_eq_LSeries (m : ℕ) [NeZero m]
       UnitaryIdealWeight.toIdealArithmeticFunction_eq_val,
       MonoidHom.val_galoisCharacterUnitaryWeight]
 
--- For `F = K(μ_m)` and `χ` nontrivial, the continued `L`-series is holomorphic on the half-plane
--- `Re s > 1 - 1 / [K : ℚ]`.
-private theorem differentiableOn_cyclotomicCharacterSeriesC (m : ℕ) [NeZero m]
+variable (K F) in
+/-- **Holomorphy on `Re s > 1 - 1 / [K : ℚ]`.** For `F = K(μ_m)` and a nontrivial character `χ` of
+`Gal(F/K)`, the continued `L`-series of `χ` is holomorphic on the half-plane
+`Re s > 1 - 1 / [K : ℚ]`. -/
+theorem differentiableOn_cyclotomicCharacterSeriesC (m : ℕ) [NeZero m]
     [IsCyclotomicExtension {m} K F] (χ : (F ≃ₐ[K] F) →* ℂˣ) (hχ : χ ≠ 1) :
     DifferentiableOn ℂ (cyclotomicCharacterSeriesC K F χ)
       {s | 1 - 1 / (Module.finrank ℚ K : ℝ) < s.re} := by
@@ -130,10 +144,11 @@ private theorem differentiableOn_cyclotomicCharacterSeriesC (m : ℕ) [NeZero m]
 
 variable (K F) in
 /-- **Analyticity at `s = 1`.** For `F = K(μ_m)` and a nontrivial character `χ` of `Gal(F/K)`,
-the continued `L`-series of `χ` is analytic at `s = 1`. -/
+the continued `L`-series of `χ` is analytic at `s = 1`, which lies in the half-plane of
+`differentiableOn_cyclotomicCharacterSeriesC`. -/
 theorem cyclotomicCharacterSeriesC_analyticAt_one (m : ℕ) [NeZero m] [IsCyclotomicExtension {m} K F]
     (χ : (F ≃ₐ[K] F) →* ℂˣ) (hχ : χ ≠ 1) : AnalyticAt ℂ (cyclotomicCharacterSeriesC K F χ) 1 :=
-  (differentiableOn_cyclotomicCharacterSeriesC m χ hχ).analyticAt <|
+  (differentiableOn_cyclotomicCharacterSeriesC K F m χ hχ).analyticAt <|
     (isOpen_lt continuous_const Complex.continuous_re).mem_nhds
       (by simpa using cancellationExponent_lt_one (K := K))
 

@@ -11,6 +11,7 @@ import Mathlib.NumberTheory.Cyclotomic.Gal
 import TauCeti.NumberTheory.NumberField.Cyclotomic.Frobenius
 import TauCeti.NumberTheory.NumberField.Cyclotomic.Ramification
 import TauCeti.NumberTheory.NumberField.Ideal.ArtinMap
+import TauCeti.RingTheory.Ideal.Norm.AbsNorm
 
 /-!
 # Cyclotomic Galois characters as ray class characters
@@ -91,54 +92,6 @@ section Auxiliary
 
 variable {K : Type*} [Field K] [NumberField K]
 
--- Two homomorphisms out of the integral ideals prime to `S` agree once they agree on the primes
--- outside `S`: those primes generate the monoid.
-private theorem integralIdealsAway_hom_ext {M : Type*} [MulOneClass M]
-    {S : Finset (HeightOneSpectrum (𝓞 K))} {f g : integralIdealsAway (K := K) S →* M}
-    (h : ∀ (v : HeightOneSpectrum (𝓞 K)) (hv : v.asIdeal ∈ integralIdealsAway (K := K) S),
-      f ⟨v.asIdeal, hv⟩ = g ⟨v.asIdeal, hv⟩) : f = g := by
-  refine MonoidHom.ext fun ⟨I, hI⟩ ↦ ?_
-  induction I using UniqueFactorizationMonoid.induction_on_prime with
-  | h₁ => exact absurd rfl (mem_integralIdealsAway_iff.mp hI).1
-  | h₂ x hx =>
-    obtain rfl := isUnit_iff_eq_one.mp hx
-    exact (map_one f).trans (map_one g).symm
-  | h₃ a p ha hp ih =>
-    obtain ⟨-, hS⟩ := mem_integralIdealsAway_iff.mp hI
-    have hpS : p ∈ integralIdealsAway (K := K) S := mem_integralIdealsAway_iff.mpr
-      ⟨hp.ne_zero, fun v hv hvp ↦ hS v hv (hvp.mul_right a)⟩
-    have haS : a ∈ integralIdealsAway (K := K) S := mem_integralIdealsAway_iff.mpr
-      ⟨ha, fun v hv hva ↦ hS v hv (hva.mul_left p)⟩
-    change f (⟨p, hpS⟩ * ⟨a, haS⟩) = g (⟨p, hpS⟩ * ⟨a, haS⟩)
-    rw [map_mul, map_mul, ih haS, h ⟨p, Ideal.isPrime_of_prime hp, hp.ne_zero⟩ hpS]
-
--- Congruent integers have congruent norms: if `a ≡ b` modulo `(m)` in `𝓞 K`, then
--- `N(a) ≡ N(b) mod m`.
-private theorem intCast_norm_eq_of_sub_mem {m : ℕ} {a b : 𝓞 K}
-    (h : a - b ∈ Ideal.span {(m : 𝓞 K)}) :
-    ((Algebra.norm ℤ a : ℤ) : ZMod m) = ((Algebra.norm ℤ b : ℤ) : ZMod m) := by
-  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp h
-  let B := Module.Free.chooseBasis ℤ (𝓞 K)
-  rw [Algebra.norm_eq_matrix_det B, Algebra.norm_eq_matrix_det B]
-  change Int.castRingHom (ZMod m) _ = Int.castRingHom (ZMod m) _
-  rw [RingHom.map_det, RingHom.map_det, sub_eq_iff_eq_add.mp hc.symm, map_add, map_mul,
-    map_natCast, map_add, map_mul, map_natCast, ← Matrix.diagonal_natCast, ZMod.natCast_self,
-    Matrix.diagonal_zero, mul_zero, zero_add]
-
--- Two integers of the same sign that are congruent modulo `m` have congruent absolute values.
-private theorem natCast_natAbs_eq_of_mul_pos {m : ℕ} {z w : ℤ} (hzw : 0 < z * w)
-    (h : (z : ZMod m) = w) : (z.natAbs : ZMod m) = w.natAbs := by
-  rcases pos_and_pos_or_neg_and_neg_of_mul_pos hzw with ⟨hz, hw⟩ | ⟨hz, hw⟩ <;>
-    simp [← Int.cast_natCast (R := ZMod m), abs_of_pos, abs_of_neg, hz, hw, h]
-
--- The ideal `(m)` of `𝓞 K` is proper unless `m = 1`.
-private theorem span_natCast_ne_top {m : ℕ} (hm : m ≠ 1) : Ideal.span {(m : 𝓞 K)} ≠ ⊤ := by
-  intro h
-  have hnorm := Ideal.absNorm_eq_one_iff.mpr h
-  rw [Ideal.absNorm_span_singleton, ← map_natCast (algebraMap ℤ (𝓞 K)), Algebra.norm_algebraMap,
-    Int.natAbs_pow, Int.natAbs_natCast] at hnorm
-  exact hm ((pow_eq_one_iff.mp hnorm).resolve_right Module.finrank_pos.ne')
-
 -- A nonzero integer congruent to one modulo `(m)` generates an ideal prime to the cyclotomic
 -- modulus.
 private theorem span_singleton_mem_integralIdealsPrimeTo_cyclotomicModulus {m : ℕ} [NeZero m]
@@ -214,35 +167,6 @@ private theorem autToPow_cyclotomicArtinIntegral {ζ : F} (hζ : IsPrimitiveRoot
       (asIdeal_mem_integralIdealsPrimeTo_cyclotomicModulus_iff.mp hv) Q]
   exact DFunLike.congr_fun hfg I
 
--- An element congruent to one modulo `𝔪` is a quotient `a / b` of algebraic integers that are both
--- congruent to one modulo the finite part of `𝔪`.
-private theorem exists_sub_one_mem_and_algebraMap_eq_mul_of_isCongrOne {𝔪 : Modulus K} {x : Kˣ}
-    (hx : IsCongrOne 𝔪 x) : ∃ a b : 𝓞 K, a - 1 ∈ 𝔪.finitePart ∧ b - 1 ∈ 𝔪.finitePart ∧
-      algebraMap (𝓞 K) K a = algebraMap (𝓞 K) K b * (x : K) := by
-  have hxp : x ∈ primeToSubgroup 𝔪 :=
-    congruenceSubgroup_le_primeToSubgroup _ (mem_congruenceSubgroup.mpr hx)
-  obtain ⟨a, b, hb, hab⟩ := exists_algebraMap_eq_mul_of_mem_primeToSubgroup hxp
-  -- the reduction of `x` modulo the finite part is that of `a`, and is one
-  refine ⟨a, b, Ideal.Quotient.eq.mp ?_, hb, hab⟩
-  rw [map_one, ← residue_eq ⟨x, hxp⟩ hb hab, ← coe_residueHom,
-    residueHom_eq_one_of_mem_congruenceSubgroup (mem_congruenceSubgroup.mpr hx), Units.val_one]
-
--- If `a = b x` with `x` of positive norm, and `a ≡ b` modulo `(m)`, then the ideals `(a)` and
--- `(b)` have absolute norms congruent modulo `m`.
-private theorem natCast_absNorm_span_singleton_eq_of_sub_mem {m : ℕ} {a b : 𝓞 K} {x : K}
-    (hx : 0 < Algebra.norm ℚ x) (hb : b ≠ 0) (hab : algebraMap (𝓞 K) K a = algebraMap (𝓞 K) K b * x)
-    (h : a - b ∈ Ideal.span {(m : 𝓞 K)}) :
-    (Ideal.absNorm (Ideal.span {a}) : ZMod m) = Ideal.absNorm (Ideal.span {b}) := by
-  -- the norms of `a` and `b` are congruent modulo `m` and have the same sign
-  have hNab : ((Algebra.norm ℤ a : ℤ) : ℚ) = (Algebra.norm ℤ b : ℤ) * Algebra.norm ℚ x := by
-    rw [Algebra.coe_norm_int, Algebra.coe_norm_int, ← map_mul]
-    exact congrArg _ hab
-  have hsign : (0 : ℚ) < (Algebra.norm ℤ a : ℤ) * (Algebra.norm ℤ b : ℤ) := by
-    rw [hNab, mul_right_comm]
-    exact mul_pos (mul_self_pos.mpr (Int.cast_ne_zero.mpr (Algebra.norm_ne_zero_iff.mpr hb))) hx
-  rw [Ideal.absNorm_span_singleton, Ideal.absNorm_span_singleton]
-  exact natCast_natAbs_eq_of_mul_pos (mod_cast hsign) (intCast_norm_eq_of_sub_mem h)
-
 -- The Artin map of `F / K` kills the ray of the cyclotomic modulus.
 private theorem ray_le_ker_cyclotomicArtinAway :
     ray (cyclotomicModulus K m) ≤ (cyclotomicArtinAway F m).ker := by
@@ -257,10 +181,11 @@ private theorem ray_le_ker_cyclotomicArtinAway :
   rcases eq_or_ne m 1 with rfl | hm1
   · exact Subsingleton.elim _ _
   -- Write `x = a / b` with `a ≡ b ≡ 1 mod m`.
-  obtain ⟨a, b, ha, hb, hab⟩ := exists_sub_one_mem_and_algebraMap_eq_mul_of_isCongrOne hx
+  obtain ⟨a, b, ha, hb, hab⟩ := hx.exists_sub_one_mem_and_algebraMap_eq_mul
   rw [cyclotomicModulus_finitePart] at ha hb
   have hne0 {c : 𝓞 K} (hc : c - 1 ∈ Ideal.span {(m : 𝓞 K)}) : c ≠ 0 := fun h ↦
-    span_natCast_ne_top hm1 ((Ideal.eq_top_iff_one _).mpr (by simpa [h] using neg_mem hc))
+    hm1 (Ideal.span_singleton_natCast_eq_top_iff.mp
+      ((Ideal.eq_top_iff_one _).mpr (by simpa [h] using neg_mem hc)))
   have hIa := span_singleton_mem_integralIdealsPrimeTo_cyclotomicModulus (hne0 ha) ha
   have hIb := span_singleton_mem_integralIdealsPrimeTo_cyclotomicModulus (hne0 hb) hb
   -- In `idealsPrimeTo`, `(a) = (x) * (b)`.
@@ -276,10 +201,18 @@ private theorem ray_le_ker_cyclotomicArtinAway :
   rw [cyclotomicArtinIntegral_apply, ← map_mul, ← map_mul, ← hsplit, Units.ext_iff,
     ← cyclotomicArtinIntegral_apply, ← cyclotomicArtinIntegral_apply,
     autToPow_cyclotomicArtinIntegral F m hζ, autToPow_cyclotomicArtinIntegral F m hζ]
-  -- They do: the two norms are congruent modulo `m`.
-  exact natCast_absNorm_span_singleton_eq_of_sub_mem (norm_pos_of_isTotallyPositive x.ne_zero
-    (isTotallyPositive_iff.mpr fun w hw ↦ hx.pos (mem_cyclotomicModulus_infinitePart K m ⟨w, hw⟩)))
-    (hne0 hb) hab (by simpa using sub_mem ha hb)
+  -- They do: `a ≡ b` modulo `m`, and `N(a) = N(b) N(x)` with `N(x) > 0` as `x` is totally
+  -- positive, so the norms of `a` and `b` have the same sign.
+  have hNab : ((Algebra.norm ℤ a : ℤ) : ℚ) = (Algebra.norm ℤ b : ℤ) * Algebra.norm ℚ (x : K) := by
+    rw [Algebra.coe_norm_int, Algebra.coe_norm_int, ← map_mul]
+    exact congrArg _ hab
+  have hsign : (0 : ℚ) < (Algebra.norm ℤ a : ℤ) * (Algebra.norm ℤ b : ℤ) := by
+    rw [hNab, mul_right_comm]
+    refine mul_pos (mul_self_pos.mpr (Int.cast_ne_zero.mpr (Algebra.norm_ne_zero_iff.mpr
+      (hne0 hb)))) (norm_pos_of_isTotallyPositive x.ne_zero (isTotallyPositive_iff.mpr
+        fun w hw ↦ hx.pos (mem_cyclotomicModulus_infinitePart K m ⟨w, hw⟩)))
+  exact Ideal.natCast_absNorm_span_singleton_eq_of_sub_mem (mod_cast hsign)
+    (by simpa using sub_mem ha hb)
 
 variable (K) in
 /-- **The Artin map of a cyclotomic extension on the ray class group.** For `F = K(μ_m)` the
@@ -310,7 +243,7 @@ end NumberField.Chebotarev
 
 namespace MonoidHom
 
-open TauCeti.GlobalNumberFields NumberField.Chebotarev
+open TauCeti.GlobalNumberFields TauCeti.NumberFieldArithmetic NumberField.Chebotarev
 open scoped IsMulCommutative
 
 variable {K : Type*} [Field K] [NumberField K] {F : Type*} [Field F] [NumberField F]
