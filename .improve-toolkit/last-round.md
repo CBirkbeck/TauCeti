@@ -1,4 +1,4 @@
-# Last round — r898 (2026-09-23T11:55Z)
+# Last round — r899 (2026-09-23T12:05Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -60,7 +60,7 @@ splits keep order, goals and blocks, column 6 is correct and Mathlib style, and 
 **When a slot frees**, if the pin has not moved: rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
 as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If the pin has moved, run the kind-1 scan first. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `f8b590dc2`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `0279a5348`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -156,7 +156,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r898 did
+## What r703–r899 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -363,7 +363,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r892–r894: no change. At r894 external reviewers were active (21 boards in 45 min).
 * r895: no change; main moved to `7d24ccc8a` (pin unchanged), and all three heads plus the staged branch merge-tree clean.
 * r896: reviewers are **passing over** #8233 and #8235 (they boarded #8230–#8252, all numbered above them); other contributors do review CBirkbeck PRs, and the cause is not visible locally. Reported to the user.
-* r897–r898: no change.
+* r897–r899: no change.
 
 ## Candidates for a later step 5
 
