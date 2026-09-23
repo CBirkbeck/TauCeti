@@ -96,6 +96,14 @@ representation. Passing instead through `ContRepresentation.toRepresentation` wo
 that typeclass synthesis produces for an integral module, and the two are not definitionally
 equal.
 
+Because `toRep` and `rep` are `abbrev`s for `Rep.of`, `simp` reduces the carriers `F.toRep.V` and
+`(L.rep F).V` to `F.module.V` and `F.level L.top` wherever they occur as implicit type arguments
+(the type of a coercion, of a bundled map, of a membership) before it looks a term up among its
+lemmas. A `simp` lemma is indexed by its left-hand side as elaborated, where these carriers are
+still unreduced, so a lemma stated plainly over `F.toRep.V` is never found. The `simp` lemmas
+about levels and layer coefficients below therefore state their left-hand sides through
+`dsimp% only`, which puts those implicit arguments in the form `simp` produces.
+
 ## References
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV.
@@ -165,7 +173,7 @@ def level (U : OpenSubgroup G) : Submodule ℤ F.toRep.V :=
 
 @[simp]
 theorem mem_level {U : OpenSubgroup G} {x : F.toRep.V} :
-    x ∈ F.level U ↔ ∀ u ∈ U, F.toRep.ρ u x = x :=
+    (dsimp% only (x ∈ F.level U)) ↔ ∀ u ∈ U, F.toRep.ρ u x = x :=
   ⟨fun hx u hu ↦ hx ⟨u, hu⟩, fun hx u ↦ hx u u.2⟩
 
 /-- **Every element of the coefficient module lies in a level.** This is the Artin–Tate condition
@@ -190,13 +198,14 @@ def levelEquivH0 (U : OpenSubgroup G) : F.level U ≃+ ContCohomology.H0 U.toSub
 /-- `levelEquivH0` moves no element of the ambient module. -/
 @[simp]
 theorem levelEquivH0_apply_coe (U : OpenSubgroup G) (x : F.level U) :
-    (F.levelEquivH0 U x : F.toRep.V) = x :=
+    (dsimp% only (F.levelEquivH0 U x : F.toRep.V)) = x :=
   (rfl)
 
 /-- The inverse of `levelEquivH0` moves no element of the ambient module either. -/
 @[simp]
 theorem levelEquivH0_symm_apply_coe (U : OpenSubgroup G)
-    (x : ContCohomology.H0 U.toSubgroup F.toRep.V) : ((F.levelEquivH0 U).symm x : F.toRep.V) = x :=
+    (x : ContCohomology.H0 U.toSubgroup F.toRep.V) :
+    (dsimp% only ((F.levelEquivH0 U).symm x : F.toRep.V)) = x :=
   (rfl)
 
 end Formation
@@ -324,7 +333,7 @@ abbrev groundRep : Representation ℤ L.ground (F.level L.top) :=
 
 @[simp]
 theorem groundRep_apply_coe (u : L.ground) (x : F.level L.top) :
-    ((L.groundRep F u x : F.level L.top) : F.toRep.V) = F.toRep.ρ (u : G) x :=
+    (dsimp% only ((L.groundRep F u x : F.level L.top) : F.toRep.V)) = F.toRep.ρ (u : G) x :=
   (rfl)
 
 /-- The top subgroup acts trivially on the top level, so the `U`-action descends to `U ⧸ V`. -/
@@ -367,14 +376,14 @@ def groundLevelEquiv : (L.rep F).ρ.invariants ≃ₗ[ℤ] F.level L.ground :=
 
 @[simp]
 theorem groundLevelEquiv_apply_coe (x : (L.rep F).ρ.invariants) :
-    ((L.groundLevelEquiv F x : F.level L.ground) : F.toRep.V) = ((x : F.level L.top) :
-      F.toRep.V) :=
+    (dsimp% only ((L.groundLevelEquiv F x : F.level L.ground) : F.toRep.V)) =
+      ((x : F.level L.top) : F.toRep.V) :=
   (rfl)
 
 @[simp]
 theorem groundLevelEquiv_symm_apply_coe (y : F.level L.ground) :
-    ((((L.groundLevelEquiv F).symm y : (L.rep F).ρ.invariants) : F.level L.top) : F.toRep.V) =
-      (y : F.toRep.V) :=
+    (dsimp% only ((((L.groundLevelEquiv F).symm y : (L.rep F).ρ.invariants) : F.level L.top) :
+      F.toRep.V)) = (y : F.toRep.V) :=
   (rfl)
 
 end Coefficients
@@ -462,14 +471,11 @@ def norm : F.level L.top →ₗ[ℤ] F.level L.ground :=
 
 @[simp]
 theorem norm_apply_coe (x : F.level L.top) :
-    ((L.norm F x : F.level L.ground) : F.toRep.V) =
+    (dsimp% only ((L.norm F x : F.level L.ground) : F.toRep.V)) =
       ∑ γ : L.Gal, (((L.rep F).ρ γ x : F.level L.top) : F.toRep.V) := by
   -- The identification with the ground level does not move the underlying element, so the norm
   -- of the layer and Mathlib's `Representation.norm` take the same value in the ambient module.
-  have h : ((L.norm F x : F.level L.ground) : F.toRep.V)
-      = (((L.rep F).ρ.norm x : F.level L.top) : F.toRep.V) := rfl
-  rw [h]
-  simp [Representation.norm]
+  simp [norm, Representation.norm]
 
 /-- The norm of a layer is the trace of the Galois action on the top level, so on an element of
 the ground level it is multiplication by the degree. -/
