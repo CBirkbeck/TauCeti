@@ -41579,3 +41579,14 @@ round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5
     not blocked by this quota.
   * `tauceti-review` also supports `--reviewer claude` (and others, `runner/cli.py:446`), but the round rules name `codex`, so
     switching is the user's decision.
+
+## r890 — 2026-09-23T10:34Z (cron; step 4 hard-stopped)
+
+* #8224 carries the r889 error board (head `f4b657306`, 10:26:15Z). #8233 (68 min) and #8235 (58 min) have no board. **#8233 is past
+  its drive clock, but step 4 is hard-stopped** (codex quota), so no drive.
+* **The review "pipeline" is distributed.** Boards in the last 90 minutes come from contributors' own accounts (`Robertboy18`,
+  `utensil`, `roed-math`, `kim-em`), five of them in the ten minutes before this round. Other people's runs can still review
+  #8233 and #8235; it is not a service on this machine.
+* **Another session on this account is driving into the empty quota:** #8232 (`cft/opensubgroup-finiteindex`, a different
+  worker lane) got an all-⚠️ error board as `CBirkbeck` at 10:27:44Z. That lane is not this role's to touch; the user has been told.
+* No merges since #8101. Pin `dc4b8d60d5`, main `1724b0c80`. The cap is full.
