@@ -95,6 +95,11 @@ translates of the cone below. -/
 def unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :=
   unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K
 
+/-- The roots of unity lie in `unitsCongruenceSubgroupSupTorsion 𝔪`. -/
+theorem torsion_le_unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) :
+    NumberField.Units.torsion K ≤ unitsCongruenceSubgroupSupTorsion 𝔪 :=
+  le_sup_right
+
 instance unitsCongruenceSubgroupSupTorsion_finiteIndex (𝔪 : Modulus K) :
     (unitsCongruenceSubgroupSupTorsion 𝔪).FiniteIndex := by
   rw [unitsCongruenceSubgroupSupTorsion]
