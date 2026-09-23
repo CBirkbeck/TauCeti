@@ -23,11 +23,6 @@ natural with respect to change of group: given `f : G →* H`, a short exact seq
 formed by the two connecting maps and the change-of-group maps `groupHomology.map f Φ.τᵢ`
 commutes.
 
-The proof is Mathlib's `HomologicalComplex.HomologySequence.δ_naturality`, applied to the morphism
-of short exact sequences of chain complexes that `Φ` induces through `groupHomology.chainsMap`.
-The two squares of that morphism are `Φ.comm₁₂` and `Φ.comm₂₃`, transported by the functoriality
-`groupHomology.chainsMap_comp`.
-
 Taking `f` to be the identity recovers naturality of `δ` for a morphism of short exact sequences
 of `G`-representations. The general case is what compares connecting maps across a change of
 group, for instance across Shapiro's isomorphism, whose inverse is the change-of-group map along a
