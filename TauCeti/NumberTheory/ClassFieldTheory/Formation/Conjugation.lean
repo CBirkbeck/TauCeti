@@ -159,16 +159,20 @@ def levelConjEquiv (g : G) {U U' : OpenSubgroup G}
   left_inv a := Subtype.ext (F.toRep.ρ.inv_self_apply g a)
   right_inv b := Subtype.ext (F.toRep.ρ.self_inv_apply g b)
 
+-- The `simp` lemmas below state their left-hand sides through `dsimp% only`, following #8315;
+-- see the implementation notes of `Formation/Basic.lean`.
+/-- `levelConjEquiv` acts by `g` on underlying elements. -/
 @[simp]
 theorem levelConjEquiv_apply_coe (g : G) {U U' : OpenSubgroup G}
     (h : ∀ x : G, g * x * g⁻¹ ∈ U' ↔ x ∈ U) (a : F.level U) :
-    ((F.levelConjEquiv g h a : F.level U') : F.toRep.V) = F.toRep.ρ g a :=
+    (dsimp% only (F.levelConjEquiv g h a : F.toRep.V)) = F.toRep.ρ g a :=
   (rfl)
 
+/-- The inverse of `levelConjEquiv` acts by `g⁻¹` on underlying elements. -/
 @[simp]
 theorem levelConjEquiv_symm_apply_coe (g : G) {U U' : OpenSubgroup G}
     (h : ∀ x : G, g * x * g⁻¹ ∈ U' ↔ x ∈ U) (b : F.level U') :
-    (((F.levelConjEquiv g h).symm b : F.level U) : F.toRep.V) = F.toRep.ρ g⁻¹ b :=
+    (dsimp% only ((F.levelConjEquiv g h).symm b : F.toRep.V)) = F.toRep.ρ g⁻¹ b :=
   (rfl)
 
 /-- Conjugating a level by `h` and then by `g` agrees on underlying elements with conjugating by
@@ -179,9 +183,7 @@ theorem levelConjEquiv_comp_apply_coe (g h : G)
     (hg : ∀ x : G, g * x * g⁻¹ ∈ U₃ ↔ x ∈ U₂)
     (hgh : ∀ x : G, (g * h) * x * (g * h)⁻¹ ∈ U₄ ↔ x ∈ U₁) (a : F.level U₁) :
     (((F.levelConjEquiv g hg) (F.levelConjEquiv h hh a) : F.level U₃) : F.toRep.V) =
-      ((F.levelConjEquiv (g * h) hgh a : F.level U₄) : F.toRep.V) := by
-  rw [levelConjEquiv_apply_coe, levelConjEquiv_apply_coe, levelConjEquiv_apply_coe,
-    map_mul, Module.End.mul_apply]
+      ((F.levelConjEquiv (g * h) hgh a : F.level U₄) : F.toRep.V) := by simp
 
 end Formation
 
@@ -320,17 +322,18 @@ theorem degree_conjugate : (L.conjugate g).degree = L.degree := by
 def conjugateCoefficientEquiv : F.level L.top ≃ₗ[ℤ] F.level (L.conjugate g).top :=
   F.levelConjEquiv g fun _ ↦ L.conj_mem_top_conjugate g
 
+-- The `simp` lemmas below state their left-hand sides through `dsimp% only`, following #8315;
+-- see the implementation notes of `Formation/Basic.lean`.
+/-- The coefficient equivalence acts by `g` on underlying elements. -/
 @[simp]
 theorem conjugateCoefficientEquiv_apply_coe (x : F.level L.top) :
-    ((L.conjugateCoefficientEquiv F g x : F.level (L.conjugate g).top) : F.toRep.V) =
-      F.toRep.ρ g x :=
+    (dsimp% only (L.conjugateCoefficientEquiv F g x : F.toRep.V)) = F.toRep.ρ g x :=
   (rfl)
 
 /-- The inverse coefficient equivalence acts by `g⁻¹` on underlying elements. -/
 @[simp]
 theorem conjugateCoefficientEquiv_symm_apply_coe (y : F.level (L.conjugate g).top) :
-    (((L.conjugateCoefficientEquiv F g).symm y : F.level L.top) : F.toRep.V) =
-      F.toRep.ρ g⁻¹ y :=
+    (dsimp% only ((L.conjugateCoefficientEquiv F g).symm y : F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
   F.levelConjEquiv_symm_apply_coe g _ y
 
 /-- **Conjugation on the ground level of a layer:** acting by `g` is an isomorphism
@@ -338,17 +341,16 @@ theorem conjugateCoefficientEquiv_symm_apply_coe (y : F.level (L.conjugate g).to
 def conjugateGroundLevelEquiv : F.level L.ground ≃ₗ[ℤ] F.level (L.conjugate g).ground :=
   F.levelConjEquiv g fun _ ↦ L.conj_mem_ground_conjugate g
 
+/-- The ground-level equivalence acts by `g` on underlying elements. -/
 @[simp]
 theorem conjugateGroundLevelEquiv_apply_coe (x : F.level L.ground) :
-    ((L.conjugateGroundLevelEquiv F g x : F.level (L.conjugate g).ground) : F.toRep.V) =
-      F.toRep.ρ g x :=
+    (dsimp% only (L.conjugateGroundLevelEquiv F g x : F.toRep.V)) = F.toRep.ρ g x :=
   (rfl)
 
 /-- The inverse ground-level equivalence acts by `g⁻¹` on underlying elements. -/
 @[simp]
 theorem conjugateGroundLevelEquiv_symm_apply_coe (y : F.level (L.conjugate g).ground) :
-    (((L.conjugateGroundLevelEquiv F g).symm y : F.level L.ground) : F.toRep.V) =
-      F.toRep.ρ g⁻¹ y :=
+    (dsimp% only ((L.conjugateGroundLevelEquiv F g).symm y : F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
   F.levelConjEquiv_symm_apply_coe g _ y
 
 /-- **The isomorphisms of Galois groups and of coefficient modules intertwine:**
@@ -419,13 +421,11 @@ theorem norm_conjugateCoefficientEquiv (x : F.level L.top) :
   refine Subtype.ext ?_
   have hsource : ((L.norm F x : F.level L.ground) : F.toRep.V) =
       (((L.rep F).ρ.norm x : F.level L.top) : F.toRep.V) := by
-    rw [L.norm_apply_coe]
     simp [Representation.norm]
   have htarget : (((L.conjugate g).norm F (L.conjugateCoefficientEquiv F g x) :
       F.level (L.conjugate g).ground) : F.toRep.V) =
       ((((L.conjugate g).rep F).ρ.norm (L.conjugateCoefficientEquiv F g x) :
         F.level (L.conjugate g).top) : F.toRep.V) := by
-    rw [(L.conjugate g).norm_apply_coe]
     simp [Representation.norm]
   calc
     _ = ((((L.conjugate g).rep F).ρ.norm (L.conjugateCoefficientEquiv F g x) :
@@ -527,15 +527,13 @@ theorem conjugateGroundEquiv_conjugateGroundEquiv_apply_coe (u : L.ground) :
 theorem conjugateCoefficientEquiv_conjugateCoefficientEquiv_apply_coe (x : F.level L.top) :
     (((L.conjugate h).conjugateCoefficientEquiv F g (L.conjugateCoefficientEquiv F h x) :
         F.level ((L.conjugate h).conjugate g).top) : F.toRep.V) =
-      (L.conjugateCoefficientEquiv F (g * h) x : F.level (L.conjugate (g * h)).top) := by
-  exact F.levelConjEquiv_comp_apply_coe g h _ _ _ x
+      (L.conjugateCoefficientEquiv F (g * h) x : F.level (L.conjugate (g * h)).top) := by simp
 
 /-- Conjugating the ground level of a layer by `h` and then by `g` is conjugating it by `g * h`. -/
 theorem conjugateGroundLevelEquiv_conjugateGroundLevelEquiv_apply_coe (x : F.level L.ground) :
     (((L.conjugate h).conjugateGroundLevelEquiv F g (L.conjugateGroundLevelEquiv F h x) :
         F.level ((L.conjugate h).conjugate g).ground) : F.toRep.V) =
-      (L.conjugateGroundLevelEquiv F (g * h) x : F.level (L.conjugate (g * h)).ground) := by
-  exact F.levelConjEquiv_comp_apply_coe g h _ _ _ x
+      (L.conjugateGroundLevelEquiv F (g * h) x : F.level (L.conjugate (g * h)).ground) := by simp
 
 private theorem conjugateGalEquiv_trans_cast_eq {L' : NormalLayer G}
     (hL : L.conjugate g = L') (e : L.Gal ≃* L'.Gal)
@@ -671,8 +669,7 @@ theorem conjugateCohomologyIso_trans_conjugateCohomologyIso (n : ℕ) :
       MulEquiv.symm_apply_eq, MulEquiv.symm_apply_eq, conjugateGalEquiv_mk, conjugateGalEquiv_mk]
     exact congrArg QuotientGroup.mk <| Subtype.ext <| by
       rw [huv, conjugateGroundEquiv_conjugateGroundEquiv_apply_coe, conjugateGroundEquiv_apply_coe]
-  · exact (L.conjugateCoefficientEquiv_conjugateCoefficientEquiv_apply_coe F g h x).trans
-      (L.conjugateCoefficientEquiv_apply_coe F (g * h) x)
+  · simp
 
 /-- Any Tate map of a compatible pair whose group part is conjugation by `g` on representatives and
 whose coefficient part acts by `g` is `conjugateTateIso`, up to the transport along an equality of
@@ -719,8 +716,7 @@ theorem conjugateTateIso_trans_conjugateTateIso (r : ℤ) :
   · rw [MulEquiv.trans_apply, conjugateGalEquiv_mk, conjugateGalEquiv_mk]
     exact congrArg QuotientGroup.mk <| Subtype.ext <| by
       rw [huv, conjugateGroundEquiv_conjugateGroundEquiv_apply_coe, conjugateGroundEquiv_apply_coe]
-  · exact (L.conjugateCoefficientEquiv_conjugateCoefficientEquiv_apply_coe F g h x).trans
-      (L.conjugateCoefficientEquiv_apply_coe F (g * h) x)
+  · simp
 
 end NormalLayer
 
