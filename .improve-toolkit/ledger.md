@@ -41765,3 +41765,19 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
   comment explaining it). `ConvexSubgroup.lean:729` collides with #8291. **The kind-3 queue is nearly dry:** only the private, cosmetic
   `integral_Ioi_eq_Ioc_add_Ioi` is left. Next time, try the rooting and relocation scanners (`nscand`, `misplaced`, `parallelns`);
   kind 2 returns when astra's quota resets (2026-09-27T15:04Z).
+* r911 addendum (waiter): **#8291 went green at 14:13:06Z and was marked ready at 14:13:26Z**. The guards held: every check green,
+  head `eff08afe1` unchanged, pin `dc4b8d60d5` at both the base `cdd847a11` and main `9a0cebd8e`, the file untouched, and no
+  `not_mem_maxAvoid` re-added on main since the base.
+
+## r912 — 2026-09-23T14:14Z (cron; step 4 hard-stopped)
+
+* **#8273 merged** 14:07:15Z, the fifth merge today (#8101, #8233, #8224, #8235, #8273). In progress (cap full): #8275 (77 min, no
+  board), #8286 (23 min) and #8291 (ready 14:13:26Z), all `awaiting-review`. Pin `dc4b8d60d5`, main `9a0cebd8e`.
+* **Rooting lane re-measured:** `scripts/lint-dot-notation.py` (read-only, empty baseline) on `snap-main7` gives 659 findings (the CI
+  baseline grandfathers them), and `nscand.py` finds 47 flagged namespaces, **8 WHOLE, all known**: the six ABSENT-in-Mathlib traps
+  (`PDE.Continuous`, `PDE.ContinuousOn`, `Probability.Kernel`, `BilinForm.IsAlt`, `Probability.AEStronglyMeasurable`,
+  `Probability.MeasurableSet`), plus `LinearEquiv` 1/1 and `FDRep` 1/12, both deliberately-private skips. Dry.
+* **So the next slot goes to** the private `integral_Ioi_eq_Ioc_add_Ioi` weakening (`Resolvent/Basic.lean:184`, `0 < h` used only as
+  `hh.le`, one call site). `strictscan` calls private weakenings "cosmetic", but #6915 (three private strict hypotheses) merged, so
+  there is precedent. After that, the options are the 16-site `one_sub_conj_mul_ne_zero_of_norm_lt_one` weakening, or waiting for
+  astra (kind 2) or a pin bump (kind 1).
