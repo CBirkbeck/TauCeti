@@ -39,6 +39,9 @@ and cohomology: `groupHomology.chainsMap` consumes the first adapter and
 * `Rep.isIntertwiningMap_id` and `Rep.isIntertwiningMap_res`: the identity
   map is intertwining along the identity isomorphism of the monoid, and along `f` between a
   restricted representation and the representation it restricts.
+* `Rep.isIntertwiningMap_res_res`, `Rep.isIntertwiningMap_res_res_naturality`: the identity map
+  is intertwining between the restrictions along two factorisations of one homomorphism, naturally
+  in the representation.
 -/
 
 public noncomputable section
@@ -126,6 +129,15 @@ theorem isIntertwiningMap_res (N : Rep.{uV} R H) (f : G →* H) :
       ((LinearEquiv.refl R N.V : N.V →ₗ[R] N.V) : (Rep.res f N).V →ₗ[R] N.V) :=
   ⟨fun g v ↦ by simp⟩
 
+/-- Restricting in two steps along two factorisations `g₂ ∘ g₁ = f₂ ∘ f₁` of one homomorphism,
+the identity map is intertwining along `g₁` between the two restrictions. -/
+theorem isIntertwiningMap_res_res {K : Type uK} {L : Type uU} [Monoid K] [Monoid L]
+    (N : Rep.{uV} R H) {f₁ : K →* G} {f₂ : G →* H} {g₁ : K →* L} {g₂ : L →* H}
+    (h : g₂.comp g₁ = f₂.comp f₁) :
+    (Rep.res f₁ (Rep.res f₂ N)).ρ.IsIntertwiningMap ((Rep.res g₂ N).ρ.comp g₁)
+      (LinearMap.id : N.V →ₗ[R] N.V) :=
+  ⟨fun k v ↦ congrArg (fun g ↦ N.ρ g v) (DFunLike.congr_fun h k).symm⟩
+
 end Rep
 
 variable {M : Rep.{uV} R G} {N : Rep.{uV} R H} {φ : M.V →ₗ[R] N.V}
@@ -149,6 +161,10 @@ def ofRes {e : G ≃* H} (hφ : M.ρ.IsIntertwiningMap (N.ρ.comp (e : G →* H)
     (hφ : M.ρ.IsIntertwiningMap (N.ρ.comp f) φ) :
     (toRes hφ).hom.toLinearMap = φ := by simp [toRes]
 
+@[simp] theorem toRes_hom_apply {f : G →* H} (hφ : M.ρ.IsIntertwiningMap (N.ρ.comp f) φ)
+    (v : M.V) : (toRes hφ).hom v = φ v := by
+  simp [toRes]
+
 @[simp] theorem ofRes_hom_toLinearMap {e : G ≃* H}
     (hφ : M.ρ.IsIntertwiningMap (N.ρ.comp (e : G →* H)) φ) :
     (ofRes hφ).hom.toLinearMap = φ := by simp [ofRes]
@@ -156,5 +172,18 @@ def ofRes {e : G ≃* H} (hφ : M.ρ.IsIntertwiningMap (N.ρ.comp (e : G →* H)
 end IsIntertwiningMap
 
 end Representation
+
+open CategoryTheory in
+/-- The identity map between the restrictions along two factorisations of one homomorphism is
+natural in the representation. -/
+theorem Rep.isIntertwiningMap_res_res_naturality {K : Type uK} {L : Type uU} [Monoid K] [Monoid L]
+    {f₁ : K →* G} {f₂ : G →* H} {g₁ : K →* L} {g₂ : L →* H} (h : g₂.comp g₁ = f₂.comp f₁)
+    {N N' : Rep.{uV} R H} (ψ : N ⟶ N') :
+    (Rep.isIntertwiningMap_res_res N h).toRes ≫
+        (Rep.resFunctor g₁).map ((Rep.resFunctor g₂).map ψ) =
+      (Rep.resFunctor f₁).map ((Rep.resFunctor f₂).map ψ) ≫
+        (Rep.isIntertwiningMap_res_res N' h).toRes := by
+  ext v
+  simp [Representation.IsIntertwiningMap.toRes, Rep.resMap]
 
 end RepMorphisms
