@@ -70,8 +70,8 @@ Bind-evaluation of the mixture `μ.bind fun ω ↦ (ProbabilityMeasure.pi fun i 
   bind-evaluation, and is what identifiability arguments for the mixing measure consume.
 
 This file does not introduce a new product-kernel structure; the lemmas live directly over Mathlib's
-`ProbabilityMeasure.pi`. It is part of the Exchangeability roadmap
-(`TauCetiRoadmap/Exchangeability`), and is motivated by the product-kernel layer of
+`ProbabilityMeasure.pi`. Its design follows the product-kernel and mixture blueprint of the
+Exchangeability roadmap (`TauCetiRoadmap/Exchangeability`) and the product-kernel layer of
 `cameronfreer/exchangeability` (`MeasureKernels.lean` and the `bind_pi_apply` of
 `DeFinetti/CommonEnding.lean`, pin `e0532e59ceff23edab44dda9ab0655debbc9cc22`), implemented using
 Mathlib's `ProbabilityMeasure.pi`, `Measure.bind_apply`, and Giry measurability API; the combinator
