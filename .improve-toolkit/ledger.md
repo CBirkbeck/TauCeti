@@ -41924,3 +41924,16 @@ notification check, not the build. No merges. Pin `dc4b8d60d5`, main `f59cc5333`
 
 **#8304 merged** 16:29:48Z, the tenth today. #8305 is `review-in-progress` on its fix `4f4ff931e`. Two slots are open (no eligible target). Pin
 `dc4b8d60d5`, main `09299b243`.
+
+## r927 — 2026-09-23T16:44Z (cron; step 4 hard-stopped)
+
+* **#8305 approved on its `placement` fix** (board by Robertboy18 2026-09-23T16:35:50Z on head `4f4ff931e`), `ready-to-merge`. Every PR this session opened has now
+  been approved: ten merged today, and #8305 is queued. **Nothing is in progress; all three slots are open.**
+* **Declined again: `LevelRaise/Commute.lean:269`'s "dead" `have hmod`.** Closer reading: `hcount` exists only to build `hmod :
+  l * w % p < descendMatrixCount p N`, and the first `split` branch closes with a bare `simp`. That bound is exactly the side condition
+  `simp`'s default discharger takes from the local context (`Fin.val_cast_of_lt`-style lemmas), so `deadhave` very likely misses a real
+  use. Without a local build, a red CI would leave a broken PR that this role may not close. **Probable `deadhave` false positive: do
+  not take.**
+* **No kind has a clean target:** kind 1 needs a pin bump (pin `dc4b8d60d5` since r881), kind 2 needs astra (2026-09-27T15:04Z), and
+  kind 3's scanners (r911–r920) and the `misplaced` × Mathlib list are exhausted. Declined as not worth it: the 12-site PseudoHyperbolic
+  weakening, the junk-value `Beta` weakening, and `hmod` above. Main `4713a2e6f`.
