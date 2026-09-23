@@ -42143,3 +42143,9 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 
 **#8339 merged** 19:52:27Z, the twelfth today. #8332 and #8344 are queued. #8381, #8388 and #8389 are drafts whose builds are still queued in the congested CI
 (waiters running). Pin `dc4b8d60d5`, main `cec7a1b0b`.
+
+## r947 — 2026-09-23T20:04Z (cron)
+
+* **#8381 went green at 20:03:07Z**, after about 44 min in the congested queue, and **was marked ready at 20:04:56Z**. Astra had cleared it at
+  r945, and the guards held (every check green, head `e64edbfd9` unchanged, pin unchanged, file untouched). #8388 and #8389 are still building
+  (waiters running). #8332 and #8344 are queued. No new merges. Pin `dc4b8d60d5`, main `8d9b9b89a`.
