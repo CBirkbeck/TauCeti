@@ -43,7 +43,9 @@ from datetime import date, datetime, time as day_time, timedelta, timezone
 from pathlib import Path
 from typing import Iterable
 
-from chart_style import BAR_BG, BG, MUTED, PALETTE, TEXT, base_css, card_rect, css_px
+from chart_style import (
+    BAR_BG, BG, MUTED, PALETTE, REFERENCE_WIDTH, TEXT, base_css, card_rect, css_px,
+)
 # The lifecycle rules live in one module because two readers of the same label
 # timelines have to agree about what they mean, and once did not.
 from pr_lifecycle import (  # noqa: F401  (re-exported for existing callers)
@@ -112,6 +114,13 @@ OTHER_CONTRIBUTOR = "other/contributors"
 # Minimum viewBox width for the grids. They are served at `width: 100%`, so a narrow viewBox is
 # scaled UP; matching the other cards keeps a sparse grid the same size on the page as a full one.
 REFERENCE_HEATMAP_WIDTH = 1500
+# Rough width of a character as a fraction of the font size, for this sans face at these sizes.
+# Only used to reserve space, so erring high costs a little whitespace and erring low costs a
+# collision; 0.55 is measured against the longest real roadmap names rather than guessed.
+HEADING_ASPECT = 0.55
+# The lowest subtitle baseline chart_frame emits (y = 72 + 22 for a second line). Rotated
+# column headings have to clear it.
+HEADING_SUBTITLE_FLOOR = 94
 # XML 1.0 forbids most control characters outright, and no amount of entity escaping makes them
 # legal -- a NUL in a label would produce a file no parser will read. GitHub documents label
 # names as general strings and explicitly allows emoji, so this is not a theoretical input.
@@ -1229,16 +1238,26 @@ def render_roadmap_heatmap(
         return (f"Other ({data['omitted_contributors']:,})"
                 if who == OTHER_CONTRIBUTOR else clip(who, 24))
 
-    left, top = 230, 232
+    left = 230
     cell_w, cell_h, gap = 74, 26, 2
     # The right reserve has to hold the LAST heading, which is rotated 45 degrees and so runs
     # up and to the right past its own column. Forty units did not, so a clipped label could
     # still cross the viewBox edge.
     right = 150
     # Floored at the reference width because the page renders these at `width: 100%`: a grid
-    # with one or two columns would otherwise be scaled up into an enormous near-square card
+    # with one or two columns would otherwise be scaled up into an enormous near-space card
     # of mostly whitespace.
     width = max(REFERENCE_HEATMAP_WIDTH, left + len(axis) * cell_w + right)
+    # The header band is sized from the longest heading rather than fixed, because a heading
+    # rotated 45 degrees reaches upward by its own length over root two -- and css_px scales a
+    # design-space 12 to about 18 user units at this width, so `RepresentationTheory` reaches
+    # 143 units. A fixed 232-unit band put it through the subtitle, which is what the first
+    # render against real roadmap names showed; the synthetic fixtures all had shorter names.
+    # HEADING_SUBTITLE_FLOOR is the lowest subtitle baseline chart_frame writes.
+    heading_font = 12 * width / REFERENCE_WIDTH
+    longest = max((len(column_label(area)) for area in axis), default=0)
+    reach = longest * heading_font * HEADING_ASPECT / 1.414
+    top = max(232, int(HEADING_SUBTITLE_FLOOR + 26 + reach))
     height = top + len(rows) * cell_h + 72
     maximum = max(counts.values(), default=0)
     edges = heat_buckets(maximum)

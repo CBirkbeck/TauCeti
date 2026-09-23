@@ -822,6 +822,46 @@ class HeatmapRenderTest(unittest.TestCase):
         self.assertNotIn("A" * 40, svg)
         self.assertIn("…", svg)
 
+    def headings_clear_the_subtitle(self, svg):
+        """Recompute how far each rotated heading reaches and compare with the subtitle.
+
+        A heading is drawn at `y` and rotated -45 degrees about that point, so it runs up and
+        to the right by its own rendered length over root two. The first render against real
+        roadmap names put `RepresentationTheory` straight through the subtitle, because the
+        band was a fixed 232 units and `css_px` scales the 12 to about 18 at this width.
+        """
+        root = ET.fromstring(svg)
+        width = int(root.attrib["viewBox"].split()[2])
+        font = 12 * width / stats.REFERENCE_WIDTH
+        worst = None
+        for node in root.iter("{http://www.w3.org/2000/svg}text"):
+            if node.attrib.get("class") != "collab":
+                continue
+            reach = float(node.attrib["y"]) - (
+                len(node.text or "") * font * stats.HEADING_ASPECT / 1.414)
+            worst = reach if worst is None else min(worst, reach)
+        return worst
+
+    def test_long_headings_do_not_run_into_the_subtitle(self):
+        prs = [self.merged(index + 1, f"person-{index:02d}", name) for index, name in enumerate(
+            ["RepresentationTheory", "OneParameterSemigroups", "StandardDistributions",
+             "GeometricTopology", "ConformalMapping"])]
+        svg = self.render(self.matrix_for(prs))
+
+        worst = self.headings_clear_the_subtitle(svg)
+
+        self.assertIsNotNone(worst)
+        self.assertGreater(worst, stats.HEADING_SUBTITLE_FLOOR, "a heading crosses the subtitle")
+
+    def test_short_headings_do_not_pay_for_the_long_ones(self):
+        """The band is sized from the labels, so a grid of short names stays compact."""
+        def height_for(name):
+            prs = [self.merged(1, "alice", name)]
+            svg = self.render(self.matrix_for(prs))
+            return int(ET.fromstring(svg).attrib["viewBox"].split()[3])
+
+        self.assertLess(height_for("PDE"), height_for("RepresentationTheory"))
+
     def test_neither_sentinel_reaches_the_output(self):
         prs = [self.merged(index + 1, f"person-{index:02d}", "PDE")
                for index in range(stats.ROADMAP_CONTRIBUTOR_LIMIT + 3)]
