@@ -8,6 +8,7 @@ module
 public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.FundamentalCone
 public import Mathlib.RingTheory.Complex
+public import TauCeti.NumberTheory.NumberField.CanonicalEmbedding.UnitAction
 public import TauCeti.RingTheory.NormTrace.Pi
 public import TauCeti.RingTheory.NormTrace.Prod
 
