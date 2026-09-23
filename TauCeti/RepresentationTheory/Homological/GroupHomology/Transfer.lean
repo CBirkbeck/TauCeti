@@ -36,6 +36,7 @@ corestriction is the map induced by the counit `Indˢᴳ Resˢᴳ M ⟶ M`
 
 * `TauCeti.groupHomology.transfer_comp_indIso_inv`: through the inverse of Shapiro's isomorphism,
   transfer is the map induced by the unit of the finite-index adjunction.
+* `TauCeti.groupHomology.map_comp_transfer`: the transfer is natural in the representation.
 * `TauCeti.groupHomology.transfer_comp_map_subtype_id`: corestriction after transfer is
   multiplication by the index `[G : S]`.
 
@@ -74,6 +75,38 @@ theorem transfer_comp_indIso_inv (M : Rep R G) (S : Subgroup G) [S.FiniteIndex] 
   -- `Iso.hom_inv_id`: the two occurrences of `Resˢᴳ M` carry different `Monoid ↥S` instances, so
   -- the rewrite does not match syntactically, while this equation holds by `rfl`.
   (Iso.comp_inv_eq _).2 rfl
+
+open scoped Classical in
+/-- **The transfer is natural in the representation**: for `φ : M ⟶ N`, the transfers of `M` and
+`N` commute with the maps induced by `φ` over `G` and by its restriction over `S`. -/
+@[reassoc]
+theorem map_comp_transfer {M N : Rep R G} (φ : M ⟶ N) (S : Subgroup G) [S.FiniteIndex]
+    (n : ℕ) :
+    _root_.groupHomology.map (MonoidHom.id G) φ n ≫ transfer N S n =
+      transfer M S n ≫
+        _root_.groupHomology.map (MonoidHom.id S) ((Rep.resFunctor S.subtype).map φ) n := by
+  have hM := (Iso.comp_inv_eq _).1 (transfer_comp_indIso_inv M S n)
+  have hN := (Iso.comp_inv_eq _).1 (transfer_comp_indIso_inv N S n)
+  have hU := (Rep.resIndAdjunction.{u} R S).unit.naturality φ
+  have hI := indIso_hom_comp_map S (Rep.res S.subtype M) ((Rep.resFunctor S.subtype).map φ) n
+  -- The objects appear both as `groupHomology _ n` and as `(functor R G n).obj _`, so the steps
+  -- are composed as terms rather than by rewriting.
+  calc _root_.groupHomology.map (MonoidHom.id G) φ n ≫ transfer N S n
+      = (_root_.groupHomology.map (MonoidHom.id G) φ n ≫
+          _root_.groupHomology.map (MonoidHom.id G) ((Rep.resIndAdjunction.{u} R S).unit.app N) n) ≫
+            (_root_.groupHomology.indIso S (Rep.res S.subtype N) n).hom :=
+        (congrArg (_ ≫ ·) hN).trans (Category.assoc _ _ _).symm
+    _ = (_root_.groupHomology.map (MonoidHom.id G) ((Rep.resIndAdjunction.{u} R S).unit.app M) n ≫
+          _root_.groupHomology.map (MonoidHom.id G)
+            ((Rep.indFunctor R S.subtype).map ((Rep.resFunctor S.subtype).map φ)) n) ≫
+            (_root_.groupHomology.indIso S (Rep.res S.subtype N) n).hom :=
+        congrArg (· ≫ _) ((_root_.groupHomology.map_id_comp _ _ n).symm.trans
+          ((congrArg (fun x => _root_.groupHomology.map (MonoidHom.id G) x n) hU).trans
+            (_root_.groupHomology.map_id_comp _ _ n)))
+    _ = transfer M S n ≫
+          _root_.groupHomology.map (MonoidHom.id S) ((Rep.resFunctor S.subtype).map φ) n :=
+        (Category.assoc _ _ _).trans ((congrArg (_ ≫ ·) hI.symm).trans
+          ((Category.assoc _ _ _).symm.trans (congrArg (· ≫ _) hM.symm)))
 
 open scoped Classical in
 /-- **Corestriction after transfer is multiplication by the index**: for a finite-index subgroup

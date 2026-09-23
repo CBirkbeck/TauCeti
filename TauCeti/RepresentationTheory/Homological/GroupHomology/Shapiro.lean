@@ -36,6 +36,8 @@ This is the homological counterpart of `TauCeti.groupCohomology.coindIso_hom`.
   `groupHomology.map S.subtype ((indResAdjunction k S.subtype).unit.app A) n`.
 * `TauCeti.groupHomology.indIso_inv_comp_map_counit`: read through Shapiro's isomorphism,
   corestriction from `S` to `G` is the map induced by the counit `Ind_S^G Res_S B ⟶ B`.
+* `TauCeti.groupHomology.map_comp_indIso_inv`, `TauCeti.groupHomology.indIso_hom_comp_map`:
+  Shapiro's isomorphism is natural in the `S`-representation.
 
 ## References
 
@@ -151,5 +153,22 @@ theorem indIso_inv_comp_map_counit (B : Rep.{u} k G) (n : ℕ) :
   rw [indIso_inv, ← map_comp, (indResAdjunction k S.subtype).right_triangle_components B]
   -- `(MonoidHom.id G).comp S.subtype` is `S.subtype` by definition.
   rfl
+
+/-- **The inverse of Shapiro's isomorphism is natural** in the `S`-representation. -/
+@[reassoc]
+theorem map_comp_indIso_inv {B : Rep.{u} k S} (ψ : A ⟶ B) (n : ℕ) :
+    map (MonoidHom.id S) ψ n ≫ (indIso S B n).inv =
+      (indIso S A n).inv ≫ map (MonoidHom.id G) ((indFunctor k S.subtype).map ψ) n := by
+  rw [indIso_inv, indIso_inv, ← map_comp, ← map_comp]
+  refine map_congr (by rw [MonoidHom.comp_id, MonoidHom.id_comp]) ?_ n
+  exact congrArg (fun f => f.hom.toLinearMap) ((indResAdjunction k S.subtype).unit.naturality ψ)
+
+/-- **Shapiro's isomorphism is natural** in the `S`-representation. -/
+@[reassoc]
+theorem indIso_hom_comp_map {B : Rep.{u} k S} (ψ : A ⟶ B) (n : ℕ) :
+    (indIso S A n).hom ≫ map (MonoidHom.id S) ψ n =
+      map (MonoidHom.id G) ((indFunctor k S.subtype).map ψ) n ≫ (indIso S B n).hom := by
+  rw [← cancel_epi (indIso S A n).inv, Iso.inv_hom_id_assoc, ← Category.assoc,
+    ← map_comp_indIso_inv, Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
 end TauCeti.groupHomology
