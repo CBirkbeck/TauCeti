@@ -41945,3 +41945,11 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
 ## r929 — 2026-09-23T17:04Z (cron; step 4 hard-stopped)
 
 No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kind is blocked or dry. Pin `dc4b8d60d5`, main `beea0b0c0`.
+
+## r930 — 2026-09-23T17:14Z (cron; step 4 hard-stopped)
+
+* **#8305 merged** 17:09:28Z. **Eleven of this session's PRs merged on 2026-09-23**: #8101, #8233, #8224, #8235, #8273, #8275, #8286, #8291,
+  #8295, #8304 and #8305. **No `improve/*` PR is open.**
+* Re-ran `strictscan` and `deadhave` on fresh main `9fcdc85e7` (`snap-main9`). The only change since r911 is the three hits this session fixed
+  (`GlobalTurning:94`, `Resolvent/Basic:184`, `RelNorm:122`), now gone; **no new target**. Every kind is still blocked or dry: pin
+  `dc4b8d60d5`, astra back 2026-09-27T15:04Z, kind-3 sources exhausted.
