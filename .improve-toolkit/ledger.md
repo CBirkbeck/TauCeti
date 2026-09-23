@@ -41813,3 +41813,8 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
 
 No change: #8291 (31 min) and #8295 (5 min) are `awaiting-review` with no board. No new merges. The third slot stays open (no
 eligible target). Pin `dc4b8d60d5`, main `59ea34489`.
+
+## r916 — 2026-09-23T14:54Z (cron; step 4 hard-stopped)
+
+**#8291 and #8295 are both `review-in-progress`**, picked up by external reviewers at 41 and 15 min. No new merges. The third slot
+stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.

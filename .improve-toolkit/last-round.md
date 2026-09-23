@@ -1,4 +1,4 @@
-# Last round — r915 (2026-09-23T14:45Z)
+# Last round — r916 (2026-09-23T14:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -47,7 +47,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8291** | `eff08afe1` | green (14:13:06Z) | kind 3 (`ConvexSubgroup.lean`: rename `not_mem_maxAvoid` → `notMem_maxAvoid`, the file's last `not_mem` spelling; three occurrences, all in the file; no alias; no open PR mentions it; +3/−3; gate 12/0/0; `Roadmap: AdicSpaces`). Opened r910 from `cdd847a11`; **marked ready 14:13:26Z** | **external reviewers** (1–4 h); step 4 hard-stopped |
 | **#8295** | `ab4d3f380` | green (14:39:42Z) | kind 3 (`Resolvent/Basic.lean`: the private `integral_Ioi_eq_Ioc_add_Ioi` and `resolvent_shift_identity` go from `0 < h` to `0 ≤ h`, as a cascade; the caller passes `ht.le`; +8/−8; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Opened r913 from `6e1f69bb8`; **marked ready 14:40:03Z** | **external reviewers** (1–4 h); step 4 hard-stopped |
 
-**In progress (2 of 3): #8291 (`awaiting-review`, ready 14:13:26Z) and #8295 (`awaiting-review`, ready 14:40:03Z).** **#8286 merged 14:34:50Z** and
+**In progress (2 of 3): #8291 and #8295, both `review-in-progress` (r916).** **#8286 merged 14:34:50Z** and
 **#8275 merged 14:30:25Z**, as did #8273, #8235, #8233, #8224 and #8101 earlier today. **The third slot is
 deliberately empty**: every kind is blocked or dry (r913 ledger).
 
@@ -55,7 +55,7 @@ deliberately empty**: every kind is blocked or dry (r913 ledger).
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `80b5967cb`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `deb4b70ec`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -151,7 +151,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r915 did
+## What r703–r916 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -373,6 +373,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r913: **#8275 and #8286 approved 10/10** (`sqrt-of-2`), MERGING. Kind 3 opened as draft **#8295** (two private resolvent lemmas to `0 ≤ h`). The third slot is left empty: every kind is dry or blocked, and `docghost` had no real hit.
 * r914: **#8275 and #8286 merged** (the sixth and seventh today); #8295 is building. Trap: `queuepos` shows a just-merged PR as EJECTED, so check `merged` before acting on an ejection.
 * r915: no change; #8295 was marked ready (14:40:03Z).
+* r916: #8291 and #8295 are both `review-in-progress`.
 
 ## Candidates for a later step 5
 
