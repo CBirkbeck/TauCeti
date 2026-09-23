@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Character.Basic
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count.Basic
+public import TauCeti.Order.Northcott
 
 /-!
 # Character sums over the integral ideals of bounded norm
@@ -43,16 +44,20 @@ open scoped NumberField
 
 variable {K : Type*} [Field K] [NumberField K]
 
-open scoped Classical in
-/-- **The partial sum of a ray class character.**  The sum of `χ.onIdeals` over the nonzero
-integral ideals `I` prime to the finite part of `𝔪` with `absNorm I ≤ x`.
+/-- The absolute norm is Northcott on the integral ideals prime to `𝔪`: only finitely many
+nonzero integral ideals have bounded norm. -/
+instance (𝔪 : Modulus K) :
+    Northcott (fun I : integralIdealsPrimeTo 𝔪 ↦ Ideal.absNorm (I : Ideal (𝓞 K))) :=
+  ⟨fun B ↦ (Ring.HasFiniteQuotients.finite_absNorm_le (S := 𝓞 K) B).preimage
+    Subtype.val_injective.injOn⟩
 
-The bounded subtype is `Finite`, but carries no installed `Fintype` instance, so a `finsum`
-avoids committing to an enumeration of it. -/
+/-- **The partial sum of a ray class character.**  The inclusive summatory function, in the sense
+of `TauCeti.summatory`, of `χ.onIdeals` over the nonzero integral ideals prime to the finite part
+of `𝔪`, graded by the absolute norm. -/
 noncomputable def rayClassCharacterPartialSum
     (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (x : ℝ) : ℂ :=
-  ∑ᶠ I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x},
-    (χ.onIdeals (I : integralIdealsPrimeTo 𝔪) : ℂ)
+  summatory (fun I : integralIdealsPrimeTo 𝔪 ↦ Ideal.absNorm (I : Ideal (𝓞 K)))
+    (fun I ↦ (χ.onIdeals I : ℂ)) x
 
 open scoped Classical in
 /-- **The partial sum as the `finsum` defining it.**  The rewrite rule turning
@@ -61,8 +66,9 @@ of norm at most `x`. -/
 theorem rayClassCharacterPartialSum_def (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (x : ℝ) :
     rayClassCharacterPartialSum 𝔪 χ x =
       ∑ᶠ I : {I : integralIdealsPrimeTo 𝔪 // (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x},
-        (χ.onIdeals (I : integralIdealsPrimeTo 𝔪) : ℂ) :=
-  (rfl)
+        (χ.onIdeals (I : integralIdealsPrimeTo 𝔪) : ℂ) := by
+  rw [rayClassCharacterPartialSum, summatory_apply, ← finsum_mem_coe_finset, coe_normLE]
+  exact (finsum_set_coe_eq_finsum_mem _).symm
 
 /-- **A character partial sum is the weighted combination of the class counts.**  The partial sum
 of `χ` over the integral ideals prime to `𝔪` of norm at most `x` is the sum of the ray class
