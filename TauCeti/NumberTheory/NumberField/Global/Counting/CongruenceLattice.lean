@@ -42,8 +42,8 @@ sublattice.
   is the absolute norm of `𝔪₀`.
 * `TauCeti.GlobalNumberFields.covolume_congruenceLattice`: its covolume is `N 𝔪₀` times the
   covolume of the ideal lattice of `I`.
-* `TauCeti.GlobalNumberFields.covolume_congruenceLattice_mk0_div_absNorm`: for a nonzero
-  integral ideal `𝔞`, its covolume divided by `N 𝔞` is `N 𝔪₀ · √|d_K| / 2 ^ r₂`.
+* `TauCeti.GlobalNumberFields.covolume_congruenceLattice_div_absNorm`: its covolume divided by
+  `N I` is `N 𝔪₀ · √|d_K| / 2 ^ r₂`.
 * `TauCeti.GlobalNumberFields.congruenceLattice_eq_of_finitePart_eq`: it depends only on the
   finite part of the modulus.
 * `TauCeti.GlobalNumberFields.congruenceLattice_eq_idealLattice_of_finitePart_eq_top`: for a
@@ -127,17 +127,17 @@ theorem covolume_congruenceLattice (𝔪 : Modulus K) (I : (FractionalIdeal (�
   rw [congruenceLattice_def, covolume_idealLattice_mul_mk0]
 
 open scoped Classical in
-/-- **The covolume of the congruence lattice of an integral ideal, per unit norm.**  For a
-nonzero integral ideal `𝔞`, the covolume of the congruence lattice of `𝔪` at `mk0 𝔞`, divided by
-`N 𝔞`, is `N 𝔪₀ · √|d_K| / 2 ^ r₂`, where `d_K` is the discriminant and `r₂` the number of
-complex places of `K`; in particular it does not depend on `𝔞`. -/
-theorem covolume_congruenceLattice_mk0_div_absNorm (𝔪 : Modulus K) (𝔞 : (Ideal (𝓞 K))⁰) :
-    ZLattice.covolume (congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)) volume /
-        Ideal.absNorm (𝔞 : Ideal (𝓞 K)) =
+/-- **The covolume of the congruence lattice, per unit norm.**  For an invertible fractional
+ideal `I`, the covolume of the congruence lattice of `𝔪` at `I`, divided by `N I`, is
+`N 𝔪₀ · √|d_K| / 2 ^ r₂`, where `d_K` is the discriminant and `r₂` the number of complex places
+of `K`; in particular it does not depend on `I`. -/
+theorem covolume_congruenceLattice_div_absNorm (𝔪 : Modulus K)
+    (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
+    ZLattice.covolume (congruenceLattice 𝔪 I) volume /
+        (FractionalIdeal.absNorm (I : FractionalIdeal (𝓞 K)⁰ K) : ℝ) =
       Ideal.absNorm 𝔪.finitePart * √|(discr K : ℝ)| / 2 ^ nrComplexPlaces K := by
-  rw [covolume_congruenceLattice, covolume_idealLattice, FractionalIdeal.coe_mk0,
-    FractionalIdeal.coeIdeal_absNorm, inv_pow, Rat.cast_natCast]
-  field_simp [Ideal.absNorm_ne_zero_of_nonZeroDivisors 𝔞]
+  simp only [covolume_congruenceLattice, covolume_idealLattice, inv_pow]
+  field_simp
 
 /-- The congruence lattice depends only on the finite part of the modulus. -/
 theorem congruenceLattice_eq_of_finitePart_eq {𝔪 𝔫 : Modulus K}

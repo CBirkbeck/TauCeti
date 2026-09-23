@@ -68,7 +68,9 @@ theorem measureReal_div_covolume_congruenceLattice_mul_absNorm (𝔪 : Modulus K
           ZLattice.covolume (congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)) volume *
         Ideal.absNorm (𝔞 : Ideal (𝓞 K)) =
       Nat.card (unitsCongruenceTorsion 𝔪) * rayClassIdealMainTerm 𝔪 := by
-  rw [div_mul_eq_mul_div, ← div_div_eq_mul_div, covolume_congruenceLattice_mk0_div_absNorm,
+  have h := covolume_congruenceLattice_div_absNorm 𝔪 (FractionalIdeal.mk0 K 𝔞)
+  rw [FractionalIdeal.coe_mk0, FractionalIdeal.coeIdeal_absNorm, Rat.cast_natCast] at h
+  rw [div_mul_eq_mul_div, ← div_div_eq_mul_div, h,
     measureReal_rayFundamentalDomain_inter_normLeOne,
     card_unitsCongruenceTorsion_mul_rayClassIdealMainTerm]
   field_simp
