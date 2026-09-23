@@ -89,7 +89,9 @@ theorem map_comp_transfer {M N : Rep R G} (φ : M ⟶ N) (S : Subgroup G) [S.Fin
   -- `M ⟶ Ind_S^G Res_S M` of the finite-index adjunction, which is natural in `φ`.
   rw [← cancel_mono (_root_.groupHomology.indIso S _ n).inv, Category.assoc, Category.assoc,
     indIso_inv_naturality, transfer_comp_indIso_inv, transfer_comp_indIso_inv_assoc]
-  exact (Functor.whiskerRight (Rep.resIndAdjunction R S).unit
+  -- The universes of `Rep.resIndAdjunction` are pinned: left to unification, the constraint
+  -- `max ?w u u = u` makes this definitional check cost seconds.
+  exact (Functor.whiskerRight (Rep.resIndAdjunction.{u, u, u} R S).unit
     (_root_.groupHomology.functor R G n)).naturality φ
 
 open scoped Classical in

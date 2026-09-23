@@ -161,7 +161,10 @@ theorem indIso_inv_naturality {B : Rep.{u} k S} (φ : A ⟶ B) (n : ℕ) :
     map (MonoidHom.id S) φ n ≫ (indIso S B n).inv =
       (indIso S A n).inv ≫ map (MonoidHom.id G) ((indFunctor k S.subtype).map φ) n := by
   rw [indIso_inv, indIso_inv, ← map_comp, ← map_comp]
-  exact congrArg (map S.subtype · n) ((indResAdjunction k S.subtype).unit.naturality φ)
+  -- Comparing the underlying linear maps through `map_congr` avoids unifying the free universe
+  -- of `indResAdjunction` against `map`'s arguments, which costs seconds.
+  refine map_congr rfl ?_ n
+  exact congrArg (·.hom.toLinearMap) ((indResAdjunction k S.subtype).unit.naturality φ)
 
 /-- **Shapiro's isomorphism is natural in the coefficients**: `indIso_inv_naturality` for
 `(indIso S A n).hom`. -/
