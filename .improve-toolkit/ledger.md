@@ -41882,3 +41882,8 @@ stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.
   * `finrank_toSubmodule` (`Subcomodule`, not `Subalgebra`) and `simple_of_finrank_eq_one` (`FDRep`, not `ModuleCat`): not duplicates.
   So the name-intersection source is exhausted after #8304 and #8305.
 * Pin `dc4b8d60d5`, main `881ac00c4`.
+
+## r921 — 2026-09-23T15:44Z (cron; step 4 hard-stopped)
+
+#8304 and #8305 are building (queued about 8 min, running since 15:34Z; waiter running). #8295 is `ready-to-merge`. No new merges. One
+slot is open (no eligible target). Pin `dc4b8d60d5`, main `80f9ab2de`.
