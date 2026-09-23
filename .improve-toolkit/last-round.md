@@ -1,4 +1,4 @@
-# Last round — r954 (2026-09-23T21:16Z)
+# Last round — r955 (2026-09-23T21:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -47,17 +47,17 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8388** | `35ba59b71` | green | kind 2 (`Arrays/JointLaw.lean`). **Approved** (20:39:01Z); `ready-to-merge` | **queue** |
 | **#8389** | `18762ee10` | green | kind 2 (`ConditionallyIID/Moments.lean`). **Approved** (20:39:04Z); `ready-to-merge` | **queue** |
 | **#8402** | `1ffccd0f8` | queued | kind 2 (`Recurrence/RowExchangeable.lean`: 83 `↦`; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r951) | **CI** — mark ready when green |
-| **#8413** | `e6125f186` | queued | kind 2 (`KnotTheory/Grid/Unknot/Basic.lean`: 62 `↦`; gate 12/0/0; `Roadmap: CombinatorialHeegaardFloer`). **Draft**, opened r951; gpt-6-astra launched 20:49Z (three-dot diff) | **astra + CI** — mark ready when both clear |
-| **#8426** | `db6452b92` | queued | kind 2 (`Exchangeability/Arrays/ConditionalLaw.lean`: 64 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r952; gpt-6-astra launched 20:58Z (three-dot diff) | **astra + CI** — mark ready when both clear |
+| **#8413** | `e6125f186` | queued | kind 2 (`KnotTheory/Grid/Unknot/Basic.lean`: 62 `↦`; gate 12/0/0; `Roadmap: CombinatorialHeegaardFloer`). **Draft**; **astra cleared it** (r954) | **CI** — mark ready when green (the sweep catches it) |
+| **#8426** | `db6452b92` | queued | kind 2 (`Exchangeability/Arrays/ConditionalLaw.lean`: 64 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (20:59Z) | **CI** — mark ready when green |
 
-**In progress (cap full): the drafts #8402 (astra ✓, build queued), #8413 and #8426 (astra and builds pending).** #8388 and #8389 are
+**In progress (cap full): the drafts #8402, #8413 and #8426, all astra-cleared, with builds stuck in the CI backlog (124 queued / 2 running at r955).** #8388 and #8389 are
 `ready-to-merge`. Fifteen of this session's PRs merged on 2026-09-23, the latest #8381 (21:02:10Z). Next kind-2 candidates are listed in the r951 ledger.
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `c36c7f804`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `9bb4db236`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -150,7 +150,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r954 did
+## What r703–r955 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -409,6 +409,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r952: kind 2 opened as draft **#8426** (`Arrays/ConditionalLaw.lean`, 64 `↦`). The cap is full.
 * r953: **#8381 merged**, the fifteenth today.
 * r954: CI backlog (114 queued, 4 running). The three drafts' builds have not started. The sweep marks each green draft ready when it lands.
+* r955: the backlog is growing (124 queued). All three drafts are cleared by astra and waiting for builds.
 
 ## Candidates for a later step 5
 

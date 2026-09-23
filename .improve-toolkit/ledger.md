@@ -42220,3 +42220,12 @@ Pin `dc4b8d60d5`, main `a1fd64731`.
   20:18:59Z, #8413 since 20:49:09Z and #8426 since 20:58:50Z. Nothing to act on. The 30-min waiters may time out before these start, but the
   cron sweep marks any green draft ready in the round that sees it, so the waiters are only a convenience.
 * #8388 and #8389 are queued. No new merges. Pin `dc4b8d60d5`, main `040b7697a`. The cap is full.
+* r954 addendum: **gpt-6-astra cleared #8413** ("accept the diff as a pure style change"; the `Finset.filter` predicates and `DecidablePred`
+  synthesis are unchanged). #8402's and #8413's builds are still queued in the CI backlog. The waiter timed out; the cron sweeps will mark
+  each ready once green.
+
+## r955 — 2026-09-23T21:24Z (cron)
+
+* **The CI backlog is growing: 124 queued, 2 running.** None of the three drafts' builds has started. **gpt-6-astra has cleared all three**:
+  #8402 (r951), #8413 (r954) and #8426 (answer 20:59:19Z, "accept every edit … as purely stylistic"). Each goes ready the moment its
+  build is green. #8388 and #8389 are queued. No merges. Pin `dc4b8d60d5`, main `040b7697a`.
