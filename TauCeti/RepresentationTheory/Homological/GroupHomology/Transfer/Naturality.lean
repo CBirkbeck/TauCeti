@@ -116,11 +116,11 @@ theorem map_comp_transfer_congrOfMapEq [S.FiniteIndex] {M : Rep.{u} R G}
       transfer M S n ≫ map (Subgroup.congrOfMapEq e he : S →* S') ((resFunctor S.subtype).map φ ≫
         (Rep.isIntertwiningMap_res_res N (Subgroup.subtype_comp_congrOfMapEq e he)).toRes) n := by
   -- Split the map over `S` at `Res_S φ`, then paste the naturality square of `φ` with the case of
-  -- identity coefficients. `map_comp` recombines the maps over `G` into `map e φ` only up to
-  -- unfolding `e.comp (MonoidHom.id G)` and `φ ≫ (resFunctor _).map (𝟙 _)`, hence the `rfl`.
+  -- identity coefficients. `map_comp` recombines the maps over `G` into
+  -- `map (e.comp (MonoidHom.id G)) (φ ≫ resMap _ (𝟙 _))`, which is `map e φ` by `map_congr`.
   have := Subgroup.finiteIndex_of_map_eq e he
   refine ((whisker_eq _ (map_comp (MonoidHom.id S) _ _ _ n)).trans ?_).symm
   rw [← map_comp_transfer_assoc, transfer_res_equiv e he N, ← map_comp_assoc]
-  rfl
+  exact congrArg (· ≫ transfer N S' n) (map_congr (MonoidHom.comp_id _) (by simp) n)
 
 end TauCeti.groupHomology
