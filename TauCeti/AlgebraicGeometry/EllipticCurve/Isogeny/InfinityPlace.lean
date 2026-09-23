@@ -49,10 +49,6 @@ Neither direction uses ellipticity, separability, or the degree of an isogeny.
   infinity**, `1 < v_∞ (φ x₂)`.
 * `TauCeti.Isogeny.isEquiv_comap_infinityPlace`: **the place at infinity restricts to the place at
   infinity** along an isogeny.
-* `TauCeti.Isogeny.comap_fieldPullback_apply` and
-  `TauCeti.Isogeny.comap_fieldPullback_apply_algebraMap`: a valuation restricted along the
-  pullback, evaluated on the image of the target coordinate ring, is `v ∘ φ` — the computation rule
-  the other two are stated through, at `v = v_∞`.
 * `TauCeti.CoordinatePullback.mapsInfinity_iff_one_lt_infinityPlace`: **pointedness is exactly a
   pole of `x` at infinity**, for any coordinate pullback — the form in which a construction can
   establish it by one valuation computation.
@@ -75,20 +71,6 @@ open scoped Polynomial.Bivariate
 namespace Isogeny
 
 variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F} (φ : Isogeny W₁ W₂)
-
-/-- **A valuation restricted along the pullback is the valuation of the pulled-back function.** -/
-theorem comap_fieldPullback_apply {Γ : Type*} [LinearOrderedCommGroupWithZero Γ]
-    (v : Valuation W₁.FunctionField Γ) (z : W₂.FunctionField) :
-    (v.comap φ.fieldPullback.toRingHom) z = v (φ.fieldPullback z) := by
-  rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
-
-/-- **A restricted valuation, evaluated on an affine function of the target**: it is the value of
-the pullback of that function. -/
-theorem comap_fieldPullback_apply_algebraMap {Γ : Type*} [LinearOrderedCommGroupWithZero Γ]
-    (v : Valuation W₁.FunctionField Γ) (c : W₂.CoordinateRing) :
-    (v.comap φ.fieldPullback.toRingHom) (algebraMap W₂.CoordinateRing W₂.FunctionField c) =
-      v (φ.pullback c) := by
-  rw [comap_fieldPullback_apply, fieldPullback_algebraMap]
 
 /-- **The pullback of the target's coordinate `x` has a pole at the source's point at infinity.**
 If it did not, then neither would the pullback of `y` — by the Weierstrass equation of the target —

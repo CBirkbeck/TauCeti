@@ -51,8 +51,10 @@ When `W` is elliptic, Mathlib's `Affine.equation_iff_nonsingular` identifies the
 * `WeierstrassCurve.Affine.CoordinateRing.eq_pointPlace_of_mem_asIdeal`: a height-one prime
   containing both generators of the ideal of a point is that point's place.
 * `WeierstrassCurve.Affine.CoordinateRing.valuation_pointPlace_div_le_one` and
-  `WeierstrassCurve.Affine.CoordinateRing.valuation_pointPlace_div_lt_one`: the value at a point of
-  a quotient of coordinate-ring classes, read off from where its numerator and denominator vanish.
+  `WeierstrassCurve.Affine.CoordinateRing.valuation_pointPlace_div_lt_one` and
+  `WeierstrassCurve.Affine.CoordinateRing.one_lt_valuation_pointPlace_div`: the value at a point
+  of a quotient of coordinate-ring classes, read off from where its numerator and denominator
+  vanish.
 * `WeierstrassCurve.Affine.CoordinateRing.pointPlace.finrank_residueField_eq_one`: the
   place of a point has degree one.
 * `WeierstrassCurve.Affine.CoordinateRing.exists_pointPlace_eq`: conversely, every
@@ -198,6 +200,25 @@ theorem _root_.WeierstrassCurve.Affine.CoordinateRing.valuation_pointPlace_div_l
       CoordinateRing.mk_mem_XYIdeal_iff h])
   rw [map_div₀, HeightOneSpectrum.valuation_of_algebraMap,
     HeightOneSpectrum.valuation_of_algebraMap, hq1, div_one]
+  refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).mpr ?_
+  rwa [WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal,
+    CoordinateRing.mk_mem_XYIdeal_iff h]
+
+/-- **A quotient of coordinate-ring classes has a pole at a point where its denominator vanishes
+and its numerator does not.** -/
+theorem _root_.WeierstrassCurve.Affine.CoordinateRing.one_lt_valuation_pointPlace_div {y : F}
+    (h : W.Equation x y) {p q : F[X][Y]} (hp : p.evalEval x y ≠ 0) (hq : q.evalEval x y = 0)
+    (hq0 : CoordinateRing.mk W q ≠ 0) :
+    1 < (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).valuation K
+      (algebraMap W.CoordinateRing K (CoordinateRing.mk W p) /
+        algebraMap W.CoordinateRing K (CoordinateRing.mk W q)) := by
+  have hp1 : (WeierstrassCurve.Affine.CoordinateRing.pointPlace h).intValuation
+      (CoordinateRing.mk W p) = 1 := HeightOneSpectrum.intValuation_eq_one_iff.mpr (by
+    rwa [WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal,
+      CoordinateRing.mk_mem_XYIdeal_iff h])
+  rw [map_div₀, HeightOneSpectrum.valuation_of_algebraMap,
+    HeightOneSpectrum.valuation_of_algebraMap, hp1, one_div,
+    one_lt_inv₀ (zero_lt_iff.mpr (HeightOneSpectrum.intValuation_ne_zero _ _ hq0))]
   refine (HeightOneSpectrum.intValuation_lt_one_iff_mem _ _).mpr ?_
   rwa [WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal,
     CoordinateRing.mk_mem_XYIdeal_iff h]

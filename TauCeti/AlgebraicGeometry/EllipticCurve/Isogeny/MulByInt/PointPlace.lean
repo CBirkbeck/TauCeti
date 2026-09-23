@@ -7,6 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfinity
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Place
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Basic
 -- Proof-only: the non-vanishing of the division polynomials off the kernel.
 import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Coprimality
 -- Proof-only: the two coordinate identities relating `P` and `n • P`.
@@ -19,26 +20,28 @@ import TauCeti.RingTheory.Valuation.IsTrivialOn
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.CoordinateRingIntegral
 -- Proof-only: the centre of a bounded valuation on a Dedekind domain.
 import TauCeti.RingTheory.DedekindDomain.AdicValuation.Basic
--- Proof-only: a restricted valuation evaluated on the target coordinate ring.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace
+-- Proof-only: the place at infinity is the only place at which `x` has a pole.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Unique
 
 /-!
 # The place of a point restricts along `[n]` to the place of its multiple
 
-A point `P` of `W` off the kernel of `[n]` has a place of `F(W)`, and so does `n • P`. Pulling the
-first back along the function-field map of `[n]` gives a valuation of `F(W)` again, and this file
-shows it is equivalent to the place of `n • P`: the points above a place, for the covering `[n]`,
-are the points that `[n]` sends there.
+An affine point `P` of `W` has a place of `F(W)`, and pulling that place back along the
+function-field map of `[n]` gives a valuation of `F(W)` again. This file identifies it: it is
+equivalent to the place of `n • P`, which is the place at infinity when `n • P = 0`. So the places
+above the place of a point `T`, for the covering `[n]`, are the places of the `[n]`-preimages of
+`T`. That is what turns the pullback of a divisor along `[n]` into a sum over a fibre, which is the
+form in which the divisor construction of the Weil pairing uses it.
 
-The restricted valuation need not be normalized, which is why the statement is an equivalence
-rather than an equality. Normalizing it and taking its centre on the coordinate ring names a
-height one prime, and the two division-polynomial coordinate identities put the ideal of `n • P`
-inside that centre; maximality of the point ideal then forces the two to agree.
+The restricted valuation need not be normalized, since `[n]` can multiply orders, which is why the
+statements are equivalences rather than equalities.
 
 ## Main results
 
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace`: the place of `P` restricted along `[n]` is
   equivalent to the place of `n • P`.
+* `TauCeti.Isogeny.isEquiv_comap_pointPlace_infinityPlace_iff`: the place of an affine point `P`
+  restricts to the place at infinity exactly when `n • P = 0`, over any field.
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace_iff`: and conversely, a place restricts to the place
   of `T` only if its point is an `[n]`-preimage of `T`, so the fibre over a place is exactly the
   preimage of its point. Stated for a `P` that `[n]` does not kill, which is all the converse
@@ -155,6 +158,9 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
     (by rw [evalEval_C]; exact eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP)
 
 /-- **The place of `P` restricts along `[n]` to the place of `n • P`.** -/
+-- Normalizing the restricted valuation and taking its centre on the coordinate ring names a height
+-- one prime; the two division-polynomial coordinate identities put the ideal of `n • P` inside
+-- that centre, and maximality of the point ideal forces the two to agree.
 theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
     {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
     (hnP : n • Affine.Point.some x y h = Affine.Point.some x' y' h') :
@@ -223,6 +229,48 @@ theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) 
   obtain ⟨rfl, rfl⟩ := (CoordinateRing.pointPlace_eq_iff h''.left h'.left).mp hpq
   rw [hnP]
 
+
+/-- **The place of an affine `n`-torsion point restricts along `[n]` to the place at infinity.**
+For `P = (x, y)` with `n • P = 0`, the valuation `z ↦ v_P([n]^* z)` of `F(W)` is equivalent to the
+place at infinity: `[n]*x = Φₙ/ΨSqₙ` has a pole at `P`. No closure hypothesis on `F` is needed. -/
+-- `ΨSqₙ` vanishes at `x` because `P` is `n`-torsion, and `Φₙ`, having no root in common with it,
+-- does not; the place at infinity is the only place at which `x` has a pole.
+theorem isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero {x y : F}
+    (h : W.toAffine.Nonsingular x y) {n : ℤ} (hn : psiFunctionField W n ≠ 0)
+    (hnP : n • Affine.Point.some x y h = 0) :
+    (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
+        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv (infinityPlace W.toAffine) := by
+  refine isEquiv_infinityPlace_of_one_lt _ ?_
+  have hΨ : (W.ΨSq n).eval x = 0 := (W.eval_ΨSq_eq_zero_iff_zsmul_eq_zero h n).mpr
+    (zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero.mpr hnP)
+  have hΦ : (W.Φ n).eval x ≠ 0 := by
+    simpa [hΨ] using aeval_ne_zero_of_isCoprime (W.isCoprime_Φ_ΨSq n W.isUnit_Δ.ne_zero) x
+  rw [comap_fieldPullback_apply, ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
+    fieldPullback_mulByIntIsogeny_genericX, mulByIntX_def, phiFunctionField_def,
+    CoordinateRing.mk_φ, psiFunctionField_sq]
+  exact CoordinateRing.one_lt_valuation_pointPlace_div _ h.left (by rwa [evalEval_C])
+    (by rwa [evalEval_C])
+    fun h0 ↦ pow_ne_zero 2 hn (by rw [psiFunctionField_sq, h0, map_zero])
+
+/-- **The places over the place at infinity are those of the `n`-torsion points.** For an affine
+point `P`, the place of `P` restricts along `[n]` to the place at infinity exactly when
+`n • P = 0`. -/
+theorem isEquiv_comap_pointPlace_infinityPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y)
+    {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
+    (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
+        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv (infinityPlace W.toAffine) ↔
+      n • Affine.Point.some x y h = 0 := by
+  refine ⟨fun hinf ↦ ?_, isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero W h hn⟩
+  by_contra hP0
+  -- otherwise `n • P` is affine, and the restriction is also the place of `n • P`, at which `x`
+  -- has no pole
+  obtain ⟨x', y', h', hnP⟩ := Affine.Point.exists_eq_some_of_ne_zero hP0
+  have hpt := (isEquiv_comap_pointPlace W h h' hnP).symm.trans hinf
+  have hle : (CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField
+      (algebraMap F[X] W.toAffine.FunctionField Polynomial.X) ≤ 1 := by
+    rw [IsScalarTower.algebraMap_apply F[X] W.toAffine.CoordinateRing]
+    exact HeightOneSpectrum.valuation_le_one _ _
+  exact absurd (hpt.le_one_iff_le_one.mp hle) (not_le.mpr (one_lt_infinityPlace_X W.toAffine))
 
 end TauCeti.Isogeny
 end
