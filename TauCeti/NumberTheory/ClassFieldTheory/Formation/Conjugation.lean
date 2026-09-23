@@ -159,20 +159,22 @@ def levelConjEquiv (g : G) {U U' : OpenSubgroup G}
   left_inv a := Subtype.ext (F.toRep.ρ.inv_self_apply g a)
   right_inv b := Subtype.ext (F.toRep.ρ.self_inv_apply g b)
 
--- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
--- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
--- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
+-- The `simp` lemmas whose left-hand sides involve `F.toRep.V`, directly or through a level
+-- `F.level U`, state those sides through `dsimp% only`: `toRep` is an `abbrev`, and `simp` reduces
+-- its carrier in implicit type arguments before it looks a term up, so a left-hand side stated
+-- plainly over it is never found.
+/-- `levelConjEquiv` acts by `g` on underlying elements. -/
 @[simp]
 theorem levelConjEquiv_apply_coe (g : G) {U U' : OpenSubgroup G}
     (h : ∀ x : G, g * x * g⁻¹ ∈ U' ↔ x ∈ U) (a : F.level U) :
-    (dsimp% only ((F.levelConjEquiv g h a : F.level U') : F.toRep.V)) = F.toRep.ρ g a :=
+    (dsimp% only (F.levelConjEquiv g h a : F.toRep.V)) = F.toRep.ρ g a :=
   (rfl)
 
+/-- The inverse of `levelConjEquiv` acts by `g⁻¹` on underlying elements. -/
 @[simp]
 theorem levelConjEquiv_symm_apply_coe (g : G) {U U' : OpenSubgroup G}
     (h : ∀ x : G, g * x * g⁻¹ ∈ U' ↔ x ∈ U) (b : F.level U') :
-    (dsimp% only (((F.levelConjEquiv g h).symm b : F.level U) : F.toRep.V)) =
-      F.toRep.ρ g⁻¹ b :=
+    (dsimp% only ((F.levelConjEquiv g h).symm b : F.toRep.V)) = F.toRep.ρ g⁻¹ b :=
   (rfl)
 
 /-- Conjugating a level by `h` and then by `g` agrees on underlying elements with conjugating by
@@ -324,17 +326,16 @@ theorem degree_conjugate : (L.conjugate g).degree = L.degree := by
 def conjugateCoefficientEquiv : F.level L.top ≃ₗ[ℤ] F.level (L.conjugate g).top :=
   F.levelConjEquiv g fun _ ↦ L.conj_mem_top_conjugate g
 
+/-- The coefficient equivalence acts by `g` on underlying elements. -/
 @[simp]
 theorem conjugateCoefficientEquiv_apply_coe (x : F.level L.top) :
-    (dsimp% only ((L.conjugateCoefficientEquiv F g x : F.level (L.conjugate g).top) :
-      F.toRep.V)) = F.toRep.ρ g x :=
+    (dsimp% only (L.conjugateCoefficientEquiv F g x : F.toRep.V)) = F.toRep.ρ g x :=
   (rfl)
 
 /-- The inverse coefficient equivalence acts by `g⁻¹` on underlying elements. -/
 @[simp]
 theorem conjugateCoefficientEquiv_symm_apply_coe (y : F.level (L.conjugate g).top) :
-    (dsimp% only (((L.conjugateCoefficientEquiv F g).symm y : F.level L.top) : F.toRep.V)) =
-      F.toRep.ρ g⁻¹ y :=
+    (dsimp% only ((L.conjugateCoefficientEquiv F g).symm y : F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
   F.levelConjEquiv_symm_apply_coe g _ y
 
 /-- **Conjugation on the ground level of a layer:** acting by `g` is an isomorphism
@@ -342,17 +343,16 @@ theorem conjugateCoefficientEquiv_symm_apply_coe (y : F.level (L.conjugate g).to
 def conjugateGroundLevelEquiv : F.level L.ground ≃ₗ[ℤ] F.level (L.conjugate g).ground :=
   F.levelConjEquiv g fun _ ↦ L.conj_mem_ground_conjugate g
 
+/-- The ground-level equivalence acts by `g` on underlying elements. -/
 @[simp]
 theorem conjugateGroundLevelEquiv_apply_coe (x : F.level L.ground) :
-    (dsimp% only ((L.conjugateGroundLevelEquiv F g x : F.level (L.conjugate g).ground) :
-      F.toRep.V)) = F.toRep.ρ g x :=
+    (dsimp% only (L.conjugateGroundLevelEquiv F g x : F.toRep.V)) = F.toRep.ρ g x :=
   (rfl)
 
 /-- The inverse ground-level equivalence acts by `g⁻¹` on underlying elements. -/
 @[simp]
 theorem conjugateGroundLevelEquiv_symm_apply_coe (y : F.level (L.conjugate g).ground) :
-    (dsimp% only (((L.conjugateGroundLevelEquiv F g).symm y : F.level L.ground) :
-      F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
+    (dsimp% only ((L.conjugateGroundLevelEquiv F g).symm y : F.toRep.V)) = F.toRep.ρ g⁻¹ y :=
   F.levelConjEquiv_symm_apply_coe g _ y
 
 /-- **The isomorphisms of Galois groups and of coefficient modules intertwine:**
@@ -474,7 +474,7 @@ def conjugateNormQuotientEquiv : L.NormQuotient F ≃+ (L.conjugate g).NormQuoti
 conjugate. -/
 @[simp]
 theorem conjugateNormQuotientEquiv_normQuotientMk (x : F.level L.ground) :
-    L.conjugateNormQuotientEquiv F g (L.normQuotientMk F x) =
+    (dsimp% only (L.conjugateNormQuotientEquiv F g (L.normQuotientMk F x))) =
       (L.conjugate g).normQuotientMk F (L.conjugateGroundLevelEquiv F g x) := by
   rw [normQuotientMk_apply, normQuotientMk_apply, conjugateNormQuotientEquiv,
     LinearEquiv.coe_toAddEquiv]
@@ -489,7 +489,7 @@ of its inverse conjugate. -/
 @[simp]
 theorem conjugateNormQuotientEquiv_symm_normQuotientMk
     (y : F.level (L.conjugate g).ground) :
-    (L.conjugateNormQuotientEquiv F g).symm ((L.conjugate g).normQuotientMk F y) =
+    (dsimp% only ((L.conjugateNormQuotientEquiv F g).symm ((L.conjugate g).normQuotientMk F y))) =
       L.normQuotientMk F ((L.conjugateGroundLevelEquiv F g).symm y) := by
   apply (L.conjugateNormQuotientEquiv F g).injective
   rw [AddEquiv.apply_symm_apply, conjugateNormQuotientEquiv_normQuotientMk,
