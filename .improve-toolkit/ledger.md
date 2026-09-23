@@ -42096,3 +42096,15 @@ No merges. Pin `dc4b8d60d5`, main `d66b14525`.
 
 All three (#8332 `a32a2f72e`, #8339 `4f18336f9`, #8344 `ba8ab38b9`) are rebuilding on their pushed fixes; every board is BEHIND its head, as expected, so nothing to
 re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
+
+## r942 — 2026-09-23T19:14Z (cron)
+
+* **#8339 approved** (board on `4f18336f9`, 19:12:41Z), `ready-to-merge`, after the roadmap bullet was removed. #8344 is green on
+  `ba8ab38b9` and `awaiting-review`; #8332 is rebuilding on `a32a2f72e`.
+* **Step 5, kind 2: opened draft #8381**, `improve/oncurve-style` @ `e64edbfd9`, from `fe1d9dad6`; +75/−72; `Roadmap:
+  ContourIntegration` (as #5618 and #4635). Target: `Contour/Winding/RealIntegral/OnCurve.lean` (516 lines). Edits: 70 `fun … =>` → `↦`
+  (asserted; no other `=>`); 3 real chains split (lines 278/280, `rw […]; exact ⟨…⟩` bodies of `fun t ht ↦ by`, at the same indent; line
+  436 bullet `rw […]; ring`), with the parenthesised and anonymous-constructor chains (138/201/202/494/495) kept. Under the r939 rule, the
+  Provenance "for this roadmap target" framing goes ("New assembly of HW Prop 2.3"). Gate 12/0/0. gpt-6-astra was launched at 19:18Z
+  (`astra-oncurve-1918.txt`); a waiter covers astra and the first build.
+* In progress (cap full): #8332, #8344 and #8381. No merges. Pin `dc4b8d60d5`.

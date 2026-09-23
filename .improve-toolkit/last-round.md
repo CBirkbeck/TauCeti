@@ -1,4 +1,4 @@
-# Last round — r941 (2026-09-23T19:05Z)
+# Last round — r942 (2026-09-23T19:22Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -45,16 +45,18 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#8332** | `a32a2f72e` | rebuilding | kind 2 (`ProductKernel.lean`: 100 `↦`; roadmap reference removed from the docstring, per `documentation` rounds 2–3, and the `cameronfreer` motivation kept; `Roadmap: Exchangeability` only in the body). Body v4 | **CI**, then re-review. If `attribution` re-fires, **contest** it quoting `documentation` r3 and #8344 `attribution` |
-| **#8339** | `4f18336f9` | rebuilding | kind 2 (`ViaKoopman/Decoupling.lean`: 100 `↦`; roadmap bullet removed, per `documentation` r4085974249; `Roadmap: Exchangeability`). Body v3 | **CI**, then re-review |
-| **#8344** | `ba8ab38b9` | rebuilding | kind 2 (`Slice/Density.lean`: 92 `↦`; roadmap bullet removed, per `documentation` + `attribution`; `Roadmap: OneParameterSemigroups`). Body v3 | **CI**, then re-review |
+| **#8339** | `4f18336f9` | green | kind 2 (`ViaKoopman/Decoupling.lean`). **Approved** (19:12:41Z) after the roadmap bullet was removed; `ready-to-merge` | **queue** |
+| **#8344** | `ba8ab38b9` | green | kind 2 (`Slice/Density.lean`: 92 `↦`; roadmap bullet removed, per `documentation` + `attribution`; `Roadmap: OneParameterSemigroups`). Body v3 | **external reviewers** |
+| **#8381** | `e64edbfd9` | first build | kind 2 (`Contour/Winding/RealIntegral/OnCurve.lean`: 70 `↦`, 3 chains split, Provenance "roadmap target" framing dropped; +75/−72; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**, opened r942; gpt-6-astra launched 19:18Z (`$SP/astra-oncurve-1918.txt`) | **astra + CI** — mark ready when both clear |
 
-**In progress (cap full): #8332 (rebuilding on `a32a2f72e`, the roadmap reference removed), #8339 and #8344 (rebuilding on the r939 bullet removals).**
+**In progress (cap full): #8332 (rebuilding on `a32a2f72e`), #8344 (`awaiting-review`) and #8381 (draft; astra and first build pending).**
+#8339 is `ready-to-merge`.
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `2ed34e8ed`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `0be23acae`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -66,8 +68,7 @@ a usage-limit error means the stop applies again (a drive then posts an all-⚠�
 
 0. **Now (r939):** cap full: #8332 (roadmap reference removed at r940, `a32a2f72e`; **if `attribution` re-fires, contest it quoting `documentation` r3
    and #8344's r4086003465**), and #8339/#8344 rebuilding after dropping the
-   roadmap bullets (reviewer proposals, r939). Roadmap credit goes ONLY in the PR description (trap below). Next kind 2 when a slot frees:
-   `Contour/Winding/RealIntegral/OnCurve.lean`.
+   roadmap bullets (reviewer proposals, r939). Roadmap credit goes ONLY in the PR description (trap below). The OnCurve pass opened as #8381 (r942).
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -147,7 +148,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r941 did
+## What r703–r942 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -393,6 +394,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r939: **#8339 and #8344 got `documentation` (+ `attribution` on #8344) findings: remove the roadmap bullet.** Done on both. This corrects r934: roadmap credit goes only in the PR description.
 * r940: **#8332 round 3: `documentation` rejected the provenance wording too.** The roadmap reference is removed (`a32a2f72e`), leaving the credit only in the PR body.
 * r941: all three are rebuilding on their fixes.
+* r942: **#8339 approved**. Kind 2 opened as draft **#8381** (`OnCurve.lean`: 70 `↦`, 3 chains split, and roadmap framing dropped per the r939 rule; gate 12/0/0).
 
 ## Candidates for a later step 5
 
