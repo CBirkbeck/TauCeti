@@ -40,13 +40,6 @@ open scoped NumberField
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- The absolute norm is Northcott on the integral ideals prime to `𝔪`: only finitely many
-nonzero integral ideals have bounded norm. -/
-instance (𝔪 : Modulus K) :
-    Northcott (fun I : integralIdealsPrimeTo 𝔪 ↦ Ideal.absNorm (I : Ideal (𝓞 K))) :=
-  ⟨fun B ↦ (Ring.HasFiniteQuotients.finite_absNorm_le (S := 𝓞 K) B).preimage
-    Subtype.val_injective.injOn⟩
-
 /-- **The partial sum of a ray class character.**  The inclusive summatory function, in the sense
 of `TauCeti.summatory`, of `χ.onIdeals` over the nonzero integral ideals prime to the finite part
 of `𝔪`, graded by the absolute norm. -/
