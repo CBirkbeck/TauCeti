@@ -41801,3 +41801,8 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
     `one_sub_conj_mul_ne_zero_of_norm_lt_one`'s `hw : ‖w‖ < 1` to `≤` (only `hw.le` is used). It would touch 12 call sites in 7 files
     with no consumer for boundary `w` and a docstring rework, so it is churn with no motivation.
 * Pin `dc4b8d60d5`, main `6e1f69bb8`.
+
+## r914 — 2026-09-23T14:34Z (cron; step 4 hard-stopped)
+
+**#8275 merged** 14:30:25Z, the sixth today. #8286 is MERGING, #8291 is `awaiting-review` (21 min), and #8295 is on its first build
+(waiter running). The third slot stays open (every kind is dry or blocked, per r913). Pin `dc4b8d60d5`, main `05649787a`.
