@@ -64,7 +64,8 @@ open scoped Classical in
 by the unit `M ⟶ Indˢᴳ Resˢᴳ M`, followed by the homological Shapiro isomorphism. -/
 def transfer (M : Rep R G) (S : Subgroup G) [S.FiniteIndex] (n : ℕ) :
     _root_.groupHomology M n ⟶ _root_.groupHomology (Rep.res S.subtype M) n :=
-  (_root_.groupHomology.functor R G n).map ((Rep.resIndAdjunction R S).unit.app M) ≫
+  -- Universes pinned: left to unification, `max ?w u u = u` slows the composite's type check.
+  (_root_.groupHomology.functor R G n).map ((Rep.resIndAdjunction.{u, u, u} R S).unit.app M) ≫
     (_root_.groupHomology.indIso S (Rep.res S.subtype M) n).hom
 
 open scoped Classical in
@@ -73,7 +74,8 @@ the unit of the finite-index induction--restriction adjunction. -/
 @[reassoc (attr := simp)]
 theorem transfer_comp_indIso_inv (M : Rep R G) (S : Subgroup G) [S.FiniteIndex] (n : ℕ) :
     transfer M S n ≫ (_root_.groupHomology.indIso S (Rep.res S.subtype M) n).inv =
-      (_root_.groupHomology.functor R G n).map ((Rep.resIndAdjunction R S).unit.app M) :=
+      -- Universes pinned: an unsolved `max ?w u u = u` makes this statement slow to elaborate.
+      (_root_.groupHomology.functor R G n).map ((Rep.resIndAdjunction.{u, u, u} R S).unit.app M) :=
   -- Cancelling Shapiro's isomorphism against the definition, rather than rewriting with
   -- `Iso.hom_inv_id`: the two occurrences of `Resˢᴳ M` carry different `Monoid ↥S` instances, so
   -- the rewrite does not match syntactically, while this equation holds by `rfl`.
