@@ -16,7 +16,7 @@ By Shapiro's lemma, the representation `Ind_⊥^G X` induced from the trivial su
 homology in positive degrees, and so does its restriction to any subgroup `S`, since that
 restriction is again induced from the trivial subgroup (`Rep.resIndBotIso`).
 
-The statement follows `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.lean` in
+The statements follow `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.lean` in
 `kbuzzard/ClassFieldTheory`, commit `ccc3323c6750abca25b49b35106f54eb3a398509`.
 
 ## Main statements
