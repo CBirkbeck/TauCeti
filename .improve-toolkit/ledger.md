@@ -42175,3 +42175,14 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 
 **#8344 merged** 20:19:27Z, the thirteenth today. #8332 and #8381 are queued. #8388, #8389 and #8402 are drafts on queued builds (waiters running). Pin
 `dc4b8d60d5`, main `3b6440d8d`.
+* r949 addendum (waiter): **#8388 went green at 20:28:51Z**, about 50 min after it was queued, **and was marked ready**. Astra had judged the
+  JointLaw edits acceptable (r947; its rejection was the two-dot phantom). The guards held: every check green, head unchanged, pin unchanged,
+  and the file untouched on main.
+* r949 addendum 2 (waiter): **#8389 went green at 20:30:57Z and was marked ready.** Astra had accepted all of it (r948). The guards held:
+  every check green, head `18762ee10` unchanged, pin unchanged, and the file untouched on main.
+
+## r950 — 2026-09-23T20:34Z (cron)
+
+* **#8332 merged** 20:26:21Z, the fourteenth today, after three review rounds over the roadmap sentence. #8381 is queued. #8388 (ready
+  20:29:38Z) and #8389 (ready 20:31:52Z) are `awaiting-review`; #8402 is a draft on a queued build (its waiter is running). The cap is full.
+  Pin `dc4b8d60d5`, main `e49afa44e`.

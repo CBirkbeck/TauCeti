@@ -1,4 +1,4 @@
-# Last round — r949 (2026-09-23T20:25Z)
+# Last round — r950 (2026-09-23T20:36Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,20 +44,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8332** | `a32a2f72e` | green | kind 2 (`ProductKernel.lean`). **Approved** (19:34:04Z) once the roadmap reference was removed; `attribution` did not re-fire; `ready-to-merge` | **queue** |
 | **#8381** | `e64edbfd9` | green | kind 2 (`OnCurve.lean`). **Approved** (20:12:15Z); `ready-to-merge` | **queue** |
-| **#8388** | `35ba59b71` | queued | kind 2 (`Arrays/JointLaw.lean`: 89 `↦`; roadmap paragraph deleted; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; astra: JointLaw edits acceptable (its "rejection" was a phantom deletion from a two-dot diff, r947) | **CI** — mark ready when green |
-| **#8389** | `18762ee10` | queued | kind 2 (`ConditionallyIID/Moments.lean`: 76 `↦`, 1 chain split; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r948) | **CI** — mark ready when green |
+| **#8388** | `35ba59b71` | green (20:28:51Z) | kind 2 (`Arrays/JointLaw.lean`: 89 `↦`; roadmap paragraph deleted; `Roadmap: Exchangeability`). Astra accepted the edits; **marked ready** (r949) | **external reviewers** |
+| **#8389** | `18762ee10` | green (20:30:57Z) | kind 2 (`ConditionallyIID/Moments.lean`: 76 `↦`, 1 chain split; `Roadmap: Exchangeability`). Astra accepted it; **marked ready** (r949) | **external reviewers** |
 | **#8402** | `1ffccd0f8` | queued | kind 2 (`Recurrence/RowExchangeable.lean`: 83 `↦` only; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r948; gpt-6-astra launched 20:18Z with the three-dot diff | **astra + CI** — mark ready when both clear |
 
-**In progress (cap full): the drafts #8388 (astra ✓ modulo the r947 phantom; build queued), #8389 (astra ✓, build queued) and #8402 (astra and build pending).**
-#8332 and #8381 are `ready-to-merge`; **#8344 merged 20:19:27Z**, the thirteenth today.
+**In progress (cap full): #8388 and #8389 (`awaiting-review`) and the draft #8402 (astra and build pending).** #8381 is `ready-to-merge`.
+Fourteen of this session's PRs merged on 2026-09-23, most recently #8332 (20:26:21Z), #8344 and #8339.
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `3f48d4b2b`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `dfbadb46a`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -150,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r949 did
+## What r703–r950 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -404,6 +403,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r947: #8381 went green after about 44 min queued and was marked ready.
 * r948: **#8381 approved**. Kind 2 opened as draft **#8402** (`RowExchangeable.lean`, 83 `↦`; the astra question uses the three-dot diff).
 * r949: **#8344 merged**, the thirteenth today. The drafts are still waiting on the CI queue.
+* r950: **#8332 merged**, the fourteenth today. #8388 and #8389 were marked ready (they went green at 20:28Z and 20:30Z).
 
 ## Candidates for a later step 5
 
