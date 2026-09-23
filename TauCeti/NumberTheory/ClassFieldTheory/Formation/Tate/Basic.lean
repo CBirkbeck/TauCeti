@@ -91,6 +91,17 @@ theorem tateRangeIso_inv_H0π (T : LayerRestriction small big) (F : Formation G)
   rw [TauCeti.TateCohomology.mapInvariants_apply_coe]
   simp
 
+/-- In degree minus one, the inverse range comparison sends the class of a norm-zero element of
+the image subgroup to the class of its image under the inverse coefficient identification. -/
+theorem tateRangeIso_inv_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
+    (x : LinearMap.ker (Rep.res T.galHom.range.subtype (big.rep F)).ρ.norm) :
+    (T.tateRangeIso F (-1)).inv (TauCeti.TateCohomology.HNegOneπ _ x) =
+      TauCeti.TateCohomology.HNegOneπ (small.rep F)
+        (TauCeti.TateCohomology.mapKerNorm
+          (Representation.IsIntertwiningMap.symm (T.isIntertwiningMap_repIso_range F)) x) := by
+  rw [tateRangeIso, TauCeti.TateCohomology.mapIso_inv,
+    TauCeti.TateCohomology.HNegOneπ_comp_map_apply]
+
 /-! ### Trivial coefficients -/
 
 private theorem trivial_isIntertwiningRange (T : LayerRestriction small big) :

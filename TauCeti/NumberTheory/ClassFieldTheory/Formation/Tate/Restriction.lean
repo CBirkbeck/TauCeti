@@ -62,7 +62,7 @@ namespace TauCeti.ClassFieldTheory.LayerRestriction
 variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
   [TotallyDisconnectedSpace G] {small big : NormalLayer G}
 
-attribute [local instance] instFintypeRange
+attribute [local instance] instFintypeRange Subgroup.fintypeQuotientOfFiniteIndex
 
 /-- **Restriction between the Tate cohomology groups of finite normal layers, in every integer
 degree.** Positive degrees use ordinary cohomological restriction, degrees zero and minus one use
@@ -155,6 +155,37 @@ theorem tateRes_zero_H0π (T : LayerRestriction small big) (F : Formation G)
   apply (small.tateHZeroEquivNormQuotient F).injective
   rw [tateHZeroEquivNormQuotient_tateRes_H0π,
     NormalLayer.tateHZeroEquivNormQuotient_H0π, LinearEquiv.apply_symm_apply]
+
+/-- The **relative transfer of norm kernels** along a restriction: the transfer of the image of
+`Gal(K/E)` in `Gal(K/F)`, read back into the smaller layer through `repIso`. On representatives,
+degree `-1` restriction is this map (`tateRes_neg_one_HNegOneπ`); it is the wrong-way partner of
+`LayerRestriction.kerNormInclusion`. -/
+def kerNormTransfer (T : LayerRestriction small big) (F : Formation G) :
+    LinearMap.ker (big.rep F).ρ.norm →ₗ[ℤ] LinearMap.ker (small.rep F).ρ.norm :=
+  (TauCeti.TateCohomology.mapKerNorm
+      (Representation.IsIntertwiningMap.symm (T.isIntertwiningMap_repIso_range F))).comp
+    (Representation.relTransferKerNorm (big.rep F).ρ T.galHom.range)
+
+/-- The relative transfer of norm kernels is the relative transfer on the ambient module. -/
+@[simp]
+theorem kerNormTransfer_apply_coe (T : LayerRestriction small big) (F : Formation G)
+    (x : LinearMap.ker (big.rep F).ρ.norm) :
+    (((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) : F.level small.top) :
+        F.toRep.V) =
+      ((Representation.relTransfer (big.rep F).ρ T.galHom.range
+        ((x : F.level big.top) : (big.rep F).V) : F.level big.top) : F.toRep.V) := by
+  rw [kerNormTransfer, LinearMap.comp_apply,
+    TauCeti.TateCohomology.mapKerNorm_apply_coe, Representation.coe_relTransferKerNorm]
+  exact T.repIso_inv_apply_coe F _
+
+/-- **In degree minus one, layer Tate restriction is the relative transfer** on representatives. -/
+theorem tateRes_neg_one_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
+    (x : LinearMap.ker (big.rep F).ρ.norm) :
+    T.tateRes F (-1) (TauCeti.TateCohomology.HNegOneπ (big.rep F) x) =
+      TauCeti.TateCohomology.HNegOneπ (small.rep F) (T.kerNormTransfer F x) := by
+  rw [tateRes_neg_one, ModuleCat.comp_apply,
+    TauCeti.TateCohomology.HNegOneπ_comp_HNegOneRes_apply, tateRangeIso_inv_HNegOneπ,
+    kerNormTransfer, LinearMap.comp_apply]
 
 /-! ### Towers -/
 
