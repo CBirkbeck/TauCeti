@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count.Basic
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.Integral
 
 /-!
 # The ray class count, reindexed by a representative ideal
@@ -16,14 +15,19 @@ condition is not a divisibility condition.  Multiplying by an ideal `𝔞` whose
 inverse one turns it into two conditions that are: divisibility by `𝔞`, and triviality of the
 class.  The norm bound is carried along, scaled by the norm of `𝔞`.
 
-## Main definitions
-
-* `TauCeti.GlobalNumberFields.countReindexEquiv`: the reindexing described above.
-
 ## Main results
 
 * `TauCeti.GlobalNumberFields.rayClassIdealCountingFunction_eq_card_dvd_and_idealClass_eq_one`:
   the counting function as the number of multiples of `𝔞` of trivial class and bounded norm.
+
+## Provenance
+
+The reindexing follows Mathlib's class-group analogue
+`NumberField.Ideal.tendsto_norm_le_and_mk_eq_div_atTop_aux₁`
+(`Mathlib/NumberTheory/NumberField/Ideal/Asymptotics.lean`) move for move: `subtypeEquiv`, then
+`subtypeSubtypeEquivSubtypeInter`, then `Nat.card_congr`.  That lemma is `private`, is a
+`Nat.card` equality rather than an `Equiv`, and is stated over `(Ideal (𝓞 K))⁰`, so it cannot be
+called from here.
 -/
 
 public section
@@ -37,7 +41,8 @@ variable {K : Type*} [Field K] [NumberField K]
 /-- **The ray class count, reindexed by a representative.**  For `𝔞` in the inverse class of `c`,
 multiplication by `𝔞` matches the ideals of class `c` with norm at most `x` against the multiples
 of `𝔞` of trivial class with norm at most `x * N 𝔞`. -/
-noncomputable def countReindexEquiv (𝔪 : Modulus K) {c : RayClassGroup 𝔪}
+private noncomputable def idealClassNormLEEquivDvdIdealClassOneNormLE (𝔪 : Modulus K)
+    {c : RayClassGroup 𝔪}
     (𝔞 : integralIdealsPrimeTo 𝔪) (h𝔞 : idealClass 𝔪 𝔞 = c⁻¹) (x : ℝ) :
     {I : integralIdealsPrimeTo 𝔪 // idealClass 𝔪 I = c ∧
       (Ideal.absNorm (I : Ideal (𝓞 K)) : ℝ) ≤ x} ≃
@@ -64,6 +69,7 @@ theorem rayClassIdealCountingFunction_eq_card_dvd_and_idealClass_eq_one (𝔪 : 
         x * Ideal.absNorm (𝔞 : Ideal (𝓞 K))} :=
   -- `rayClassIdealCountingFunction` is not `@[expose]`d, so the step onto the cardinality it is
   -- defined as goes through `rayClassIdealCountingFunction_def` rather than by `rfl`
-  (rayClassIdealCountingFunction_def 𝔪 c x).trans <| Nat.card_congr <| countReindexEquiv 𝔪 𝔞 h𝔞 x
+  (rayClassIdealCountingFunction_def 𝔪 c x).trans <|
+    Nat.card_congr <| idealClassNormLEEquivDvdIdealClassOneNormLE 𝔪 𝔞 h𝔞 x
 
 end TauCeti.GlobalNumberFields
