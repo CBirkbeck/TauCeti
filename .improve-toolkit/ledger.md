@@ -42020,3 +42020,14 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
   "Milestone", "Part C") but keep a stage-free `TauCetiRoadmap/<Area>` credit. #8101 passed without one, but `attribution` enforces it
   stochastically.
 * No merges. Pin `dc4b8d60d5`, main `11cdb5809`. The cap is full.
+
+## r935 — 2026-09-23T18:10Z (cron)
+
+* All three PRs are rebuilding on the r934 credit commits (the waiter is running). #8332's and #8339's boards are BEHIND their heads, as
+  expected. No merges. Pin `dc4b8d60d5`, main `d66b14525`.
+* **Mistake, r934: the proactive push on #8339 superseded an approval.** `sqrt-of-2`'s board on the old head `9d44d5749` (18:01:22Z) was
+  **10/10 approved** with no findings. The `attribution` rubric did *not* flag the dropped roadmap bullet there. The credit commit
+  `21eca0421` went out minutes later without that board being read, so #8339 needs a full re-review for a change nobody asked for. Nothing
+  is broken, but it cost an approval and a review cycle.
+* **Rule (standing):** before any *speculative* push (one not answering a finding on that PR), read the PR's current board. If it is
+  approved on its head, leave it alone; carry the lesson into the *next* PR instead.
