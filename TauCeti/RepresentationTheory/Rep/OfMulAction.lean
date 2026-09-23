@@ -125,21 +125,18 @@ theorem quotientIsoCongr_inv_hom_single {H K : Subgroup G} (h : H = K) (q : G �
       MonoidAlgebra.single (Subgroup.quotientEquivOfEq h.symm q) r :=
   ofMulActionIsoCongr_inv_hom_single k _ _ q r
 
-/-- The basis element indexed by the coset of a representative, in the forward direction.
-
-Not a `simp` lemma: `simp` first rewrites the left-hand side with the general
-`quotientIsoCongr_hom_hom_single`, to `MonoidAlgebra.single (Subgroup.quotientEquivOfEq h x) r`,
-which `simp [Subgroup.quotientEquivOfEq_mk]` finishes. The left-hand side is still stated through
-`dsimp% only`, so that `simp only [quotientIsoCongr_hom_hom_single_mk]` fires. -/
+-- Not `@[simp]`: `simp` first rewrites the left-hand side with `quotientIsoCongr_hom_hom_single`
+-- (and `simp [Subgroup.quotientEquivOfEq_mk]` then finishes), so simpNF rejects it. The left-hand
+-- side is still stated through `dsimp% only`, so that `simp only [this lemma]` fires.
+/-- The basis element indexed by the coset of a representative, in the forward direction. -/
 theorem quotientIsoCongr_hom_hom_single_mk {H K : Subgroup G} (h : H = K) (x : G) (r : k) :
     (dsimp% only ((quotientIsoCongr k h).hom.hom (MonoidAlgebra.single (x : G ⧸ H) r))) =
       MonoidAlgebra.single (x : G ⧸ K) r :=
   quotientIsoCongr_hom_hom_single k h _ r
 
-/-- The basis element indexed by the coset of a representative, in the inverse direction.
-
-Not a `simp` lemma, for the same reason as `quotientIsoCongr_hom_hom_single_mk`: `simp` first
-rewrites the left-hand side with `quotientIsoCongr_inv_hom_single`. -/
+-- Not `@[simp]`, as for `quotientIsoCongr_hom_hom_single_mk`: `simp` first rewrites the left-hand
+-- side with `quotientIsoCongr_inv_hom_single`.
+/-- The basis element indexed by the coset of a representative, in the inverse direction. -/
 theorem quotientIsoCongr_inv_hom_single_mk {H K : Subgroup G} (h : H = K) (x : G) (r : k) :
     (dsimp% only ((quotientIsoCongr k h).inv.hom (MonoidAlgebra.single (x : G ⧸ K) r))) =
       MonoidAlgebra.single (x : G ⧸ H) r :=
@@ -158,13 +155,11 @@ theorem quotientBotIsoLeftRegular_hom_hom_single (q : G ⧸ (⊥ : Subgroup G)) 
   ofMulActionIsoCongr_hom_hom_single k QuotientGroup.quotientBot.toEquiv
     quotientBot_equivariant q r
 
+-- Not `@[simp]`: `simp` first rewrites the left-hand side with
+-- `quotientBotIsoLeftRegular_hom_hom_single`, so simpNF rejects it. The left-hand side is still
+-- stated through `dsimp% only`, so that `simp only [this lemma]` fires.
 /-- The basis element indexed by the coset of a representative is sent to that
-representative.
-
-Not a `simp` lemma: `simp` first rewrites the left-hand side with the general
-`quotientBotIsoLeftRegular_hom_hom_single`, to
-`MonoidAlgebra.single (QuotientGroup.quotientBot x) r`. The left-hand side is still stated through
-`dsimp% only`, so that `simp only [quotientBotIsoLeftRegular_hom_hom_single_mk]` fires. -/
+representative. -/
 theorem quotientBotIsoLeftRegular_hom_hom_single_mk (x : G) (r : k) :
     (dsimp% only ((quotientBotIsoLeftRegular k).hom.hom
         (MonoidAlgebra.single (x : G ⧸ (⊥ : Subgroup G)) r))) =
