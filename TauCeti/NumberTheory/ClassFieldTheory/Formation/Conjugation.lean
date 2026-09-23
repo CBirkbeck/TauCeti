@@ -105,8 +105,8 @@ so that membership in the conjugate subgroups is definitionally the membership c
 `g⁻¹xg ∈ U` and needs no image lemma to use.
 
 The `simp` lemmas whose left-hand sides involve `F.toRep.V`, directly or through a level
-`F.level U`, state those sides through `dsimp% only`; see the implementation notes of
-`Formation/Basic.lean`.
+`F.level U`, state those sides through `dsimp% only`, following #8315; see the implementation
+notes of `Formation/Basic.lean`.
 
 ## References
 
