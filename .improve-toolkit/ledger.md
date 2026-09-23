@@ -42278,3 +42278,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   #4706 and #4271). Target: `Exchangeability/Arrays/Block.lean` (326 lines, 61 `fun … =>`, no real chains, no roadmap text). Edit: 61
   arrows (asserted). Gate 12/0/0; the astra question uses the three-dot diff (1 file); astra was launched at 22:59Z. In progress (cap
   full): #8413, #8426 and #8469. Pin `dc4b8d60d5`, main `6c75046e3`.
+
+## r965 — 2026-09-23T23:04Z (cron)
+
+* **#8413 went green at 23:04:37Z and was marked ready at 23:04:55Z.** Astra had cleared it; the guards held (checks green, head unchanged, pin
+  unchanged, file untouched).
+* **gpt-6-astra cleared #8469** ("every replacement … acceptable as a pure style edit"). Its build is queued, as is #8426's (also astra-cleared).
+* #8402 is `ready-to-merge`. No new merges. Pin `dc4b8d60d5`, main `5d16a37f3`. In progress (cap full): #8413, #8426 and #8469.
