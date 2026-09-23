@@ -34,10 +34,9 @@ symmetric group is canonical only up to conjugacy. This is the same phenomenon a
 the same reason.
 
 `permutationRepresentation` is the underlying action homomorphism and needs no hypothesis. When
-the action is faithful it is injective, and two bundlings of that fact are provided, differing in
-what they retain: `permutationEmbedding` is the injection `(M ≃ₐ[F] M) ↪ S_n` into the ambient
-symmetric group, and `permutationEquivRange` is the isomorphism onto the image, which keeps the
-group structure.
+the action is faithful it is injective, and `permutationEmbedding` bundles that as the injection
+`(M ≃ₐ[F] M) ↪ S_n` into the ambient symmetric group. The isomorphism onto the image is
+`MonoidHom.ofInjective (permutationRepresentation_injective e)`, which needs no wrapper here.
 
 ## Main results
 
@@ -47,9 +46,6 @@ group structure.
 * `Equiv.permutationRepresentation_injective`: it is injective when the action is faithful.
 * `Equiv.permutationEmbedding`: the injection `(M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n)`, with
   `Equiv.permutationEmbedding_apply` identifying its values.
-* `Equiv.permutationEquivRange`: the resulting isomorphism of `M ≃ₐ[F] M` with the
-  range of the representation, a subgroup of `Equiv.Perm (Fin n)`, with
-  `Equiv.permutationEquivRange_apply` identifying its values.
 * `Equiv.permutationRepresentation_eq_conj`: replacing the enumeration conjugates
   the representation, and `Equiv.permutationRepresentation_range_map_conj` says the same of the
   represented subgroups of `Equiv.Perm (Fin n)`.
@@ -87,8 +83,8 @@ theorem permutationRepresentation_injective [FaithfulSMul (M ≃ₐ[F] M) (L →
   (e.permCongrHom.toEquiv.comp_injective _).2 MulAction.toPerm_injective
 
 /-- **`M ≃ₐ[F] M` injects into `S_n`**, for an enumeration `e` of the algebra maps and a
-faithful action on them. This is the ambient-group form; `permutationEquivRange` is the form
-that keeps the group structure. -/
+faithful action on them. A consumer wanting the isomorphism onto the image instead writes
+`MonoidHom.ofInjective (permutationRepresentation_injective e)`. -/
 noncomputable def permutationEmbedding [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
     (e : (L →ₐ[F] M) ≃ Fin n) : (M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n) :=
   ⟨permutationRepresentation e, permutationRepresentation_injective e⟩
@@ -99,21 +95,6 @@ theorem permutationEmbedding_apply [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)
     (e : (L →ₐ[F] M) ≃ Fin n) (σ : M ≃ₐ[F] M) :
     permutationEmbedding e σ = permutationRepresentation e σ :=
   (rfl)
-
-/-- **`M ≃ₐ[F] M` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the algebra
-maps and a faithful action on them: the representation is injective, so it is an isomorphism
-onto its range. -/
-noncomputable def permutationEquivRange [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
-    (e : (L →ₐ[F] M) ≃ Fin n) :
-    (M ≃ₐ[F] M) ≃* (permutationRepresentation (F := F) (L := L) (M := M) e).range :=
-  MonoidHom.ofInjective (permutationRepresentation_injective e)
-
-/-- **The isomorphism acts as the representation.** -/
-@[simp]
-theorem permutationEquivRange_apply [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
-    (e : (L →ₐ[F] M) ≃ Fin n) (σ : M ≃ₐ[F] M) :
-    (permutationEquivRange e σ : Equiv.Perm (Fin n)) = permutationRepresentation e σ :=
-  MonoidHom.ofInjective_apply _
 
 /-- **Replacing the enumeration conjugates the representation inside `S_n`**, by the re-indexing
 permutation `e.symm.trans e'`. The subgroup of `Equiv.Perm (Fin n)` is therefore well defined
