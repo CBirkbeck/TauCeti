@@ -7,7 +7,6 @@ module
 
 public import Mathlib.RepresentationTheory.Homological.GroupHomology.Shapiro
 public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
-
 import Mathlib.RepresentationTheory.Homological.GroupHomology.Functoriality
 
 /-!
@@ -49,8 +48,8 @@ theorem isZero_indBot_succ (X : Type u) [AddCommGroup X] [Module k X] (n : ℕ) 
     (indIso (⊥ : Subgroup G) (trivial k (⊥ : Subgroup G) X) (n + 1))
 
 /-- Positive-degree homology of the restriction to a subgroup of a representation induced from the
-trivial subgroup vanishes: `Hₙ₊₁(S, Ind_⊥^G X) = 0` for every subgroup `S ≤ G`, with no finiteness
-assumption on `S` or on its index. This is the subgroup version of `isZero_indBot_succ`. -/
+trivial subgroup vanishes. Unlike the Tate analogue `TauCeti.TateCohomology.isZero_res_indBot`, no
+finiteness is needed. -/
 theorem isZero_res_indBot_succ (S : Subgroup G) (X : Type u) [AddCommGroup X] [Module k X] (n : ℕ) :
     Limits.IsZero (groupHomology (res S.subtype (indBot k G X)) (n + 1)) :=
   (isZero_indBot_succ (G := S) (G ⧸ S →₀ X) n).of_iso
