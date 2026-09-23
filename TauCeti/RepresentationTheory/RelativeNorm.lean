@@ -49,8 +49,8 @@ subgroup in the two degrees where Tate cohomology is not ordinary group cohomolo
   relative transfer is `[G : H] • ·`.
 * `Representation.relTransfer_sub_sum_mem`: modulo the augmentation submodule of `H` the relative
   transfer is the sum over any transversal of `H`.
-* `Representation.relTransfer_map_sub_mem`: the relative transfer commutes with a map of
-  representations along a group isomorphism carrying `H` to `H'`.
+* `Representation.relTransfer_map_sub_mem`: modulo the augmentation submodule of `H'` the relative
+  transfer commutes with a map of representations along a group isomorphism carrying `H` to `H'`.
 * `Representation.relTransfer_relTransfer_sub_relTransfer_mem`: modulo the augmentation submodule
   of `K` the relative transfer is transitive along a tower `K ≤ H ≤ G`.
 

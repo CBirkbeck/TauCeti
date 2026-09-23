@@ -188,6 +188,7 @@ theorem kerNormTransfer_apply_coe (T : LayerRestriction small big) (F : Formatio
 
 /-- The norm-kernel transfer is the relative transfer of the image subgroup, read back through
 the identification of coefficient modules. -/
+@[simp]
 theorem kerNormTransfer_apply (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (big.rep F).ρ.norm) :
     ((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) : F.level small.top) =
@@ -264,9 +265,8 @@ theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRest
   rw [← neg_sub]
   exact Submodule.neg_mem _ hsum
 
-/-- **Tate restriction is functorial along a tower in every nonnegative degree.** Restricting
-from `K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`. -/
-theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestriction b c)
+-- The nonnegative degrees of `tateRes_trans_of_neg_one_le`.
+private theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestriction b c)
     (F : Formation G) (r : ℤ) (hr : 0 ≤ r) :
     (T.trans T').tateRes F r = T'.tateRes F r ≫ T.tateRes F r := by
   obtain rfl | ⟨n, rfl⟩ : r = 0 ∨ ∃ n : ℕ, r = n + 1 := by
@@ -288,7 +288,7 @@ theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestrictio
 Restricting from `K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to
 `K/E'`.
 
-Unlike the nonnegative degrees (`tateRes_trans_of_nonneg`), degree `-1` is not a formal consequence
+Unlike the nonnegative degrees, degree `-1` is not a formal consequence
 of functoriality of some change-of-group map: there restriction is the relative transfer, which is
 transitive only modulo the augmentation submodule — exactly the submodule degree `-1` Tate
 cohomology divides by. See `kerNormTransfer_trans_sub_mem`. -/

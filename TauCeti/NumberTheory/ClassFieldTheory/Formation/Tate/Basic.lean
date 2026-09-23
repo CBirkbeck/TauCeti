@@ -96,6 +96,7 @@ theorem tateRangeIso_inv_H0π (T : LayerRestriction small big) (F : Formation G)
 
 /-- In degree minus one, the inverse range comparison sends the class of a norm-zero element of
 the image subgroup to the class of its image under the inverse coefficient identification. -/
+@[simp]
 theorem tateRangeIso_inv_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (Rep.res T.galHom.range.subtype (big.rep F)).ρ.norm) :
     (T.tateRangeIso F (-1)).inv (TauCeti.TateCohomology.HNegOneπ _ x) =
