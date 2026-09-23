@@ -19,6 +19,8 @@ Dirichlet density `1 / [L : K]`.
 
 * `NumberField.Chebotarev.hasDirichletDensity_frobeniusPrimeSet_one`: the completely split primes
   have Dirichlet density `1 / [L : K]`.
+* `NumberField.Chebotarev.hasDirichletDensity_splitCompletely`: the same density, written as
+  `1 / #Gal(L/K)`.
 
 ## References
 
@@ -67,5 +69,14 @@ theorem hasDirichletDensity_frobeniusPrimeSet_one :
     rw [Nat.card_congr ((Equiv.subtypeEquivRight hdiv).trans
       (HeightOneSpectrum.equivPrimesOver (𝓞 L) 𝔭.ne_bot)), Nat.card_coe_set_eq]
     exact mem_frobeniusPrimeSet_one_iff_ncard_primesOver_eq_finrank.mp h𝔭.1
+
+variable (K L) in
+/-- **The completely split primes have density `1 / #Gal(L/K)`.** The primes of `𝓞 K` that split
+completely in the finite Galois extension `L` have Dirichlet density `1 / #Gal(L/K)`. -/
+theorem hasDirichletDensity_splitCompletely :
+    NumberField.Set.HasDirichletDensity (frobeniusPrimeSet K L 1)
+      (1 / (Nat.card (L ≃ₐ[K] L) : ℝ)) := by
+  rw [IsGalois.card_aut_eq_finrank]
+  exact hasDirichletDensity_frobeniusPrimeSet_one K L
 
 end NumberField.Chebotarev
