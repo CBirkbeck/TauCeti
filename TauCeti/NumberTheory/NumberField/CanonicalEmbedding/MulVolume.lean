@@ -30,7 +30,8 @@ mixed space leaves the volume of every set unchanged.
   `mixedEmbedding.norm c`;
 * `NumberField.mixedEmbedding.volume_image_mul_left`: multiplication by `c` scales volume by
   `mixedEmbedding.norm c`;
-* `NumberField.mixedEmbedding.volume_unitSMul`: the unit action preserves volume.
+* `MeasureTheory.SMulInvariantMeasure (𝓞 K)ˣ (mixedSpace K) volume`: the unit action preserves
+  volume, so Mathlib's `measure_smul` and `measure_preimage_smul` apply.
 -/
 
 public section
@@ -65,19 +66,22 @@ theorem abs_algebraNorm (c : mixedSpace K) : |Algebra.norm ℝ c| = mixedEmbeddi
 open scoped Classical in
 /-- **Multiplication by `c` scales volume by the mixed norm of `c`.**  The set `A` is arbitrary,
 so there is no measurability hypothesis to discharge.  Its specialisation to the action of a
-unit, stated as `u • A` and with factor one, is `volume_unitSMul`. -/
+unit, where the factor is one, is the `SMulInvariantMeasure` instance below. -/
 theorem volume_image_mul_left (c : mixedSpace K) (A : Set (mixedSpace K)) :
     volume ((c * ·) '' A) = ENNReal.ofReal (mixedEmbedding.norm c) * volume A := by
   have h : (c * ·) = ⇑(Algebra.lmul ℝ (mixedSpace K) c) := funext fun _ ↦ by simp
   rw [h, Measure.addHaar_image_linearMap, ← Algebra.norm_apply, abs_algebraNorm]
 
 open scoped Classical in
-/-- **A unit acts by a volume-preserving map.**  For a general multiplier `c`, where the factor is
-`mixedEmbedding.norm c`, use `volume_image_mul_left`.  This is in `simp` normal form: the
-pointwise action on a set is not rewritten by `unitSMul_smul`, which acts on points. -/
-@[simp]
-theorem volume_unitSMul (u : (𝓞 K)ˣ) (A : Set (mixedSpace K)) : volume (u • A) = volume A := by
+/-- **The unit action preserves volume.**  With it, `measure_smul` and `measure_preimage_smul`
+are the volume equations for `u • A` and `(u • ·) ⁻¹' A`, and `measurePreserving_smul` and the
+`IsFundamentalDomain` lemmas apply to the unit action.  For a general multiplier `c`, where the
+factor is `mixedEmbedding.norm c`, use `volume_image_mul_left`. -/
+instance : SMulInvariantMeasure (𝓞 K)ˣ (mixedSpace K) volume :=
   -- A unit has mixed norm one, so the factor `volume_image_mul_left` supplies is one.
-  simp [← Set.image_smul, volume_image_mul_left]
+  have h (v : (𝓞 K)ˣ) (A : Set (mixedSpace K)) : volume (v • A) = volume A := by
+    simp [← Set.image_smul, volume_image_mul_left]
+  -- The preimage under `u` is the image under `u⁻¹`.
+  ⟨fun u s _ ↦ by rw [Set.preimage_smul, h]⟩
 
 end NumberField.mixedEmbedding
