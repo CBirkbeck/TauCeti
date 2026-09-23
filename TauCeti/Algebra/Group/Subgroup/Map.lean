@@ -86,7 +86,7 @@ commutes with the inclusions into `G`. This is the homomorphism form of Mathlib'
 theorem _root_.Subgroup.subtype_comp_subgroupOfEquivOfLe {A B : Subgroup G} (h : A ≤ B) :
     A.subtype.comp (Subgroup.subgroupOfEquivOfLe h : A.subgroupOf B →* A) =
       B.subtype.comp (A.subgroupOf B).subtype :=
-  rfl
+  MonoidHom.ext <| Subgroup.subgroupOfEquivOfLe_apply_coe h
 
 /-! ## Restricting an isomorphism to a subgroup -/
 
