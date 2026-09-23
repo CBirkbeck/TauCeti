@@ -1,4 +1,4 @@
-# Last round — r886 (2026-09-23T10:01Z)
+# Last round — r887 (2026-09-23T10:05Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -55,11 +55,12 @@ if the pin has moved, otherwise kind 2.
 **Staged for the next free slot (kind 2, local only, NOT pushed):** `improve/condindep-conditional-style` @ `dddfd9f96`, from
 `9ca651002`, a style pass on `Probability/Independence/Conditional.lean` (+101/−85: 82 `↦` and 12 chains split; the anonymous-constructor
 chain in `isPiSystem_inter_measurableSet` stays). Gate 12/0/0. `/mathlibable` found no counterpart for any of the three public theorems
-(r886 ledger). gpt-6-astra's answer lands in `$SP/astra-condindep-0959.txt`; codex PID and paths are in `$SP/astra-condindep.current`.
-**When a slot frees**, if the pin has not moved: read astra's answer, rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
+(r886 ledger). **gpt-6-astra cleared it** (`$SP/astra-condindep-0959.txt`, 10:00:39Z): the arrows are the same syntax (`μ[f | m]` included), all twelve
+splits keep order, goals and blocks, column 6 is correct and Mathlib style, and it would reject nothing.
+**When a slot frees**, if the pin has not moved: rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
 as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If the pin has moved, run the kind-1 scan first. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `8fd84bbbf`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `41bed706b`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -94,8 +95,7 @@ as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If 
    * the r843 `Algebra/Order/Group/ConvexSubgroup.lean` leftovers (#6896 merged, and no open PR touches the file):
      `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases where Mathlib's `mabs_mem_iff` gives it. Check
      that `mabs_mem_iff` is still at the pin and fits the statement before cutting.
-   * `gammaPDFReal_of_pos` in `Distributions/Gamma/Basic.lean` (#6580 merged). The weakening needs an `_of_nonneg` rename, so update
-     every caller in the same PR, with no alias.
+   * ~~`gammaPDFReal_of_pos`~~ — **gone from main (r887)**, dropped.
    Re-run the scanners on fresh main as well (`strictscan`, `deadhave`, `unusedscan`). The private `integral_Ioi_eq_Ioc_add_Ioi`
    in `Resolvent/Basic.lean` also uses only `hh.le`, but it shares a file with #8224: wait for #8224 to merge. The kind-1 scan is dry at
    `dc4b8d60d5`; re-run it after the next pin bump.
@@ -146,7 +146,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r886 did
+## What r703–r887 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -345,6 +345,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r884: #8235 went green (09:35:30Z) and was marked ready (09:36:14Z); all three PRs are now `awaiting-review`.
 * r885: no change; drive clocks open at 10:18Z (#8224), 10:26Z (#8233) and 10:36Z (#8235).
 * r886: board unchanged. Kind 2 is staged locally as `improve/condindep-conditional-style` @ `dddfd9f96` (`Independence/Conditional.lean`: 82 `↦`, 12 chains split; gate 12/0/0), with astra running.
+* r887: board unchanged; the `gammaPDFReal_of_pos` candidate is gone from main (dropped).
 
 ## Candidates for a later step 5
 
@@ -415,7 +416,9 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
   though it answered the new question, and was overwritten 8 seconds later. The fresh file was then moved aside as "stale" and waited
   on for 12 minutes. Before launching, give the `-o` target a unique name (`astra-<topic>-<UTC time>.txt`). A run is finished when
   its log has `tokens used`, and the answer is the log's final text. **Never wait with `pgrep -f <pattern>`**: the waiter's own command
-  line matches, so it never exits. Wait on the codex PID (`kill -0 $pid`) instead.
+  line matches, so it never exits. **Nor with `kill -0 $!`** (r886): under `setsid nohup … &`, `$!` is `setsid`'s PID, and `setsid`
+  forks and exits at once, so the wait ends in seconds while codex runs on. Wait on files instead:
+  `until [ -s "$A" ] || grep -q '^tokens used' "$LOG"; do sleep 15; done`.
 * **The round that opens a draft must also be the one that marks it ready (r881 → r882).** r881 recorded the on-hold trap and then
   ended with #8101 still a draft. The bot parked it within the hour. When a round ends with a draft building, say so in item 0 of
   "What to expect next" so the next round's first action is to mark it ready.

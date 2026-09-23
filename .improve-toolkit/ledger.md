@@ -41537,3 +41537,18 @@ and 10:36Z. No merges since #8101. Pin `dc4b8d60d5`, main `9ca651002`. The cap i
 * **gpt-6-astra** was launched at 09:59Z with a unique target, `astra-condindep-0959.txt`; the waiter keys on the codex PID (the r882 rule).
 
 No toolkit edits.
+* r886 addendum: the PID waiter ended after 40 s with no answer. `$!` was `setsid`'s PID; `setsid` forked (the codex child is
+  486283) and exited, while codex went on web-searching. The waiter now watches the log's `tokens used` marker and the `-o` file,
+  and the standing trap in `last-round.md` is corrected; it had prescribed `kill -0 $pid`.
+* r886 addendum 2: **gpt-6-astra cleared the staged `Conditional.lean` pass** (10:00:39Z, `astra-condindep-0959.txt`). (a) `↦`/`=>`
+  are the same lambda syntax, including inside `μ[f | m]`, which expands to `condExp m μ f`; (b) all twelve splits keep tactic
+  order, goals and block boundaries, including the calc steps and the `setIntegral_congr_ae … <| by` block; (c) column 6 is correct
+  and is Mathlib style; (d) it would reject nothing. The branch is ready to open at the next free slot.
+
+## r887 — 2026-09-23T10:04Z (cron)
+
+Board unchanged: #8224, #8233 and #8235 are `awaiting-review`, green, with no board; the drive clocks open at 10:18Z, 10:26Z and
+10:36Z. No merges since #8101. Pin `dc4b8d60d5`, main `9ca651002`. Kind 2 stays staged (`dddfd9f96`, astra-cleared).
+**Kind-3 candidate dropped:** `gammaPDFReal_of_pos` has no occurrence on main (`git grep` finds 0), so #6580 took it; the r853 note is
+obsolete. The remaining queued kind-3 targets are `not_mem_maxAvoid` → `notMem_maxAvoid` (after #8235, same file) and
+`integral_Ioi_eq_Ioc_add_Ioi` (after #8224, same file); both wait on a merge. Fresh scanner runs are needed for anything else.
