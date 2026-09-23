@@ -83,13 +83,11 @@ theorem volume_mul_left_image (c : mixedSpace K) (A : Set (mixedSpace K)) :
   exact Measure.addHaar_image_linearMap volume (Algebra.lmul ℝ (mixedSpace K) c) A
 
 open scoped Classical in
-/-- **A unit acts by a volume preserving map.**  Its mixed norm is one, so the scaling factor in
-`volume_mul_left_image` is one. -/
-theorem volume_unitSMul (u : (𝓞 K)ˣ) (A : Set (mixedSpace K)) :
-    volume (u • A) = volume A := by
-  have himg : u • A = ((mixedEmbedding K (u : K) * ·) '' A) := by
-    ext x
-    simp [Set.mem_smul_set, unitSMul_smul, eq_comm]
-  rw [himg, volume_mul_left_image, norm_unit, ENNReal.ofReal_one, one_mul]
+/-- **A unit acts by a volume-preserving map.**  For a general multiplier `c`, where the factor is
+`mixedEmbedding.norm c`, use `volume_mul_left_image`. -/
+@[simp]
+theorem volume_unitSMul (u : (𝓞 K)ˣ) (A : Set (mixedSpace K)) : volume (u • A) = volume A := by
+  -- A unit has mixed norm one, so the factor `volume_mul_left_image` supplies is one.
+  simp [← Set.image_smul, volume_mul_left_image]
 
 end TauCeti.NumberField.mixedEmbedding
