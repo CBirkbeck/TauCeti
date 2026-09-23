@@ -1,4 +1,4 @@
-# Last round — r936 (2026-09-23T18:15Z)
+# Last round — r937 (2026-09-23T18:32Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,7 +44,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8332** | `3c978ac17` | rebuilding | kind 2 (`ProductKernel.lean`: 100 `↦`; the module doc keeps a stage-free Exchangeability-roadmap credit, per the r934 `attribution` fix; `Roadmap: Exchangeability`). Ready 17:40:44Z; astra accepted it | **CI** rebuild, then re-review |
+| **#8332** | `ccc663cf3` | rebuilding | kind 2 (`ProductKernel.lean`). Round 2: `attribution` ✅, `documentation` asked to drop the "is part of the roadmap" status. The conflict was resolved by provenance wording ("Its design follows … the Exchangeability roadmap"), r937; body v3 links both threads | **CI**, then re-review. If `documentation` re-fires, **contest** quoting `attribution` round 1 |
 | **#8339** | `21eca0421` | rebuilding | kind 2 (`ViaKoopman/Decoupling.lean`: 100 `↦`; the References bullet keeps a stage-free roadmap credit, per r934; `Roadmap: Exchangeability`). Ready 17:51:36Z; astra: no findings | **CI** rebuild, then review |
 | **#8344** | `caefae5b0` | rebuilding | kind 2 (`Slice/Density.lean`: 92 `↦`, 4 induction arms kept; the References bullet keeps a stage-free roadmap credit, per r934; `Roadmap: OneParameterSemigroups`). **Draft**; astra accepted it; the first build `bf9fdabf3` was green | **CI** — mark ready when the `caefae5b0` rebuild is green |
 
@@ -55,7 +55,7 @@ of this session's PRs merged on 2026-09-23.
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `917f28326`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `fd29943ed`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -66,7 +66,7 @@ a usage-limit error means the stop applies again (a drive then posts an all-⚠�
 
 
 0. **Now (r934):** in progress (cap full) are #8332, #8339 and #8344 (kind 2), rebuilding on the roadmap-credit commits. **Mark #8344 ready
-   when `caefae5b0` is green.** #8332's `attribution` finding is fixed; #8339 and #8344 got the same change proactively. **Rule:** a style pass
+   when `caefae5b0` is green.** #8332's `attribution` (r1) and `documentation` (r2) findings conflicted; r937 reconciled them with provenance wording (`ccc663cf3`). **Rule:** a style pass
    drops roadmap *stage* wording but keeps a stage-free `TauCetiRoadmap/<Area>` credit. (#8339's proactive push superseded a 10/10 approval: read the board first.) Next kind 2: `Contour/Winding/RealIntegral/OnCurve.lean`.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
@@ -147,7 +147,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r936 did
+## What r703–r937 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -388,6 +388,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r934: **#8332 got an `attribution` finding** (keep the roadmap credit). Fixed, and the same fix applied to #8339 and #8344. All three are rebuilding.
 * r935: the rebuilds are running. Found that r934's proactive push on #8339 superseded a 10/10 approval on its old head, so it now needs a re-review. New trap: read the board before any speculative push.
 * r936: #8332's rebuild is done (`awaiting-review`); #8339 and #8344 are still building.
+* r937: #8332 round 2 — `documentation` contradicted `attribution` round 1 over the roadmap sentence. Reconciled with provenance wording (`ccc663cf3`), and body v3 links both threads.
 
 ## Candidates for a later step 5
 
@@ -453,6 +454,11 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
   `handover/fiber-compfiberequiv-laws-deferred`.
 
 ## Standing traps
+
+* **Roadmap credit in docstrings is contested territory (r934–r937).** `attribution` wants a code-level roadmap credit; `documentation`
+  rejects roadmap *status* ("is part of the roadmap") because it dates. The wording that satisfies both is provenance: "Its design follows
+  the … blueprint of the <Area> roadmap (`TauCetiRoadmap/<Area>`)". Use that shape in future style passes; plain References citations
+  are fine.
 
 * **Read the board before any speculative push (r935).** At r934 a proactive fix went to #8339 minutes after it had been approved 10/10 on
   its old head, and the push threw that approval away for a change no reviewer asked for. Push only to answer a finding on *that* PR, or

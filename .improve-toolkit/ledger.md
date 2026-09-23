@@ -42036,3 +42036,19 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
 
 #8332 is `awaiting-review` on its credit fix `3c978ac17` (its build is done; only `zulip-pr` pending). #8339 and #8344 are still rebuilding (waiter running).
 No merges. Pin `dc4b8d60d5`, main `d66b14525`.
+
+## r937 — 2026-09-23T18:24Z (cron)
+
+* **#8332 round 2 (board by `sqrt-of-2`, 18:20:40Z, on the credit fix `3c978ac17`):** `attribution` now passes, but **`documentation`
+  requests changes**: "The module docstring says the file is part of the Exchangeability roadmap; this project status will date … Remove the
+  roadmap sentence … keep the `Roadmap: Exchangeability` attribution in the PR description."
+* **The findings conflict.** `attribution` round 1
+  ([r4085578869](https://github.com/TauCetiProject/TauCeti/pull/8332#discussion_r4085578869)) *required* a module-level roadmap credit;
+  `documentation` round 2 ([r4085812034](https://github.com/TauCetiProject/TauCeti/pull/8332#discussion_r4085812034)) asks to remove it.
+  There is an implementation serving both readings, so no contest (step 3). `attribution` wanted credit to "the roadmap's product-kernel
+  and mixture blueprint" (provenance); `documentation` objects to a *status* claim ("is part of") that dates. Commit **`ccc663cf3`**
+  rewrites the sentence as provenance: "Its design follows the product-kernel and mixture blueprint of the Exchangeability roadmap
+  (`TauCetiRoadmap/Exchangeability`)". Gate 12/0/0; pushed; body v3 links both threads and quotes both. If `documentation` fires again,
+  **contest** in its thread, quoting the `attribution` round-1 wording (CLAUDE.md contradiction rule).
+* #8339 and #8344: their References bullets ("Roadmap: `TauCetiRoadmap/<Area>/README.md`.") are citations, not status claims, so no
+  speculative push (the r935 rule). Both are still rebuilding (waiter running). No merges. Pin `dc4b8d60d5`, main `81d2aae95`.
