@@ -78,13 +78,6 @@ open WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-/-- The pullback of `[n]` sends the generic coordinate to `[n]*x = Φₙ/ΨSqₙ`. -/
-private theorem fieldPullback_mulByIntIsogeny_genericX [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) :
-    (mulByIntIsogeny W hn).fieldPullback (genericX W) = mulByIntX W n := by
-  rw [genericX_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
-  exact mulByIntPullback_X W hn
-
 /-- **The division-polynomial Wronskian at the generic point**:
 
 `(Φₙ' ΨSqₙ - Φₙ ΨSqₙ') u = n ΨSqₙ² ([n]*u)`,

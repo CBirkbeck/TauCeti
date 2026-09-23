@@ -141,7 +141,8 @@ exactly the elements of `R` whose value drops below `1`.
 Normalizing is what makes the centre's adic valuation equal the valuation rather than merely
 equivalent to it (`valuation_heightOneSpectrum`); a valuation that is only bounded, not normalized,
 still picks out the same prime, which is what this states. -/
-theorem exists_heightOneSpectrum_isEquiv_of_le_one (u : _root_.Valuation K ℤᵐ⁰) [u.IsNontrivial]
+theorem exists_heightOneSpectrum_isEquiv_of_le_one [IsDedekindDomain R]
+    (u : _root_.Valuation K ℤᵐ⁰) [u.IsNontrivial]
     (hR : ∀ r : R, u (algebraMap R K r) ≤ 1) :
     ∃ 𝔭 : HeightOneSpectrum R, (𝔭.valuation K).IsEquiv u ∧
       ∀ r : R, r ∈ 𝔭.asIdeal ↔ u (algebraMap R K r) < 1 := by
