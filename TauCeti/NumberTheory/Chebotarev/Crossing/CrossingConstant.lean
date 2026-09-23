@@ -28,8 +28,9 @@ that can raise `r` gets a bound approaching `1 / #Aut_K(L)` without revisiting t
 
 ## Main results
 
-* `TauCeti.NumberField.Chebotarev.le_crossingConstant`: the same bound divided through by the
-  order of the Galois group.
+* `TauCeti.NumberField.Chebotarev.crossingConstant_nonneg`: the constant is nonnegative.
+* `TauCeti.NumberField.Chebotarev.le_crossingConstant`: once `f ^ r` divides `#H`, the crossing
+  constant is at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` divided by the order of `Aut_K(L)`.
 
 ## References
 
@@ -56,12 +57,21 @@ noncomputable def crossingConstant (f : ℕ) : ℝ :=
     ((Nat.card (L ≃ₐ[K] L) : ℝ) * (Nat.card H : ℝ))
 
 /-- **The crossing constant, written out.**  The characteristic rewrite: a consumer uses this
-rather than unfolding the definition. -/
-@[simp]
+rather than unfolding the definition.
+
+Deliberately not a `simp` lemma.  `crossingConstant` is itself the normal form — the bound
+`le_crossingConstant` is stated in terms of it, so unfolding it on sight would dissolve the
+conclusion a consumer is trying to apply. -/
 theorem crossingConstant_def (f : ℕ) : crossingConstant K L (H := H) f =
     ((taggedElements (H := H) f).card : ℝ) /
       ((Nat.card (L ≃ₐ[K] L) : ℝ) * (Nat.card H : ℝ)) :=
   (rfl)
+
+/-- **The crossing constant is nonnegative.**  It is a ratio of cardinalities, so a consumer
+squeezing a density between bounds gets this without unfolding the definition. -/
+theorem crossingConstant_nonneg (f : ℕ) : 0 ≤ crossingConstant K L (H := H) f := by
+  rw [crossingConstant_def]
+  positivity
 
 /-- **The lower bound for the crossing constant.**  When `f ^ r` divides the order of the cyclic
 auxiliary group `H`, the crossing constant is at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` divided

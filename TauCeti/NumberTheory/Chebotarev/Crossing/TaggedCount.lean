@@ -27,7 +27,9 @@ carrier together with its membership and divisibility API.
 * `TauCeti.NumberField.Chebotarev.taggedElements_subset_of_dvd`: divisibility makes the tag carrier
   shrink.
 * `TauCeti.NumberField.Chebotarev.card_taggedElements_eq_sum_totient`: the exact cyclic count,
-  expressed as a sum of Euler totients over the allowed orders;
+  expressed as a sum of Euler totients over the allowed orders.
+* `TauCeti.NumberField.Chebotarev.card_taggedElements_cyclic`: the exact count as `#H` times an
+  Euler product over the primes of `f`, over `ℝ`.
 * `TauCeti.NumberField.Chebotarev.le_card_taggedElements_cyclic`: a uniform lower bound for that
   count, over `ℝ`.
 
@@ -88,18 +90,17 @@ theorem card_taggedElements_cyclic {H : Type*} [Group H] [Fintype H] [IsCyclic H
     ((taggedElements (H := H) f).card : ℝ) =
       (Nat.card H : ℝ) * ∏ p ∈ f.primeFactors,
         (1 - (p : ℝ) ^ (-(((Nat.card H).factorization p - f.factorization p + 1 : ℕ) : ℤ))) := by
+  unfold taggedElements
   rw [Nat.card_eq_fintype_card] at hf ⊢
-  have hset : taggedElements f = ({τ : H | f ∣ orderOf τ} : Finset H) := Finset.ext fun τ ↦ by simp
   have hQ := (Rat.cast_inj (α := ℝ)).mpr
     (IsCyclic.card_filter_dvd_orderOf_eq_mul_prod_primeFactors hf)
   push_cast at hQ
-  rw [hset, hQ]
-  refine congrArg _ (Finset.prod_congr rfl fun p _ ↦ ?_)
+  refine hQ.trans (congrArg _ (Finset.prod_congr rfl fun p _ ↦ ?_))
   rw [← inv_zpow', zpow_natCast, inv_pow]
 
-/-- **The tagged elements of a cyclic group are a fixed proportion of it.**  When `f ^ r` divides
-the order of `H`, at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` of the elements of `H` have order
-divisible by `f`.
+/-- **The tagged elements of a cyclic group make up at least a fixed proportion of it.**  When
+`f ^ r` divides the order of `H`, at least `(1 - 2 ^ (-r)) ^ #f.primeFactors` of the elements of
+`H` have order divisible by `f`.  The exact proportion is `card_taggedElements_cyclic`.
 
 This restates `IsCyclic.le_card_filter_dvd_orderOf` for the `taggedElements` carrier and over
 `ℝ`, which is where the density statements consuming it live.  No positivity hypothesis on `f` is
@@ -108,10 +109,10 @@ theorem le_card_taggedElements_cyclic {H : Type*} [Group H] [Fintype H] [IsCycli
     (hrpos : 0 < r) (hf : f ^ r ∣ Nat.card H) :
     (1 - (2 : ℝ) ^ (-(r : ℤ))) ^ f.primeFactors.card * (Nat.card H : ℝ) ≤
       ((taggedElements (H := H) f).card : ℝ) := by
+  unfold taggedElements
   rw [Nat.card_eq_fintype_card] at hf ⊢
-  have hset : taggedElements f = ({τ : H | f ∣ orderOf τ} : Finset H) := Finset.ext fun τ ↦ by simp
   have hR := (Rat.cast_le (K := ℝ)).mpr (IsCyclic.le_card_filter_dvd_orderOf hrpos hf)
   push_cast at hR
-  rwa [hset, ← inv_zpow', zpow_natCast]
+  rwa [← inv_zpow', zpow_natCast]
 
 end TauCeti.NumberField.Chebotarev
