@@ -42108,3 +42108,8 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
   Provenance "for this roadmap target" framing goes ("New assembly of HW Prop 2.3"). Gate 12/0/0. gpt-6-astra was launched at 19:18Z
   (`astra-oncurve-1918.txt`); a waiter covers astra and the first build.
 * In progress (cap full): #8332, #8344 and #8381. No merges. Pin `dc4b8d60d5`.
+
+## r943 — 2026-09-23T19:24Z (cron)
+
+#8332 is green on `a32a2f72e` and `awaiting-review`. #8339 is `ready-to-merge` (queued). #8344 is `review-in-progress`. #8381 is on its first build with astra pending
+(waiter running). No merges. Pin `dc4b8d60d5`, main `fe1d9dad6`.
