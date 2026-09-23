@@ -13,13 +13,12 @@ public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.NormLeOne
 Membership in Mathlib's `NumberField.mixedEmbedding.fundamentalCone K` depends on a point only
 through its norms at the infinite places, and so does its mixed norm. Reflecting the real
 coordinates at a set of real places with `negAt` changes none of these norms, so it preserves the
-fundamental cone, the norm-≤-one region `normLeOne K`, and every unit translate of that region.
+fundamental cone and every unit translate of the norm-≤-one region `normLeOne K`.
 
 ## Main results
 
 * `TauCeti.NumberField.mixedEmbedding.negAt_mem_fundamentalCone_iff`: `negAt s x` lies in the
   fundamental cone exactly when `x` does.
-* `TauCeti.NumberField.mixedEmbedding.negAt_mem_normLeOne_iff`: the same for `normLeOne K`.
 * `TauCeti.NumberField.mixedEmbedding.negAt_mem_unit_smul_normLeOne_iff`: the same for the
   translate `u • normLeOne K` by a unit `u`.
 -/
@@ -39,13 +38,6 @@ theorem negAt_mem_fundamentalCone_iff (s : Set {w : InfinitePlace K // w.IsReal}
     (x : mixedSpace K) : negAt s x ∈ fundamentalCone K ↔ x ∈ fundamentalCone K :=
   ⟨fun h ↦ fundamentalCone.mem_of_normAtPlace_eq h fun w ↦ by simp [normAtPlace_negAt],
     fun h ↦ fundamentalCone.mem_of_normAtPlace_eq h fun w ↦ by simp [normAtPlace_negAt]⟩
-
-/-- Reflecting real coordinates preserves the norm-≤-one region `normLeOne K`.  Not a `simp` lemma:
-`simp` proves it from `negAt_mem_fundamentalCone_iff` and `norm_negAt`. -/
-theorem negAt_mem_normLeOne_iff (s : Set {w : InfinitePlace K // w.IsReal})
-    (x : mixedSpace K) : negAt s x ∈ fundamentalCone.normLeOne K ↔
-      x ∈ fundamentalCone.normLeOne K := by
-  simp
 
 /-- Reflecting real coordinates preserves each unit translate of `normLeOne K`, since it commutes
 with the unit action. -/
