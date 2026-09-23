@@ -42138,3 +42138,8 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
   the `simp only` list.
 * Waiters: #8381 build plus #8389 astra and build (new, 45-s polls); #8388 astra and build (r944). In progress (cap full): #8381, #8388 and
   #8389. No merges since #8305. Pin `dc4b8d60d5`, main `38d6ddc00`.
+
+## r946 — 2026-09-23T19:54Z (cron)
+
+**#8339 merged** 19:52:27Z, the twelfth today. #8332 and #8344 are queued. #8381, #8388 and #8389 are drafts whose builds are still queued in the congested CI
+(waiters running). Pin `dc4b8d60d5`, main `cec7a1b0b`.
