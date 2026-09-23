@@ -236,17 +236,11 @@ theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRest
   have htower := Representation.relTransfer_relTransfer_sub_relTransfer_mem
     (ρ := (c.rep F).ρ) (H := T'.galHom.range) hKH ((y : F.level c.top))
   rw [← hw] at htower
-  -- The two ways of reading the image of the smallest Galois group inside the largest agree.
-  have hsub : ((T.trans T').galHom.range.subtype).comp
-      (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom =
-        (T'.galHom.range.subtype).comp
-          (((T.trans T').galHom.range).subgroupOf T'.galHom.range).subtype := by
-    ext x
-    simp
-  rw [MonoidHom.comp_assoc, ← hsub,
+  -- Read the augmentation submodule in `htrans` over the image of the smallest Galois group
+  -- directly, rather than through the image of the middle one.
+  rw [MonoidHom.comp_assoc, ← Subgroup.subtype_comp_subgroupOfEquivOfLe hKH,
     Representation.coinvariantsKer_comp_comp_of_surjective
-      ((T.trans T').galHom.range.subtype)
-      (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom
+      ((T.trans T').galHom.range.subtype) _
       (Subgroup.subgroupOfEquivOfLe hKH).surjective] at htrans
   -- Reading an element of the middle layer back to the smallest one directly agrees with going
   -- across to the largest and back along the composite.
