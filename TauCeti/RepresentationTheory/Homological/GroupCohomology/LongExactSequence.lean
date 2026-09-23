@@ -34,12 +34,22 @@ functoriality `groupCohomology.cochainsMap_comp`.
 ## Main definitions
 
 * `TauCeti.groupCohomology.cochainsMapShortComplex`: the morphism of short complexes of cochain
-  complexes induced by a morphism `Res_f Y ⟶ X` along `f : G →* H`.
+  complexes induced by a morphism `Res_f Y ⟶ X` along `f : G →* H`; its components are
+  `groupCohomology.cochainsMap f Φ.τᵢ` (`cochainsMapShortComplex_τ₁` and its siblings).
 
 ## Main results
 
 * `TauCeti.groupCohomology.δ_naturality`: the connecting map of group cohomology commutes with
   change-of-group maps.
+
+## References
+
+* The restriction and inflation cases are `rest_δ_naturality`
+  (`ClassFieldTheory/Cohomology/Functors/Restriction.lean`) and `infl_δ_naturality`
+  (`ClassFieldTheory/Cohomology/Functors/Inflation.lean`) in `kbuzzard/ClassFieldTheory`, commit
+  `ccc3323c6750abca25b49b35106f54eb3a398509` (Apache-2.0), proved by the same reduction to
+  `HomologicalComplex.HomologySequence.δ_naturality`; this file generalises them to an arbitrary
+  morphism `Φ : Res_f Y ⟶ X`.
 -/
 
 public section
@@ -70,10 +80,26 @@ noncomputable def cochainsMapShortComplex (Φ : Y.map (resFunctor f) ⟶ X) :
     (cochainsMap_comp f (MonoidHom.id G) Φ.τ₂ X.g).symm.trans
       ((congrArg (cochainsMap f) Φ.comm₂₃).trans (cochainsMap_comp (MonoidHom.id H) f Y.g Φ.τ₃))
 
+@[simp]
+theorem cochainsMapShortComplex_τ₁ (Φ : Y.map (resFunctor f) ⟶ X) :
+    (cochainsMapShortComplex f Φ).τ₁ = cochainsMap f Φ.τ₁ := by
+  rw [cochainsMapShortComplex.eq_def]
+
+@[simp]
+theorem cochainsMapShortComplex_τ₂ (Φ : Y.map (resFunctor f) ⟶ X) :
+    (cochainsMapShortComplex f Φ).τ₂ = cochainsMap f Φ.τ₂ := by
+  rw [cochainsMapShortComplex.eq_def]
+
+@[simp]
+theorem cochainsMapShortComplex_τ₃ (Φ : Y.map (resFunctor f) ⟶ X) :
+    (cochainsMapShortComplex f Φ).τ₃ = cochainsMap f Φ.τ₃ := by
+  rw [cochainsMapShortComplex.eq_def]
+
 /-- **The connecting map of group cohomology is natural with respect to change of group.** For
 short exact sequences `Y` of `H`-representations and `X` of `G`-representations, and a morphism
 `Φ : Res_f Y ⟶ X` along `f : G →* H`, the connecting maps commute with the change-of-group maps
 `groupCohomology.map f`. -/
+@[reassoc]
 theorem δ_naturality (hY : Y.ShortExact) (hX : X.ShortExact) (Φ : Y.map (resFunctor f) ⟶ X)
     (i j : ℕ) (hij : i + 1 = j) :
     δ hY i j hij ≫ map f Φ.τ₁ j = map f Φ.τ₃ i ≫ δ hX i j hij :=
