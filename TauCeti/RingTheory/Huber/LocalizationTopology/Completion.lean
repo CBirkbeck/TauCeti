@@ -425,9 +425,8 @@ theorem isTateRing_completion_locTopology_of_isTateRing [IsTopologicalRing A] [I
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   have _ := isHuberRing_completion_locTopology P T s S hden
-  -- the image of a pseudouniformizer of `A` is one
-  obtain ⟨ϖ, hϖ⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
-  exact ⟨⟨_, hϖ.map (continuous_toCompletionLoc P T s S hden)⟩⟩
+  -- the structure map is continuous, so `IsTateRing.of_continuous` carries the pseudouniformiser
+  exact IsTateRing.of_continuous (A := A) (continuous_toCompletionLoc P T s S hden)
 
 /-- **Maps out of `A⟨T/s⟩` are determined on `A`.** Two continuous ring homomorphisms into a
 semiring carrying a Hausdorff topology that agree after composing with the structure map
