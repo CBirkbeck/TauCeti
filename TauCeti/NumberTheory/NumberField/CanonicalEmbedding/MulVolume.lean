@@ -73,11 +73,14 @@ theorem abs_det_lmul (c : mixedSpace K) :
     Subtype.prop]
 
 open scoped Classical in
-/-- **Multiplication by `c` scales volume by the mixed norm of `c`.** -/
+/-- **Multiplication by `c` scales volume by the mixed norm of `c`.**  The set `A` is arbitrary,
+so there is no measurability hypothesis to discharge; for `c` the image of a unit, where the
+factor is one, use `volume_unitSMul`. -/
 theorem volume_mul_left_image (c : mixedSpace K) (A : Set (mixedSpace K)) :
     volume ((c * ·) '' A) = ENNReal.ofReal (mixedEmbedding.norm c) * volume A := by
-  have : ((c * ·) : mixedSpace K → mixedSpace K) = Algebra.lmul ℝ (mixedSpace K) c := rfl
-  rw [this, Measure.addHaar_image_linearMap, abs_det_lmul]
+  rw [← abs_det_lmul]
+  -- `(c * ·)` is definitionally the `ℝ`-linear map `Algebra.lmul ℝ (mixedSpace K) c`.
+  exact Measure.addHaar_image_linearMap volume (Algebra.lmul ℝ (mixedSpace K) c) A
 
 open scoped Classical in
 /-- **A unit acts by a volume preserving map.**  Its mixed norm is one, so the scaling factor in
