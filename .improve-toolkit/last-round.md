@@ -1,4 +1,4 @@
-# Last round — r903 (2026-09-23T12:48Z)
+# Last round — r904 (2026-09-23T12:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -46,16 +46,16 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 |---|---|---|---|---|
 | **#8224** | `f4b657306` | green | kind 3 (`norm_resolvent_integrand_le` to `0 ≤ t`; `Roadmap: OneParameterSemigroups`). **Approved 10/10** by `sqrt-of-2` (new board 5795005350, 12:41:52Z; my r889 error board is superseded); `ready-to-merge`, MERGING at pos 4 | **queue** |
 | **#8235** | `3a7c03114` | green (09:35:30Z) | kind 3 (`ConvexSubgroup.lean`: `mem_of_mabs_le_mabs` and `mem_closure_singleton` use Mathlib's `mabs_mem_iff` instead of a four-line `mabs_choice` split; adds a private `import Mathlib.Algebra.Group.Subgroup.Order`, one new module; +3/−8; gate 12/0/0; `Roadmap: AdicSpaces`). Opened from `2d137180a` as a draft; **marked ready 09:36:14Z** | **pipeline** — board due by ~10:25Z; step 4 may drive only after 10:36Z |
-| **#8273** | `0f704c040` | first build | kind 2 in kind 1's slot (`Probability/Independence/Conditional.lean`: 82 `↦`, 12 chains split; +101/−85; gate 12/0/0; gpt-6-astra cleared it (r886); `Roadmap: Exchangeability`, since the only importer is `DeFinetti/PrefixDeletion.lean`). **Draft**, opened r902 from `3bbef7660` | **CI** — mark ready when `sandboxed-build` is green |
+| **#8273** | `0f704c040` | green (12:50:00Z) | kind 2 in kind 1's slot (`Probability/Independence/Conditional.lean`: 82 `↦`, 12 chains split; +101/−85; gate 12/0/0; gpt-6-astra cleared it (r886); `Roadmap: Exchangeability`, since the only importer is `DeFinetti/PrefixDeletion.lean`). Opened r902 from `3bbef7660`; **marked ready 12:50:19Z** | **external reviewers** (1–3 h); step 4 hard-stopped |
 | **#8275** | `3844a410e` | first build | kind 3 (`RingTheory/Ideal/Norm/RelNorm.lean`: drop the dead `have hJ' : J ≠ ⊥ := hJ` and its comment in `multiplicity_relNorm`; +0/−2; gate 12/0/0; `Roadmap: NumberFieldArithmetic`). **Draft**, opened r903 from `3843e9d3f` | **CI** — mark ready when green |
 
-**In progress (cap full): #8235 (`awaiting-review`, no board), #8273 and #8275 (drafts, first builds).** **#8233 merged 12:41:47Z**;
+**In progress (cap full): #8235 (`awaiting-review`, no board), #8273 (`awaiting-review`, ready 12:50:19Z) and #8275 (draft, first build).** **#8233 merged 12:41:47Z**;
 #8224 is `ready-to-merge` (MERGING). **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved, otherwise kind 2 (re-run the r882 scoring on fresh main first). The remaining kind-3 target is the `GlobalTurning.lean` `i ≤ j` weakening (item 5). #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `3843e9d3f`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `86e38ced1`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `e4c3b549f`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -67,7 +67,7 @@ and a kind-2 slot must go to the already-cleared staged branch or to kind 1/3. (
 claude` or buying credits is their call. After the reset, probe with `codex exec -m gpt-5.6-sol "Reply ok"` before any drive.
 
 
-0. **Now (r903):** in progress (cap full) are #8235 (no board) and the drafts #8273 and #8275 (first builds — **mark each ready when
+0. **Now (r903):** in progress (cap full) are #8235 (no board), #8273 (ready 12:50:19Z) and the draft #8275 (first build — **mark it ready when
    green**). #8224 is `ready-to-merge` (MERGING), and #8233 merged. Step 4 is hard-stopped until 2026-09-27T15:04Z. External reviewers
    do reach our PRs, including ones carrying an error board (#8224, r903). Next opening: kind 1 if the pin moved, else kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -149,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r903 did
+## What r703–r904 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -359,6 +359,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r897–r901: no change (main `90ff820df` at r901; every branch merge-tree clean).
 * r902: **#8233 approved 10/10** (`Robertboy18`) and MERGING. In the freed slot, kind 2 opened as draft **#8273** (the staged `Conditional.lean` pass, rebased to `0f704c040`, gate 12/0/0).
 * r903: **#8233 merged**. **#8224 approved 10/10** by `sqrt-of-2`, despite my error board, and is MERGING. Kind 3 opened as draft **#8275** (`RelNorm.lean` dead `hJ'`; gate 12/0/0).
+* r904: no new change; #8273 marked ready (12:50:19Z, via the r903 waiter), and #8275 is still building.
 
 ## Candidates for a later step 5
 

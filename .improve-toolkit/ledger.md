@@ -41691,3 +41691,10 @@ No change (186/178/168 min without a real board). No merges. Main `90ff820df` (p
 * **In progress (cap full):** #8235 (no board, 188 min), #8273 (draft, building) and #8275 (draft, building). Build waiters are running
   for both drafts. The next opening is kind 1 if the pin has moved, otherwise kind 2 (the kind-2 scoring list from r882 needs a
   re-run). Pin `dc4b8d60d5`, main `3843e9d3f`.
+* r903 addendum (waiter): **#8273 went green at 12:50:00Z and was marked ready at 12:50:19Z**. The guards held: every check green,
+  head `0f704c040` unchanged, pin `dc4b8d60d5` at both the base `3bbef7660` and main `35e004dd4`, and the file untouched.
+
+## r904 — 2026-09-23T12:54Z (cron; step 4 hard-stopped)
+
+No new change: #8224 is still MERGING; #8235 (198 min) and #8273 (ready 12:50:19Z) have no board; #8275 is on its first build
+(waiter running). The cap is full. Pin `dc4b8d60d5`, main `87831f04d`.
