@@ -18,13 +18,20 @@ import TauCeti.RepresentationTheory.Induction.DimensionShift
 For a finite-index subgroup `S` of a group `G` and a group isomorphism `e : G ≃* G'` carrying `S`
 onto `S'`, the transfer `Hₙ(G, M) ⟶ Hₙ(S, Res_S M)` is compatible with `e`.
 
-The proof is by dimension shifting from degree zero, where the transfer is the relative transfer
-on coinvariants.
+This moves transfer computations between isomorphic groups and their corresponding subgroups.
+For example, the Galois group of a layer of a class formation is identified with its image in a
+larger Galois group. Tate restriction below degree `-1` is the transfer read along that
+identification, so its functoriality along a tower of layers needs this compatibility.
 
 ## Main results
 
 * `TauCeti.groupHomology.map_comp_transfer_congrOfMapEq`: the transfer is compatible with a group
   isomorphism and a compatible map of coefficients.
+
+## Implementation notes
+
+The proof follows that of `TauCeti.groupHomology.transfer_trans` in `Transfer/Trans.lean` (#8326):
+dimension shifting from degree zero, where the transfer is the relative transfer on coinvariants.
 -/
 
 public section
