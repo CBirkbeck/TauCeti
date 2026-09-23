@@ -174,27 +174,19 @@ def kerNormTransfer (T : LayerRestriction small big) (F : Formation G) :
       (Representation.IsIntertwiningMap.symm (T.isIntertwiningMap_repIso_range F))).comp
     (Representation.relTransferKerNorm (big.rep F).ρ T.galHom.range)
 
-/-- The relative transfer of norm kernels is the relative transfer on the ambient module. -/
-@[simp]
-theorem kerNormTransfer_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : LinearMap.ker (big.rep F).ρ.norm) :
-    (((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) : F.level small.top) :
-        F.toRep.V) =
-      ((Representation.relTransfer (big.rep F).ρ T.galHom.range
-        ((x : F.level big.top) : (big.rep F).V) : F.level big.top) : F.toRep.V) := by
-  rw [kerNormTransfer, LinearMap.comp_apply, TauCeti.TateCohomology.mapKerNorm_apply_coe,
-    Representation.coe_relTransferKerNorm]
-  exact T.repIso_inv_apply_coe F _
-
+-- `dsimp% only` on the left-hand side: see the implementation notes of `Formation/Basic.lean`.
 /-- The norm-kernel transfer is the relative transfer of the image subgroup, read back through
 the identification of coefficient modules. -/
 @[simp]
 theorem kerNormTransfer_apply (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (big.rep F).ρ.norm) :
-    ((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) : F.level small.top) =
-      (T.repIso F).inv.hom
-        (Representation.relTransfer (big.rep F).ρ T.galHom.range ((x : F.level big.top))) :=
-  Subtype.ext (by rw [kerNormTransfer_apply_coe, repIso_inv_apply_coe])
+    (dsimp% only (T.kerNormTransfer F x : F.level small.top)) =
+      (T.repIso F).inv.hom (Representation.relTransfer (big.rep F).ρ T.galHom.range x) := by
+  rw [kerNormTransfer, LinearMap.comp_apply, TauCeti.TateCohomology.mapKerNorm_apply_coe,
+    Representation.coe_relTransferKerNorm]
+  -- The linear part of `IsIntertwiningMap.symm (T.isIntertwiningMap_repIso_range F)` is
+  -- `(T.repIso F).inv.hom` by definition of `Representation.equivOfIso`.
+  rfl
 
 /-- **In degree minus one, layer Tate restriction is the relative transfer** on representatives. -/
 theorem tateRes_neg_one_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
