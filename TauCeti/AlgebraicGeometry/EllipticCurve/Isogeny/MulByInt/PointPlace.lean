@@ -153,7 +153,8 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
         (mulByIntIsogeny W hn).fieldPullback.toRingHom)
       (algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField r) ≤ 1 := by
   refine Valuation.algebraMap_coordinateRing_le_one _ ?_ r
-  rw [comap_fieldPullback_apply, ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
+  rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
+    ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
     fieldPullback_mulByIntIsogeny_genericX, mulByIntX_def, phiFunctionField_def,
     CoordinateRing.mk_φ, psiFunctionField_sq]
   exact CoordinateRing.valuation_pointPlace_div_le_one _ h.left
@@ -182,7 +183,7 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
     (CoordinateRing.XClass W.toAffine x') with hzdef
   -- `XClass x'` is `x - x'`, so its pullback is `[n]*x - x'`
   have huz : u z = v (mulByIntX W n - algebraMap F W.toAffine.FunctionField x') := by
-    rw [hzdef, hudef, comap_fieldPullback_apply]
+    rw [hzdef, hudef, Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
     simp only [CoordinateRing.XClass, map_sub, ← genericX_def, algebraMap_mk_C_C,
       fieldPullback_mulByIntIsogeny_genericX, AlgHom.commutes]
   have hz1 : u z ≠ 1 := by
@@ -202,7 +203,7 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
         mulByIntY W n - algebraMap F W.toAffine.FunctionField y' := by
       simp only [CoordinateRing.YClass, map_sub, ← genericY_def, algebraMap_mk_C_C,
         fieldPullback_mulByIntIsogeny_genericY, AlgHom.commutes]
-    rw [hQmem, comap_fieldPullback_apply, hY]
+    rw [hQmem, Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, hY]
     exact valuation_pointPlace_mulByIntY_sub_lt_one W h hn h' hnP
   rw [← CoordinateRing.eq_pointPlace_of_mem_asIdeal h'.left hmemX hmemY]
   exact hQu.symm
@@ -247,7 +248,8 @@ theorem isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero {x y : F}
     (zsmul_fromAffine_eq_zero_iff_zsmul_eq_zero.mpr hnP)
   have hΦ : (W.Φ n).eval x ≠ 0 := by
     simpa [hΨ] using aeval_ne_zero_of_isCoprime (W.isCoprime_Φ_ΨSq n W.isUnit_Δ.ne_zero) x
-  rw [comap_fieldPullback_apply, ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
+  rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
+    ← WeierstrassCurve.Affine.genericX_eq_algebraMap,
     fieldPullback_mulByIntIsogeny_genericX, mulByIntX_def, phiFunctionField_def,
     CoordinateRing.mk_φ, psiFunctionField_sq]
   exact CoordinateRing.one_lt_valuation_pointPlace_div _ h.left (by rwa [evalEval_C])

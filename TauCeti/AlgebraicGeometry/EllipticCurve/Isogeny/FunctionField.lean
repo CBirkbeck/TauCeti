@@ -35,9 +35,9 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
 * `TauCeti.Isogeny.pullback_injective`: a coordinate pullback satisfying `MapsInfinity` is
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields.
-* `TauCeti.Isogeny.comap_fieldPullback_apply` and
-  `TauCeti.Isogeny.comap_fieldPullback_apply_algebraMap`: a valuation restricted along the
-  pullback is the valuation of the pulled-back function.
+* `TauCeti.Isogeny.comap_fieldPullback_apply_algebraMap`: a valuation restricted along the
+  pullback, evaluated on an affine function of the target, is the valuation of its coordinate
+  pullback.
 * `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.comp_fieldPullback`
   its function-field law and `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`,
   `TauCeti.Isogeny.comp_assoc` the unit and associativity laws. The pointedness obligation is
@@ -174,12 +174,6 @@ theorem fieldPullback_algebraMap (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRi
     φ.fieldPullback (algebraMap W₂.CoordinateRing W₂.FunctionField x) = φ.pullback x := by
   simp [fieldPullback, IsFractionRing.liftAlgHom_apply]
 
-/-- **A valuation restricted along the pullback is the valuation of the pulled-back function.** -/
-theorem comap_fieldPullback_apply (φ : Isogeny W₁ W₂) {Γ : Type*}
-    [LinearOrderedCommGroupWithZero Γ] (v : Valuation W₁.FunctionField Γ) (z : W₂.FunctionField) :
-    (v.comap φ.fieldPullback.toRingHom) z = v (φ.fieldPullback z) := by
-  rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe]
-
 /-- **A restricted valuation, evaluated on an affine function of the target**: it is the value of
 the pullback of that function. -/
 theorem comap_fieldPullback_apply_algebraMap (φ : Isogeny W₁ W₂) {Γ : Type*}
@@ -187,7 +181,7 @@ theorem comap_fieldPullback_apply_algebraMap (φ : Isogeny W₁ W₂) {Γ : Type
     (c : W₂.CoordinateRing) :
     (v.comap φ.fieldPullback.toRingHom) (algebraMap W₂.CoordinateRing W₂.FunctionField c) =
       v (φ.pullback c) := by
-  rw [comap_fieldPullback_apply, fieldPullback_algebraMap]
+  rw [Valuation.comap_apply, AlgHom.toRingHom_eq_coe, RingHom.coe_coe, fieldPullback_algebraMap]
 
 /-- **A ring homomorphism agreeing with an isogeny's coordinate pullback is its function-field
 pullback.** `W₂.FunctionField` is a fraction field of `W₂.CoordinateRing`, so a map out of it is
