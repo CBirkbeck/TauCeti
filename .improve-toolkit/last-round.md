@@ -1,4 +1,4 @@
-# Last round — r890 (2026-09-23T10:35Z)
+# Last round — r891 (2026-09-23T10:46Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -60,7 +60,7 @@ splits keep order, goals and blocks, column 6 is correct and Mathlib style, and 
 **When a slot frees**, if the pin has not moved: rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
 as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If the pin has moved, run the kind-1 scan first. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `dc65f5ec2`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `874f51325`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -97,7 +97,10 @@ claude` or buying credits is their call. After the reset, probe with `codex exec
    r881 rebased both onto fresh main and re-gated before marking them ready, so the builds that matter ran against `dc4b8d60d5`.
 
 
-5. **Kind 3 went as #8235 (ConvexSubgroup `mabs_mem_iff`). Queued kind-3 candidates for the next kind-3 turn:** `not_mem_maxAvoid` →
+5. **Next kind-3 turn — ready targets (r891 scans, free files):** (a) `RingTheory/Ideal/Norm/RelNorm.lean:122`: delete the dead
+   `have hJ' : J ≠ ⊥ := hJ` in `multiplicity_relNorm` and the comment above it; (b) `SchwarzChristoffel/GlobalTurning.lean:94`: weaken
+   `schwarzChristoffelEdgeAngle_sub_eq_neg_pi_mul_sum_Ioc`'s `i < j` to `i ≤ j` (only `hij.le` is used; one caller, line 120). Check each file
+   against a fresh open-PR list first. Older kind-3 notes follow. Kind 3 went as #8235 (ConvexSubgroup `mabs_mem_iff`). Queued kind-3 candidates for later: `not_mem_maxAvoid` →
    `notMem_maxAvoid` (a rename: the file's other names already say `notMem`; update every caller, with no alias), plus the following, of which the first is TAKEN by #8235:
    * the r843 `Algebra/Order/Group/ConvexSubgroup.lean` leftovers (#6896 merged, and no open PR touches the file):
      `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases where Mathlib's `mabs_mem_iff` gives it. Check
@@ -153,7 +156,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r890 did
+## What r703–r891 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -356,6 +359,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r888: no change; #8224's drive clock opens at 10:18Z.
 * r889: drove #8224 (10:24:54Z; 66 min without a board). **Every rubric errored**: codex is out of quota until 2026-09-27T15:04Z, and astra is too. The drive left an error board (5793153420). Step 4 is hard-stopped until the reset.
 * r890: no change; #8233 is past its hour, but step 4 is hard-stopped. Review boards come from contributors' own runs (distributed), and #8232 (another lane on this account) also got an error board.
+* r891: no change. The kind-3 queue is refilled: the `RelNorm.lean` dead `hJ'` and the `GlobalTurning.lean` `i < j` → `i ≤ j` weakening, both free.
 
 ## Candidates for a later step 5
 

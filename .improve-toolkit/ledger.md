@@ -41590,3 +41590,20 @@ round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5
 * **Another session on this account is driving into the empty quota:** #8232 (`cft/opensubgroup-finiteindex`, a different
   worker lane) got an all-⚠️ error board as `CBirkbeck` at 10:27:44Z. That lane is not this role's to touch; the user has been told.
 * No merges since #8101. Pin `dc4b8d60d5`, main `1724b0c80`. The cap is full.
+
+## r891 — 2026-09-23T10:44Z (cron; step 4 hard-stopped)
+
+* Board unchanged: #8224 has the error board, and #8233 (78 min) and #8235 (68 min) have none. Both are past their clocks, but
+  step 4 is stopped. No merges since #8101. Pin `dc4b8d60d5`, main `1724b0c80`. The cap is full.
+* **The kind-3 queue is refilled** from scanners run on `1724b0c80` (`snap-main6`; 365 files touched by open PRs):
+  * **`RingTheory/Ideal/Norm/RelNorm.lean:122`**, `multiplicity_relNorm`: `have hJ' : J ≠ ⊥ := hJ` is a dead restatement (the
+    proof uses `hJ` at 127, 129 and 136), and the comment on line 121 only justifies it. Delete both. No open PR touches the file.
+    `deadhave`'s other hit, `LevelRaise/Commute.lean:269`, strands `w` and is known.
+  * **`SchwarzChristoffel/GlobalTurning.lean:94`**, `schwarzChristoffelEdgeAngle_sub_eq_neg_pi_mul_sum_Ioc`: `(hij : i < j)`
+    is used only as `hij.le` (`ha.monotone hij.le`). At `i = j` both sides are 0 (`Ioc i i = ∅`), so `i ≤ j` is a genuine
+    generalization. It has one caller (line 120, same file). No open PR touches the file.
+  * Suspect, needs reading: `SpecialFunctions/Beta.lean:406` `integral_one_add_sq_div_rpow` `(hν : 0 < ν)`, only `.le`, 4 sites
+    in 3 files. At `ν = 0` the Student-t-type integral may hold only through junk values (`x²/0 = 0`), which is not a
+    generalization reviewers would take.
+  * Blocked by open PRs: `Resolvent/Basic.lean:184` (after #8224), `W1p/ChainRule.lean:436` (an open PR touches it).
+  * `unusedscan`: 0 hits.
