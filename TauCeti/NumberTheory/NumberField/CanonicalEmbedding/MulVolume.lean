@@ -54,14 +54,11 @@ open scoped Classical in
 /-- **The determinant of multiplication on the mixed space.**  Each real coordinate contributes
 its own factor and each complex coordinate contributes the norm of multiplication by a complex
 number, namely `Complex.normSq`. -/
-theorem det_lmul (c : mixedSpace K) :
-    LinearMap.det (Algebra.lmul ℝ (mixedSpace K) c) =
-      (∏ w, c.1 w) * ∏ w, Complex.normSq (c.2 w) := by
-  rw [lmul_eq_prodMap, LinearMap.det_prodMap, LinearMap.det_pi, LinearMap.det_pi]
-  congr 1
-  · exact Finset.prod_congr rfl fun i _ ↦ by simp
-  · exact Finset.prod_congr rfl fun i _ ↦
-      (Algebra.norm_apply ℝ (c.2 i)).symm.trans (Algebra.norm_complex_apply (c.2 i))
+theorem det_lmul (c : mixedSpace K) : LinearMap.det (Algebra.lmul ℝ (mixedSpace K) c) =
+    (∏ w, c.1 w) * ∏ w, Complex.normSq (c.2 w) := by
+  -- `simp only`: full `simp` rewrites `Algebra.lmul` to `LinearMap.mul` and blocks `norm_apply`.
+  simp only [lmul_eq_prodMap, LinearMap.det_prodMap, LinearMap.det_pi, ← Algebra.norm_apply,
+    Algebra.norm_self, MonoidHom.id_apply, Algebra.norm_complex_apply]
 
 /-- **The absolute determinant of multiplication by `c` is the mixed norm of `c`.**  The two are
 the same product of local absolute values: a real place contributes `|c w|` and a complex place
