@@ -23,6 +23,11 @@ relative transfer on coinvariants.
 ## Main results
 
 * `TauCeti.groupHomology.transfer_trans`: the transfer is transitive along a tower of subgroups.
+
+## References
+
+* K. S. Brown, *Cohomology of Groups*, Graduate Texts in Mathematics 87, Springer (1982),
+  Chapter III, §9.
 -/
 
 public section
@@ -71,7 +76,8 @@ attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex in
 transfer `Hₙ(G, M) ⟶ Hₙ(H, Res_H M)` followed by the transfer to `K.subgroupOf H` is the transfer
 `Hₙ(G, M) ⟶ Hₙ(K, Res_K M)`. Here `K.subgroupOf H`, which is `K` viewed as a subgroup of `H`, is
 identified with `K` by the change-of-group map along `Subgroup.subgroupOfEquivOfLe hKH`, under
-which the two restrictions of `M` agree (`Rep.isIntertwiningMap_res_res`). -/
+which the two restrictions of `M` agree (`Rep.isIntertwiningMap_res_res`). This is the
+transitivity of the transfer described in Brown, Chapter III, §9. -/
 @[reassoc]
 theorem transfer_trans [K.FiniteIndex] [H.FiniteIndex] (M : Rep.{u} R G) (n : ℕ) :
     transfer M H n ≫ transfer (res H.subtype M) (K.subgroupOf H) n ≫
