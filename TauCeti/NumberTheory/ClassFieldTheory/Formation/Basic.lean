@@ -171,10 +171,11 @@ module. -/
 def level (U : OpenSubgroup G) : Submodule ℤ F.toRep.V :=
   invariants (F.toRep.ρ.comp U.toSubgroup.subtype)
 
+/-- An element lies in the level `A^U` exactly when every element of `U` fixes it. -/
 @[simp]
 theorem mem_level {U : OpenSubgroup G} {x : F.toRep.V} :
     (dsimp% only (x ∈ F.level U)) ↔ ∀ u ∈ U, F.toRep.ρ u x = x :=
-  ⟨fun hx u hu ↦ hx ⟨u, hu⟩, fun hx u ↦ hx u u.2⟩
+  Subtype.forall
 
 /-- **Every element of the coefficient module lies in a level.** This is the Artin–Tate condition
 that each element of `A` is fixed by a sufficiently small member of the distinguished family of
@@ -333,7 +334,7 @@ abbrev groundRep : Representation ℤ L.ground (F.level L.top) :=
 
 @[simp]
 theorem groundRep_apply_coe (u : L.ground) (x : F.level L.top) :
-    (dsimp% only ((L.groundRep F u x : F.level L.top) : F.toRep.V)) = F.toRep.ρ (u : G) x :=
+    (dsimp% only (L.groundRep F u x : F.toRep.V)) = F.module.ρ (u : G) x :=
   (rfl)
 
 /-- The top subgroup acts trivially on the top level, so the `U`-action descends to `U ⧸ V`. -/
@@ -376,14 +377,12 @@ def groundLevelEquiv : (L.rep F).ρ.invariants ≃ₗ[ℤ] F.level L.ground :=
 
 @[simp]
 theorem groundLevelEquiv_apply_coe (x : (L.rep F).ρ.invariants) :
-    (dsimp% only ((L.groundLevelEquiv F x : F.level L.ground) : F.toRep.V)) =
-      ((x : F.level L.top) : F.toRep.V) :=
+    (dsimp% only (L.groundLevelEquiv F x : F.toRep.V)) = (x : F.toRep.V) :=
   (rfl)
 
 @[simp]
 theorem groundLevelEquiv_symm_apply_coe (y : F.level L.ground) :
-    (dsimp% only ((((L.groundLevelEquiv F).symm y : (L.rep F).ρ.invariants) : F.level L.top) :
-      F.toRep.V)) = (y : F.toRep.V) :=
+    (dsimp% only ((L.groundLevelEquiv F).symm y : F.toRep.V)) = y :=
   (rfl)
 
 end Coefficients
@@ -469,10 +468,10 @@ def norm : F.level L.top →ₗ[ℤ] F.level L.ground :=
       (Representation.mem_invariants _ _).2 fun g ↦ by
         rw [← LinearMap.comp_apply, Representation.self_comp_norm]
 
+/-- The norm of a layer is the sum of the Galois conjugates: `N_{U/V}(x) = ∑_{γ ∈ U ⧸ V} γ x`. -/
 @[simp]
 theorem norm_apply_coe (x : F.level L.top) :
-    (dsimp% only ((L.norm F x : F.level L.ground) : F.toRep.V)) =
-      ∑ γ : L.Gal, (((L.rep F).ρ γ x : F.level L.top) : F.toRep.V) := by
+    (dsimp% only (L.norm F x : F.toRep.V)) = ∑ γ : L.Gal, ((L.rep F).ρ γ x : F.toRep.V) := by
   -- The identification with the ground level does not move the underlying element, so the norm
   -- of the layer and Mathlib's `Representation.norm` take the same value in the ambient module.
   simp [norm, Representation.norm]
