@@ -7,6 +7,7 @@ module
 
 public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Lipschitz
 public import TauCeti.NumberTheory.NumberField.CanonicalEmbedding.MulVolume
+public import TauCeti.NumberTheory.NumberField.CanonicalEmbedding.NormLeOne
 
 /-!
 # The volume of the norm-one section of the ray fundamental domain
@@ -24,6 +25,10 @@ sign at the `s` real places of the infinite part therefore divides the volume of
 * `TauCeti.GlobalNumberFields.two_pow_mul_volume_rayFundamentalDomain_inter_normLeOne`:
   `2 ^ s` times the volume of the norm-one section of `rayFundamentalDomain 𝔪` is the index of
   `unitsCongruenceSubgroupSupTorsion 𝔪` times the volume of `normLeOne K`.
+
+## References
+
+* S. Lang, *Algebraic Number Theory*, Chapter VI, §2.
 -/
 
 public section
@@ -44,15 +49,6 @@ private theorem rayFundamentalDomain_inter_normLeOne_eq_iUnion_inter (𝔪 : Mod
   rw [rayFundamentalDomain_inter_normLeOne_eq, Set.inter_comm]
   ext x
   simp only [Set.mem_inter_iff, mem_posRegion, Set.mem_ofPred_eq]
-
-private theorem negAt_mem_unit_smul_normLeOne_iff (s : Set {w : InfinitePlace K // w.IsReal})
-    (u : (𝓞 K)ˣ) (x : mixedSpace K) : negAt s x ∈ u • normLeOne K ↔ x ∈ u • normLeOne K := by
-  -- reflecting real coordinates commutes with units and preserves the cone and the norm, since
-  -- membership in the cone only depends on the norms at the places
-  simp only [Set.mem_smul_set_iff_inv_smul_mem, unitSMul_smul, mem_normLeOne, map_mul, norm_negAt]
-  exact and_congr_left fun _ ↦
-    ⟨fun h ↦ fundamentalCone.mem_of_normAtPlace_eq h fun w ↦ by simp [map_mul, normAtPlace_negAt],
-      fun h ↦ fundamentalCone.mem_of_normAtPlace_eq h fun w ↦ by simp [map_mul, normAtPlace_negAt]⟩
 
 private theorem pairwise_disjoint_rayUnitRepresentative_smul_normLeOne (𝔪 : Modulus K) :
     Pairwise (Function.onFun Disjoint fun q ↦ rayUnitRepresentative 𝔪 q • normLeOne K) := by
@@ -80,7 +76,7 @@ theorem two_pow_mul_volume_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus 
   -- divides its volume by `2 ^ s`; the translates are disjoint, each with the volume of
   -- `normLeOne K`
   rw [rayFundamentalDomain_inter_normLeOne_eq_iUnion_inter,
-    ← volume_eq_two_pow_mul_volume_inter_pos _ (by simp [negAt_mem_unit_smul_normLeOne_iff])
+    ← volume_eq_two_pow_mul_volume_inter_pos _ (by simp)
       (.iUnion hm),
     measure_iUnion (pairwise_disjoint_rayUnitRepresentative_smul_normLeOne 𝔪) hm]
   simp [ENat.card_eq_coe_natCard, Subgroup.index]
