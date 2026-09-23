@@ -36,6 +36,7 @@ corestriction is the map induced by the counit `Indˢᴳ Resˢᴳ M ⟶ M`
 
 * `TauCeti.groupHomology.transfer_comp_indIso_inv`: through the inverse of Shapiro's isomorphism,
   transfer is the map induced by the unit of the finite-index adjunction.
+* `TauCeti.groupHomology.map_comp_transfer`: the transfer is natural in the coefficients.
 * `TauCeti.groupHomology.transfer_comp_map_subtype_id`: corestriction after transfer is
   multiplication by the index `[G : S]`.
 
@@ -74,6 +75,24 @@ theorem transfer_comp_indIso_inv (M : Rep R G) (S : Subgroup G) [S.FiniteIndex] 
   -- `Iso.hom_inv_id`: the two occurrences of `Resˢᴳ M` carry different `Monoid ↥S` instances, so
   -- the rewrite does not match syntactically, while this equation holds by `rfl`.
   (Iso.comp_inv_eq _).2 rfl
+
+/-- **The transfer is natural in the coefficients**: for a morphism `φ : M ⟶ N` of
+`G`-representations, transfer intertwines the map `Hₙ(G, M) ⟶ Hₙ(G, N)` induced by `φ` with the
+map `Hₙ(S, Res_S M) ⟶ Hₙ(S, Res_S N)` induced by its restriction to `S`. The cohomological
+counterpart, for corestriction, is `TauCeti.groupCohomology.map_comp_corestriction`. -/
+@[reassoc, elementwise]
+theorem map_comp_transfer {M N : Rep R G} (φ : M ⟶ N) (S : Subgroup G) [S.FiniteIndex] (n : ℕ) :
+    _root_.groupHomology.map (MonoidHom.id G) φ n ≫ transfer N S n = transfer M S n ≫
+      _root_.groupHomology.map (MonoidHom.id S) ((Rep.resFunctor S.subtype).map φ) n := by
+  classical
+  -- Cancel Shapiro's isomorphism: both sides become `Hₙ(G, -)` applied to the unit
+  -- `M ⟶ Ind_S^G Res_S M` of the finite-index adjunction, which is natural in `φ`.
+  rw [← cancel_mono (_root_.groupHomology.indIso S _ n).inv, Category.assoc, Category.assoc,
+    indIso_inv_naturality, transfer_comp_indIso_inv, transfer_comp_indIso_inv_assoc]
+  -- The universes of `Rep.resIndAdjunction` are pinned: left to unification, the constraint
+  -- `max ?w u u = u` makes this definitional check cost seconds.
+  exact (Functor.whiskerRight (Rep.resIndAdjunction.{u, u, u} R S).unit
+    (_root_.groupHomology.functor R G n)).naturality φ
 
 open scoped Classical in
 /-- **Corestriction after transfer is multiplication by the index**: for a finite-index subgroup
