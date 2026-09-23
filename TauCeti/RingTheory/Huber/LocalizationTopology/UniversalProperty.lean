@@ -208,7 +208,7 @@ theorem existsUnique_continuous_ringHom_locTopology {B : Type*} [CommRing B] [To
     · rw [IsLocalization.Away.lift_comp s hs]; exact continuous_of_continuousAt_zero φ hφ
     · intro t ht
       rw [map_divBy_eq_mul_inv (S := S) t s
-        (fun a ↦ RingHom.congr_fun (IsLocalization.Away.lift_comp s hs) a) hs]
+        (fun a ↦ RingHom.congr_fun (IsLocalization.Away.lift_comp s hs) a)]
       exact hpow t ht
   · rintro g ⟨-, hg⟩
     exact IsLocalization.ringHom_ext (Submonoid.powers s)

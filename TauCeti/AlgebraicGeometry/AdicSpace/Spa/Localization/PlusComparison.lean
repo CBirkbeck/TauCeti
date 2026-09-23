@@ -9,6 +9,7 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.HuberPair
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.PresentationIndependence
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Integral
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.CompletedHomeomorph
+import TauCeti.RingTheory.Huber.LocalizationTopology.Valuation
 
 /-!
 # The comparison map of a containment of rational subsets is a map of Huber pairs
@@ -66,9 +67,36 @@ public section
 
 namespace TauCeti.ValuationSpectrum
 
-open TauCeti.Huber TauCeti.Huber.PairOfDefinition UniformSpace
+open TauCeti.Huber TauCeti.Huber.PairOfDefinition TauCeti.Localization UniformSpace
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
+
+-- **The plus ring of the localisation is sub-unit.** Let `w` be a point of `Spv B` that is
+-- sub-unit on the image of `A⁺` under `φ` and on the images `ψ (t/s)` of the fractions, and let
+-- `ψ : Aₛ → B` restrict along `algebraMap A Aₛ` to `φ`. Then `w` is sub-unit on the image under
+-- `ψ` of the plus ring of `Aₛ` — the integral closure of `A⁺[t₁/s, …, tₙ/s]`.
+--
+-- The bound on the fractions is asked of `ψ` directly, so no unit hypothesis on `φ s` is needed;
+-- a caller holding the bound as `φ t * (φ s)⁻¹` converts it with
+-- `TauCeti.Localization.map_divBy_eq_mul_inv`.
+--
+-- `B` carries no topology and no `B⁺` appears: the two bounds enter as hypotheses on the single
+-- point `w`, not as a quantifier over `spa B⁺`.
+omit [TopologicalSpace A] [IsTopologicalRing A] in
+private theorem vle_one_of_mem_integralClosure_adjoin_plus {B : Type*} [CommRing B]
+    (Aplus : Subring A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] {φ : A →+* B} {ψ : S →+* B}
+    (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) {w : Spv B}
+    (hA : ∀ a ∈ Aplus, w.toValuativeRel.vle (φ a) 1)
+    (hT : ∀ t ∈ T, w.toValuativeRel.vle (ψ (divBy (t : A) s : S)) 1) {x : S}
+    (hx : x ∈ integralClosure
+      ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
+    w.toValuativeRel.vle (ψ x) 1 := by
+  have key (y : S) : w.valuation.comap ψ y ≤ 1 ↔ w.toValuativeRel.vle (ψ y) 1 := by
+    rw [Valuation.comap_apply, ← map_one w.valuation, valuation_le_iff]
+  exact (key x).mp (Huber.le_one_of_mem_integralClosure_adjoin_plus S T s Aplus
+    (fun a ha ↦ (key _).mpr (hψ a ▸ hA a ha))
+    (fun t ht ↦ (key _).mpr (hT t ht)) hx)
 
 /-- **Pullback along the comparison map lands in the adic spectrum of `A⟨T/s⟩`.** For a
 containment `R(T'/s') ⊆ R(T/s)` of rational subsets, every point of `Spa (A⟨T'/s'⟩, A_U'⁺)` pulls
@@ -113,7 +141,7 @@ theorem comap_ringHomOfRationalSubsetSubset_mem_spa (P : PairOfDefinition A) (Ap
     vle_one_of_mem_integralClosure_adjoin_plus Aplus T s S hψ
       (fun a ha ↦ ((mem_spa_iff _ _).mp hw).2 _
         (toCompletionLoc_mem_completedPlusSubring P Aplus T' s' S' hden' ha))
-      (fun t ht ↦ (TauCeti.Localization.map_divBy_eq_mul_inv (S := S) t s hψ hu).symm ▸
+      (fun t ht ↦ (map_divBy_eq_mul_inv (S := S) t s hψ).symm ▸
         vle_one_of_comap_mem_rationalSubset hu hfac ht) hx
 
 /-- **The comparison map is a map of Huber pairs** (Wedhorn's Proposition 8.2(1)): for a
