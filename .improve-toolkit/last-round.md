@@ -1,4 +1,4 @@
-# Last round — r944 (2026-09-23T19:42Z)
+# Last round — r945 (2026-09-23T19:52Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -47,16 +47,18 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8332** | `a32a2f72e` | green | kind 2 (`ProductKernel.lean`). **Approved** (19:34:04Z) once the roadmap reference was removed; `attribution` did not re-fire; `ready-to-merge` | **queue** |
 | **#8339** | `4f18336f9` | green | kind 2 (`ViaKoopman/Decoupling.lean`). **Approved** (19:12:41Z) after the roadmap bullet was removed; `ready-to-merge` | **queue** |
 | **#8344** | `ba8ab38b9` | green | kind 2 (`Slice/Density.lean`). **Approved** (19:24:51Z) after the roadmap bullet was removed; `ready-to-merge` | **queue** |
-| **#8381** | `e64edbfd9` | first build | kind 2 (`Contour/Winding/RealIntegral/OnCurve.lean`: 70 `↦`, 3 chains split, Provenance "roadmap target" framing dropped; +75/−72; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**, opened r942; gpt-6-astra launched 19:18Z (`$SP/astra-oncurve-1918.txt`) | **astra + CI** — mark ready when both clear |
+| **#8381** | `e64edbfd9` | queued (since 19:19Z) | kind 2 (`OnCurve.lean`: 70 `↦`, 3 chains split, Provenance roadmap framing dropped; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**; **gpt-6-astra cleared it** (r945) | **CI** — mark ready when green |
 | **#8388** | `35ba59b71` | first build | kind 2 (`Arrays/JointLaw.lean`: 89 `↦`; the roadmap paragraph deleted; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r944; gpt-6-astra launched 19:38Z (`$SP/astra-jointlaw-1938.txt`) | **astra + CI** — mark ready when both clear |
+| **#8389** | `18762ee10` | queued | kind 2 (`ConditionallyIID/Moments.lean`: 76 `↦`, 1 chain split; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r945; gpt-6-astra launched 19:49Z (`$SP/astra-moments-1949.txt`) | **astra + CI** — mark ready when both clear |
 
-**In progress (2 of 3): #8381 and #8388 (drafts; astra and first builds pending).** #8332, #8339 and #8344 are `ready-to-merge`.
+**In progress (cap full): the drafts #8381 (astra ✓, build queued), #8388 and #8389 (astra and builds pending).** #8332, #8339 and #8344 are
+`ready-to-merge` (queue depth 19; CI congested at r945).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `1915dff79`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `b1dad53fb`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -66,9 +68,9 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r944):** #8332, #8339 and #8344 are all approved (`ready-to-merge`). In progress: the drafts #8381 (OnCurve) and #8388 (JointLaw),
-   both kind 2 — **mark each ready once astra clears and the build is green**. One slot is open. Next kind 2 from the r931 scoring:
-   `Probability/Exchangeability/ConditionallyIID/Moments.lean` or `…/Recurrence/RowExchangeable.lean`. Roadmap mentions in docstrings are
+0. **Now (r944):** #8332, #8339 and #8344 are all approved (`ready-to-merge`). In progress (cap full): the drafts #8381 (OnCurve; astra ✓), #8388 (JointLaw) and #8389 (Moments),
+   all kind 2 — **mark each ready once astra clears and the build is green**. CI is congested (32 queued at r945). Next kind 2:
+   `…/Recurrence/RowExchangeable.lean`. Roadmap mentions in docstrings are
    deleted outright (r939 rule; confirmed by #8332's approval at r944).
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
@@ -149,7 +151,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r944 did
+## What r703–r945 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -398,6 +400,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r942: **#8339 approved**. Kind 2 opened as draft **#8381** (`OnCurve.lean`: 70 `↦`, 3 chains split, and roadmap framing dropped per the r939 rule; gate 12/0/0).
 * r943: no action; #8332 is green and awaiting review, #8344 is under review, and #8381 is building.
 * r944: **#8332 and #8344 approved** (with #8339, all three roadmap-rework PRs are `ready-to-merge`). Kind 2 opened as draft **#8388** (`Arrays/JointLaw.lean`; gate 12/0/0).
+* r945: CI is congested (32 queued). #8381 was cleared by astra, but its build is still queued. Kind 2 opened as draft **#8389** (`ConditionallyIID/Moments.lean`; gate 12/0/0). The cap is full.
 
 ## Candidates for a later step 5
 

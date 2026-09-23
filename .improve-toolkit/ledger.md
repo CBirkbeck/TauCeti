@@ -42124,3 +42124,17 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
   (asserted), and under the r939 rule the standalone docstring paragraph "These results advance the exchangeable-arrays milestone in
   `…/README.md`, Layer 8." is deleted outright. Gate 12/0/0. gpt-6-astra was launched at 19:38Z; a waiter covers astra and the build.
 * In progress: #8381 and #8388. One slot is open. No merges. Pin `dc4b8d60d5`, main `e1b9c755d`.
+
+## r945 — 2026-09-23T19:44Z (cron)
+
+* **CI is congested:** 32 queued and 17 running Actions runs, and the merge queue is 19 deep. #8339 is MERGING at pos 5, with #8344 QUEUED at 12
+  and #8332 at 15. #8381's first build has been queued since 19:19Z, and #8388's since 19:39Z.
+* **#8381: astra cleared it** ("would reject none"; `choose! … using` elaborates an ordinary term, and all three splits are block-correct), but
+  the build was still queued when its 30-min waiter timed out. It stays a draft until the build is green.
+* **Step 5, kind 2: opened draft #8389**, `improve/ciid-moments-style` @ `18762ee10`, from `38d6ddc00`; `Roadmap: Exchangeability`
+  (as #4401 and #3639). Target: `ConditionallyIID/Moments.lean` (475 lines, 76 `fun … =>`, no match arms, no roadmap text). Edits: 76 arrows
+  (asserted), including one inside a `simp only [fun n : ℕ ↦ …]` lemma list, and 1 chain split (`rw [one_div]; norm_cast` in a
+  `congr fun n ↦ by` block, at the same column). Gate 12/0/0. gpt-6-astra was launched at 19:49Z and asked specifically about the lambda in
+  the `simp only` list.
+* Waiters: #8381 build plus #8389 astra and build (new, 45-s polls); #8388 astra and build (r944). In progress (cap full): #8381, #8388 and
+  #8389. No merges since #8305. Pin `dc4b8d60d5`, main `38d6ddc00`.
