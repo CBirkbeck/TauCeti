@@ -15,15 +15,18 @@ identifies `H₀(G, A)` with the coinvariants of `A`.
 
 ## Main results
 
-* `groupHomology.H0π_eq_iff`: two elements of `A` have the same class in `H₀(G, A)` exactly when
-  their difference lies in the augmentation submodule `Representation.Coinvariants.ker A.ρ`.
+* `TauCeti.groupHomology.H0π_eq_iff`: two elements of `A` have the same class in `H₀(G, A)`
+  exactly when their difference lies in the augmentation submodule
+  `Representation.Coinvariants.ker A.ρ`.
 -/
 
 public section
 
 universe u
 
-namespace groupHomology
+namespace TauCeti.groupHomology
+
+open _root_.groupHomology
 
 variable {k G : Type u} [CommRing k] [Group G] (A : Rep k G)
 
@@ -36,4 +39,4 @@ theorem H0π_eq_iff {x y : A.V} :
   exact (H0Iso A).toLinearEquiv.symm.injective.eq_iff.trans
     (Representation.Coinvariants.mk_eq_iff _)
 
-end groupHomology
+end TauCeti.groupHomology

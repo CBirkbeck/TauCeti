@@ -18,8 +18,9 @@ import TauCeti.RepresentationTheory.Induction.DimensionShift
 
 For finite-index subgroups `K ≤ H ≤ G`, the transfer in group homology is transitive: transferring
 from `G` to `H` and then from `H` to `K` is the transfer from `G` to `K`, once `K.subgroupOf H` is
-identified with `K`. The proof is by dimension shifting from degree zero, where the transfer is the
-relative transfer on coinvariants.
+identified with `K`. This lets a transfer to a small subgroup be computed in stages through an
+intermediate subgroup; it is what makes Tate restriction below degree `-1` functorial along a tower
+of layers of a class formation.
 
 ## Main results
 
@@ -82,11 +83,13 @@ identified with `K` by the change-of-group map along `Subgroup.subgroupOfEquivOf
 which the two restrictions of `M` agree (`Rep.isIntertwiningMap_res_res`). This is the
 transitivity of the transfer described in Brown, Chapter III, §9. -/
 @[reassoc]
-theorem transfer_trans [K.FiniteIndex] [H.FiniteIndex] (M : Rep.{u} R G) (n : ℕ) :
+theorem transfer_trans [K.FiniteIndex] (M : Rep.{u} R G) (n : ℕ) :
+    haveI := Subgroup.finiteIndex_of_le hKH
     transfer M H n ≫ transfer (res H.subtype M) (K.subgroupOf H) n ≫
       map (Subgroup.subgroupOfEquivOfLe hKH : K.subgroupOf H →* K)
         (Rep.isIntertwiningMap_res_res M (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH)).toRes n =
       transfer M K n := by
+  have := Subgroup.finiteIndex_of_le hKH
   induction n generalizing M with
   | zero =>
     -- On `H₀`, the coinvariants, the transfer is the relative transfer (`transfer_zero_H0π`).
