@@ -6,11 +6,11 @@ Authors: Claude
 module
 
 public import TauCeti.Algebra.Group.Subgroup.Map
-public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Delta
+public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Basic
 public import TauCeti.RepresentationTheory.Rep.ChangeOfGroup
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Induced
+import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Delta
 import TauCeti.RepresentationTheory.Induction.DimensionShift
-import TauCeti.RepresentationTheory.RelativeNorm
 
 /-!
 # Transitivity of the transfer
