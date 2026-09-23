@@ -36,11 +36,6 @@ so the series is analytic at `s = 1`, and its value at `s = 1` is nonzero.
   nontrivial it is analytic at `s = 1`.
 * `NumberField.Chebotarev.cyclotomicCharacterSeriesC_ne_zero_at_one`: for `F = K(μ_m)` and `χ`
   nontrivial it is nonzero at `s = 1`.
-
-## References
-
-* J.-P. Serre, *A Course in Arithmetic*, Chapter VI, §3.
-* J. Neukirch, *Algebraic Number Theory*, Chapter VII, §13.
 -/
 
 public section
