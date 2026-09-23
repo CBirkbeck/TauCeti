@@ -157,10 +157,9 @@ theorem preimageOfMemRayIntegerSet_smul {𝔪 : Modulus K} (ζ : unitsCongruence
     (a : rayIntegerSet 𝔪) :
     (preimageOfMemRayIntegerSet (ζ • a) : 𝓞 K) =
       ((ζ : (𝓞 K)ˣ) : 𝓞 K) * preimageOfMemRayIntegerSet a := by
-  rw [RingOfIntegers.ext_iff, ← (mixedEmbedding_injective K).eq_iff,
-    mixedEmbedding_preimageOfMemRayIntegerSet, rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe,
-    unitSMul_smul, ← mixedEmbedding_preimageOfMemRayIntegerSet a, ← map_mul]
-  rfl
+  refine RingOfIntegers.ext <| mixedEmbedding_injective K ?_
+  simp [mixedEmbedding_preimageOfMemRayIntegerSet,
+    rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe, unitSMul_smul]
 
 /-- **The action is free.**  A congruence root of unity fixing a point of `rayIntegerSet 𝔪` is
 the identity, because the point is the image of a nonzero algebraic integer. -/

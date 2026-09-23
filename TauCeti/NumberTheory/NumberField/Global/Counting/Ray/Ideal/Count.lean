@@ -62,8 +62,8 @@ of `rayIntegerSet 𝔪` is the mixed norm of the point. -/
 private theorem absNorm_span_preimageOfMemRayIntegerSet {𝔪 : Modulus K} (a : rayIntegerSet 𝔪) :
     (Ideal.absNorm (Ideal.span {(preimageOfMemRayIntegerSet a : 𝓞 K)}) : ℝ) =
       mixedEmbedding.norm (a : mixedSpace K) := by
-  rw [Ideal.absNorm_span_singleton, Nat.cast_natAbs, ← Rat.cast_intCast, Int.cast_abs,
-    Algebra.coe_norm_int, ← norm_eq_norm, mixedEmbedding_preimageOfMemRayIntegerSet]
+  rw [← mixedEmbedding_preimageOfMemRayIntegerSet, norm_eq_norm, ← Algebra.coe_norm_int]
+  simp [Ideal.absNorm_span_singleton]
 
 /-- **Two points generating the same ideal lie in one orbit.**  If the algebraic integers under
 two points of `rayIntegerSet 𝔪` are congruent to one modulo `𝔪₀` and generate the same ideal,
