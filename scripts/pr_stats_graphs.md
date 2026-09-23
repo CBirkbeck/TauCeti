@@ -1,6 +1,6 @@
 # Pull-request statistics graphs
 
-`pr_stats_graphs.py` regenerates the five pull-request statistics assets intended for
+`pr_stats_graphs.py` regenerates the seven pull-request statistics assets intended for
 the Tau Ceti Statistics page:
 
 ```sh
@@ -90,7 +90,7 @@ state transitions stop generation rather than publishing a mislabelled clock. Is
 comments and their v1 metadata are filtered and parsed by `gh` before reaching Python,
 so full scoreboard bodies do not accumulate in memory.
 
-All six outputs are rendered in a staging directory and promoted only after every
+All eight outputs are rendered in a staging directory and promoted only after every
 chart and the JSON payload succeeds. A failed scheduled fetch therefore keeps the
 previous coherent asset set.
 
