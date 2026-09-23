@@ -100,12 +100,7 @@ section Norm
 
 variable [Fintype G] {ρ H}
 
-/-- A subgroup of a finite group is a finite type. -/
-noncomputable local instance fintypeSubgroup : Fintype H := Fintype.ofFinite H
-
-/-- The quotient of a finite group by a subgroup is a finite type. -/
-noncomputable local instance fintypeQuotientGroup : Fintype (G ⧸ H) :=
-  H.fintypeQuotientOfFiniteIndex
+attribute [local instance] TauCeti.fintypeSubgroup Subgroup.fintypeQuotientOfFiniteIndex
 
 private theorem norm_apply' (x : V) : ρ.norm x = ∑ g : G, ρ g x := by
   simp [Representation.norm]

@@ -112,14 +112,18 @@ theorem quotientBot_smul_eq_self_iff (g : G) (q : G ⧸ (⊥ : Subgroup G)) :
 
 section Finite
 
+-- Not a global instance: Mathlib's `Subgroup.instFintypeSubtypeMemOfDecidablePred` asks for
+-- decidable membership instead, and the two structures are not definitionally equal. Files about
+-- the subgroups of a finite group install this one with `attribute [local instance]`, so that
+-- their statements share one `Fintype` structure.
+/-- The `Fintype` structure on a subgroup of a finite group given by `Fintype.ofFinite`. -/
+@[instance_reducible, expose]
+noncomputable def fintypeSubgroup [Finite G] (H : Subgroup G) : Fintype H :=
+  Fintype.ofFinite H
+
+attribute [local instance] fintypeSubgroup Subgroup.fintypeQuotientOfFiniteIndex
+
 variable {M : Type*} [AddCommMonoid M] [Fintype G] (H : Subgroup G)
-
-/-- A subgroup of a finite group is a finite type. -/
-noncomputable local instance fintypeSubgroup : Fintype H := Fintype.ofFinite H
-
-/-- The quotient of a finite group by a subgroup is a finite type. -/
-noncomputable local instance fintypeQuotientGroup : Fintype (G ⧸ H) :=
-  H.fintypeQuotientOfFiniteIndex
 
 /-- Every element of a finite group `G` is uniquely the product of the `Quotient.out`
 representative of a left coset of `H` and an element of `H`. -/
