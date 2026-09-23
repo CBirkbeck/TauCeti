@@ -33,6 +33,11 @@ The generation proof transports Mathlib's unique factorization of a nonzero frac
 * `NumberFieldArithmetic.integralIdealsAway`: nonzero integral ideals prime to `S`.
 * `NumberFieldArithmetic.integralIdealsAwayHom`: the map from integral to fractional ideals.
 
+## Main results
+
+* `NumberFieldArithmetic.integralIdealsAway_hom_ext`: a monoid homomorphism out of
+  `integralIdealsAway S` is determined by its values on the primes outside `S`.
+
 ## References
 
 The shared lift of fractional-ideal factorization to units,
@@ -163,6 +168,28 @@ theorem mem_integralIdealsAway_iff {S : Finset (HeightOneSpectrum (𝓞 K))}
 instance (S : Finset (HeightOneSpectrum (𝓞 K))) : CancelCommMonoid (integralIdealsAway S) where
   mul_left_cancel a _ _ h :=
     Subtype.ext <| mul_left_cancel₀ (mem_integralIdealsAway_iff.mp a.2).1 (congrArg Subtype.val h)
+
+/-- **Homomorphisms out of `integralIdealsAway S` are determined on the primes.** Two monoid
+homomorphisms from the integral ideals prime to `S` agree as soon as they agree on every prime
+outside `S`. -/
+theorem integralIdealsAway_hom_ext {M : Type*} [MulOneClass M]
+    {S : Finset (HeightOneSpectrum (𝓞 K))} {f g : integralIdealsAway (K := K) S →* M}
+    (h : ∀ (v : HeightOneSpectrum (𝓞 K)) (hv : v.asIdeal ∈ integralIdealsAway (K := K) S),
+      f ⟨v.asIdeal, hv⟩ = g ⟨v.asIdeal, hv⟩) : f = g := by
+  refine MonoidHom.ext fun ⟨I, hI⟩ ↦ ?_
+  induction I using UniqueFactorizationMonoid.induction_on_prime with
+  | h₁ => exact absurd rfl (mem_integralIdealsAway_iff.mp hI).1
+  | h₂ x hx =>
+    obtain rfl := isUnit_iff_eq_one.mp hx
+    exact (map_one f).trans (map_one g).symm
+  | h₃ a p ha hp ih =>
+    obtain ⟨-, hS⟩ := mem_integralIdealsAway_iff.mp hI
+    have hpS : p ∈ integralIdealsAway (K := K) S := mem_integralIdealsAway_iff.mpr
+      ⟨hp.ne_zero, fun v hv hvp ↦ hS v hv (hvp.mul_right a)⟩
+    have haS : a ∈ integralIdealsAway (K := K) S := mem_integralIdealsAway_iff.mpr
+      ⟨ha, fun v hv hva ↦ hS v hv (hva.mul_left p)⟩
+    rw [← Submonoid.mk_mul_mk _ p a hpS haS, map_mul, map_mul, ih haS,
+      h ⟨p, Ideal.isPrime_of_prime hp, hp.ne_zero⟩ hpS]
 
 /-- Divisibility in `integralIdealsAway S` is divisibility of the underlying ideals: a cofactor
 of two ideals prime to `S` is itself prime to `S`. -/
