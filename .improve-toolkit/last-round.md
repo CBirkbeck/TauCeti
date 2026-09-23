@@ -1,4 +1,4 @@
-# Last round — r953 (2026-09-23T21:05Z)
+# Last round — r954 (2026-09-23T21:16Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -57,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `98ecc8f48`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `c36c7f804`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -150,7 +150,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r953 did
+## What r703–r954 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -408,6 +408,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r951: **#8388 and #8389 approved**; #8402 was cleared by astra. Kind 2 opened as draft **#8413** (`KnotTheory/Grid/Unknot/Basic.lean`, 62 `↦`).
 * r952: kind 2 opened as draft **#8426** (`Arrays/ConditionalLaw.lean`, 64 `↦`). The cap is full.
 * r953: **#8381 merged**, the fifteenth today.
+* r954: CI backlog (114 queued, 4 running). The three drafts' builds have not started. The sweep marks each green draft ready when it lands.
 
 ## Candidates for a later step 5
 

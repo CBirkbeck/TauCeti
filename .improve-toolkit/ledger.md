@@ -42213,3 +42213,10 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 
 **#8381 merged** 21:02:10Z, the fifteenth today. #8388 and #8389 are queued. #8402, #8413 and #8426 are drafts on queued builds (waiters running). The cap is full.
 Pin `dc4b8d60d5`, main `a1fd64731`.
+
+## r954 — 2026-09-23T21:14Z (cron)
+
+* **CI backlog: 114 Actions runs queued, only 4 in progress, repo-wide.** Our drafts' builds are still *queued* (not started): #8402 since
+  20:18:59Z, #8413 since 20:49:09Z and #8426 since 20:58:50Z. Nothing to act on. The 30-min waiters may time out before these start, but the
+  cron sweep marks any green draft ready in the round that sees it, so the waiters are only a convenience.
+* #8388 and #8389 are queued. No new merges. Pin `dc4b8d60d5`, main `040b7697a`. The cap is full.
