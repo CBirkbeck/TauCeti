@@ -41953,3 +41953,21 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
 * Re-ran `strictscan` and `deadhave` on fresh main `9fcdc85e7` (`snap-main9`). The only change since r911 is the three hits this session fixed
   (`GlobalTurning:94`, `Resolvent/Basic:184`, `RelNorm:122`), now gone; **no new target**. Every kind is still blocked or dry: pin
   `dc4b8d60d5`, astra back 2026-09-27T15:04Z, kind-3 sources exhausted.
+
+## r931 — 2026-09-23T17:24Z (cron) — **quota back; hard stop lifted**
+
+* **Both codex models answer again.** One-line probes of `gpt-6-astra` and `gpt-5.6-sol` return `ok` (rc=0) at 17:25Z, days before the
+  "try again at Sep 27th, 3:04 PM" the r889 error named. **The r889 step-4 hard stop is lifted**: driven reviews (`--reviewer codex`) and
+  kind-2 astra clearance work again. Probe before relying on either; the limit may come back.
+* No `improve/*` PR was open, so all three slots were free. Kind 1 is still dry (pin `dc4b8d60d5`), so **kind 2** takes the slot.
+* **Opened draft #8332**, `improve/productkernel-style` @ `0b1248176`, from `c4a45e85d`; +74/−75; `Roadmap: Exchangeability` (as #2116).
+  * Target: scored on `snap-main9`, excluding the 295 files open PRs touch and the ledger-named files. Chose
+    `MeasureTheory/Measure/ProductKernel.lean` (344 lines, 100 `fun … =>`, no match arms, no real `;` chains) as the cleanest mechanical
+    pass. The file already mixed in 16 `↦`.
+  * Edits: 100 `fun … =>` → `↦` (asserted; no `=>` left), including in docstring code spans. Two docstrings are restated off the
+    roadmap stage (the #8101 recipe): the module doc drops "It advances `TauCetiRoadmap/Exchangeability`, Layer 1 (…), and", and
+    `measurable_dirac_prod_probabilityMeasure_pi_const_toMeasure` drops "(`…/README.md`, Layer 1)". The `cameronfreer/exchangeability`
+    motivation and pin stay.
+  * Gate **12 ok / 0 failed / 0 UNRUN**. gpt-6-astra was launched at 17:29Z (`astra-prodkern-1729.txt`); it was asked specifically about
+    `@[fun_prop]` statements and docstring accuracy. One waiter covers the astra log marker and the first build; mark ready when both clear.
+* Other kinds are still dry (r930 scanner re-run). Main `c4a45e85d`.
