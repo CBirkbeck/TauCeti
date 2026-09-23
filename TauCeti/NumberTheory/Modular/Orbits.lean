@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.Modular
 
 import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
+import TauCeti.Analysis.Complex.UpperHalfPlane.Translation
 
 /-!
 # Orbits of the modular group on the upper half-plane
@@ -30,6 +31,8 @@ the unit arc right of `i`.
 
 * `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
 * `TauCeti.ModularGroup.orbit_mk_int_vadd`: integer translation preserves the orbit.
+* `TauCeti.ModularGroup.vadd_mem_fd_of_re_eq`: translation by `r` carries the points of `𝒟` on
+  the line `re = -r / 2` into `𝒟`.
 * `TauCeti.ModularGroup.orbit_mk_injOn_fdo`: the orbit map is injective on `𝒟ᵒ`.
 * `TauCeti.ModularGroup.orbit_mk_eq_I_iff`: a point of `𝒟` lies in the orbit of `i` exactly
   when it is `i`.
@@ -73,6 +76,15 @@ lemma orbit_mk_int_vadd (n : ℤ) (z : ℍ) :
       Quotient.mk'' z :=
   Quotient.sound' ⟨_root_.ModularGroup.T ^ n, UpperHalfPlane.modular_T_zpow_smul z n⟩
 
+/-- Translation by `r` carries a point of `𝒟` on the line `re = -r / 2` into `𝒟`. -/
+lemma vadd_mem_fd_of_re_eq {r : ℝ} {p : ℍ} (hp : p ∈ 𝒟) (hre : p.re = -r / 2) : r +ᵥ p ∈ 𝒟 := by
+  -- the translate keeps the modulus, and its real part is the mirror image `-p.re` of `p`'s
+  have hmirror : (r +ᵥ p).re = -p.re := by
+    rw [vadd_re, hre]
+    ring
+  refine ⟨normSq_coe_vadd_of_re_eq hre ▸ hp.1, ?_⟩
+  rw [hmirror, abs_neg]
+  exact hp.2
 
 /-- Distinct points of the **open** fundamental domain lie in distinct `SL(2, ℤ)`-orbits: the
 orbit map is injective there. This is the Second Fundamental Domain Lemma
