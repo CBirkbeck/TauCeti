@@ -42229,3 +42229,8 @@ Pin `dc4b8d60d5`, main `a1fd64731`.
 * **The CI backlog is growing: 124 queued, 2 running.** None of the three drafts' builds has started. **gpt-6-astra has cleared all three**:
   #8402 (r951), #8413 (r954) and #8426 (answer 20:59:19Z, "accept every edit … as purely stylistic"). Each goes ready the moment its
   build is green. #8388 and #8389 are queued. No merges. Pin `dc4b8d60d5`, main `040b7697a`.
+
+## r956 — 2026-09-23T21:34Z (cron)
+
+CI is still stalled (130 queued, 4 running); main is unmoved since r954 (`040b7697a`) because merge-queue builds are stuck too. The three astra-cleared drafts
+wait for builds; #8388 and #8389 wait in the merge queue. No action.
