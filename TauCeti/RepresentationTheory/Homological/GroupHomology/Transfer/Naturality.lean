@@ -69,7 +69,9 @@ private theorem transfer_res_equiv_succ [S.FiniteIndex] [S'.FiniteIndex]
   -- do not identify.
   exact (Category.assoc _ _ _).trans <|
     (whisker_eq _ (δ_naturality _ ((shortExact_res S.subtype).2 hX) hYS'
-      ⟨_, _, _, Rep.isIntertwiningMap_res_res_toRes_naturality hc Y.f,
+      ⟨(Rep.isIntertwiningMap_res_res Y.X₁ hc).toRes, (Rep.isIntertwiningMap_res_res Y.X₂ hc).toRes,
+        (Rep.isIntertwiningMap_res_res Y.X₃ hc).toRes,
+        Rep.isIntertwiningMap_res_res_toRes_naturality hc Y.f,
         Rep.isIntertwiningMap_res_res_toRes_naturality hc Y.g⟩ (n + 1) n rfl).symm).trans <|
     (δ_comp_transfer_assoc S hX (n + 1) n rfl _).symm.trans <|
     (whisker_eq _ ih).trans <|
