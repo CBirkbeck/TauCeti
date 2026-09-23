@@ -60,38 +60,52 @@ private theorem rayClassIdealCountingFunction_mul_card_eq_ncard (𝔪 : Modulus 
     ← rayIdealSet_eq_inter_vadd 𝔪 ⟨𝔞, h𝔞0⟩ hξ𝔞 hξ𝔪]
   exact Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter _ (mixedEmbedding.norm · ≤ _))
 
+private theorem exists_mem_idealClass_inv_and_sub_one_mem (𝔪 : Modulus K) (c : RayClassGroup 𝔪) :
+    ∃ 𝔞 : integralIdealsPrimeTo 𝔪, idealClass 𝔪 𝔞 = c⁻¹ ∧
+      (𝔞 : Ideal (𝓞 K)) ∈ (Ideal (𝓞 K))⁰ ∧ ∃ ξ ∈ (𝔞 : Ideal (𝓞 K)), ξ - 1 ∈ 𝔪.finitePart := by
+  obtain ⟨𝔞, h𝔞⟩ := idealClass_surjective 𝔪 c⁻¹
+  refine ⟨𝔞, h𝔞, mem_nonZeroDivisors_of_ne_zero
+    (NumberFieldArithmetic.mem_integralIdealsAway_iff.mp 𝔞.prop).1, ?_⟩
+  -- `𝔞` is coprime to `𝔪₀`, so it contains an element congruent to one modulo `𝔪₀`
+  exact Ideal.isCoprime_iff_exists_mem_and_sub_one_mem.mp <| Ideal.isCoprime_iff_sup_eq.mpr
+    (Modulus.isCoprimeTo_iff_sup_eq_top.mp (Modulus.mem_integralIdealsPrimeTo.mp 𝔞.prop)).2
+
+private theorem exists_abs_rayClassIdealCountingFunction_sub_le (𝔪 : Modulus K)
+    {c : RayClassGroup 𝔪} (𝔞 : integralIdealsPrimeTo 𝔪) (h𝔞 : idealClass 𝔪 𝔞 = c⁻¹)
+    (h𝔞0 : (𝔞 : Ideal (𝓞 K)) ∈ (Ideal (𝓞 K))⁰) {ξ : 𝓞 K} (hξ𝔞 : ξ ∈ (𝔞 : Ideal (𝓞 K)))
+    (hξ𝔪 : ξ - 1 ∈ 𝔪.finitePart) : ∃ C : ℝ, ∀ x : ℝ, 1 ≤ x →
+      |(rayClassIdealCountingFunction 𝔪 c x : ℝ) - rayClassIdealMainTerm 𝔪 * x| ≤
+        C * x ^ (1 - (finrank ℚ K : ℝ)⁻¹) := by
+  obtain ⟨A, -, hA⟩ := exists_abs_ncard_rayFundamentalDomain_inter_norm_le_inter_vadd_sub_le 𝔪
+    (FractionalIdeal.mk0 K ⟨𝔞, h𝔞0⟩)
+  set N : ℝ := (Ideal.absNorm (𝔞 : Ideal (𝓞 K)) : ℝ)
+  have hN : 1 ≤ N := Nat.one_le_cast.mpr <| Nat.one_le_iff_ne_zero.mpr <|
+    Ideal.absNorm_ne_zero_of_nonZeroDivisors ⟨_, h𝔞0⟩
+  have hw : 0 < (Nat.card (unitsCongruenceTorsion 𝔪) : ℝ) := Nat.cast_pos.mpr Nat.card_pos
+  refine ⟨A * N ^ (1 - (finrank ℚ K : ℝ)⁻¹) / Nat.card (unitsCongruenceTorsion 𝔪), fun x hx ↦ ?_⟩
+  have hcount := hA (mixedEmbedding K (ξ : K)) (x * N) (one_le_mul_of_one_le_of_one_le hx hN)
+  -- the lattice-point count is `w` times the ideal count, and its main term `w` times ours,
+  -- where `w` is the number of roots of unity congruent to one modulo `𝔪`
+  rw [← rayClassIdealCountingFunction_mul_card_eq_ncard 𝔪 𝔞 h𝔞 _ hξ𝔞 hξ𝔪 x, Nat.cast_mul,
+    mul_left_comm _ x, measureReal_div_covolume_congruenceLattice_mul_absNorm 𝔪 ⟨𝔞, h𝔞0⟩,
+    Real.mul_rpow (zero_le_one.trans hx) (zero_le_one.trans hN)] at hcount
+  rw [div_mul_eq_mul_div, le_div_iff₀ hw, ← abs_of_pos hw, ← abs_mul]
+  refine le_of_eq_of_le ?_ (hcount.trans_eq ?_) <;> ring_nf
+
 /-- **The ray class ideal count of a single class, with an explicit power saving.**  The number
 of nonzero integral ideals prime to `𝔪` in the ray class `c` with norm at most `x` is
 `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - 1 / [K : ℚ]))`. -/
 theorem isBigO_rayClassIdealCountingFunction_sub (𝔪 : Modulus K) (c : RayClassGroup 𝔪) :
     (fun x : ℝ => (rayClassIdealCountingFunction 𝔪 c x : ℝ) - rayClassIdealMainTerm 𝔪 * x) =O[atTop]
       fun x : ℝ => x ^ (1 - (finrank ℚ K : ℝ)⁻¹) := by
-  obtain ⟨𝔞, h𝔞⟩ := idealClass_surjective 𝔪 c⁻¹
-  have h𝔞0 : (𝔞 : Ideal (𝓞 K)) ∈ (Ideal (𝓞 K))⁰ :=
-    mem_nonZeroDivisors_of_ne_zero (NumberFieldArithmetic.mem_integralIdealsAway_iff.mp 𝔞.prop).1
-  -- an element of `𝔞` congruent to one modulo `𝔪₀` places the counted points in one coset
-  obtain ⟨ξ, hξ𝔞, hξ𝔪⟩ := Ideal.isCoprime_iff_exists_mem_and_sub_one_mem.mp <|
-    Ideal.isCoprime_iff_sup_eq.mpr
-      (Modulus.isCoprimeTo_iff_sup_eq_top.mp (Modulus.mem_integralIdealsPrimeTo.mp 𝔞.prop)).2
-  obtain ⟨A, -, hA⟩ := exists_abs_ncard_rayFundamentalDomain_inter_norm_le_inter_vadd_sub_le 𝔪
-    (FractionalIdeal.mk0 K ⟨𝔞, h𝔞0⟩)
-  have hcoef := measureReal_div_covolume_congruenceLattice_mul_absNorm 𝔪 ⟨𝔞, h𝔞0⟩
-  set N : ℝ := (Ideal.absNorm (𝔞 : Ideal (𝓞 K)) : ℝ)
-  set w : ℝ := (Nat.card (unitsCongruenceTorsion 𝔪) : ℝ)
-  have hN : 1 ≤ N := Nat.one_le_cast.mpr <| Nat.one_le_iff_ne_zero.mpr <|
-    Ideal.absNorm_ne_zero_of_nonZeroDivisors ⟨_, h𝔞0⟩
-  have hw : 0 < w := Nat.cast_pos.mpr Nat.card_pos
-  refine IsBigO.of_bound (A * N ^ (1 - (finrank ℚ K : ℝ)⁻¹) / w) ?_
+  -- an ideal `𝔞` of the inverse class and an element of `𝔞` congruent to one modulo `𝔪₀` place
+  -- the counted points in one coset of a congruence lattice
+  obtain ⟨𝔞, h𝔞, h𝔞0, ξ, hξ𝔞, hξ𝔪⟩ := exists_mem_idealClass_inv_and_sub_one_mem 𝔪 c
+  obtain ⟨C, hC⟩ := exists_abs_rayClassIdealCountingFunction_sub_le 𝔪 𝔞 h𝔞 h𝔞0 hξ𝔞 hξ𝔪
+  refine IsBigO.of_bound C ?_
   filter_upwards [eventually_ge_atTop 1] with x hx
-  have hx0 : 0 ≤ x := zero_le_one.trans hx
-  have hcount := hA (mixedEmbedding K (ξ : K)) (x * N) (one_le_mul_of_one_le_of_one_le hx hN)
-  -- the lattice-point count is `w` times the ideal count, and its main term `w` times ours
-  rw [← rayClassIdealCountingFunction_mul_card_eq_ncard 𝔪 𝔞 h𝔞 _ hξ𝔞 hξ𝔪 x, Nat.cast_mul,
-    mul_left_comm _ x, hcoef, show ∀ a b : ℝ, a * w - x * (w * b) = w * (a - b * x) from
-      fun a b ↦ by ring, abs_mul, abs_of_pos hw] at hcount
-  rw [Real.norm_eq_abs, Real.norm_of_nonneg (Real.rpow_nonneg hx0 _), div_mul_eq_mul_div,
-    le_div_iff₀ hw, mul_comm]
-  exact hcount.trans_eq (by rw [Real.mul_rpow hx0 (zero_le_one.trans hN)]; ring)
+  rw [Real.norm_eq_abs, Real.norm_of_nonneg (Real.rpow_nonneg (zero_le_one.trans hx) _)]
+  exact hC x hx
 
 /-- **The ray class ideal count.**  For every modulus `𝔪` there is a power saving `δ > 0` such
 that, in each ray class `c` of `𝔪`, the number of nonzero integral ideals prime to `𝔪` of norm at
