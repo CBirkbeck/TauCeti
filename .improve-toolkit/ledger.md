@@ -42167,3 +42167,11 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
   are inline terms and stay; there is no roadmap text. Gate 12/0/0. **The astra question uses the three-dot diff `origin/main...HEAD` (the r947
   trap): exactly 1 `diff --git`, verified.** gpt-6-astra was launched at 20:18Z.
 * In progress (cap full): #8388, #8389 and #8402. Pin `dc4b8d60d5`, main `20aa079d5`.
+* r948 addendum (#8389 astra): gpt-6-astra accepts the whole diff (the lambda inside `simp only […]` elaborates unchanged, and the
+  `congr fun n ↦ by` split is block-correct). There was no two-dot artefact here, since main had not moved between branching and the question.
+  **#8389 is astra-cleared**; its build is still queued (a waiter was re-armed after the combined waiter timed out).
+
+## r949 — 2026-09-23T20:24Z (cron)
+
+**#8344 merged** 20:19:27Z, the thirteenth today. #8332 and #8381 are queued. #8388, #8389 and #8402 are drafts on queued builds (waiters running). Pin
+`dc4b8d60d5`, main `3b6440d8d`.
