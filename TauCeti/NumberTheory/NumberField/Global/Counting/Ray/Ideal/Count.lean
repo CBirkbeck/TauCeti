@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.NumberField.Global.Counting.Ray.IdealSet
+public import TauCeti.NumberTheory.NumberField.Global.Counting.Ray.Ideal.Set
 public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Orbit
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Integral
 
@@ -39,24 +39,13 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Divisibility in `integralIdealsPrimeTo 𝔪` is divisibility of the underlying ideals. -/
-private theorem dvd_iff_coe_dvd {𝔪 : Modulus K} {𝔞 I : integralIdealsPrimeTo 𝔪} :
-    𝔞 ∣ I ↔ (𝔞 : Ideal (𝓞 K)) ∣ (I : Ideal (𝓞 K)) := by
-  refine ⟨fun ⟨c, hc⟩ ↦ ⟨c, by rw [hc, Submonoid.coe_mul]⟩, fun ⟨c, hc⟩ ↦ ?_⟩
-  have hI := NumberFieldArithmetic.mem_integralIdealsAway_iff.mp I.prop
-  refine ⟨⟨c, NumberFieldArithmetic.mem_integralIdealsAway_iff.mpr
-    ⟨fun h ↦ hI.1 ?_, fun v hv hvc ↦ hI.2 v hv ?_⟩⟩, Subtype.ext hc⟩
-  · rw [hc, h, Ideal.mul_bot]
-  · rw [hc]
-    exact dvd_mul_of_dvd_right hvc _
-
 /-- A unit congruent to one modulo `𝔪` keeps an algebraic integer congruent to one modulo `𝔪₀`. -/
 private theorem unit_mul_sub_one_mem {𝔪 : Modulus K} {u : (𝓞 K)ˣ}
     (hu : u ∈ unitsCongruenceSubgroup 𝔪) {α : 𝓞 K} (hα : α - 1 ∈ 𝔪.finitePart) :
     (u : 𝓞 K) * α - 1 ∈ 𝔪.finitePart := by
-  rw [show (u : 𝓞 K) * α - 1 = u * (α - 1) + ((u : 𝓞 K) - 1) by ring]
-  exact add_mem (Ideal.mul_mem_left _ _ hα)
-    (sub_one_mem_of_isCongrOne (by simp) (mem_unitsCongruenceSubgroup.mp hu))
+  convert add_mem (Ideal.mul_mem_left _ (u : 𝓞 K) hα)
+    (sub_one_mem_of_isCongrOne (a := u) (by simp) (mem_unitsCongruenceSubgroup.mp hu)) using 1
+  ring
 
 /-- The algebraic integer underlying a point of `rayIntegerSet 𝔪` is positive at the real places
 of the infinite part of `𝔪`. -/
@@ -75,17 +64,6 @@ private theorem absNorm_span_preimageOfMemRayIntegerSet {𝔪 : Modulus K} (a : 
       mixedEmbedding.norm (a : mixedSpace K) := by
   rw [Ideal.absNorm_span_singleton, Nat.cast_natAbs, ← Rat.cast_intCast, Int.cast_abs,
     Algebra.coe_norm_int, ← norm_eq_norm, mixedEmbedding_preimageOfMemRayIntegerSet]
-
-/-- The action of a congruence root of unity on `rayIntegerSet 𝔪` multiplies the underlying
-algebraic integer. -/
-private theorem preimageOfMemRayIntegerSet_smul {𝔪 : Modulus K} (ζ : unitsCongruenceTorsion 𝔪)
-    (a : rayIntegerSet 𝔪) :
-    (preimageOfMemRayIntegerSet (ζ • a) : 𝓞 K) =
-      ((ζ : (𝓞 K)ˣ) : 𝓞 K) * preimageOfMemRayIntegerSet a := by
-  rw [RingOfIntegers.ext_iff, ← (mixedEmbedding_injective K).eq_iff,
-    mixedEmbedding_preimageOfMemRayIntegerSet, rayIntegerSetUnitsCongruenceTorsionSMul_smul_coe,
-    unitSMul_smul, ← mixedEmbedding_preimageOfMemRayIntegerSet a, ← map_mul]
-  rfl
 
 /-- **Two points generating the same ideal lie in one orbit.**  If the algebraic integers under
 two points of `rayIntegerSet 𝔪` are congruent to one modulo `𝔪₀` and generate the same ideal,
@@ -133,7 +111,8 @@ private noncomputable def toIdeal (a : PointSet 𝔪 𝔞 s) : IdealCountSet �
             (Ideal.mem_sup_left (Ideal.mem_span_singleton_self
               (preimageOfMemRayIntegerSet a.1 : 𝓞 K)))
             (Ideal.mem_sup_right a.2.1.2)⟩⟩,
-    dvd_iff_coe_dvd.mpr (Ideal.dvd_span_singleton.mpr a.2.1.1),
+    NumberFieldArithmetic.integralIdealsAway_dvd_iff_dvd_coe.mpr
+      (Ideal.dvd_span_singleton.mpr a.2.1.1),
     (idealClass_eq_one_iff_exists_generator _).mpr
       ⟨_, a.2.1.2, fun _ hw ↦ pos_preimageOfMemRayIntegerSet a.1 hw, rfl⟩,
     (absNorm_span_preimageOfMemRayIntegerSet a.1).symm ▸ a.2.2⟩
@@ -162,7 +141,8 @@ private theorem exists_toIdeal_eq (I : IdealCountSet 𝔪 𝔞 s) : ∃ a, toIde
     rw [Ideal.span_singleton_mul_left_unit u.isUnit, hI]
   refine ⟨⟨⟨_, hmem⟩, ⟨?_, ?_⟩, ?_⟩, toIdeal_eq_iff.mpr (by rw [hpre, hspan])⟩
   · rw [hpre]
-    exact Ideal.dvd_span_singleton.mp (hspan ▸ dvd_iff_coe_dvd.mp I.2.1)
+    exact Ideal.dvd_span_singleton.mp
+      (hspan ▸ NumberFieldArithmetic.integralIdealsAway_dvd_iff_dvd_coe.mp I.2.1)
   · rw [hpre]
     exact unit_mul_sub_one_mem hu hα1
   · rw [← absNorm_span_preimageOfMemRayIntegerSet, hpre, hspan]
