@@ -1,4 +1,4 @@
-# Last round — r883 (2026-09-23T09:27Z)
+# Last round — r884 (2026-09-23T09:35Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -52,7 +52,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 (draft, first build).** **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z). The next opening is kind 1
 if the pin has moved, otherwise kind 2. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `048aee764`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `dbc7ad7b5`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -139,7 +139,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r883 did
+## What r703–r884 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -335,6 +335,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r881 (2026-09-22, after a six-day gap): every queued PR had merged — thirteen of mine plus #5950. The two survivors, #6952 and #6953, were drafts the bot had parked `on-hold`; both were rebased onto `c6b94ee7a`, re-gated 12/0/0, pushed and marked ready. The kind-1 re-run at pin `dc4b8d60d5` was dry (the `wordProd` collision is a false positive), so kind 2 opened as draft **#8101**, a style pass on `Cesaro/Convergence.lean` (gpt-6-astra: no risk; gate 12/0/0).
 * r882 (2026-09-23): no cron had been set, so a 10-minute job (`4b5d0e55`) now drives rounds. #6952 and #6953 had merged. #8101 was still a draft, parked `on-hold` again; with the pin unchanged, it was marked ready, approved within 8 minutes and merged at 09:19:24Z. Kind 3 opened as draft **#8224** (`norm_resolvent_integrand_le` to `0 ≤ t`; ready 09:18:43Z), kind 2 in kind 1's slot as draft **#8233** (`Residue/Basic.lean` style pass), and kind 3 as draft **#8235** (`ConvexSubgroup.lean` uses Mathlib's `mabs_mem_iff`). All three gated 12/0/0.
 * r883: #8233 went green (09:24:57Z) and was marked ready (09:26:40Z) with the pin unchanged. #8235 was still on its first build; the cap is full.
+* r884: no change; #8235 still building, #8224/#8233 not yet due for a drive.
 
 ## Candidates for a later step 5
 

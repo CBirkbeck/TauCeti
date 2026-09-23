@@ -41499,3 +41499,8 @@ No toolkit edits.
   first build.
 * Merges: **#8101** at 09:19:24Z (recorded at r882); no new ones. Nothing is `awaiting-author` or `ci-failed`.
 * The cap is full (#8224, #8233, #8235), so step 5 is shut. No toolkit edits.
+
+## r884 — 2026-09-23T09:34Z (cron)
+
+No change. #8224 (ready 09:18:43Z) and #8233 (ready 09:26:40Z) are `awaiting-review` with no board; neither is due for a drive
+(10:18Z, 10:26Z). #8235 is still on its first build (pushed ~09:21Z). No merges since #8101. The cap is full, so step 5 is shut.
