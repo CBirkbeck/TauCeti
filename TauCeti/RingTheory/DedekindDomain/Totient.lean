@@ -57,10 +57,22 @@ private theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] 
     congr 1
     exact Nat.card_congr (Equiv.subtypeEquivRight (p := (· ∈ f.toAddMonoidHom.ker))
       (q := fun x ↦ ¬ IsUnit x) fun x ↦ by simp [hunit])
-  change Nat.card (R ⧸ P ^ e)ˣ * Nat.card (R ⧸ P) =
-    Nat.card (R ⧸ P ^ e) * (Nat.card (R ⧸ P) - 1)
-  rw [Nat.mul_sub_one]
+  simp only [absNorm_apply, Submodule.cardQuot_apply, Nat.mul_sub_one]
   exact Nat.eq_sub_of_add_eq (by grind)
+
+private theorem card_units_quotient_mul_prod_absNorm_of_prod_eq (I : Ideal R) [Finite (R ⧸ I)]
+    {S : Finset (HeightOneSpectrum R)} {e : HeightOneSpectrum R → ℕ} (he : ∀ v ∈ S, e v ≠ 0)
+    (hprod : ∏ v ∈ S, v.asIdeal ^ e v = I) : Nat.card (R ⧸ I)ˣ * ∏ v ∈ S, absNorm v.asIdeal =
+      absNorm I * ∏ v ∈ S, (absNorm v.asIdeal - 1) := by
+  let φ := HeightOneSpectrum.quotientEquivPiOfProdEq I (fun v : S ↦ (v : HeightOneSpectrum R))
+    (fun v ↦ e v) Subtype.coe_injective.pairwise_ne ((Finset.prod_coe_sort S _).trans hprod)
+  rw [Nat.card_congr ((Units.mapEquiv φ.toMulEquiv).trans MulEquiv.piUnits).toEquiv, Nat.card_pi,
+    Finset.prod_coe_sort S fun v ↦ Nat.card (R ⧸ v.asIdeal ^ e v)ˣ, ← hprod, map_prod,
+    ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
+  refine Finset.prod_congr rfl fun v hv ↦ ?_
+  have : Finite (R ⧸ v.asIdeal ^ e v) :=
+    Finite.of_surjective _ ((Function.surjective_eval (⟨v, hv⟩ : S)).comp φ.surjective)
+  exact card_units_quotient_pow_mul_absNorm v.asIdeal (he v hv)
 
 /-- **Euler's totient for ideals**, multiplicative form: if `S` is the set of height-one primes
 dividing `I` and `R ⧸ I` is finite, then `#(R ⧸ I)ˣ · ∏_{𝔭 ∈ S} N 𝔭 = N I · ∏_{𝔭 ∈ S} (N 𝔭 - 1)`.
@@ -75,24 +87,10 @@ theorem card_units_quotient_mul_prod_absNorm (I : Ideal R) [Finite (R ⧸ I)]
     (Associates.mk v.asIdeal).count (Associates.mk I).factors
   have he (v : HeightOneSpectrum R) : e v ≠ 0 ↔ v ∈ S := by
     rw [hS, Associates.count_ne_zero_iff_dvd hI v.irreducible]
-  have hprod : ∏ v ∈ S, v.asIdeal ^ e v = I := by
-    rw [← finprod_eq_finsetProd_of_mulSupport_subset (fun v ↦ v.asIdeal ^ e v) fun v hv ↦
-      (he v).mp fun h ↦ hv (by simp [h])]
-    exact Ideal.finprod_heightOneSpectrum_factorization hI
-  let φ := HeightOneSpectrum.quotientEquivPiOfProdEq I (fun v : S ↦ (v : HeightOneSpectrum R))
-    (fun v ↦ e v) Subtype.coe_injective.pairwise_ne
-    (by rw [Finset.prod_coe_sort S fun v ↦ v.asIdeal ^ e v]; exact hprod)
-  have hU : Nat.card (R ⧸ I)ˣ = ∏ v ∈ S, Nat.card (R ⧸ v.asIdeal ^ e v)ˣ := by
-    rw [Nat.card_congr ((Units.mapEquiv φ.toMulEquiv).trans MulEquiv.piUnits).toEquiv,
-      Nat.card_pi, Finset.prod_coe_sort S fun v ↦ Nat.card (R ⧸ v.asIdeal ^ e v)ˣ]
-  have hN : absNorm I = ∏ v ∈ S, absNorm (v.asIdeal ^ e v) := by
-    rw [← map_prod, hprod]
-  rw [hU, hN, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-  refine Finset.prod_congr rfl fun v hv ↦ ?_
-  have : Finite (R ⧸ v.asIdeal ^ e v) :=
-    Finite.of_surjective _ (Ideal.Quotient.factor_surjective (Ideal.le_of_dvd
-      (hprod ▸ Finset.dvd_prod_of_mem (fun v : HeightOneSpectrum R ↦ v.asIdeal ^ e v) hv)))
-  exact card_units_quotient_pow_mul_absNorm v.asIdeal ((he v).mpr hv)
+  refine card_units_quotient_mul_prod_absNorm_of_prod_eq I (fun v ↦ (he v).mpr) ?_
+  rw [← finprod_eq_finsetProd_of_mulSupport_subset (fun v ↦ v.asIdeal ^ e v) fun v hv ↦
+    (he v).mp fun h ↦ hv (by simp [h])]
+  exact Ideal.finprod_heightOneSpectrum_factorization hI
 
 /-- **Euler's totient for ideals**: if `S` is the set of height-one primes dividing `I` and
 `R ⧸ I` is finite, then `#(R ⧸ I)ˣ = N I · ∏_{𝔭 ∈ S} (1 - (N 𝔭)⁻¹)` in any field of
