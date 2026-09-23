@@ -37,7 +37,6 @@ bridge of `Ergodic/CondExpProjection.lean`, and the invariant conditional law of
 
 * O. Kallenberg, *Probabilistic Symmetries and Invariance Principles*, Springer, 2005, Chapter 1,
   Theorem 1.1.
-* Roadmap: `TauCetiRoadmap/Exchangeability/README.md`.
 
 ## Main results
 
