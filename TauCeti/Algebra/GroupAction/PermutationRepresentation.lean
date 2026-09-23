@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.Group.Action.End
 public import Mathlib.Algebra.Group.Subgroup.Ker
+public import TauCeti.GroupTheory.Perm.PermCongr
 
 /-!
 # The permutation representation of a group action on an enumerated set
@@ -105,13 +106,11 @@ theorem permutationRepresentation_eq_conj (e e' : α ≃ Fin n) (g : G) :
 This is the subgroup-level form of `permutationRepresentation_eq_conj`, and it is what makes
 "canonical up to conjugacy" a statement about the image rather than about individual elements. -/
 theorem map_permutationRepresentation_range_conj (e e' : α ≃ Fin n) :
-    Subgroup.map (MulAut.conj (e.symm.trans e' : Equiv.Perm (Fin n))).toMonoidHom
+    Subgroup.map (MulAut.conj (e.symm.trans e' : Equiv.Perm (Fin n)))
         (permutationRepresentation (G := G) e).range =
       (permutationRepresentation (G := G) e').range := by
-  rw [MonoidHom.map_range]
-  congr 1
-  ext g
-  simp [MulAut.conj_apply, permutationRepresentation_eq_conj e e' g]
+  simp only [permutationRepresentation, ← MonoidHom.map_range]
+  exact (Equiv.map_permCongrHom_eq_map_conj e e' _).symm
 
 end Equiv
 
