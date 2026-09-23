@@ -279,20 +279,65 @@ theorem relTransfer_mem_coinvariantsKer {x : V} (hx : x ∈ Coinvariants.ker ρ)
   exact hmap ⟨x, hx, rfl⟩
 
 /-- **The relative transfer is computed by any transversal, modulo the augmentation submodule of
-`H`.** `relTransfer` sums `ρ q.out⁻¹` over the transversal `Quotient.out`; replacing it by any
-other choice `f` of coset representatives changes each summand by an element of `H`, which acts
-trivially on coinvariants. -/
-theorem relTransfer_sub_sum_mem (f : G ⧸ H → G) (hf : ∀ q, (f q : G ⧸ H) = q) (x : V) :
-    relTransfer ρ H x - ∑ q : G ⧸ H, ρ (f q)⁻¹ x ∈ Coinvariants.ker (ρ.comp H.subtype) := by
-  rw [relTransfer_apply, ← Finset.sum_sub_distrib]
+`H`.** `relTransfer` sums `ρ q.out⁻¹` over the transversal `Quotient.out`; any family `f` whose
+classes exhaust `G ⧸ H` bijectively computes the same element of the coinvariants, because two
+representatives of a coset differ by an element of `H`. -/
+theorem relTransfer_sub_sum_mem {ι : Type*} [Fintype ι] (f : ι → G)
+    (hf : Function.Bijective fun i => ((f i : G) : G ⧸ H)) (x : V) :
+    relTransfer ρ H x - ∑ i, ρ (f i)⁻¹ x ∈ Coinvariants.ker (ρ.comp H.subtype) := by
+  classical
+  set e : ι ≃ G ⧸ H := Equiv.ofBijective _ hf
+  rw [relTransfer_apply, ← Equiv.sum_comp e.symm fun i => ρ (f i)⁻¹ x, ← Finset.sum_sub_distrib]
   refine Submodule.sum_mem _ fun q _ => ?_
-  have hq : (f q)⁻¹ * (q.out : G) ∈ H := QuotientGroup.eq.mp ((hf q).trans q.out_eq'.symm)
-  have hg : H.subtype ⟨(f q)⁻¹ * (q.out : G), hq⟩⁻¹ * (f q)⁻¹ = ((q.out : G))⁻¹ := by
-    change ((f q)⁻¹ * (q.out : G))⁻¹ * (f q)⁻¹ = _
+  have hq : (f (e.symm q))⁻¹ * (q.out : G) ∈ H :=
+    QuotientGroup.eq.mp ((e.apply_symm_apply q).trans q.out_eq'.symm)
+  have hg : H.subtype ⟨(f (e.symm q))⁻¹ * (q.out : G), hq⟩⁻¹ * (f (e.symm q))⁻¹ =
+      ((q.out : G))⁻¹ := by
+    change ((f (e.symm q))⁻¹ * (q.out : G))⁻¹ * (f (e.symm q))⁻¹ = _
     group
-  refine Coinvariants.mem_ker_of_eq (ρ := ρ.comp H.subtype) ⟨_, hq⟩⁻¹ (ρ (f q)⁻¹ x) _ ?_
+  refine Coinvariants.mem_ker_of_eq (ρ := ρ.comp H.subtype) ⟨_, hq⟩⁻¹
+    (ρ (f (e.symm q))⁻¹ x) _ ?_
   congr 1
   rw [MonoidHom.comp_apply, ← Module.End.mul_apply, ← map_mul, hg]
+
+/-- A section of the quotient map is in particular such a family. -/
+theorem relTransfer_sub_sum_section_mem (f : G ⧸ H → G) (hf : ∀ q, ((f q : G) : G ⧸ H) = q)
+    (x : V) : relTransfer ρ H x - ∑ q : G ⧸ H, ρ (f q)⁻¹ x ∈
+      Coinvariants.ker (ρ.comp H.subtype) :=
+  relTransfer_sub_sum_mem f (by simp only [hf]; exact Function.bijective_id) x
+
+/-- **The relative transfer is transported along an isomorphism of representations**, modulo the
+augmentation submodule. Carrying the `Quotient.out` transversal of `H` in `G` across `e` gives a
+transversal of `H'` in `G'`, but not the one `Quotient.out` picks there, so the comparison is
+again `relTransfer_sub_sum_mem`. -/
+theorem relTransfer_map_sub_mem {G' V' : Type*} [Group G'] [AddCommGroup V'] [Module R V']
+    {ρ' : Representation R G' V'} (e : G ≃* G') (φ : V →ₗ[R] V')
+    (hφ : ∀ g x, φ (ρ g x) = ρ' (e g) (φ x)) {H' : Subgroup G'}
+    (he : H.map (e : G →* G') = H') [Fintype (G' ⧸ H')] (x : V) :
+    φ (relTransfer ρ H x) - relTransfer ρ' H' (φ x) ∈ Coinvariants.ker (ρ'.comp H'.subtype) := by
+  classical
+  have hmem : ∀ a b : G, ((e a : G') : G' ⧸ H') = ((e b : G') : G' ⧸ H') ↔
+      ((a : G ⧸ H) = (b : G ⧸ H)) := fun a b => by
+    rw [QuotientGroup.eq, QuotientGroup.eq, ← he]
+    refine ⟨fun h => ?_, fun h => ⟨a⁻¹ * b, h, by simp⟩⟩
+    obtain ⟨y, hy, hey⟩ := h
+    have hya : y = a⁻¹ * b := e.injective (by simpa using hey)
+    exact hya ▸ hy
+  have hbij : Function.Bijective fun q : G ⧸ H => ((e (q.out : G) : G') : G' ⧸ H') := by
+    constructor
+    · intro a b hab
+      have hout := (hmem _ _).1 hab
+      rwa [QuotientGroup.out_eq', QuotientGroup.out_eq'] at hout
+    · intro r
+      refine ⟨((e.symm (r.out : G') : G) : G ⧸ H), ?_⟩
+      dsimp only
+      rw [(hmem (Quotient.out _) (e.symm (r.out : G'))).2 (QuotientGroup.out_eq' _),
+        e.apply_symm_apply, QuotientGroup.out_eq']
+  have hsum : φ (relTransfer ρ H x) = ∑ q : G ⧸ H, ρ' (e (q.out : G))⁻¹ (φ x) := by
+    rw [relTransfer_apply, map_sum]
+    exact Finset.sum_congr rfl fun q _ => (hφ _ x).trans (by rw [map_inv])
+  rw [hsum, ← neg_sub (relTransfer ρ' H' (φ x))]
+  exact Submodule.neg_mem _ (relTransfer_sub_sum_mem _ hbij (φ x))
 
 /-- **The relative transfer is transitive along a tower `K ≤ H ≤ G`, modulo the augmentation
 submodule of `K`.** Transferring from `G` to `H` and then from `H` to `K` agrees with the
@@ -322,7 +367,7 @@ theorem relTransfer_relTransfer_sub_relTransfer_mem {K : Subgroup G} (hKH : K �
     rw [MonoidHom.comp_apply, ← Module.End.mul_apply, ← map_mul, mul_inv_rev]
     rfl
   rw [← hprod, ← neg_sub (relTransfer ρ K x)]
-  exact Submodule.neg_mem _ (relTransfer_sub_sum_mem _ hcoset x)
+  exact Submodule.neg_mem _ (relTransfer_sub_sum_section_mem _ hcoset x)
 
 end Coinvariants
 
