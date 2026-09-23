@@ -41436,7 +41436,7 @@ Both r881 rescues landed within five hours of being marked ready.
 `on-hold` — the r881 trap, repeated by r881 itself, which ended before its first build finished. Before marking it ready: the pin at
 the build base `c6b94ee7a` and at main `62fc0367c` are both `dc4b8d60d5`, main never touched the file, and the merge-tree is clean,
 so the build still counts. The pipeline posted an **approved board at 09:07:14Z** on head `5c3e4390e`, eight minutes after
-ready_for_review, and the PR is now `ready-to-merge`.
+ready_for_review. It queued at 09:07:36Z and **merged at 09:19:24Z** as `2d137180a`.
 
 **Step 5, kind 3: opened draft #8224** (09:07:51Z), `improve/resolvent-integrand-nonneg` @ `f4b657306`, +3/−3,
 `Roadmap: OneParameterSemigroups` (as #6911). This is the r848 candidate, unblocked by #6911's merge. No open PR touches the file:
@@ -41461,16 +41461,31 @@ with no rename. Its one caller in the repo, the `M / (λ-ω)` bound inside `reso
 * **`/mathlibable`:** the local Mathlib is at `dc4b8d60d5` (it matches the pin). Mathlib has no complex residue at all; its only
   `residue` is `AlgebraicGeometry.Scheme.residue`. The private `iteratedDeriv_pow_sub_mul_div_factorial` has no counterpart:
   `IteratedDeriv/Lemmas.lean:432` gives the monomial ingredient (`iteratedDeriv_fun_pow_zero`), which the proof already uses.
-* **gpt-6-astra:** launched at 09:11Z on the full diff with questions on arrow elaboration, split semantics and indentation. **Trap:**
-  `astra-residue-answer.txt` already existed from **2026-09-15**, an earlier pass on another residue file, and read at first as an
-  answer to this one (it discussed `toMeromorphicNFOn` and `h.ne`, which appear nowhere here). Its mtime gave it away. It was moved
-  to `astra-residue-answer.stale-0915.txt`, and #8233 stays a draft until the fresh answer lands.
+* **gpt-6-astra** (`astra-residue-answer.txt`, 09:12:40Z): "The supplied diff preserves meaning. I see no indentation error or
+  tactic escaping its intended block." That covers (a) arrows in every listed position, (b) splits under `have … := by`, bullets and
+  `| empty =>`, and (c) indentation. **Trap, twice over:** the first check ran at 09:12:32Z and printed a 2026-09-15 answer from an
+  earlier residue pass. Codex overwrote that file **8 seconds later**. The "stale" file then moved aside at ~09:13 was in fact the
+  fresh answer, which was then waited on for 12 minutes. The waiter could never finish either: `pgrep -f astra-residue-answer` matched
+  the waiter's own command line. What finally settled it was the codex log (`tokens used`, final text at 09:12:40Z) plus the renamed
+  file's mtime.
 * Gate on `62fc0367c`: **12 ok / 0 failed / 0 UNRUN**.
 
 **#8224 went green at 09:17:52Z and was marked ready at 09:18:43Z** (every latest check was green and the head unchanged), so step 4 may drive it
-only after 10:18Z. **In progress now:** #8224 (`awaiting-review`) and #8233 (draft, building, astra pending). #8101 is `ready-to-merge` and does not
-count. One slot is free. The next opening is **kind 3**, and two candidates were unblocked this round: `gammaPDFReal_of_pos`
-(#6580 merged 2026-09 — its weakening needs an `_of_nonneg` rename) and the r843 `ConvexSubgroup.lean` leftovers (#6896 merged, and
-no open PR touches the file). Main is `3d3243192`.
+only after 10:18Z. **Step 5 again, kind 3: opened draft #8235** (the slot was free, and two kind-3 candidates had been unblocked:
+`gammaPDFReal_of_pos` by #6580's merge, and the r843 `ConvexSubgroup.lean` leftovers by #6896's). The branch is
+`improve/convexsubgroup-mabs-mem` @ `3a7c03114`, from `2d137180a`; +3/−8; `Roadmap: AdicSpaces` (as #6896).
+`mem_of_mabs_le_mabs` and `mem_closure_singleton` each rebuilt `|h|ₘ ∈ H` by `rcases mabs_choice … <;> rw […]` plus
+`exact hh`/`exact inv_mem hh`. Mathlib's root-namespace `mabs_mem_iff` (`Algebra/Group/Subgroup/Order.lean:23`) covers any `SetLike`
+with `InvMemClass`, and `ConvexSubgroup Γ` has `SubgroupClass`. Both proofs are now `mabs_mem_iff.mpr`; `mem_closure_singleton`
+keeps its `hy`, so no argument has to elaborate without its expected type. The module was not in the file's import closure
+(1565 modules), so a private `import Mathlib.Algebra.Group.Subgroup.Order` is added. Every one of its imports is already in the
+closure, so it adds exactly one module. There is no TauCeti `mabs_mem_iff` to shadow it, and neither lemma has an outside caller.
+Gate on `2d137180a`: **12 ok / 0 failed / 0 UNRUN** (`importcover` ok).
+
+**In progress now (cap full):** #8224 (`awaiting-review`), #8233 (draft, building; astra clear) and #8235 (draft, first build).
+The next opening is **kind 1** if the pin has moved past `dc4b8d60d5`, otherwise kind 2. Still
+queued for kind 3: `gammaPDFReal_of_pos` (`_of_nonneg` rename, update every caller), `not_mem_maxAvoid` → `notMem_maxAvoid`
+(the file's other names already use `notMem`), and `Resolvent/Basic.lean`'s private `integral_Ioi_eq_Ioc_add_Ioi` (uses only `hh.le`;
+after #8224). Main is `2d137180a`.
 
 No toolkit edits.

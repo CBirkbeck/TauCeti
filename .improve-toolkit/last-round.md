@@ -44,20 +44,23 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8101** | `5c3e4390e` | green | kind 2 (`Cesaro/Convergence.lean` style pass; `Roadmap: Exchangeability`). Left a draft by r881 and parked `on-hold`; r882 checked the pin was unchanged and **marked it ready 08:59:00Z**. The pipeline's board **approved at 09:07:14Z** on head | **queue** — `ready-to-merge`; watch with `queuepos.py` |
 | **#8224** | `f4b657306` | green (09:17:52Z) | kind 3 (`StronglyContinuousSemigroup.norm_resolvent_integrand_le` takes `0 ≤ t`; its one caller gains `.le`; +3/−3; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Opened 09:07:51Z from `62fc0367c` as a draft; **marked ready 09:18:43Z** | **pipeline** — board due by ~10:05Z; step 4 may drive only after 10:18Z |
-| **#8233** | `77df94016` | first build | kind 2 in kind 1's slot (`Analysis/Contour/Residue/Basic.lean`: 49 `↦`, 21 chains split, one comment; +93/−63; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**, opened 09:16:54Z from `62fc0367c`. gpt-6-astra was launched at 09:11Z; its answer lands in `$SP/astra-residue-answer.txt` — **check the mtime is 2026-09-23** | **astra + CI** — mark ready when both are clear |
+| **#8233** | `77df94016` | first build | kind 2 in kind 1's slot (`Analysis/Contour/Residue/Basic.lean`: 49 `↦`, 21 chains split, one comment; +93/−63; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**, opened 09:16:54Z from `62fc0367c`. gpt-6-astra (09:12:40Z): meaning preserved, no indentation error, nothing to reject | **CI** — mark ready when `sandboxed-build` is green |
+| **#8235** | `3a7c03114` | first build | kind 3 (`ConvexSubgroup.lean`: `mem_of_mabs_le_mabs` and `mem_closure_singleton` use Mathlib's `mabs_mem_iff` instead of a four-line `mabs_choice` split; adds a private `import Mathlib.Algebra.Group.Subgroup.Order`, one new module; +3/−8; gate 12/0/0; `Roadmap: AdicSpaces`). **Draft**, opened from `2d137180a` | **CI** — mark ready when `sandboxed-build` is green |
 
-**In progress: #8224 (`awaiting-review`, ready 09:18:43Z) and #8233 (draft, first build).** #8101 is `ready-to-merge` and does not count, so **one slot is free**, and
-the next opening is kind 3. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `3d3243192`, the Mathlib pin
+**In progress (cap full): #8224 (`awaiting-review`, ready 09:18:43Z), #8233 (draft, first build) and #8235 (draft, first
+build).** **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z). The next opening is kind 1
+if the pin has moved, otherwise kind 2. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30.
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `daa610717`
+(r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
 
 0. **r843–r882:** the cap counts only PRs in progress (rotation paragraph above). In progress: #8224 (green 09:17:52Z, ready 09:18:43Z;
-   drive not before 10:18Z) and #8233 (draft, first build). Mark #8233 ready once its build is green and the fresh astra answer is read. #8101 is
-   `ready-to-merge`: pass it to `queuepos.py`. One slot is free, for kind 3 (item 5).
+   drive not before 10:18Z), #8233 (draft, first build) and #8235 (draft, first build). Mark each ready once its build is green
+   (astra has cleared #8233). #8101
+   merged 09:19:24Z. The cap is full; at the next free slot, open kind 1 if the pin moved, else kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -79,7 +82,8 @@ the next opening is kind 3. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 
    r881 rebased both onto fresh main and re-gated before marking them ready, so the builds that matter ran against `dc4b8d60d5`.
 
 
-5. **At the next free slot: kind 3.** Two candidates were unblocked at r882:
+5. **Kind 3 went as #8235 (ConvexSubgroup `mabs_mem_iff`). Queued kind-3 candidates for the next kind-3 turn:** `not_mem_maxAvoid` →
+   `notMem_maxAvoid` (a rename: the file's other names already say `notMem`; update every caller, with no alias), plus the following, of which the first is TAKEN by #8235:
    * the r843 `Algebra/Order/Group/ConvexSubgroup.lean` leftovers (#6896 merged, and no open PR touches the file):
      `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases where Mathlib's `mabs_mem_iff` gives it. Check
      that `mabs_mem_iff` is still at the pin and fits the statement before cutting.
@@ -329,7 +333,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r879: kind 3 opened as draft **#6953**, dropping the unused `h2` and `h3` in the Weierstrass equation differential (gate 12/0/0; `deadhave` flagged `h3`, and `h2` is dead the same way). No merges since #6845 and #6841, main still `e0103897b`, and #6950 was not yet due for a drive (23:38Z).
 * r880: **#6952's first build failed** on the `simpa only [mul_one]` golf (instance paths). The job log gave the exact mismatch, `f2f4f9666` restores the explicit `have`/`simp only`/`exact`, and the body was corrected. #6953 was still building, #6950 still had no board, and there were no merges.
 * r881 (2026-09-22, after a six-day gap): every queued PR had merged — thirteen of mine plus #5950. The two survivors, #6952 and #6953, were drafts the bot had parked `on-hold`; both were rebased onto `c6b94ee7a`, re-gated 12/0/0, pushed and marked ready. The kind-1 re-run at pin `dc4b8d60d5` was dry (the `wordProd` collision is a false positive), so kind 2 opened as draft **#8101**, a style pass on `Cesaro/Convergence.lean` (gpt-6-astra: no risk; gate 12/0/0).
-* r882 (2026-09-23): no cron had been set, so a 10-minute job (`4b5d0e55`) now drives rounds. #6952 and #6953 had merged. #8101 was still a draft, parked `on-hold` again; with the pin unchanged, it was marked ready and approved within 8 minutes. Kind 3 opened as draft **#8224** (`norm_resolvent_integrand_le` to `0 ≤ t`), and kind 2, in kind 1's slot, as draft **#8233** (`Residue/Basic.lean` style pass). Both gated 12/0/0.
+* r882 (2026-09-23): no cron had been set, so a 10-minute job (`4b5d0e55`) now drives rounds. #6952 and #6953 had merged. #8101 was still a draft, parked `on-hold` again; with the pin unchanged, it was marked ready, approved within 8 minutes and merged at 09:19:24Z. Kind 3 opened as draft **#8224** (`norm_resolvent_integrand_le` to `0 ≤ t`; ready 09:18:43Z), kind 2 in kind 1's slot as draft **#8233** (`Residue/Basic.lean` style pass), and kind 3 as draft **#8235** (`ConvexSubgroup.lean` uses Mathlib's `mabs_mem_iff`). All three gated 12/0/0.
 
 ## Candidates for a later step 5
 
@@ -396,9 +400,11 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
 
 ## Standing traps
 
-* **A reused answer-file name reads as a fresh answer (r882).** `astra-residue-answer.txt` survived from a 2026-09-15 pass on another
-  file, and the first check of the new run printed it as though it answered the new question. Before launching astra, move any
-  existing `-o` target aside, and before trusting an answer, check its mtime and that it names this diff's declarations.
+* **Judge an astra run by its log, not by the answer file alone (r882).** An existing `-o` file from an earlier pass printed as
+  though it answered the new question, and was overwritten 8 seconds later. The fresh file was then moved aside as "stale" and waited
+  on for 12 minutes. Before launching, give the `-o` target a unique name (`astra-<topic>-<UTC time>.txt`). A run is finished when
+  its log has `tokens used`, and the answer is the log's final text. **Never wait with `pgrep -f <pattern>`**: the waiter's own command
+  line matches, so it never exits. Wait on the codex PID (`kill -0 $pid`) instead.
 * **The round that opens a draft must also be the one that marks it ready (r881 → r882).** r881 recorded the on-hold trap and then
   ended with #8101 still a draft. The bot parked it within the hour. When a round ends with a draft building, say so in item 0 of
   "What to expect next" so the next round's first action is to mark it ready.
