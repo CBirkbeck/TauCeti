@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.NumberField.Global.Counting.RayCoset
+public import TauCeti.NumberTheory.NumberField.Global.Counting.Ray.Coset
 public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.IntegerSet
 
 /-!
@@ -33,6 +33,8 @@ unity acting on the domain; a ray-class ideal count imposes both itself.
 ## Main results
 
 * `TauCeti.GlobalNumberFields.mem_rayIdealSet`: its points, unfolded;
+* `TauCeti.GlobalNumberFields.rayIdealSet_one`: the trivial modulus recovers Mathlib's
+  `NumberField.mixedEmbedding.fundamentalCone.idealSet`;
 * `TauCeti.GlobalNumberFields.rayIdealSet_eq_inter_vadd`: the same set as a translate of the
   congruence lattice, intersected with the domain;
 * `TauCeti.GlobalNumberFields.rayIdealSet_subset_rayIntegerSet` and
@@ -74,14 +76,21 @@ def rayIdealSet (𝔪 : Modulus K) (𝔞 : (Ideal (𝓞 K))⁰) : Set (mixedSpac
       {α : 𝓞 K | α ∈ (𝔞 : Ideal (𝓞 K)) ∧ α - 1 ∈ 𝔪.finitePart}
 
 /-- **The points of `rayIdealSet`.**  A point lies in it exactly when it lies in the ray
-fundamental domain and is the image of an element of `𝔞` congruent to one modulo `𝔪₀`.
-
-The two sides are definitionally equal, so a membership hypothesis can equally be destructured
-on the spot, as `rintro ⟨hdom, α, ⟨h𝔞, h𝔪⟩, rfl⟩`. -/
+fundamental domain and is the image of an element of `𝔞` congruent to one modulo `𝔪₀`. -/
 theorem mem_rayIdealSet {𝔪 : Modulus K} {𝔞 : (Ideal (𝓞 K))⁰} {x : mixedSpace K} :
     x ∈ rayIdealSet 𝔪 𝔞 ↔ x ∈ rayFundamentalDomain 𝔪 ∧
       ∃ α : 𝓞 K, (α ∈ (𝔞 : Ideal (𝓞 K)) ∧ α - 1 ∈ 𝔪.finitePart) ∧ mixedEmbedding K (α : K) = x :=
   Iff.rfl
+
+/-- **The trivial modulus recovers Mathlib's ideal set.**  Its finite part is the whole ring, so
+the congruence condition holds vacuously, and its ray fundamental domain is the fundamental cone
+(`rayFundamentalDomain_one`); what is left is
+`NumberField.mixedEmbedding.fundamentalCone.idealSet`. -/
+@[simp]
+theorem rayIdealSet_one (𝔞 : (Ideal (𝓞 K))⁰) :
+    rayIdealSet (Modulus.one K) 𝔞 = fundamentalCone.idealSet K 𝔞 := by
+  ext x
+  simp [mem_rayIdealSet, fundamentalCone.mem_idealSet, rayFundamentalDomain_one]
 
 /-- **`rayIdealSet` as the domain met with a translate of the congruence lattice.**  For any
 element `ξ` of `𝔞` congruent to one modulo `𝔪₀`, the set is the ray fundamental domain
