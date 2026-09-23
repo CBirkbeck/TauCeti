@@ -331,11 +331,12 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/site-data"
           missing=()
-          for asset in \
-            loc-tauceti.svg loc-roadmap.svg loc-per-roadmap.svg participation.svg \
-            pr-queue-age.svg review-cycles-reached.svg rolling-seven-day-history.svg \
-            cumulative-merges-by-contributor.svg cumulative-reviews-by-contributor.svg \
-            pr-stats.json progress.json pipeline-health.json
+          # Asked of the generators, not restated here. This list was written out by hand, so
+          # adding a chart meant editing two files -- and when those edits landed in two
+          # different pull requests, the two roadmap/contributor grids were generated into
+          # static_files and then not carried. The site referenced two images that never
+          # arrived, and nothing failed: the artifact was simply missing them.
+          for asset in $(python3 scripts/generated_assets.py)
           do
             if [ -s "web/static_files/$asset" ]; then
               cp "web/static_files/$asset" "$RUNNER_TEMP/site-data/$asset"
@@ -600,6 +601,21 @@ jobs:
             web/examples/.lake
           key: web-lake-${{ runner.os }}-${{ hashFiles('web/lake-manifest.json', 'web/lean-toolchain', 'web/examples/lake-manifest.json', 'web/examples/lean-toolchain') }}
           restore-keys: web-lake-${{ runner.os }}-
+
+      # Run 35812845983 failed here with `unable to open output file .../Anchors.c.o.export:
+      # 'Operation not permitted'` while compiling into the restored tree. Run 35812919873
+      # restored the SAME cache entry and succeeded, because it needed no rebuild -- so the
+      # failure happens only when those objects have to be recompiled, which is the same
+      # intermittency the artifact-cache leak had. Why a restored file is unwritable is not
+      # established; that it is, is. Restoring write permission costs milliseconds and removes
+      # the error whatever put it there, which is worth more than a theory about which.
+      - name: Make the restored Lake trees writable
+        working-directory: ${{ github.workspace }}
+        run: |
+          for tree in web/.lake web/examples/.lake; do
+            [ -d "$tree" ] && chmod -R u+w "$tree"
+          done
+          exit 0
 
       # web/examples has no committed Lake manifest and no committed toolchain: the manifest is
       # derived from the root pins here, and elan finds the root lean-toolchain by walking up. So
