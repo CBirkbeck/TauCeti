@@ -237,13 +237,7 @@ theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRest
     (ρ := (c.rep F).ρ) (H := T'.galHom.range) hKH ((y : F.level c.top))
   rw [← hw] at htower
   -- The two ways of reading the image of the smallest Galois group inside the largest agree.
-  have hsub : ((T.trans T').galHom.range.subtype).comp
-      (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom =
-        (T'.galHom.range.subtype).comp
-          (((T.trans T').galHom.range).subgroupOf T'.galHom.range).subtype := by
-    ext x
-    simp
-  rw [MonoidHom.comp_assoc, ← hsub,
+  rw [MonoidHom.comp_assoc, ← Subgroup.subtype_comp_subgroupOfEquivOfLe hKH,
     Representation.coinvariantsKer_comp_comp_of_surjective
       ((T.trans T').galHom.range.subtype)
       (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom
