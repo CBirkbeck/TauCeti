@@ -41971,3 +41971,13 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
   * Gate **12 ok / 0 failed / 0 UNRUN**. gpt-6-astra was launched at 17:29Z (`astra-prodkern-1729.txt`); it was asked specifically about
     `@[fun_prop]` statements and docstring accuracy. One waiter covers the astra log marker and the first build; mark ready when both clear.
 * Other kinds are still dry (r930 scanner re-run). Main `c4a45e85d`.
+
+## r932 — 2026-09-23T17:34Z (cron)
+
+* #8332 is on its first build with astra pending (waiter running). No merges. Pin `dc4b8d60d5`, main `6133bbae0`.
+* **Step 5, kind 2 again** (kind 3 and kind 1 are dry): **opened draft #8339**, `improve/decoupling-style` @ `9d44d5749`, from `6133bbae0`;
+  `Roadmap: Exchangeability` (as #3427 and #3371). Target: `Probability/DeFinetti/ViaKoopman/Decoupling.lean`, next in the r931 scoring
+  (414 lines, 100 `fun … =>`, no match arms, no real chains). No open PR touches it. Edits: 100 arrows (asserted), and the References list
+  drops its "Roadmap: … **Layer 5** …, whose milestone is `deFinetti_viaKoopman`" bullet. Gate **12 ok / 0 failed / 0 UNRUN**. gpt-6-astra
+  was launched at 17:38Z (`astra-decoup-1738.txt`); a waiter covers astra and the first build.
+* In progress: #8332 and #8339 (drafts). One slot is open.

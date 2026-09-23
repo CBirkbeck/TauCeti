@@ -1,4 +1,4 @@
-# Last round — r931 (2026-09-23T17:35Z)
+# Last round — r932 (2026-09-23T17:42Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -45,15 +45,16 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#8332** | `0b1248176` | first build | kind 2 (`MeasureTheory/Measure/ProductKernel.lean`: 100 `↦`, and two docstrings off the roadmap stage; +74/−75; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r931 from `c4a45e85d`; gpt-6-astra launched 17:29Z (`$SP/astra-prodkern-1729.txt`) | **astra + CI** — mark ready when both clear |
+| **#8339** | `9d44d5749` | first build | kind 2 (`Probability/DeFinetti/ViaKoopman/Decoupling.lean`: 100 `↦`, and the roadmap bullet dropped from References; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r932 from `6133bbae0`; gpt-6-astra launched 17:38Z (`$SP/astra-decoup-1738.txt`) | **astra + CI** — mark ready when both clear |
 
-**In progress (1 of 3): #8332 (draft; astra and first build pending).** Eleven of this session's PRs merged on 2026-09-23: #8101,
+**In progress (2 of 3): #8332 and #8339 (drafts; astra and first builds pending).** Eleven of this session's PRs merged on 2026-09-23: #8101,
 #8233, #8224, #8235, #8273, #8275, #8286, #8291, #8295, #8304 and #8305.
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `2f7ee85e6`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `16a704088`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -63,8 +64,8 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r931):** the quota is back and the hard stop is lifted. In progress is the draft #8332 (kind 2, ProductKernel); **mark it ready once
-   astra clears and the build is green**. Two slots are open. Next: kind 3 (the scanners are dry, so look for a fresh source, or another
+0. **Now (r931):** the quota is back and the hard stop is lifted. In progress are the drafts #8332 (ProductKernel) and #8339 (Decoupling), both kind 2; **mark each ready
+   once astra clears and the build is green**. One slot is open. Next: kind 3 (the scanners are dry, so look for a fresh source, or another
    kind 2 once #8332 lands), and kind 1 only if the pin moves. Step 4 applies again: drive any PR whose green build sits an hour
    past `max(CI-green, ready_for_review)` with no board, after probing the quota.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -146,7 +147,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r931 did
+## What r703–r932 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -382,6 +383,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r928–r929: no change.
 * r930: **#8305 merged**, the eleventh today; no `improve/*` PR is open. A scanner re-run on fresh main found no new target.
 * r931: **the quota is back** (astra and sol probes ok), so the hard stop is lifted. Kind 2 opened as draft **#8332** (`ProductKernel.lean` style pass; gate 12/0/0; astra pending).
+* r932: kind 2 again as draft **#8339** (`ViaKoopman/Decoupling.lean` style pass; gate 12/0/0; astra pending).
 
 ## Candidates for a later step 5
 
