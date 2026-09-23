@@ -42260,3 +42260,10 @@ CI is recovering (135 queued, 16 running, up from 4–8). The three astra-cleare
 ## r962 — 2026-09-23T22:34Z (cron)
 
 CI is still recovering (128 queued, 16 running). The three astra-cleared drafts are still on queued builds. No merges. Main `72c797e2f`.
+* r962 addendum (waiter): **#8402 went green at 22:38:41Z** (its build started in the CI recovery) **and was marked ready**. Astra had
+  cleared it (r951). The guards held: every check green, head `1ffccd0f8` unchanged, pin unchanged, and the file untouched. #8413 and #8426
+  are still queued.
+
+## r963 — 2026-09-23T22:44Z (cron)
+
+#8402 is `awaiting-review` (ready 22:39:10Z). #8413 and #8426 (astra-cleared) are still on queued builds. No merges. Pin `dc4b8d60d5`, main `bae992d9a`.
