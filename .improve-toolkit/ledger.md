@@ -42292,3 +42292,18 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * #8413 is `awaiting-review` with no board yet (ready 23:04:55Z, so step 4 opens no earlier than 00:05Z). #8426's `sandboxed-build`
   started at 23:13:28Z (a background waiter is armed); #8469's is still queued (105 queued, 19 running repo-wide).
 * In progress (cap full): #8413, #8426 and #8469. No step 5. Pin `dc4b8d60d5`, main `dbb95106b`.
+
+## r967 — 2026-09-23T23:31Z (cron)
+
+* **#8413 approved** (board on head `e6125f186`, updated 23:20:57Z); now `ready-to-merge`.
+* **#8426 went green** (`sandboxed-build` completed 23:24:30Z) **and was marked ready at 23:24:49Z.** Guards: all latest check-runs
+  green, head `db6452b92` unchanged, pin `dc4b8d60d5` at base `aefb9f811` and at main, file untouched on main since the base.
+* **Step 5, kind 2** (kind 1 still dry at `dc4b8d60d5`; the astra probe answered "ok"): **opened draft #8473**,
+  `improve/arrays-rowcoding-style` @ `f52a3a755` from `dbb95106b`; `Roadmap: Exchangeability`. Target: `Exchangeability/Arrays/RowCoding.lean`
+  (333 lines, 65 `fun … =>`, no chains, no open-PR overlap). Edits: 65 arrows (asserted), and the module docstring's roadmap sentence ("the
+  coupled interface needed by … `TauCetiRoadmap/Exchangeability/README.md`, Layer 8 … remains the next step") is replaced by a scope sentence:
+  "This file stops short of the final Aldous--Hoover representation, which further resolves the random path law into column and cell noise."
+  Gate 12/0/0. The astra question uses the three-dot diff (1 file); **gpt-6-astra cleared it** ("I would reject none of these edits"; the
+  new sentence is accurate).
+* Note: `prepush.sh` lives in the toolkit's `tools/`, not the repo's; run it as `~/GitHub/TauCeti/.mathlib-quality/improve/tools/prepush.sh`.
+* In progress (cap full): #8426, #8469 (build queued) and #8473. Pin `dc4b8d60d5`, main `dbb95106b`.
