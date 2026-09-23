@@ -26,6 +26,8 @@ integrality from `x` to `y`.
 
 ## Main results
 
+* `WeierstrassCurve.smulEval_equiv_of_zsmul`: the division-polynomial triple at `P` represents
+  `n • P` in Jacobian coordinates; the two coordinate identities below are read off it.
 * `WeierstrassCurve.mul_eval_ΨSq_eq_eval_Φ_of_zsmul`: the coordinate identity
   `x' · ΨSqₙ(x) = Φₙ(x)` relating `P` and `n • P`, over a field.
 * `WeierstrassCurve.mul_evalEval_ψ_cube_eq_evalEval_ω_of_zsmul`: its `y`-coordinate companion
@@ -92,7 +94,7 @@ open Jacobian in
 /-- **The division-polynomial triple at `P` represents `n • P`**, so it agrees with the affine
 representative of that value up to a unit scalar. Both coordinate identities below are one
 coordinate of this single equivalence. -/
-private theorem smulEval_equiv_of_zsmul {x y : F} (hns : E.toAffine.Nonsingular x y)
+theorem smulEval_equiv_of_zsmul {x y : F} (hns : E.toAffine.Nonsingular x y)
     {x' y' : F} (hns' : E.toAffine.Nonsingular x' y') {n : ℤ}
     (hnP : n • (Affine.Point.some _ _ hns) = Affine.Point.some _ _ hns') :
     smulEval E x y n ≈ ![x', y', 1] := by
@@ -128,11 +130,10 @@ theorem mul_eval_ΨSq_eq_eval_Φ_of_zsmul {x y : F} (hns : E.toAffine.Nonsingula
 /-- **The `y`-coordinates of `P` and `n • P` satisfy `y' · ψₙ(P)³ = ωₙ(P)`.**
 
 The companion of `mul_eval_ΨSq_eq_eval_Φ_of_zsmul` for the second coordinate, cleared of its
-denominator in the same way. Where `ψₙ(P) ≠ 0` the two identities together pin `n • P` down, which
-the `x`-identity alone cannot, because a point and its negative share an `x`-coordinate. Where
-`ψₙ(P) = 0` both sides are zero and neither identity constrains `n • P`: clearing the denominator
-is what lets the statement be made without that hypothesis, and it is also what costs it its
-force there. -/
+denominator in the same way. The two identities together pin `n • P` down, which the
+`x`-identity alone cannot, because a point and its negative share an `x`-coordinate. The hypothesis
+`n • P = (x', y')` forces `ψₙ(P) ≠ 0`, since the two Jacobian representatives differ by a unit
+scalar acting on the `Z`-coordinate. -/
 -- The same comparison of Jacobian representatives, reading off the `Y`-coordinate with
 -- `Jacobian.Y_eq_of_equiv` in place of `X_eq_of_equiv`. Nothing has to be converted to the
 -- univariate `Ψ`/`Φ`, so this is shorter than its `x`-counterpart.

@@ -31,6 +31,9 @@ the pullback of the class of `X`.
 * `TauCeti.Isogeny.mapsInfinity_mulByIntPullback`: the pullback of `[n]` maps infinity to
   infinity.
 * `TauCeti.Isogeny.mulByIntIsogeny`: `[n]` as an `Isogeny W W`.
+* `TauCeti.Isogeny.fieldPullback_mulByIntIsogeny_genericX` and
+  `TauCeti.Isogeny.fieldPullback_mulByIntIsogeny_genericY`: the pullback of `[n]` sends the generic
+  coordinates to `[n]*x` and `[n]*y`.
 * `TauCeti.Isogeny.mulByIntX_sub_algebraMap_ne_zero`: `[n]*x` is not a constant — the
   transcendence of the generic coordinate, carried across the pullback.
 * `TauCeti.Isogeny.map_mulByIntIsogeny_genericPoint`: the function-field map of `[n]` carries the
@@ -125,14 +128,23 @@ noncomputable abbrev mulByIntIsogenyOfNeZero [W.IsElliptic] {n : ℤ} (hn : n �
 
 Not the same statement as `fieldPullback_mulByIntIsogeny_X`, which the degree tower needs and
 which lands in `F(x)` as a quotient of `RatFunc F`; this is the `mulByIntX` form, which is what
-a computation in `F(W)` wants. Both `mulByIntX_sub_algebraMap_ne_zero` below and
-`comap_algebraMap_coordinateRing_le_one` consume it. -/
+a computation in `F(W)` wants, as in `mulByIntX_sub_algebraMap_ne_zero` below and in the place and
+Wronskian computations downstream. -/
 @[simp]
 theorem fieldPullback_mulByIntIsogeny_genericX [W.IsElliptic] {n : ℤ}
     (hn : psiFunctionField W n ≠ 0) :
     (mulByIntIsogeny W hn).fieldPullback W.genericX = mulByIntX W n := by
   rw [WeierstrassCurve.Affine.genericX_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
   exact mulByIntPullback_X W hn
+
+/-- **The pullback of `[n]` sends the generic `y` to `[n]*y`**, the companion of
+`fieldPullback_mulByIntIsogeny_genericX` for the second coordinate. -/
+@[simp]
+theorem fieldPullback_mulByIntIsogeny_genericY [W.IsElliptic] {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) :
+    (mulByIntIsogeny W hn).fieldPullback W.genericY = mulByIntY W n := by
+  rw [WeierstrassCurve.Affine.genericY_def, fieldPullback_algebraMap, mulByIntIsogeny_pullback]
+  exact mulByIntPullback_Y W hn
 
 /-- **`[n]*x` is not a constant**: it is the image of the generic coordinate under an injective
 map, and the generic coordinate is not a constant. -/
