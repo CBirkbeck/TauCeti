@@ -93,14 +93,22 @@ noncomputable def RationalSubsetIndex.presentationIndex (U : RationalSubsetIndex
     PresentationIndex (P := P) Aplus V :=
   (exists_presentationToRationalSubsetIndex_obj_eq (P := P) U).choose
 
+/-- **The choice is a section of `presentationToRationalSubsetIndex`**: forgetting the chosen
+presentation returns the rational subset it was chosen for. This is the equation the choice was
+made by, so it, and not the open-level equation below, is what pins the choice down. -/
+@[simp]
+theorem RationalSubsetIndex.presentationToRationalSubsetIndex_obj_presentationIndex
+    (U : RationalSubsetIndex Aplus V) :
+    (presentationToRationalSubsetIndex Aplus V).obj (U.presentationIndex (P := P)) = U :=
+  (exists_presentationToRationalSubsetIndex_obj_eq (P := P) U).choose_spec
+
 /-- The chosen presentation presents the rational subset it was chosen for. -/
 @[simp]
 theorem RationalSubsetIndex.spaBasicOpen_presentationIndex (U : RationalSubsetIndex Aplus V) :
     spaBasicOpen Aplus (U.presentationIndex (P := P)).pres.num
         (U.presentationIndex (P := P)).pres.den = (OrderDual.ofDual U).1 := by
-  have h := (exists_presentationToRationalSubsetIndex_obj_eq (P := P) U).choose_spec
-  rw [← presentationToRationalSubsetIndex_obj_open Aplus V (U.presentationIndex (P := P))]
-  exact congrArg (fun W ↦ (OrderDual.ofDual W).1) h
+  rw [← presentationToRationalSubsetIndex_obj_open Aplus V (U.presentationIndex (P := P)),
+    RationalSubsetIndex.presentationToRationalSubsetIndex_obj_presentationIndex]
 
 /-- **A containment of rational subsets is a containment of the chosen presentations' rational
 subsets**, so the comparison morphism of Wedhorn's Proposition 8.2(1) is available along it. -/
@@ -260,7 +268,8 @@ presentation.
 
 Identifying the two limits is one use of it; as an isomorphism of the diagrams themselves it also
 transports cones, restrictions along a functor, and whatever else is built from a diagram. The
-body is not exposed; `presentationIndexDiagramIso_hom_app` gives its components. -/
+body is not exposed; `presentationIndexDiagramIso_hom_app` and
+`presentationIndexDiagramIso_inv_app` give its components in both directions. -/
 noncomputable def presentationIndexDiagramIso (Aplus : Subring A)
     (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus)) :
     presentationIndexDiagram (P := P) Aplus V ≅
@@ -285,6 +294,25 @@ theorem presentationIndexDiagramIso_hom_app (Aplus : Subring A)
             (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).le ≫
         eqToHom (rationalSubsetIndexDiagram_obj (P := P) Aplus hAplus V
           ((presentationToRationalSubsetIndex Aplus V).obj i)).symm := by
+  rw [presentationIndexDiagramIso]
+  simp [presentationIndexDiagramIsoApp]
+
+/-- **The inverse comparison at a presentation is the comparison morphism of the reverse
+containment**: the two rational subsets are equal, so Wedhorn's Proposition 8.2(1) supplies a
+morphism each way, and the inverse of the isomorphism of the two diagrams is the one running from
+the coordinate ring of the presentation chosen for the rational subset `i` presents back to that
+of `i`, transported to the two diagrams' objects. -/
+@[simp]
+theorem presentationIndexDiagramIso_inv_app (Aplus : Subring A)
+    (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → IsPowerBounded a) (V : Opens ↥(spa Aplus))
+    (i : PresentationIndex (P := P) Aplus V) :
+    (presentationIndexDiagramIso Aplus hAplus V).inv.app i =
+      eqToHom (rationalSubsetIndexDiagram_obj (P := P) Aplus hAplus V
+          ((presentationToRationalSubsetIndex Aplus V).obj i)) ≫
+        homOfRationalSubsetSubset Aplus hAplus
+          (rationalSubset_presentationIndex_eq _
+            (presentationToRationalSubsetIndex_obj_open Aplus V i).symm).ge ≫
+        eqToHom (presentationIndexDiagram_obj Aplus V i).symm := by
   rw [presentationIndexDiagramIso]
   simp [presentationIndexDiagramIsoApp]
 
