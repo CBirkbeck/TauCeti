@@ -101,8 +101,10 @@ Because `toRep` and `rep` are `abbrev`s for `Rep.of`, `simp` reduces the carrier
 (the type of a coercion, of a bundled map, of a membership) before it looks a term up among its
 lemmas. A `simp` lemma is indexed by its left-hand side as elaborated, where these carriers are
 still unreduced, so a lemma stated plainly over `F.toRep.V` is never found. The `simp` lemmas
-about levels and layer coefficients below therefore state their left-hand sides through
-`dsimp% only`, which puts those implicit arguments in the form `simp` produces.
+about levels, layer coefficients and the norm below therefore state their left-hand sides through
+`dsimp% only`, which puts those implicit arguments in the form `simp` produces. Only the left-hand
+side is wrapped, and with `only`, so that the right-hand side keeps the form it is written in:
+`rw` with these lemmas then leaves terms over `F.toRep`, as the rest of this file states them.
 
 ## References
 
@@ -158,7 +160,8 @@ theorem ext {F F' : Formation G} (h : F.module = F'.module) : F = F' :=
 
 /-- The coefficient module of a formation as a plain integral representation of `G`, forgetting
 its topology. The levels, the layer representations and all of their cohomology are taken of this
-underlying representation. -/
+underlying representation. Being an `abbrev`, its carrier is reduced by `simp`; see the
+implementation notes for how `simp` lemmas over it are stated. -/
 abbrev toRep : Rep ℤ G := Rep.of (Representation.ofDistribMulAction ℤ G F.module.V)
 
 theorem toRep_ρ_apply (g : G) (x : F.toRep.V) : F.toRep.ρ g x = F.module.ρ g x :=
@@ -334,7 +337,7 @@ abbrev groundRep : Representation ℤ L.ground (F.level L.top) :=
 
 @[simp]
 theorem groundRep_apply_coe (u : L.ground) (x : F.level L.top) :
-    (dsimp% only (L.groundRep F u x : F.toRep.V)) = F.module.ρ (u : G) x :=
+    (dsimp% only (L.groundRep F u x : F.toRep.V)) = F.toRep.ρ (u : G) x :=
   (rfl)
 
 /-- The top subgroup acts trivially on the top level, so the `U`-action descends to `U ⧸ V`. -/
@@ -377,7 +380,7 @@ def groundLevelEquiv : (L.rep F).ρ.invariants ≃ₗ[ℤ] F.level L.ground :=
 
 @[simp]
 theorem groundLevelEquiv_apply_coe (x : (L.rep F).ρ.invariants) :
-    (dsimp% only (L.groundLevelEquiv F x : F.toRep.V)) = (x : F.toRep.V) :=
+    (dsimp% only (L.groundLevelEquiv F x : F.toRep.V)) = x :=
   (rfl)
 
 @[simp]
@@ -472,8 +475,7 @@ def norm : F.level L.top →ₗ[ℤ] F.level L.ground :=
 @[simp]
 theorem norm_apply_coe (x : F.level L.top) :
     (dsimp% only (L.norm F x : F.toRep.V)) = ∑ γ : L.Gal, ((L.rep F).ρ γ x : F.toRep.V) := by
-  -- The identification with the ground level does not move the underlying element, so the norm
-  -- of the layer and Mathlib's `Representation.norm` take the same value in the ambient module.
+  -- `norm` is Mathlib's `Representation.norm` read in the ground level, which moves no element.
   simp [norm, Representation.norm]
 
 /-- The norm of a layer is the trace of the Galois action on the top level, so on an element of
