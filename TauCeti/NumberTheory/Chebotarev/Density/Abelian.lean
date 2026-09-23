@@ -29,6 +29,10 @@ Let `L / K` be a finite Galois extension of number fields with abelian group `G`
 
 * R. Sharifi, *Algebraic Number Theory*, Theorem 7.2.2.
 * J. Neukirch, *Algebraic Number Theory*, Chapter VII, Section 13.
+* The same Deuring crossing argument is formalized as `Chebotarev.chebotarev_abelian` in
+  AINTLIB, <https://github.com/CBirkbeck/aintlib> (Apache-2.0), commit
+  `8102fa09bbf570f3e991adfdb2d6d70b48cb5b5e`, file
+  `projects/Chebotarev/CebotarevDensity/Abelian.lean`.
 -/
 
 open NumberField NumberField.Set Filter
@@ -39,14 +43,6 @@ namespace NumberField.Chebotarev
 
 variable {K L : Type*} [Field K] [NumberField K] [Field L] [NumberField L] [Algebra K L]
   [IsGalois K L]
-
--- If every value below `δ` is a lower Dirichlet-density bound for `S`, then so is `δ`.
-private theorem isLowerDirichletDensityBound_of_forall_lt
-    {S : Set (IsDedekindDomain.HeightOneSpectrum (𝓞 K))} {δ : ℝ}
-    (h : ∀ δ' < δ, IsLowerDirichletDensityBound S δ') : IsLowerDirichletDensityBound S δ :=
-  isLowerDirichletDensityBound_iff.mpr fun ε hε ↦
-    (isLowerDirichletDensityBound_iff.mp (h (δ - ε / 2) (by linarith)) (ε / 2) (half_pos hε)).mono
-      fun _ hs ↦ by linarith
 
 -- **One auxiliary prime.** In an abelian extension, the Frobenius fibre of `σ` has lower
 -- Dirichlet density at least `(1 - 2 ^ (-r)) ^ #(orderOf σ).primeFactors / #G`, for every
