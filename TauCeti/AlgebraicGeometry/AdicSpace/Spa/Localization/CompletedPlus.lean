@@ -64,6 +64,10 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 which is the second component of his Proposition 8.16. An element of `A⟨T/s⟩` lies in `A_U⁺`
 exactly when its value is at most `1` at every point of `R(T/s)`, each point being read as a point
 of `Spa (A⟨T/s⟩, A_U⁺)` through `spaCompletedLocalizationHomeomorph`. -/
+-- Deliberately not `@[simp]`: `TauCeti.Huber.PairOfDefinition.mem_completedPlusSubring_iff` is
+-- already a simp lemma and rewrites `g ∈ completedPlusSubring …` to `g ∈ closure (…)`, so this
+-- left-hand side is not in simp-normal form. `lake build` accepts the attribute;
+-- `scripts/lint-env.sh` reports a new simpNF violation.
 theorem mem_completedPlusSubring_iff_forall_mem_rationalSubset_vle_one (P : PairOfDefinition A)
     (Aplus : Subring A) (hP : P.ringOfDefinition ≤ Aplus) (T : Finset A) (s : A) (S : Type*)
     [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) :

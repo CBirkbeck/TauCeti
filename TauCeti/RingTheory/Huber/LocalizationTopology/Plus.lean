@@ -380,13 +380,10 @@ theorem locIdealImage_one_le_adjoin_plus (P : PairOfDefinition A) (Aplus : Subri
   exact Subring.mem_toAddSubgroup.mpr (Subalgebra.mem_toSubring.mpr (one_mul d ▸ hJ d hd 1))
 
 /-- **`A⁺[T/s]` is open in `Aₛ`** at the localised topology, as soon as `A⁺` contains the image of
-the ideal of definition. It absorbs the first basic neighbourhood of zero by
-`locIdealImage_one_le_adjoin_plus`, and an additive subgroup containing an open one is open.
+the ideal of definition. This is the openness that `C`, and then `A_U⁺`, inherit.
 
-This is the openness of `A⁺[T/s]` that `isRingOfIntegralElements_integralClosure_adjoin_plus`
-uses among its three conditions and that `isOpen_integralClosure_adjoin_plus` passes to `C`. It is
-stated at `locTopology`; a consumer working at the topology of `locUniformSpace`, the one
-`A⟨T/s⟩` completes, moves it across `locUniformSpace_toTopologicalSpace`. -/
+The statement is at `locTopology`; a consumer working at the topology of `locUniformSpace`, the
+one `A⟨T/s⟩` completes, moves it across `locUniformSpace_toTopologicalSpace`. -/
 theorem isOpen_adjoin_plus_toSubring (P : PairOfDefinition A) (Aplus : Subring A)
     (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -397,6 +394,8 @@ theorem isOpen_adjoin_plus_toSubring (P : PairOfDefinition A) (Aplus : Subring A
   let _ := locTopology P T s S hden
   have _ := isTopologicalRing_locTopology P T s S hden
   rw [← Subring.coe_toAddSubgroup]
+  -- `A⁺[T/s]` absorbs the first basic neighbourhood of zero, and an additive subgroup containing
+  -- an open one is open
   exact AddSubgroup.isOpen_mono (locIdealImage_one_le_adjoin_plus P Aplus hIplus T s S)
     (isOpen_locIdealImage P T s S hden 1)
 
@@ -441,14 +440,14 @@ theorem isRingOfIntegralElements_integralClosure_adjoin_plus (P : PairOfDefiniti
   exact Pair.isRingOfIntegralElements_integralClosure (R := E.toSubring)
     (isOpen_adjoin_plus_toSubring P Aplus hIplus T s S hden) hpb
 
-/-- **`C` is open in `Aₛ`**, the integral closure of `A⁺[T/s]` being that of an open subring:
-`isOpen_adjoin_plus_toSubring` opens `A⁺[T/s]`, and `isOpen_integralClosure_toSubring` passes to
-the integral closure.
+/-- **`C` is open in `Aₛ`**, the integral closure of `A⁺[T/s]` in the localisation, as soon as `A⁺`
+contains the image of the ideal of definition.
 
-`isRingOfIntegralElements_integralClosure_adjoin_plus` proves this same openness among its three
-conditions, but under `hAplus` as well; openness alone needs only `hIplus`, which is the form the
-completion statements `isOpen_completedPlusSubring` and `isIntegrallyClosedIn_completedPlusSubring`
-consume. The conclusion is at the topology of `locUniformSpace`, the one `A⟨T/s⟩` completes. -/
+This supplies the openness of `C` under `hIplus` alone, which is the form the completion statements
+`isOpen_completedPlusSubring` and `isIntegrallyClosedIn_completedPlusSubring` consume;
+`isRingOfIntegralElements_integralClosure_adjoin_plus` gives the same openness alongside its other
+two conditions, under `hAplus` as well. The conclusion is at the topology of `locUniformSpace`, the
+one `A⟨T/s⟩` completes. -/
 theorem isOpen_integralClosure_adjoin_plus (P : PairOfDefinition A) (Aplus : Subring A)
     (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -504,11 +503,10 @@ theorem completedPlusSubring_le_powerBoundedSubring (P : PairOfDefinition A) (Ap
   exact topologicalClosure_map_coeRingHom_le_powerBoundedSubring
     (integralClosure_adjoin_plus_le_powerBoundedSubring P Aplus hAplus T s S hden)
 
-/-- **`A_U⁺` is open in `A⟨T/s⟩`** as soon as `A⁺` contains the image of the ideal of definition:
-`C` is then open (`isOpen_integralClosure_adjoin_plus`), and the closure of the image of an open
-subring is open. This is the openness condition of
-`isRingOfIntegralElements_completedPlusSubring`, and unlike that theorem it needs no
-power-boundedness hypothesis: openness is settled before `(A⟨T/s⟩)°` is mentioned. -/
+/-- **`A_U⁺` is open in `A⟨T/s⟩`** as soon as `A⁺` contains the image of the ideal of definition.
+This is the openness condition of `isRingOfIntegralElements_completedPlusSubring`, available here
+under `hIplus` alone: openness makes no reference to `(A⟨T/s⟩)°`, so no power-boundedness
+hypothesis enters. -/
 theorem isOpen_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A)
     (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -520,17 +518,15 @@ theorem isOpen_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A)
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
+  -- the closure of the image of an open subring is open
   exact UniformSpace.Completion.isOpen_topologicalClosure_map_coeRingHom
     (isOpen_integralClosure_adjoin_plus P Aplus hIplus T s S hden)
 
 /-- **`A_U⁺` is integrally closed in `A⟨T/s⟩`** as soon as `A⁺` contains the image of the ideal of
-definition. This is Huber's Lemma 2.4.3(iv),
-`UniformSpace.Completion.isIntegrallyClosedIn_topologicalClosure_map_coeRingHom`, applied to `C`:
-that lemma asks only that `C` be open, which is `isOpen_integralClosure_adjoin_plus`, and
-integrally closed in `Aₛ`, which holds of any integral closure.
+definition — Huber's Lemma 2.4.3(iv) for `A_U⁺`.
 
-This is the integral-closedness condition of `isRingOfIntegralElements_completedPlusSubring`, and
-unlike that theorem it needs no power-boundedness hypothesis. -/
+This is the integral-closedness condition of `isRingOfIntegralElements_completedPlusSubring`,
+available here under `hIplus` alone, with no power-boundedness hypothesis. -/
 theorem isIntegrallyClosedIn_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A)
     (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -543,6 +539,8 @@ theorem isIntegrallyClosedIn_completedPlusSubring (P : PairOfDefinition A) (Aplu
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
+  -- Huber's Lemma 2.4.3(iv) asks only that `C` be open, and integrally closed in `Aₛ` — which
+  -- holds of any integral closure
   exact UniformSpace.Completion.isIntegrallyClosedIn_topologicalClosure_map_coeRingHom
     (isOpen_integralClosure_adjoin_plus P Aplus hIplus T s S hden)
 
