@@ -109,13 +109,13 @@ theorem isBigO_rayClassIdealCountingFunction_sub (𝔪 : Modulus K) (c : RayClas
 
 /-- **The ray class ideal count.**  For every modulus `𝔪` there is a power saving `δ > 0` such
 that, in each ray class `c` of `𝔪`, the number of nonzero integral ideals prime to `𝔪` of norm at
-most `x` is `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - δ))`.  One can take `δ = 1 / [K : ℚ]`. -/
+most `x` is `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - δ))`.  One can take `δ = 1 / [K : ℚ]`;
+for that explicit exponent, use `isBigO_rayClassIdealCountingFunction_sub` instead. -/
 theorem rayClassIdealCount (𝔪 : Modulus K) :
     ∃ δ : ℝ, 0 < δ ∧ ∀ c : RayClassGroup 𝔪,
       (fun x : ℝ =>
           (rayClassIdealCountingFunction 𝔪 c x : ℝ) - rayClassIdealMainTerm 𝔪 * x) =O[atTop]
         (fun x : ℝ => x ^ (1 - δ)) :=
-  ⟨(finrank ℚ K : ℝ)⁻¹, inv_pos.mpr (Nat.cast_pos.mpr finrank_pos),
-    isBigO_rayClassIdealCountingFunction_sub 𝔪⟩
+  ⟨(finrank ℚ K : ℝ)⁻¹, by simp [finrank_pos], isBigO_rayClassIdealCountingFunction_sub 𝔪⟩
 
 end TauCeti.GlobalNumberFields
