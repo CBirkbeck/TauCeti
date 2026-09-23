@@ -97,6 +97,20 @@ translates of the cone below. -/
 def unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :=
   unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K
 
+/-- `unitsCongruenceSubgroupSupTorsion 𝔪` is the join of `unitsCongruenceSubgroup 𝔪` and the roots
+of unity. The definition is not exposed, so this is how another module unfolds it. -/
+theorem unitsCongruenceSubgroupSupTorsion_def (𝔪 : Modulus K) :
+    unitsCongruenceSubgroupSupTorsion 𝔪 =
+      unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K :=
+  (rfl)
+
+/-- The universal property of the join: a subgroup contains `unitsCongruenceSubgroupSupTorsion 𝔪`
+if and only if it contains the units congruent to one modulo `𝔪` and the roots of unity. -/
+theorem unitsCongruenceSubgroupSupTorsion_le_iff {𝔪 : Modulus K} {H : Subgroup (𝓞 K)ˣ} :
+    unitsCongruenceSubgroupSupTorsion 𝔪 ≤ H ↔
+      unitsCongruenceSubgroup 𝔪 ≤ H ∧ NumberField.Units.torsion K ≤ H :=
+  sup_le_iff
+
 /-- The roots of unity lie in `unitsCongruenceSubgroupSupTorsion 𝔪`. -/
 theorem torsion_le_unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) :
     NumberField.Units.torsion K ≤ unitsCongruenceSubgroupSupTorsion 𝔪 :=
@@ -111,7 +125,7 @@ instance unitsCongruenceSubgroupSupTorsion_finiteIndex (𝔪 : Modulus K) :
 roots of unity changes nothing and there is a single coset. -/
 @[simp] theorem unitsCongruenceSubgroupSupTorsion_one :
     unitsCongruenceSubgroupSupTorsion (Modulus.one K) = ⊤ := by
-  rw [unitsCongruenceSubgroupSupTorsion]
+  rw [unitsCongruenceSubgroupSupTorsion_def]
   simp
 
 /-! ### The sign conditions prescribed by the infinite part -/
