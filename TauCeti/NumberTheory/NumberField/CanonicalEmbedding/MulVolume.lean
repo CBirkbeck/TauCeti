@@ -60,22 +60,17 @@ theorem det_lmul (c : mixedSpace K) : LinearMap.det (Algebra.lmul ℝ (mixedSpac
   simp only [lmul_eq_prodMap, LinearMap.det_prodMap, LinearMap.det_pi, ← Algebra.norm_apply,
     Algebra.norm_self, MonoidHom.id_apply, Algebra.norm_complex_apply]
 
-/-- **The absolute determinant of multiplication by `c` is the mixed norm of `c`.**  The two are
-the same product of local absolute values: a real place contributes `|c w|` and a complex place
-contributes `‖c w‖ ^ 2`, which is `Complex.normSq`. -/
+/-- **The absolute determinant of multiplication by `c` is the mixed norm of `c`.**  Reach for
+this rather than `det_lmul` when the determinant feeds a measure-scaling lemma such as
+`Measure.addHaar_image_linearMap`, which asks for the absolute value. -/
 theorem abs_det_lmul (c : mixedSpace K) :
     |LinearMap.det (Algebra.lmul ℝ (mixedSpace K) c)| = mixedEmbedding.norm c := by
-  classical
+  -- Both sides are the same product of local absolute values: a real place contributes `|c.1 w|`
+  -- with `mult w = 1`, a complex place `Complex.normSq (c.2 w) = ‖c.2 w‖ ^ 2` with `mult w = 2`.
   rw [det_lmul, abs_mul, Finset.abs_prod, Finset.abs_prod, mixedEmbedding.norm_apply,
-    ← Fintype.prod_subtype_mul_prod_subtype (fun w : InfinitePlace K ↦ w.IsReal)]
-  congr 1
-  · refine Finset.prod_congr rfl fun w _ ↦ ?_
-    rw [normAtPlace_apply_of_isReal w.prop, InfinitePlace.mult_isReal, pow_one, Real.norm_eq_abs]
-  · refine Fintype.prod_equiv
-      (Equiv.subtypeEquivRight fun w ↦ (not_isReal_iff_isComplex (w := w)).symm) _ _ fun w ↦ ?_
-    simp only [Equiv.subtypeEquivRight_apply_coe]
-    rw [abs_of_nonneg (Complex.normSq_nonneg _), Complex.normSq_eq_norm_sq,
-      normAtPlace_apply_of_isComplex w.prop, w.prop.mult_eq_two]
+    InfinitePlace.prod_eq_prod_mul_prod]
+  simp [normAtPlace_apply_of_isReal, normAtPlace_apply_of_isComplex, Complex.normSq_eq_norm_sq,
+    Subtype.prop]
 
 open scoped Classical in
 /-- **Multiplication by `c` scales volume by the mixed norm of `c`.** -/
