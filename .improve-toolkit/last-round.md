@@ -1,4 +1,4 @@
-# Last round — r927 (2026-09-23T16:50Z)
+# Last round — r928 (2026-09-23T16:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -53,7 +53,7 @@ session's PRs merged on 2026-09-23: #8101, #8233, #8224, #8235, #8273, #8275, #8
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `5cecbdde6`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `6f421475b`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -149,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r927 did
+## What r703–r928 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -382,6 +382,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r924–r925: no change; #8305's fix went green (16:24:15Z) and awaits re-review.
 * r926: **#8304 merged**, the tenth today. #8305 is under re-review.
 * r927: **#8305 approved on its fix**. Nothing is in progress, and every kind is blocked or dry. The `LevelRaise` `hmod` was declined as a probable `deadhave` false positive (`simp` discharger).
+* r928: no change.
 
 ## Candidates for a later step 5
 

@@ -41937,3 +41937,7 @@ notification check, not the build. No merges. Pin `dc4b8d60d5`, main `f59cc5333`
 * **No kind has a clean target:** kind 1 needs a pin bump (pin `dc4b8d60d5` since r881), kind 2 needs astra (2026-09-27T15:04Z), and
   kind 3's scanners (r911–r920) and the `misplaced` × Mathlib list are exhausted. Declined as not worth it: the 12-site PseudoHyperbolic
   weakening, the junk-value `Beta` weakening, and `hmod` above. Main `4713a2e6f`.
+
+## r928 — 2026-09-23T16:54Z (cron; step 4 hard-stopped)
+
+No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kind is blocked or dry (r927). Pin `dc4b8d60d5`, main `8afccaf4b`.
