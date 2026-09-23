@@ -42234,3 +42234,7 @@ Pin `dc4b8d60d5`, main `a1fd64731`.
 
 CI is still stalled (130 queued, 4 running); main is unmoved since r954 (`040b7697a`) because merge-queue builds are stuck too. The three astra-cleared drafts
 wait for builds; #8388 and #8389 wait in the merge queue. No action.
+
+## r957 — 2026-09-23T21:44Z (cron)
+
+CI is still stalled (134 queued, 5 running); main `a86d24954`. The three astra-cleared drafts wait for builds; #8388 and #8389 wait in the merge queue. No action.
