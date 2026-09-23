@@ -233,7 +233,7 @@ theorem measurableSet_rayFundamentalDomain (𝔪 : Modulus K) :
   rw [rayFundamentalDomain_eq_iUnion]
   refine (measurableSet_posRegion 𝔪).inter (MeasurableSet.iUnion fun q ↦ ?_)
   rw [← Set.preimage_smul_inv]
-  exact (measurableSet_fundamentalCone K).preimage (measurable_unitSMul _)
+  exact (measurableSet_fundamentalCone K).preimage (measurable_const_smul _)
 
 /-- Every point of the ray fundamental domain has positive mixed norm. -/
 theorem norm_pos_of_mem_rayFundamentalDomain {𝔪 : Modulus K} {x : mixedSpace K}
