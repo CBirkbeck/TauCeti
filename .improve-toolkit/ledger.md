@@ -41981,3 +41981,19 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
   drops its "Roadmap: … **Layer 5** …, whose milestone is `deFinetti_viaKoopman`" bullet. Gate **12 ok / 0 failed / 0 UNRUN**. gpt-6-astra
   was launched at 17:38Z (`astra-decoup-1738.txt`); a waiter covers astra and the first build.
 * In progress: #8332 and #8339 (drafts). One slot is open.
+* r932 addendum (waiter): **#8332 cleared.** gpt-6-astra (`astra-prodkern-1729.txt`) "would accept the entire diff": `@[fun_prop]` reads
+  the elaborated `Expr.lam`, not the arrow spelling, and both docstring edits are accurate. The build went green at 17:40:20Z. **Marked
+  ready**, with the guards holding: every check green, head unchanged, pin unchanged, and the file untouched on main.
+
+## r933 — 2026-09-23T17:44Z (cron)
+
+* #8332 is `awaiting-review` (ready 17:40:44Z). #8339 is on its first build with astra pending. No merges. Pin `dc4b8d60d5`, main `a28e74abd`.
+* **Step 5, kind 2** (to vary the area after two Exchangeability passes): **opened draft #8344**, `improve/slice-density-style` @
+  `bf9fdabf3`, from `a28e74abd`; `Roadmap: OneParameterSemigroups` (as #4428). Target:
+  `Analysis/PositiveDefinite/SemigroupGroup/Time/Slice/Density.lean` (370 lines). Edits: 92 `fun … =>` → `↦` (asserted; the four remaining
+  `=>` are `| nil`/`| cons` induction arms; no pattern-matching lambdas, checked with `grep 'fun *|'`), and the References list drops its
+  "Roadmap: … Part C, Milestone 2 …" bullet. Its two `;` chains are inside anonymous-constructor terms and stay. Gate **12 ok / 0 failed /
+  0 UNRUN**. gpt-6-astra was launched at 17:49Z (`astra-density-1749.txt`), and asked whether match arms would even parse with `↦`. A
+  waiter covers astra and the build.
+* **In progress (cap full):** #8332, #8339 and #8344. `OnCurve.lean` (Contour) was profiled as the next kind-2 target: 70 arrows, but 10 chains
+  need care (lines 138/201/202/494/495 are parenthesised or anonymous-constructor terms that stay; 278/280/436 are real splits).
