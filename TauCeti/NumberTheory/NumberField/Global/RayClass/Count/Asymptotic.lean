@@ -42,10 +42,6 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Multiplied by the number of roots of unity congruent to one modulo `𝔪`, the count of the
-ideals of the class `c` of norm at most `x` is the number of points, of norm at most `x · N𝔞`, of
-the coset `ξ + Λ` of the congruence lattice of `𝔞` in the ray fundamental domain, where `𝔞` lies in
-the inverse class and `ξ ∈ 𝔞` is congruent to one modulo `𝔪₀`. -/
 private theorem rayClassIdealCountingFunction_mul_card_eq_ncard (𝔪 : Modulus K)
     {c : RayClassGroup 𝔪} (𝔞 : integralIdealsPrimeTo 𝔪) (h𝔞 : idealClass 𝔪 𝔞 = c⁻¹)
     (h𝔞0 : (𝔞 : Ideal (𝓞 K)) ∈ (Ideal (𝓞 K))⁰) {ξ : 𝓞 K} (hξ𝔞 : ξ ∈ (𝔞 : Ideal (𝓞 K)))
@@ -55,11 +51,14 @@ private theorem rayClassIdealCountingFunction_mul_card_eq_ncard (𝔪 : Modulus 
           {y | mixedEmbedding.norm y ≤ x * Ideal.absNorm (𝔞 : Ideal (𝓞 K))}) ∩
         (mixedEmbedding K (ξ : K) +ᵥ
           (congruenceLattice 𝔪 (FractionalIdeal.mk0 K ⟨𝔞, h𝔞0⟩) : Set (mixedSpace K)))).ncard := by
+  -- as `𝔞` lies in the inverse class and `ξ ∈ 𝔞` is congruent to one modulo `𝔪₀`, the ideals of
+  -- `c` of norm at most `x`, counted with the roots of unity congruent to one modulo `𝔪`, match
+  -- the points of norm at most `x · N𝔞` of the coset `ξ + Λ` of the congruence lattice of `𝔞`
+  -- in the ray fundamental domain
   rw [rayClassIdealCountingFunction_eq_card_dvd_and_idealClass_eq_one 𝔪 𝔞 h𝔞 x,
     card_idealClass_eq_one_dvd_norm_le, ← Nat.card_coe_set_eq, Set.inter_right_comm,
     ← rayIdealSet_eq_inter_vadd 𝔪 ⟨𝔞, h𝔞0⟩ hξ𝔞 hξ𝔪]
-  exact Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter (· ∈ rayIdealSet 𝔪 _)
-    (mixedEmbedding.norm · ≤ _))
+  exact Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter _ (mixedEmbedding.norm · ≤ _))
 
 /-- **The ray class ideal count of a single class, with an explicit power saving.**  The number
 of nonzero integral ideals prime to `𝔪` in the ray class `c` with norm at most `x` is
