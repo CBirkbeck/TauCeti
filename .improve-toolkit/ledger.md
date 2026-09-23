@@ -41818,3 +41818,18 @@ eligible target). Pin `dc4b8d60d5`, main `59ea34489`.
 
 **#8291 and #8295 are both `review-in-progress`**, picked up by external reviewers at 41 and 15 min. No new merges. The third slot
 stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.
+
+## r917 — 2026-09-23T15:04Z (cron; step 4 hard-stopped)
+
+* **#8291 approved** (board by sqrt-of-2 2026-09-23T14:56:54Z on head `eff08afe1`) and is `ready-to-merge`.
+* **#8295 went `awaiting-author`** (board by `roed-math`, 14:57:00Z, on head `ab4d3f380`): 9/10 approved, with **one `api-design`
+  request_changes**. The finding: the private `integral_Ioi_eq_Ioc_add_Ioi` is general set-integral infrastructure hidden in a semigroup
+  file, so "relocate it to the canonical general integration utility module, give it a suitably general public name, and use that
+  theorem here". **Implemented via Mathlib:** the pinned Mathlib already has the split as
+  `intervalIntegral.integral_interval_add_Ioi` (`IntervalIntegral/Basic.lean:1157`,
+  `∫ x in a..b, f + ∫ x in Ioi b, f = ∫ x in Ioi a, f`, no `a ≤ b` needed), plus `intervalIntegral.integral_of_le` for `Ioc`. Commit
+  **`08d0a50ca`** deletes the helper (and its `omit`/docstring) and proves `h_split` from those two, with `hint : IntegrableOn f (Set.Ioi 0)`
+  ascribed so the lemma is stated in the `set`-bound `f`. That leaves one private weakening (`resolvent_shift_identity`, `0 ≤ h`). +5/−15;
+  gate **12 ok / 0 failed / 0 UNRUN** (`stalequal` and `ghostref` ok). Pushed with a lease; body v2 and a new title via REST PATCH. CI is
+  rebuilding (waiter running); the push re-reviews on its own, so no thread reply was needed.
+* In progress: #8295 (awaiting CI and then re-review). The third slot stays open. Pin `dc4b8d60d5`, main `7669537a3`.
