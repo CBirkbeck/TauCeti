@@ -52,8 +52,7 @@ multiplication by the relative degree `[E : F]` in every degree.
   degree.
 * `TauCeti.ClassFieldTheory.LayerRestriction.kerNormTransfer_trans_sub_mem`: the relative transfer
   of norm kernels is transitive along a tower modulo the augmentation submodule.
-* `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_trans_of_nonneg` and
-  `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_neg_one_trans`: Tate restriction is
+* `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_trans_of_neg_one_le`: Tate restriction is
   functorial along towers in every degree at least minus one.
 
 ## References
@@ -248,8 +247,13 @@ theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRest
       ((T.trans T').galHom.range.subtype)
       (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom
       (Subgroup.subgroupOfEquivOfLe hKH).surjective] at htrans
-  rw [kerNormTransfer_apply, kerNormTransfer_apply, kerNormTransfer_apply,
-    repIso_inv_apply_eq_trans T T' F, ← map_sub]
+  -- Reading an element of the middle layer back to the smallest one directly agrees with going
+  -- across to the largest and back along the composite.
+  have hrep : ∀ u : F.level b.top, (T.repIso F).inv.hom u =
+      ((T.trans T').repIso F).inv.hom ((T'.repIso F).hom.hom.toLinearMap u) := fun u => by
+    rw [repIso_inv_hom_trans_apply T T' F]
+    exact congrArg (T.repIso F).inv.hom ((T'.repIso F).hom_inv_id_apply u).symm
+  rw [kerNormTransfer_apply, kerNormTransfer_apply, kerNormTransfer_apply, hrep, ← map_sub]
   refine Representation.coinvariantsKer_map_le
     (ρ := (c.rep F).ρ.comp ((T.trans T').galHom.range).subtype)
     (MonoidHom.ofInjective (T.trans T').galHom_injective).symm
@@ -280,22 +284,25 @@ theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestrictio
       cohomologyRes_trans T T']
     simp only [Category.assoc, Iso.inv_hom_id_assoc]
 
-/-- **Tate restriction is functorial along a tower in degree minus one.** Restricting from `K/F`
-to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`.
+/-- **Tate restriction is functorial along a tower in every degree at least minus one.**
+Restricting from `K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to
+`K/E'`.
 
-Unlike the nonnegative degrees, this is not a formal consequence of functoriality of some
-change-of-group map: in degree `-1` restriction is the relative transfer, which is transitive
-only modulo the augmentation submodule — exactly the submodule degree `-1` Tate cohomology
-divides by. See `kerNormTransfer_trans_sub_mem`. -/
-theorem tateRes_neg_one_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
-    (F : Formation G) :
-    (T.trans T').tateRes F (-1) = T'.tateRes F (-1) ≫ T.tateRes F (-1) := by
-  ext x
-  induction x using TauCeti.TateCohomology.HNegOne_induction_on with
-  | h y =>
-    rw [ModuleCat.comp_apply, tateRes_neg_one_HNegOneπ, tateRes_neg_one_HNegOneπ,
-      tateRes_neg_one_HNegOneπ, TauCeti.TateCohomology.HNegOneπ_eq_iff]
-    exact kerNormTransfer_trans_sub_mem T T' F y
+Unlike the nonnegative degrees (`tateRes_trans_of_nonneg`), degree `-1` is not a formal consequence
+of functoriality of some change-of-group map: there restriction is the relative transfer, which is
+transitive only modulo the augmentation submodule — exactly the submodule degree `-1` Tate
+cohomology divides by. See `kerNormTransfer_trans_sub_mem`. -/
+theorem tateRes_trans_of_neg_one_le (T : LayerRestriction a b) (T' : LayerRestriction b c)
+    (F : Formation G) (r : ℤ) (hr : -1 ≤ r) :
+    (T.trans T').tateRes F r = T'.tateRes F r ≫ T.tateRes F r := by
+  obtain rfl | hr := hr.eq_or_lt
+  · ext x
+    induction x using TauCeti.TateCohomology.HNegOne_induction_on with
+    | h y =>
+      rw [ModuleCat.comp_apply, tateRes_neg_one_HNegOneπ, tateRes_neg_one_HNegOneπ,
+        tateRes_neg_one_HNegOneπ, TauCeti.TateCohomology.HNegOneπ_eq_iff]
+      exact kerNormTransfer_trans_sub_mem T T' F y
+  · exact tateRes_trans_of_nonneg T T' F r (by omega)
 
 end Towers
 

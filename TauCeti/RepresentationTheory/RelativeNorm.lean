@@ -326,12 +326,6 @@ theorem relTransfer_sub_sum_mem {ι : Type*} [Fintype ι] (f : ι → G)
   congr 1
   rw [MonoidHom.comp_apply, ← Module.End.mul_apply, ← map_mul, hg]
 
-/-- The relative transfer is computed, modulo the augmentation submodule of `H`, by the sum of
-`ρ (f q)⁻¹` over any section `f` of the quotient map `G → G ⧸ H`. -/
-theorem relTransfer_sub_sum_section_mem (f : G ⧸ H → G) (hf : ∀ q, ((f q : G) : G ⧸ H) = q)
-    (x : V) : relTransfer ρ H x - ∑ q : G ⧸ H, ρ (f q)⁻¹ x ∈ Coinvariants.ker (ρ.comp H.subtype) :=
-  relTransfer_sub_sum_mem f (by simp [hf]) x
-
 /-- **The relative transfer commutes with a map of representations along a group isomorphism**,
 modulo the augmentation submodule of `H'`. Here `e : G ≃* G'` carries `H` onto `H'` and `φ`
 intertwines `ρ` with `ρ'` along `e`. -/
@@ -369,7 +363,7 @@ theorem relTransfer_relTransfer_sub_relTransfer_mem {K : Subgroup G} (hKH : K �
   -- transversals, which form a transversal of `K` in `G` but not the one `Quotient.out` picks.
   have hcoset : ∀ t : G ⧸ K, (((e t).1.out * ((e t).2.out : G) : G) : G ⧸ K) = t := fun t => by
     conv_rhs => rw [← e.symm_apply_apply t, ← Prod.mk.eta (p := e t), ← (e t).2.out_eq']
-    rfl
+    rw [Subgroup.quotientEquivProdOfLE_symm_apply, Quotient.map'_mk'']
   have hprod : ∑ t : G ⧸ K, ρ ((e t).1.out * ((e t).2.out : G))⁻¹ x =
       relTransfer (ρ.comp H.subtype) (K.subgroupOf H) (relTransfer ρ H x) := by
     rw [← Equiv.sum_comp e.symm fun t : G ⧸ K => ρ ((e t).1.out * ((e t).2.out : G))⁻¹ x]
@@ -380,7 +374,7 @@ theorem relTransfer_relTransfer_sub_relTransfer_mem {K : Subgroup G} (hKH : K �
     refine Finset.sum_congr rfl fun q _ => ?_
     simp [← Module.End.mul_apply, ← map_mul]
   rw [← hprod, ← neg_sub (relTransfer ρ K x)]
-  exact Submodule.neg_mem _ (relTransfer_sub_sum_section_mem _ hcoset x)
+  exact Submodule.neg_mem _ (relTransfer_sub_sum_mem _ (by simp [hcoset]) x)
 
 end Coinvariants
 

@@ -357,16 +357,6 @@ theorem repIso_inv_hom_trans_apply (T : LayerRestriction a b) (T' : LayerRestric
   Subtype.ext <| ((T.trans T').repIso_inv_apply_coe F x).trans
     (((T.repIso_inv_apply_coe F _).trans (T'.repIso_inv_apply_coe F x)).symm)
 
-/-- Reading an element of the middle layer back to the smallest one directly, or first across to
-the largest and then back along the composite, give the same answer. -/
-theorem repIso_inv_apply_eq_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
-    (F : Formation G) (u : F.level b.top) :
-    (T.repIso F).inv.hom u =
-      ((T.trans T').repIso F).inv.hom ((T'.repIso F).hom.hom.toLinearMap u) :=
-  Subtype.ext <| by
-    rw [T.repIso_inv_apply_coe F, (T.trans T').repIso_inv_apply_coe F]
-    exact (T'.repIso_hom_apply_coe F u).symm
-
 /-! ### Restriction of layer cohomology -/
 
 /-- **Restriction of cohomology along a restriction of layers**, the map
