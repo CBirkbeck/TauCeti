@@ -41643,3 +41643,8 @@ touched none of their files. No merges. The cap is full.
   (`queue_reservation.py` is the merge-queue pin-bump reservation, not review scheduling). #8233 and #8235 carry only
   `awaiting-review` plus a roadmap label, with no comments, the same shape as the PRs that do get boarded. #8224's skip may be the r889
   error board on its head. The only in-lane lever is step 4, which is hard-stopped, so this goes to the user.
+
+## r897 — 2026-09-23T11:44Z (cron; step 4 hard-stopped)
+
+No change: #8224 (error board), #8233 and #8235 still have no real board (146/138/128 min). No merges; main `0103368cc`, pin
+unchanged. Waiting on the user (quota options, and the #8224 error board).
