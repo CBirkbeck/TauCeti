@@ -5,9 +5,10 @@ Authors: Claude
 -/
 module
 
-public import Mathlib.RepresentationTheory.Homological.GroupHomology.Shapiro
+public import Mathlib.RepresentationTheory.Homological.GroupHomology.Basic
 public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
 import Mathlib.RepresentationTheory.Homological.GroupHomology.Functoriality
+import Mathlib.RepresentationTheory.Homological.GroupHomology.Shapiro
 
 /-!
 # Homology of modules induced from the trivial subgroup
@@ -39,13 +40,14 @@ namespace groupHomology
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Positive-degree homology of a representation induced from the trivial subgroup vanishes
-(Shapiro's lemma). -/
+/-- Positive-degree homology of a representation induced from the trivial subgroup vanishes.
+Unlike the Tate analogue `TauCeti.TateCohomology.isZero_indBot`, no finiteness is needed. -/
 theorem isZero_indBot_succ (X : Type u) [AddCommGroup X] [Module k X] (n : ℕ) :
     Limits.IsZero (groupHomology (indBot k G X) (n + 1)) := by
   classical
-  exact (isZero_groupHomology_succ_of_subsingleton (trivial k (⊥ : Subgroup G) X) n).of_iso
-    (indIso (⊥ : Subgroup G) (trivial k (⊥ : Subgroup G) X) (n + 1))
+  -- Shapiro's lemma identifies this with `Hₙ₊₁(⊥, X)`, and the trivial group has no
+  -- positive-degree homology.
+  exact (isZero_groupHomology_succ_of_subsingleton _ n).of_iso (indIso _ _ _)
 
 /-- Positive-degree homology of the restriction to a subgroup of a representation induced from the
 trivial subgroup vanishes. Unlike the Tate analogue `TauCeti.TateCohomology.isZero_res_indBot`, no
