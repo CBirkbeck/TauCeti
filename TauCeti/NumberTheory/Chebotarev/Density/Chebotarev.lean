@@ -31,7 +31,7 @@ fixed-field contraction carries this down to the density `#C / #G` over `K`.
 ## References
 
 * R. Sharifi, *Algebraic Number Theory*, Theorem 7.2.2.
-* J. Neukirch, *Algebraic Number Theory*, Chapter VII, Theorem 13.4.
+* J. Neukirch, *Algebraic Number Theory*, Chapter VII, §13.
 -/
 
 public section

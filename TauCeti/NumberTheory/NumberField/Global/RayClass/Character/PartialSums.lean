@@ -26,10 +26,6 @@ the class counts remain.
   nontrivial ray class character are `O(x ^ (1 - 1 / [K : ℚ]))`.
 * `TauCeti.GlobalNumberFields.rayClassCharacter_partialSums`: the partial sums of a nontrivial
   ray class character are `O(x ^ (1 - δ))` for some `δ > 0`.
-
-## References
-
-* S. Lang, *Algebraic Number Theory*, Chapter VIII.
 -/
 
 public section

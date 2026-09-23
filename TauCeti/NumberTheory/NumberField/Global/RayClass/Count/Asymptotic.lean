@@ -31,10 +31,6 @@ for the same number of points; the lattice-point count in that domain then gives
   counting function of a class is `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - 1 / [K : ℚ]))`.
 * `TauCeti.GlobalNumberFields.rayClassIdealCount`: the ray class ideal counting function is
   `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - δ))` for some `δ > 0` uniform in the class.
-
-## References
-
-* S. Lang, *Algebraic Number Theory*, Chapter VI.
 -/
 
 public section

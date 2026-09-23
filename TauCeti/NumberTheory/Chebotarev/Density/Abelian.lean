@@ -40,7 +40,7 @@ the whole group, each of them is the density.
 
 ## References
 
-* R. Sharifi, *Algebraic Number Theory*, Theorem 7.2.2, Step 2.
+* R. Sharifi, *Algebraic Number Theory*, Theorem 7.2.2.
 * J. Neukirch, *Algebraic Number Theory*, Chapter VII, Section 13.
 -/
 

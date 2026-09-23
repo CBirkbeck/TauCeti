@@ -22,8 +22,7 @@ surjective.
 
 ## References
 
-* J. Neukirch, *Algebraic Number Theory*, Chapter VI, §7 and Chapter VII, §13.
-* S. Lang, *Algebraic Number Theory*, Chapter VIII, §4.
+* J. Neukirch, *Algebraic Number Theory*, Chapter VII, §13.
 -/
 
 public section
