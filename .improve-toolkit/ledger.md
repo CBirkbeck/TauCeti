@@ -42256,3 +42256,7 @@ on queued builds (CI: 138 queued, 8 running). Pin `dc4b8d60d5`, main `8593e938c`
 ## r961 — 2026-09-23T22:24Z (cron)
 
 CI is recovering (135 queued, 16 running, up from 4–8). The three astra-cleared drafts are still on queued builds. No merges since #8388 and #8389. Main `8593e938c`.
+
+## r962 — 2026-09-23T22:34Z (cron)
+
+CI is still recovering (128 queued, 16 running). The three astra-cleared drafts are still on queued builds. No merges. Main `72c797e2f`.
