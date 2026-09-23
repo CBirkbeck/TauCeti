@@ -42208,3 +42208,8 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
   64 arrows (asserted). `Roadmap: Exchangeability`: the file's roadmap history is mixed (#7937 DenseGraphLimits; #7676 and #7442
   Exchangeability), and the directory and majority attribution are Exchangeability. Gate 12/0/0. The astra question uses the three-dot diff
   (1 file, verified); astra was launched at 20:58Z. The cap is full: #8402, #8413 and #8426.
+
+## r953 — 2026-09-23T21:04Z (cron)
+
+**#8381 merged** 21:02:10Z, the fifteenth today. #8388 and #8389 are queued. #8402, #8413 and #8426 are drafts on queued builds (waiters running). The cap is full.
+Pin `dc4b8d60d5`, main `a1fd64731`.
