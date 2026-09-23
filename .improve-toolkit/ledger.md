@@ -42243,3 +42243,7 @@ CI is still stalled (134 queued, 5 running); main `a86d24954`. The three astra-c
 
 CI is still stalled (138 queued, 5 running), about 2 h since the backlog built up (r945: 32 queued). It looks like a runner-capacity problem outside this role;
 reported to the user. Nothing of ours has moved. Main `a86d24954`.
+
+## r959 — 2026-09-23T22:04Z (cron)
+
+CI is still stalled (141 queued, 8 running). Nothing of ours has moved. Main `a86d24954`.
