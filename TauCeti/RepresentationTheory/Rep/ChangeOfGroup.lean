@@ -39,7 +39,7 @@ and cohomology: `groupHomology.chainsMap` consumes the first adapter and
 * `Rep.isIntertwiningMap_id` and `Rep.isIntertwiningMap_res`: the identity
   map is intertwining along the identity isomorphism of the monoid, and along `f` between a
   restricted representation and the representation it restricts.
-* `Rep.isIntertwiningMap_res_res`, `Rep.isIntertwiningMap_res_res_toRes_naturality`: the identity
+* `Rep.isIntertwiningMap_res_res` and `Rep.isIntertwiningMap_res_res_toRes_naturality`: the identity
   map is intertwining between the restrictions along two factorisations of one homomorphism,
   naturally in the representation.
 -/
@@ -129,15 +129,15 @@ theorem isIntertwiningMap_res (N : Rep.{uV} R H) (f : G →* H) :
       ((LinearEquiv.refl R N.V : N.V →ₗ[R] N.V) : (Rep.res f N).V →ₗ[R] N.V) :=
   ⟨fun g v ↦ by simp⟩
 
-/-- For two factorisations `g₂ ∘ g₁ = f₂ ∘ f₁` of one homomorphism `K →* H`, the identity map of
-`N` is intertwining along `g₁` from `Res(f₁)(Res(f₂)(N))` to `Res(g₂)(N)`. Its `toRes` is the
-comparison morphism `Res(f₁)(Res(f₂)(N)) ⟶ Res(g₁)(Res(g₂)(N))` of `K`-representations. -/
+/-- The identity of `N` is intertwining along `g₁` from `Res(f₁)(Res(f₂)(N))` to `Res(g₂)(N)` when
+`g₂ ∘ g₁ = f₂ ∘ f₁`; its `toRes` is the comparison morphism
+`Res(f₁)(Res(f₂)(N)) ⟶ Res(g₁)(Res(g₂)(N))` of `K`-representations. -/
 theorem isIntertwiningMap_res_res {K : Type uK} {L : Type uL} [Monoid K] [Monoid L]
     (N : Rep.{uV} R H) {f₁ : K →* G} {f₂ : G →* H} {g₁ : K →* L} {g₂ : L →* H}
-    (h : g₂.comp g₁ = f₂.comp f₁) :
+    (hfg : g₂.comp g₁ = f₂.comp f₁) :
     (Rep.res f₁ (Rep.res f₂ N)).ρ.IsIntertwiningMap ((Rep.res g₂ N).ρ.comp g₁)
       (LinearMap.id : N.V →ₗ[R] N.V) :=
-  ⟨fun k v ↦ congr(N.ρ ($h.symm k) v)⟩
+  ⟨fun k v ↦ congr(N.ρ ($hfg.symm k) v)⟩
 
 end Rep
 
@@ -176,14 +176,15 @@ end IsIntertwiningMap
 end Representation
 
 open CategoryTheory in
-/-- The comparison morphisms `(isIntertwiningMap_res_res N h).toRes` from `Res(f₁)(Res(f₂)(N))` to
-`Res(g₁)(Res(g₂)(N))` are natural in `N`. The square is oriented like the `comm₁₂` field
+/-- The comparison morphisms `(isIntertwiningMap_res_res N hfg).toRes` from `Res(f₁)(Res(f₂)(N))`
+to `Res(g₁)(Res(g₂)(N))` are natural in `N`. The square is oriented like the `comm₁₂` field
 `τ₁ ≫ S₂.f = S₁.f ≫ τ₂` of a morphism of short complexes. -/
 @[reassoc]
 theorem Rep.isIntertwiningMap_res_res_toRes_naturality {K : Type uK} {L : Type uL} [Monoid K]
     [Monoid L] {f₁ : K →* G} {f₂ : G →* H} {g₁ : K →* L} {g₂ : L →* H}
-    (h : g₂.comp g₁ = f₂.comp f₁) {N N' : Rep.{uV} R H} (ψ : N ⟶ N') :
-    (isIntertwiningMap_res_res N h).toRes ≫ (resFunctor g₁).map ((resFunctor g₂).map ψ) =
-      (resFunctor f₁).map ((resFunctor f₂).map ψ) ≫ (isIntertwiningMap_res_res N' h).toRes := by rfl
+    (hfg : g₂.comp g₁ = f₂.comp f₁) {N N' : Rep.{uV} R H} (ψ : N ⟶ N') :
+    (isIntertwiningMap_res_res N hfg).toRes ≫ (resFunctor g₁).map ((resFunctor g₂).map ψ) =
+      (resFunctor f₁).map ((resFunctor f₂).map ψ) ≫ (isIntertwiningMap_res_res N' hfg).toRes := by
+  rfl
 
 end RepMorphisms
