@@ -1,4 +1,4 @@
-# Last round — r921 (2026-09-23T15:45Z)
+# Last round — r922 (2026-09-23T15:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,18 +44,17 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8295** | `08d0a50ca` | green | kind 3 (`Resolvent/Basic.lean`: `resolvent_shift_identity` takes `0 ≤ h`; the private Ioi-split helper is replaced by Mathlib's `intervalIntegral.integral_interval_add_Ioi`). **Approved on the fix** (board on head, 15:30:10Z); `ready-to-merge` | **queue** |
-| **#8304** | `58a0076a2` | first build | kind 3 (`Spin/Weight.lean`: delete the private `invOf_two_add_invOf_two`, an exact duplicate of Mathlib's root lemma; −4; gate 12/0/0; `Roadmap: RepresentationTheory`). **Draft**, opened r919 from `faf999d7c` | **CI** — mark ready when green |
-| **#8305** | `23d3af464` | first build | kind 3 (`Sard/FlatStratum.lean`: delete the private `norm_sub_le_of_mem_segment`, which is Mathlib's root lemma up to renaming the points; −7; gate 12/0/0; `Roadmap: none`). **Draft**, opened r919 from `faf999d7c` | **CI** — mark ready when green |
+| **#8304** | `58a0076a2` | green (15:47:26Z) | kind 3 (`Spin/Weight.lean`: delete the private `invOf_two_add_invOf_two`, an exact duplicate of Mathlib's root lemma; −4; gate 12/0/0; `Roadmap: RepresentationTheory`). Opened r919 from `faf999d7c`; **marked ready 15:48:03Z** | **external reviewers** (1–4 h); step 4 hard-stopped |
+| **#8305** | `23d3af464` | green (15:46:12Z) | kind 3 (`Sard/FlatStratum.lean`: delete the private `norm_sub_le_of_mem_segment`, which is Mathlib's root lemma up to renaming the points; −7; gate 12/0/0; `Roadmap: none`). Opened r919 from `faf999d7c`; **marked ready 15:48:05Z** | **external reviewers** (1–4 h); step 4 hard-stopped |
 
-**In progress (2 of 3): #8304 and #8305 (drafts, first builds).** #8295 is `ready-to-merge` (approved on its fix). **#8291 merged
+**In progress (2 of 3): #8304 and #8305 (`awaiting-review`, ready 15:48Z).** **#8295 merged 15:47:58Z**, the ninth today. **#8291 merged
 15:19:10Z**, the eighth today, after #8286, #8275, #8273, #8235, #8233, #8224 and #8101.
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `dcbcc08dc`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `7def523c8`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -67,7 +66,7 @@ and a kind-2 slot must go to the already-cleared staged branch or to kind 1/3. (
 claude` or buying credits is their call. After the reset, probe with `codex exec -m gpt-5.6-sol "Reply ok"` before any drive.
 
 
-0. **Now (r920):** in progress are the drafts #8304 and #8305 (first builds — **mark each ready when green**); #8295 is `ready-to-merge`.
+0. **Now (r920):** in progress are #8304 and #8305 (ready 15:48Z; #8305 `review-in-progress`); #8295 merged 15:47:58Z.
    One slot is open. Step 4 is hard-stopped until 2026-09-27T15:04Z. **A new kind-3 source (r919):** run `misplaced.py` over the tree and
    intersect its private names with Mathlib's declared names. It yielded #8304 and #8305 and is now **exhausted** (r920 vetted the rest).
    No kind has a clean target: kind 1 needs a pin bump, kind 2 needs astra (2026-09-27T15:04Z), and the kind-3 scanners are dry.
@@ -150,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r921 did
+## What r703–r922 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -378,6 +377,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r919: **#8291 merged** (the eighth today). `misplaced.py` ∩ Mathlib names found two private exact duplicates of Mathlib lemmas, opened as drafts **#8304** (`invOf_two_add_invOf_two`) and **#8305** (`norm_sub_le_of_mem_segment`); six more are queued for vetting.
 * r920: **#8295 approved on the fix**. The rest of the `misplaced` × Mathlib list was vetted: no more duplicates. The HilbertTheory overlap with Mathlib is a design question, not a catch-up.
 * r921: no change; #8304 and #8305 are building.
+* r922: **#8295 merged**, the ninth today. #8304 and #8305 were marked ready (15:48Z); #8305 is under review.
 
 ## Candidates for a later step 5
 

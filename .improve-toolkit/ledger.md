@@ -41887,3 +41887,11 @@ stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.
 
 #8304 and #8305 are building (queued about 8 min, running since 15:34Z; waiter running). #8295 is `ready-to-merge`. No new merges. One
 slot is open (no eligible target). Pin `dc4b8d60d5`, main `80f9ab2de`.
+* r921 addendum (waiter): **#8304 went green at 15:47:26Z and #8305 at 15:46:12Z. Marked ready at 15:48:03Z and 15:48:05Z.** The guards
+  held: every check green, heads `58a0076a2` and `23d3af464` unchanged, pin `dc4b8d60d5` at both the base `faf999d7c` and main
+  `6a8de21ce`, and neither file touched. Both deletions compile against Mathlib's lemmas as expected.
+
+## r922 — 2026-09-23T15:54Z (cron; step 4 hard-stopped)
+
+**#8295 merged** 15:47:58Z, the ninth today (#8101, #8233, #8224, #8235, #8273, #8275, #8286, #8291, #8295). #8305 is
+`review-in-progress`; #8304 is `awaiting-review` (7 min). One slot is open (no eligible target). Pin `dc4b8d60d5`, main `7783dbc4b`.
