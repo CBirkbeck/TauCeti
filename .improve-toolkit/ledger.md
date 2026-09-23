@@ -41624,3 +41624,9 @@ No change on the board. **External reviewers are active:** 21 boards were update
 `Robertboy18`), and their targets (#8173–#8222) are all numbered below ours. They seem to work oldest-first, so #8224, #8233 and
 #8235 are queued behind them rather than dropped. Merges are slow (one in the last hour), and main is still `1724b0c80`.
 The cap is full.
+
+## r895 — 2026-09-23T11:24Z (cron; step 4 hard-stopped)
+
+Board unchanged: #8224 (error board), #8233 (118 min) and #8235 (108 min) are waiting on external reviewers. Main moved to
+`7d24ccc8a`, and the pin is unchanged. All three open heads and the staged `condindep-conditional-style` merge-tree clean, and main
+touched none of their files. No merges. The cap is full.
