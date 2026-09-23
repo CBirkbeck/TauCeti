@@ -42252,3 +42252,7 @@ CI is still stalled (141 queued, 8 running). Nothing of ours has moved. Main `a8
 
 **#8388 and #8389 merged** 22:05:52Z (the sixteenth and seventeenth today); the merge queue is moving again. #8402, #8413 and #8426 (all astra-cleared) are still
 on queued builds (CI: 138 queued, 8 running). Pin `dc4b8d60d5`, main `8593e938c`.
+
+## r961 — 2026-09-23T22:24Z (cron)
+
+CI is recovering (135 queued, 16 running, up from 4–8). The three astra-cleared drafts are still on queued builds. No merges since #8388 and #8389. Main `8593e938c`.
