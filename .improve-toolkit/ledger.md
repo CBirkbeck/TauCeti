@@ -42267,3 +42267,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 ## r963 — 2026-09-23T22:44Z (cron)
 
 #8402 is `awaiting-review` (ready 22:39:10Z). #8413 and #8426 (astra-cleared) are still on queued builds. No merges. Pin `dc4b8d60d5`, main `bae992d9a`.
+
+## r964 — 2026-09-23T22:54Z (cron)
+
+* **#8402 approved** (22:52:44Z), `ready-to-merge`. #8413's build is `in_progress`; #8426's is still queued.
+* **Declined `Probability/Moments/VanishingMoments.lean`** as a kind-2 target: roadmap text (milestone **B1** of `OrthogonalL2Bases`) runs
+  through several declaration docstrings, including one explaining a "roadmap-specified API name". Removing it is a documentation rewrite,
+  not a style pass.
+* **Step 5, kind 2: opened draft #8469**, `improve/arrays-block-style` @ `75cce7ae9`, from `6c75046e3`; `Roadmap: Exchangeability` (as
+  #4706 and #4271). Target: `Exchangeability/Arrays/Block.lean` (326 lines, 61 `fun … =>`, no real chains, no roadmap text). Edit: 61
+  arrows (asserted). Gate 12/0/0; the astra question uses the three-dot diff (1 file); astra was launched at 22:59Z. In progress (cap
+  full): #8413, #8426 and #8469. Pin `dc4b8d60d5`, main `6c75046e3`.

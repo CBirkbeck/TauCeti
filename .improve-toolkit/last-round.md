@@ -1,4 +1,4 @@
-# Last round — r963 (2026-09-23T22:45Z)
+# Last round — r964 (2026-09-23T23:02Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,18 +44,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8402** | `1ffccd0f8` | green (22:38:41Z) | kind 2 (`Recurrence/RowExchangeable.lean`: 83 `↦`; `Roadmap: Exchangeability`). Astra accepted it; **marked ready** (r962) | **external reviewers** |
+| **#8402** | `1ffccd0f8` | green | kind 2 (`Recurrence/RowExchangeable.lean`). **Approved** (22:52:44Z); `ready-to-merge` | **queue** |
 | **#8413** | `e6125f186` | queued | kind 2 (`KnotTheory/Grid/Unknot/Basic.lean`: 62 `↦`; gate 12/0/0; `Roadmap: CombinatorialHeegaardFloer`). **Draft**; **astra cleared it** (r954) | **CI** — mark ready when green (the sweep catches it) |
 | **#8426** | `db6452b92` | queued | kind 2 (`Exchangeability/Arrays/ConditionalLaw.lean`: 64 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (20:59Z) | **CI** — mark ready when green |
+| **#8469** | `75cce7ae9` | queued | kind 2 (`Exchangeability/Arrays/Block.lean`: 61 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r964; astra launched 22:59Z (three-dot diff) | **astra + CI** — mark ready when both clear |
 
-**In progress (cap full): #8402 (ready, r962) and the drafts #8413 and #8426 (astra-cleared; builds queued in the recovering CI).** Seventeen of this session's PRs
-merged on 2026-09-23, the latest #8388 and #8389 (22:05:52Z). Next kind-2 candidates are listed in the r951 ledger.
+**In progress (cap full): the drafts #8413 (astra ✓, building), #8426 (astra ✓, queued) and #8469 (astra and build pending).** #8402 is
+`ready-to-merge`. Seventeen of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `cd77d1c28`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `a13d99dc8`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -148,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r963 did
+## What r703–r964 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -411,6 +412,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r960: **#8388 and #8389 merged** (the sixteenth and seventeenth today). The drafts are still waiting for builds.
 * r961–r962: CI is recovering (16 running, the queue down to 128); the drafts are still queued.
 * r963: #8402 was marked ready (it went green at 22:38Z); #8413 and #8426 are still queued.
+* r964: **#8402 approved**. `VanishingMoments.lean` was declined (roadmap text throughout). Kind 2 opened as draft **#8469** (`Arrays/Block.lean`, 61 `↦`).
 
 ## Candidates for a later step 5
 
