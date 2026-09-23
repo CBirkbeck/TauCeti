@@ -27,7 +27,7 @@ fundamental domain, say — needs exactly that.
 * `TauCeti.NumberField.mixedEmbedding.det_lmul`: the determinant of multiplication by `c`,
   as a product over the real and the complex places;
 * `TauCeti.NumberField.mixedEmbedding.abs_det_lmul`: its absolute value is `mixedEmbedding.norm c`;
-* `TauCeti.NumberField.mixedEmbedding.volume_mul_left_image`: multiplication by `c` scales volume
+* `TauCeti.NumberField.mixedEmbedding.volume_image_mul_left`: multiplication by `c` scales volume
   by `mixedEmbedding.norm c`;
 * `TauCeti.NumberField.mixedEmbedding.volume_unitSMul`: the action of a unit preserves volume.
 -/
@@ -76,7 +76,7 @@ open scoped Classical in
 /-- **Multiplication by `c` scales volume by the mixed norm of `c`.**  The set `A` is arbitrary,
 so there is no measurability hypothesis to discharge; for `c` the image of a unit, where the
 factor is one, use `volume_unitSMul`. -/
-theorem volume_mul_left_image (c : mixedSpace K) (A : Set (mixedSpace K)) :
+theorem volume_image_mul_left (c : mixedSpace K) (A : Set (mixedSpace K)) :
     volume ((c * ·) '' A) = ENNReal.ofReal (mixedEmbedding.norm c) * volume A := by
   rw [← abs_det_lmul]
   -- `(c * ·)` is definitionally the `ℝ`-linear map `Algebra.lmul ℝ (mixedSpace K) c`.
@@ -84,10 +84,10 @@ theorem volume_mul_left_image (c : mixedSpace K) (A : Set (mixedSpace K)) :
 
 open scoped Classical in
 /-- **A unit acts by a volume-preserving map.**  For a general multiplier `c`, where the factor is
-`mixedEmbedding.norm c`, use `volume_mul_left_image`. -/
+`mixedEmbedding.norm c`, use `volume_image_mul_left`. -/
 @[simp]
 theorem volume_unitSMul (u : (𝓞 K)ˣ) (A : Set (mixedSpace K)) : volume (u • A) = volume A := by
-  -- A unit has mixed norm one, so the factor `volume_mul_left_image` supplies is one.
-  simp [← Set.image_smul, volume_mul_left_image]
+  -- A unit has mixed norm one, so the factor `volume_image_mul_left` supplies is one.
+  simp [← Set.image_smul, volume_image_mul_left]
 
 end TauCeti.NumberField.mixedEmbedding
