@@ -47,6 +47,17 @@ homology, `groupHomology.H1AddEquivOfIsTrivial`, and the tensor-product right un
 * `TauCeti.TateCohomology.subsingleton_tateCohomology_negOne_trivial_int`: for trivial integral
   coefficients, degree `-1` is trivial.
 
+## Implementation notes
+
+`H0π`, `HNegOneπ`, `groupHomology.H1π` and `groupHomology.cycles₁IsoOfIsTrivial` are maps out of
+modules `ModuleCat.of R X`. Before `simp` looks a term up among its lemmas, it reduces the carrier
+of `ModuleCat.of R X` to `X`, and `(Rep.trivial ℤ H ℤ).ρ` to `Representation.trivial ℤ H ℤ`, even
+inside the implicit type arguments of a coercion, whereas a `simp` lemma is indexed by its
+left-hand side as elaborated. The `simp` lemmas evaluating these maps therefore state their
+left-hand sides through `dsimp% only`, and `range_norm_trivial_int` is stated over
+`Representation.trivial ℤ H ℤ`, so that `simp` finds them. This follows #8315, which introduced
+the convention for the `Formation` files.
+
 ## References
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §4.
@@ -218,7 +229,7 @@ theorem mkQ_comp_H0IsoNormQuotient_inv (M : Rep R G) :
 the image of the norm. -/
 @[simp]
 theorem H0π_eq_zero_iff {M : Rep R G} (y : M.ρ.invariants) :
-    H0π M y = 0 ↔ y ∈ (range M.ρ.norm).submoduleOf M.ρ.invariants := by
+    (dsimp% only (H0π M y)) = 0 ↔ y ∈ (range M.ρ.norm).submoduleOf M.ρ.invariants := by
   rw [← Submodule.Quotient.mk_eq_zero, ← H0π_comp_H0IsoNormQuotient_hom_apply]
   exact ((H0IsoNormQuotient M).toLinearEquiv.map_eq_zero_iff).symm
 
@@ -226,7 +237,7 @@ theorem H0π_eq_zero_iff {M : Rep R G} (y : M.ρ.invariants) :
 difference lies in the image of the norm. -/
 @[simp]
 theorem H0π_eq_iff {M : Rep R G} (y z : M.ρ.invariants) :
-    H0π M y = H0π M z ↔ y - z ∈ (range M.ρ.norm).submoduleOf M.ρ.invariants := by
+    (dsimp% only (H0π M y = H0π M z)) ↔ y - z ∈ (range M.ρ.norm).submoduleOf M.ρ.invariants := by
   rw [← sub_eq_zero, ← map_sub, H0π_eq_zero_iff]
 
 /-- Every degree-zero Tate cohomology class is represented by an invariant, so a property of all
@@ -337,8 +348,8 @@ theorem HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom (M : Rep R G) :
 the augmentation submodule. -/
 @[simp]
 theorem HNegOneπ_eq_zero_iff {M : Rep R G} (x : ker M.ρ.norm) :
-    HNegOneπ M x = 0 ↔ x ∈
-      (Representation.Coinvariants.ker M.ρ).submoduleOf (ker M.ρ.norm) := by
+    (dsimp% only (HNegOneπ M x)) = 0 ↔
+      x ∈ (Representation.Coinvariants.ker M.ρ).submoduleOf (ker M.ρ.norm) := by
   rw [← Submodule.Quotient.mk_eq_zero,
     ← HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom_apply]
   exact ((HNegOneIsoNormKernelQuotient M).toLinearEquiv.map_eq_zero_iff).symm
@@ -347,8 +358,8 @@ theorem HNegOneπ_eq_zero_iff {M : Rep R G} (x : ker M.ρ.norm) :
 difference belongs to the augmentation submodule. -/
 @[simp]
 theorem HNegOneπ_eq_iff {M : Rep R G} (x y : ker M.ρ.norm) :
-    HNegOneπ M x = HNegOneπ M y ↔ x - y ∈
-      (Representation.Coinvariants.ker M.ρ).submoduleOf (ker M.ρ.norm) := by
+    (dsimp% only (HNegOneπ M x = HNegOneπ M y)) ↔
+      x - y ∈ (Representation.Coinvariants.ker M.ρ).submoduleOf (ker M.ρ.norm) := by
   rw [← sub_eq_zero, ← map_sub, HNegOneπ_eq_zero_iff]
 
 /-- Every degree `-1` Tate cohomology class is represented by a norm-zero element, so a property
@@ -413,22 +424,16 @@ def HNegTwoAddEquivTensorOfIsTrivial :
 elementary tensor `⟦g⟧ ⊗ₜ a`. -/
 @[simp]
 theorem HNegTwoAddEquivTensorOfIsTrivial_single (g : G) (a : A) :
-    HNegTwoAddEquivTensorOfIsTrivial A
+    (dsimp% only (HNegTwoAddEquivTensorOfIsTrivial A
       ((TateCohomology.isoGroupHomology (-2) 1 (Eq.refl (-2))).inv.app A
-        (H1π A ((cycles₁IsoOfIsTrivial A).inv (Finsupp.single g a)))) =
-      Additive.ofMul (Abelianization.of g) ⊗ₜ[ℤ] a := by
-  let e : tateCohomology A (-2) ≅ groupHomology.H1 A :=
-    (TateCohomology.isoGroupHomology (-2) 1 (Eq.refl (-2))).app A
+        (H1π A ((cycles₁IsoOfIsTrivial A).inv (Finsupp.single g a)))))) =
+      Additive.ofMul (Abelianization.of g) ⊗ₜ[ℤ] a :=
   -- The natural isomorphism lands in `groupHomology.functor R G 1`, whereas the low-degree API
-  -- uses the definitionally equal alias `groupHomology.H1`; an explicit rewrite cannot cross
-  -- that boundary at implicit transparency.
-  change HNegTwoAddEquivTensorOfIsTrivial A
-    (e.inv (H1π A ((cycles₁IsoOfIsTrivial A).inv (Finsupp.single g a)))) = _
-  -- Unfolding the composite similarly exposes the functor value rather than `H1`, so record the
-  -- definitionally equal, well-typed low-degree form before applying the isomorphism law.
-  change (H1AddEquivOfIsTrivial A)
-    (e.hom (e.inv (H1π A ((cycles₁IsoOfIsTrivial A).inv (Finsupp.single g a))))) = _
-  rw [e.inv_hom_id_apply, H1AddEquivOfIsTrivial_single]
+  -- uses the definitionally equal alias `groupHomology.H1`; the two facts are therefore composed
+  -- as terms, since `rw` cannot match across that unfolding.
+  (congrArg (H1AddEquivOfIsTrivial A)
+    (((TateCohomology.isoGroupHomology (-2) 1 (Eq.refl (-2))).app A).inv_hom_id_apply _)).trans
+    (H1AddEquivOfIsTrivial_single A g a)
 
 /-- The inverse degree-`-2` identification sends an elementary tensor to the corresponding Tate
 homology class. -/
@@ -438,8 +443,7 @@ theorem HNegTwoAddEquivTensorOfIsTrivial_symm_tmul (g : G) (a : A) :
         (Additive.ofMul (Abelianization.of g) ⊗ₜ[ℤ] a) =
       (TateCohomology.isoGroupHomology (-2) 1 (Eq.refl (-2))).inv.app A
         (H1π A ((cycles₁IsoOfIsTrivial A).inv (Finsupp.single g a))) := by
-  apply (HNegTwoAddEquivTensorOfIsTrivial A).injective
-  rw [AddEquiv.apply_symm_apply, HNegTwoAddEquivTensorOfIsTrivial_single]
+  simp [AddEquiv.symm_apply_eq]
 
 variable {G : Type} [Group G] [Fintype G]
 
@@ -454,14 +458,12 @@ def HNegTwoAddEquivAbelianization :
 of `g` in the additive abelianization. -/
 @[simp]
 theorem HNegTwoAddEquivAbelianization_single_one (g : G) :
-    HNegTwoAddEquivAbelianization
-      ((TateCohomology.isoGroupHomology (-2) 1 (Eq.refl (-2))).inv.app
-        (Rep.trivial ℤ G ℤ)
+    (dsimp% only (HNegTwoAddEquivAbelianization
+      ((TateCohomology.isoGroupHomology (-2) 1 (Eq.refl (-2))).inv.app (Rep.trivial ℤ G ℤ)
         (H1π (Rep.trivial ℤ G ℤ)
-          ((cycles₁IsoOfIsTrivial (Rep.trivial ℤ G ℤ)).inv (Finsupp.single g 1)))) =
+          ((cycles₁IsoOfIsTrivial (Rep.trivial ℤ G ℤ)).inv (Finsupp.single g 1)))))) =
       Additive.ofMul (Abelianization.of g) := by
-  simp only [HNegTwoAddEquivAbelianization, AddEquiv.trans_apply]
-  rw [HNegTwoAddEquivTensorOfIsTrivial_single]
+  rw [HNegTwoAddEquivAbelianization, AddEquiv.trans_apply, HNegTwoAddEquivTensorOfIsTrivial_single]
   simp
 
 /-- The inverse integral degree-`-2` identification sends the class of `g` to the Tate homology
@@ -473,18 +475,17 @@ theorem HNegTwoAddEquivAbelianization_symm_of (g : G) :
         (Rep.trivial ℤ G ℤ)
         (H1π (Rep.trivial ℤ G ℤ)
           ((cycles₁IsoOfIsTrivial (Rep.trivial ℤ G ℤ)).inv (Finsupp.single g 1))) := by
-  apply HNegTwoAddEquivAbelianization.injective
-  rw [AddEquiv.apply_symm_apply, HNegTwoAddEquivAbelianization_single_one]
+  simp [AddEquiv.symm_apply_eq]
 
 section TrivialInt
 
 variable (H : Type v) [Group H] [Fintype H]
 
-/-- For trivial integral coefficients, the norm image is the subgroup generated by the order of
-the group. -/
+/-- For trivial integral coefficients, the norm image is the ideal generated by the order of the
+group. -/
 @[simp]
 theorem range_norm_trivial_int :
-    range (Rep.trivial ℤ H ℤ).ρ.norm = Ideal.span {(Nat.card H : ℤ)} := by
+    range (Representation.trivial ℤ H ℤ).norm = Ideal.span {(Nat.card H : ℤ)} := by
   ext x
   simp [Representation.norm, Ideal.mem_span_singleton', mul_comm]
 
@@ -516,14 +517,11 @@ def H0LinearEquivTrivialIntZModCard :
 /-- The degree-zero equivalence sends an invariant representative to its residue class modulo the
 order of the group. -/
 @[simp]
-theorem H0LinearEquivTrivialIntZModCard_H0π
-    (x : (Rep.trivial ℤ H ℤ).ρ.invariants) :
-    H0LinearEquivTrivialIntZModCard H (H0π (Rep.trivial ℤ H ℤ) x) = (x : ℤ) := by
-  have hx : (H0IsoNormQuotient (Rep.trivial ℤ H ℤ)).toLinearEquiv
-      (H0π (Rep.trivial ℤ H ℤ) x) = Submodule.Quotient.mk x :=
-    H0π_comp_H0IsoNormQuotient_hom_apply _ _
+theorem H0LinearEquivTrivialIntZModCard_H0π (x : (Rep.trivial ℤ H ℤ).ρ.invariants) :
+    (dsimp% only (H0LinearEquivTrivialIntZModCard H (H0π (Rep.trivial ℤ H ℤ) x))) = (x : ℤ) := by
   simp only [H0LinearEquivTrivialIntZModCard, LinearEquiv.trans_apply]
-  rw [hx, Submodule.Quotient.equiv_apply, Submodule.mapQ_apply]
+  rw [Iso.toLinearEquiv_apply, H0π_comp_H0IsoNormQuotient_hom_apply,
+    Submodule.Quotient.equiv_apply, Submodule.mapQ_apply]
   rfl
 
 /-- The order of degree-zero Tate cohomology with trivial integral coefficients is the order of
