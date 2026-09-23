@@ -196,17 +196,6 @@ theorem kerNormTransfer_apply (T : LayerRestriction small big) (F : Formation G)
         (Representation.relTransfer (big.rep F).ρ T.galHom.range ((x : F.level big.top))) :=
   Subtype.ext (by rw [kerNormTransfer_apply_coe, repIso_inv_apply_coe])
 
-/-- The inverse identification of coefficient modules intertwines the action of the image of the
-smaller Galois group with the action of the smaller layer. -/
-theorem repIso_inv_comm_apply (T : LayerRestriction small big) (F : Formation G)
-    (g : T.galHom.range) (x : F.level big.top) :
-    (T.repIso F).inv.hom.toLinearMap (((big.rep F).ρ.comp T.galHom.range.subtype) g x) =
-      (small.rep F).ρ ((MonoidHom.ofInjective T.galHom_injective).symm g)
-        ((T.repIso F).inv.hom.toLinearMap x) := by
-  have hg := (MonoidHom.apply_ofInjective_symm T.galHom_injective g).symm
-  simp only [MonoidHom.comp_apply, Subgroup.coe_subtype, hg]
-  exact Rep.hom_comm_apply (T.repIso F).inv ((MonoidHom.ofInjective T.galHom_injective).symm g) x
-
 /-- **In degree minus one, layer Tate restriction is the relative transfer** on representatives. -/
 theorem tateRes_neg_one_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (big.rep F).ρ.norm) :
@@ -220,49 +209,6 @@ theorem tateRes_neg_one_HNegOneπ (T : LayerRestriction small big) (F : Formatio
 section Towers
 
 variable {a b c : NormalLayer G}
-
-/-- Along a tower, the image of the smallest Galois group sits inside the image of the middle
-one. -/
-theorem galHom_range_trans_le (T : LayerRestriction a b) (T' : LayerRestriction b c) :
-    (T.trans T').galHom.range ≤ T'.galHom.range := by
-  rw [galHom_trans T T', MonoidHom.range_comp T'.galHom T.galHom]
-  exact Subgroup.map_le_range _ _
-
-/-- Along a tower, the image of the middle Galois group inside the largest one carries the image
-of the smallest to the expected subgroup. -/
-theorem galHom_range_map_ofInjective (T : LayerRestriction a b) (T' : LayerRestriction b c) :
-    T.galHom.range.map (MonoidHom.ofInjective T'.galHom_injective : b.Gal →* T'.galHom.range) =
-      ((T.trans T').galHom.range).subgroupOf T'.galHom.range := by
-  ext z
-  simp only [Subgroup.mem_map, MonoidHom.mem_range, Subgroup.mem_subgroupOf, galHom_trans T T',
-    MonoidHom.comp_apply]
-  constructor
-  · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
-    exact ⟨x, (MonoidHom.ofInjective_apply T'.galHom_injective).symm⟩
-  · rintro ⟨x, hx⟩
-    exact ⟨T.galHom x, ⟨x, rfl⟩,
-      Subtype.ext ((MonoidHom.ofInjective_apply T'.galHom_injective).trans hx)⟩
-
-
-/-- Reading an element of the middle layer back to the smallest one directly, or first across to
-the largest and then back along the composite, give the same answer. -/
-theorem repIso_inv_eq_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
-    (F : Formation G) (u : F.level b.top) :
-    (T.repIso F).inv.hom u =
-      ((T.trans T').repIso F).inv.hom ((T'.repIso F).hom.hom.toLinearMap u) :=
-  Subtype.ext <| by
-    rw [T.repIso_inv_apply_coe F, (T.trans T').repIso_inv_apply_coe F]
-    exact (T'.repIso_hom_apply_coe F u).symm
-
-/-- The two ways of reading a subgroup of the middle image as a subgroup of the largest Galois
-group agree. -/
-theorem galHom_range_subtype_comp_subgroupOfEquivOfLe (T : LayerRestriction a b)
-    (T' : LayerRestriction b c) :
-    ((T.trans T').galHom.range.subtype).comp
-        (Subgroup.subgroupOfEquivOfLe (galHom_range_trans_le T T')).toMonoidHom =
-      (T'.galHom.range.subtype).comp
-        (((T.trans T').galHom.range).subgroupOf T'.galHom.range).subtype :=
-  (rfl)
 
 /-- **The norm-kernel transfer is transitive along a tower, modulo the augmentation submodule.**
 The transfer is transitive only up to the choice of coset representatives, and that choice is
@@ -290,13 +236,20 @@ theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRest
   have htower := Representation.relTransfer_relTransfer_sub_relTransfer_mem
     (ρ := (c.rep F).ρ) (H := T'.galHom.range) hKH ((y : F.level c.top))
   rw [← hw] at htower
-  rw [MonoidHom.comp_assoc, ← galHom_range_subtype_comp_subgroupOfEquivOfLe T T',
+  -- The two ways of reading the image of the smallest Galois group inside the largest agree.
+  have hsub : ((T.trans T').galHom.range.subtype).comp
+      (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom =
+        (T'.galHom.range.subtype).comp
+          (((T.trans T').galHom.range).subgroupOf T'.galHom.range).subtype := by
+    ext x
+    simp
+  rw [MonoidHom.comp_assoc, ← hsub,
     Representation.coinvariantsKer_comp_comp_of_surjective
       ((T.trans T').galHom.range.subtype)
       (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom
       (Subgroup.subgroupOfEquivOfLe hKH).surjective] at htrans
   rw [kerNormTransfer_apply, kerNormTransfer_apply, kerNormTransfer_apply,
-    repIso_inv_eq_trans T T' F, ← map_sub]
+    repIso_inv_apply_eq_trans T T' F, ← map_sub]
   refine Representation.coinvariantsKer_map_le
     (ρ := (c.rep F).ρ.comp ((T.trans T').galHom.range).subtype)
     (MonoidHom.ofInjective (T.trans T').galHom_injective).symm

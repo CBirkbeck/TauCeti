@@ -278,6 +278,17 @@ theorem repIso_inv_apply_coe (T : LayerRestriction small big) (F : Formation G)
     (((T.repIso F).inv.hom x : F.level small.top) : F.toRep.V) = (x : F.toRep.V) :=
   LinearEquiv.coe_ofEq_apply (congrArg F.level T.same_top).symm x
 
+/-- The inverse identification of coefficient modules intertwines the action of the image of the
+smaller Galois group with the action of the smaller layer. -/
+theorem repIso_inv_comm_apply (T : LayerRestriction small big) (F : Formation G)
+    (g : T.galHom.range) (x : F.level big.top) :
+    (T.repIso F).inv.hom.toLinearMap (((big.rep F).ρ.comp T.galHom.range.subtype) g x) =
+      (small.rep F).ρ ((MonoidHom.ofInjective T.galHom_injective).symm g)
+        ((T.repIso F).inv.hom.toLinearMap x) := by
+  have hg := (MonoidHom.apply_ofInjective_symm T.galHom_injective g).symm
+  simp only [MonoidHom.comp_apply, Subgroup.coe_subtype, hg]
+  exact Rep.hom_comm_apply (T.repIso F).inv ((MonoidHom.ofInjective T.galHom_injective).symm g) x
+
 /-! ### Towers of restrictions -/
 
 /-- **Every layer is a restriction of itself.** -/
@@ -315,6 +326,28 @@ theorem galHom_trans (T : LayerRestriction a b) (T' : LayerRestriction b c) :
       rw [galHom_mk, MonoidHom.comp_apply, galHom_mk, galHom_mk]
       exact congrArg QuotientGroup.mk (Subtype.ext (by simp only [Subgroup.coe_inclusion]))
 
+/-- Along a tower, the image of the smallest Galois group sits inside the image of the middle
+one. -/
+theorem galHom_range_trans_le (T : LayerRestriction a b) (T' : LayerRestriction b c) :
+    (T.trans T').galHom.range ≤ T'.galHom.range := by
+  rw [galHom_trans T T', MonoidHom.range_comp T'.galHom T.galHom]
+  exact Subgroup.map_le_range _ _
+
+/-- Along a tower, the image of the middle Galois group inside the largest one carries the image
+of the smallest to the expected subgroup. -/
+theorem galHom_range_map_ofInjective (T : LayerRestriction a b) (T' : LayerRestriction b c) :
+    T.galHom.range.map (MonoidHom.ofInjective T'.galHom_injective : b.Gal →* T'.galHom.range) =
+      ((T.trans T').galHom.range).subgroupOf T'.galHom.range := by
+  ext z
+  simp only [Subgroup.mem_map, MonoidHom.mem_range, Subgroup.mem_subgroupOf, galHom_trans T T',
+    MonoidHom.comp_apply]
+  constructor
+  · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
+    exact ⟨x, (MonoidHom.ofInjective_apply T'.galHom_injective).symm⟩
+  · rintro ⟨x, hx⟩
+    exact ⟨T.galHom x, ⟨x, rfl⟩,
+      Subtype.ext ((MonoidHom.ofInjective_apply T'.galHom_injective).trans hx)⟩
+
 /-- **The identifications of coefficient modules compose along a tower of restrictions.** All
 three are the identity on the ambient module, so this is an equation between three inclusions of
 one and the same level. -/
@@ -323,6 +356,16 @@ theorem repIso_inv_hom_trans_apply (T : LayerRestriction a b) (T' : LayerRestric
     ((T.trans T').repIso F).inv.hom x = (T.repIso F).inv.hom ((T'.repIso F).inv.hom x) :=
   Subtype.ext <| ((T.trans T').repIso_inv_apply_coe F x).trans
     (((T.repIso_inv_apply_coe F _).trans (T'.repIso_inv_apply_coe F x)).symm)
+
+/-- Reading an element of the middle layer back to the smallest one directly, or first across to
+the largest and then back along the composite, give the same answer. -/
+theorem repIso_inv_apply_eq_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
+    (F : Formation G) (u : F.level b.top) :
+    (T.repIso F).inv.hom u =
+      ((T.trans T').repIso F).inv.hom ((T'.repIso F).hom.hom.toLinearMap u) :=
+  Subtype.ext <| by
+    rw [T.repIso_inv_apply_coe F, (T.trans T').repIso_inv_apply_coe F]
+    exact (T'.repIso_hom_apply_coe F u).symm
 
 /-! ### Restriction of layer cohomology -/
 

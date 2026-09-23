@@ -319,7 +319,7 @@ theorem relTransfer_sub_sum_mem {ι : Type*} [Fintype ι] (f : ι → G)
     QuotientGroup.eq.mp ((e.apply_symm_apply q).trans q.out_eq'.symm)
   have hg : H.subtype ⟨(f (e.symm q))⁻¹ * (q.out : G), hq⟩⁻¹ * (f (e.symm q))⁻¹ =
       ((q.out : G))⁻¹ := by
-    change ((f (e.symm q))⁻¹ * (q.out : G))⁻¹ * (f (e.symm q))⁻¹ = _
+    rw [Subgroup.subtype_apply, InvMemClass.coe_inv, Subgroup.coe_mk]
     group
   refine Coinvariants.mem_ker_of_eq (ρ := ρ.comp H.subtype) ⟨_, hq⟩⁻¹
     (ρ (f (e.symm q))⁻¹ x) _ ?_
