@@ -145,10 +145,11 @@ deliberately overlap.
 :::blob participationGraph
 :::
 
-How have merged contributions and reviews accumulated? Unlike the rolling charts above,
-these histories include the current partial UTC day through the snapshot time. They show
-every contributor while that remains legible, then cap themselves at 24 named lines and
-combine the remaining long tail. Exact totals for every login remain available in the generated
+How have merged contributions and reviews accumulated? Like the rolling charts above, these
+histories are drawn through the last complete UTC day, so a few hours of today never read as
+a slowdown. They show every contributor while that remains legible, then cap themselves at 24
+named lines and combine the remaining long tail. Exact totals for every login, counted right
+through the snapshot instant, remain available in the generated
 [`pr-stats.json`](static/pr-stats.json). A review is one canonical v1 scoreboard whose
 posting login also authors a merged PR in the fetched snapshot.
 

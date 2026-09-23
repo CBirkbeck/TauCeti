@@ -617,6 +617,21 @@ class MetricsTest(unittest.TestCase):
         self.assertTrue(names[-1].startswith("Other (2,488 contributors)"))
         self.assertTrue(all(len(values) == len(dates) for values in series.values()))
 
+    def test_the_cutoff_excludes_events_after_the_snapshot_instant(self):
+        # Independent of the end-date cut: both events fall on a day that has finished, so only
+        # the cutoff can separate them. Kept as its own test because generate() now ends the
+        # series on the last full day, which would hide a broken cutoff behind the date filter.
+        start = datetime(2026, 1, 1, tzinfo=UTC)
+        events = [
+            (datetime(2026, 1, 3, 9, tzinfo=UTC), "before"),
+            (datetime(2026, 1, 3, 18, tzinfo=UTC), "after"),
+        ]
+        _, _, _, totals = stats.cumulative_chart_series(
+            events, start.date(), date(2026, 1, 5), limit=10,
+            cutoff=datetime(2026, 1, 3, 12, tzinfo=UTC),
+        )
+        self.assertEqual(dict(totals), {"before": 1})
+
 
 class RenderingTest(unittest.TestCase):
     def test_generate_writes_five_valid_svgs_with_requested_names(self):
@@ -686,8 +701,24 @@ class RenderingTest(unittest.TestCase):
             self.assertIn("Reviews by contributor", review_svg)
             self.assertNotIn("Trusted v1 review scoreboards", review_svg)
             self.assertEqual(metrics["review_cycles"]["max_cycle"], 7)
+            self.assertEqual(metrics["merge_totals_by_contributor"]["alice"], 2)
+            self.assertEqual(metrics["review_totals_by_contributor"]["reviewer-a"], 1)
+            # frank merged and reviewer-c reviewed on day 15 at 12:00, eight hours before the
+            # 20:00 snapshot. Both are real and both are COUNTED -- the totals are documented
+            # as exact through the snapshot instant, and a contributor must not vanish from
+            # them for a few hours.
             self.assertEqual(metrics["merge_totals_by_contributor"]["frank"], 1)
             self.assertEqual(metrics["review_totals_by_contributor"]["reviewer-c"], 1)
+            # They are not PLOTTED, because day 15 is not over: drawing eight hours of it as
+            # though it were a whole day reads as a downturn, and the next run three hours
+            # later would redraw the same point higher.
+            self.assertEqual(metrics["last_full_day"], "2026-01-14")
+            self.assertEqual(metrics["cumulative_dates"][-1], "2026-01-14")
+            plotted = sum(values[-1] for values
+                          in metrics["cumulative_merges_plotted"].values())
+            counted = sum(metrics["merge_totals_by_contributor"].values())
+            self.assertEqual(counted - plotted, 1)  # frank's, held back for the day
+            # And anything after the snapshot instant stays out of both.
             self.assertNotIn("future-author", metrics["merge_totals_by_contributor"])
             self.assertNotIn("future-reviewer", metrics["review_totals_by_contributor"])
 

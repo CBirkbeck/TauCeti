@@ -44,8 +44,12 @@ It requires an authenticated `gh` CLI. In GitHub Actions, set `GH_TOKEN` to
   commenters without requiring the read-only Actions token to enumerate collaborators; a
   contributor who has authored a merged PR is inside this statistics trust boundary.
 - Seven-day metrics use complete UTC calendar days. Merge latency is PR creation to
-  merge time among PRs merged in that trailing window. Cumulative contributor histories
-  include events through the snapshot time, including the current partial UTC day.
+  merge time among PRs merged in that trailing window. Every chart is PLOTTED through the
+  last complete UTC day: regenerated every three hours, a final point holding only part of
+  the current day reads as a downturn rather than as an unfinished day, and redraws higher
+  on the next run. The contributor TOTALS in `pr-stats.json` are unaffected and remain exact
+  through the snapshot instant, so somebody whose first merge landed this morning appears in
+  the totals before appearing on the line.
 
 ## Reproducible and offline runs
 

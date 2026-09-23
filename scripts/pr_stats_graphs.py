@@ -701,25 +701,45 @@ def rolling_metrics(prs: list[dict], last_full_day: date, history_days: int) -> 
     return rows
 
 
+def utc_day(moment: datetime) -> date:
+    """The UTC calendar day of an instant, whatever offset it arrived with."""
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment.astimezone(timezone.utc).date()
+
+
 def cumulative_chart_series(
     events: Iterable[tuple[datetime, str]], start: date, end: date, limit: int,
     cutoff: datetime | None = None,
 ) -> tuple[list[str], list[str], dict[str, list[int]], Counter]:
-    """Build bounded plotted series while retaining exact totals for every login."""
-    events = [
+    """Build bounded plotted series while retaining exact totals for every login.
+
+    `cutoff` bounds what is COUNTED; `end` bounds what is PLOTTED. They are different
+    questions, and collapsing them into one silently rewrites a published contract:
+    pr-stats.json documents its contributor totals as exact through the snapshot instant, and
+    the charts stop at the last completed UTC day so that a few hours of the current day
+    cannot read as a downturn. A contributor whose only merge landed this morning is therefore
+    in the totals and not yet on the line, which is what both of those promises require.
+    """
+    known = [
         (timestamp, name) for timestamp, name in events
-        if timestamp.date() <= end and (cutoff is None or timestamp <= cutoff)
+        if cutoff is None or timestamp <= cutoff
     ]
-    totals = Counter(name for _, name in events)
+    totals = Counter(name for _, name in known)
     selected = sorted(totals, key=lambda name: (-totals[name], name.casefold()))[:limit]
     selected_set = set(selected)
     omitted = len(totals) - len(selected)
     other = f"Other ({omitted:,} contributors)" if omitted else None
     names = selected + ([other] if other else [])
     daily = Counter()
-    for timestamp, name in events:
+    for timestamp, name in known:
+        # Normalized, not `timestamp.date()`. parse_dt keeps whatever offset the snapshot
+        # carried, and the day boundary this is bucketing against is a UTC one.
+        day = utc_day(timestamp)
+        if day > end:
+            continue
         group = name if name in selected_set else other
-        daily[(timestamp.date(), group)] += 1
+        daily[(day, group)] += 1
     running = Counter()
     series = {name: [] for name in names}
     dates = []
@@ -1062,11 +1082,16 @@ def generate(
         (parse_dt(item["created_at"]), item["user"])
         for item in data.get("scoreboards") or []
     ]
+    # `last_full_day`, not `snapshot.date()`: the snapshot is taken every three hours, so ending
+    # the series on the current day plotted whatever had merged by then as though it were a whole
+    # day. On a cumulative curve that is not visibly "incomplete" -- it is a flat final segment
+    # and an end-of-line total that is simply short, both of which redraw steeper on the next run.
+    # The rolling chart has always ended here for the same reason; these two now agree with it.
     merge_dates, merge_names, merge_series, merge_totals = cumulative_chart_series(
-        merge_events, project_start, snapshot.date(), contributor_limit, snapshot,
+        merge_events, project_start, last_full_day, contributor_limit, snapshot,
     )
     review_dates, review_names, review_series, review_totals = cumulative_chart_series(
-        review_events, project_start, snapshot.date(), contributor_limit, snapshot,
+        review_events, project_start, last_full_day, contributor_limit, snapshot,
     )
 
     metrics = {
