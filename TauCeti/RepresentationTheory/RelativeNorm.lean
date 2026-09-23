@@ -232,6 +232,17 @@ theorem coinvariantsKer_comp_subtype_le :
   rintro _ ⟨⟨h, y⟩, rfl⟩
   exact Submodule.subset_span ⟨((h : G), y), rfl⟩
 
+/-- **An intertwining map carries the augmentation submodule into the augmentation submodule.**
+Only the compatibility of the actions is used, so `e` need not be a homomorphism. -/
+theorem coinvariantsKer_map_le {G' V' : Type*} [Group G'] [AddCommGroup V'] [Module R V']
+    {ρ' : Representation R G' V'} (e : G → G') (φ : V →ₗ[R] V')
+    (hφ : ∀ g x, φ (ρ g x) = ρ' (e g) (φ x)) :
+    (Coinvariants.ker ρ).map φ ≤ Coinvariants.ker ρ' := by
+  rw [Coinvariants.ker, Submodule.map_span_le]
+  rintro _ ⟨⟨g, x⟩, rfl⟩
+  rw [map_sub, hφ]
+  exact Coinvariants.sub_mem_ker _ _
+
 /-- **The augmentation submodule of a restricted representation depends only on the image of the
 restricting homomorphism.** Precomposing with a surjection does not change the generators. -/
 theorem coinvariantsKer_comp_comp {G' G'' : Type*} [Group G'] [Group G'']

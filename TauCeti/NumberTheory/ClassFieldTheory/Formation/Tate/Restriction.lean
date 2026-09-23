@@ -226,6 +226,86 @@ theorem galHom_range_map_ofInjective (T : LayerRestriction a b) (T' : LayerRestr
     rw [← hx, galHom_trans T T', MonoidHom.comp_apply]
     rfl
 
+/-- The identification of coefficient modules of the middle layer undoes its own inverse. -/
+theorem repIso_hom_repIso_inv (T' : LayerRestriction b c) (F : Formation G) (w : F.level c.top) :
+    (T'.repIso F).hom.hom.toLinearMap ((T'.repIso F).inv.hom w) = w := by
+  have h : (T'.repIso F).hom.hom ((T'.repIso F).inv.hom w) = w :=
+    Subtype.ext (by rw [T'.repIso_hom_apply_coe F, T'.repIso_inv_apply_coe F])
+  exact h
+
+/-- Reading an element of the middle layer back to the smallest one directly, or first across to
+the largest and then back along the composite, give the same answer. -/
+theorem repIso_inv_eq_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
+    (F : Formation G) (u : F.level b.top) :
+    (T.repIso F).inv.hom u =
+      ((T.trans T').repIso F).inv.hom ((T'.repIso F).hom.hom.toLinearMap u) := by
+  have h : (T.repIso F).inv.hom u = ((T.trans T').repIso F).inv.hom ((T'.repIso F).hom.hom u) :=
+    Subtype.ext (by
+      rw [T.repIso_inv_apply_coe F, (T.trans T').repIso_inv_apply_coe F,
+        T'.repIso_hom_apply_coe F])
+  exact h
+
+/-- The two ways of reading a subgroup of the middle image as a subgroup of the largest Galois
+group agree. -/
+theorem subtype_comp_subgroupOfEquivOfLe (T : LayerRestriction a b) (T' : LayerRestriction b c) :
+    ((T.trans T').galHom.range.subtype).comp
+        (Subgroup.subgroupOfEquivOfLe (galHom_range_trans_le T T')).toMonoidHom =
+      (T'.galHom.range.subtype).comp
+        (((T.trans T').galHom.range).subgroupOf T'.galHom.range).subtype :=
+  rfl
+
+/-- **The norm-kernel transfer is transitive along a tower, modulo the augmentation submodule.**
+The transfer is transitive only up to the choice of coset representatives, and that choice is
+invisible in degree `-1` Tate cohomology, which is the norm kernel modulo exactly this
+submodule. -/
+theorem kerNormTransfer_trans_sub_mem (T : LayerRestriction a b) (T' : LayerRestriction b c)
+    (F : Formation G) (y : LinearMap.ker (c.rep F).ρ.norm) :
+    (((T.trans T').kerNormTransfer F y : LinearMap.ker (a.rep F).ρ.norm) : F.level a.top) -
+      ((T.kerNormTransfer F (T'.kerNormTransfer F y) : LinearMap.ker (a.rep F).ρ.norm) :
+        F.level a.top) ∈ Representation.Coinvariants.ker (a.rep F).ρ := by
+  have hKH := galHom_range_trans_le T T'
+  set w := Representation.relTransfer (c.rep F).ρ T'.galHom.range ((y : F.level c.top)) with hw
+  -- Transport the inner transfer from the middle layer to the image of its Galois group.
+  have htrans := Representation.relTransfer_map_sub_mem
+    (ρ := (b.rep F).ρ) (H := T.galHom.range)
+    (ρ' := (c.rep F).ρ.comp T'.galHom.range.subtype)
+    (MonoidHom.ofInjective T'.galHom_injective) ((T'.repIso F).hom.hom.toLinearMap)
+    (fun g x ↦ by exact Rep.hom_comm_apply (T'.repIso F).hom g x)
+    (galHom_range_map_ofInjective T T') ((T'.repIso F).inv.hom w)
+  rw [repIso_hom_repIso_inv T' F w] at htrans
+  -- Then compose the two transfers inside the largest Galois group.
+  have htower := Representation.relTransfer_relTransfer_sub_relTransfer_mem
+    (ρ := (c.rep F).ρ) (H := T'.galHom.range) hKH ((y : F.level c.top))
+  rw [← hw] at htower
+  rw [MonoidHom.comp_assoc, ← subtype_comp_subgroupOfEquivOfLe T T',
+    Representation.coinvariantsKer_comp_comp ((T.trans T').galHom.range.subtype)
+      (Subgroup.subgroupOfEquivOfLe hKH).toMonoidHom
+      (Subgroup.subgroupOfEquivOfLe hKH).surjective] at htrans
+  rw [kerNormTransfer_apply, kerNormTransfer_apply, kerNormTransfer_apply,
+    repIso_inv_eq_trans T T' F, ← map_sub]
+  have hcomm : ∀ (g : ((T.trans T').galHom.range)) (x : F.level c.top),
+      ((T.trans T').repIso F).inv.hom.toLinearMap
+          (((c.rep F).ρ.comp ((T.trans T').galHom.range).subtype) g x) =
+        (a.rep F).ρ ((MonoidHom.ofInjective (T.trans T').galHom_injective).symm g)
+          (((T.trans T').repIso F).inv.hom.toLinearMap x) := by
+    intro g x
+    have hg : ((g : c.Gal)) = (T.trans T').galHom
+        ((MonoidHom.ofInjective (T.trans T').galHom_injective).symm g) :=
+      (congrArg Subtype.val
+        (MulEquiv.apply_symm_apply (MonoidHom.ofInjective (T.trans T').galHom_injective) g)).symm
+    have h := Rep.hom_comm_apply ((T.trans T').repIso F).inv
+      ((MonoidHom.ofInjective (T.trans T').galHom_injective).symm g) x
+    simp only [MonoidHom.comp_apply, Subgroup.coe_subtype, hg]
+    exact h
+  refine Representation.coinvariantsKer_map_le
+    (ρ := (c.rep F).ρ.comp ((T.trans T').galHom.range).subtype)
+    (fun g ↦ (MonoidHom.ofInjective (T.trans T').galHom_injective).symm g)
+    (((T.trans T').repIso F).inv.hom.toLinearMap) hcomm (Submodule.mem_map_of_mem ?_)
+  have hsum := add_mem htrans htower
+  rw [sub_add_sub_cancel, hw] at hsum
+  rw [← neg_sub]
+  exact Submodule.neg_mem _ hsum
+
 /-- **Tate restriction is functorial along a tower in every nonnegative degree.** Restricting
 from `K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`. -/
 theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestriction b c)
@@ -245,6 +325,23 @@ theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestrictio
   · rw [tateRes_ofNat_succ, tateRes_ofNat_succ, tateRes_ofNat_succ,
       cohomologyRes_trans T T']
     simp only [Category.assoc, Iso.inv_hom_id_assoc]
+
+/-- **Tate restriction is functorial along a tower in degree minus one.** Restricting from `K/F`
+to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`.
+
+Unlike the nonnegative degrees, this is not a formal consequence of functoriality of some
+change-of-group map: in degree `-1` restriction is the relative transfer, which is transitive
+only modulo the augmentation submodule — exactly the submodule degree `-1` Tate cohomology
+divides by. See `kerNormTransfer_trans_sub_mem`. -/
+theorem tateRes_neg_one_trans (T : LayerRestriction a b) (T' : LayerRestriction b c)
+    (F : Formation G) :
+    (T.trans T').tateRes F (-1) = T'.tateRes F (-1) ≫ T.tateRes F (-1) := by
+  ext x
+  induction x using TauCeti.TateCohomology.HNegOne_induction_on with
+  | h y =>
+    rw [ModuleCat.comp_apply, tateRes_neg_one_HNegOneπ, tateRes_neg_one_HNegOneπ,
+      tateRes_neg_one_HNegOneπ, TauCeti.TateCohomology.HNegOneπ_eq_iff]
+    exact kerNormTransfer_trans_sub_mem T T' F y
 
 end Towers
 
