@@ -41607,3 +41607,8 @@ round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5
     generalization reviewers would take.
   * Blocked by open PRs: `Resolvent/Basic.lean:184` (after #8224), `W1p/ChainRule.lean:436` (an open PR touches it).
   * `unusedscan`: 0 hits.
+
+## r892 — 2026-09-23T10:54Z (cron; step 4 hard-stopped)
+
+No change. #8224 (error board), #8233 (88 min) and #8235 (78 min) are waiting on external reviewers. No merges since #8101.
+Pin `dc4b8d60d5`, main `1724b0c80`. The cap is full.
