@@ -193,6 +193,30 @@ section Towers
 
 variable {a b c : NormalLayer G}
 
+/-- Along a tower, the image of the smallest Galois group sits inside the image of the middle
+one. -/
+theorem galHom_range_trans_le (T : LayerRestriction a b) (T' : LayerRestriction b c) :
+    (T.trans T').galHom.range ≤ T'.galHom.range := by
+  rintro _ ⟨x, rfl⟩
+  exact ⟨T.galHom x, by rw [galHom_trans T T']; rfl⟩
+
+/-- Along a tower, the image of the middle Galois group inside the largest one carries the image
+of the smallest to the expected subgroup. -/
+theorem galHom_range_map_ofInjective (T : LayerRestriction a b) (T' : LayerRestriction b c) :
+    T.galHom.range.map (MonoidHom.ofInjective T'.galHom_injective : b.Gal →* T'.galHom.range) =
+      ((T.trans T').galHom.range).subgroupOf T'.galHom.range := by
+  ext z
+  simp only [Subgroup.mem_map, MonoidHom.mem_range, Subgroup.mem_subgroupOf]
+  constructor
+  · rintro ⟨_, ⟨x, rfl⟩, rfl⟩
+    refine ⟨x, ?_⟩
+    rw [galHom_trans T T', MonoidHom.comp_apply]
+    exact (MonoidHom.ofInjective_apply T'.galHom_injective).symm
+  · rintro ⟨x, hx⟩
+    refine ⟨T.galHom x, ⟨x, rfl⟩, Subtype.ext ?_⟩
+    rw [← hx, galHom_trans T T', MonoidHom.comp_apply]
+    rfl
+
 /-- **Tate restriction is functorial along a tower in every nonnegative degree.** Restricting
 from `K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`. -/
 theorem tateRes_trans_of_nonneg (T : LayerRestriction a b) (T' : LayerRestriction b c)

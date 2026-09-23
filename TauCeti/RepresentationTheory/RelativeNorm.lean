@@ -232,6 +232,21 @@ theorem coinvariantsKer_comp_subtype_le :
   rintro _ ⟨⟨h, y⟩, rfl⟩
   exact Submodule.subset_span ⟨((h : G), y), rfl⟩
 
+/-- **The augmentation submodule of a restricted representation depends only on the image of the
+restricting homomorphism.** Precomposing with a surjection does not change the generators. -/
+theorem coinvariantsKer_comp_comp {G' G'' : Type*} [Group G'] [Group G'']
+    (ψ : G' →* G) (ε : G'' →* G') (hε : Function.Surjective ε) :
+    Coinvariants.ker (ρ.comp (ψ.comp ε)) = Coinvariants.ker (ρ.comp ψ) := by
+  rw [Coinvariants.ker, Coinvariants.ker]
+  congr 1
+  ext v
+  constructor
+  · rintro ⟨⟨g, x⟩, rfl⟩
+    exact ⟨(ε g, x), rfl⟩
+  · rintro ⟨⟨g, x⟩, rfl⟩
+    obtain ⟨g', rfl⟩ := hε g
+    exact ⟨(g', x), rfl⟩
+
 variable [Fintype (G ⧸ H)]
 
 /-- Modulo the augmentation submodule of `G`, the relative transfer is multiplication by the
