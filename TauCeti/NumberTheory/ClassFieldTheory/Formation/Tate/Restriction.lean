@@ -184,14 +184,9 @@ theorem kerNormTransfer_apply (T : LayerRestriction small big) (F : Formation G)
       (T.repIso F).inv.hom (Representation.relTransfer (big.rep F).ρ T.galHom.range x) := by
   rw [kerNormTransfer, LinearMap.comp_apply, TauCeti.TateCohomology.mapKerNorm_apply_coe,
     Representation.coe_relTransferKerNorm]
+  -- The linear part of `IsIntertwiningMap.symm (T.isIntertwiningMap_repIso_range F)` is
+  -- `(T.repIso F).inv.hom` by definition of `Representation.equivOfIso`.
   rfl
-
-/-- The relative transfer of norm kernels is the relative transfer on the ambient module. -/
-theorem kerNormTransfer_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : LinearMap.ker (big.rep F).ρ.norm) :
-    (T.kerNormTransfer F x : F.toRep.V) =
-      (Representation.relTransfer (big.rep F).ρ T.galHom.range x : F.toRep.V) := by
-  rw [kerNormTransfer_apply, repIso_inv_apply_coe]
 
 /-- **In degree minus one, layer Tate restriction is the relative transfer** on representatives. -/
 theorem tateRes_neg_one_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
