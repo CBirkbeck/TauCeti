@@ -180,21 +180,21 @@ private lemma integral_comp_add_right_Ioi (f : ℝ → X) (h : ℝ) :
   exact MeasureTheory.integral_add_right_eq_self _ h
 
 omit [CompleteSpace X] in
-/-- Splitting `∫_{Ioi 0} = ∫_{Ioc 0 h} + ∫_{Ioi h}` for `h > 0`. -/
-private lemma integral_Ioi_eq_Ioc_add_Ioi (f : ℝ → X) {h : ℝ} (hh : 0 < h)
+/-- Splitting `∫_{Ioi 0} = ∫_{Ioc 0 h} + ∫_{Ioi h}` for `0 ≤ h`. -/
+private lemma integral_Ioi_eq_Ioc_add_Ioi (f : ℝ → X) {h : ℝ} (hh : 0 ≤ h)
     (hf : IntegrableOn f (Set.Ioi 0) volume) :
     ∫ t in Set.Ioi 0, f t = (∫ t in Set.Ioc 0 h, f t) + ∫ t in Set.Ioi h, f t := by
-  rw [← Set.Ioc_union_Ioi_eq_Ioi hh.le]
+  rw [← Set.Ioc_union_Ioi_eq_Ioi hh]
   have hd : Disjoint (Set.Ioc 0 h) (Set.Ioi h) :=
     Set.disjoint_left.mpr (fun _ ht1 ht2 ↦ not_le.mpr ht2 ht1.2)
   exact MeasureTheory.setIntegral_union hd measurableSet_Ioi
     (hf.mono_set Set.Ioc_subset_Ioi_self)
-    (hf.mono_set (Set.Ioi_subset_Ioi hh.le))
+    (hf.mono_set (Set.Ioi_subset_Ioi hh))
 
-/-- The resolvent shift identity for a positive time increment. -/
+/-- The resolvent shift identity for a nonnegative time increment. -/
 private theorem StronglyContinuousSemigroup.resolvent_shift_identity
     (S : StronglyContinuousSemigroup X) {ω M : ℝ} (hb : S.HasGrowthBound ω M)
-    (lambda : ℝ) (hlam : ω < lambda) (x : X) {h : ℝ} (hh : 0 < h) :
+    (lambda : ℝ) (hlam : ω < lambda) (x : X) {h : ℝ} (hh : 0 ≤ h) :
     S.realOperator h (S.resolvent hb lambda hlam x) - S.resolvent hb lambda hlam x =
       (Real.exp (lambda * h) - 1) • S.resolvent hb lambda hlam x -
       Real.exp (lambda * h) •
@@ -209,7 +209,7 @@ private theorem StronglyContinuousSemigroup.resolvent_shift_identity
         (S.realOperator h) (f t) = Real.exp (lambda * h) • f (t + h) := by
       intro t ht
       simp only [f, ContinuousLinearMap.map_smul]
-      rw [← S.realOperator_add_apply h t hh.le (Set.mem_Ioi.mp ht).le, add_comm]
+      rw [← S.realOperator_add_apply h t hh (Set.mem_Ioi.mp ht).le, add_comm]
       symm
       rw [← mul_smul, ← Real.exp_add]
       congr 1
@@ -258,7 +258,7 @@ private theorem StronglyContinuousSemigroup.resolvent_generator_tendsto
   -- rewrite via the shift identity, then take the limit term by term
   apply Filter.Tendsto.congr'
   · filter_upwards [self_mem_nhdsWithin] with t (ht : 0 < t)
-    rw [S.resolvent_shift_identity hb lambda hlam x ht, smul_sub, smul_smul, smul_smul]
+    rw [S.resolvent_shift_identity hb lambda hlam x ht.le, smul_sub, smul_smul, smul_smul]
   · set Rlx := S.resolvent hb lambda hlam x
     set f := fun t ↦ Real.exp (-(lambda * t)) • S.realOperator t x
     apply Filter.Tendsto.sub
