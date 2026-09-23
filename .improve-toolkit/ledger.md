@@ -41838,3 +41838,29 @@ stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.
 
 #8295: its board (on `ab4d3f380`) is BEHIND the head `08d0a50ca`. The fix is pushed and CI is rebuilding (waiter running), so nothing to re-fix.
 #8291 is `ready-to-merge`. No new merges. Pin `dc4b8d60d5`, main `14fe11163`. Two slots are open (no eligible target).
+* r918 addendum (waiter): **#8295's rebuild on `08d0a50ca` is green** (15:21:04Z, check run 107244213147). The Mathlib-based `h_split`
+  (`integral_interval_add_Ioi` + `integral_of_le`, with `rw [hRlx, ← hsplit]`) compiles as written. It now waits for the re-review
+  triggered by the push. Its clock for step 4 would run from 15:21Z, but step 4 is hard-stopped.
+
+## r919 — 2026-09-23T15:24Z (cron; step 4 hard-stopped)
+
+* **#8291 merged** 15:19:10Z, the eighth today. #8295 is `review-in-progress` on the fix `08d0a50ca` (green 15:21:04Z). Two slots open.
+* **A new kind-3 source, prompted by #8295's `api-design` finding: `misplaced.py`.** Over all 6828 files of `snap-main8` it flags 5404
+  `private` declarations whose statements name nothing local; that is too broad on its own. Intersected with the short names declared
+  in pinned Mathlib, it gives 56 names, mostly coincidental (`shortComplex`, `surjective`, `instances`). Two are **exact duplicates of
+  root-level Mathlib lemmas**:
+  * `Spin/Weight.lean:147`, private `invOf_two_add_invOf_two : ⅟(2 : K) + ⅟(2 : K) = 1`, is identical in statement and proof to
+    Mathlib's `invOf_two_add_invOf_two` (`Algebra/Ring/Invertible.lean`). Four other TauCeti files already use Mathlib's.
+  * `Sard/FlatStratum.lean:74`, private `norm_sub_le_of_mem_segment`, is Mathlib's `norm_sub_le_of_mem_segment`
+    (`Analysis/Normed/Module/Convex.lean`) up to renaming the points. `ContinuousMap.lean:239` already uses Mathlib's.
+  * Rejected as different statements: `mulLeft₃_eq_mulRight₃` (Mathlib has only `_iff_associative`) and
+    `continuous_of_continuousAt_zero` (Mathlib's is `Seminorm.`).
+* **Opened two kind-3 drafts** (one topic each; both files are free and both Mathlib modules are in the import closure; gates 12/0/0):
+  * **#8304** `improve/spin-weight-invof-two-dedup` @ `58a0076a2` (−4; `Roadmap: RepresentationTheory`, as #7466);
+  * **#8305** `improve/sard-norm-sub-segment-dedup` @ `23d3af464` (−7; `Roadmap: none`, as #6044 and #3140).
+  A build waiter is running for both.
+* **More candidates for later** from the 56-name list, still to vet: `card_filter_le` (`KnotTheory/Grid/Unknot/Basic.lean:196`),
+  `qExpansion_pow` (`ModularForms/Order/AtCusp.lean:159`), `exp_one_pow`
+  (`EllipticCurve/Affine/ValuationIntegrality.lean:284`), `prod_map_inv` (`Matrix/SpecialLinearGroup/Transvection.lean:89`),
+  `subtype_rTensor_injective` (`Coalgebra/Subcomodule/Induced.lean:58`) and `exists_isGLB` (`LocalField/QuadraticForm/Defect.lean:228`).
+  Outputs are in `$SP/misplaced-r919.out`. Pin `dc4b8d60d5`, main `faf999d7c`.
