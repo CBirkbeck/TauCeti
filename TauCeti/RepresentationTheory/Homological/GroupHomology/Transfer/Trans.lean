@@ -9,6 +9,7 @@ public import TauCeti.Algebra.Group.Subgroup.Map
 public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Basic
 public import TauCeti.RepresentationTheory.Rep.ChangeOfGroup
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Induced
+import TauCeti.RepresentationTheory.Homological.GroupHomology.LowDegree
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Delta
 import TauCeti.RepresentationTheory.Induction.DimensionShift
 
@@ -58,13 +59,15 @@ private theorem transfer_trans_succ [K.FiniteIndex] [H.FiniteIndex] {X : ShortCo
         transfer X.X₃ K (n + 1) := by
   have hH := (shortExact_res H.subtype).2 hX
   have hK := (shortExact_res K.subtype).2 hX
+  have hc := Subgroup.subtype_comp_subgroupOfEquivOfLe hKH
   refine (mono_δ_of_isZero hK n hX₂).right_cancellation _ _ ?_
-  -- Naturality of the connecting maps along `K.subgroupOf H ≃* K`.
+  -- Naturality of the connecting maps along `K.subgroupOf H ≃* K`, for the morphism of short
+  -- complexes identifying the two restrictions of each `X.Xᵢ`.
   rw [Category.assoc, Category.assoc, ← δ_naturality _ ((shortExact_res _).2 hH) hK
-    ⟨_, _, _, Rep.isIntertwiningMap_res_res_toRes_naturality
-        (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH) X.f,
-      Rep.isIntertwiningMap_res_res_toRes_naturality
-        (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH) X.g⟩]
+    ⟨(Rep.isIntertwiningMap_res_res X.X₁ hc).toRes, (Rep.isIntertwiningMap_res_res X.X₂ hc).toRes,
+      (Rep.isIntertwiningMap_res_res X.X₃ hc).toRes,
+      Rep.isIntertwiningMap_res_res_toRes_naturality hc X.f,
+      Rep.isIntertwiningMap_res_res_toRes_naturality hc X.g⟩]
   -- Pasting the transfer squares as terms: the objects appear both as restrictions of `X.Xᵢ` and
   -- as projections of restricted short complexes, which `rw` and `simp` do not identify.
   exact (congrArg (_ ≫ ·) (δ_comp_transfer_assoc (K.subgroupOf H) hH (n + 1) n rfl _).symm).trans <|
@@ -91,10 +94,8 @@ theorem transfer_trans [K.FiniteIndex] [H.FiniteIndex] (M : Rep.{u} R G) (n : �
     ext m
     simp only [ModuleCat.hom_comp, LinearMap.comp_apply]
     rw [transfer_zero_H0π, transfer_zero_H0π, transfer_zero_H0π, H0π_comp_map_apply,
-      ← coinvariantsMk_comp_H0Iso_inv, ModuleCat.comp_apply, ModuleCat.comp_apply,
       Representation.IsIntertwiningMap.toRes_hom_apply]
-    exact congrArg _ <| (Representation.Coinvariants.mk_eq_iff _).2 <|
-      Representation.relTransfer_relTransfer_sub_relTransfer_mem hKH m
+    exact (H0π_eq_iff _).2 (Representation.relTransfer_relTransfer_sub_relTransfer_mem hKH m)
   | succ n ih =>
     -- Shift dimension along `dimensionShiftDown M ⟶ Ind_⊥^G M ⟶ M`. The casts along
     -- `dimensionShiftDownSES_X₂/X₃` are needed: without them unification times out.
