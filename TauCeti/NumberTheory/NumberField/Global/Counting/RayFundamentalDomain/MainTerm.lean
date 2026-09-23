@@ -9,6 +9,7 @@ public import TauCeti.NumberTheory.NumberField.Global.Counting.CongruenceLattice
 public import TauCeti.NumberTheory.NumberField.Global.Counting.RayFundamentalDomain.Volume
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.ClassNumber
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.MainTerm
+import TauCeti.RingTheory.DedekindDomain.Totient
 
 /-!
 # The geometric coefficient of the ray ideal count
@@ -18,17 +19,17 @@ Counting the points of a coset of `congruenceLattice 𝔪 (mk0 𝔞)` in the nor
 norm-one section of the domain and `covol` the covolume of the lattice. This file evaluates the
 coefficient that this produces for the ideals of a ray class, where `t = x · N 𝔞`: the norm of
 `𝔞` cancels against the covolume, and the volume of the domain, the index of the congruence
-units and the ray class number formula combine into the Dedekind-zeta residue.
+units and the ray class number formula combine into the Dedekind-zeta residue, and the
+proportion `#(𝓞 K ⧸ 𝔪₀)ˣ / N 𝔪₀` of residues prime to the finite part `𝔪₀` of `𝔪` becomes the
+product of the local factors `1 - (N 𝔭)⁻¹`.
 
-Writing `w_𝔪` for the number of roots of unity congruent to one modulo `𝔪`, `h_𝔪` for the ray
-class number and `𝔪₀` for the finite part of `𝔪`, the coefficient is
-`V / covol · N 𝔞 = w_𝔪 · Res_{s=1} ζ_K / h_𝔪 · #(𝓞 K ⧸ 𝔪₀)ˣ / N 𝔪₀`.
-For the trivial modulus the right-hand side is `w_K · Res_{s=1} ζ_K / h_K`.
+Writing `w_𝔪` for the number of roots of unity congruent to one modulo `𝔪`, the coefficient is
+`V / covol · N 𝔞 = w_𝔪 · rayClassIdealMainTerm 𝔪`.
 
 ## Main results
 
 * `TauCeti.GlobalNumberFields.measureReal_div_covolume_congruenceLattice_mul_absNorm`: the
-  coefficient in terms of the Dedekind-zeta residue.
+  coefficient is `w_𝔪` times `rayClassIdealMainTerm 𝔪`.
 -/
 
 public section
@@ -44,16 +45,14 @@ variable {K : Type*} [Field K] [NumberField K]
 open scoped Classical in
 /-- **The geometric coefficient of the ray ideal count.**  The volume of the norm-one section of
 `rayFundamentalDomain 𝔪`, over the covolume of the congruence lattice of a nonzero integral ideal
-`𝔞`, times the norm of `𝔞`, is `w_𝔪 · Res_{s=1} ζ_K / h_𝔪 · #(𝓞 K ⧸ 𝔪₀)ˣ / N 𝔪₀`, where `w_𝔪`
-is the number of roots of unity congruent to one modulo `𝔪`. -/
+`𝔞`, times the norm of `𝔞`, is `w_𝔪 · rayClassIdealMainTerm 𝔪`, where `w_𝔪` is the number of
+roots of unity congruent to one modulo `𝔪`. -/
 theorem measureReal_div_covolume_congruenceLattice_mul_absNorm (𝔪 : Modulus K)
     (𝔞 : (Ideal (𝓞 K))⁰) :
     volume.real (rayFundamentalDomain 𝔪 ∩ {x | mixedEmbedding.norm x ≤ 1}) /
         ZLattice.covolume (congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)) volume *
           Ideal.absNorm (𝔞 : Ideal (𝓞 K)) =
-      Nat.card (unitsCongruenceTorsion 𝔪) * (dedekindZeta_residue K /
-        Nat.card (RayClassGroup 𝔪) * (Nat.card (𝓞 K ⧸ 𝔪.finitePart)ˣ /
-          Ideal.absNorm 𝔪.finitePart)) := by
+      Nat.card (unitsCongruenceTorsion 𝔪) * rayClassIdealMainTerm 𝔪 := by
   have hV := congrArg ENNReal.toReal (two_pow_mul_volume_rayFundamentalDomain_inter_normLeOne 𝔪)
   rw [volume_normLeOne] at hV
   simp only [ENNReal.toReal_mul, ENNReal.toReal_pow, ENNReal.toReal_ofNat, ENNReal.toReal_natCast,
@@ -67,6 +66,10 @@ theorem measureReal_div_covolume_congruenceLattice_mul_absNorm (𝔪 : Modulus K
     Nat.cast_ne_zero.mpr (Ideal.absNorm_ne_zero_of_nonZeroDivisors 𝔞)
   have h𝔪 : (Ideal.absNorm 𝔪.finitePart : ℝ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (Ideal.absNorm_eq_zero_iff.not.mpr 𝔪.finitePart_ne_zero)
+  have := Ring.HasFiniteQuotients.finiteQuotient 𝔪.finitePart_ne_bot
+  -- the correction product is the proportion of residues modulo `𝔪₀` that are units
+  rw [rayClassIdealMainTerm_eq, ← mul_div_cancel_left₀ (∏ v ∈ 𝔪.support, _) h𝔪,
+    ← Ideal.card_units_quotient_eq_absNorm_mul_prod 𝔪.finitePart 𝔪.mem_support_iff]
   have hd : √|(discr K : ℝ)| ≠ 0 :=
     Real.sqrt_ne_zero'.mpr (abs_pos.mpr (Int.cast_ne_zero.mpr (discr_ne_zero K)))
   have hw : (torsionOrder K : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (torsionOrder_ne_zero K)
