@@ -85,14 +85,14 @@ theorem Ideal.span_singleton_natCast_eq_top_iff [Nontrivial S] {m : ℕ} :
 
 /-- **Congruent elements of norms of the same sign generate ideals of congruent norms.** If
 `a ≡ b` modulo the ideal `(m)` of a Dedekind domain `S` that is free of finite rank over `ℤ`, and
-`N(a) N(b) > 0`, then the absolute norms of `(a)` and `(b)` are congruent modulo `m`. -/
+`N(a) N(b) ≥ 0`, then the absolute norms of `(a)` and `(b)` are congruent modulo `m`. -/
 theorem Ideal.natCast_absNorm_span_singleton_eq_of_sub_mem [IsDedekindDomain S] [Infinite S]
     {m : ℕ}
-    {a b : S} (hab : 0 < Algebra.norm ℤ a * Algebra.norm ℤ b)
+    {a b : S} (hab : 0 ≤ Algebra.norm ℤ a * Algebra.norm ℤ b)
     (h : a - b ∈ Ideal.span {(m : S)}) :
     (Ideal.absNorm (Ideal.span {a}) : ZMod m) = Ideal.absNorm (Ideal.span {b}) := by
   rw [Ideal.absNorm_span_singleton, Ideal.absNorm_span_singleton]
-  exact ZMod.natCast_natAbs_eq_of_mul_pos hab (Algebra.intCast_norm_eq_of_sub_mem_span_natCast h)
+  exact ZMod.natCast_natAbs_eq_of_mul_nonneg hab (Algebra.intCast_norm_eq_of_sub_mem_span_natCast h)
 
 end Congruence
 
