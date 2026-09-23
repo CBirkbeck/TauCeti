@@ -41,15 +41,6 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-private theorem rayFundamentalDomain_inter_normLeOne_eq_iUnion_inter (𝔪 : Modulus K) :
-    rayFundamentalDomain 𝔪 ∩ {x | mixedEmbedding.norm x ≤ 1} =
-      (⋃ q, rayUnitRepresentative 𝔪 q • normLeOne K) ∩ {x | ∀ w ∈ 𝔪.infinitePart, 0 < x.1 w} := by
-  -- this is `rayFundamentalDomain_inter_normLeOne_eq` with the sign region unfolded, in the
-  -- order `volume_eq_two_pow_mul_volume_inter_pos` cuts along
-  rw [rayFundamentalDomain_inter_normLeOne_eq, Set.inter_comm]
-  ext x
-  simp only [Set.mem_inter_iff, mem_posRegion, Set.mem_ofPred_eq]
-
 private theorem pairwise_disjoint_rayUnitRepresentative_smul_normLeOne (𝔪 : Modulus K) :
     Pairwise (Function.onFun Disjoint fun q ↦ rayUnitRepresentative 𝔪 q • normLeOne K) := by
   refine fun q q' hqq' ↦ Set.disjoint_left.mpr fun x hx hx' ↦ hqq' ?_
@@ -75,9 +66,8 @@ theorem two_pow_mul_volume_rayFundamentalDomain_inter_normLeOne (𝔪 : Modulus 
   -- the union of the translates is stable under reflection at each real place, so the sign cut
   -- divides its volume by `2 ^ s`; the translates are disjoint, each with the volume of
   -- `normLeOne K`
-  rw [rayFundamentalDomain_inter_normLeOne_eq_iUnion_inter,
-    ← volume_eq_two_pow_mul_volume_inter_pos _ (by simp)
-      (.iUnion hm),
+  rw [rayFundamentalDomain_inter_normLeOne_eq, Set.inter_comm, posRegion_def,
+    ← volume_eq_two_pow_mul_volume_inter_pos _ (by simp) (.iUnion hm),
     measure_iUnion (pairwise_disjoint_rayUnitRepresentative_smul_normLeOne 𝔪) hm]
   simp [ENat.card_eq_coe_natCard, Subgroup.index]
 

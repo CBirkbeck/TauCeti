@@ -98,7 +98,7 @@ def unitsCongruenceSubgroupSupTorsion (𝔪 : Modulus K) : Subgroup (𝓞 K)ˣ :
   unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K
 
 /-- `unitsCongruenceSubgroupSupTorsion 𝔪` is the join of `unitsCongruenceSubgroup 𝔪` and the roots
-of unity. The definition is not exposed, so this is how another module unfolds it. -/
+of unity. -/
 theorem unitsCongruenceSubgroupSupTorsion_def (𝔪 : Modulus K) :
     unitsCongruenceSubgroupSupTorsion 𝔪 =
       unitsCongruenceSubgroup 𝔪 ⊔ NumberField.Units.torsion K :=
@@ -121,9 +121,8 @@ theorem unitsCongruenceSubgroup_le_unitsCongruenceSubgroupSupTorsion (𝔪 : Mod
     unitsCongruenceSubgroup 𝔪 ≤ unitsCongruenceSubgroupSupTorsion 𝔪 :=
   le_sup_left
 
-/-- Membership in `unitsCongruenceSubgroupSupTorsion`: a product of a unit congruent to one
-modulo `𝔪` and a root of unity.  The definition is not exposed, so `Subgroup.mem_sup` cannot see
-through it from another module. -/
+/-- A unit lies in `unitsCongruenceSubgroupSupTorsion 𝔪` exactly when it is the product of a unit
+congruent to one modulo `𝔪` and a root of unity. -/
 theorem mem_unitsCongruenceSubgroupSupTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
     u ∈ unitsCongruenceSubgroupSupTorsion 𝔪 ↔
       ∃ v ∈ unitsCongruenceSubgroup 𝔪, ∃ ζ ∈ NumberField.Units.torsion K, v * ζ = u :=
@@ -150,6 +149,11 @@ element congruent to one lies in this region, and the region is stable under the
 congruent to one. -/
 def posRegion (𝔪 : Modulus K) : Set (mixedSpace K) :=
   {x | ∀ w ∈ 𝔪.infinitePart, 0 < x.1 w}
+
+/-- `posRegion 𝔪` is the set of points positive at every real place of the infinite part of `𝔪`. -/
+theorem posRegion_def (𝔪 : Modulus K) :
+    posRegion 𝔪 = {x | ∀ w ∈ 𝔪.infinitePart, 0 < x.1 w} :=
+  (rfl)
 
 @[simp] theorem mem_posRegion {𝔪 : Modulus K} {x : mixedSpace K} :
     x ∈ posRegion 𝔪 ↔ ∀ w ∈ 𝔪.infinitePart, 0 < x.1 w := Iff.rfl
