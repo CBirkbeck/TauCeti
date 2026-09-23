@@ -6,7 +6,7 @@ Authors: Claude
 module
 
 public import TauCeti.RepresentationTheory.Homological.GroupHomology.LongExactSequence
-public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer
+public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Basic
 
 /-!
 # Transfer commutes with the connecting map
