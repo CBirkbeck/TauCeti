@@ -41738,3 +41738,18 @@ are `awaiting-review`. No merges. Pin `dc4b8d60d5`, main `6333907d5`. The cap is
 
 #8273 is `review-in-progress` (54 min after ready). #8235 is still MERGING, #8275 is `awaiting-review` (47 min), and #8286 is
 on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca5`. The cap is full.
+* r909 addendum (waiter): **#8286 went green at 13:50:53Z and was marked ready at 13:51:31Z**. The guards held: every check green,
+  head `d099adbd2` unchanged, pin `dc4b8d60d5` at both the base `8f789cae4` and main `cdd847a11`, and the file untouched.
+
+## r910 — 2026-09-23T13:54Z (cron; step 4 hard-stopped)
+
+* **#8235 merged** 13:45:14Z. **#8273 approved 10/10 by `roed-math`** (13:48:53Z, 58 min after ready) and is `ready-to-merge`,
+  MERGING at pos 4. That frees a slot: in progress are #8275 (57 min, no board) and #8286 (ready 13:51:31Z).
+* **Step 5, kind 3 (kind 1 is dry and astra is out): opened draft #8291**, `improve/convexsubgroup-notmem-maxavoid` @ `eff08afe1`, from
+  `cdd847a11`; +3/−3; `Roadmap: AdicSpaces` (as #6896 and #8235). It renames `not_mem_maxAvoid` → `notMem_maxAvoid`, the file's only
+  `not_mem` spelling; the other six names already say `notMem`, and Mathlib has deprecated `not_mem`. `git grep` over all files finds three
+  occurrences (the declaration and two uses, all in this file); all are renamed, with no alias. A scan of every open PR's patch found no
+  mention of the old name. The gate is **12 ok / 0 failed / 0 UNRUN** (`stalequal` and `ghostref` ok). This was the r843 leftover, unblocked by
+  #8235's merge. A build waiter is running.
+* Pin `dc4b8d60d5`, main `cdd847a11`. The remaining kind-3 target is the private `integral_Ioi_eq_Ioc_add_Ioi` (cosmetic); re-run the
+  scanners next.
