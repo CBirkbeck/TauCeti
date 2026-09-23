@@ -41630,3 +41630,16 @@ The cap is full.
 Board unchanged: #8224 (error board), #8233 (118 min) and #8235 (108 min) are waiting on external reviewers. Main moved to
 `7d24ccc8a`, and the pin is unchanged. All three open heads and the staged `condindep-conditional-style` merge-tree clean, and main
 touched none of their files. No merges. The cap is full.
+
+## r896 — 2026-09-23T11:34Z (cron; step 4 hard-stopped)
+
+* Board unchanged: #8224 (error board, 136 min), #8233 (128 min) and #8235 (118 min). Main `0103368cc`, pin unchanged. No merges.
+* **r894's "oldest-first" reading was wrong.** In the last 30 minutes reviewers boarded #8230, #8241, #8242, #8244 and #8252, all
+  numbered above #8233 and #8235, so our PRs are being **passed over**, not queued.
+* **Other contributors do review CBirkbeck PRs.** Boards are posted by accounts other than the author: #8101 by `Robertboy18`,
+  #6952 by `ldct`, #6953 by `kim-em`; #8241 (`sqrt-of-2`) by `kim-em`, #8219 (`Robertboy18`) by `roed-math`. So the skip is not
+  "authors review their own".
+* **The cause is not visible from here.** The reviewers' picking logic is not in the local TauCetiReview checkout
+  (`queue_reservation.py` is the merge-queue pin-bump reservation, not review scheduling). #8233 and #8235 carry only
+  `awaiting-review` plus a roadmap label, with no comments, the same shape as the PRs that do get boarded. #8224's skip may be the r889
+  error board on its head. The only in-lane lever is step 4, which is hard-stopped, so this goes to the user.
