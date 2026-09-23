@@ -42199,3 +42199,12 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 * In progress: #8402 and #8413 (drafts); one slot is open. Remaining candidates from the re-scoring: `Probability/Moments/VanishingMoments.lean`,
   `Exchangeability/Arrays/{RowCoding,ConditionalLaw,Block}.lean`, `Exchangeability/Contractability.lean` and
   `ClassicalGroups/Rational.lean`. Pin `dc4b8d60d5`, main `e0988d7bc`.
+
+## r952 — 2026-09-23T20:54Z (cron)
+
+* #8381, #8388 and #8389 are `ready-to-merge` (queued). #8402 (astra ✓) and #8413 are drafts on queued builds (waiters running). No new merges.
+* **Step 5, kind 2: opened draft #8426**, `improve/arrays-condlaw-style` @ `db6452b92`, from `aefb9f811`. Target:
+  `Exchangeability/Arrays/ConditionalLaw.lean` (232 lines, 64 `fun … =>`, no real chains, no roadmap text), from the r951 re-scoring. Edit:
+  64 arrows (asserted). `Roadmap: Exchangeability`: the file's roadmap history is mixed (#7937 DenseGraphLimits; #7676 and #7442
+  Exchangeability), and the directory and majority attribution are Exchangeability. Gate 12/0/0. The astra question uses the three-dot diff
+  (1 file, verified); astra was launched at 20:58Z. The cap is full: #8402, #8413 and #8426.
