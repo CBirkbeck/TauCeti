@@ -39,6 +39,9 @@ corestriction is the map induced by the counit `Indˢᴳ Resˢᴳ M ⟶ M`
 * `TauCeti.groupHomology.map_comp_transfer`: the transfer is natural in the coefficients.
 * `TauCeti.groupHomology.transfer_comp_map_subtype_id`: corestriction after transfer is
   multiplication by the index `[G : S]`.
+* `TauCeti.groupHomology.transfer_zero_H0π`: in degree zero, where group homology is the module of
+  coinvariants, the transfer is the relative transfer `Representation.relTransfer`,
+  `⟦m⟧ ↦ ⟦∑_{q ∈ G ⧸ S} q⁻¹ • m⟧`.
 
 ## References
 
@@ -113,5 +116,38 @@ theorem transfer_comp_map_subtype_id (M : Rep R G) (S : Subgroup G) [S.FiniteInd
     TauCeti.Rep.resIndAdjunction_unit_app_comp_indResAdjunction_counit_app,
     hsmul, Functor.map_nsmul, Functor.map_nsmul, CategoryTheory.Functor.map_id]
   exact congrArg (S.index • ·) (CategoryTheory.Functor.map_id _ _)
+
+section DegreeZero
+
+attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
+
+open scoped Classical in
+/-- **In degree zero, the transfer is the relative transfer on coinvariants.** Group homology in
+degree zero is the module of coinvariants, and the transfer `H₀(G, M) ⟶ H₀(S, Res_S M)` sends the
+class of `m` to the class of `∑_{q ∈ G ⧸ S} q⁻¹ • m`, the relative transfer
+`Representation.relTransfer`. -/
+@[simp]
+theorem transfer_zero_H0π (M : Rep R G) (S : Subgroup G) [S.FiniteIndex] (m : M.V) :
+    transfer M S 0 (_root_.groupHomology.H0π M m) =
+      _root_.groupHomology.H0π (Rep.res S.subtype M) (Representation.relTransfer M.ρ S m) := by
+  -- Shapiro's inverse is injective and is the change-of-group map along `S ≤ G` (`indIso_inv`),
+  -- so it suffices to compare both sides as classes in `H₀(G, Ind_S^G Res_S M)`.
+  apply (ModuleCat.mono_iff_injective
+    (_root_.groupHomology.indIso S (Rep.res S.subtype M) 0).inv).1 inferInstance
+  rw [← ModuleCat.comp_apply, transfer_comp_indIso_inv, indIso_inv]
+  simp only [_root_.groupHomology.functor_map]
+  rw [← ModuleCat.comp_apply, ← ModuleCat.comp_apply, _root_.groupHomology.H0π_comp_map,
+    _root_.groupHomology.H0π_comp_map]
+  simp only [Functor.comp_obj]
+  apply (ModuleCat.mono_iff_injective
+    (_root_.groupHomology.H0Iso ((indFunctor R S.subtype).obj (res S.subtype M))).hom).1
+    inferInstance
+  rw [← ModuleCat.comp_apply, ← ModuleCat.comp_apply, Category.assoc, Category.assoc,
+    _root_.groupHomology.H0π_comp_H0Iso_hom, ModuleCat.comp_apply, ModuleCat.comp_apply]
+  -- Both units are explicit by definition: `resIndAdjunction`'s goes through `coindToInd`, and
+  -- `indResAdjunction`'s is `a ↦ ⟦1 ⊗ a⟧`.
+  exact Rep.coinvariantsMk_coindToInd_unit M S m
+
+end DegreeZero
 
 end TauCeti.groupHomology
