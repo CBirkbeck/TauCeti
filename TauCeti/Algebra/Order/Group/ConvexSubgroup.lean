@@ -377,7 +377,7 @@ theorem mem_maxAvoid_iff {γ : Γ} {hγ : γ ≠ 1} {x : Γ} :
     (fun h ↦ hγ (MulArchimedeanClass.mk_eq_top_iff.mp h))
 
 /-- The avoided element is not a member. -/
-theorem not_mem_maxAvoid {γ : Γ} (hγ : γ ≠ 1) : γ ∉ maxAvoid hγ := by
+theorem notMem_maxAvoid {γ : Γ} (hγ : γ ≠ 1) : γ ∉ maxAvoid hγ := by
   rw [mem_maxAvoid_iff (hγ := hγ)]
   exact lt_irrefl _
 
@@ -386,7 +386,7 @@ theorem not_mem_maxAvoid {γ : Γ} (hγ : γ ≠ 1) : γ ∉ maxAvoid hγ := by
 @[simp]
 theorem le_maxAvoid {γ : Γ} {hγ : γ ≠ 1} {H : ConvexSubgroup Γ} :
     H ≤ maxAvoid hγ ↔ γ ∉ H := by
-  refine ⟨fun h hγH ↦ not_mem_maxAvoid hγ (h hγH), fun h x hx ↦ ?_⟩
+  refine ⟨fun h hγH ↦ notMem_maxAvoid hγ (h hγH), fun h x hx ↦ ?_⟩
   rw [mem_maxAvoid_iff (hγ := hγ)]
   by_contra hle
   rw [not_lt, MulArchimedeanClass.mk_le_mk] at hle
@@ -658,7 +658,7 @@ theorem nontrivial_quotient_maxAvoid {γ : Γ} (hγ : γ ≠ 1) :
     Nontrivial (Γ ⧸ (maxAvoid hγ).toSubgroup) := by
   apply QuotientGroup.nontrivial_iff.mpr
   intro htop
-  apply not_mem_maxAvoid hγ
+  apply notMem_maxAvoid hγ
   rw [← mem_toSubgroup, htop]
   exact Subgroup.mem_top γ
 
