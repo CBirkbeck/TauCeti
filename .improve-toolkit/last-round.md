@@ -46,20 +46,20 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 |---|---|---|---|---|
 | **#8224** | `f4b657306` | green (09:17:52Z) | kind 3 (`StronglyContinuousSemigroup.norm_resolvent_integrand_le` takes `0 ≤ t`; its one caller gains `.le`; +3/−3; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Opened 09:07:51Z from `62fc0367c` as a draft; **marked ready 09:18:43Z** | **pipeline** — board due by ~10:05Z; step 4 may drive only after 10:18Z |
 | **#8233** | `77df94016` | green (09:24:57Z) | kind 2 in kind 1's slot (`Analysis/Contour/Residue/Basic.lean`: 49 `↦`, 21 chains split, one comment; +93/−63; gate 12/0/0; `Roadmap: ContourIntegration`; gpt-6-astra: meaning preserved). Opened 09:16:54Z from `62fc0367c` as a draft; **marked ready 09:26:40Z** | **pipeline** — board due by ~10:15Z; step 4 may drive only after 10:26Z |
-| **#8235** | `3a7c03114` | first build | kind 3 (`ConvexSubgroup.lean`: `mem_of_mabs_le_mabs` and `mem_closure_singleton` use Mathlib's `mabs_mem_iff` instead of a four-line `mabs_choice` split; adds a private `import Mathlib.Algebra.Group.Subgroup.Order`, one new module; +3/−8; gate 12/0/0; `Roadmap: AdicSpaces`). **Draft**, opened from `2d137180a` | **CI** — mark ready when `sandboxed-build` is green |
+| **#8235** | `3a7c03114` | green (09:35:30Z) | kind 3 (`ConvexSubgroup.lean`: `mem_of_mabs_le_mabs` and `mem_closure_singleton` use Mathlib's `mabs_mem_iff` instead of a four-line `mabs_choice` split; adds a private `import Mathlib.Algebra.Group.Subgroup.Order`, one new module; +3/−8; gate 12/0/0; `Roadmap: AdicSpaces`). Opened from `2d137180a` as a draft; **marked ready 09:36:14Z** | **pipeline** — board due by ~10:25Z; step 4 may drive only after 10:36Z |
 
 **In progress (cap full): #8224 (`awaiting-review`, ready 09:18:43Z), #8233 (`awaiting-review`, ready 09:26:40Z) and #8235
-(draft, first build).** **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z). The next opening is kind 1
+(`awaiting-review`, ready 09:36:14Z).** **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z). The next opening is kind 1
 if the pin has moved, otherwise kind 2. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `dbc7ad7b5`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `0e27ef817`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
 
 0. **r843–r882:** the cap counts only PRs in progress (rotation paragraph above). In progress: #8224 (green 09:17:52Z, ready 09:18:43Z;
-   drive not before 10:18Z), #8233 (green 09:24:57Z, ready 09:26:40Z; drive not before 10:26Z) and #8235 (draft, first
-   build; mark it ready once green). #8101
+   drive not before 10:18Z), #8233 (green 09:24:57Z, ready 09:26:40Z; drive not before 10:26Z) and #8235 (green 09:35:30Z,
+   ready 09:36:14Z; drive not before 10:36Z). Step 4 is the only open move: drive any of them whose hour passes with no board for its head. #8101
    merged 09:19:24Z. The cap is full; at the next free slot, open kind 1 if the pin moved, else kind 2.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
@@ -335,7 +335,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r881 (2026-09-22, after a six-day gap): every queued PR had merged — thirteen of mine plus #5950. The two survivors, #6952 and #6953, were drafts the bot had parked `on-hold`; both were rebased onto `c6b94ee7a`, re-gated 12/0/0, pushed and marked ready. The kind-1 re-run at pin `dc4b8d60d5` was dry (the `wordProd` collision is a false positive), so kind 2 opened as draft **#8101**, a style pass on `Cesaro/Convergence.lean` (gpt-6-astra: no risk; gate 12/0/0).
 * r882 (2026-09-23): no cron had been set, so a 10-minute job (`4b5d0e55`) now drives rounds. #6952 and #6953 had merged. #8101 was still a draft, parked `on-hold` again; with the pin unchanged, it was marked ready, approved within 8 minutes and merged at 09:19:24Z. Kind 3 opened as draft **#8224** (`norm_resolvent_integrand_le` to `0 ≤ t`; ready 09:18:43Z), kind 2 in kind 1's slot as draft **#8233** (`Residue/Basic.lean` style pass), and kind 3 as draft **#8235** (`ConvexSubgroup.lean` uses Mathlib's `mabs_mem_iff`). All three gated 12/0/0.
 * r883: #8233 went green (09:24:57Z) and was marked ready (09:26:40Z) with the pin unchanged. #8235 was still on its first build; the cap is full.
-* r884: no change; #8235 still building, #8224/#8233 not yet due for a drive.
+* r884: #8235 went green (09:35:30Z) and was marked ready (09:36:14Z); all three PRs are now `awaiting-review`.
 
 ## Candidates for a later step 5
 

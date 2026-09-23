@@ -41504,3 +41504,6 @@ No toolkit edits.
 
 No change. #8224 (ready 09:18:43Z) and #8233 (ready 09:26:40Z) are `awaiting-review` with no board; neither is due for a drive
 (10:18Z, 10:26Z). #8235 is still on its first build (pushed ~09:21Z). No merges since #8101. The cap is full, so step 5 is shut.
+* r884 addendum (09:36Z, waiter): **#8235 went green at 09:35:30Z and was marked ready at 09:36:14Z**. The guards held: every latest
+  check green, head `3a7c03114` unchanged, pin `dc4b8d60d5` at both the base `2d137180a` and main `e5553c92e`, and the file untouched.
+  Step 4 may drive it only after 10:36Z. All three PRs are now `awaiting-review`.
