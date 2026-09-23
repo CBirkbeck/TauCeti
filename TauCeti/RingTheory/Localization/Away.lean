@@ -247,7 +247,7 @@ below. -/
 /-- **A homomorphism out of the localisation makes the denominator a unit.** If `ψ : S →+* B`
 restricts along `algebraMap A S` to `φ`, then `φ s` is a unit: it is the image under `ψ` of
 `algebraMap A S s`, which `S` inverts. -/
-theorem isUnit_of_comp_algebraMap {B : Type*} [CommSemiring B] {φ : A →+* B} {ψ : S →+* B}
+theorem isUnit_of_comp_algebraMap {B : Type*} [Semiring B] {φ : A →+* B} {ψ : S →+* B}
     (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) : IsUnit (φ s) :=
   hψ s ▸ (IsLocalization.Away.algebraMap_isUnit (S := S) s).map ψ
 
@@ -258,7 +258,7 @@ unit `isUnit_of_comp_algebraMap` supplies.
 Nothing is asked of `ψ` beyond the factoring hypothesis, so the statement holds for every
 homomorphism out of `S` restricting to `φ`, and it records the value they are all forced to take
 on a distinguished fraction. -/
-theorem map_divBy_eq_mul_inv {B : Type*} [CommSemiring B] {φ : A →+* B} {ψ : S →+* B}
+theorem map_divBy_eq_mul_inv {B : Type*} [Semiring B] {φ : A →+* B} {ψ : S →+* B}
     (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) :
     ψ (divBy t s : S) = φ t * ↑(isUnit_of_comp_algebraMap s hψ).unit⁻¹ := by
   rw [Units.eq_mul_inv_iff_mul_eq, IsUnit.unit_spec, ← hψ, ← hψ, ← map_mul, divBy_mul_algebraMap]
