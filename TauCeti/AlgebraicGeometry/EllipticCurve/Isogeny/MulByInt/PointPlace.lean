@@ -28,10 +28,12 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlac
 
 An affine point `P` of `W` has a place of `F(W)`, and pulling that place back along the
 function-field map of `[n]` gives a valuation of `F(W)` again. This file identifies it: it is
-equivalent to the place of `n • P`, which is the place at infinity when `n • P = 0`. So the places
-above the place of a point `T`, for the covering `[n]`, are the places of the `[n]`-preimages of
-`T`. That is what turns the pullback of a divisor along `[n]` into a sum over a fibre, which is the
-form in which the divisor construction of the Weil pairing uses it.
+equivalent to the place of `n • P`, which is the place at infinity when `n • P = 0`. So among the
+places attached to the `F`-rational points of `W`, those above the place of a point `T`, for the
+covering `[n]`, are the places of the `[n]`-preimages of `T`. A fibre can also contain places of
+higher degree, which are not attached to points and are not treated here; over an algebraically
+closed field there are none. That is what turns the pullback of a divisor along `[n]` into a sum
+over a fibre, which is the form in which the divisor construction of the Weil pairing uses it.
 
 The restricted valuation need not be normalized, since `[n]` can multiply orders, which is why the
 statements are equivalences rather than equalities.
@@ -42,10 +44,10 @@ statements are equivalences rather than equalities.
   equivalent to the place of `n • P`.
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace_infinityPlace_iff`: the place of an affine point `P`
   restricts to the place at infinity exactly when `n • P = 0`, over any field.
-* `TauCeti.Isogeny.isEquiv_comap_pointPlace_iff`: and conversely, a place restricts to the place
-  of `T` only if its point is an `[n]`-preimage of `T`, so the fibre over a place is exactly the
-  preimage of its point. Stated for a `P` that `[n]` does not kill, which is all the converse
-  needs.
+* `TauCeti.Isogeny.isEquiv_comap_pointPlace_iff`: and conversely, the place of an affine point
+  restricts to the place of `T` only if the point is an `[n]`-preimage of `T`, so the affine
+  `F`-rational places over the place of `T` are exactly those of its `[n]`-preimages. Stated for a
+  `P` that `[n]` does not kill, which is all the converse needs.
 
 ## References
 
@@ -205,9 +207,9 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
   rw [← CoordinateRing.eq_pointPlace_of_mem_asIdeal h'.left hmemX hmemY]
   exact hQu.symm
 
-/-- **The fibre of `[n]` over a place is exactly the `[n]`-preimage of its point.** For `P` off
-the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of `T` precisely when
-`n • P = T`. -/
+/-- **The affine points over the place of `T` are its `[n]`-preimages.** For an `F`-rational
+affine point `P` off the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of
+`T` precisely when `n • P = T`. -/
 -- The left-hand side is stated with the coercion rather than `fieldPullback.toRingHom`, which is
 -- what `AlgHom.toRingHom_eq_coe` normalises it to; in the `toRingHom` spelling `simpNF` rejects
 -- the attribute, since simp would rewrite the term the lemma keys on.
@@ -252,13 +254,16 @@ theorem isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero {x y : F}
     (by rwa [evalEval_C])
     fun h0 ↦ pow_ne_zero 2 hn (by rw [psiFunctionField_sq, h0, map_zero])
 
-/-- **The places over the place at infinity are those of the `n`-torsion points.** For an affine
-point `P`, the place of `P` restricts along `[n]` to the place at infinity exactly when
-`n • P = 0`. -/
+/-- **The affine points over the place at infinity are the `n`-torsion points.** For an
+`F`-rational affine point `P`, the place of `P` restricts along `[n]` to the place at infinity
+exactly when `n • P = 0`. -/
+-- Stated with the coercion rather than `fieldPullback.toRingHom`, as for
+-- `isEquiv_comap_pointPlace_iff`, so that the left-hand side is in `simp` normal form.
+@[simp]
 theorem isEquiv_comap_pointPlace_infinityPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y)
     {n : ℤ} (hn : psiFunctionField W n ≠ 0) :
     (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
-        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv (infinityPlace W.toAffine) ↔
+        (mulByIntIsogeny W hn).fieldPullback).IsEquiv (infinityPlace W.toAffine) ↔
       n • Affine.Point.some x y h = 0 := by
   refine ⟨fun hinf ↦ ?_, isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero W h hn⟩
   by_contra hP0
