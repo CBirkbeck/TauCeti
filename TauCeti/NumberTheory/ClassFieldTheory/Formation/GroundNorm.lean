@@ -72,9 +72,9 @@ def groundNorm (T : LayerRestriction small big) (F : Formation G) :
     (ContCohomology.explicitCor0Le G F.toRep.V _ _ T.ground_toSubgroup_le).comp
       (F.levelEquivH0 small.ground).toAddMonoidHom
 
--- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
+-- The `simp` lemmas on the norm of an element state their left-hand sides through `dsimp% only`:
 -- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
--- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
+-- a term up, so a left-hand side stated plainly over `F.toRep.V` or its levels is never found.
 /-- The norm along a restriction is the sum of the translates by coset representatives, read in the
 ambient module: `N_{U/U'} x = ∑ ρ(g) x` over the representatives `g = q.out` of the cosets
 `q ∈ U/U'`. -/
@@ -93,7 +93,8 @@ theorem groundNorm_apply_coe (T : LayerRestriction small big) (F : Formation G)
 /-- **The norm of an element of the ground level `A^U` is its multiple by the relative degree.** -/
 @[simp]
 theorem groundNorm_groundInclusion (T : LayerRestriction small big) (F : Formation G)
-    (x : F.level big.ground) : T.groundNorm F (T.groundInclusion F x) = T.relativeDegree • x := by
+    (x : F.level big.ground) :
+    (dsimp% only (T.groundNorm F (T.groundInclusion F x))) = T.relativeDegree • x := by
   ext
   rw [groundNorm_apply_coe, groundInclusion_apply_coe]
   -- Every coset representative lies in `U`, so it fixes an element of the ground level `A^U`.

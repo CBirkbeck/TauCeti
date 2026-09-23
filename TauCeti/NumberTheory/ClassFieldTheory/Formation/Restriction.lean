@@ -264,23 +264,19 @@ def repIso (T : LayerRestriction small big) (F : Formation G) :
             (Subgroup.inclusion T.ground_toSubgroup_le w) _).symm
 
 -- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
--- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
--- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
+-- `toRep` and `NormalLayer.rep` are `abbrev`s, and `simp` reduces their carriers in implicit type
+-- arguments before it looks a term up, so a left-hand side stated plainly over them is never found.
 /-- The identification of coefficient modules moves no element of the ambient module. -/
 @[simp]
 theorem repIso_hom_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : F.level small.top) :
-    (dsimp% only (((T.repIso F).hom.hom x : F.level big.top) : F.toRep.V)) =
-      (x : F.toRep.V) :=
+    (x : F.level small.top) : (dsimp% only ((T.repIso F).hom.hom x : F.toRep.V)) = x :=
   LinearEquiv.coe_ofEq_apply (congrArg F.level T.same_top) x
 
 /-- The inverse of the identification of coefficient modules moves no element of the ambient
 module either. -/
 @[simp]
 theorem repIso_inv_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : F.level big.top) :
-    (dsimp% only (((T.repIso F).inv.hom x : F.level small.top) : F.toRep.V)) =
-      (x : F.toRep.V) :=
+    (x : F.level big.top) : (dsimp% only ((T.repIso F).inv.hom x : F.toRep.V)) = x :=
   LinearEquiv.coe_ofEq_apply (congrArg F.level T.same_top).symm x
 
 /-- The inverse identification of coefficient modules intertwines the action of the image of the
@@ -406,11 +402,10 @@ def groundInclusion (T : LayerRestriction small big) (F : Formation G) :
     F.level big.ground →ₗ[ℤ] F.level small.ground :=
   Submodule.inclusion (F.level_antitone T.ground_le)
 
+/-- The ground-level inclusion moves no element of the ambient module. -/
 @[simp]
 theorem groundInclusion_apply_coe (T : LayerRestriction small big) (F : Formation G)
-    (x : F.level big.ground) :
-    (dsimp% only ((T.groundInclusion F x : F.level small.ground) : F.toRep.V)) =
-      (x : F.toRep.V) :=
+    (x : F.level big.ground) : (dsimp% only (T.groundInclusion F x : F.toRep.V)) = x :=
   Submodule.coe_inclusion _ x
 
 /-- The ground-level inclusion along the trivial layer restriction is the identity. -/
