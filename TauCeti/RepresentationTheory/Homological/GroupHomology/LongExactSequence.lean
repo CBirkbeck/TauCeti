@@ -36,7 +36,8 @@ subgroup inclusion (`TauCeti.groupHomology.indIso_inv`).
 ## Main definitions
 
 * `TauCeti.groupHomology.chainsMapShortComplex`: the morphism of short complexes of chain
-  complexes induced by a morphism `X ⟶ Res_f Y` along `f : G →* H`.
+  complexes induced by a morphism `X ⟶ Res_f Y` along `f : G →* H`; its components are
+  `groupHomology.chainsMap f Φ.τᵢ` (`chainsMapShortComplex_τ₁` and its siblings).
 
 ## Main results
 
@@ -75,10 +76,26 @@ noncomputable def chainsMapShortComplex (Φ : X ⟶ Y.map (resFunctor f)) :
     (chainsMap_comp f (MonoidHom.id H) Φ.τ₂ Y.g).symm.trans
       ((congrArg (chainsMap f) Φ.comm₂₃).trans (chainsMap_comp (MonoidHom.id G) f X.g Φ.τ₃))
 
+@[simp]
+theorem chainsMapShortComplex_τ₁ (Φ : X ⟶ Y.map (resFunctor f)) :
+    (chainsMapShortComplex f Φ).τ₁ = chainsMap f Φ.τ₁ := by
+  rw [chainsMapShortComplex.eq_def]
+
+@[simp]
+theorem chainsMapShortComplex_τ₂ (Φ : X ⟶ Y.map (resFunctor f)) :
+    (chainsMapShortComplex f Φ).τ₂ = chainsMap f Φ.τ₂ := by
+  rw [chainsMapShortComplex.eq_def]
+
+@[simp]
+theorem chainsMapShortComplex_τ₃ (Φ : X ⟶ Y.map (resFunctor f)) :
+    (chainsMapShortComplex f Φ).τ₃ = chainsMap f Φ.τ₃ := by
+  rw [chainsMapShortComplex.eq_def]
+
 /-- **The connecting map of group homology is natural with respect to change of group.** For short
 exact sequences `X` of `G`-representations and `Y` of `H`-representations, and a morphism
 `Φ : X ⟶ Res_f Y` along `f : G →* H`, the connecting maps commute with the change-of-group maps
 `groupHomology.map f`. -/
+@[reassoc]
 theorem δ_naturality (hX : X.ShortExact) (hY : Y.ShortExact) (Φ : X ⟶ Y.map (resFunctor f))
     (i j : ℕ) (hij : j + 1 = i) :
     δ hX i j hij ≫ map f Φ.τ₁ j = map f Φ.τ₃ i ≫ δ hY i j hij :=
