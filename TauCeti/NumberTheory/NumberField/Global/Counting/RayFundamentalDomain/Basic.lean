@@ -319,6 +319,10 @@ theorem mem_unitsCongruenceTorsion {𝔪 : Modulus K} {u : (𝓞 K)ˣ} :
       u ∈ unitsCongruenceSubgroup 𝔪 ∧ u ∈ NumberField.Units.torsion K :=
   Iff.rfl
 
+/-- `unitsCongruenceTorsion 𝔪` is finite, being a subgroup of the roots of unity. -/
+instance (𝔪 : Modulus K) : Finite (unitsCongruenceTorsion 𝔪) :=
+  Finite.of_injective _ (Subgroup.inclusion_injective (inf_le_right : unitsCongruenceTorsion 𝔪 ≤ _))
+
 /-- **The index of the congruence units, corrected by torsion.**  Adjoining the roots of unity to
 the units congruent to one modulo `𝔪` divides their index by the index of
 `unitsCongruenceTorsion 𝔪` in the roots of unity:
