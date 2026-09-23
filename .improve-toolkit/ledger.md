@@ -41941,3 +41941,7 @@ notification check, not the build. No merges. Pin `dc4b8d60d5`, main `f59cc5333`
 ## r928 — 2026-09-23T16:54Z (cron; step 4 hard-stopped)
 
 No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kind is blocked or dry (r927). Pin `dc4b8d60d5`, main `8afccaf4b`.
+
+## r929 — 2026-09-23T17:04Z (cron; step 4 hard-stopped)
+
+No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kind is blocked or dry. Pin `dc4b8d60d5`, main `beea0b0c0`.
