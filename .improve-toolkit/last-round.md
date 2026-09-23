@@ -1,4 +1,4 @@
-# Last round — r912 (2026-09-23T14:20Z)
+# Last round — r913 (2026-09-23T14:32Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,18 +44,20 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8275** | `3844a410e` | green (12:57:04Z) | kind 3 (`RingTheory/Ideal/Norm/RelNorm.lean`: drop the dead `have hJ' : J ≠ ⊥ := hJ` and its comment in `multiplicity_relNorm`; +0/−2; gate 12/0/0; `Roadmap: NumberFieldArithmetic`). Opened r903 from `3843e9d3f`; **marked ready 12:57:21Z** | **external reviewers** (1–3 h); step 4 hard-stopped |
-| **#8286** | `d099adbd2` | green (13:50:53Z) | kind 3 (`SchwarzChristoffel/GlobalTurning.lean`: `schwarzChristoffelEdgeAngle_sub_eq_neg_pi_mul_sum_Ioc` takes `i ≤ j`, and the one caller passes `hij.le`; +3/−3; gate 12/0/0; `Roadmap: ConformalMapping`). Opened r908 from `8f789cae4`; **marked ready 13:51:31Z** | **external reviewers** (1–4 h); step 4 hard-stopped |
+| **#8275** | `3844a410e` | green | kind 3 (`RelNorm.lean` dead `hJ'`; `Roadmap: NumberFieldArithmetic`). **Approved 10/10** by `sqrt-of-2` (14:18:05Z); `ready-to-merge`, MERGING at pos 1 | **queue** |
+| **#8286** | `d099adbd2` | green | kind 3 (`GlobalTurning.lean` `i ≤ j`; `Roadmap: ConformalMapping`). **Approved 10/10** by `sqrt-of-2` (14:18:44Z); `ready-to-merge`, MERGING at pos 2 | **queue** |
 | **#8291** | `eff08afe1` | green (14:13:06Z) | kind 3 (`ConvexSubgroup.lean`: rename `not_mem_maxAvoid` → `notMem_maxAvoid`, the file's last `not_mem` spelling; three occurrences, all in the file; no alias; no open PR mentions it; +3/−3; gate 12/0/0; `Roadmap: AdicSpaces`). Opened r910 from `cdd847a11`; **marked ready 14:13:26Z** | **external reviewers** (1–4 h); step 4 hard-stopped |
+| **#8295** | `ab4d3f380` | first build | kind 3 (`Resolvent/Basic.lean`: the private `integral_Ioi_eq_Ioc_add_Ioi` and `resolvent_shift_identity` go from `0 < h` to `0 ≤ h`, as a cascade; the caller passes `ht.le`; +8/−8; gate 12/0/0; `Roadmap: OneParameterSemigroups`). **Draft**, opened r913 from `6e1f69bb8` | **CI** — mark ready when green |
 
-**In progress (cap full): #8275 (`awaiting-review`, ready 12:57:21Z), #8286 (`awaiting-review`, ready 13:51:31Z) and #8291 (`awaiting-review`, ready
-14:13:26Z).** **#8273 merged 14:07:15Z**, as did #8235, #8233, #8224 and #8101 earlier today.
+**In progress (2 of 3): #8291 (`awaiting-review`, ready 14:13:26Z) and #8295 (draft, first build).** #8275 and #8286 are
+`ready-to-merge` (MERGING). **#8273 merged 14:07:15Z**, as did #8235, #8233, #8224 and #8101 earlier today. **The third slot is
+deliberately empty**: every kind is blocked or dry (r913 ledger).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `853445144`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `075bb69a0`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -67,11 +69,11 @@ and a kind-2 slot must go to the already-cleared staged branch or to kind 1/3. (
 claude` or buying credits is their call. After the reset, probe with `codex exec -m gpt-5.6-sol "Reply ok"` before any drive.
 
 
-0. **Now (r910):** in progress (cap full) are #8275 and #8286 (`awaiting-review`) and #8291 (ready 14:13:26Z), all
-   waiting on external reviewers. #8273 merged 14:07Z. Step 4 is hard-stopped until 2026-09-27T15:04Z; external reviewers board our PRs
-   in 1–4 h. Next opening: kind 1 if the pin moved, else kind 3 (astra is out). The scanners (r911) and `nscand` (r912) are dry, so the
-   next kind 3 is the private `integral_Ioi_eq_Ioc_add_Ioi` weakening (`Resolvent/Basic.lean:184`; precedent #6915). After that, the
-   16-site `one_sub_conj_mul_ne_zero_of_norm_lt_one`.
+0. **Now (r913):** in progress are #8291 (`awaiting-review`) and the draft #8295 (first build — **mark it ready when green**); #8275 and
+   #8286 are MERGING. Step 4 is hard-stopped until 2026-09-27T15:04Z. **One slot is open, and no kind has a clean target**: kind 1 needs a
+   pin bump, kind 2 needs astra (back 2026-09-27T15:04Z), and every kind-3 scanner is dry (r911–r913; the PseudoHyperbolic 12-site weakening
+   was declined as unmotivated churn). Re-check each round: a pin bump reopens kind 1, and main keeps moving, so re-run
+   `strictscan`/`deadhave` every few hours.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -151,7 +153,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r912 did
+## What r703–r913 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -370,6 +372,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r910: **#8235 merged**; **#8273 approved 10/10** (`roed-math`) and MERGING. Kind 3 opened as draft **#8291** (rename `not_mem_maxAvoid` → `notMem_maxAvoid`; gate 12/0/0).
 * r911: no board change. The scanner refill found nothing new for kind 3 (the new `deadprivate` hits are worked examples).
 * r912: **#8273 merged**, the fifth today. The `nscand` rooting lane is dry (8 WHOLE, all known traps or skips), so the next kind 3 is the `integral_Ioi_eq_Ioc_add_Ioi` weakening.
+* r913: **#8275 and #8286 approved 10/10** (`sqrt-of-2`), MERGING. Kind 3 opened as draft **#8295** (two private resolvent lemmas to `0 ≤ h`). The third slot is left empty: every kind is dry or blocked, and `docghost` had no real hit.
 
 ## Candidates for a later step 5
 

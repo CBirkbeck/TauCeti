@@ -41781,3 +41781,23 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
   `hh.le`, one call site). `strictscan` calls private weakenings "cosmetic", but #6915 (three private strict hypotheses) merged, so
   there is precedent. After that, the options are the 16-site `one_sub_conj_mul_ne_zero_of_norm_lt_one` weakening, or waiting for
   astra (kind 2) or a pin bump (kind 1).
+
+## r913 — 2026-09-23T14:24Z (cron; step 4 hard-stopped)
+
+* **#8275 and #8286 approved 10/10 by `sqrt-of-2`** (14:18:05Z and 14:18:44Z), `ready-to-merge`, MERGING at pos 1 and 2. That freed
+  two slots; #8291 (ready 14:13:26Z) is still `awaiting-review`.
+* **Step 5, kind 3: opened draft #8295**, `improve/resolvent-shift-nonneg` @ `ab4d3f380`, from `6e1f69bb8`; +8/−8;
+  `Roadmap: OneParameterSemigroups`. The private `integral_Ioi_eq_Ioc_add_Ioi` goes from `0 < h` to `0 ≤ h` (it used only `hh.le`), and that
+  **cascades** to the private `resolvent_shift_identity`, whose `hh` was then used only as `0 ≤ h` (`realOperator_add_apply` and the split;
+  at `h = 0` both sides are 0). Its one caller passes `ht.le`, and the two docstrings ("`h > 0`", "positive time increment") follow the
+  hypotheses. #8224's merge freed the file. Gate **12 ok / 0 failed / 0 UNRUN**. A build waiter is running.
+* **The second slot is left open on purpose. Every kind is blocked or dry:**
+  * kind 1: the pin is still `dc4b8d60d5` (dry at r881);
+  * kind 2: astra is out of quota until 2026-09-27T15:04Z;
+  * kind 3: after r911–r913, `strictscan`, `deadhave`, `impliedscan`, `deadprivate` (worked examples only), `dupsig` (module-system
+    pairs), `nscand` (8 WHOLE, all known) and now `docghost` show no clean target. Of `docghost`'s 11 "unreachable" hits, the two
+    plausible ones are false: `Cone.lean` declares both `cone`s itself, and `CoordinateDiscriminant.lean` cites
+    `IntegralLattice.rankOne` under **References**, not as a result. **Declined:** weakening
+    `one_sub_conj_mul_ne_zero_of_norm_lt_one`'s `hw : ‖w‖ < 1` to `≤` (only `hw.le` is used). It would touch 12 call sites in 7 files
+    with no consumer for boundary `w` and a docstring rework, so it is churn with no motivation.
+* Pin `dc4b8d60d5`, main `6e1f69bb8`.
