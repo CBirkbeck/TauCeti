@@ -42091,3 +42091,8 @@ No merges. Pin `dc4b8d60d5`, main `d66b14525`.
   `documentation` round 3 and #8344's `attribution` r4086003465.
 * #8339 (`4f18336f9`) and #8344 (`ba8ab38b9`) have builds queued. Their boards are BEHIND their heads, as expected. No merges. Pin
   `dc4b8d60d5`, main `db753ef7a`.
+
+## r941 — 2026-09-23T19:04Z (cron)
+
+All three (#8332 `a32a2f72e`, #8339 `4f18336f9`, #8344 `ba8ab38b9`) are rebuilding on their pushed fixes; every board is BEHIND its head, as expected, so nothing to
+re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
