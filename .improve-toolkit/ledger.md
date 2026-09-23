@@ -41557,3 +41557,11 @@ obsolete. The remaining queued kind-3 targets are `not_mem_maxAvoid` → `notMem
 
 No change. #8224, #8233 and #8235 are `awaiting-review`, green, with no board. #8224's drive clock opens at 10:18Z, so the next
 round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5`, main `99140c78a`.
+
+## r889 — 2026-09-23T10:24Z (cron)
+
+* **Step 4: drove #8224** at 10:24:54Z. Its clock started at `max(CI-green 09:17:52Z, ready 09:18:43Z)` = 09:18:43Z, and at 66 min
+  it still had no board. Guards passed: head `f4b657306` unchanged, no `tauceti-meta:v1` comment, no `review-in-progress` label,
+  no local `tauceti-review` process. Log: `review-8224-r889.log`.
+* #8233 (58 min) and #8235 (48 min) are not yet due; their clocks open at 10:26Z and 10:36Z. No merges since #8101. Pin
+  `dc4b8d60d5`, main `1724b0c80`.
