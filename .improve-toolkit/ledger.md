@@ -42186,3 +42186,16 @@ re-fix. No merges. Pin `dc4b8d60d5`, main `d48e180a1`.
 * **#8332 merged** 20:26:21Z, the fourteenth today, after three review rounds over the roadmap sentence. #8381 is queued. #8388 (ready
   20:29:38Z) and #8389 (ready 20:31:52Z) are `awaiting-review`; #8402 is a draft on a queued build (its waiter is running). The cap is full.
   Pin `dc4b8d60d5`, main `e49afa44e`.
+
+## r951 — 2026-09-23T20:44Z (cron)
+
+* **#8388 and #8389 approved** (20:39:01Z and 20:39:04Z), both `ready-to-merge`. #8381 is queued.
+* **#8402: astra accepts it** (destructuring `fun ⟨n, hn⟩ ↦` binders are fine as well). Its build is still queued; a waiter was re-armed.
+* **Step 5, kind 2: opened draft #8413**, `improve/grid-unknot-style` @ `e6125f186`, from `e0988d7bc`; `Roadmap: CombinatorialHeegaardFloer`
+  (as #7932). The target came from a fresh re-scoring on `snap-main10` (arrow-only files, ≥60 `fun … =>`, no match arms, excluding open-PR
+  and ledger files). I picked `KnotTheory/Grid/Unknot/Basic.lean` (438 lines, 62 arrows, no real chains, no roadmap text) over the next
+  Exchangeability files, to spread the areas. Edit: 62 arrows (asserted). Gate 12/0/0. The astra question uses the three-dot diff (1 file,
+  verified); gpt-6-astra was launched at 20:49Z.
+* In progress: #8402 and #8413 (drafts); one slot is open. Remaining candidates from the re-scoring: `Probability/Moments/VanishingMoments.lean`,
+  `Exchangeability/Arrays/{RowCoding,ConditionalLaw,Block}.lean`, `Exchangeability/Contractability.lean` and
+  `ClassicalGroups/Rational.lean`. Pin `dc4b8d60d5`, main `e0988d7bc`.
