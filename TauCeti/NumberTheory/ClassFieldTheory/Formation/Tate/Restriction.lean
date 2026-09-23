@@ -174,12 +174,15 @@ def kerNormTransfer (T : LayerRestriction small big) (F : Formation G) :
       (Representation.IsIntertwiningMap.symm (T.isIntertwiningMap_repIso_range F))).comp
     (Representation.relTransferKerNorm (big.rep F).ρ T.galHom.range)
 
+-- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
+-- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
+-- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
 /-- The relative transfer of norm kernels is the relative transfer on the ambient module. -/
 @[simp]
 theorem kerNormTransfer_apply_coe (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (big.rep F).ρ.norm) :
-    (((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) : F.level small.top) :
-        F.toRep.V) =
+    (dsimp% only (((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) :
+        F.level small.top) : F.toRep.V)) =
       ((Representation.relTransfer (big.rep F).ρ T.galHom.range
         ((x : F.level big.top) : (big.rep F).V) : F.level big.top) : F.toRep.V) := by
   rw [kerNormTransfer, LinearMap.comp_apply, TauCeti.TateCohomology.mapKerNorm_apply_coe,

@@ -176,12 +176,15 @@ def kerNormInclusion (T : LayerRestriction small big) (F : Formation G) :
       exact Representation.ker_norm_comp_subtype_le_ker_norm (ρ := (big.rep F).ρ)
         (H := T.galHom.range) h
 
+-- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
+-- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
+-- a term up, so a left-hand side stated plainly over `F.toRep.V` is never found.
 /-- The inclusion of norm kernels moves no element of the ambient module. -/
 @[simp]
 theorem kerNormInclusion_apply_coe (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (small.rep F).ρ.norm) :
-    (((T.kerNormInclusion F x : LinearMap.ker (big.rep F).ρ.norm) : F.level big.top) :
-        F.toRep.V) = ((x : F.level small.top) : F.toRep.V) :=
+    (dsimp% only (((T.kerNormInclusion F x : LinearMap.ker (big.rep F).ρ.norm) :
+        F.level big.top) : F.toRep.V)) = ((x : F.level small.top) : F.toRep.V) :=
   T.repIso_hom_apply_coe F x
 
 /-- **In degree minus one, layer Tate corestriction is the inclusion of norm kernels** on
