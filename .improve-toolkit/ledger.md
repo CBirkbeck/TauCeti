@@ -41676,3 +41676,18 @@ No change (186/178/168 min without a real board). No merges. Main `90ff820df` (p
   0 UNRUN**. `Roadmap: Exchangeability`: the file's only importer is `DeFinetti/PrefixDeletion.lean`. #2978 on this file used `none`,
   and its origin PRs (#566, #739, #723) predate the convention. The body carries the `/mathlibable` result (no projection form or
   Kallenberg 1.3 in Mathlib at the pin). A build waiter is running; mark it ready when green.
+
+## r903 — 2026-09-23T12:44Z (cron; step 4 hard-stopped)
+
+* **#8233 merged** 12:41:47Z (approved 12:28:02Z by `Robertboy18`).
+* **#8224 approved 10/10 by `sqrt-of-2`** (a *new* board, 5795005350, at 12:41:52Z; my r889 error board 5793153420 stays in place,
+  superseded). It is `ready-to-merge`, MERGING at queue pos 4. **So the error board did not block review**: external reviewers
+  re-review a head whose only board is errored. The r889 "watch" concern is resolved, and deleting that board is moot.
+* **Step 5, kind 3: opened draft #8275**, `improve/relnorm-dead-have` @ `3844a410e`, from `3843e9d3f`; +0/−2; `Roadmap:
+  NumberFieldArithmetic` (as #6993). It drops the dead `have hJ' : J ≠ ⊥ := hJ` in `multiplicity_relNorm`'s `h₃` case (the r891
+  `deadhave` hit) and the comment that only justified it. `hJ'` has no other occurrence. The case uses `hJ` directly (`hnb`, `ih hJ`,
+  `mul_ne_zero hP0 hJ`), and no tactic there consumes the context. The class-typed `hPprime : P.IsPrime` stays, as a potential
+  local instance. No open PR touches the file (fresh check). Gate: **12 ok / 0 failed / 0 UNRUN**.
+* **In progress (cap full):** #8235 (no board, 188 min), #8273 (draft, building) and #8275 (draft, building). Build waiters are running
+  for both drafts. The next opening is kind 1 if the pin has moved, otherwise kind 2 (the kind-2 scoring list from r882 needs a
+  re-run). Pin `dc4b8d60d5`, main `3843e9d3f`.
