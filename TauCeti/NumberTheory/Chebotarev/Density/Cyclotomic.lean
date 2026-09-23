@@ -11,7 +11,7 @@ import TauCeti.Analysis.SpecialFunctions.Log.OneDivSub
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.PrimeSum
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.IdealZetaSum
 import TauCeti.NumberTheory.Chebotarev.Density.Ramification
-import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Orthogonality
+import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.PrimeSum
 import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Series
 
 /-!
@@ -42,59 +42,6 @@ namespace NumberField.Chebotarev
 variable (K F : Type*) [Field K] [NumberField K] [Field F] [NumberField F] [Algebra K F]
   [IsGalois K F]
 
-open scoped Classical IsMulCommutative in
--- Character orthogonality at every prime, the ramified ones included: the character sum is
--- `#Gal(F/K)` on the Frobenius fibre of `σ` and `0` off it.
-private theorem sum_inv_mul_galoisCharacterWeight_eq_ite [IsMulCommutative (F ≃ₐ[K] F)]
-    (σ : F ≃ₐ[K] F) (P : HeightOneSpectrum (𝓞 K)) :
-    ∑ χ : (F ≃ₐ[K] F) →* ℂˣ,
-        (((χ σ)⁻¹ : ℂˣ) : ℂ) * MonoidHom.galoisCharacterWeight (L := F) χ P.asIdeal =
-      if P ∈ frobeniusPrimeSet K F (ConjClasses.mk σ) then (Nat.card (F ≃ₐ[K] F) : ℂ) else 0 := by
-  by_cases hP : P ∈ ramifiedPrimes K F
-  · rw [AlgEquiv.sum_inv_mul_galoisCharacterWeight_apply_eq_zero_of_mem_ramifiedPrimes σ P hP,
-      ite_eq_right fun h ↦ frobeniusPrimeSet_subset_compl_ramifiedPrimes _ h hP]
-  · rw [mem_ramifiedPrimes_iff, not_not] at hP
-    rw [AlgEquiv.sum_inv_mul_galoisCharacterWeight_apply_of_unramified σ P hP,
-      mem_frobeniusPrimeSet_iff_artinSymbol_eq hP]
-    generalize artinSymbol P.asIdeal hP = c
-    -- In an abelian group a conjugacy class is the class of its representative alone.
-    congr 1
-    have hc : ConjClasses.mk c.out = c := Quotient.out_eq c
-    rw [← ConjClasses.mk_injective.eq_iff (a := c.out), hc]
-
--- The weight of a Galois character is bounded by `1`.
-private theorem norm_galoisCharacterWeight_le_one (χ : (F ≃ₐ[K] F) →* ℂˣ) (I : Ideal (𝓞 K)) :
-    ‖MonoidHom.galoisCharacterWeight (L := F) χ I‖ ≤ 1 := by
-  simpa using χ.galoisCharacterUnitaryWeight.norm_le_one I
-
--- The prime sum of the trivial character is the prime sum over the unramified primes.
-private theorem primeSum_galoisCharacterWeight_one (t : ℝ) :
-    (MonoidHom.galoisCharacterWeight (L := F) (1 : (F ≃ₐ[K] F) →* ℂˣ)).primeSum t =
-      ((↑(ramifiedPrimes K F) : Set (HeightOneSpectrum (𝓞 K)))ᶜ.primeIdealZetaSum t : ℂ) := by
-  classical
-  simp [Set.ofReal_primeIdealZetaSum, MultiplicativeIdealWeight.primeSum_def,
-    Ideal.isPrimeTo_asIdeal_iff]
-
--- **The Frobenius fibre by orthogonality.** For `F / K` abelian and `t > 1`, `#Gal(F/K)` times
--- the prime sum over the Frobenius fibre of `σ` is `∑ χ, χ(σ)⁻¹ P_χ(t)`.
-private theorem natCard_mul_primeIdealZetaSum_eq [IsMulCommutative (F ≃ₐ[K] F)] (σ : F ≃ₐ[K] F)
-    {t : ℝ} (ht : 1 < t) :
-    (Nat.card (F ≃ₐ[K] F) : ℂ) *
-        ((frobeniusPrimeSet K F (ConjClasses.mk σ)).primeIdealZetaSum t : ℂ) =
-      ∑ χ : (F ≃ₐ[K] F) →* ℂˣ,
-        (((χ σ)⁻¹ : ℂˣ) : ℂ) * (MonoidHom.galoisCharacterWeight (L := F) χ).primeSum t := by
-  simp only [MultiplicativeIdealWeight.primeSum_def, ← tsum_mul_left]
-  rw [← Summable.tsum_finsetSum fun χ _ ↦
-      ((MonoidHom.galoisCharacterWeight χ).summable_div_of_summable_idealTerm
-        (summable_idealTerm_of_bounded_of_one_lt_re
-          (MultiplicativeIdealWeight.norm_toIdealArithmeticFunction_le_one
-            (norm_galoisCharacterWeight_le_one K F χ))
-          (by simpa using ht))).mul_left _,
-    Set.ofReal_primeIdealZetaSum, ← tsum_mul_left]
-  refine tsum_congr fun P ↦ ?_
-  simp only [mul_div_assoc', ← Finset.sum_div, sum_inv_mul_galoisCharacterWeight_eq_ite]
-  simp
-
 open scoped Classical in
 -- The normalized prime sum of a character tends to `1` for the trivial character, whose primes are
 -- the unramified ones, and to `0` for the others, whose prime sums stay bounded.
@@ -106,10 +53,10 @@ private theorem tendsto_primeSum_galoisCharacterWeight_div_log (m : ℕ) [NeZero
   · subst hχ
     refine ((Set.hasDirichletDensity_iff_tendsto_div_log_one_div_sub_one _ _).mp
       (hasDirichletDensity_compl_ramifiedPrimes K F)).ofReal.congr fun t ↦ ?_
-    rw [primeSum_galoisCharacterWeight_one, Complex.ofReal_div]
+    rw [MonoidHom.primeSum_galoisCharacterWeight_one, Complex.ofReal_div]
   · have hℓ := Real.tendsto_log_one_div_sub_atTop 1
     obtain ⟨B, hB⟩ := MultiplicativeIdealWeight.exists_norm_primeSum_le
-      (norm_galoisCharacterWeight_le_one K F χ)
+      (MonoidHom.norm_galoisCharacterWeight_le_one χ)
       (cyclotomicCharacterSeriesC_analyticAt_one K F m χ hχ)
       (cyclotomicCharacterSeriesC_ne_zero_at_one K F m χ hχ)
       fun _ ↦ cyclotomicCharacterSeriesC_eq_LSeries K F χ
@@ -142,7 +89,8 @@ theorem hasDirichletDensity_cyclotomicFrobenius (m : ℕ) [NeZero m]
       (((χ σ)⁻¹ : ℂˣ) : ℂ)).const_mul (1 / (Nat.card (F ≃ₐ[K] F) : ℂ))).congr' ?_ using 2
   · simp
   filter_upwards [self_mem_nhdsWithin] with t (ht : 1 < t)
-  simp only [mul_div_assoc', ← Finset.sum_div, ← natCard_mul_primeIdealZetaSum_eq K F σ ht]
+  simp only [mul_div_assoc', ← Finset.sum_div,
+    ← σ.natCard_mul_primeIdealZetaSum_frobeniusPrimeSet ht]
   simp
 
 end NumberField.Chebotarev
