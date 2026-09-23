@@ -42247,3 +42247,8 @@ reported to the user. Nothing of ours has moved. Main `a86d24954`.
 ## r959 — 2026-09-23T22:04Z (cron)
 
 CI is still stalled (141 queued, 8 running). Nothing of ours has moved. Main `a86d24954`.
+
+## r960 — 2026-09-23T22:14Z (cron)
+
+**#8388 and #8389 merged** 22:05:52Z (the sixteenth and seventeenth today); the merge queue is moving again. #8402, #8413 and #8426 (all astra-cleared) are still
+on queued builds (CI: 138 queued, 8 running). Pin `dc4b8d60d5`, main `8593e938c`.
