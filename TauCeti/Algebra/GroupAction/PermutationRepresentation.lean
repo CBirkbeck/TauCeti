@@ -8,15 +8,17 @@ module
 public import TauCeti.Algebra.GroupAction.AlgHom
 
 /-!
-# The permutation representation of a Galois group on embeddings
+# The permutation representation of an automorphism group on algebra maps
 
 For algebras `L` and `M` over a base `F`, the group `M ≃ₐ[F] M` acts on the algebra maps
 `L →ₐ[F] M` by postcomposition (`TauCeti/Algebra/GroupAction/AlgHom.lean`). This file transports
 that action to a concrete symmetric group, once the maps are enumerated.
 
-Nothing here needs normality: the injectivity statements take faithfulness of the action as a
-hypothesis rather than deriving it. `TauCeti/FieldTheory/Normal/Embeddings.lean` supplies that
-instance from the generation hypothesis, as `faithfulSMul_of_normalClosure_eq_top`.
+Only semiring structure is involved, as for the action itself: the injectivity statements take
+faithfulness of the action as a hypothesis rather than deriving it, so nothing here needs fields
+or normality. The motivating case is `Gal(M/F)` permuting the embeddings of a field `L`, where
+`TauCeti/FieldTheory/Normal/Embeddings.lean` supplies faithfulness from the generation
+hypothesis as `faithfulSMul_of_normalClosure_eq_top`.
 
 The set `L →ₐ[F] M` is the intrinsic object: the action on it needs no choices. A symmetric
 group does not appear until an enumeration `e : (L →ₐ[F] M) ≃ Fin n` is chosen, and the point of
@@ -26,25 +28,24 @@ this file is that the choice costs exactly one conjugation and no more:
 * but `permutationRepresentation e'` is conjugate to it inside `Equiv.Perm (Fin n)`, by the
   re-indexing permutation `e.symm.trans e'` (`permutationRepresentation_eq_conj`).
 
-So the action on embeddings is canonical, while the resulting subgroup of a particular symmetric
-group is canonical only up to conjugacy. This is the same phenomenon as Mathlib's
+So the action on `L →ₐ[F] M` is canonical, while the resulting subgroup of a particular
+symmetric group is canonical only up to conjugacy. This is the same phenomenon as Mathlib's
 `Polynomial.Gal.galActionHom`, which acts on `p.rootSet E` rather than on `Fin p.natDegree` for
 the same reason.
 
 `permutationRepresentation` is the underlying action homomorphism and needs no hypothesis. When
 the action is faithful it is injective, and two bundlings of that fact are provided, differing in
-what they retain: `permutationEmbedding` is the injection `Gal(M/F) ↪ S_n` into the ambient
+what they retain: `permutationEmbedding` is the injection `(M ≃ₐ[F] M) ↪ S_n` into the ambient
 symmetric group, and `permutationEquivRange` is the isomorphism onto the image, which keeps the
 group structure.
 
 ## Main results
 
 * `Equiv.permutationRepresentation`: the representation `(M ≃ₐ[F] M) →* Equiv.Perm
-  (Fin n)` attached to an enumeration `e` of the embeddings.
+  (Fin n)` attached to an enumeration `e` of the algebra maps.
 * `Equiv.permutationRepresentation_apply`: it acts by `i ↦ e (σ • e.symm i)`.
-* `Equiv.permutationRepresentation_injective`: it is injective when the action on
-  embeddings is faithful.
-* `Equiv.permutationEmbedding`: the injection `Gal(M/F) ↪ Equiv.Perm (Fin n)`, with
+* `Equiv.permutationRepresentation_injective`: it is injective when the action is faithful.
+* `Equiv.permutationEmbedding`: the injection `(M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n)`, with
   `Equiv.permutationEmbedding_apply` identifying its values.
 * `Equiv.permutationEquivRange`: the resulting isomorphism of `M ≃ₐ[F] M` with the
   range of the representation, a subgroup of `Equiv.Perm (Fin n)`, with
@@ -53,16 +54,14 @@ group structure.
   the representation, and `Equiv.permutationRepresentation_range_map_conj` says the same of the
   represented subgroups of `Equiv.Perm (Fin n)`.
 
-## References
-
-* J. Neukirch, *Algebraic Number Theory*, Chapter I, §2.
 -/
 
 public section
 
 namespace Equiv
 
-variable {F L M : Type*} [Field F] [Field L] [Field M] [Algebra F L] [Algebra F M]
+variable {F L M : Type*} [CommSemiring F] [Semiring L] [Semiring M] [Algebra F L]
+variable [Algebra F M]
 variable {n : ℕ}
 
 /-- **The permutation representation on embeddings, read through an enumeration `e`.** The
@@ -80,16 +79,16 @@ theorem permutationRepresentation_apply (e : (L →ₐ[F] M) ≃ Fin n) (σ : M 
     Equiv.permCongrHom_coe, Equiv.permCongr_apply, MulAction.toPermHom_apply,
     MulAction.toPerm_apply]
 
-/-- **`Gal(M/F)` embeds in `S_n`** when the action on embeddings is faithful: an automorphism
-acting trivially on the enumerated embeddings fixes every embedding, hence is the identity. -/
+/-- **`M ≃ₐ[F] M` embeds in `S_n`** when the action is faithful: an automorphism acting
+trivially on the enumerated maps fixes every map, hence is the identity. -/
 theorem permutationRepresentation_injective [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
     (e : (L →ₐ[F] M) ≃ Fin n) :
     Function.Injective (permutationRepresentation (F := F) (L := L) (M := M) e) :=
   (e.permCongrHom.toEquiv.comp_injective _).2 MulAction.toPerm_injective
 
-/-- **`Gal(M/F)` injects into `S_n`**, for an enumeration `e` of the algebra maps and a faithful
-action on them. This is the ambient-group form; `permutationEquivRange` is the form that keeps
-the group structure. -/
+/-- **`M ≃ₐ[F] M` injects into `S_n`**, for an enumeration `e` of the algebra maps and a
+faithful action on them. This is the ambient-group form; `permutationEquivRange` is the form
+that keeps the group structure. -/
 noncomputable def permutationEmbedding [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
     (e : (L →ₐ[F] M) ≃ Fin n) : (M ≃ₐ[F] M) ↪ Equiv.Perm (Fin n) :=
   ⟨permutationRepresentation e, permutationRepresentation_injective e⟩
@@ -101,9 +100,9 @@ theorem permutationEmbedding_apply [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)
     permutationEmbedding e σ = permutationRepresentation e σ :=
   (rfl)
 
-/-- **`Gal(M/F)` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the embeddings
-and a faithful action on them: the representation is injective, so it is an isomorphism onto its
-range. -/
+/-- **`M ≃ₐ[F] M` is isomorphic to a subgroup of `S_n`**, for an enumeration `e` of the algebra
+maps and a faithful action on them: the representation is injective, so it is an isomorphism
+onto its range. -/
 noncomputable def permutationEquivRange [FaithfulSMul (M ≃ₐ[F] M) (L →ₐ[F] M)]
     (e : (L →ₐ[F] M) ≃ Fin n) :
     (M ≃ₐ[F] M) ≃* (permutationRepresentation (F := F) (L := L) (M := M) e).range :=
