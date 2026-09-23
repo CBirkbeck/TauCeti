@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RingTheory.Valuation.Integral
+public import TauCeti.RingTheory.Valuation.Integral.Basic
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Plus
 public import TauCeti.RingTheory.Valuation.LtAddSubgroup
 public import TauCeti.RingTheory.Valuation.Continuous.Basic

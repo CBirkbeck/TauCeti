@@ -159,9 +159,13 @@ theorem vle_one_of_comap_mem_rationalSubset {φ : A →+* B} {Aplus : Subring A}
 
 omit [TopologicalSpace A] in
 /-- **The plus ring of the localisation is sub-unit.** Let `w` be a point of `Spv B` that is
-sub-unit on the image of `A⁺` and on the fractions `φ t / φ s`, and let `ψ : Aₛ → B` restrict
-along `algebraMap A Aₛ` to `φ`. Then `w` is sub-unit on the image under `ψ` of the plus ring of
-`Aₛ` — the integral closure of `A⁺[t₁/s, …, tₙ/s]`.
+sub-unit on the image of `A⁺` under `φ` and on the images `ψ (t/s)` of the fractions, and let
+`ψ : Aₛ → B` restrict along `algebraMap A Aₛ` to `φ`. Then `w` is sub-unit on the image under `ψ`
+of the plus ring of `Aₛ` — the integral closure of `A⁺[t₁/s, …, tₙ/s]`.
+
+The bound on the fractions is asked of `ψ` directly, so no unit hypothesis on `φ s` is needed; a
+caller holding the bound as `φ t * (φ s)⁻¹` converts it with
+`TauCeti.Localization.map_divBy_eq_mul_inv`.
 
 `B` carries no topology and no `B⁺` appears: the two bounds enter as hypotheses on the single
 point `w`, not as a quantifier over `spa B⁺`. Lemma 8.1 itself does not use this step — it spends
@@ -170,8 +174,8 @@ the pullback condition on the fractions alone — but a consumer that has to pla
 theorem vle_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] {φ : A →+* B} {ψ : S →+* B}
     (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) {w : Spv B}
-    (hA : ∀ a ∈ Aplus, w.toValuativeRel.vle (φ a) 1) (hu : IsUnit (φ s))
-    (hT : ∀ t ∈ T, w.toValuativeRel.vle (φ t * ↑hu.unit⁻¹) 1) {x : S}
+    (hA : ∀ a ∈ Aplus, w.toValuativeRel.vle (φ a) 1)
+    (hT : ∀ t ∈ T, w.toValuativeRel.vle (ψ (divBy (t : A) s : S)) 1) {x : S}
     (hx : x ∈ integralClosure
       ↥(Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))) S) :
     w.toValuativeRel.vle (ψ x) 1 := by
@@ -179,7 +183,7 @@ theorem vle_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) (T : Fins
     rw [Valuation.comap_apply, ← map_one w.valuation, valuation_le_iff]
   exact (key x).mp (Huber.le_one_of_mem_integralClosure_adjoin_plus S T s Aplus
     (fun a ha ↦ (key _).mpr (hψ a ▸ hA a ha))
-    (fun t ht ↦ (key _).mpr ((map_divBy_eq_mul_inv (S := S) t s hψ hu).symm ▸ hT t ht)) hx)
+    (fun t ht ↦ (key _).mpr (hT t ht)) hx)
 
 end Steps
 

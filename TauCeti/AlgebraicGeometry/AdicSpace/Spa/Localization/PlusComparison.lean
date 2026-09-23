@@ -48,8 +48,11 @@ All names below are in the `TauCeti.ValuationSpectrum` namespace.
   of `Spa (A⟨T'/s'⟩, A_U'⁺)` to points of `Spa (A⟨T/s⟩, A_U⁺)`.
 * `ringHomOfRationalSubsetSubset_mem_completedPlusSubring` : the comparison map carries `A_U⁺`
   into `A_U'⁺`, so it is a map of Huber pairs.
-* `toRingHom_pairHomOfRationalSubsetSubset` : the underlying ring homomorphism of the morphism of
+* `pairHomOfRationalSubsetSubset_toRingHom` : the underlying ring homomorphism of the morphism of
   Huber pairs is the comparison map.
+* `pairHomOfRationalSubsetSubset_self`, `pairHomOfRationalSubsetSubset_comp` : the morphisms of
+  Huber pairs are functorial in the containment — the morphism of a rational subset with itself is
+  the identity, and the morphism of a composite containment is the composite of the two morphisms.
 * `spaCompletedLocalizationHomeomorph_spaComap_pairHomOfRationalSubsetSubset` : across the
   homeomorphisms `Spa (A⟨T/s⟩, A_U⁺) ≃ₜ R(T/s)`, the induced map of adic spectra is the
   inclusion `R(T'/s') ⊆ R(T/s)`.
@@ -110,7 +113,8 @@ theorem comap_ringHomOfRationalSubsetSubset_mem_spa (P : PairOfDefinition A) (Ap
     vle_one_of_mem_integralClosure_adjoin_plus Aplus T s S hψ
       (fun a ha ↦ ((mem_spa_iff _ _).mp hw).2 _
         (toCompletionLoc_mem_completedPlusSubring P Aplus T' s' S' hden' ha))
-      hu (fun _ ↦ vle_one_of_comap_mem_rationalSubset hu hfac) hx
+      (fun t ht ↦ (TauCeti.Localization.map_divBy_eq_mul_inv (S := S) t s hψ hu).symm ▸
+        vle_one_of_comap_mem_rationalSubset hu hfac ht) hx
 
 /-- **The comparison map is a map of Huber pairs** (Wedhorn's Proposition 8.2(1)): for a
 containment `R(T'/s') ⊆ R(T/s)` of rational subsets, the comparison map
@@ -154,7 +158,7 @@ continuity and with `ringHomOfRationalSubsetSubset_mem_completedPlusSubring` as 
 The two Huber pairs are the plus rings `completedPlusSubring` together with
 `TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_completedPlusSubring`; that is what
 `hIplus` pays for, since it is the hypothesis making `A_U⁺` open.
-`toRingHom_pairHomOfRationalSubsetSubset` recovers `σ`, and `TauCeti.Huber.Pair.Hom.spaComap` of
+`pairHomOfRationalSubsetSubset_toRingHom` recovers `σ`, and `TauCeti.Huber.Pair.Hom.spaComap` of
 this morphism is the induced map `Spa (A⟨T'/s'⟩, A_U'⁺) → Spa (A⟨T/s⟩, A_U⁺)`, with the generic
 `spaComap` API — its value, continuity and functoriality lemmas — applying to it unchanged. -/
 noncomputable def pairHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus : Subring A)
@@ -191,7 +195,7 @@ noncomputable def pairHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus 
 
 /-- The underlying ring homomorphism of `pairHomOfRationalSubsetSubset` is the comparison map. -/
 @[simp]
-theorem toRingHom_pairHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus : Subring A)
+theorem pairHomOfRationalSubsetSubset_toRingHom (P : PairOfDefinition A) (Aplus : Subring A)
     (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus)
     (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]
     [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) (T' : Finset A)
@@ -208,6 +212,98 @@ theorem toRingHom_pairHomOfRationalSubsetSubset (P : PairOfDefinition A) (Aplus 
     letI := isHuberRing_completion_locTopology P T' s' S' hden'
     (pairHomOfRationalSubsetSubset P Aplus hIplus hAplus T s S hden T' s' S' hden' hsub).toRingHom =
       ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' hsub := (rfl)
+
+/-- **The morphism of a rational subset with itself is the identity** (Wedhorn's Proposition
+8.2(1)): for the containment `R(T/s) ⊆ R(T/s)`, the morphism of Huber pairs
+`pairHomOfRationalSubsetSubset` is `TauCeti.Huber.Pair.Hom.id`. -/
+@[simp]
+theorem pairHomOfRationalSubsetSubset_self (P : PairOfDefinition A) (Aplus : Subring A)
+    (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := isHuberRing_completion_locTopology P T s S hden
+    pairHomOfRationalSubsetSubset P Aplus hIplus hAplus T s S hden T s S hden subset_rfl =
+      Huber.Pair.Hom.id _ := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_completion_locTopology P T s S hden
+  refine Huber.Pair.Hom.ext ?_
+  simp only [pairHomOfRationalSubsetSubset_toRingHom, Huber.Pair.Hom.toRingHom_id]
+  -- the identity is continuous and fixes the structure map, so uniqueness identifies it with the
+  -- comparison map of `R(T/s) ⊆ R(T/s)`
+  exact (eq_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T s S hden subset_rfl
+    (RingHom.id _) continuous_id (RingHom.id_comp _)).symm
+
+/-- **The composite morphism is the morphism of the composite containment** (Wedhorn's Proposition
+8.2(1)): for containments `R(T''/s'') ⊆ R(T'/s') ⊆ R(T/s)` of rational subsets,
+`TauCeti.Huber.Pair.Hom.comp` of the morphisms of the two containments is
+`pairHomOfRationalSubsetSubset` of the composite containment. Together with
+`pairHomOfRationalSubsetSubset_self` this makes the comparison morphisms a functorial system of
+restriction maps on rational subsets.
+
+The composite is the left-hand side, matching `Set.inclusion_comp_inclusion`: that orientation
+collapses a composite to a single morphism, and it is the only one `simp` can use, since the
+intermediate presentation `S'` is visible on this side but occurs on the other only inside the
+containment proof `hsub'.trans hsub`. -/
+@[simp]
+theorem pairHomOfRationalSubsetSubset_comp (P : PairOfDefinition A) (Aplus : Subring A)
+    (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus)
+    (hAplus : ∀ ⦃a⦄, a ∈ Aplus → IsPowerBounded a) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) (T' : Finset A)
+    (s' : A) (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S') (T'' : Finset A) (s'' : A) (S'' : Type*)
+    [CommRing S''] [Algebra A S''] [IsLocalization.Away s'' S'']
+    (hden'' : HasDenominatorPower P T'' s'' S'')
+    (hsub : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s)
+    (hsub' : rationalSubset Aplus T'' s'' ⊆ rationalSubset Aplus T' s') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := isHuberRing_completion_locTopology P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    letI := isHuberRing_completion_locTopology P T' s' S' hden'
+    letI := locUniformSpace P T'' s'' S'' hden''
+    letI := isUniformAddGroup_locUniformSpace P T'' s'' S'' hden''
+    letI := isTopologicalRing_locUniformSpace P T'' s'' S'' hden''
+    letI := isHuberRing_completion_locTopology P T'' s'' S'' hden''
+    (pairHomOfRationalSubsetSubset P Aplus hIplus hAplus T' s' S' hden' T'' s'' S'' hden''
+          hsub').comp
+        (pairHomOfRationalSubsetSubset P Aplus hIplus hAplus T s S hden T' s' S' hden' hsub) =
+      pairHomOfRationalSubsetSubset P Aplus hIplus hAplus T s S hden T'' s'' S'' hden''
+        (hsub'.trans hsub) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  have _ := isHuberRing_completion_locTopology P T s S hden
+  let _ := locUniformSpace P T' s' S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
+  have _ := isHuberRing_completion_locTopology P T' s' S' hden'
+  let _ := locUniformSpace P T'' s'' S'' hden''
+  have _ := isUniformAddGroup_locUniformSpace P T'' s'' S'' hden''
+  have _ := isTopologicalRing_locUniformSpace P T'' s'' S'' hden''
+  have _ := isHuberRing_completion_locTopology P T'' s'' S'' hden''
+  refine Huber.Pair.Hom.ext ?_
+  simp only [pairHomOfRationalSubsetSubset_toRingHom, Huber.Pair.Hom.toRingHom_comp]
+  -- the composite is continuous, so uniqueness identifies it with the comparison map of
+  -- `R(T''/s'') ⊆ R(T/s)` once it is compatible with the structure map
+  refine (eq_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T'' s'' S'' hden''
+    (hsub'.trans hsub)
+    ((ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T'' s'' S'' hden'' hsub').comp
+      (ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' hsub))
+    ((continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T' s' S' hden' T'' s'' S'' hden''
+      hsub').comp
+      (continuous_ringHomOfRationalSubsetSubset P Aplus hAplus T s S hden T' s' S' hden' hsub))
+    ?_)
+  -- reassociate, then the structure-map compatibility of each of the two comparison maps
+  rw [RingHom.comp_assoc, ringHomOfRationalSubsetSubset_comp_toCompletionLoc,
+    ringHomOfRationalSubsetSubset_comp_toCompletionLoc]
 
 /-- **The induced map of adic spectra is the inclusion of rational subsets.** Across the
 homeomorphisms `Spa (A⟨T/s⟩, A_U⁺) ≃ₜ R(T/s)` of Wedhorn's Proposition 8.2(2), the map
@@ -243,7 +339,7 @@ theorem spaCompletedLocalizationHomeomorph_spaComap_pairHomOfRationalSubsetSubse
   have _ := isHuberRing_completion_locTopology P T' s' S' hden'
   refine fun w ↦ Subtype.ext (Subtype.ext ?_)
   simp only [spaCompletedLocalizationHomeomorph_apply, spaLocToRationalSubset_val,
-    spaComapLoc_val, Huber.Pair.Hom.spaComap_val, toRingHom_pairHomOfRationalSubsetSubset]
+    spaComapLoc_val, Huber.Pair.Hom.spaComap_val, pairHomOfRationalSubsetSubset_toRingHom]
   rw [← Function.comp_apply (f := comap (toCompletionLoc P T s S hden)), ← comap_comp,
     ringHomOfRationalSubsetSubset_comp_toCompletionLoc]
 
