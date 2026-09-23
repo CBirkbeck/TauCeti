@@ -1,4 +1,4 @@
-# Last round — r908 (2026-09-23T13:37Z)
+# Last round — r909 (2026-09-23T13:45Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -49,13 +49,13 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8275** | `3844a410e` | green (12:57:04Z) | kind 3 (`RingTheory/Ideal/Norm/RelNorm.lean`: drop the dead `have hJ' : J ≠ ⊥ := hJ` and its comment in `multiplicity_relNorm`; +0/−2; gate 12/0/0; `Roadmap: NumberFieldArithmetic`). Opened r903 from `3843e9d3f`; **marked ready 12:57:21Z** | **external reviewers** (1–3 h); step 4 hard-stopped |
 | **#8286** | `d099adbd2` | first build | kind 3 (`SchwarzChristoffel/GlobalTurning.lean`: `schwarzChristoffelEdgeAngle_sub_eq_neg_pi_mul_sum_Ioc` takes `i ≤ j`, and the one caller passes `hij.le`; +3/−3; gate 12/0/0; `Roadmap: ConformalMapping`). **Draft**, opened r908 from `8f789cae4` | **CI** — mark ready when green |
 
-**In progress (cap full): #8273 (`awaiting-review`, ready 12:50:19Z), #8275 (`awaiting-review`, ready 12:57:21Z) and #8286 (draft, first build).** #8235 is `ready-to-merge` (MERGING). **#8233 merged 12:41:47Z** and **#8224 merged 12:55:04Z**. **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z).
+**In progress (cap full): #8273 (`review-in-progress` since r909), #8275 (`awaiting-review`, ready 12:57:21Z) and #8286 (draft, first build).** #8235 is `ready-to-merge` (MERGING). **#8233 merged 12:41:47Z** and **#8224 merged 12:55:04Z**. **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). Remaining kind-3
 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `44de2e34a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `159ee7304`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `fbc93af96`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -149,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r908 did
+## What r703–r909 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -364,6 +364,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r906: no change. With astra out, the next slot goes to kind 3; the `GlobalTurning.lean` `i ≤ j` weakening is staged locally (`26b23a436`, gate 12/0/0).
 * r907: #8235 is `review-in-progress` (an external reviewer, 228 min after ready).
 * r908: **#8235 approved 10/10** (`sqrt-of-2`) and MERGING. Kind 3 opened as draft **#8286** (the `GlobalTurning.lean` `i ≤ j` weakening, `d099adbd2`, gate 12/0/0).
+* r909: #8273 is `review-in-progress`; #8286 is building.
 
 ## Candidates for a later step 5
 

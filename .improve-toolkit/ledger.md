@@ -41733,3 +41733,8 @@ are `awaiting-review`. No merges. Pin `dc4b8d60d5`, main `6333907d5`. The cap is
   caller passes `hij.le`. Re-gate **12 ok / 0 failed / 0 UNRUN**. `Roadmap: ConformalMapping` (as #6904). No open PR touches the file. A build
   waiter is running.
 * In progress (cap full): #8273 (44 min), #8275 (37 min) and #8286 (draft). Pin `dc4b8d60d5`.
+
+## r909 — 2026-09-23T13:44Z (cron; step 4 hard-stopped)
+
+#8273 is `review-in-progress` (54 min after ready). #8235 is still MERGING, #8275 is `awaiting-review` (47 min), and #8286 is
+on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca5`. The cap is full.
