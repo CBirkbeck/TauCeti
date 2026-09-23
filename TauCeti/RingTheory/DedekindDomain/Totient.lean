@@ -38,10 +38,8 @@ namespace Ideal
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Infinite R]
 
-/-- The units of `R ⧸ P ^ e` for a maximal ideal `P` and `e ≠ 0`:
-`#(R ⧸ P ^ e)ˣ · N P = N (P ^ e) · (N P - 1)`. -/
-private theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] {e : ℕ}
-    (he : e ≠ 0) [Finite (R ⧸ P ^ e)] :
+private theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] {e : ℕ} (he : e ≠ 0)
+    [Finite (R ⧸ P ^ e)] :
     Nat.card (R ⧸ P ^ e)ˣ * absNorm P = absNorm (P ^ e) * (absNorm P - 1) := by
   classical
   let f : R ⧸ P ^ e →+* R ⧸ P := Ideal.Quotient.factor (Ideal.pow_le_self he)
@@ -61,23 +59,19 @@ private theorem card_units_quotient_pow_mul_absNorm (P : Ideal R) [P.IsMaximal] 
       (q := fun x ↦ ¬ IsUnit x) fun x ↦ by simp [hunit])
   change Nat.card (R ⧸ P ^ e)ˣ * Nat.card (R ⧸ P) =
     Nat.card (R ⧸ P ^ e) * (Nat.card (R ⧸ P) - 1)
-  rw [hA] at hU ⊢
-  have hu : Nat.card (R ⧸ P ^ e)ˣ = Nat.card f.toAddMonoidHom.ker * (Nat.card (R ⧸ P) - 1) := by
-    rw [Nat.mul_sub_one, mul_comm]
-    omega
-  rw [hu]
-  ring
+  rw [Nat.mul_sub_one]
+  exact Nat.eq_sub_of_add_eq (by grind)
 
 /-- **Euler's totient for ideals**, multiplicative form: if `S` is the set of height-one primes
 dividing `I` and `R ⧸ I` is finite, then `#(R ⧸ I)ˣ · ∏_{𝔭 ∈ S} N 𝔭 = N I · ∏_{𝔭 ∈ S} (N 𝔭 - 1)`.
-This is the analogue of `Nat.totient_mul_prod_primeFactors`. -/
+This is the analogue of `Nat.totient_mul_prod_primeFactors`; for the form with the factors
+`1 - (N 𝔭)⁻¹` in a field, see `Ideal.card_units_quotient_eq_absNorm_mul_prod`. -/
 theorem card_units_quotient_mul_prod_absNorm (I : Ideal R) [Finite (R ⧸ I)]
     {S : Finset (HeightOneSpectrum R)} (hS : ∀ v, v ∈ S ↔ v.asIdeal ∣ I) :
     Nat.card (R ⧸ I)ˣ * ∏ v ∈ S, absNorm v.asIdeal =
       absNorm I * ∏ v ∈ S, (absNorm v.asIdeal - 1) := by
-  classical
   have hI : I ≠ 0 := fun h ↦ (absNorm_ne_zero_iff I).mpr ‹_› (by rw [h, map_zero])
-  set e : HeightOneSpectrum R → ℕ := fun v ↦
+  let e : HeightOneSpectrum R → ℕ := fun v ↦
     (Associates.mk v.asIdeal).count (Associates.mk I).factors
   have he (v : HeightOneSpectrum R) : e v ≠ 0 ↔ v ∈ S := by
     rw [hS, Associates.count_ne_zero_iff_dvd hI v.irreducible]
@@ -102,25 +96,20 @@ theorem card_units_quotient_mul_prod_absNorm (I : Ideal R) [Finite (R ⧸ I)]
 
 /-- **Euler's totient for ideals**: if `S` is the set of height-one primes dividing `I` and
 `R ⧸ I` is finite, then `#(R ⧸ I)ˣ = N I · ∏_{𝔭 ∈ S} (1 - (N 𝔭)⁻¹)` in any field of
-characteristic zero. This is the analogue of `Nat.totient_eq_mul_prod_factors`. -/
-theorem card_units_quotient_eq_absNorm_mul_prod {F : Type*} [Field F] [CharZero F]
-    (I : Ideal R) [Finite (R ⧸ I)] {S : Finset (HeightOneSpectrum R)}
-    (hS : ∀ v, v ∈ S ↔ v.asIdeal ∣ I) :
+characteristic zero. This is the analogue of `Nat.totient_eq_mul_prod_factors`, which is stated
+over `ℚ` only; the identity in `ℕ`, free of inverses, is
+`Ideal.card_units_quotient_mul_prod_absNorm`. -/
+theorem card_units_quotient_eq_absNorm_mul_prod {F : Type*} [Field F] [CharZero F] (I : Ideal R)
+    [Finite (R ⧸ I)] {S : Finset (HeightOneSpectrum R)} (hS : ∀ v, v ∈ S ↔ v.asIdeal ∣ I) :
     (Nat.card (R ⧸ I)ˣ : F) = absNorm I * ∏ v ∈ S, (1 - (absNorm v.asIdeal : F)⁻¹) := by
-  have hN (v) (hv : v ∈ S) : absNorm v.asIdeal ≠ 0 := by
-    rw [absNorm_ne_zero_iff]
-    exact Finite.of_surjective _
-      (Ideal.Quotient.factor_surjective (Ideal.le_of_dvd ((hS v).mp hv)))
-  have h := congrArg (Nat.cast (R := F)) (card_units_quotient_mul_prod_absNorm I hS)
-  rw [Nat.cast_mul, Nat.cast_mul, Nat.cast_prod, Nat.cast_prod, Finset.prod_congr rfl
-    fun v hv ↦ Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr (hN v hv))] at h
-  have hprod : ∏ v ∈ S, (1 - (absNorm v.asIdeal : F)⁻¹) =
-      (∏ v ∈ S, ((absNorm v.asIdeal : F) - 1)) / ∏ v ∈ S, (absNorm v.asIdeal : F) := by
-    rw [← Finset.prod_div_distrib]
-    refine Finset.prod_congr rfl fun v hv ↦ ?_
-    have : (absNorm v.asIdeal : F) ≠ 0 := Nat.cast_ne_zero.mpr (hN v hv)
-    field_simp
-  rw [hprod, ← mul_div_assoc, eq_div_iff (Finset.prod_ne_zero_iff.mpr fun v hv ↦
-    Nat.cast_ne_zero.mpr (hN v hv)), h, Nat.cast_one]
+  have hN (v) (hv : v ∈ S) : absNorm v.asIdeal ≠ 0 :=
+    ne_zero_of_dvd_ne_zero ((absNorm_ne_zero_iff I).mpr ‹_›) (map_dvd absNorm ((hS v).mp hv))
+  have hN' (v) (hv : v ∈ S) : (absNorm v.asIdeal : F) ≠ 0 := Nat.cast_ne_zero.mpr (hN v hv)
+  have key (v) (hv : v ∈ S) :
+      (1 - (absNorm v.asIdeal : F)⁻¹) * absNorm v.asIdeal = (absNorm v.asIdeal - 1 : ℕ) := by
+    rw [sub_mul, one_mul, inv_mul_cancel₀ (hN' v hv), Nat.cast_pred (Nat.pos_of_ne_zero (hN v hv))]
+  refine mul_right_cancel₀ (Finset.prod_ne_zero_iff.mpr hN') ?_
+  rw [mul_assoc, ← Finset.prod_mul_distrib, Finset.prod_congr rfl key]
+  exact_mod_cast card_units_quotient_mul_prod_absNorm I hS
 
 end Ideal
