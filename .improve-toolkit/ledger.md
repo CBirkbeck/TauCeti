@@ -41698,3 +41698,13 @@ No change (186/178/168 min without a real board). No merges. Main `90ff820df` (p
 
 No new change: #8224 is still MERGING; #8235 (198 min) and #8273 (ready 12:50:19Z) have no board; #8275 is on its first build
 (waiter running). The cap is full. Pin `dc4b8d60d5`, main `87831f04d`.
+* r904 addendum (waiter): **#8275 went green at 12:57:04Z and was marked ready at 12:57:21Z**. The guards held: every check green,
+  head `3844a410e` unchanged, pin `dc4b8d60d5` at both the base `3843e9d3f` and main `da600cd98`, and the file untouched. All
+  three in-progress PRs are now `awaiting-review`.
+
+## r905 — 2026-09-23T13:04Z (cron; step 4 hard-stopped)
+
+* **#8224 merged** 12:55:04Z (approved 12:41:52Z by `sqrt-of-2`). That unblocks the queued kind-3 weakening of the private
+  `integral_Ioi_eq_Ioc_add_Ioi` (`Resolvent/Basic.lean:184`, `0 < h` used only as `hh.le`).
+* In progress (cap full): #8235 (208 min, no board), #8273 (14 min) and #8275 (7 min), all `awaiting-review`. Pin `dc4b8d60d5`,
+  main `44de2e34a`.
