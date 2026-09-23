@@ -13,7 +13,7 @@ public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count.Asymptotic
 
 Let `𝔪` be a modulus of a number field `K` and `χ` a nontrivial ray class character of `𝔪`.
 This file proves that the sum of `χ` over the nonzero integral ideals prime to `𝔪` of norm at
-most `x` is `O(x ^ (1 - δ))` for some `δ > 0`.
+most `x` is `O(x ^ (1 - 1 / [K : ℚ]))`.
 
 The partial sum is the `χ`-weighted combination of the ray class counting functions.  Every class
 has the same main term `rayClassIdealMainTerm 𝔪 * x`, and the values of a nontrivial character
@@ -22,6 +22,8 @@ the class counts remain.
 
 ## Main results
 
+* `TauCeti.GlobalNumberFields.isBigO_rayClassCharacterPartialSum`: the partial sums of a
+  nontrivial ray class character are `O(x ^ (1 - 1 / [K : ℚ]))`.
 * `TauCeti.GlobalNumberFields.rayClassCharacter_partialSums`: the partial sums of a nontrivial
   ray class character are `O(x ^ (1 - δ))` for some `δ > 0`.
 
@@ -38,15 +40,14 @@ namespace TauCeti.GlobalNumberFields
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- **Cancellation of a nontrivial ray class character.**  The partial sums of a nontrivial ray
-class character over the integral ideals of norm at most `x` are `O(x ^ (1 - δ))` for some
-`δ > 0`. -/
-theorem rayClassCharacter_partialSums (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (hχ : χ ≠ 1) :
-    ∃ δ : ℝ, 0 < δ ∧
-      (fun x : ℝ => rayClassCharacterPartialSum 𝔪 χ x) =O[atTop]
-        (fun x : ℝ => ((x ^ (1 - δ) : ℝ) : ℂ)) := by
+/-- **Cancellation of a nontrivial ray class character, with an explicit power saving.**  The
+partial sums of a nontrivial ray class character over the integral ideals of norm at most `x` are
+`O(x ^ (1 - 1 / [K : ℚ]))`. -/
+theorem isBigO_rayClassCharacterPartialSum (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪)
+    (hχ : χ ≠ 1) :
+    (fun x : ℝ => rayClassCharacterPartialSum 𝔪 χ x) =O[atTop]
+      (fun x : ℝ => x ^ (1 - (Module.finrank ℚ K : ℝ)⁻¹)) := by
   have : Fintype (RayClassGroup 𝔪) := Fintype.ofFinite _
-  obtain ⟨δ, hδ, hcount⟩ := rayClassIdealCount 𝔪
   -- the character values sum to zero, so the common main term drops out
   have hχ0 : ∑ c : RayClassGroup 𝔪, (χ c : ℂ) = 0 :=
     sum_hom_units_eq_zero ((Units.coeHom ℂ).comp χ) fun h ↦ hχ <|
@@ -57,9 +58,18 @@ theorem rayClassCharacter_partialSums (𝔪 : Modulus K) (χ : RayClassCharacter
     simp only [Complex.ofReal_sub, Complex.ofReal_mul, Complex.ofReal_natCast, mul_sub,
       Finset.sum_sub_distrib, ← Finset.sum_mul, hχ0, zero_mul, sub_zero]
     exact rayClassCharacterPartialSum_eq_sum 𝔪 χ x
-  refine ⟨δ, hδ, ?_⟩
   simp_rw [hsum]
   refine IsBigO.fun_sum fun c _ ↦ IsBigO.const_mul_left ?_ _
-  exact Complex.isBigO_ofReal_right.mpr (Complex.isBigO_ofReal_left.mpr (hcount c))
+  exact Complex.isBigO_ofReal_left.mpr (isBigO_rayClassIdealCountingFunction_sub 𝔪 c)
+
+/-- **Cancellation of a nontrivial ray class character.**  The partial sums of a nontrivial ray
+class character over the integral ideals of norm at most `x` are `O(x ^ (1 - δ))` for some
+`δ > 0`. -/
+theorem rayClassCharacter_partialSums (𝔪 : Modulus K) (χ : RayClassCharacter 𝔪) (hχ : χ ≠ 1) :
+    ∃ δ : ℝ, 0 < δ ∧
+      (fun x : ℝ => rayClassCharacterPartialSum 𝔪 χ x) =O[atTop]
+        (fun x : ℝ => ((x ^ (1 - δ) : ℝ) : ℂ)) :=
+  ⟨(Module.finrank ℚ K : ℝ)⁻¹, inv_pos.mpr (Nat.cast_pos.mpr Module.finrank_pos),
+    Complex.isBigO_ofReal_right.mpr (isBigO_rayClassCharacterPartialSum 𝔪 χ hχ)⟩
 
 end TauCeti.GlobalNumberFields

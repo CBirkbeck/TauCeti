@@ -27,6 +27,8 @@ for the same number of points; the lattice-point count in that domain then gives
 
 ## Main results
 
+* `TauCeti.GlobalNumberFields.isBigO_rayClassIdealCountingFunction_sub`: the ray class ideal
+  counting function of a class is `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - 1 / [K : ℚ]))`.
 * `TauCeti.GlobalNumberFields.rayClassIdealCount`: the ray class ideal counting function is
   `rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - δ))` for some `δ > 0` uniform in the class.
 
@@ -63,8 +65,10 @@ private theorem rayClassIdealCountingFunction_mul_card_eq_ncard (𝔪 : Modulus 
   exact Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter (· ∈ rayIdealSet 𝔪 _)
     (mixedEmbedding.norm · ≤ _))
 
-/-- The ray class ideal count of a single class, with the power saving `1 / [K : ℚ]`. -/
-private theorem isBigO_rayClassIdealCountingFunction_sub (𝔪 : Modulus K) (c : RayClassGroup 𝔪) :
+/-- **The ray class ideal count of a single class, with an explicit power saving.**  The number
+of nonzero integral ideals prime to `𝔪` in the ray class `c` with norm at most `x` is
+`rayClassIdealMainTerm 𝔪 * x + O(x ^ (1 - 1 / [K : ℚ]))`. -/
+theorem isBigO_rayClassIdealCountingFunction_sub (𝔪 : Modulus K) (c : RayClassGroup 𝔪) :
     (fun x : ℝ => (rayClassIdealCountingFunction 𝔪 c x : ℝ) - rayClassIdealMainTerm 𝔪 * x) =O[atTop]
       fun x : ℝ => x ^ (1 - (finrank ℚ K : ℝ)⁻¹) := by
   obtain ⟨𝔞, h𝔞⟩ := idealClass_surjective 𝔪 c⁻¹

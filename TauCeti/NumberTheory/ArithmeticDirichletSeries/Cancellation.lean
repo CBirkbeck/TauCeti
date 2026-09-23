@@ -38,9 +38,10 @@ Both are stable under deleting finitely many Euler factors, the operation a char
 needs at the bad primes of its modulus. A one-prime recurrence relates the partial sums after
 inserting a forbidden prime to two partial sums before the insertion
 (`TauCeti.MultiplicativeIdealWeight.idealSummatory_restrict_insert`). Iterating this recurrence
-shows that cancellation passes to the restriction (`TauCeti.HasCancellation.restrict`); on
-`Re s > 1` the two continued
-`L`-functions differ by the entire factor `∏ 𝔭 ∈ S, (1 - χ(𝔭) N(𝔭) ^ (-s))`
+shows that cancellation passes to the restriction (`TauCeti.HasCancellation.restrict`), and in
+number-field degree greater than one also back from it (`TauCeti.hasCancellation_restrict_iff`).
+On `Re s > 1` the two continued `L`-functions differ by the entire factor
+`∏ 𝔭 ∈ S, (1 - χ(𝔭) N(𝔭) ^ (-s))`
 (`TauCeti.continuedLFunctionOfWeight_restrict_of_one_lt_re`), and under cancellation that identity
 propagates to the whole half-plane `Re s > 1 - 1 / d`
 (`TauCeti.continuedLFunctionOfWeight_restrict`).
@@ -246,6 +247,83 @@ theorem HasCancellation.restrict {χ : UnitaryIdealWeight K} (hχ : HasCancellat
             · rw [norm_mul]
               exact mul_le_mul (χ.norm_le_one _) hsecond (norm_nonneg _) zero_le_one
         _ = 2 * max C 0 * x ^ θ := by ring
+
+/-- **In degree greater than one, cancellation is insensitive to finitely many Euler factors.**
+For `[K : ℚ] > 1`, a unitary weight restricted away from a finite set of primes has cancellation
+exactly when the weight itself does. -/
+theorem hasCancellation_restrict_iff {χ : UnitaryIdealWeight K}
+    (S : Set (HeightOneSpectrum (𝓞 K))) (hS : S.Finite) (hK : 1 < Module.finrank ℚ K) :
+    HasCancellation (χ.restrict S hS) ↔ HasCancellation χ := by
+  refine ⟨fun h ↦ ?_, fun h ↦ h.restrict S hS⟩
+  set θ : ℝ := 1 - 1 / (Module.finrank ℚ K : ℝ)
+  have hθ : 0 < θ := by
+    have hK' : (1 : ℝ) < Module.finrank ℚ K := by exact_mod_cast hK
+    exact sub_pos.mpr ((div_lt_one (by linarith)).mpr hK')
+  induction S, hS using Set.Finite.induction_on with
+  | empty => simpa using h
+  | @insert 𝔭 T h𝔭 hT ih =>
+      refine ih ?_
+      obtain ⟨C, hC⟩ := h
+      set B : ℝ → ℂ := fun x ↦ idealSummatory K (χ.restrict T hT).toIdealArithmeticFunction x
+      set N : ℝ := (Ideal.absNorm 𝔭.asIdeal : ℝ)
+      have hN : (2 : ℝ) ≤ N := two_le_absNorm_asIdeal_real 𝔭
+      have hrec (x : ℝ) : B x = idealSummatory K
+          (χ.restrict (insert 𝔭 T) (hT.insert 𝔭)).toIdealArithmeticFunction x +
+            χ.1 𝔭.asIdeal * B (x / N) := by
+        rw [UnitaryIdealWeight.toIdealArithmeticFunction_eq_val, UnitaryIdealWeight.val_restrict,
+          χ.1.idealSummatory_restrict_insert hT h𝔭 x]
+        simp only [B, N, UnitaryIdealWeight.toIdealArithmeticFunction_eq_val,
+          UnitaryIdealWeight.val_restrict, sub_add_cancel]
+      set C' : ℝ := max C 0
+      set q : ℝ := (2 : ℝ) ^ θ
+      have hq : 1 < q := Real.one_lt_rpow (by norm_num) hθ
+      set M : ℝ := C' * q / (q - 1)
+      have hC'M : C' ≤ M := by
+        rw [le_div_iff₀ (by linarith)]
+        nlinarith [le_max_right C 0]
+      have hMq : C' + M / q = M := by
+        have hq1 : q - 1 ≠ 0 := by linarith
+        have hq0 : q ≠ 0 := by linarith
+        simp only [M]
+        field_simp
+        ring
+      have key (n : ℕ) : ∀ x : ℝ, 1 ≤ x → x < 2 ^ n → ‖B x‖ ≤ M * x ^ θ := by
+        induction n with
+        | zero => exact fun x hx hxn ↦ absurd hxn (by simpa using hx)
+        | succ n ihn =>
+          intro x hx hxn
+          have hx0 : 0 ≤ x := zero_le_one.trans hx
+          have hfirst : ‖idealSummatory K
+              (χ.restrict (insert 𝔭 T) (hT.insert 𝔭)).toIdealArithmeticFunction x‖ ≤
+                C' * x ^ θ :=
+            (hC x hx).trans (mul_le_mul_of_nonneg_right (le_max_left C 0)
+              (Real.rpow_nonneg hx0 θ))
+          rw [hrec]
+          refine (norm_add_le _ _).trans ?_
+          rw [norm_mul]
+          rcases lt_or_ge (x / N) 1 with hy | hy
+          · rw [show B (x / N) = 0 from idealSummatory_eq_zero_of_lt_one K _ hy, norm_zero,
+              mul_zero, add_zero]
+            exact hfirst.trans (mul_le_mul_of_nonneg_right hC'M (Real.rpow_nonneg hx0 θ))
+          · have hxN : x / N ≤ x / 2 := div_le_div_of_nonneg_left hx0 (by norm_num) hN
+            have hsecond : ‖B (x / N)‖ ≤ M * (x ^ θ / q) := by
+              refine (ihn _ hy (hxN.trans_lt ?_)).trans (mul_le_mul_of_nonneg_left ?_ ?_)
+              · rw [pow_succ] at hxn
+                linarith
+              · rw [← Real.div_rpow hx0 (by norm_num)]
+                exact Real.rpow_le_rpow (by linarith) hxN hθ.le
+              · exact hC'M.trans' (le_max_right C 0)
+            calc ‖idealSummatory K
+                  (χ.restrict (insert 𝔭 T) (hT.insert 𝔭)).toIdealArithmeticFunction x‖ +
+                    ‖χ.1 𝔭.asIdeal‖ * ‖B (x / N)‖
+                ≤ C' * x ^ θ + 1 * (M * (x ^ θ / q)) :=
+                  add_le_add hfirst (mul_le_mul (χ.norm_le_one _) hsecond (norm_nonneg _)
+                    zero_le_one)
+              _ = (C' + M / q) * x ^ θ := by ring
+              _ = M * x ^ θ := by rw [hMq]
+      refine ⟨M, fun x hx ↦ ?_⟩
+      obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt x (by norm_num : (1 : ℝ) < 2)
+      exact key n x hx hn
 
 /-- **Cancellation bounds the partial sums of the norm coefficients**, in the `O(n ^ r)` form of
 Mathlib's `LSeries_eq_mul_integral`. -/
