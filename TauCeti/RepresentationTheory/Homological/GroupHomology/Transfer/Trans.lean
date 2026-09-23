@@ -1,0 +1,107 @@
+/-
+Copyright (c) 2026 Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Claude
+-/
+module
+
+public import TauCeti.Algebra.Group.Subgroup.Map
+public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Delta
+public import TauCeti.RepresentationTheory.Rep.ChangeOfGroup
+import TauCeti.RepresentationTheory.Homological.GroupHomology.Induced
+import TauCeti.RepresentationTheory.Induction.DimensionShift
+import TauCeti.RepresentationTheory.RelativeNorm
+
+/-!
+# Transitivity of the transfer
+
+For finite-index subgroups `K ≤ H ≤ G`, the transfer `Hₙ(G, M) ⟶ Hₙ(S, Res_S M)` is transitive:
+transferring from `G` to `H` and then from `H` to `K` is the transfer from `G` to `K`, once
+`K.subgroupOf H` is identified with `K`.
+
+The proof is by dimension shifting. In degree zero the transfer is the relative transfer on
+coinvariants (`transfer_zero_H0π`), which is transitive modulo the augmentation submodule
+(`Representation.relTransfer_relTransfer_sub_relTransfer_mem`). In degree `n + 1` the connecting
+map of `Rep.dimensionShiftDownSES` is injective after restriction to a subgroup, because `Ind_⊥^G`
+has no positive-degree homology over any subgroup (`groupHomology.isZero_res_indBot_succ`), and the
+transfer commutes with it (`TauCeti.groupHomology.δ_comp_transfer`).
+
+## Main results
+
+* `TauCeti.groupHomology.transfer_trans`: the transfer is transitive along a tower of subgroups.
+-/
+
+public section
+
+universe u
+
+open CategoryTheory Rep
+
+namespace TauCeti.groupHomology
+
+open _root_.groupHomology
+
+variable {R G G' : Type u} [CommRing R] [Group G] [Group G']
+
+section Tower
+
+variable {K H : Subgroup G} (hKH : K ≤ H)
+
+-- The inductive step of `transfer_trans`.
+private theorem transfer_trans_succ [K.FiniteIndex] [H.FiniteIndex] {X : ShortComplex (Rep.{u} R G)}
+    (hX : X.ShortExact) (n : ℕ) (hX₂ : Limits.IsZero (groupHomology (res K.subtype X.X₂) (n + 1)))
+    (ih : transfer X.X₁ H n ≫ transfer (res H.subtype X.X₁) (K.subgroupOf H) n ≫
+      map (Subgroup.subgroupOfEquivOfLe hKH : K.subgroupOf H →* K)
+        (Rep.isIntertwiningMap_res_res X.X₁
+          (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH)).toRes n = transfer X.X₁ K n) :
+    transfer X.X₃ H (n + 1) ≫ transfer (res H.subtype X.X₃) (K.subgroupOf H) (n + 1) ≫
+      map (Subgroup.subgroupOfEquivOfLe hKH : K.subgroupOf H →* K)
+        (Rep.isIntertwiningMap_res_res X.X₃
+          (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH)).toRes (n + 1) =
+        transfer X.X₃ K (n + 1) := by
+  have hH := (shortExact_res H.subtype).2 hX
+  have hK := (shortExact_res K.subtype).2 hX
+  refine (mono_δ_of_isZero hK n hX₂).right_cancellation _ _ ?_
+  -- Naturality of the connecting maps along `K.subgroupOf H ≃* K`.
+  rw [Category.assoc, Category.assoc, ← δ_naturality _ ((shortExact_res _).2 hH) hK
+    ⟨_, _, _, Rep.isIntertwiningMap_res_res_toRes_naturality
+        (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH) X.f,
+      Rep.isIntertwiningMap_res_res_toRes_naturality
+        (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH) X.g⟩]
+  -- Pasting the transfer squares as terms: the objects appear both as restrictions of `X.Xᵢ` and
+  -- as projections of restricted short complexes, which `rw` and `simp` do not identify.
+  exact (congrArg (_ ≫ ·) (δ_comp_transfer_assoc (K.subgroupOf H) hH (n + 1) n rfl _).symm).trans <|
+    (δ_comp_transfer_assoc H hX (n + 1) n rfl _).symm.trans <|
+    (congrArg (_ ≫ ·) ih).trans (δ_comp_transfer K hX (n + 1) n rfl)
+
+attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex in
+/-- **The transfer is transitive along a tower of finite-index subgroups** `K ≤ H ≤ G`: the
+transfer `Hₙ(G, M) ⟶ Hₙ(H, Res_H M)` followed by the transfer to `K.subgroupOf H` is the transfer
+`Hₙ(G, M) ⟶ Hₙ(K, Res_K M)`. Here `K.subgroupOf H`, which is `K` viewed as a subgroup of `H`, is
+identified with `K` by the change-of-group map along `Subgroup.subgroupOfEquivOfLe hKH`, under
+which the two restrictions of `M` agree (`Rep.isIntertwiningMap_res_res`). -/
+@[reassoc]
+theorem transfer_trans [K.FiniteIndex] [H.FiniteIndex] (M : Rep.{u} R G) (n : ℕ) :
+    transfer M H n ≫ transfer (res H.subtype M) (K.subgroupOf H) n ≫
+      map (Subgroup.subgroupOfEquivOfLe hKH : K.subgroupOf H →* K)
+        (Rep.isIntertwiningMap_res_res M (Subgroup.subtype_comp_subgroupOfEquivOfLe hKH)).toRes n =
+      transfer M K n := by
+  induction n generalizing M with
+  | zero =>
+    -- On `H₀`, the coinvariants, the transfer is the relative transfer (`transfer_zero_H0π`).
+    refine (cancel_epi (H0π M)).1 <| ModuleCat.hom_ext <| LinearMap.ext fun m => ?_
+    simp only [ModuleCat.hom_comp, LinearMap.comp_apply]
+    rw [transfer_zero_H0π, transfer_zero_H0π, transfer_zero_H0π, H0π_comp_map_apply,
+      ← coinvariantsMk_comp_H0Iso_inv, ModuleCat.comp_apply, ModuleCat.comp_apply,
+      Representation.IsIntertwiningMap.toRes_hom_apply]
+    exact congrArg _ <| (Representation.Coinvariants.mk_eq_iff _).2 <|
+      Representation.relTransfer_relTransfer_sub_relTransfer_mem hKH m
+  | succ n ih =>
+    -- Shift dimension along `dimensionShiftDown M ⟶ Ind_⊥^G M ⟶ M`.
+    exact dimensionShiftDownSES_X₃ M ▸
+      transfer_trans_succ hKH (dimensionShiftDownSES_shortExact M) n
+        (dimensionShiftDownSES_X₂ M ▸ isZero_res_indBot_succ K M.V n) (ih _)
+
+end Tower
+
+end TauCeti.groupHomology
