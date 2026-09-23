@@ -27,11 +27,6 @@ identification, so its functoriality along a tower of layers needs this compatib
 
 * `TauCeti.groupHomology.map_comp_transfer_congrOfMapEq`: the transfer is compatible with a group
   isomorphism and a compatible map of coefficients.
-
-## Implementation notes
-
-The proof follows that of `TauCeti.groupHomology.transfer_trans` in `Transfer/Trans.lean` (#8326):
-dimension shifting from degree zero, where the transfer is the relative transfer on coinvariants.
 -/
 
 public section
@@ -48,7 +43,8 @@ variable {R G G' : Type u} [CommRing R] [Group G] [Group G']
 
 variable (e : G ≃* G') {S : Subgroup G} {S' : Subgroup G'} (he : S.map (e : G →* G') = S')
 
--- The inductive step of `transfer_res_equiv`.
+-- The inductive step of `transfer_res_equiv`. This dimension-shifting argument, and the degree-zero
+-- case of `transfer_res_equiv`, are adapted from `transfer_trans` in `Transfer/Trans.lean`.
 private theorem transfer_res_equiv_succ [S.FiniteIndex] [S'.FiniteIndex]
     {Y : ShortComplex (Rep.{u} R G')} (hY : Y.ShortExact) (n : ℕ)
     (hY₂ : Limits.IsZero (groupHomology (res S'.subtype Y.X₂) (n + 1)))
