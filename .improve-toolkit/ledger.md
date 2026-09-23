@@ -42238,3 +42238,8 @@ wait for builds; #8388 and #8389 wait in the merge queue. No action.
 ## r957 — 2026-09-23T21:44Z (cron)
 
 CI is still stalled (134 queued, 5 running); main `a86d24954`. The three astra-cleared drafts wait for builds; #8388 and #8389 wait in the merge queue. No action.
+
+## r958 — 2026-09-23T21:54Z (cron)
+
+CI is still stalled (138 queued, 5 running), about 2 h since the backlog built up (r945: 32 queued). It looks like a runner-capacity problem outside this role;
+reported to the user. Nothing of ours has moved. Main `a86d24954`.
