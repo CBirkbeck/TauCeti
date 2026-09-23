@@ -41422,3 +41422,55 @@ Coxeter files already use — so there is nothing to delete; adopting it would b
 **In progress now:** #6952, #6953 and #8101. The cap is full; the next opening is kind 3.
 
 No toolkit edits.
+
+## r882 — 2026-09-23T08:58Z–09:25Z (resumed on the user's "set a 10 min cron … make new PRs like before")
+
+**Cron.** No job was scheduled, which is why rounds stopped after r881. `CronCreate` job **4b5d0e55**
+(`3,13,23,33,43,53 * * * *`, recurring, session-only, auto-expires after 7 days) now fires the standard round prompt, with
+two rules added from r881: mark every green draft ready, and treat a green build that predates a pin bump as stale.
+
+**Merges:** **#6952 merged** 2026-09-22T15:27:14Z (board approved 15:12:59Z) and **#6953 merged** 18:02:40Z (approved 17:47:40Z).
+Both r881 rescues landed within five hours of being marked ready.
+
+**#8101 marked ready 08:59:00Z.** It was still a draft with a green build (`sandboxed-build` success), and the bot had parked it
+`on-hold` — the r881 trap, repeated by r881 itself, which ended before its first build finished. Before marking it ready: the pin at
+the build base `c6b94ee7a` and at main `62fc0367c` are both `dc4b8d60d5`, main never touched the file, and the merge-tree is clean,
+so the build still counts. The pipeline posted an **approved board at 09:07:14Z** on head `5c3e4390e`, eight minutes after
+ready_for_review, and the PR is now `ready-to-merge`.
+
+**Step 5, kind 3: opened draft #8224** (09:07:51Z), `improve/resolvent-integrand-nonneg` @ `f4b657306`, +3/−3,
+`Roadmap: OneParameterSemigroups` (as #6911). This is the r848 candidate, unblocked by #6911's merge. No open PR touches the file:
+94 open PRs touch 269 files (`openpr-files-r882.json`). `StronglyContinuousSemigroup.norm_resolvent_integrand_le` took
+`ht : 0 < t` but passed only `ht.le` to `norm_pow_mul_resolvent_integrand_le`, which is stated on `[0, ∞)`. It now takes `0 ≤ t`,
+with no rename. Its one caller in the repo, the `M / (λ-ω)` bound inside `resolvent`, gains `.le`. Gate on `62fc0367c`:
+**12 ok / 0 failed / 0 UNRUN**.
+
+**Step 5, kind 2 in kind 1's slot: opened draft #8233** (09:16:54Z), `improve/residue-basic-style` @ `77df94016`, +93/−63,
+`Roadmap: ContourIntegration` (as #1507 and #6952). The pin is unchanged at `dc4b8d60d5`, so the r881 dry kind-1 scan still stands.
+
+* **Target:** 142-file scoring on `62fc0367c`, excluding the 269 open-PR files and the 45 files the ledger names.
+  `Analysis/Contour/Residue/Basic.lean` led (score 136: 483 lines, 49 `fun … =>`, 21 top-level chains, none of them `↦`). Its last
+  change was the 2026-08-11 Mathlib bump, and no open PR touches `Analysis/Contour/`.
+* **Arrow convention checked first.** The repo is split roughly evenly on arrows (23159 `fun … ↦` vs 28854 `fun … =>`; 2795 vs
+  2940 files). This ledger records five previous `↦` passes (r865–r881), and #6952 merged with one, so the idiom is accepted.
+* **Chain-split rule calibrated on #6952's merged diff.** Split `have h : T := by a; b` into `:= by` plus indented lines, split
+  `ext t; rw […]` and bulleted `· a; b`, and keep parenthesised inline `(by a; b)`.
+* **Edits** (surface only): 49 `fun … =>` → `↦` (asserted; the three `=>` left are `case neg`, `| empty` and `| insert a s ha ih`);
+  21 chains split by original line number (asserted: each had a depth-0 `;`, and the result has no line over 100); and one comment
+  in `residue_const_smul` now quotes `fun z ↦ c * f z`.
+* **`/mathlibable`:** the local Mathlib is at `dc4b8d60d5` (it matches the pin). Mathlib has no complex residue at all; its only
+  `residue` is `AlgebraicGeometry.Scheme.residue`. The private `iteratedDeriv_pow_sub_mul_div_factorial` has no counterpart:
+  `IteratedDeriv/Lemmas.lean:432` gives the monomial ingredient (`iteratedDeriv_fun_pow_zero`), which the proof already uses.
+* **gpt-6-astra:** launched at 09:11Z on the full diff with questions on arrow elaboration, split semantics and indentation. **Trap:**
+  `astra-residue-answer.txt` already existed from **2026-09-15**, an earlier pass on another residue file, and read at first as an
+  answer to this one (it discussed `toMeromorphicNFOn` and `h.ne`, which appear nowhere here). Its mtime gave it away. It was moved
+  to `astra-residue-answer.stale-0915.txt`, and #8233 stays a draft until the fresh answer lands.
+* Gate on `62fc0367c`: **12 ok / 0 failed / 0 UNRUN**.
+
+**#8224 went green at 09:17:52Z and was marked ready at 09:18:43Z** (every latest check was green and the head unchanged), so step 4 may drive it
+only after 10:18Z. **In progress now:** #8224 (`awaiting-review`) and #8233 (draft, building, astra pending). #8101 is `ready-to-merge` and does not
+count. One slot is free. The next opening is **kind 3**, and two candidates were unblocked this round: `gammaPDFReal_of_pos`
+(#6580 merged 2026-09 — its weakening needs an `_of_nonneg` rename) and the r843 `ConvexSubgroup.lean` leftovers (#6896 merged, and
+no open PR touches the file). Main is `3d3243192`.
+
+No toolkit edits.

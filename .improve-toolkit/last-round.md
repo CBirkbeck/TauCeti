@@ -1,4 +1,4 @@
-# Last round — r881 (2026-09-22T13:15Z)
+# Last round — r882 (2026-09-23T09:25Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -19,8 +19,10 @@ Vandermonde dedup), kind 2 as **#6911** (r848, Resolvent/Basic.lean style pass, 
 style pass, since kind 1 is still dry at `30a58f795a`). Kind 3 then opened as draft **#6933** (r861, the `Subcomodule/Comap.lean` dedup), and kind 2 went again in kind 1's slot as draft **#6941**
 (r865, `Residue/Theorem.lean` style pass; the pin is still `30a58f795a`). Kind 3 then opened as draft **#6945** (r869, the `ExchangeableAt.of_lt` dedup), and kind 2 went again in kind 1's slot as draft **#6947** (r873,
 `Arrays/ZeroOne.lean` style pass; the pin is still `30a58f795a`). Kind 3 then opened as draft **#6950** (r874, two dead `have`s in `Recut/Pairing.lean`), and kind 2 went again in kind 1's slot as draft
-**#6952** (r878, `Winding/Number/Segment/Formula.lean` style pass; the pin is still `30a58f795a`). Kind 3 then opened as draft **#6953** (r879, two dead `have`s in the Weierstrass equation differential). **The next opening is kind 1**
-if a Mathlib bump has opened a catch-up window, otherwise kind 2. Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
+**#6952** (r878, `Winding/Number/Segment/Formula.lean` style pass; the pin is still `30a58f795a`). Kind 3 then opened as draft **#6953** (r879, two dead `have`s in the Weierstrass equation differential). Both merged
+2026-09-22. Kind 2 went in kind 1's slot as **#8101** (r881, `Cesaro/Convergence.lean`, now `ready-to-merge`), kind 3 as draft
+**#8224** (r882, `norm_resolvent_integrand_le` to `0 ≤ t`), and kind 2 again in kind 1's slot as draft **#8233** (r882,
+`Residue/Basic.lean` style pass; the pin is still `dc4b8d60d5`). **The next opening is kind 3.** Record each PR's kind in the ledger. **Step 5's cap counts only PRs still in progress** (user directive, 2026-09-15 ~15:00Z): drafts and
 `awaiting-review`, `awaiting-author` or `ci-failed` PRs count. `ready-to-merge` and queued PRs do not, and neither
 does #5950. Do not idle waiting for merges: open the next kind whenever fewer than 3 are in progress.
 
@@ -42,19 +44,20 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#6952** | `8ca6278ac` | green (13:11:02Z) | kind 2 (`Winding/Number/Segment/Formula.lean` style pass: 32 `↦`, 7 `;` chains split, `h_avoid` as a term, roadmap parenthetical out of the docstring; the r880 `simpa only` revert stands). Opened 2026-09-15 as a draft and never marked ready, so the bot parked it **`on-hold`** at 2026-09-16T07:33Z. r881 rebased it onto `c6b94ee7a` (gate 12/0/0), pushed with a lease and **marked it ready 13:01:23Z**; the fresh build against pin `dc4b8d60d5` is green | **pipeline** — board due; step 4 may drive only after 14:11Z |
-| **#6953** | `5d7fe3322` | building (pushed 13:04Z) | kind 3 (drops the unused `h2` and `h3` in `Equation.evalEval_polynomialX_smul_add_evalEval_polynomialY_smul_eq_zero`; gate 12/0/0; `Roadmap: EllipticCurves`). Same `on-hold` history; r881 rebased it onto `c6b94ee7a`, pushed and **marked it ready 13:04:48Z** | **CI** — then the board clock runs an hour from CI-green |
-| **#8101** | `5c3e4390e` | first build | kind 2, in kind 1's slot (`Probability/Exchangeability/L2/Cesaro/Convergence.lean` style pass: 64 `↦`, the two `intro i j; have …; omega` chains split, and two docstrings restated off the "Layer 3 roadmap" wording, keeping the Kallenberg reference and the `cameronfreer/exchangeability` pin; gpt-6-astra reviewed, no risk; gate 12/0/0; `Roadmap: Exchangeability`, as #3372); **draft**, opened 13:12:50Z from `c6b94ee7a` | **CI** — mark ready when `sandboxed-build` is green |
+| **#8101** | `5c3e4390e` | green | kind 2 (`Cesaro/Convergence.lean` style pass; `Roadmap: Exchangeability`). Left a draft by r881 and parked `on-hold`; r882 checked the pin was unchanged and **marked it ready 08:59:00Z**. The pipeline's board **approved at 09:07:14Z** on head | **queue** — `ready-to-merge`; watch with `queuepos.py` |
+| **#8224** | `f4b657306` | green (09:17:52Z) | kind 3 (`StronglyContinuousSemigroup.norm_resolvent_integrand_le` takes `0 ≤ t`; its one caller gains `.le`; +3/−3; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Opened 09:07:51Z from `62fc0367c` as a draft; **marked ready 09:18:43Z** | **pipeline** — board due by ~10:05Z; step 4 may drive only after 10:18Z |
+| **#8233** | `77df94016` | first build | kind 2 in kind 1's slot (`Analysis/Contour/Residue/Basic.lean`: 49 `↦`, 21 chains split, one comment; +93/−63; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**, opened 09:16:54Z from `62fc0367c`. gpt-6-astra was launched at 09:11Z; its answer lands in `$SP/astra-residue-answer.txt` — **check the mtime is 2026-09-23** | **astra + CI** — mark ready when both are clear |
 
-**In progress: #6952 (`awaiting-review`, ready 13:01:23Z, green 13:11:02Z), #6953 (`awaiting-CI`, ready 13:04:48Z) and #8101 (draft, first build).** The cap is full, so
-step 5 is shut until one of them turns `ready-to-merge`. **Everything else this watch tracked has merged**: #6896, #6899, #6902, #6910, #6911, #6915, #6923, #6933, #6941, #6945, #6947 and #6950 between 06:59Z and 10:19Z on 2026-09-16, #6875 (the `web/examples` PR needing a human merge) on 2026-09-21T05:44:38Z, and Chris's #5950 on 2026-09-17T15:57:25Z. Main is `1c3418d52` and moving fast — 1157 commits in the six days this session was idle. The Mathlib pin is now `dc4b8d60d5` (bumped by #6935, #7433 and #7622) and the toolchain `leanprover/lean4:v4.34.0-rc2`.
+**In progress: #8224 (`awaiting-review`, ready 09:18:43Z) and #8233 (draft, first build).** #8101 is `ready-to-merge` and does not count, so **one slot is free**, and
+the next opening is kind 3. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `3d3243192`, the Mathlib pin
+`dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
+:03/:13/…/:53); it is session-only and expires 2026-09-30.
 
 ## What to expect next
 
-0. **r843–r881:** the cap counts only PRs in progress (rotation paragraph above). In progress: #6952 (green 13:11:02Z; drive not
-   before 14:11Z), #6953 (building; its clock starts at CI-green) and #8101 (draft; mark it ready once its first build is green).
-   Pass #8101, #6953 and #6952 to `queuepos.py`. When a slot frees the next opening is kind 3 — kind 2 took kind 1's slot at r881
-   because the catch-up scan at the new pin came up dry.
+0. **r843–r882:** the cap counts only PRs in progress (rotation paragraph above). In progress: #8224 (green 09:17:52Z, ready 09:18:43Z;
+   drive not before 10:18Z) and #8233 (draft, first build). Mark #8233 ready once its build is green and the fresh astra answer is read. #8101 is
+   `ready-to-merge`: pass it to `queuepos.py`. One slot is free, for kind 3 (item 5).
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -65,10 +68,8 @@ step 5 is shut until one of them turns `ready-to-merge`. **Everything else this 
    callers: also grep main's new lines for the names each staged branch removes, and when main DELETES declarations,
    grep every branch's added lines for them (r738: #6601 removed `sum_binomial_weight(_mul)`; 0 uses). Print a firing
    control: r738's first try was a crashed `sed` whose empty result read as "none".
-2. **The whole 2026-09-15 queue drained.** Twelve of this watch's PRs merged inside three and a half hours on 2026-09-16
-   (06:59:48Z #6950 through 10:18:58Z #6896), #6875 waited for Chris and merged 2026-09-21T05:44:38Z, and #5950 merged
-   2026-09-17T15:57:25Z. Every board they carried was 10/10. Nothing from that batch needs watching; their rows are gone from the
-   board above.
+2. **Everything from the 2026-09-15 batch has merged**, as have #6952 and #6953 (2026-09-22) and Chris's #5950. None of it
+   needs watching.
 
 3. **A draft nobody marks ready gets parked.** `tauceti-review-bot` swapped `awaiting-review` → **`on-hold`** on #6952 and #6953 at
    2026-09-16T07:33Z, six days before this round. The label means "Draft PR or explicitly held by a keep/hold/wip/human/do-not-close
@@ -78,10 +79,15 @@ step 5 is shut until one of them turns `ready-to-merge`. **Everything else this 
    r881 rebased both onto fresh main and re-gated before marking them ready, so the builds that matter ran against `dc4b8d60d5`.
 
 
-5. **At the next free slot: kind 3** (candidates below; the `norm_resolvent_integrand_le` weakening is unblocked now that #6911 has
-   merged). Kind 2 went as #8101 (r881) in kind 1's slot, after the catch-up scan at pin `dc4b8d60d5` found no target. No kind-1
-   target is left after #6875. #39722 (`Nat.Partition` → `YoungDiagram`, merged 2026-09-14) needs a pin from that date or later,
-   and #6852's `8842b50` is from 2026-09-04.
+5. **At the next free slot: kind 3.** Two candidates were unblocked at r882:
+   * the r843 `Algebra/Order/Group/ConvexSubgroup.lean` leftovers (#6896 merged, and no open PR touches the file):
+     `mem_of_mabs_le_mabs` and `mem_closure_singleton` rebuild `|h|ₘ ∈ H` by cases where Mathlib's `mabs_mem_iff` gives it. Check
+     that `mabs_mem_iff` is still at the pin and fits the statement before cutting.
+   * `gammaPDFReal_of_pos` in `Distributions/Gamma/Basic.lean` (#6580 merged). The weakening needs an `_of_nonneg` rename, so update
+     every caller in the same PR, with no alias.
+   Re-run the scanners on fresh main as well (`strictscan`, `deadhave`, `unusedscan`). The private `integral_Ioi_eq_Ioc_add_Ioi`
+   in `Resolvent/Basic.lean` also uses only `hh.le`, but it shares a file with #8224: wait for #8224 to merge. The kind-1 scan is dry at
+   `dc4b8d60d5`; re-run it after the next pin bump.
 
 ## Kind-1 prospects (r703 first pass, r798 re-run, r881 re-run at pin `dc4b8d60d5`)
 
@@ -129,7 +135,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r881 did
+## What r703–r882 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -323,6 +329,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r879: kind 3 opened as draft **#6953**, dropping the unused `h2` and `h3` in the Weierstrass equation differential (gate 12/0/0; `deadhave` flagged `h3`, and `h2` is dead the same way). No merges since #6845 and #6841, main still `e0103897b`, and #6950 was not yet due for a drive (23:38Z).
 * r880: **#6952's first build failed** on the `simpa only [mul_one]` golf (instance paths). The job log gave the exact mismatch, `f2f4f9666` restores the explicit `have`/`simp only`/`exact`, and the body was corrected. #6953 was still building, #6950 still had no board, and there were no merges.
 * r881 (2026-09-22, after a six-day gap): every queued PR had merged — thirteen of mine plus #5950. The two survivors, #6952 and #6953, were drafts the bot had parked `on-hold`; both were rebased onto `c6b94ee7a`, re-gated 12/0/0, pushed and marked ready. The kind-1 re-run at pin `dc4b8d60d5` was dry (the `wordProd` collision is a false positive), so kind 2 opened as draft **#8101**, a style pass on `Cesaro/Convergence.lean` (gpt-6-astra: no risk; gate 12/0/0).
+* r882 (2026-09-23): no cron had been set, so a 10-minute job (`4b5d0e55`) now drives rounds. #6952 and #6953 had merged. #8101 was still a draft, parked `on-hold` again; with the pin unchanged, it was marked ready and approved within 8 minutes. Kind 3 opened as draft **#8224** (`norm_resolvent_integrand_le` to `0 ≤ t`), and kind 2, in kind 1's slot, as draft **#8233** (`Residue/Basic.lean` style pass). Both gated 12/0/0.
 
 ## Candidates for a later step 5
 
@@ -349,7 +356,7 @@ the lemma directly. It also turns the module docstring's roadmap sentence into t
   `MapRestrictDensity.lean` and `SquareClass/Rational.lean`. They exist to be elaborated.
 * `dupsig`'s 53 `private …_aux` + public pairs, the module-system `rfl` idiom.
 
-**Kind 3, ready (r848):** `StronglyContinuousSemigroup.norm_resolvent_integrand_le` (`Analysis/Semigroups/Resolvent/Basic.lean`)
+**Kind 3, TAKEN by #8224 (r882); was ready (r848):** `StronglyContinuousSemigroup.norm_resolvent_integrand_le` (`Analysis/Semigroups/Resolvent/Basic.lean`)
 takes `ht : 0 < t` but passes only `ht.le` on. Weaken it to `0 ≤ t`: no rename is needed, and its one caller, in the same
 file, gains `.le`. Wait for #6911 (same file) to merge first. Also blocked (r853): `gammaPDFReal_of_pos` in `Distributions/Gamma/Basic.lean`,
 because open PR #6580 touches that file, and the weakening would need an `_of_nonneg` rename.
@@ -388,6 +395,13 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
   `handover/fiber-compfiberequiv-laws-deferred`.
 
 ## Standing traps
+
+* **A reused answer-file name reads as a fresh answer (r882).** `astra-residue-answer.txt` survived from a 2026-09-15 pass on another
+  file, and the first check of the new run printed it as though it answered the new question. Before launching astra, move any
+  existing `-o` target aside, and before trusting an answer, check its mtime and that it names this diff's declarations.
+* **The round that opens a draft must also be the one that marks it ready (r881 → r882).** r881 recorded the on-hold trap and then
+  ended with #8101 still a draft. The bot parked it within the hour. When a round ends with a draft building, say so in item 0 of
+  "What to expect next" so the next round's first action is to mark it ready.
 
 Never merge/close a PR. Push to `fork`, never `origin` (403). One worktree: `improver-1`.
 Never touch `scripts/`, `.github/`, the lakefile — **including the dot-notation baseline**, which is
