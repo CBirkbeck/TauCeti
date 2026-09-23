@@ -41864,3 +41864,21 @@ stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.
   (`EllipticCurve/Affine/ValuationIntegrality.lean:284`), `prod_map_inv` (`Matrix/SpecialLinearGroup/Transvection.lean:89`),
   `subtype_rTensor_injective` (`Coalgebra/Subcomodule/Induced.lean:58`) and `exists_isGLB` (`LocalField/QuadraticForm/Defect.lean:228`).
   Outputs are in `$SP/misplaced-r919.out`. Pin `dc4b8d60d5`, main `faf999d7c`.
+
+## r920 — 2026-09-23T15:34Z (cron; step 4 hard-stopped)
+
+* **#8295 approved on the fix** (board on `08d0a50ca`, 15:30:10Z), `ready-to-merge`. Mathlib's `integral_interval_add_Ioi` satisfied
+  `api-design`. #8304 and #8305 are on their first builds (waiter running). That leaves one slot open.
+* **Vetted the rest of r919's `misplaced` × Mathlib-name list; no more duplicates.** The six queued names are all different statements:
+  `card_filter_le` (a specific count), `qExpansion_pow` (analytic `f`, not `ModularForm`), `exp_one_pow` (`ℤᵐ⁰`, not `Real.exp`),
+  `prod_map_inv` (transvection lists), `subtype_rTensor_injective` (flatness) and `exists_isGLB` (taken, and different). A statement-similarity
+  ranking of all 56 surfaced:
+  * `instances` (0.93/0.87) in `RamificationInertia/HilbertTheory/{Basic,ResidueDegree}.lean`, mirroring a private `instances` in
+    Mathlib's `NumberTheory/RamificationInertia/HilbertTheory.lean`. **This is an overlap, not a duplicate.** `Basic.lean` is the
+    inertia-field complement Mathlib lacks (its module doc says so). `ResidueDegree.lean`'s `TauCeti.IsDecompositionField.
+    ramificationIdx_under_eq_one`/`inertiaDeg_under_eq_one` state Mathlib's `IsDecompositionField.ramificationIdx_eq`/`inertiaDeg_eq`
+    facts under a *different* hypothesis set: Dedekind domains and finiteness, with no `p ≠ ⊥`, and deliberately "no residue-field
+    hypothesis". Reconciling them is a design question for a human, not a catch-up.
+  * `finrank_toSubmodule` (`Subcomodule`, not `Subalgebra`) and `simple_of_finrank_eq_one` (`FDRep`, not `ModuleCat`): not duplicates.
+  So the name-intersection source is exhausted after #8304 and #8305.
+* Pin `dc4b8d60d5`, main `881ac00c4`.
