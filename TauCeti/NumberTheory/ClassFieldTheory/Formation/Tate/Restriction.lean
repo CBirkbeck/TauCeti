@@ -178,6 +178,15 @@ theorem kerNormTransfer_apply_coe (T : LayerRestriction small big) (F : Formatio
     TauCeti.TateCohomology.mapKerNorm_apply_coe, Representation.coe_relTransferKerNorm]
   exact T.repIso_inv_apply_coe F _
 
+/-- The norm-kernel transfer is the relative transfer of the image subgroup, read back through
+the identification of coefficient modules. -/
+theorem kerNormTransfer_apply (T : LayerRestriction small big) (F : Formation G)
+    (x : LinearMap.ker (big.rep F).ρ.norm) :
+    ((T.kerNormTransfer F x : LinearMap.ker (small.rep F).ρ.norm) : F.level small.top) =
+      (T.repIso F).inv.hom
+        (Representation.relTransfer (big.rep F).ρ T.galHom.range ((x : F.level big.top))) :=
+  Subtype.ext (by rw [kerNormTransfer_apply_coe, repIso_inv_apply_coe])
+
 /-- **In degree minus one, layer Tate restriction is the relative transfer** on representatives. -/
 theorem tateRes_neg_one_HNegOneπ (T : LayerRestriction small big) (F : Formation G)
     (x : LinearMap.ker (big.rep F).ρ.norm) :
