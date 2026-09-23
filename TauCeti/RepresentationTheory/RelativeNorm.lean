@@ -278,6 +278,46 @@ theorem relTransfer_mem_coinvariantsKer {x : V} (hx : x ∈ Coinvariants.ker ρ)
     exact congrArg ρ (hgrp g q)
   exact hmap ⟨x, hx, rfl⟩
 
+/-- **The relative transfer is transitive along a tower `K ≤ H ≤ G`, modulo the augmentation
+submodule of `K`.** Transferring from `G` to `H` and then from `H` to `K` agrees with the
+transfer from `G` to `K`. The two are not equal on the nose: the products `q.out * s.out` of
+the chosen transversals of `H` in `G` and of `K` in `H` form a transversal of `K` in `G`, but
+not the one `Quotient.out` picks, and two representatives of the same coset differ by right
+multiplication by an element of `K`. -/
+theorem relTransfer_relTransfer_sub_relTransfer_mem {K : Subgroup G} (hKH : K ≤ H)
+    [Fintype (G ⧸ K)] [Fintype (H ⧸ K.subgroupOf H)] (x : V) :
+    relTransfer (ρ.comp H.subtype) (K.subgroupOf H) (relTransfer ρ H x) - relTransfer ρ K x ∈
+      Coinvariants.ker (ρ.comp K.subtype) := by
+  classical
+  set e := Subgroup.quotientEquivProdOfLE hKH
+  have hL : relTransfer (ρ.comp H.subtype) (K.subgroupOf H) (relTransfer ρ H x) =
+      ∑ p : (G ⧸ H) × (H ⧸ K.subgroupOf H), ρ ((p.1.out * (p.2.out : G))⁻¹) x := by
+    rw [relTransfer_apply, Fintype.sum_prod_type, Finset.sum_comm]
+    refine Finset.sum_congr rfl fun s _ => ?_
+    rw [relTransfer_apply, map_sum]
+    refine Finset.sum_congr rfl fun q _ => ?_
+    rw [MonoidHom.comp_apply, ← Module.End.mul_apply, ← map_mul, mul_inv_rev]
+    rfl
+  have hR : relTransfer ρ K x =
+      ∑ p : (G ⧸ H) × (H ⧸ K.subgroupOf H), ρ ((e.symm p).out⁻¹) x := by
+    rw [relTransfer_apply, ← Equiv.sum_comp e.symm fun t : G ⧸ K => ρ (t.out : G)⁻¹ x]
+  rw [hL, hR, ← Finset.sum_sub_distrib]
+  refine Submodule.sum_mem _ fun p _ => ?_
+  obtain ⟨q, s⟩ := p
+  have ht : (QuotientGroup.mk (q.out * (s.out : G)) : G ⧸ K) = e.symm (q, s) := by
+    conv_rhs => rw [← s.out_eq']
+    rfl
+  have hk : ((q.out * (s.out : G))⁻¹ * ((e.symm (q, s)).out : G)) ∈ K :=
+    QuotientGroup.eq.mp (ht.trans (e.symm (q, s)).out_eq'.symm)
+  have hg : K.subtype ⟨(q.out * (s.out : G))⁻¹ * ((e.symm (q, s)).out : G), hk⟩ *
+      ((e.symm (q, s)).out : G)⁻¹ = (q.out * (s.out : G))⁻¹ := by
+    change (q.out * (s.out : G))⁻¹ * ((e.symm (q, s)).out : G) * ((e.symm (q, s)).out : G)⁻¹ = _
+    group
+  refine Coinvariants.mem_ker_of_eq (ρ := ρ.comp K.subtype) ⟨_, hk⟩
+    (ρ ((e.symm (q, s)).out : G)⁻¹ x) _ ?_
+  congr 1
+  rw [MonoidHom.comp_apply, ← Module.End.mul_apply, ← map_mul, hg]
+
 end Coinvariants
 
 end Ring
