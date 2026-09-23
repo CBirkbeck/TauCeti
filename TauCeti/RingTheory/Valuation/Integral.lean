@@ -30,11 +30,6 @@ valuation ring and no `IsIntegral.map_of_comp_eq` transport.
 
 * `Valuation.integer.isIntegrallyClosedIn`: `v.integer` is integrally closed in `R`.
 
-## Provenance
-
-Developed here; nothing is ported. The proof is one application of Mathlib's
-`Valuation.Integers.mem_of_integral` through `Subring.isIntegrallyClosedIn_iff`, at the
-tautological `Valuation.integer.integers`.
 -/
 
 public section

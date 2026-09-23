@@ -244,10 +244,9 @@ particular ones `IsLocalization.Away.lift` and `IsLocalization.Away.map` build b
 /-- **A homomorphism out of the localisation sends `t/s` to `φ t / φ s`.** If `ψ : S →+* B`
 restricts along `algebraMap A S` to `φ`, and `φ s` is a unit, then `ψ (t/s) = φ t * (φ s)⁻¹`.
 
-Both sides become `φ t` after multiplying by the unit `φ s`, so they agree. Only the restriction
-hypothesis is used, which is why the statement holds for an arbitrary factoring `ψ`; the
-restriction determines `ψ` outright by `IsLocalization.ringHom_ext`, and this records the value
-that determination forces on the generators. -/
+Nothing is asked of `ψ` beyond the factoring hypothesis, so the statement holds for every
+homomorphism out of `S` restricting to `φ`, and it records the value they are all forced to take
+on a distinguished fraction. -/
 theorem map_divBy_eq_mul_inv {B : Type*} [CommSemiring B] {φ : A →+* B} {ψ : S →+* B}
     (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) (hs : IsUnit (φ s)) :
     ψ (divBy t s : S) = φ t * ↑hs.unit⁻¹ := by

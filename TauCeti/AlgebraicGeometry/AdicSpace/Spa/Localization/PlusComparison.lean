@@ -15,9 +15,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Localization.CompletedHome
 
 For a containment `R(T'/s') ⊆ R(T/s)` of rational subsets of `Spa (A, A⁺)`,
 `TauCeti.ValuationSpectrum.ringHomOfRationalSubsetSubset` is the unique continuous ring
-homomorphism `σ : A⟨T/s⟩ → A⟨T'/s'⟩` compatible with the structure maps from `A`. It is so far a
-map of rings only. This file makes it a map of *Huber pairs*: `σ` carries `A_U⁺` into `A_U'⁺`, so
-it induces a map of adic spectra
+homomorphism `σ : A⟨T/s⟩ → A⟨T'/s'⟩` compatible with the structure maps from `A`. This file makes
+it a map of *Huber pairs*: `σ` carries `A_U⁺` into `A_U'⁺`, so it induces a map of adic spectra
 
 ```text
 Spa (A⟨T'/s'⟩, A_U'⁺) → Spa (A⟨T/s⟩, A_U⁺)

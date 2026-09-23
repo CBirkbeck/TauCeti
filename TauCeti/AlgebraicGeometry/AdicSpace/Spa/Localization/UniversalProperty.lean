@@ -163,16 +163,10 @@ sub-unit on the image of `A⁺` and on the fractions `φ t / φ s`, and let `ψ 
 along `algebraMap A Aₛ` to `φ`. Then `w` is sub-unit on the image under `ψ` of the plus ring of
 `Aₛ` — the integral closure of `A⁺[t₁/s, …, tₙ/s]`.
 
-This is `TauCeti.Huber.le_one_of_mem_integralClosure_adjoin_plus` at the pulled-back valuation
-`w.valuation.comap ψ`. What is local to the adic spectrum is the translation between `≤ 1` and
-`vle _ 1`, and the value `TauCeti.Localization.map_divBy_eq_mul_inv` forces on a distinguished
-fraction; nothing else is needed, so `B` carries no topology and no `B⁺` appears.
-
-The two bounds are in the shape the steps above produce: `hA` is membership of `w` in
-`spa B⁺` read at the image of `A⁺`, and `hT` is `vle_one_of_comap_mem_rationalSubset`. As there,
-`w` enters as a single point rather than a quantifier over `spa B⁺`. Lemma 8.1 itself does not
-use this step — it spends the pullback condition on the fractions alone — but a consumer that
-has to place a point of `Spa (Aₛ, Aₛ⁺)` does. -/
+`B` carries no topology and no `B⁺` appears: the two bounds enter as hypotheses on the single
+point `w`, not as a quantifier over `spa B⁺`. Lemma 8.1 itself does not use this step — it spends
+the pullback condition on the fractions alone — but a consumer that has to place a point of
+`Spa (Aₛ, Aₛ⁺)` does. -/
 theorem vle_one_of_mem_integralClosure_adjoin_plus (Aplus : Subring A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] {φ : A →+* B} {ψ : S →+* B}
     (hψ : ∀ a : A, ψ (algebraMap A S a) = φ a) {w : Spv B}
