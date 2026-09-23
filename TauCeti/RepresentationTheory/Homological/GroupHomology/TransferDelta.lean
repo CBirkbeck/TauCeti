@@ -22,13 +22,6 @@ Let `S` be a finite-index subgroup of a group `G` and `X` a short exact sequence
 with `j + 1 = i`. This is what lets a statement about the transfer be moved up or down in degree
 by dimension shifting.
 
-The transfer is the unit `M ⟶ Ind_S^G Res_S M` followed by Shapiro's isomorphism. The unit is a
-morphism of short exact sequences, so its square commutes by naturality of the connecting map.
-The inverse of Shapiro's isomorphism is the change-of-group map along `S ≤ G` induced by the unit
-of the other adjunction (`TauCeti.groupHomology.indIso_inv`), so its square commutes by the
-naturality of the connecting map across a change of group
-(`TauCeti.groupHomology.δ_naturality`).
-
 ## Main results
 
 * `TauCeti.groupHomology.δ_comp_indIso_inv`: the inverse of Shapiro's isomorphism commutes with
