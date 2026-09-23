@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Topology.MetricSpace.HausdorffDimension
-import Mathlib.Analysis.Normed.Affine.Convex
 import Mathlib.MeasureTheory.Measure.Haar.Unique
 
 /-!
