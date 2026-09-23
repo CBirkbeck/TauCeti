@@ -266,6 +266,7 @@ def repIso (T : LayerRestriction small big) (F : Formation G) :
 -- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
 -- `toRep` and `NormalLayer.rep` are `abbrev`s, and `simp` reduces their carriers in implicit type
 -- arguments before it looks a term up, so a left-hand side stated plainly over them is never found.
+-- This follows #8315; see the implementation notes of `Formation/Basic.lean`.
 /-- The identification of coefficient modules moves no element of the ambient module. -/
 @[simp]
 theorem repIso_hom_apply_coe (T : LayerRestriction small big) (F : Formation G)

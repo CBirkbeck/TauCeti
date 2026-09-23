@@ -75,6 +75,7 @@ def groundNorm (T : LayerRestriction small big) (F : Formation G) :
 -- The `simp` lemmas on the norm of an element state their left-hand sides through `dsimp% only`:
 -- `toRep` is an `abbrev`, and `simp` reduces its carrier in implicit type arguments before it looks
 -- a term up, so a left-hand side stated plainly over `F.toRep.V` or its levels is never found.
+-- This follows #8315; see the implementation notes of `Formation/Basic.lean`.
 /-- The norm along a restriction is the sum of the translates by coset representatives, read in the
 ambient module: `N_{U/U'} x = ∑ ρ(g) x` over the representatives `g = q.out` of the cosets
 `q ∈ U/U'`. -/

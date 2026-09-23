@@ -212,6 +212,7 @@ def repHom (T : LayerRefinement old new) (F : Formation G) :
 -- The `simp` lemmas on underlying elements state their left-hand sides through `dsimp% only`:
 -- `toRep` and `NormalLayer.rep` are `abbrev`s, and `simp` reduces their carriers in implicit type
 -- arguments before it looks a term up, so a left-hand side stated plainly over them is never found.
+-- This follows #8315; see the implementation notes of `Formation/Basic.lean`.
 /-- The inclusion of coefficient modules moves no element of the ambient module. -/
 @[simp]
 theorem repHom_hom_apply_coe (T : LayerRefinement old new) (F : Formation G) (x : F.level old.top) :
