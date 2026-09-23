@@ -96,18 +96,15 @@ representation. Passing instead through `ContRepresentation.toRepresentation` wo
 that typeclass synthesis produces for an integral module, and the two are not definitionally
 equal.
 
-Because `toRep` and `rep`, like Mathlib's `Rep.trivial`, are `abbrev`s for `Rep.of`, `simp`
-reduces the carriers `F.toRep.V`, `(L.rep F).V` and `(Rep.trivial ℤ L.Gal ℤ).V` to `F.module.V`,
-`F.level L.top` and `ℤ` wherever they occur as implicit type arguments (the type of a coercion, of
-a bundled map, of a membership) before it looks a term up among its lemmas. A `simp` lemma is
-indexed by its left-hand side as elaborated, where these carriers are still unreduced, so a lemma
-stated plainly over one of them, directly or through a level `F.level U` or a cohomology group of
-the layer, is never found. The `simp` lemmas below about levels, layer coefficients, the two low
-Tate degrees, the norm, the norm subgroup and the norm quotient map therefore state their left-hand
-sides through `dsimp% only`, which puts those implicit arguments in the form `simp` produces. Only
-the left-hand side is wrapped, and with `only`, so that the right-hand side keeps the form it is
-written in: `rw` with these lemmas then leaves terms over `F.toRep`, as the rest of this file
-states them.
+Because `toRep` and `rep` are `abbrev`s for `Rep.of`, `simp` reduces the carriers `F.toRep.V` and
+`(L.rep F).V` to `F.module.V` and `F.level L.top` wherever they occur as implicit type arguments
+(the type of a coercion, of a bundled map, of a membership) before it looks a term up among its
+lemmas. A `simp` lemma is indexed by its left-hand side as elaborated, where these carriers are
+still unreduced, so a lemma stated plainly over `F.toRep.V` is never found. The `simp` lemmas
+about levels, layer coefficients and the norm below therefore state their left-hand sides through
+`dsimp% only`, which puts those implicit arguments in the form `simp` produces. Only the left-hand
+side is wrapped, and with `only`, so that the right-hand side keeps the form it is written in:
+`rw` with these lemmas then leaves terms over `F.toRep`, as the rest of this file states them.
 
 ## References
 
@@ -421,6 +418,8 @@ def tateHMinusTwoEquivAbelianization :
     L.TrivialTateH (-2) ≃+ Additive (Abelianization L.Gal) :=
   TauCeti.TateCohomology.HNegTwoAddEquivAbelianization
 
+-- `dsimp% only` on the left-hand side, as explained in the implementation notes: Mathlib's
+-- `Rep.trivial` is also an `abbrev` for `Rep.of`, so `simp` reduces its carrier as well.
 /-- The degree `-2` identification sends the standard first-homology class represented by
 `(g, 1)` to the class of `g` in the additive abelianization. -/
 @[simp]
@@ -497,6 +496,8 @@ theorem norm_apply_coe_of_mem_level_ground (x : F.level L.top)
 def normSubgroup : Submodule ℤ (F.level L.ground) :=
   LinearMap.range (L.norm F)
 
+-- `dsimp% only` on the left-hand sides of this and `normQuotientMk_apply`, as explained in the
+-- implementation notes.
 /-- An element of the ground level lies in the norm subgroup exactly when it is a norm. -/
 @[simp]
 theorem mem_normSubgroup {y : F.level L.ground} :
@@ -546,6 +547,7 @@ def tateHZeroEquivNormQuotient : L.TateH F 0 ≃+ L.NormQuotient F :=
     (Submodule.Quotient.equiv _ _ (L.groundLevelEquiv F)
       (L.map_groundLevelEquiv_submoduleOf F)).toModuleIso).toLinearEquiv.toAddEquiv
 
+-- `dsimp% only` on the left-hand side, as explained in the implementation notes.
 /-- The identification of degree-zero Tate cohomology with the norm quotient sends the class of an
 invariant to the class of the corresponding element of the ground level. -/
 @[simp]
