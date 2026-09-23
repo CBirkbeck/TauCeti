@@ -41806,3 +41806,10 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
 
 **#8275 merged** 14:30:25Z, the sixth today. **#8286 merged** 14:34:50Z (the seventh today; `queuepos` reported a merged PR as EJECTED, since it only sees that the PR left the queue), #8291 is `awaiting-review` (21 min), and #8295 is on its first build
 (waiter running). The third slot stays open (every kind is dry or blocked, per r913). Pin `dc4b8d60d5`, main `05649787a`.
+* r914 addendum (waiter): **#8295 went green at 14:39:42Z and was marked ready at 14:40:03Z**. The guards held: every check green,
+  head `ab4d3f380` unchanged, pin `dc4b8d60d5` at both the base `6e1f69bb8` and main `59ea34489`, and the file untouched.
+
+## r915 — 2026-09-23T14:44Z (cron; step 4 hard-stopped)
+
+No change: #8291 (31 min) and #8295 (5 min) are `awaiting-review` with no board. No new merges. The third slot stays open (no
+eligible target). Pin `dc4b8d60d5`, main `59ea34489`.
