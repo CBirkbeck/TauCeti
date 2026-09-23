@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.NumberField.Global.RayClass.Character.Basic
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count
+public import TauCeti.NumberTheory.NumberField.Global.RayClass.Count.Basic
 
 /-!
 # Character sums over the integral ideals of bounded norm
