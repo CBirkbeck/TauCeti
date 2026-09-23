@@ -5,11 +5,11 @@ Authors: Claude
 -/
 module
 
-public import TauCeti.Algebra.Group.Subgroup.Map
 public import TauCeti.GroupTheory.Index.Basic
 public import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Basic
 public import TauCeti.RepresentationTheory.Rep.ChangeOfGroup
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Induced
+import TauCeti.RepresentationTheory.Homological.GroupHomology.LowDegree
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Delta
 import TauCeti.RepresentationTheory.Induction.DimensionShift
 
@@ -93,9 +93,8 @@ private theorem transfer_res_equiv [S.FiniteIndex] (N : Rep.{u} R G') (n : ℕ) 
     ext m
     simp only [ModuleCat.hom_comp, LinearMap.comp_apply]
     rw [transfer_zero_H0π, H0π_comp_map_apply, H0π_comp_map_apply, transfer_zero_H0π,
-      ← coinvariantsMk_comp_H0Iso_inv_apply, ← coinvariantsMk_comp_H0Iso_inv_apply,
       Representation.IsIntertwiningMap.toRes_hom_apply]
-    exact congrArg _ <| (Representation.Coinvariants.mk_eq_iff _).2 <|
+    exact (H0π_eq_iff _).2 <|
       Representation.relTransfer_map_sub_mem e LinearMap.id (fun _ _ ↦ rfl) he m
   | succ n ih =>
     -- Shift dimension along `dimensionShiftDown N ⟶ Ind_⊥^G' N ⟶ N`. The casts along
