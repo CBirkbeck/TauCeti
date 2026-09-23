@@ -41919,3 +41919,8 @@ slot is open (no eligible target). Pin `dc4b8d60d5`, main `80f9ab2de`.
 
 No change. #8304 is `ready-to-merge` (queued). #8305 is `awaiting-review` on its green fix `4f4ff931e`; the sweep's PENDING is only the `zulip-pr`
 notification check, not the build. No merges. Pin `dc4b8d60d5`, main `f59cc5333`.
+
+## r926 — 2026-09-23T16:34Z (cron; step 4 hard-stopped)
+
+**#8304 merged** 16:29:48Z, the tenth today. #8305 is `review-in-progress` on its fix `4f4ff931e`. Two slots are open (no eligible target). Pin
+`dc4b8d60d5`, main `09299b243`.
