@@ -41997,3 +41997,26 @@ No change: #8305 is `ready-to-merge` (queued); nothing is in progress; every kin
   waiter covers astra and the build.
 * **In progress (cap full):** #8332, #8339 and #8344. `OnCurve.lean` (Contour) was profiled as the next kind-2 target: 70 arrows, but 10 chains
   need care (lines 138/201/202/494/495 are parenthesised or anonymous-constructor terms that stay; 278/280/436 are real splits).
+* r933 addendum (waiter): **#8339 cleared.** gpt-6-astra (`astra-decoup-1738.txt`): "No findings; I would accept the supplied diff". The
+  build went green at 17:51:09Z. **Marked ready**, with the guards holding: every check green, head `9d44d5749` unchanged, pin unchanged, and
+  the file untouched on main.
+
+## r934 — 2026-09-23T17:54Z (cron)
+
+* **#8332 went `awaiting-author`** (board by `sqrt-of-2`, 17:54:10Z, on `0b1248176`): 9/10 approved, with **one `attribution`
+  request_changes**. "The edit removes both code-level references to the human Exchangeability roadmap … Fix: keep a module-level credit
+  to the Exchangeability roadmap; the stage-specific wording can be omitted." **Implemented**: `3c978ac17` restores "It is part of the
+  Exchangeability roadmap (`TauCetiRoadmap/Exchangeability`)" in the module doc, without the "Layer 1" stage. (The first try tripped my
+  100-column assertion before writing anything, so it was rewrapped.) Gate 12/0/0; pushed; body v2.
+* **Applied the same reading to the two sibling passes** before the rubric could flag them, since both made the same removal:
+  * **#8339** (Decoupling) `21eca0421`: the References bullet now reads "Roadmap: `TauCetiRoadmap/Exchangeability/README.md`.", without
+    the "**Layer 5** …, whose milestone is …" stage wording.
+  * **#8344** (Slice/Density) `caefae5b0`: the References bullet now reads "Roadmap: `TauCetiRoadmap/OneParameterSemigroups/README.md`.",
+    without "Part C, Milestone 2 …".
+  Both gate 12/0/0 and have body v2. #8339 was ready at `9d44d5749` (astra: no findings; green 17:51:09Z). #8344's first build `bf9fdabf3`
+  was green at 18:00:47Z and astra accepted it ("no edits … warrant rejection"; induction arms need `=>`), but it stays a **draft** until the
+  `caefae5b0` rebuild is green. A waiter covers all three rebuilds.
+* **Lesson (standing):** a roadmap-stage mention in a docstring is also the file's **roadmap credit**. Drop the stage ("Layer n",
+  "Milestone", "Part C") but keep a stage-free `TauCetiRoadmap/<Area>` credit. #8101 passed without one, but `attribution` enforces it
+  stochastically.
+* No merges. Pin `dc4b8d60d5`, main `11cdb5809`. The cap is full.

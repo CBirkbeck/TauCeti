@@ -1,4 +1,4 @@
-# Last round — r933 (2026-09-23T17:52Z)
+# Last round — r934 (2026-09-23T18:10Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,18 +44,18 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8332** | `0b1248176` | green (17:40:20Z) | kind 2 (`MeasureTheory/Measure/ProductKernel.lean`: 100 `↦`, and two docstrings off the roadmap stage; +74/−75; gate 12/0/0; `Roadmap: Exchangeability`). Opened r931 from `c4a45e85d`; gpt-6-astra: accept all; **marked ready r932** | **external reviewers** (1–4 h); step 4 re-enabled |
-| **#8339** | `9d44d5749` | first build | kind 2 (`Probability/DeFinetti/ViaKoopman/Decoupling.lean`: 100 `↦`, and the roadmap bullet dropped from References; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**, opened r932 from `6133bbae0`; gpt-6-astra launched 17:38Z (`$SP/astra-decoup-1738.txt`) | **astra + CI** — mark ready when both clear |
-| **#8344** | `bf9fdabf3` | first build | kind 2 (`PositiveDefinite/SemigroupGroup/Time/Slice/Density.lean`: 92 `↦`, 4 induction arms kept as `=>`, roadmap bullet dropped from References; gate 12/0/0; `Roadmap: OneParameterSemigroups`). **Draft**, opened r933 from `a28e74abd`; gpt-6-astra launched 17:49Z (`$SP/astra-density-1749.txt`) | **astra + CI** — mark ready when both clear |
+| **#8332** | `3c978ac17` | rebuilding | kind 2 (`ProductKernel.lean`: 100 `↦`; the module doc keeps a stage-free Exchangeability-roadmap credit, per the r934 `attribution` fix; `Roadmap: Exchangeability`). Ready 17:40:44Z; astra accepted it | **CI** rebuild, then re-review |
+| **#8339** | `21eca0421` | rebuilding | kind 2 (`ViaKoopman/Decoupling.lean`: 100 `↦`; the References bullet keeps a stage-free roadmap credit, per r934; `Roadmap: Exchangeability`). Ready 17:51:36Z; astra: no findings | **CI** rebuild, then review |
+| **#8344** | `caefae5b0` | rebuilding | kind 2 (`Slice/Density.lean`: 92 `↦`, 4 induction arms kept; the References bullet keeps a stage-free roadmap credit, per r934; `Roadmap: OneParameterSemigroups`). **Draft**; astra accepted it; the first build `bf9fdabf3` was green | **CI** — mark ready when the `caefae5b0` rebuild is green |
 
-**In progress (cap full): #8332 (`awaiting-review`, ready 17:40:44Z), #8339 and #8344 (drafts; astra and first builds pending).** Eleven of this session's PRs merged on 2026-09-23: #8101,
-#8233, #8224, #8235, #8273, #8275, #8286, #8291, #8295, #8304 and #8305.
+**In progress (cap full): #8332, #8339 and #8344, all rebuilding on the r934 roadmap-credit commits (#8344 is still a draft).** Eleven
+of this session's PRs merged on 2026-09-23.
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `54e5bc1b0`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `3d9f8be4a`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -65,10 +65,9 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r931):** the quota is back and the hard stop is lifted. In progress (cap full) are #8332 (ProductKernel, `awaiting-review`) and the drafts #8339 (Decoupling) and #8344 (Slice/Density), all
-   kind 2; **mark each draft ready once astra clears and the build is green**. The next kind-2 target is `Contour/Winding/RealIntegral/OnCurve.lean` (r933 ledger). Next: kind 3 (the scanners are dry, so look for a fresh source, or another
-   kind 2 once #8332 lands), and kind 1 only if the pin moves. Step 4 applies again: drive any PR whose green build sits an hour
-   past `max(CI-green, ready_for_review)` with no board, after probing the quota.
+0. **Now (r934):** in progress (cap full) are #8332, #8339 and #8344 (kind 2), rebuilding on the roadmap-credit commits. **Mark #8344 ready
+   when `caefae5b0` is green.** #8332's `attribution` finding is fixed; #8339 and #8344 got the same change proactively. **Rule:** a style pass
+   drops roadmap *stage* wording but keeps a stage-free `TauCetiRoadmap/<Area>` credit. Next kind 2: `Contour/Winding/RealIntegral/OnCurve.lean`.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -148,7 +147,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r933 did
+## What r703–r934 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -386,6 +385,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r931: **the quota is back** (astra and sol probes ok), so the hard stop is lifted. Kind 2 opened as draft **#8332** (`ProductKernel.lean` style pass; gate 12/0/0; astra pending).
 * r932: kind 2 again as draft **#8339** (`ViaKoopman/Decoupling.lean` style pass; gate 12/0/0; astra pending).
 * r933: #8332 was marked ready after astra cleared it (it accepted everything). Kind 2 opened as draft **#8344** (`Slice/Density.lean`; gate 12/0/0; astra pending). The cap is full.
+* r934: **#8332 got an `attribution` finding** (keep the roadmap credit). Fixed, and the same fix applied to #8339 and #8344. All three are rebuilding.
 
 ## Candidates for a later step 5
 
@@ -451,6 +451,10 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
   `handover/fiber-compfiberequiv-laws-deferred`.
 
 ## Standing traps
+
+* **A roadmap-stage docstring line is also the file's roadmap credit (r934).** `attribution` asked #8332 to keep "a module-level credit to
+  the Exchangeability roadmap; the stage-specific wording can be omitted". Drop "Layer n"/"Milestone"/"Part C" but keep a stage-free
+  `TauCetiRoadmap/<Area>` mention. #8101 got through without one, but the rubric enforces it stochastically.
 
 * **Judge an astra run by its log, not by the answer file alone (r882).** An existing `-o` file from an earlier pass printed as
   though it answered the new question, and was overwritten 8 seconds later. The fresh file was then moved aside as "stale" and waited
