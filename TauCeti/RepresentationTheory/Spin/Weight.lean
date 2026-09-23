@@ -143,10 +143,6 @@ theorem spinWeight_of_notMem {s : Finset ι} {i : ι} (h : i ∉ s) :
     spinWeight K s i = -⅟(2 : K) := by
   simp [spinWeight_apply, h]
 
-/-- Twice the inverse of `2` is `1`: the scalar identity behind half-integrality. -/
-private theorem invOf_two_add_invOf_two : (⅟(2 : K)) + ⅟(2 : K) = 1 := by
-  rw [← two_mul, mul_invOf_self]
-
 /-- **The weights are half-integral**: twice the weight at an occupied index is `1`. -/
 theorem spinWeight_add_self_of_mem {s : Finset ι} {i : ι} (h : i ∈ s) :
     spinWeight K s i + spinWeight K s i = 1 := by
