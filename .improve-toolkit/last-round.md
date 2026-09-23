@@ -1,4 +1,4 @@
-# Last round — r910 (2026-09-23T13:58Z)
+# Last round — r911 (2026-09-23T14:08Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -56,7 +56,7 @@ build).** #8273 is `ready-to-merge` (MERGING). **#8235 merged 13:45:14Z**, as di
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `be65f2204`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `b196efdbe`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -70,8 +70,9 @@ claude` or buying credits is their call. After the reset, probe with `codex exec
 
 0. **Now (r910):** in progress (cap full) are #8275 and #8286 (`awaiting-review`) and the draft #8291 (first build — **mark it ready when
    green**). #8273 is `ready-to-merge` (MERGING). Step 4 is hard-stopped until 2026-09-27T15:04Z; external reviewers board our PRs
-   in 1–4 h. Next opening: kind 1 if the pin moved, else kind 3 (astra is out). Re-run the scanners first; only the cosmetic private
-   `integral_Ioi_eq_Ioc_add_Ioi` is left in the queue.
+   in 1–4 h. Next opening: kind 1 if the pin moved, else kind 3 (astra is out). The r911 scanner refill found nothing new
+   (`deadprivate`'s new hits are worked examples), so for kind 3 try `nscand`/`misplaced`/`parallelns`, or the cosmetic private
+   `integral_Ioi_eq_Ioc_add_Ioi`.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -151,7 +152,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r910 did
+## What r703–r911 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -368,6 +369,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r908: **#8235 approved 10/10** (`sqrt-of-2`) and MERGING. Kind 3 opened as draft **#8286** (the `GlobalTurning.lean` `i ≤ j` weakening, `d099adbd2`, gate 12/0/0).
 * r909: #8273 is `review-in-progress`; #8286 is building.
 * r910: **#8235 merged**; **#8273 approved 10/10** (`roed-math`) and MERGING. Kind 3 opened as draft **#8291** (rename `not_mem_maxAvoid` → `notMem_maxAvoid`; gate 12/0/0).
+* r911: no board change. The scanner refill found nothing new for kind 3 (the new `deadprivate` hits are worked examples).
 
 ## Candidates for a later step 5
 

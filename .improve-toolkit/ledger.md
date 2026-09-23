@@ -41753,3 +41753,15 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
   #8235's merge. A build waiter is running.
 * Pin `dc4b8d60d5`, main `cdd847a11`. The remaining kind-3 target is the private `integral_Ioi_eq_Ioc_add_Ioi` (cosmetic); re-run the
   scanners next.
+
+## r911 — 2026-09-23T14:04Z (cron; step 4 hard-stopped)
+
+* Board: #8273 is MERGING, #8275 (67 min) and #8286 (13 min) are `awaiting-review` with no board, and #8291 is on its first build. No merges.
+  Pin `dc4b8d60d5`, main `f5f0cc5b2`. The cap is full.
+* **Scanner refill on `f5f0cc5b2` (`snap-main7`; 319 files touched by open PRs):** `strictscan` and `deadhave` show nothing new since r891 (the
+  `Resolvent:69` hit is gone with #8224's merge). `impliedscan`: 0. `dupsig`: the known module-system `private …_aux`/public pairs.
+  `deadprivate`'s new hits are **worked examples, not candidates**: `Moebius.lean:252/262` (`graphParamMobius_one`,
+  `graphParamMobius_ite_eq_bot`, in an `Examples` section) and `VonMangoldt.lean:259` (an illustrative order-four Artin class, with a
+  comment explaining it). `ConvexSubgroup.lean:729` collides with #8291. **The kind-3 queue is nearly dry:** only the private, cosmetic
+  `integral_Ioi_eq_Ioc_add_Ioi` is left. Next time, try the rooting and relocation scanners (`nscand`, `misplaced`, `parallelns`);
+  kind 2 returns when astra's quota resets (2026-09-27T15:04Z).
