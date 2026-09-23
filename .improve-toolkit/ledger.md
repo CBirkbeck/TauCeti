@@ -41895,3 +41895,15 @@ slot is open (no eligible target). Pin `dc4b8d60d5`, main `80f9ab2de`.
 
 **#8295 merged** 15:47:58Z, the ninth today (#8101, #8233, #8224, #8235, #8273, #8275, #8286, #8291, #8295). #8305 is
 `review-in-progress`; #8304 is `awaiting-review` (7 min). One slot is open (no eligible target). Pin `dc4b8d60d5`, main `7783dbc4b`.
+
+## r923 — 2026-09-23T16:04Z (cron; step 4 hard-stopped)
+
+* **#8304 approved** (board by Robertboy18 2026-09-23T15:58:54Z on head `58a0076a2`), `ready-to-merge`.
+* **#8305 went `awaiting-author`** (board by `Robertboy18`, 15:55:08Z, on `23d3af464`): 9/10 approved and **one `placement`
+  request_changes**. It agreed that the deletion is correct. `import Mathlib.Analysis.Normed.Affine.Convex` (line 10) supplied only
+  `dist_add_dist_of_mem_segment`, used only by the deleted private lemma, and Mathlib's lemma arrives through `public import
+  Mathlib.Analysis.Calculus.MeanValue`. The fix was to delete line 10. **Implemented as proposed**, after checking with a closure script
+  that dropping the import removes **no** module from the file's import closure (it stays reachable through the other imports), so
+  nothing else can break. Commit **`4f4ff931e`**; gate **12 ok / 0 failed / 0 UNRUN** (`importcover` ok); pushed with a lease; body v2
+  (REST PATCH). The rebuild waiter is running, and the push re-reviews on its own.
+* In progress: #8305 (fix pushed). One slot is open. Pin `dc4b8d60d5`, main `7783dbc4b`.
