@@ -36,8 +36,8 @@ This is the homological counterpart of `TauCeti.groupCohomology.coindIso_hom`.
   `groupHomology.map S.subtype ((indResAdjunction k S.subtype).unit.app A) n`.
 * `TauCeti.groupHomology.indIso_inv_comp_map_counit`: read through Shapiro's isomorphism,
   corestriction from `S` to `G` is the map induced by the counit `Ind_S^G Res_S B ⟶ B`.
-* `TauCeti.groupHomology.map_comp_indIso_inv`, `TauCeti.groupHomology.indIso_hom_comp_map`:
-  Shapiro's isomorphism is natural in the `S`-representation.
+* `TauCeti.groupHomology.indIso_inv_naturality`, `TauCeti.groupHomology.indIso_hom_naturality`:
+  Shapiro's isomorphism is natural in the coefficients.
 
 ## References
 
@@ -154,21 +154,25 @@ theorem indIso_inv_comp_map_counit (B : Rep.{u} k G) (n : ℕ) :
   -- `(MonoidHom.id G).comp S.subtype` is `S.subtype` by definition.
   rfl
 
-/-- **The inverse of Shapiro's isomorphism is natural** in the `S`-representation. -/
+/-- **The inverse of Shapiro's isomorphism is natural in the coefficients**: for a morphism
+`φ : A ⟶ B` of `S`-representations, it intertwines the maps induced by `φ` and by `Ind_S^G φ`.
+See `indIso_hom_naturality` for the same statement for Shapiro's isomorphism itself. -/
 @[reassoc]
-theorem map_comp_indIso_inv {B : Rep.{u} k S} (ψ : A ⟶ B) (n : ℕ) :
-    map (MonoidHom.id S) ψ n ≫ (indIso S B n).inv =
-      (indIso S A n).inv ≫ map (MonoidHom.id G) ((indFunctor k S.subtype).map ψ) n := by
+theorem indIso_inv_naturality {B : Rep.{u} k S} (φ : A ⟶ B) (n : ℕ) :
+    map (MonoidHom.id S) φ n ≫ (indIso S B n).inv =
+      (indIso S A n).inv ≫ map (MonoidHom.id G) ((indFunctor k S.subtype).map φ) n := by
   rw [indIso_inv, indIso_inv, ← map_comp, ← map_comp]
-  refine map_congr (by rw [MonoidHom.comp_id, MonoidHom.id_comp]) ?_ n
-  exact congrArg (fun f => f.hom.toLinearMap) ((indResAdjunction k S.subtype).unit.naturality ψ)
+  refine map_congr rfl ?_ n
+  exact congrArg (·.hom.toLinearMap) ((indResAdjunction k S.subtype).unit.naturality φ)
 
-/-- **Shapiro's isomorphism is natural** in the `S`-representation. -/
+/-- **Shapiro's isomorphism is natural in the coefficients**: for a morphism `φ : A ⟶ B` of
+`S`-representations, it intertwines the maps induced by `Ind_S^G φ` and by `φ`. See
+`indIso_inv_naturality` for the same statement for its inverse. Rewrite with this lemma before
+`simp`, which normalizes `(indFunctor k S.subtype).map φ` to `indMap S.subtype φ`. -/
 @[reassoc]
-theorem indIso_hom_comp_map {B : Rep.{u} k S} (ψ : A ⟶ B) (n : ℕ) :
-    (indIso S A n).hom ≫ map (MonoidHom.id S) ψ n =
-      map (MonoidHom.id G) ((indFunctor k S.subtype).map ψ) n ≫ (indIso S B n).hom := by
-  rw [← cancel_epi (indIso S A n).inv, Iso.inv_hom_id_assoc, ← Category.assoc,
-    ← map_comp_indIso_inv, Category.assoc, Iso.inv_hom_id, Category.comp_id]
+theorem indIso_hom_naturality {B : Rep.{u} k S} (φ : A ⟶ B) (n : ℕ) :
+    map (MonoidHom.id G) ((indFunctor k S.subtype).map φ) n ≫ (indIso S B n).hom =
+      (indIso S A n).hom ≫ map (MonoidHom.id S) φ n := by
+  rw [← Iso.inv_comp_eq, ← indIso_inv_naturality_assoc, Iso.inv_hom_id, Category.comp_id]
 
 end TauCeti.groupHomology

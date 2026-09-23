@@ -36,7 +36,7 @@ corestriction is the map induced by the counit `Indˢᴳ Resˢᴳ M ⟶ M`
 
 * `TauCeti.groupHomology.transfer_comp_indIso_inv`: through the inverse of Shapiro's isomorphism,
   transfer is the map induced by the unit of the finite-index adjunction.
-* `TauCeti.groupHomology.map_comp_transfer`: the transfer is natural in the representation.
+* `TauCeti.groupHomology.map_comp_transfer`: the transfer is natural in the coefficients.
 * `TauCeti.groupHomology.transfer_comp_map_subtype_id`: corestriction after transfer is
   multiplication by the index `[G : S]`.
 
@@ -76,37 +76,21 @@ theorem transfer_comp_indIso_inv (M : Rep R G) (S : Subgroup G) [S.FiniteIndex] 
   -- the rewrite does not match syntactically, while this equation holds by `rfl`.
   (Iso.comp_inv_eq _).2 rfl
 
-open scoped Classical in
-/-- **The transfer is natural in the representation**: for `φ : M ⟶ N`, the transfers of `M` and
-`N` commute with the maps induced by `φ` over `G` and by its restriction over `S`. -/
-@[reassoc]
-theorem map_comp_transfer {M N : Rep R G} (φ : M ⟶ N) (S : Subgroup G) [S.FiniteIndex]
-    (n : ℕ) :
-    _root_.groupHomology.map (MonoidHom.id G) φ n ≫ transfer N S n =
-      transfer M S n ≫
-        _root_.groupHomology.map (MonoidHom.id S) ((Rep.resFunctor S.subtype).map φ) n := by
-  have hM := (Iso.comp_inv_eq _).1 (transfer_comp_indIso_inv M S n)
-  have hN := (Iso.comp_inv_eq _).1 (transfer_comp_indIso_inv N S n)
-  have hU := (Rep.resIndAdjunction.{u} R S).unit.naturality φ
-  have hI := indIso_hom_comp_map S (Rep.res S.subtype M) ((Rep.resFunctor S.subtype).map φ) n
-  -- The objects appear both as `groupHomology _ n` and as `(functor R G n).obj _`, so the steps
-  -- are composed as terms rather than by rewriting.
-  calc _root_.groupHomology.map (MonoidHom.id G) φ n ≫ transfer N S n
-      = (_root_.groupHomology.map (MonoidHom.id G) φ n ≫
-          _root_.groupHomology.map (MonoidHom.id G) ((Rep.resIndAdjunction.{u} R S).unit.app N) n) ≫
-            (_root_.groupHomology.indIso S (Rep.res S.subtype N) n).hom :=
-        (congrArg (_ ≫ ·) hN).trans (Category.assoc _ _ _).symm
-    _ = (_root_.groupHomology.map (MonoidHom.id G) ((Rep.resIndAdjunction.{u} R S).unit.app M) n ≫
-          _root_.groupHomology.map (MonoidHom.id G)
-            ((Rep.indFunctor R S.subtype).map ((Rep.resFunctor S.subtype).map φ)) n) ≫
-            (_root_.groupHomology.indIso S (Rep.res S.subtype N) n).hom :=
-        congrArg (· ≫ _) ((_root_.groupHomology.map_id_comp _ _ n).symm.trans
-          ((congrArg (fun x => _root_.groupHomology.map (MonoidHom.id G) x n) hU).trans
-            (_root_.groupHomology.map_id_comp _ _ n)))
-    _ = transfer M S n ≫
-          _root_.groupHomology.map (MonoidHom.id S) ((Rep.resFunctor S.subtype).map φ) n :=
-        (Category.assoc _ _ _).trans ((congrArg (_ ≫ ·) hI.symm).trans
-          ((Category.assoc _ _ _).symm.trans (congrArg (· ≫ _) hM.symm)))
+/-- **The transfer is natural in the coefficients**: for a morphism `φ : M ⟶ N` of
+`G`-representations, transfer intertwines the map `Hₙ(G, M) ⟶ Hₙ(G, N)` induced by `φ` with the
+map `Hₙ(S, Res_S M) ⟶ Hₙ(S, Res_S N)` induced by its restriction to `S`. The cohomological
+counterpart, for corestriction, is `TauCeti.groupCohomology.map_comp_corestriction`. -/
+@[reassoc, elementwise]
+theorem map_comp_transfer {M N : Rep R G} (φ : M ⟶ N) (S : Subgroup G) [S.FiniteIndex] (n : ℕ) :
+    _root_.groupHomology.map (MonoidHom.id G) φ n ≫ transfer N S n = transfer M S n ≫
+      _root_.groupHomology.map (MonoidHom.id S) ((Rep.resFunctor S.subtype).map φ) n := by
+  classical
+  -- Cancel Shapiro's isomorphism: both sides become `Hₙ(G, -)` applied to the unit
+  -- `M ⟶ Ind_S^G Res_S M` of the finite-index adjunction, which is natural in `φ`.
+  rw [← cancel_mono (_root_.groupHomology.indIso S _ n).inv, Category.assoc, Category.assoc,
+    indIso_inv_naturality, transfer_comp_indIso_inv, transfer_comp_indIso_inv_assoc]
+  exact (Functor.whiskerRight (Rep.resIndAdjunction R S).unit
+    (_root_.groupHomology.functor R G n)).naturality φ
 
 open scoped Classical in
 /-- **Corestriction after transfer is multiplication by the index**: for a finite-index subgroup
