@@ -44,7 +44,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8224** | `f4b657306` | green (09:17:52Z) | kind 3 (`StronglyContinuousSemigroup.norm_resolvent_integrand_le` takes `0 ≤ t`; its one caller gains `.le`; +3/−3; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Opened 09:07:51Z from `62fc0367c` as a draft; **marked ready 09:18:43Z** | **driven review** — launched 10:24:54Z (`$SP/review-8224-r889.log`); read its `ROUND` verdict and `scoreboard id=` |
+| **#8224** | `f4b657306` | green (09:17:52Z) | kind 3 (`StronglyContinuousSemigroup.norm_resolvent_integrand_le` takes `0 ≤ t`; its one caller gains `.le`; +3/−3; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Opened 09:07:51Z from `62fc0367c` as a draft; **marked ready 09:18:43Z** | **pipeline** — the r889 drive errored (codex out of quota) and left an all-⚠️ `error` board (5793153420) on this head; wait for the pipeline, do not re-drive |
 | **#8233** | `77df94016` | green (09:24:57Z) | kind 2 in kind 1's slot (`Analysis/Contour/Residue/Basic.lean`: 49 `↦`, 21 chains split, one comment; +93/−63; gate 12/0/0; `Roadmap: ContourIntegration`; gpt-6-astra: meaning preserved). Opened 09:16:54Z from `62fc0367c` as a draft; **marked ready 09:26:40Z** | **pipeline** — board due by ~10:15Z; step 4 may drive only after 10:26Z |
 | **#8235** | `3a7c03114` | green (09:35:30Z) | kind 3 (`ConvexSubgroup.lean`: `mem_of_mabs_le_mabs` and `mem_closure_singleton` use Mathlib's `mabs_mem_iff` instead of a four-line `mabs_choice` split; adds a private `import Mathlib.Algebra.Group.Subgroup.Order`, one new module; +3/−8; gate 12/0/0; `Roadmap: AdicSpaces`). Opened from `2d137180a` as a draft; **marked ready 09:36:14Z** | **pipeline** — board due by ~10:25Z; step 4 may drive only after 10:36Z |
 
@@ -60,10 +60,17 @@ splits keep order, goals and blocks, column 6 is correct and Mathlib style, and 
 **When a slot frees**, if the pin has not moved: rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
 as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If the pin has moved, run the kind-1 scan first. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `4496e4675`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `16b985916`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
+
+**HARD STOP until 2026-09-27T15:04Z (r889): the codex/ChatGPT subscription is out of quota.** (1) **Do NOT drive reviews
+(step 4).** Every `--reviewer codex` run errors in seconds and posts an all-⚠️ `error` board; #8224 got one (scoreboard
+5793153420). Wait for the pipeline's own boards. (2) **gpt-6-astra is out too**, so no kind-2 pass can be cleared until the reset,
+and a kind-2 slot must go to the already-cleared staged branch or to kind 1/3. (3) The user has been told; switching to `--reviewer
+claude` or buying credits is their call. After the reset, probe with `codex exec -m gpt-5.6-sol "Reply ok"` before any drive.
+
 
 0. **r843–r882:** the cap counts only PRs in progress (rotation paragraph above). In progress: #8224 (green 09:17:52Z, ready 09:18:43Z;
    drive not before 10:18Z), #8233 (green 09:24:57Z, ready 09:26:40Z; drive not before 10:26Z) and #8235 (green 09:35:30Z,
@@ -347,7 +354,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r886: board unchanged. Kind 2 is staged locally as `improve/condindep-conditional-style` @ `dddfd9f96` (`Independence/Conditional.lean`: 82 `↦`, 12 chains split; gate 12/0/0), with astra running.
 * r887: board unchanged; the `gammaPDFReal_of_pos` candidate is gone from main (dropped).
 * r888: no change; #8224's drive clock opens at 10:18Z.
-* r889: drove #8224 (10:24:54Z; 66 min without a board). #8233 and #8235 were not yet due.
+* r889: drove #8224 (10:24:54Z; 66 min without a board). **Every rubric errored**: codex is out of quota until 2026-09-27T15:04Z, and astra is too. The drive left an error board (5793153420). Step 4 is hard-stopped until the reset.
 
 ## Candidates for a later step 5
 

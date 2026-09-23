@@ -41565,3 +41565,17 @@ round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5
   no local `tauceti-review` process. Log: `review-8224-r889.log`.
 * #8233 (58 min) and #8235 (48 min) are not yet due; their clocks open at 10:26Z and 10:36Z. No merges since #8101. Pin
   `dc4b8d60d5`, main `1724b0c80`.
+* **r889 addendum — the #8224 drive produced an ERROR board; root cause: the codex subscription is out of quota until
+  2026-09-27T15:04Z.** All ten rubrics ran `codex/gpt-5.6-sol` and each failed twice with rc=1 after about 3 s (`unknown_error`,
+  $0.00). The tool then posted scoreboard **5793153420** (as `CBirkbeck`, 10:26:15Z). Every rubric row reads ⚠️ `error`, and the
+  summary line reads "changes requested". A minimal `codex exec -m gpt-5.6-sol` reproduces it: "You've hit your usage limit …
+  try again at Sep 27th, 2026 3:04 PM" (the machine is on UTC). **gpt-6-astra hits the same limit** (probe at 10:27Z), although
+  the 09:59Z astra run still completed. The tool's push to `TauCetiProject/TauCetiData` also failed with 403 for `CBirkbeck`
+  (its outbox is kept; non-fatal).
+  * #8224's labels did not change (`awaiting-review`). The board is accurate (errors, no findings) and was left in place, since
+    deleting it is an outward action the user has not approved. **Watch**: if the pipeline reviews #8233 and #8235 but not #8224,
+    the error board on its head may be what stops it. Tell the user; do not re-drive.
+  * No local `tauceti_worker` service or process exists on this machine, so the pipeline's own reviews come from elsewhere and are
+    not blocked by this quota.
+  * `tauceti-review` also supports `--reviewer claude` (and others, `runner/cli.py:446`), but the round rules name `codex`, so
+    switching is the user's decision.
