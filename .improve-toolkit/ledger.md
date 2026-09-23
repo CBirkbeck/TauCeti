@@ -42307,3 +42307,15 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   new sentence is accurate).
 * Note: `prepush.sh` lives in the toolkit's `tools/`, not the repo's; run it as `~/GitHub/TauCeti/.mathlib-quality/improve/tools/prepush.sh`.
 * In progress (cap full): #8426, #8469 (build queued) and #8473. Pin `dc4b8d60d5`, main `dbb95106b`.
+
+## r968 — 2026-09-23T23:40Z (cron)
+
+* **#8426 approved** (board on head `db6452b92`, updated 23:31:43Z); now `ready-to-merge`, like #8413.
+* **Step 5, kind 2** (kind 1 still dry at `dc4b8d60d5`): **opened draft #8476**, `improve/contractability-style` @ `1f0198742` from
+  `3ea237062`; `Roadmap: Exchangeability`. Target: `Exchangeability/Contractability.lean` (299 lines, no open-PR overlap; its last TauCeti
+  edit was #6855). Edits: 63 arrows (asserted); two `;` chains split (`have : IsFiniteMeasure (pathLaw μ X) := by rw [pathLaw_def];
+  infer_instance`, and `hφsucc`'s `intro n; simp only [hφdef]; rw [...]`); the module docstring's "this file is the Layer 0 home for
+  contractability-specific API" clause dropped (the first sentence already says what the file records). The provenance paragraph citing
+  `cameronfreer/exchangeability`'s "Layer 0 sources" is external attribution and stays. Gate 12/0/0. Astra (three-dot diff, 1 file):
+  **cleared** ("I would reject none of these edits"; indentation and block scope correct).
+* #8469 and #8473 builds still queued. In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `3ea237062`.

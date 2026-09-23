@@ -1,4 +1,4 @@
-# Last round — r967 (2026-09-23T23:31Z)
+# Last round — r968 (2026-09-23T23:40Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -45,18 +45,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#8413** | `e6125f186` | green (23:04:37Z) | kind 2 (`KnotTheory/Grid/Unknot/Basic.lean`: 62 `↦`; `Roadmap: CombinatorialHeegaardFloer`). **Approved** (board 23:20:57Z); `ready-to-merge` | **queue** |
-| **#8426** | `db6452b92` | green (23:24:30Z) | kind 2 (`Exchangeability/Arrays/ConditionalLaw.lean`: 64 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 23:24:49Z** | **external reviewers** |
+| **#8426** | `db6452b92` | green (23:24:30Z) | kind 2 (`Exchangeability/Arrays/ConditionalLaw.lean`: 64 `↦`; `Roadmap: Exchangeability`). **Approved** (board 23:31:43Z); `ready-to-merge` | **queue** |
 | **#8469** | `75cce7ae9` | queued | kind 2 (`Exchangeability/Arrays/Block.lean`: 61 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r965) | **CI** — mark ready when green |
 | **#8473** | `f52a3a755` | queued | kind 2 (`Exchangeability/Arrays/RowCoding.lean`: 65 `↦`, and the roadmap sentence in the module docstring replaced by a scope sentence; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r967) | **CI** — mark ready when green |
+| **#8476** | `1f0198742` | queued | kind 2 (`Exchangeability/Contractability.lean`: 63 `↦`, two `;` chains split, the "Layer 0 home" docstring clause dropped; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r968) | **CI** — mark ready when green |
 
-**In progress (cap full): #8426 (ready 23:24:49Z) and the drafts #8469 (astra ✓, build queued) and #8473 (astra ✓, build queued).**
-**#8413 approved** (r967); #8402 merged 23:06:21Z (r966). Eighteen of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
+**In progress (cap full): the drafts #8469, #8473 and #8476 (all astra ✓, builds queued).**
+**#8426 approved** (r968) and **#8413 approved** (r967), both `ready-to-merge`; #8402 merged 23:06:21Z (r966). Eighteen of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `bbace91c1`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `0431083b2`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -66,11 +67,11 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r967):** #8413 is approved (`ready-to-merge`). In progress (cap full): #8426 (ready 23:24:49Z; step 4 opens no earlier than
-   00:25Z) and the drafts #8469 and #8473, both astra-cleared — **mark each ready once its build is green** (guards: latest check-runs
-   green, head unchanged, pin at base = pin at main, file untouched on main since the base). Bases: #8469 `6c75046e3`, #8473 `dbb95106b`.
-   Next kind 2 (kind 1 is dry at `dc4b8d60d5`): `Exchangeability/Contractability.lean` (63 arrows, 2 chain-like lines),
-   `ClassicalGroups/Rational.lean` (roadmap text in 6 lines) or `Conformal/Monodromy.lean` (7 chain-like lines, 3 roadmap lines).
+0. **Now (r968):** #8413 and #8426 are approved (`ready-to-merge`). In progress (cap full): the drafts #8469, #8473 and #8476, all
+   astra-cleared — **mark each ready once its build is green** (guards: latest check-runs green, head unchanged, pin at base = pin at
+   main, file untouched on main since the base). Bases: #8469 `6c75046e3`, #8473 `dbb95106b`, #8476 `3ea237062`.
+   Next kind 2 (kind 1 is dry at `dc4b8d60d5`): `ClassicalGroups/Rational.lean` (roadmap text in 6 lines) or `Conformal/Monodromy.lean`
+   (7 chain-like lines, 3 roadmap lines); re-score `snap-main` for more once those are used.
    Roadmap mentions in docstrings are deleted outright (r939 rule), or replaced by a plain scope statement.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
@@ -418,6 +419,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r965: #8413 went green and was marked ready; astra cleared #8469.
 * r966: **#8402 merged** (23:06:21Z). #8426's build started at 23:13Z; #8469 is still queued. The cap is full.
 * r967: **#8413 approved**; #8426 went green and was marked ready. Kind 2 opened as draft **#8473** (`Arrays/RowCoding.lean`, 65 `↦` plus the roadmap sentence), cleared by astra.
+* r968: **#8426 approved**. Kind 2 opened as draft **#8476** (`Exchangeability/Contractability.lean`, 63 `↦`, two chains, the "Layer 0 home" clause), cleared by astra.
 
 ## Candidates for a later step 5
 
