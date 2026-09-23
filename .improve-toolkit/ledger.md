@@ -41612,3 +41612,8 @@ round drives it if it still has no board. No merges since #8101. Pin `dc4b8d60d5
 
 No change. #8224 (error board), #8233 (88 min) and #8235 (78 min) are waiting on external reviewers. No merges since #8101.
 Pin `dc4b8d60d5`, main `1724b0c80`. The cap is full.
+
+## r893 — 2026-09-23T11:04Z (cron; step 4 hard-stopped)
+
+No change. #8224 (error board), #8233 (98 min) and #8235 (88 min) are waiting on external reviewers. No merges; main is
+still `1724b0c80` (unmoved since 10:24Z). The cap is full.
