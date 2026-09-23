@@ -23,13 +23,19 @@ to define the Riemannian exponential map by evaluation at time one.
 ## Main definitions and results
 
 * `TauCeti.Manifold.maximalGeodesic` is the chosen maximal geodesic with prescribed initial data.
+* `TauCeti.Manifold.maximalGeodesic_def` identifies it with the base projection of the maximal
+  integral curve of the geodesic spray.
 * `TauCeti.Manifold.maximalIntegralCurveInterval_geodesicSpray` identifies the two independently
   defined maximal domains.
 * `TauCeti.Manifold.isGeodesicCurveOnFrom_maximalGeodesic` gives the geodesic equation and initial
   data on the maximal domain.
 * `TauCeti.Manifold.IsGeodesicCurveOnFrom.eqOn_maximalGeodesic` is the corresponding uniqueness
   theorem for any open-interval geodesic witness.
+* `TauCeti.Manifold.IsGeodesicCurveOnFrom.eq_maximalGeodesic_of_univ` specializes uniqueness to
+  geodesics defined for all time.
 * `TauCeti.Manifold.maximalGeodesic_smul` is homogeneity in the initial velocity and time.
+* `TauCeti.Manifold.alongCurve_curveVelocity_maximalGeodesic_eq_zero` is the geodesic equation for
+  the unrestricted velocity of the maximal geodesic on its maximal interval.
 
 ## References
 
@@ -41,7 +47,7 @@ to define the Riemannian exponential map by evaluation at time one.
 
 public section
 
-open Bundle Function Manifold Set
+open Bundle CovariantDerivative Function Manifold Set
 open scoped ContDiff Manifold Topology
 
 noncomputable section
@@ -58,13 +64,6 @@ variable [FiniteDimensional ℝ E] [I.Boundaryless]
   [IsContMDiffRiemannianBundle I ∞ E (fun x : M ↦ TangentSpace I x)]
 
 variable [T2Space (TangentBundle I M)]
-
-omit [I.Boundaryless] [T2Space (TangentBundle I M)] in
-private theorem contMDiff_one_geodesicSpray :
-    CMDiff 1 (fun w : TangentBundle I M ↦
-      (⟨w, geodesicSpray I M w⟩ : TangentBundle I.tangent (TangentBundle I M))) := by
-  exact (contMDiff_geodesicSpray (I := I) (M := M) (n := (1 : ℕ∞ω))
-    (m := ∞) (k := ∞) (by norm_num) (by norm_num)).of_le (by norm_num)
 
 omit [T2Space (TangentBundle I M)] in
 private theorem contMDiffOn_two_proj_of_isMIntegralCurveOn_geodesicSpray
@@ -118,6 +117,14 @@ variable (I M) in
 maximal interval. -/
 def maximalGeodesic (p : M) (v : TangentSpace I p) (t : ℝ) : M :=
   (maximalIntegralCurve (geodesicSpray I M) (TotalSpace.mk' E p v) t).proj
+
+omit [I.Boundaryless] [T2Space (TangentBundle I M)] in
+/-- The maximal geodesic is the base projection of the corresponding maximal integral curve of
+the geodesic spray. -/
+theorem maximalGeodesic_def (p : M) (v : TangentSpace I p) (t : ℝ) :
+    maximalGeodesic I M p v t =
+      (maximalIntegralCurve (geodesicSpray I M) (TotalSpace.mk' E p v) t).proj := by
+  rfl
 
 /-- The maximal geodesic has the prescribed initial data on its maximal interval. -/
 theorem isGeodesicCurveOnFrom_maximalGeodesic (p : M) (v : TangentSpace I p) :
@@ -173,6 +180,14 @@ theorem IsGeodesicCurveOnFrom.eqOn_maximalGeodesic
   rw [maximalGeodesic]
   simpa only [curveVelocityLiftWithin_proj] using congrArg TotalSpace.proj (heq ht)
 
+/-- A geodesic defined for all time with initial data `(p, v)` is the maximal geodesic. -/
+theorem IsGeodesicCurveOnFrom.eq_maximalGeodesic_of_univ
+    {p : M} {v : TangentSpace I p} {γ : ℝ → M} (hγ : IsGeodesicCurveOnFrom I γ univ p v)
+    (t : ℝ) : maximalGeodesic I M p v t = γ t := by
+  have hc : (0 : ℝ) < |t| + 1 := by positivity
+  exact (hγ.mono (uniqueDiffOn_Ioo _ _) (subset_univ _) ⟨neg_lt_zero.2 hc, hc⟩).eqOn_maximalGeodesic
+    (abs_lt.1 (lt_add_one |t|))
+
 /-- The maximal geodesic with zero initial velocity is the constant curve. -/
 @[simp] theorem maximalGeodesic_zero_velocity (p : M) :
     maximalGeodesic I M p (0 : TangentSpace I p) = fun _ ↦ p := by
@@ -216,6 +231,17 @@ time belongs to the corresponding maximal interval. -/
       _ = γ (a * t) := rfl
       _ = maximalGeodesic I M p v (a * t) :=
         (hγ.eqOn_maximalGeodesic hatbc).symm
+
+/-- The unrestricted covariant acceleration of a maximal geodesic vanishes at every point of its
+maximal interval. -/
+theorem alongCurve_curveVelocity_maximalGeodesic_eq_zero {p : M} {v : TangentSpace I p} {t : ℝ}
+    (ht : t ∈ geodesicInterval I M p v) :
+    alongCurve (leviCivitaConnection I M) (maximalGeodesic I M p v)
+      (curveVelocity I (maximalGeodesic I M p v)) t = 0 := by
+  rw [← alongCurveWithin_curveVelocityWithin_of_isOpen (leviCivitaConnection I M)
+    (maximalGeodesic I M p v) isOpen_geodesicInterval ht]
+  exact (isGeodesicCurveOnFrom_maximalGeodesic (I := I) (M := M) p v).isGeodesicCurveOn
+    |>.alongCurveWithin_curveVelocityWithin_eq_zero t ht
 
 omit [T2Space (TangentBundle I M)] in
 /-- Outside its maximal interval, the total maximal geodesic takes its junk value `p`. -/

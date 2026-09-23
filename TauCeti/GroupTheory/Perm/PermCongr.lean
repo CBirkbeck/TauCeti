@@ -25,6 +25,8 @@ the acting group: an action of `G` on `α` and the action of the subgroup
 ## Main results
 
 * `Equiv.map_permCongrHom_le_alternatingGroup_iff`: transport preserves evenness.
+* `Equiv.conj_eq_permCongrHom`: conjugation by a permutation is transport along that
+  permutation.
 * `Equiv.isPretransitive_map_permCongrHom_iff`: transport preserves transitivity.
 * `Equiv.isPreprimitive_map_permCongrHom_iff`: transport preserves primitivity.
 * `MulAction.isPretransitive_range_toPermHom_iff`, `MulAction.isPreprimitive_range_toPermHom_iff`:
@@ -39,6 +41,11 @@ open Equiv MulAction
 namespace Equiv
 
 variable {α β : Type*}
+
+/-- Conjugation by a permutation is the transport automorphism induced by that permutation. -/
+theorem conj_eq_permCongrHom (τ : Perm α) : MulAut.conj τ = τ.permCongrHom := by
+  ext σ x
+  simp [MulAut.conj_apply, Equiv.permCongrHom_coe]
 
 /-- The equivalence `e`, read as an equivariant map from the permutation representation of `G`
 to that of its transport. -/
@@ -58,6 +65,17 @@ theorem isPreprimitive_map_permCongrHom_iff (e : α ≃ β) (G : Subgroup (Perm 
     IsPreprimitive (G.map e.permCongrHom.toMonoidHom) β ↔ IsPreprimitive G α :=
   (isPreprimitive_congr (e.permCongrHom.subgroupMap G).surjective
     (f := permCongrHomMulActionHom e G) e.bijective).symm
+
+/-- **Reading a permutation group through two equivalences differs by exactly one conjugation**,
+by the re-indexing permutation `e.symm.trans e'`. So the transported subgroup is well defined
+only up to conjugacy, while the group itself is canonical. -/
+theorem map_permCongrHom_eq_map_conj (e e' : α ≃ β) (G : Subgroup (Perm α)) :
+    G.map e'.permCongrHom.toMonoidHom =
+      Subgroup.map (MulAut.conj (e.symm.trans e')) (G.map e.permCongrHom.toMonoidHom) := by
+  rw [Subgroup.map_map]
+  congr 1
+  ext σ x
+  simp [Equiv.permCongrHom_coe]
 
 variable [Fintype α] [DecidableEq α] [Fintype β] [DecidableEq β]
 

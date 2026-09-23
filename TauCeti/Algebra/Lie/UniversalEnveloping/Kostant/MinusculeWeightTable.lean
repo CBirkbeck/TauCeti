@@ -8,6 +8,7 @@ module
 public import TauCeti.Algebra.Lie.Presentation.MinusculeWeightTable.Rational
 public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.CoordinateLattice
 public import TauCeti.Algebra.Lie.UniversalEnveloping.Kostant.Serre
+import TauCeti.Algebra.Lie.Sl2.Basic
 import TauCeti.LinearAlgebra.Matrix.MulVec
 
 /-!
@@ -36,8 +37,15 @@ coefficients of an operator with integral eigenvalues are what the Kostant form 
   `isNilpotent_rep_serreRootGenerator`: the represented root generators are square-zero.
 * `TauCeti.MinusculeWeightTable.isCartanWeightVector_single`: each standard coordinate vector is a
   Cartan weight vector with its weight in the table.
+* `TauCeti.MinusculeWeightTable.isSl2Triple_rep_serreRootGenerator`: the represented positive,
+  negative, and Cartan generators at a node form an `sl₂` triple.
 * `TauCeti.MinusculeWeightTable.rep_serreKostantForm_mem_lattice`: the Serre Kostant form carries
   `TauCeti.coordinateLattice` into itself.
+* `TauCeti.MinusculeWeightTable.Symmetry.moduleEquiv_rep_ι_serreRootGenerator`: the coordinate
+  permutation `TauCeti.MinusculeWeightTable.Symmetry.moduleEquiv` of a table symmetry intertwines
+  the represented root generators along `TauCeti.MinusculeWeightTable.Symmetry.rootPerm`, and it
+  preserves the coordinate lattice by `moduleEquiv_mem_coordinateLattice_iff`. These are the
+  module-level inputs for descending a table symmetry to a Kostant toral-closure carrier.
 
 ## References
 
@@ -52,6 +60,20 @@ open scoped Matrix
 namespace TauCeti.MinusculeWeightTable
 
 attribute [local instance 100] LieRing.ofAssociativeRing
+
+namespace Symmetry
+
+variable {B ι : Type*} {T : MinusculeWeightTable B ι} (S : T.Symmetry)
+
+/-- The coordinate permutation of a symmetry preserves the integral coordinate lattice, in both
+directions. -/
+theorem moduleEquiv_mem_coordinateLattice_iff [Finite ι] (v : ι → ℚ) :
+    S.moduleEquiv v ∈ TauCeti.coordinateLattice ι ↔ v ∈ TauCeti.coordinateLattice ι := by
+  simp only [TauCeti.mem_coordinateLattice_iff, moduleEquiv_apply]
+  exact ⟨fun h a => by simpa only [Equiv.symm_apply_apply] using h (S.indexPerm a),
+    fun h a => h (S.indexPerm.symm a)⟩
+
+end Symmetry
 
 variable {B ι : Type*} [Fintype ι] [DecidableEq ι] (T : MinusculeWeightTable B ι)
 variable [DecidableEq B]
@@ -96,6 +118,50 @@ theorem isNilpotent_rep_serreRootGenerator (k : B ⊕ B) :
     IsNilpotent (T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
       (TauCeti.serreRootGenerator T.cartanMatrix k))) :=
   ⟨2, T.rep_serreRootGenerator_pow_two k⟩
+
+/-- The represented Cartan, positive, and negative Serre generators at a node form an `sl₂`
+triple whenever the weight table contains a weight of nonzero coordinate at that node. -/
+theorem isSl2Triple_rep_serreRootGenerator (i : B) (hi : ∃ a, T.weight a i ≠ 0) :
+    _root_.IsSl2Triple
+      (T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ (TauCeti.serreH ℚ T.cartanMatrix i)))
+      (T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
+        (TauCeti.serreRootGenerator T.cartanMatrix (.inl i))))
+      (T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
+        (TauCeti.serreRootGenerator T.cartanMatrix (.inr i)))) := by
+  obtain ⟨a, ha⟩ := hi
+  let toEnd : Matrix ι ι ℚ →ₗ⁅ℚ⁆ Module.End ℚ (ι → ℚ) :=
+    (Matrix.toLinAlgEquiv' (R := ℚ) (n := ι)).toAlgHom.toLieHom
+  have hEnd : toEnd (T.cartanGeneratorMatrixQ i) ≠ 0 := by
+    simpa only [toEnd, AlgHom.toLieHom_apply, AlgEquiv.toAlgHom_apply, map_zero] using
+      (Matrix.toLinAlgEquiv' (R := ℚ) (n := ι)).injective.ne
+        (T.isSl2TripleQ i ⟨a, ha⟩).h_ne_zero
+  have h := (T.isSl2TripleQ i ⟨a, ha⟩).map toEnd hEnd
+  -- `IsSl2Triple.map` retains the bundled Lie-hom application; expose the equivalent matrix
+  -- action so the three representation equations below can rewrite it.
+  change _root_.IsSl2Triple
+    (Matrix.toLinAlgEquiv' (T.cartanGeneratorMatrixQ i))
+    (Matrix.toLinAlgEquiv' (T.raisingMatrixQ i))
+    (Matrix.toLinAlgEquiv' (T.loweringMatrixQ i)) at h
+  have hH : Matrix.toLinAlgEquiv' (T.cartanGeneratorMatrixQ i) =
+      T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ (TauCeti.serreH ℚ T.cartanMatrix i)) := by
+    apply LinearMap.ext
+    intro v
+    rw [T.rep_ι_apply, T.rationalSerreRepresentation_serreH, Matrix.toLinAlgEquiv'_apply]
+  have hE : Matrix.toLinAlgEquiv' (T.raisingMatrixQ i) =
+      T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
+        (TauCeti.serreRootGenerator T.cartanMatrix (.inl i))) := by
+    apply LinearMap.ext
+    intro v
+    rw [TauCeti.serreRootGenerator_inl, T.rep_ι_apply,
+      T.rationalSerreRepresentation_serreE, Matrix.toLinAlgEquiv'_apply]
+  have hF : Matrix.toLinAlgEquiv' (T.loweringMatrixQ i) =
+      T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
+        (TauCeti.serreRootGenerator T.cartanMatrix (.inr i))) := by
+    apply LinearMap.ext
+    intro v
+    rw [TauCeti.serreRootGenerator_inr, T.rep_ι_apply,
+      T.rationalSerreRepresentation_serreF, Matrix.toLinAlgEquiv'_apply]
+  rwa [hH, hE, hF] at h
 
 /-! ## Stability of the coordinate lattice -/
 
@@ -166,5 +232,45 @@ theorem rep_kostantForm_mem_lattice
   T.rep_serreKostantForm_mem_lattice (by
     rw [TauCeti.serreKostantForm_def]
     exact hu) hv
+
+/-! ## Symmetries on the rational module -/
+
+namespace Symmetry
+
+variable {T} (S : T.Symmetry)
+
+/-- **The coordinate permutation of a table symmetry intertwines the represented positive and
+negative simple-root generators along the induced root permutation.** -/
+theorem moduleEquiv_rep_ι_serreRootGenerator (k : B ⊕ B) (v : ι → ℚ) :
+    S.moduleEquiv
+        (T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
+          (TauCeti.serreRootGenerator T.cartanMatrix k)) v) =
+      T.rep (_root_.UniversalEnvelopingAlgebra.ι ℚ
+          (TauCeti.serreRootGenerator T.cartanMatrix (S.rootPerm k))) (S.moduleEquiv v) := by
+  have hcoe : ⇑S.moduleEquiv = fun w => w ∘ S.indexPerm.symm := by
+    funext w a
+    exact S.moduleEquiv_apply w a
+  simp only [hcoe, T.rep_ι_apply]
+  cases k with
+  | inl i =>
+    have hY : T.raisingMatrixQ (S.nodePerm i) =
+        (T.raisingMatrixQ i).submatrix S.indexPerm.symm S.indexPerm.symm := by
+      rw [← S.raisingMatrixQ_submatrix i, Matrix.submatrix_submatrix, Equiv.self_comp_symm,
+        Matrix.submatrix_id_id]
+    rw [TauCeti.serreRootGenerator_inl, rootPerm_inl, TauCeti.serreRootGenerator_inl,
+      T.rationalSerreRepresentation_serreE, T.rationalSerreRepresentation_serreE, hY,
+      Matrix.submatrix_mulVec_equiv, Equiv.symm_symm, Function.comp_assoc, Equiv.symm_comp_self,
+      Function.comp_id]
+  | inr i =>
+    have hY : T.loweringMatrixQ (S.nodePerm i) =
+        (T.loweringMatrixQ i).submatrix S.indexPerm.symm S.indexPerm.symm := by
+      rw [← S.loweringMatrixQ_submatrix i, Matrix.submatrix_submatrix, Equiv.self_comp_symm,
+        Matrix.submatrix_id_id]
+    rw [TauCeti.serreRootGenerator_inr, rootPerm_inr, TauCeti.serreRootGenerator_inr,
+      T.rationalSerreRepresentation_serreF, T.rationalSerreRepresentation_serreF, hY,
+      Matrix.submatrix_mulVec_equiv, Equiv.symm_symm, Function.comp_assoc, Equiv.symm_comp_self,
+      Function.comp_id]
+
+end Symmetry
 
 end TauCeti.MinusculeWeightTable

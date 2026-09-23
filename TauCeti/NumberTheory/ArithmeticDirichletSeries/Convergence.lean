@@ -33,6 +33,8 @@ value.  The results below supply it for every `s > 1` and every set of primes.
 * `TauCeti.summable_absNorm_rpow_subtype_of_one_lt`: the same over an arbitrary set of
   height-one primes.  This is the family `NumberField.Set.primeIdealZetaSum` sums, so it is the
   form its consumers need.
+* `NumberField.Set.primeIdealZetaSum_univ`: the prime ideal zeta sum over all height-one primes as
+  a sum over the whole height-one spectrum.
 * `NumberField.Set.primeIdealZetaSum_mono_set`: the prime ideal zeta sum is monotone under
   inclusion of sets of primes, given summability over the larger set;
   `NumberField.Set.primeIdealZetaSum_mono_set_of_one_lt` is its `1 < s` specialization.
@@ -70,9 +72,6 @@ variable {K : Type*} [Field K] [NumberField K]
 
 namespace TauCeti
 
--- Source: Layer 7.1 of `TauCetiRoadmap/ArithmeticDirichletSeries/README.md`, which builds the
--- Dirichlet-density calculus directly on `NumberField.Set.primeIdealZetaSum`, and whose
--- Chebotarev consumer is Layer 3 of `TauCetiRoadmap/Chebotarev/README.md`.
 
 /-! ### The ideal-indexed series, as a real Dirichlet series -/
 
@@ -117,6 +116,15 @@ end TauCeti
 namespace NumberField.Set
 
 open TauCeti
+
+/-- The prime ideal zeta sum over all height-one primes is the sum over the whole height-one
+spectrum. -/
+@[simp]
+theorem primeIdealZetaSum_univ (s : ℝ) :
+    (Set.univ : Set (HeightOneSpectrum (𝓞 K))).primeIdealZetaSum s =
+      ∑' P : HeightOneSpectrum (𝓞 K), (Ideal.absNorm P.asIdeal : ℝ) ^ (-s) := by
+  rw [primeIdealZetaSum_def,
+    tsum_univ fun P : HeightOneSpectrum (𝓞 K) ↦ (Ideal.absNorm P.asIdeal : ℝ) ^ (-s)]
 
 /-- **The prime ideal zeta sum is monotone under inclusion of sets of primes.** The hypothesis is
 summability over the larger set, which is what the proof actually consumes: a sparse set of primes

@@ -63,10 +63,9 @@ standard nonnegative logarithmic prime-power weight, use Layer 5 to prove
 `primeTheta_asymptotic_of_primePsi` consume that named estimate."  It also supplies the arithmetic
 half of Layer **10.1**, "Define `primePsi` with all prime powers present": the exact nonnegative
 von Mangoldt coefficient system and the identity presenting `ψ` as its partial sum, which is the
-shape in which a Tauberian theorem delivers its conclusion.  What remains of 10.1 — the analytic
-package `PrimeBoundaryRemainder`, carrying the `LSeriesHasSum` and boundary-continuity hypotheses,
-and the asymptotic `primePsi_asymptotic_of_boundary` it yields — waits on the Wiener–Ikehara
-theorem of Layer 9.
+shape in which a Tauberian theorem delivers its conclusion.  The analytic boundary package and
+the resulting prime-number-theorem transfer are in
+`TauCeti/NumberTheory/ArithmeticDirichletSeries/Prime/Boundary.lean`.
 
 ## References
 
@@ -257,10 +256,8 @@ theorem primePsi_le_ncard_mul_log (hS : S.Finite) (hx : 1 ≤ x) :
   have hmemT : ∀ A ∈ T, ((Ideal.absNorm (primePowerBase A).asIdeal : ℝ)) ^ primePowerExponent A
       ≤ x ∧ primePowerBase A ∈ S := by
     intro A hA
-    rw [hTdef, Finset.mem_filter, mem_normLE] at hA
-    refine ⟨?_, hA.2⟩
-    rw [← Nat.cast_pow, ← absNorm_eq_absNorm_primePowerBase_pow]
-    exact hA.1
+    rw [hTdef, Finset.mem_filter] at hA
+    exact ⟨mem_primePowersLE_iff.mp hA.1, hA.2⟩
   have hsub : T ⊆ primePowersLE K x := Finset.filter_subset _ _
   have hzero : ∀ A ∈ primePowersLE K x, A ∉ T →
       {A : IdealPrimePower K | primePowerBase A ∈ S}.indicator primePowerWeight A = 0 := by

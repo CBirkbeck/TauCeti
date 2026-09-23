@@ -38,6 +38,7 @@ especially Proposition 4.5.8.
 * `TauCeti.PDCode`: an unoriented PD-code with `n` crossings.
 * `TauCeti.OrientedPDCode`: an orientation decoration of a PD-code.
 * `TauCeti.FramedOrientedPDCode`: a framing decoration of an oriented PD-code.
+* `TauCeti.PDCode.halfEdgeSuccEquiv`: the half-edge positions of a code with one crossing more.
 * `TauCeti.PDCode.mirror` and `TauCeti.PDCode.relabel`: reflection and relabelling.
 * `TauCeti.OrientedPDCode.reverse`: reversal of every component orientation.
 * `TauCeti.OrientedPDCode.crossingSign`: the sign derived from the local oriented crossing data.
@@ -70,6 +71,30 @@ theorem crossingSlotEquiv_apply (n : ℕ) (i : Fin n) (slot : Fin 4) :
   simp only [crossingSlotEquiv.eq_1, Equiv.trans_apply, finCongr_apply]
   rfl
 
+/-- The half-edge positions of a code with one crossing more: the `4 * n` positions of the first
+`n` crossings, followed by the four slots of the new last crossing. -/
+def halfEdgeSuccEquiv (n : ℕ) : Fin (4 * n) ⊕ Fin 4 ≃ Fin (4 * (n + 1)) :=
+  finSumFinEquiv.trans (finCongr (by omega))
+
+/-- A slot of one of the first `n` crossings keeps its half-edge position when a crossing is
+added last. -/
+@[simp]
+theorem crossingSlotEquiv_succ_castSucc {n : ℕ} (i : Fin n) (slot : Fin 4) :
+    crossingSlotEquiv (n + 1) (i.castSucc, slot) =
+      halfEdgeSuccEquiv n (.inl (crossingSlotEquiv n (i, slot))) := by
+  ext
+  simp only [crossingSlotEquiv_apply, Fin.val_castSucc, halfEdgeSuccEquiv, Equiv.trans_apply,
+    finCongr_apply, Fin.val_cast, finSumFinEquiv_apply_left, Fin.val_castAdd]
+
+/-- The slots of the last crossing occupy the last four half-edge positions. -/
+@[simp]
+theorem crossingSlotEquiv_succ_last {n : ℕ} (slot : Fin 4) :
+    crossingSlotEquiv (n + 1) (Fin.last n, slot) = halfEdgeSuccEquiv n (.inr slot) := by
+  ext
+  simp only [crossingSlotEquiv_apply, Fin.val_last, halfEdgeSuccEquiv, Equiv.trans_apply,
+    finCongr_apply, Fin.val_cast, finSumFinEquiv_apply_right, Fin.val_natAdd]
+  omega
+
 /-- The slot opposite a given slot in the cyclic order at a crossing. -/
 def oppositeCrossingSlot : Equiv.Perm (Fin 4) :=
   finCycle 2
@@ -87,6 +112,22 @@ theorem oppositeCrossingSlot_apply_oppositeCrossingSlot (slot : Fin 4) :
   fin_cases slot <;> decide
 
 end PDCode
+
+end TauCeti
+
+namespace Fin
+
+/-- The opposite crossing slot is different from the original slot. -/
+theorem oppositeCrossingSlot_ne (slot : Fin 4) :
+    TauCeti.PDCode.oppositeCrossingSlot slot ≠ slot := by
+  intro h
+  have hv := congrArg Fin.val h
+  rw [TauCeti.PDCode.oppositeCrossingSlot_apply] at hv
+  fin_cases slot <;> simp at hv
+
+end Fin
+
+namespace TauCeti
 
 /-- A finite unoriented PD-code with `n` crossings.
 
@@ -379,6 +420,12 @@ def crossing (D : OrientedPDCode n) (i : Fin n) (slot : Fin 4) : Fin (4 * n) :=
 def crossingSign (D : OrientedPDCode n) (i : Fin n) : ℤ :=
   if Bool.xor (D.orientation (D.crossing i 0)) (D.orientation (D.crossing i 1)) =
       D.overPair i then 1 else -1
+
+/-- The defining equation for an oriented crossing sign. -/
+theorem crossingSign_def (D : OrientedPDCode n) (i : Fin n) :
+    D.crossingSign i =
+      if Bool.xor (D.orientation (D.crossing i 0)) (D.orientation (D.crossing i 1)) =
+          D.overPair i then 1 else -1 := (rfl)
 
 /-- A crossing is positive exactly when its orientation parity agrees with its over-strand. -/
 @[simp]

@@ -27,6 +27,8 @@ The generation proof transports Mathlib's unique factorization of a nonzero frac
 ## Main definitions
 
 * `NumberFieldArithmetic.idealsAway`: unit fractional ideals trivial at the primes in `S`.
+* `NumberFieldArithmetic.idealsAwayEmptyEquiv`: ideals away from no primes are all invertible
+  fractional ideals.
 * `NumberFieldArithmetic.idealsAwayInclusion`: inclusion obtained from `S ⊆ S'`.
 * `NumberFieldArithmetic.integralIdealsAway`: nonzero integral ideals prime to `S`.
 * `NumberFieldArithmetic.integralIdealsAwayHom`: the map from integral to fractional ideals.
@@ -70,6 +72,30 @@ theorem mem_idealsAway_iff {S : Finset (HeightOneSpectrum (𝓞 K))}
     I ∈ idealsAway S ↔
       ∀ v ∈ S, FractionalIdeal.count K v (I : FractionalIdeal (𝓞 K)⁰ K) = 0 :=
   Iff.rfl
+
+/-- Ideals away from the empty set are canonically all invertible fractional ideals. -/
+def idealsAwayEmptyEquiv :
+    idealsAway (K := K) ∅ ≃* (FractionalIdeal (𝓞 K)⁰ K)ˣ where
+  toFun I := I
+  invFun I := ⟨I, by simp⟩
+  left_inv I := rfl
+  right_inv I := rfl
+  map_mul' _ _ := rfl
+
+/-- The equivalence from ideals away from the empty set does not change the underlying fractional
+ideal unit. -/
+@[simp]
+theorem idealsAwayEmptyEquiv_apply (I : idealsAway (K := K) ∅) :
+    idealsAwayEmptyEquiv I = (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :=
+  (rfl)
+
+/-- The inverse equivalence regards every invertible fractional ideal as an ideal away from the
+empty set, without changing its underlying value. -/
+@[simp]
+theorem coe_idealsAwayEmptyEquiv_symm_apply (I : (FractionalIdeal (𝓞 K)⁰ K)ˣ) :
+    ((idealsAwayEmptyEquiv.symm I : idealsAway (K := K) ∅) :
+      (FractionalIdeal (𝓞 K)⁰ K)ˣ) = I :=
+  (rfl)
 
 /-- Enlarging the excluded set of primes shrinks the group of fractional ideals away from it. -/
 theorem idealsAway_antitone {S S' : Finset (HeightOneSpectrum (𝓞 K))} (h : S ⊆ S') :
@@ -132,6 +158,23 @@ theorem mem_integralIdealsAway_iff {S : Finset (HeightOneSpectrum (𝓞 K))}
   -- Expose the set-builder carrier so the shared characterization applies directly.
   change Ideal.IsPrimeTo I (S : Set (HeightOneSpectrum (𝓞 K))) ↔ _
   exact Ideal.isPrimeTo_iff
+
+/-- Members of `integralIdealsAway S` are nonzero ideals of a Dedekind domain, so they cancel. -/
+instance (S : Finset (HeightOneSpectrum (𝓞 K))) : CancelCommMonoid (integralIdealsAway S) where
+  mul_left_cancel a _ _ h :=
+    Subtype.ext <| mul_left_cancel₀ (mem_integralIdealsAway_iff.mp a.2).1 (congrArg Subtype.val h)
+
+/-- Divisibility in `integralIdealsAway S` is divisibility of the underlying ideals: a cofactor
+of two ideals prime to `S` is itself prime to `S`. -/
+theorem integralIdealsAway_dvd_iff_dvd_coe {S : Finset (HeightOneSpectrum (𝓞 K))}
+    {I J : integralIdealsAway S} : I ∣ J ↔ (I : Ideal (𝓞 K)) ∣ (J : Ideal (𝓞 K)) := by
+  refine ⟨fun ⟨c, hc⟩ ↦ ⟨c, by rw [hc, Submonoid.coe_mul]⟩, fun ⟨c, hc⟩ ↦ ?_⟩
+  have hJ := mem_integralIdealsAway_iff.mp J.prop
+  refine ⟨⟨c, mem_integralIdealsAway_iff.mpr
+    ⟨fun h ↦ hJ.1 ?_, fun v hv hvc ↦ hJ.2 v hv ?_⟩⟩, Subtype.ext hc⟩
+  · rw [hc, h, Ideal.mul_bot]
+  · rw [hc]
+    exact dvd_mul_of_dvd_right hvc _
 
 /-- Membership in `integralIdealsAway S` is equivalently nonvanishing and vanishing fractional
 ideal multiplicity at every prime in `S`. -/

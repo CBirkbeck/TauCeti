@@ -83,6 +83,8 @@ to the canonical fraction fields used by Mathlib's different API.
   `TauCeti.Place.moduleFinite_integralClosure`, and
   `TauCeti.Place.isSeparable_fractionRing_integralClosure`: the fraction-field, localization,
   Dedekind, finiteness, and separability properties of the local integral closure `𝒪'_P`.
+* `TauCeti.Place.isIntegral_algebraMap_iff_mem_integers`: the local integral closure `𝒪'_P`
+  contracts to `𝒪_P`.
 
 ## References
 
@@ -141,6 +143,17 @@ theorem algebraMap_integersExtension_injective :
     Function.Injective (algebraMap (P.integers) F') := by
   rw [IsScalarTower.algebraMap_eq (P.integers) F F', RingHom.coe_comp]
   exact (algebraMap F F').injective.comp (FaithfulSMul.algebraMap_injective (P.integers) F)
+
+/-- **`𝒪'_P` contracts to `𝒪_P`**: a function of `F` is integral over `𝒪_P` in the extension `F'`
+exactly when it is regular at `P`. So enlarging the field does not enlarge the ring of functions
+of `F` integral over `𝒪_P`, and `𝒪'_P ∩ F = 𝒪_P`. -/
+@[simp]
+theorem isIntegral_algebraMap_iff_mem_integers {x : F} :
+    IsIntegral ↥P.integers (algebraMap F F' x) ↔ x ∈ P.integers :=
+  (isIntegral_algHom_iff (IsScalarTower.toAlgHom ↥P.integers F F')
+      (algebraMap F F').injective (x := x)).trans
+    ⟨fun hx ↦ P.mem_integers_of_isIntegral (fun r ↦ r.2) hx,
+      fun hx ↦ isIntegral_algebraMap (x := (⟨x, hx⟩ : P.integers))⟩
 
 instance isTorsionFree_integersExtension : Module.IsTorsionFree (P.integers) F' :=
   Module.isTorsionFree_iff_algebraMap_injective.mpr
@@ -786,6 +799,27 @@ theorem relativeDegree_le_finrank : relativeDegree k F P' ≤ Module.finrank F F
     (ramificationIdx_mul_relativeDegree_le_finrank k F P')
 
 end Bound
+
+section Self
+
+variable {k F : Type*} [Field k] [Field F] [Algebra k F] (P : Place k F)
+
+/-- **A place restricts to itself along the identity extension.** Restriction normalizes the
+valuation pulled back along `algebraMap F F`, which is the identity, and a place's valuation is
+already surjective, hence already normalized. -/
+@[simp]
+theorem restrict_self : restrict k F P = P := by
+  refine Place.ext ?_
+  rw [valuation_restrict, Algebra.algebraMap_self, Valuation.comap_id,
+    Valuation.normalization_eq_self_of_surjective _ P.valuation_surjective]
+
+/-- **The identity extension is unramified**: `e(P ∣ P) = 1`. -/
+@[simp]
+theorem ramificationIdx_self : ramificationIdx F P = 1 := by
+  rw [ramificationIdx_def, Algebra.algebraMap_self, Valuation.comap_id,
+    Valuation.ordIndex_eq_one_of_surjective _ P.valuation_surjective]
+
+end Self
 
 end Place
 

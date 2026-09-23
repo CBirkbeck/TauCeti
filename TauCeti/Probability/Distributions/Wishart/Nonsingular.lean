@@ -8,12 +8,18 @@ module
 public import TauCeti.Analysis.Matrix.MeasurableSpace
 public import TauCeti.Analysis.Matrix.PosDef
 public import TauCeti.Analysis.SpecialFunctions.MultivariateGamma.Basic
-public import TauCeti.MeasureTheory.Measure.SymmetricMatrix
+public import TauCeti.MeasureTheory.Measure.SymmetricMatrix.Lebesgue
+public import TauCeti.MeasureTheory.Measure.SymmetricMatrix.PosDef
+public import TauCeti.Probability.Distributions.ChiSquared
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Matrix.PosDef
+import TauCeti.MeasureTheory.Measure.WithDensity
+import TauCeti.Probability.Distributions.Gamma.Basic
 
 /-!
 # The nonsingular Wishart family
 
-The nonsingular Wishart law `TauCeti.nonsingularWishartMeasure n S` is the law on the
+The nonsingular Wishart law `TauCeti.Probability.nonsingularWishartMeasure n S` is the law on the
 symmetric-matrix subspace whose density against `TauCeti.symmetricLebesgue` is
 `(det A) ^ ((n - p - 1) / 2) * exp (-trace (S⁻¹ * A) / 2)`, normalized by
 `2 ^ (n p / 2) * (det S) ^ (n / 2) * Γ_p(n / 2)` and supported on the positive-definite cone.
@@ -32,26 +38,42 @@ constant leave the density equal to `1`, so for `-1 < n` the law is that Dirac m
 
 ## Main definitions
 
-* `TauCeti.nonsingularWishartPDFReal` and `TauCeti.nonsingularWishartPDF` — the Wishart density,
+* `TauCeti.Probability.nonsingularWishartPDFReal` and `TauCeti.Probability.nonsingularWishartPDF` —
+  the Wishart density,
   real- and `ℝ≥0∞`-valued.
-* `TauCeti.nonsingularWishartMeasure` — the nonsingular Wishart law.
+* `TauCeti.Probability.nonsingularWishartMeasure` — the nonsingular Wishart law.
 
 ## Main results
 
-* `TauCeti.nonsingularWishartPDFReal_pos_iff` — at a valid degree and scale the density is
+* `TauCeti.Probability.nonsingularWishartPDFReal_pos_iff` — at a valid degree and scale the density
+  is
   positive exactly on the positive-definite cone.
-* `TauCeti.nonsingularWishartMeasure_of_posDef` — at a valid degree and scale the law is the
+* `TauCeti.Probability.nonsingularWishartMeasure_of_posDef` — at a valid degree and scale the law is
+  the
   density against `TauCeti.symmetricLebesgue`, while
-  `TauCeti.nonsingularWishartMeasure_of_not_posDef` and
-  `TauCeti.nonsingularWishartMeasure_of_le` describe the two invalid branches.
-* `TauCeti.ae_posDef_nonsingularWishartMeasure` — the sampled matrix is positive definite almost
-  everywhere, so by `TauCeti.map_subtype_val_comap_nonsingularWishartMeasure` the law is recovered
+  `TauCeti.Probability.nonsingularWishartMeasure_of_not_posDef` and
+  `TauCeti.Probability.nonsingularWishartMeasure_of_le` describe the two invalid branches.
+* `TauCeti.Probability.ae_posDef_nonsingularWishartMeasure` — the sampled matrix is positive
+  definite almost
+  everywhere, so by `TauCeti.Probability.map_subtype_val_comap_nonsingularWishartMeasure` the law is
+  recovered
   from its lift to the cone.
-* `TauCeti.nonsingularWishartMeasure_zero` — in dimension zero the law is the Dirac mass at
+* `TauCeti.Probability.hasPDF_of_hasLaw_nonsingularWishartMeasure` and
+  `TauCeti.Probability.rnDeriv_nonsingularWishartMeasure` — a Wishart random matrix has a density
+  against
+  `TauCeti.symmetricLebesgue`, and at a valid degree and scale the law's Radon–Nikodym
+  derivative is `TauCeti.Probability.nonsingularWishartPDF`.
+* `TauCeti.Probability.nonsingularWishartMeasure_zero` — in dimension zero the law is the Dirac mass
+  at
   the unique symmetric matrix, hence a probability measure.
-* `TauCeti.measurable_nonsingularWishartMeasure` — the law is measurable jointly in its real
+* `TauCeti.Probability.map_symmetricFinOneEquiv_nonsingularWishartMeasure` — in dimension one the
+  law is the
+  chi-squared law with `n` degrees of freedom, scaled by the variance.
+* `TauCeti.Probability.measurable_nonsingularWishartMeasure` — the law is measurable jointly in its
+  real
   degree and every coordinate of its scale matrix, and
-  `TauCeti.measurable_nonsingularWishartMeasure_selfAdjoint` is the form with the scale ranging
+  `TauCeti.Probability.measurable_nonsingularWishartMeasure_selfAdjoint` is the form with the scale
+  ranging
   over the symmetric-matrix carrier.
 
 ## References
@@ -69,7 +91,7 @@ open MeasureTheory
 
 open scoped ENNReal
 
-namespace TauCeti
+namespace TauCeti.Probability
 
 variable {p : ℕ} {n : ℝ} {S : Matrix (Fin p) (Fin p) ℝ}
 
@@ -277,7 +299,7 @@ theorem measurable_uncurry_nonsingularWishartPDF (p : ℕ) :
 
 open Classical in
 /-- The **nonsingular Wishart law** of real degree `n` and positive-definite scale `S`: the
-density `TauCeti.nonsingularWishartPDF` against `TauCeti.symmetricLebesgue`. Outside the
+density `TauCeti.Probability.nonsingularWishartPDF` against `TauCeti.symmetricLebesgue`. Outside the
 classical parameter range — a scale that is not positive definite, or a degree at most `p - 1`,
 which in positive dimension is where the density stops being integrable — the definition sets the
 measure to zero. -/
@@ -356,6 +378,48 @@ theorem map_subtype_val_comap_nonsingularWishartMeasure (n : ℝ) (S : Matrix (F
   (map_comap_subtype_coe (measurableSet_posDefMatrix p) _).trans
     (Measure.restrict_eq_self_of_ae_mem (ae_posDef_nonsingularWishartMeasure n S))
 
+/-! ### The density of a Wishart random matrix -/
+
+section Density
+
+open ProbabilityTheory
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+  {X : Ω → selfAdjoint.submodule ℝ (Matrix (Fin p) (Fin p) ℝ)}
+
+/-- A random symmetric matrix with a nonsingular Wishart law has a density against
+`TauCeti.symmetricLebesgue`, at every degree and scale: outside the classical parameter range the
+law is zero, which trivially has one. -/
+theorem hasPDF_of_hasLaw_nonsingularWishartMeasure
+    (hX : HasLaw X (nonsingularWishartMeasure n S) P) : HasPDF X P (symmetricLebesgue p) := by
+  by_cases hS : S.PosDef
+  · by_cases hn : (p : ℝ) - 1 < n
+    · exact Probability.hasPDF_of_hasLaw_withDensity
+        (measurable_nonsingularWishartPDF n S).aemeasurable
+        (by rwa [← nonsingularWishartMeasure_of_posDef hS hn])
+    · refine Probability.hasPDF_of_hasLaw_withDensity (f := 0) aemeasurable_const ?_
+      rwa [withDensity_zero, ← nonsingularWishartMeasure_of_le S (not_lt.1 hn)]
+  · refine Probability.hasPDF_of_hasLaw_withDensity (f := 0) aemeasurable_const ?_
+    rwa [withDensity_zero, ← nonsingularWishartMeasure_of_not_posDef n hS]
+
+/-- The density against `TauCeti.symmetricLebesgue` of a random symmetric matrix with a
+nonsingular Wishart law is `TauCeti.Probability.nonsingularWishartPDF`. -/
+theorem pdf_eq_nonsingularWishartPDF_of_hasLaw_nonsingularWishartMeasure (hS : S.PosDef)
+    (hn : (p : ℝ) - 1 < n) (hX : HasLaw X (nonsingularWishartMeasure n S) P) :
+    pdf X P (symmetricLebesgue p) =ᵐ[symmetricLebesgue p] nonsingularWishartPDF n S :=
+  Probability.pdf_eq_of_hasLaw_withDensity (measurable_nonsingularWishartPDF n S).aemeasurable
+    (by rwa [← nonsingularWishartMeasure_of_posDef hS hn])
+
+/-- **The Radon–Nikodym derivative of the nonsingular Wishart law** against
+`TauCeti.symmetricLebesgue` is the Wishart density. -/
+theorem rnDeriv_nonsingularWishartMeasure (hS : S.PosDef) (hn : (p : ℝ) - 1 < n) :
+    (nonsingularWishartMeasure n S).rnDeriv (symmetricLebesgue p) =ᵐ[symmetricLebesgue p]
+      nonsingularWishartPDF n S := by
+  rw [nonsingularWishartMeasure_of_posDef hS hn]
+  exact Measure.rnDeriv_withDensity _ (measurable_nonsingularWishartPDF n S)
+
+end Density
+
 /-! ### Dimension zero -/
 
 /-- In dimension zero the symmetric space is a single point and the real-valued Wishart density
@@ -387,6 +451,64 @@ theorem nonsingularWishartMeasure_zero {n : ℝ} (hn : -1 < n)
   rw [nonsingularWishartMeasure_of_posDef hS (by simpa using hn), symmetricLebesgue_zero,
     dirac_withDensity' (measurable_nonsingularWishartPDF n S),
     nonsingularWishartPDF_zero, one_smul]
+
+/-! ### Dimension one -/
+
+/-- **In dimension one the nonsingular Wishart law is a scaled chi-squared law.** Read through
+the single-entry identification `TauCeti.symmetricFinOneEquiv` of `1 × 1` symmetric matrices with
+the reals, the Wishart law of degree `n` and scale `S` is the chi-squared law with `n` degrees of
+freedom, scaled by the variance `S 0 0`.
+
+In dimension one the hypotheses `0 < n` and `0 < S 0 0` are exactly the parameter range of the
+density family, and neither can be dropped: at `n = 0`, or at a nonpositive variance with
+`0 < n`, the Wishart law is zero while the right-hand side is a probability measure. -/
+theorem map_symmetricFinOneEquiv_nonsingularWishartMeasure {n : ℝ} (hn : 0 < n)
+    {S : Matrix (Fin 1) (Fin 1) ℝ} (hS : 0 < S 0 0) :
+    (nonsingularWishartMeasure n S).map symmetricFinOneEquiv =
+      (Probability.chiSquaredMeasure n).map (S 0 0 * ·) := by
+  have hposDef : S.PosDef := (Matrix.posDef_fin_one_iff S).2 hS
+  have hdet : S.det = S 0 0 := Matrix.det_fin_one S
+  let e := symmetricFinOneEquiv.toHomeomorph.toMeasurableEquiv
+  have he : (e : _ → ℝ) = symmetricFinOneEquiv := by
+    rw [Homeomorph.toMeasurableEquiv_coe, ContinuousLinearEquiv.coe_toHomeomorph]
+  rw [Probability.chiSquaredMeasure_eq_gammaMeasure hn,
+    gammaMeasure_map_const_mul (by positivity) (by norm_num) hS,
+    nonsingularWishartMeasure_of_posDef hposDef (by simpa using hn), ← he,
+    MeasurableEquiv.map_withDensity, he, measurePreserving_symmetricFinOneEquiv.map_eq,
+    ProbabilityTheory.gammaMeasure]
+  -- Both sides are now densities against Lebesgue measure on `ℝ`: compare them off the origin,
+  -- where the Wishart density vanishes but the gamma density need not.
+  refine withDensity_congr_ae ?_
+  filter_upwards [compl_mem_ae_iff.2 (measure_singleton (μ := volume) (0 : ℝ))] with x hx
+  set A := e.symm x
+  have hA : ∀ i j, (A : Matrix (Fin 1) (Fin 1) ℝ) i j = x :=
+    coe_symmetricFinOneEquiv_symm_apply x
+  rcases (Set.mem_compl_singleton_iff.1 hx).lt_or_gt with hx | hx
+  · have hnot : ¬ (A : Matrix (Fin 1) (Fin 1) ℝ).PosDef := by
+      rw [Matrix.posDef_fin_one_iff, hA]
+      exact hx.not_gt
+    rw [nonsingularWishartPDF_of_not_posDef n S hnot, ProbabilityTheory.gammaPDF_of_neg hx]
+  · have hApos : (A : Matrix (Fin 1) (Fin 1) ℝ).PosDef :=
+      (Matrix.posDef_fin_one_iff _).2 (by rwa [hA])
+    have htrace : Matrix.trace (S⁻¹ * (A : Matrix (Fin 1) (Fin 1) ℝ)) = x / S 0 0 := by
+      simp [Matrix.trace, Matrix.mul_apply, hA, div_eq_inv_mul]
+    rw [nonsingularWishartPDF_of_posDef n S hApos, ProbabilityTheory.gammaPDF_of_nonneg hx.le,
+      Matrix.det_fin_one, hA, htrace, hdet, multivariateGamma_one,
+      Real.div_rpow (by norm_num) hS.le, Real.div_rpow (by norm_num) (by norm_num), Real.one_rpow]
+    congr 1
+    have h2 := (Real.rpow_pos_of_pos (two_pos : (0 : ℝ) < 2) (n / 2)).ne'
+    have hσ := (Real.rpow_pos_of_pos hS (n / 2)).ne'
+    have hΓ := (Real.Gamma_pos_of_pos (by positivity : 0 < n / 2)).ne'
+    have hdetExponent : (n - ((1 : ℕ) : ℝ) - 1) / 2 = n / 2 - 1 := by
+      push_cast
+      ring
+    have hnormalizerExponent : n * ((1 : ℕ) : ℝ) / 2 = n / 2 := by
+      push_cast
+      ring
+    have hexponentialArgument : -(x / S 0 0) / 2 = -(1 / 2 / S 0 0 * x) := by
+      ring
+    rw [hdetExponent, hnormalizerExponent, hexponentialArgument]
+    field_simp
 
 /-! ### Parameter measurability -/
 
@@ -430,4 +552,4 @@ theorem measurable_nonsingularWishartMeasure_selfAdjoint :
   measurable_nonsingularWishartMeasure.comp
     (measurable_fst.prodMk (measurable_subtype_coe.comp measurable_snd))
 
-end TauCeti
+end TauCeti.Probability

@@ -11,6 +11,7 @@ public import Mathlib.RingTheory.Ideal.Int
 public import Mathlib.RingTheory.RamificationInertia.Inertia
 public import TauCeti.NumberTheory.NumberField.PrimeIdeal
 import Mathlib.RingTheory.DedekindDomain.Factorization
+import TauCeti.NumberTheory.RamificationInertia.Tower
 
 /-!
 # The residue degree of a height-one prime over `ℚ`
@@ -36,8 +37,13 @@ objects that description involves and records their elementary theory.
   above one exactly when its absolute norm is not a prime number.
 * `TauCeti.rationalPrimeBelow_pow_le_absNorm`: the norm of `𝔭` is at least the rational prime
   below it raised to any power at most the residue degree.
+* `TauCeti.mem_higherDegreePrimes_of_one_lt_inertiaDeg`: residue degree above one over an
+  intermediate number field forces residue degree above one over `ℚ`.
 * `TauCeti.card_filter_rationalPrimeBelow_le_finrank`: at most `[K : ℚ]` height-one primes have
   a given rational prime below them.
+* `IsDedekindDomain.HeightOneSpectrum.encard_setOf_under_eq_le_finrank`: at most `[E : K]`
+  height-one primes of `E` contract to a given height-one prime of an intermediate number field
+  `K`.
 * `IsDedekindDomain.HeightOneSpectrum.absNorm_dvd_rationalPrimeBelow_pow_finrank`: the absolute
   norm of `𝔭` divides `p ^ [K : ℚ]`, so the residue degree is at most the degree of the field.
 * `TauCeti.asIdeal_eq_span_singleton_of_absNorm_eq_pow_finrank`: a prime of full residue degree
@@ -134,6 +140,15 @@ theorem rationalPrimeBelow_pow_le_absNorm {𝔭 : HeightOneSpectrum (𝓞 K)} {n
   absNorm_eq_rationalPrimeBelow_pow 𝔭 ▸
     Nat.pow_le_pow_right (prime_rationalPrimeBelow 𝔭).one_lt.le hn
 
+/-- A height-one prime of `𝓞 E` whose residue degree over a number field `K` below `E` exceeds one
+has residue degree above one over `ℚ`, since residue degrees multiply along `ℤ → 𝓞 K → 𝓞 E`. -/
+theorem mem_higherDegreePrimes_of_one_lt_inertiaDeg {E : Type*} [Field E] [Algebra K E]
+    {𝔓 : HeightOneSpectrum (𝓞 E)} (h : 1 < 𝔓.asIdeal.inertiaDeg (𝓞 K)) :
+    𝔓 ∈ higherDegreePrimes E := by
+  rw [mem_higherDegreePrimes, Ideal.inertiaDeg_tower (R := ℤ) (𝔓.asIdeal.under (𝓞 K)) 𝔓.asIdeal]
+  have := Ideal.inertiaDeg_pos (𝔓.asIdeal.under (𝓞 K)) ℤ
+  nlinarith
+
 /-! ### Fibring the primes over the rational primes below them -/
 
 /-- In any finite set of height-one primes of `𝓞 K`, at most `[K : ℚ]` have a given rational
@@ -158,6 +173,32 @@ theorem card_filter_rationalPrimeBelow_le_finrank (F : Finset (HeightOneSpectrum
     (fun 𝔮 _ 𝔮' _ h ↦ HeightOneSpectrum.ext h))
     (NumberField.card_primesOverFinset_le_finrank (K := K) hne)
   exact (IsDedekindDomain.mem_primesOverFinset_iff hne (𝓞 K)).mpr ⟨𝔮.isPrime, ⟨(key 𝔮 h𝔮).symm⟩⟩
+
+/-- At most `[E : K]` height-one primes of `E` contract to a given height-one prime of `K`. -/
+theorem _root_.IsDedekindDomain.HeightOneSpectrum.encard_setOf_under_eq_le_finrank
+    {E : Type*} [Field E] [NumberField E] [Algebra K E]
+    (p : HeightOneSpectrum (𝓞 K)) :
+    {P : HeightOneSpectrum (𝓞 E) | P.under (𝓞 K) = p}.encard ≤ Module.finrank K E := by
+  let hdiv : ∀ P : HeightOneSpectrum (𝓞 E),
+      P.under (𝓞 K) = p ↔
+        P.asIdeal ∣ Ideal.map (algebraMap (𝓞 K) (𝓞 E)) p.asIdeal := fun P ↦ by
+    rw [← Ideal.liesOver_iff_dvd_map P.isPrime.ne_top]
+    exact ⟨fun h ↦ ⟨(congrArg HeightOneSpectrum.asIdeal h).symm⟩,
+      fun h ↦ HeightOneSpectrum.ext h.over.symm⟩
+  let e : {P : HeightOneSpectrum (𝓞 E) // P.under (𝓞 K) = p} ≃
+      p.asIdeal.primesOver (𝓞 E) :=
+    (Equiv.subtypeEquivRight hdiv).trans
+      (HeightOneSpectrum.equivPrimesOver (𝓞 E) p.ne_bot)
+  have hfin : (p.asIdeal.primesOver (𝓞 E)).Finite :=
+    Algebra.QuasiFinite.finite_primesOver p.asIdeal
+  calc
+    {P : HeightOneSpectrum (𝓞 E) | P.under (𝓞 K) = p}.encard =
+        (p.asIdeal.primesOver (𝓞 E)).encard := Set.encard_congr e
+    _ = (p.asIdeal.primesOver (𝓞 E)).ncard := hfin.cast_ncard_eq.symm
+    _ ≤ Module.finrank K E := by
+      exact ENat.natCast_le_natCast.mpr <| by
+        simpa only [IsFractionRing.finrank_eq (𝓞 K) K (𝓞 E) E] using
+          TauCeti.RamificationInertia.ncard_primesOver_le_finrank (S := 𝓞 E) p.asIdeal
 
 /-! ### Inert primes -/
 

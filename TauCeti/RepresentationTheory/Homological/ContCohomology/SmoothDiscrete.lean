@@ -34,6 +34,9 @@ with a discontinuous action whose object is discrete but not smooth. So the sour
 dictionary is the discrete `G`-modules with continuous `G`-action, and the image of the
 unrestricted construction is larger than the smooth discrete subcategory.
 
+The general smoothness facts for trivial topological representations also live here, since they
+provide the basic examples of smooth discrete objects used by coefficient constructions.
+
 ## Main definitions
 
 * `TauCeti.ofDiscreteModule`: a discrete `G`-module as an object of `TopRep R G`.
@@ -73,8 +76,12 @@ unrestricted construction is larger than the smooth discrete subcategory.
   underlying map, which is how statements phrased with it are specialised.
 * `TauCeti.res_ofDiscreteModule`: the dictionary commutes with restriction to a subgroup, on the
   nose.
+* `TauCeti.isSmoothDiscrete_of_ρ_apply_eq_self`: a discrete object with trivial action is smooth
+  discrete.
 * `TauCeti.IsSmoothDiscrete.res`: smoothness is inherited by restriction along a continuous
   homomorphism.
+* `TauCeti.isSmoothDiscrete_trivial`: a trivial representation on a discrete module is smooth
+  discrete.
 * `TauCeti.discreteRepEquivSmoothTopRep`: the two translations are an equivalence of categories
   between `TauCeti.DiscreteRep R G` and `TauCeti.SmoothDiscreteTopRep R G`.
 * `TauCeti.not_isSmoothDiscrete_ofDiscreteModule_units_zmod`: a discrete object that is not
@@ -129,17 +136,12 @@ variable {R : Type*} [Ring R] [TopologicalSpace R] {G : Type*} [Monoid G]
 
 /-- The `G`-action on the underlying module of an object of `TopRep R G`, read off from its
 operators. This is the object half of the translation back to Mathlib's unbundled classes. It is
-not a global instance: `X.V` is a projection, so instance search would attempt it on every action
-goal. Files that need it declare it a `local instance`, as this one does below. Its behaviour is
-`TopRep.distribMulAction_smul`; the body is `@[expose]`d only because the round trip of the
-dictionary below (`TauCeti.discreteRepEquivSmoothTopRep`) returns an object carrying this very
-instance, and identifying it with the one it started from is a definitional step. -/
-@[expose, instance_reducible] def distribMulAction (X : TopRep R G) : DistribMulAction G X.V where
-  smul g x := X.ρ g x
-  one_smul x := congr($(map_one X.ρ) x)
-  mul_smul g h x := congr($(map_mul X.ρ g h) x)
-  smul_zero g := map_zero (X.ρ g)
-  smul_add g x y := map_add (X.ρ g) x y
+not a global instance; files that need it declare it a `local instance`, as this one does below.
+Its behaviour is `TopRep.distribMulAction_smul`; the body is `@[expose]`d only because the round
+trip of the dictionary below (`TauCeti.discreteRepEquivSmoothTopRep`) returns an object carrying
+this very instance, and identifying it with the one it started from is a definitional step. -/
+@[expose, instance_reducible] def distribMulAction (X : TopRep R G) : DistribMulAction G X.V :=
+  .compHom X.V X.ρ.toRepresentation
 
 attribute [local instance] distribMulAction
 
@@ -233,6 +235,12 @@ anything about the elements of that module. -/
 
 @[simp] lemma ofDiscreteModule_V : (ofDiscreteModule R G M).V = M := (rfl)
 
+/-- The underlying topological module of `TauCeti.ofDiscreteModule` is discrete. This is
+`TauCeti.ofDiscreteModule_V` read as an instance: the equality holds by definition but not at
+reducible transparency, so instance search cannot find the discreteness of `M` through the
+projection on its own. -/
+instance : DiscreteTopology (ofDiscreteModule R G M).V := inferInstanceAs (DiscreteTopology M)
+
 variable {R G M}
 
 @[simp] lemma ofDiscreteModule_ρ_apply_apply (g : G) (m : M) :
@@ -258,6 +266,23 @@ structure IsSmoothDiscrete (X : TopRep R G) : Prop where
   discreteTopology : DiscreteTopology X.V
   /-- every point stabilizer is open -/
   stabilizer_isOpen (x : X.V) : IsOpen {g : G | X.ρ g x = x}
+
+/-- A discrete topological representation on which every operator fixes every point is smooth
+discrete. -/
+lemma isSmoothDiscrete_of_ρ_apply_eq_self (X : TopRep R G) [DiscreteTopology X.V]
+    (htriv : ∀ (g : G) (x : X.V), X.ρ g x = x) : IsSmoothDiscrete R X := by
+  refine ⟨inferInstance, fun x ↦ ?_⟩
+  have hstabilizer : {g : G | X.ρ g x = x} = Set.univ :=
+    Set.eq_univ_of_forall fun g ↦ htriv g x
+  rw [hstabilizer]
+  exact isOpen_univ
+
+/-- A trivial representation on a discrete module is smooth discrete: every point stabilizer is
+the whole monoid. -/
+lemma isSmoothDiscrete_trivial (M : Type w) [AddCommGroup M] [Module R M]
+    [TopologicalSpace M] [DiscreteTopology M] [ContinuousSMul R M] :
+    IsSmoothDiscrete R (TopRep.of (ContRepresentation.trivial R G M)) :=
+  isSmoothDiscrete_of_ρ_apply_eq_self R _ fun g x ↦ ContRepresentation.trivial_apply g x
 
 variable {R}
 

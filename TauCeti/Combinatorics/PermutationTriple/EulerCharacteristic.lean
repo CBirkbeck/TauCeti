@@ -128,8 +128,7 @@ theorem two_dvd_two_sub_eulerChar (t : PermutationTriple n) : (2 : ℤ) ∣ 2 - 
 
 /-! ### The Euler bound and genus -/
 
--- Source: Layer 0.6 of the Tau Ceti `BelyiMaps` roadmap, step 4 ("the general bound"). The proof
--- follows that roadmap's combinatorial transposition route, applied componentwise through
+-- The proof applies the combinatorial transposition route componentwise, through
 -- `TauCeti.card_add_orbitCount_le_length_add_two_mul_card_orbits`.
 /-- The Euler characteristic of a permutation triple is at most twice the number of orbits of
 its monodromy group. For a connected triple the orbit quotient has one element, recovering
@@ -224,6 +223,11 @@ theorem genus_eq_of_equivalent {t t' : PermutationTriple n} (h : Equivalent t t'
 theorem genus_transport (e : Fin n ≃ Fin m) (t : PermutationTriple n) :
     (transport e t).genus = t.genus := by
   rw [genus_def, genus_def, eulerChar_transport]
+
+/-- A triple of degree one has genus zero. -/
+theorem genus_of_degree_one (t : PermutationTriple 1) : t.genus = 0 := by
+  rw [Subsingleton.elim t 1, genus_def, eulerChar_one]
+  norm_num
 
 /-- For a connected triple, coercing its genus back to the integers recovers the exact quotient
 `(2 - χ) / 2`; the connected Euler bound supplies its nonnegativity. -/

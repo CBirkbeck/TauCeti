@@ -5,9 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.NumberTheory.NumberField.InfinitePlace.Basic
 public import TauCeti.LinearAlgebra.QuadraticForm.BaseChange
-public import TauCeti.NumberTheory.NumberField.FinitePlace
+public import TauCeti.NumberTheory.NumberField.Global.Places.ScalarExtension
 
 /-!
 # Localization of quadratic forms over number fields
@@ -17,9 +16,10 @@ finite completions and to the real or complex field selected by an infinite plac
 definitions use `QuadraticForm.baseChange`; in particular, their underlying spaces are genuine
 tensor products over the global field rather than independently chosen local spaces.
 
-The evaluation, nondegeneracy, localization of diagonal forms, and algebraic-compatibility
-lemmas make the local forms usable without unfolding the localization definitions. They are the
-common input for local isotropy, representation, and invariant comparisons over number fields.
+The evaluation, nondegeneracy, isometry-transport, localization of diagonal forms, and
+algebraic-compatibility lemmas make the local forms usable without unfolding the localization
+definitions. They are the common input for local isotropy, representation, and invariant
+comparisons over number fields.
 
 -/
 
@@ -31,16 +31,11 @@ noncomputable section
 open IsDedekindDomain NumberField NumberField.InfinitePlace
 open scoped TensorProduct
 
-universe u v
+universe u v v'
 
 namespace IsDedekindDomain.HeightOneSpectrum
 
 variable {K : Type u} [Field K]
-variable {V : Type v} [AddCommGroup V] [Module K V]
-
-/-- The scalar extension of `V` to the finite completion of `K` at `v`. -/
-abbrev FiniteScalarExtension [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :=
-  v.adicCompletion K ⊗[K] V
 
 /-- The map from global units to units in the completion at a finite place. -/
 def unitAtFinitePlace [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :
@@ -59,12 +54,6 @@ end IsDedekindDomain.HeightOneSpectrum
 namespace TauCeti
 
 variable {K : Type u} [Field K]
-variable {V : Type v} [AddCommGroup V] [Module K V]
-
-/-- The scalar extension of `V` to `ℝ` through the embedding belonging to a real place. -/
-abbrev RealScalarExtension (w : {w : InfinitePlace K // w.IsReal}) :=
-  letI : Algebra K ℝ := (embedding_of_isReal w.2).toAlgebra
-  ℝ ⊗[K] V
 
 /-- The map from global units to real units induced by a real place. -/
 def unitAtRealPlace (w : {w : InfinitePlace K // w.IsReal}) : Kˣ →* ℝˣ :=
@@ -77,18 +66,6 @@ theorem unitAtRealPlace_apply (w : {w : InfinitePlace K // w.IsReal}) (a : Kˣ) 
   rfl
 
 end TauCeti
-
-namespace NumberField.InfinitePlace
-
-variable {K : Type u} [Field K]
-variable {V : Type v} [AddCommGroup V] [Module K V]
-
-/-- The scalar extension of `V` to `ℂ` through the chosen embedding of an infinite place. -/
-abbrev ComplexScalarExtension (w : InfinitePlace K) :=
-  letI : Algebra K ℂ := w.embedding.toAlgebra
-  ℂ ⊗[K] V
-
-end NumberField.InfinitePlace
 
 namespace QuadraticForm
 
@@ -178,6 +155,36 @@ theorem Nondegenerate.atComplexEmbedding [FiniteDimensional K V]
   let : Algebra K ℂ := w.embedding.toAlgebra
   rw [atComplexEmbedding_def]
   exact _root_.QuadraticForm.Nondegenerate.baseChange hQ
+
+/-- A global isometry of quadratic forms localizes to an isometry at every finite place. -/
+theorem _root_.QuadraticMap.Equivalent.atFinitePlace [NumberField K]
+    {W : Type v'} [AddCommGroup W] [Module K W]
+    {Q : _root_.QuadraticForm K V} {R : _root_.QuadraticForm K W} (h : Q.Equivalent R)
+    (v : HeightOneSpectrum (𝓞 K)) :
+    (Q.atFinitePlace v).Equivalent (R.atFinitePlace v) := by
+  let : Invertible (2 : K) := invertibleOfNonzero two_ne_zero
+  simpa only [atFinitePlace_def] using h.baseChange (v.adicCompletion K)
+
+/-- A global isometry of quadratic forms localizes to an isometry at every real place. -/
+theorem _root_.QuadraticMap.Equivalent.atRealPlace {W : Type v'} [AddCommGroup W] [Module K W]
+    {Q : _root_.QuadraticForm K V} {R : _root_.QuadraticForm K W} (h : Q.Equivalent R)
+    (w : {w : InfinitePlace K // w.IsReal}) :
+    (Q.atRealPlace w).Equivalent (R.atRealPlace w) := by
+  let : CharZero K := RingHom.charZero w.1.embedding
+  let : Invertible (2 : K) := invertibleOfNonzero two_ne_zero
+  let : Algebra K ℝ := (embedding_of_isReal w.2).toAlgebra
+  simpa only [atRealPlace_def] using h.baseChange ℝ
+
+/-- A global isometry of quadratic forms localizes to an isometry through the complex embedding
+of every infinite place. -/
+theorem _root_.QuadraticMap.Equivalent.atComplexEmbedding {W : Type v'} [AddCommGroup W]
+    [Module K W] {Q : _root_.QuadraticForm K V} {R : _root_.QuadraticForm K W}
+    (h : Q.Equivalent R) (w : InfinitePlace K) :
+    (Q.atComplexEmbedding w).Equivalent (R.atComplexEmbedding w) := by
+  let : CharZero K := RingHom.charZero w.embedding
+  let : Invertible (2 : K) := invertibleOfNonzero two_ne_zero
+  let : Algebra K ℂ := w.embedding.toAlgebra
+  simpa only [atComplexEmbedding_def] using h.baseChange ℂ
 
 section Diagonal
 

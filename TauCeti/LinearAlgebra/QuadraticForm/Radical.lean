@@ -23,6 +23,8 @@ its polar form is `2 • B`, and nondegeneracy passes from `B` to it as soon as 
 
 * `QuadraticMap.radical_neg`: negating a quadratic map does not change its radical.
 * `QuadraticMap.radical_prod`: the radical of an orthogonal product is the product of the radicals.
+* `QuadraticMap.nondegenerate_of_ker_polarBilin_eq_bot`: a quadratic map whose polar form has
+  trivial kernel is nondegenerate.
 * `QuadraticMap.isSymm_polarBilin`: the polar form is symmetric.
 * `QuadraticMap.polarBilin_restrict`: polarization commutes with restriction to a submodule.
 * `QuadraticMap.Nondegenerate.isCompl_orthogonal`: a subspace on which the form restricts
@@ -89,6 +91,14 @@ theorem radical_prod [Invertible (2 : R)] (Q : QuadraticMap R M P) (Q' : Quadrat
   · rintro ⟨hp, hp'⟩ x
     simpa using congrArg₂ (· + ·) (hp x.1) (hp' x.2)
 
+/-- A quadratic map whose polar form has trivial kernel is nondegenerate. -/
+theorem nondegenerate_of_ker_polarBilin_eq_bot {Q : QuadraticMap R M P}
+    (hker : Q.polarBilin.ker = ⊥) : Q.Nondegenerate := by
+  refine ⟨le_antisymm (Q.radical_le_ker_polarBilin.trans hker.le) bot_le, ?_⟩
+  rw [hker]
+  nontriviality R
+  simp only [rank_subsingleton', zero_le]
+
 end QuadraticMap
 
 namespace QuadraticMap.Nondegenerate
@@ -147,6 +157,44 @@ theorem nondegenerate_restrict_orthogonal (hQ : Q.Nondegenerate)
 end Orthogonal
 
 end QuadraticMap.Nondegenerate
+
+namespace QuadraticMap
+
+variable {K : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
+
+/-- A nondegenerate quadratic space of dimension at least two has an anisotropic vector
+orthogonal to any given anisotropic vector. -/
+theorem exists_orthogonal_anisotropic [NeZero (2 : K)]
+    (Q : QuadraticForm K V) (hQ : Q.Nondegenerate) (hrank : 2 ≤ Module.finrank K V) {y : V}
+    (hy : Q y ≠ 0) : ∃ z : V, Q.IsOrtho z y ∧ Q z ≠ 0 := by
+  let _ : Invertible (2 : K) := invertibleOfNonzero (NeZero.ne (2 : K))
+  let B : LinearMap.BilinForm K V := Q.polarBilin
+  let W : Submodule K V := B.orthogonal (K ∙ y)
+  have hB : B.Nondegenerate := (QuadraticMap.nondegenerate_polar_iff (Q := Q)).mpr hQ
+  have hBsymm : B.IsSymm := ⟨fun x y => QuadraticMap.polar_comm Q x y⟩
+  have hByy : B y y ≠ 0 := by
+    simpa only [B, QuadraticMap.polarBilin_apply_apply, QuadraticMap.polar_self, nsmul_eq_mul,
+      Nat.cast_ofNat] using mul_ne_zero (NeZero.ne (2 : K)) hy
+  have hWnondeg : (B.restrict W).Nondegenerate :=
+    B.restrict_nondegenerate_orthogonal_spanSingleton hB hBsymm.isRefl hByy
+  have hWrank : 0 < Module.finrank K W := by
+    dsimp only [W]
+    rw [B.finrank_orthogonal hB]
+    rw [finrank_span_singleton (fun h => hy (by simp [h]))]
+    omega
+  let _ : Nontrivial W := Module.nontrivial_of_finrank_pos hWrank
+  obtain ⟨z, hz⟩ := LinearMap.BilinForm.exists_bilinForm_self_ne_zero
+    hWnondeg.ne_zero (LinearMap.BilinForm.isSymm_iff.mp (hBsymm.restrict W))
+  refine ⟨z, ?_, ?_⟩
+  · apply QuadraticMap.isOrtho_polarBilin.mp
+    simpa only [B, W, QuadraticMap.polarBilin_apply_apply, QuadraticMap.polar_comm] using
+      z.2 y (Submodule.mem_span_singleton_self y)
+  · have hz' : B (z : V) (z : V) ≠ 0 := by
+      simpa only [LinearMap.BilinForm.restrict_apply, LinearMap.domRestrict_apply] using hz
+    simpa only [B, QuadraticMap.polarBilin_apply_apply, QuadraticMap.polar_self, nsmul_eq_mul,
+      Nat.cast_ofNat, mul_ne_zero_iff_left (NeZero.ne (2 : K))] using hz'
+
+end QuadraticMap
 
 namespace QuadraticMap.Anisotropic
 

@@ -18,8 +18,8 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 
 This file contains general lemmas about object properties: transporting them along an
 equivalence, comparing Mathlib's closure type classes with one another in the presence of a
-zero object and of binary biproducts, smallness of full subcategories, and additivity of inclusions
-between full subcategories.
+zero object and of binary biproducts, smallness of full subcategories, and additivity of the
+standard functors between full subcategories.
 
 ## Main declarations
 
@@ -37,6 +37,12 @@ between full subcategories.
   small category is essentially small.
 * `CategoryTheory.ObjectProperty.ιOfLE_additive`: the inclusion of a smaller property into a larger
   one is additive.
+* `CategoryTheory.Equivalence.congrFullSubcategory_functor_additive` and
+  `CategoryTheory.Equivalence.congrFullSubcategory_inverse_additive`: an additive equivalence
+  restricts to an additive equivalence between corresponding full subcategories.
+* `CategoryTheory.Equivalence.congrFullSubcategory_functor_comp_ι` and
+  `CategoryTheory.Equivalence.congrFullSubcategory_inverse_comp_ι`: the restricted functors,
+  followed by the inclusions, are the inclusions followed by the original functors.
 -/
 
 public section
@@ -114,5 +120,73 @@ instance ιOfLE_additive {C : Type u₁} [Category.{v₁} C] [Preadditive C]
   map_add := rfl
 
 end ObjectProperty
+
+namespace Equivalence
+
+/-- The forward functor on corresponding full subcategories is the lift of the original functor. -/
+theorem congrFullSubcategory_functor_eq_lift
+    {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
+    {P : ObjectProperty C} {Q : ObjectProperty D} [Q.IsClosedUnderIsomorphisms]
+    (e : C ≌ D) (h : Q.inverseImage e.functor = P) :
+    (e.congrFullSubcategory h).functor =
+      Q.lift (P.ι ⋙ e.functor) (fun ⟨X, hX⟩ ↦ by rwa [← h] at hX) :=
+  rfl
+
+/-- The inverse functor on corresponding full subcategories is the lift of the original inverse. -/
+theorem congrFullSubcategory_inverse_eq_lift
+    {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
+    {P : ObjectProperty C} {Q : ObjectProperty D} [Q.IsClosedUnderIsomorphisms]
+    (e : C ≌ D) (h : Q.inverseImage e.functor = P) :
+    (e.congrFullSubcategory h).inverse =
+      P.lift (Q.ι ⋙ e.inverse) (fun ⟨Y, hY⟩ ↦ by
+        rw [← h]
+        exact Q.prop_of_iso (e.counitIso.app Y).symm hY) :=
+  rfl
+
+/-- The forward functor on corresponding full subcategories, followed by the inclusion, is the
+inclusion followed by the original functor. -/
+theorem congrFullSubcategory_functor_comp_ι
+    {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
+    {P : ObjectProperty C} {Q : ObjectProperty D} [Q.IsClosedUnderIsomorphisms]
+    (e : C ≌ D) (h : Q.inverseImage e.functor = P) :
+    (e.congrFullSubcategory h).functor ⋙ Q.ι = P.ι ⋙ e.functor := by
+  rw [congrFullSubcategory_functor_eq_lift]
+  exact Functor.ext (fun _ ↦ rfl) fun _ _ _ ↦ by
+    simp only [Functor.comp_map, ObjectProperty.ι_obj_lift_map, eqToHom_refl, Category.id_comp,
+      Category.comp_id]
+
+/-- The inverse functor on corresponding full subcategories, followed by the inclusion, is the
+inclusion followed by the original inverse. -/
+theorem congrFullSubcategory_inverse_comp_ι
+    {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
+    {P : ObjectProperty C} {Q : ObjectProperty D} [Q.IsClosedUnderIsomorphisms]
+    (e : C ≌ D) (h : Q.inverseImage e.functor = P) :
+    (e.congrFullSubcategory h).inverse ⋙ P.ι = Q.ι ⋙ e.inverse := by
+  rw [congrFullSubcategory_inverse_eq_lift]
+  exact Functor.ext (fun _ ↦ rfl) fun _ _ _ ↦ by
+    simp only [Functor.comp_map, ObjectProperty.ι_obj_lift_map, eqToHom_refl, Category.id_comp,
+      Category.comp_id]
+
+/-- The functor of an equivalence restricted to corresponding full subcategories is additive. -/
+instance congrFullSubcategory_functor_additive
+    {C : Type u₁} [Category.{v₁} C] [Preadditive C]
+    {D : Type u₂} [Category.{v₂} D] [Preadditive D]
+    {P : ObjectProperty C} {Q : ObjectProperty D} [Q.IsClosedUnderIsomorphisms]
+    (e : C ≌ D) [e.functor.Additive] (h : Q.inverseImage e.functor = P) :
+    (e.congrFullSubcategory h).functor.Additive := by
+  rw [congrFullSubcategory_functor_eq_lift]
+  infer_instance
+
+/-- The inverse of an equivalence restricted to corresponding full subcategories is additive. -/
+instance congrFullSubcategory_inverse_additive
+    {C : Type u₁} [Category.{v₁} C] [Preadditive C]
+    {D : Type u₂} [Category.{v₂} D] [Preadditive D]
+    {P : ObjectProperty C} {Q : ObjectProperty D} [Q.IsClosedUnderIsomorphisms]
+    (e : C ≌ D) [e.inverse.Additive] (h : Q.inverseImage e.functor = P) :
+    (e.congrFullSubcategory h).inverse.Additive := by
+  rw [congrFullSubcategory_inverse_eq_lift]
+  infer_instance
+
+end Equivalence
 
 end CategoryTheory

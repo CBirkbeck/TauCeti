@@ -10,8 +10,8 @@ public import Mathlib.Analysis.Normed.Operator.Bilinear
 public import Mathlib.Analysis.Normed.Operator.NormedSpace
 public import Mathlib.LinearAlgebra.Matrix.BilinearForm
 public import Mathlib.LinearAlgebra.Matrix.Symmetric
-public import Mathlib.LinearAlgebra.QuadraticForm.Basic
 public import Mathlib.Topology.Algebra.Module.FiniteDimensionBilinear
+public import TauCeti.LinearAlgebra.Matrix.ToQuadraticForm
 
 /-!
 # Uniform ellipticity for divergence-form PDE coefficients
@@ -46,6 +46,8 @@ and Lax--Milgram arguments: constants are parameters, not hidden existential dat
   continuous linear map.
 * `TauCeti.PDE.matrixBilinearForm_opNorm_le_of_upper_bound`: a pointwise bilinear upper
   bound controls the operator norm of the attached matrix bilinear form.
+* `TauCeti.PDE.mul_sq_mul_norm_sq_le_matrixBilinearForm_add`: the pointwise absorption
+  estimate used in Caccioppoli inequalities.
 * `TauCeti.PDE.UniformlyEllipticOn.isCoercive_matrixBilinearForm`: pointwise coercivity of
   the bilinear form attached to a uniformly elliptic coefficient field.
 * `TauCeti.PDE.UniformlyEllipticOn.opNorm_matrixBilinearForm_le`: pointwise operator-norm
@@ -79,17 +81,11 @@ open Matrix
 
 variable {X n : Type*} [Fintype n] [DecidableEq n]
 
-/-- Mathlib's matrix quadratic form is the dot-product expression `ξᵀ A ξ`. -/
-lemma toQuadraticForm'_eq_dotProduct (A : Matrix n n ℝ) (ξ : EuclideanSpace ℝ n) :
-    A.toQuadraticForm' ξ = ξ ⬝ᵥ (A *ᵥ ξ) := by
-  rw [Matrix.toQuadraticForm',
-    LinearMap.BilinMap.toQuadraticMap_apply, Matrix.toLinearMap₂'_apply']
-
 /-- The identity matrix has quadratic form `‖ξ‖²`. -/
 @[simp]
 lemma toQuadraticForm'_one (ξ : EuclideanSpace ℝ n) :
     (1 : Matrix n n ℝ).toQuadraticForm' ξ = ‖ξ‖ ^ 2 := by
-  rw [toQuadraticForm'_eq_dotProduct, one_mulVec]
+  rw [Matrix.toQuadraticForm'_apply, one_mulVec]
   simpa [dotProduct, sq] using (EuclideanSpace.real_norm_sq_eq ξ).symm
 
 omit [DecidableEq n] in
@@ -119,25 +115,17 @@ lemma matrixBilinearForm_one_apply (η ξ : EuclideanSpace ℝ n) :
     matrixBilinearForm (1 : Matrix n n ℝ) η ξ = η ⬝ᵥ ξ := by
   rw [matrixBilinearForm_apply, one_mulVec]
 
-/-- Matrix quadratic forms are linear in scalar multiplication of the coefficient matrix. -/
-@[simp]
-lemma toQuadraticForm'_smul (c : ℝ) (A : Matrix n n ℝ) (ξ : EuclideanSpace ℝ n) :
-    (c • A).toQuadraticForm' ξ = c * A.toQuadraticForm' ξ := by
-  rw [toQuadraticForm'_eq_dotProduct, toQuadraticForm'_eq_dotProduct, smul_mulVec,
-    dotProduct_smul]
-  simp [smul_eq_mul]
-
 /-- The scalar identity matrix has quadratic form `c ‖ξ‖²`. -/
 lemma toQuadraticForm'_smul_one (c : ℝ) (ξ : EuclideanSpace ℝ n) :
     (c • (1 : Matrix n n ℝ)).toQuadraticForm' ξ = c * ‖ξ‖ ^ 2 := by
-  rw [toQuadraticForm'_smul, toQuadraticForm'_one]
+  rw [toQuadraticForm'_smul, _root_.smul_apply, smul_eq_mul, toQuadraticForm'_one]
 
 /-- Matrix quadratic forms are additive in the coefficient matrix. -/
 @[simp]
 lemma toQuadraticForm'_add (A B : Matrix n n ℝ) (ξ : EuclideanSpace ℝ n) :
     (A + B).toQuadraticForm' ξ = A.toQuadraticForm' ξ + B.toQuadraticForm' ξ := by
-  rw [toQuadraticForm'_eq_dotProduct, toQuadraticForm'_eq_dotProduct,
-    toQuadraticForm'_eq_dotProduct, add_mulVec, dotProduct_add]
+  rw [Matrix.toQuadraticForm'_apply, Matrix.toQuadraticForm'_apply,
+    Matrix.toQuadraticForm'_apply, add_mulVec, dotProduct_add]
 
 omit [DecidableEq n] in
 /-- Matrix bilinear forms are linear in scalar multiplication of the coefficient matrix. -/
@@ -157,7 +145,7 @@ lemma matrixBilinearForm_add_apply (A B : Matrix n n ℝ) (η ξ : EuclideanSpac
 @[simp]
 lemma toQuadraticForm'_transpose (A : Matrix n n ℝ) (ξ : EuclideanSpace ℝ n) :
     Aᵀ.toQuadraticForm' ξ = A.toQuadraticForm' ξ := by
-  rw [toQuadraticForm'_eq_dotProduct, toQuadraticForm'_eq_dotProduct,
+  rw [Matrix.toQuadraticForm'_apply, Matrix.toQuadraticForm'_apply,
     Matrix.dotProduct_transpose_mulVec]
 
 omit [DecidableEq n] in
@@ -175,7 +163,47 @@ lemma matrixBilinearForm_smul_one_apply (c : ℝ) (η ξ : EuclideanSpace ℝ n)
 /-- The quadratic part of the matrix bilinear form is the matrix quadratic form. -/
 lemma matrixBilinearForm_self (A : Matrix n n ℝ) (ξ : EuclideanSpace ℝ n) :
     matrixBilinearForm A ξ ξ = A.toQuadraticForm' ξ := by
-  rw [matrixBilinearForm_apply, toQuadraticForm'_eq_dotProduct]
+  rw [matrixBilinearForm_apply, Matrix.toQuadraticForm'_apply]
+
+/-- A pointwise absorption estimate for matrix bilinear forms. If the quadratic form is
+bounded below at `g` by `λ ‖g‖²` and the bilinear form at `(q, g)` is bounded by
+`Λ ‖q‖ ‖g‖`, then the cross term in `A(g, z²g + 2zwq)` is absorbed by half of the
+elliptic term and a multiple of `w²‖q‖²`. -/
+theorem mul_sq_mul_norm_sq_le_matrixBilinearForm_add {A : Matrix n n ℝ} {lam Lam : ℝ}
+    (hlam : 0 < lam) (z w : ℝ) (g q : EuclideanSpace ℝ n)
+    (hlower : lam * ‖g‖ ^ 2 ≤ A.toQuadraticForm' g)
+    (hupper : |q ⬝ᵥ (A *ᵥ g)| ≤ Lam * ‖q‖ * ‖g‖) :
+    lam * (z ^ 2 * ‖g‖ ^ 2) ≤
+      matrixBilinearForm A (z • (z • g + w • q) + (z * w) • q) g
+        + lam / 2 * (z ^ 2 * ‖g‖ ^ 2) + 2 * Lam ^ 2 / lam * (‖q‖ ^ 2 * w ^ 2) := by
+  have hexp : matrixBilinearForm A (z • (z • g + w • q) + (z * w) • q) g =
+      z ^ 2 * A.toQuadraticForm' g + 2 * (z * w) * (q ⬝ᵥ (A *ᵥ g)) := by
+    rw [← matrixBilinearForm_self, ← matrixBilinearForm_apply]
+    simp only [map_add, map_smul, _root_.add_apply, FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
+    ring
+  have hcross : |q ⬝ᵥ (A *ᵥ g)| ≤ Lam * ‖q‖ * ‖g‖ := hupper
+  -- Weighted Young inequality `2 X Y ≤ (λ/2) X² + (2/λ) Y²` for `X = |z| ‖g‖` and
+  -- `Y = Λ |w| ‖q‖`: Mathlib's `two_mul_le_add_mul_sq` at weight `ε = λ/2`.
+  have hyoung : 2 * (|z| * ‖g‖) * (Lam * |w| * ‖q‖) ≤
+      lam / 2 * (|z| * ‖g‖) ^ 2 + 2 / lam * (Lam * |w| * ‖q‖) ^ 2 := by
+    have h := two_mul_le_add_mul_sq (a := |z| * ‖g‖) (b := Lam * |w| * ‖q‖)
+      (ε := lam / 2) (by linarith)
+    rwa [inv_div] at h
+  have hzw : |2 * (z * w) * (q ⬝ᵥ (A *ᵥ g))| ≤ 2 * (|z| * ‖g‖) * (Lam * |w| * ‖q‖) := by
+    rw [abs_mul, abs_mul, abs_mul, abs_two]
+    calc 2 * (|z| * |w|) * |q ⬝ᵥ (A *ᵥ g)| ≤ 2 * (|z| * |w|) * (Lam * ‖q‖ * ‖g‖) := by
+          gcongr
+      _ = 2 * (|z| * ‖g‖) * (Lam * |w| * ‖q‖) := by ring
+  have hsqz : |z| ^ 2 = z ^ 2 := sq_abs z
+  have hsqw : |w| ^ 2 = w ^ 2 := sq_abs w
+  have hyoung' : 2 * (|z| * ‖g‖) * (Lam * |w| * ‖q‖) ≤
+      lam / 2 * (z ^ 2 * ‖g‖ ^ 2) + 2 * Lam ^ 2 / lam * (‖q‖ ^ 2 * w ^ 2) := by
+    refine hyoung.trans_eq ?_
+    rw [mul_pow, mul_pow, mul_pow, hsqz, hsqw]
+    ring
+  rw [hexp]
+  nlinarith [neg_abs_le (2 * (z * w) * (q ⬝ᵥ (A *ᵥ g))), sq_nonneg z,
+    mul_le_mul_of_nonneg_left hlower (sq_nonneg z)]
 
 omit [DecidableEq n] in
 /-- The principal coefficient matrix-to-bilinear-form map as a continuous linear map. -/
@@ -271,8 +299,8 @@ lemma coefficientSymmetricPart_eq_self_of_isSymm {A : Matrix n n ℝ} (hA : A.Is
 @[simp]
 lemma toQuadraticForm'_coefficientSymmetricPart (A : Matrix n n ℝ) (ξ : EuclideanSpace ℝ n) :
     (coefficientSymmetricPart A).toQuadraticForm' ξ = A.toQuadraticForm' ξ := by
-  rw [coefficientSymmetricPart, toQuadraticForm'_smul, toQuadraticForm'_add,
-    toQuadraticForm'_transpose]
+  rw [coefficientSymmetricPart, toQuadraticForm'_smul, _root_.smul_apply, smul_eq_mul,
+    toQuadraticForm'_add, toQuadraticForm'_transpose]
   ring
 
 omit [DecidableEq n] in
@@ -406,7 +434,7 @@ value by the same constant. -/
 lemma abs_toQuadraticForm'_le_of_abs_dotProduct_mulVec_le {B : Matrix n n ℝ} {Mu : ℝ}
     (hB : ∀ η ξ : EuclideanSpace ℝ n, |η ⬝ᵥ (B *ᵥ ξ)| ≤ Mu * ‖η‖ * ‖ξ‖) (ξ : EuclideanSpace ℝ n) :
     |B.toQuadraticForm' ξ| ≤ Mu * ‖ξ‖ ^ 2 := by
-  rw [toQuadraticForm'_eq_dotProduct]
+  rw [Matrix.toQuadraticForm'_apply]
   have h := hB ξ ξ
   simpa [sq, mul_assoc] using h
 
