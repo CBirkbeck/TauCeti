@@ -176,9 +176,7 @@ def kerNormInclusion (T : LayerRestriction small big) (F : Formation G) :
       exact Representation.ker_norm_comp_subtype_le_ker_norm (ρ := (big.rep F).ρ)
         (H := T.galHom.range) h
 
--- The `simp` lemma on underlying elements states its left-hand side through `dsimp% only`:
--- `toRep` and `NormalLayer.rep` are `abbrev`s, and `simp` reduces their carriers in implicit type
--- arguments before it looks a term up, so a left-hand side stated plainly over them is never found.
+-- `dsimp% only` on the left-hand side: see the implementation notes of `Formation/Basic.lean`.
 /-- The inclusion of norm kernels moves no element of the ambient module. -/
 @[simp]
 theorem kerNormInclusion_apply_coe (T : LayerRestriction small big) (F : Formation G)
