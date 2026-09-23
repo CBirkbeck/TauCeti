@@ -42078,3 +42078,16 @@ No merges. Pin `dc4b8d60d5`, main `d66b14525`.
   `ccc663cf3` has no board yet). If `documentation` fires again there, delete the sentence, and reply in the round-1 `attribution` thread
   linking #8344's `attribution` finding.
 * No merges. Pin `dc4b8d60d5`, main `9c54f1f46`.
+
+## r940 — 2026-09-23T18:54Z (cron)
+
+* **#8332 round 3** (board by `sqrt-of-2`, 18:48:14Z, on the provenance head `ccc663cf3`): `documentation` **still** requests changes; the other
+  rubrics are "stale". The edited thread says: "'Its design follows the … Exchangeability roadmap' is module-level roadmap attribution. The
+  earlier attribution review requested credit here, but this documentation rubric places that credit in the PR description. Fix: Remove
+  the roadmap reference from the module docstring; keep the mathematical motivation and external mathematical source there."
+* **Implemented:** `a32a2f72e` removes the roadmap reference and keeps the `cameronfreer/exchangeability` motivation and pin; the docstring
+  is now as at the first commit `0b1248176`. Gate 12/0/0; pushed; body v4 links both threads and explains the back-and-forth. So the r937
+  provenance compromise did not satisfy `documentation`. **If `attribution` re-fires asking for credit, contest it** in its thread, quoting
+  `documentation` round 3 and #8344's `attribution` r4086003465.
+* #8339 (`4f18336f9`) and #8344 (`ba8ab38b9`) have builds queued. Their boards are BEHIND their heads, as expected. No merges. Pin
+  `dc4b8d60d5`, main `db753ef7a`.
