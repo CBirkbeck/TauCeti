@@ -50,10 +50,12 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8273** | `0f704c040` | first build | kind 2 in kind 1's slot (`Probability/Independence/Conditional.lean`: 82 `↦`, 12 chains split; +101/−85; gate 12/0/0; gpt-6-astra cleared it (r886); `Roadmap: Exchangeability`, since the only importer is `DeFinetti/PrefixDeletion.lean`). **Draft**, opened r902 from `3bbef7660` | **CI** — mark ready when `sandboxed-build` is green |
 
 **In progress: #8224 (`awaiting-review`, carrying the r889 error board), #8235 (`awaiting-review`, no board) and #8273 (draft, first build).** #8233 is
-`ready-to-merge` (MERGING). **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z). The next opening is kind 1
-if the pin has moved, otherwise kind 2.
+`ready-to-merge` (MERGING). **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z).
 
-**The staged kind-2 branch was opened as #8273 (r902).** The next opening is **kind 3** (ready targets in item 5: the `RelNorm.lean` dead `hJ'`, the `GlobalTurning.lean` `i ≤ j`).
+**The staged kind-2 branch was opened as #8273 (r902).** The next opening is **kind 3** (ready targets in item 5: the `RelNorm.lean` dead `hJ'`, the `GlobalTurning.lean` `i ≤ j`). #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `3bbef7660`, the Mathlib pin
+`dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `3996e911a`
+(r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
 
