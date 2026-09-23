@@ -69,6 +69,12 @@ noncomputable def chainsMapShortComplex (Φ : X ⟶ Y.map (resFunctor f)) :
   τ₁ := chainsMap f Φ.τ₁
   τ₂ := chainsMap f Φ.τ₂
   τ₃ := chainsMap f Φ.τ₃
+  -- The middle terms of the `Eq.trans` chains agree only up to definitional unfolding:
+  -- `chainsMap_comp` composes along `(MonoidHom.id H).comp f` and `f.comp (MonoidHom.id G)`,
+  -- which unfold to `f`; `resFunctor (MonoidHom.id _)` acts as the identity on morphisms; and
+  -- `(Y.map (resFunctor f)).f` unfolds to `(resFunctor f).map Y.f`. Mathlib's `chainsFunctor`
+  -- relies on the same unfolding (its `map_comp` is `chainsMap_comp (MonoidHom.id G)
+  -- (MonoidHom.id G)`), so no dependent rewrite through `groupHomology.congr` is needed.
   comm₁₂ :=
     (chainsMap_comp f (MonoidHom.id H) Φ.τ₁ Y.f).symm.trans
       ((congrArg (chainsMap f) Φ.comm₁₂).trans (chainsMap_comp (MonoidHom.id G) f X.f Φ.τ₂))
