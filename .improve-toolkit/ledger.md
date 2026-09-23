@@ -42052,3 +42052,10 @@ No merges. Pin `dc4b8d60d5`, main `d66b14525`.
   **contest** in its thread, quoting the `attribution` round-1 wording (CLAUDE.md contradiction rule).
 * #8339 and #8344: their References bullets ("Roadmap: `TauCetiRoadmap/<Area>/README.md`.") are citations, not status claims, so no
   speculative push (the r935 rule). Both are still rebuilding (waiter running). No merges. Pin `dc4b8d60d5`, main `81d2aae95`.
+
+## r938 — 2026-09-23T18:34Z (cron)
+
+* **#8344 marked ready at 18:34:55Z.** Its credit-fix rebuild `caefae5b0` is green (started 18:16:37Z), and astra accepted it earlier. The
+  guards held: every check green, head unchanged, pin `dc4b8d60d5` at both base and main, and the file untouched.
+* #8339 is green on `21eca0421`, `awaiting-review` (its board is on the old head, as expected). #8332 is rebuilding on the reconciled
+  wording `ccc663cf3` (started 18:31:24Z). No merges. Main `81d2aae95`. In progress (cap full): #8332, #8339 and #8344.
