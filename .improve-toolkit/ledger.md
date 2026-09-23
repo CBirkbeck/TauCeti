@@ -42285,3 +42285,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   unchanged, file untouched).
 * **gpt-6-astra cleared #8469** ("every replacement … acceptable as a pure style edit"). Its build is queued, as is #8426's (also astra-cleared).
 * #8402 is `ready-to-merge`. No new merges. Pin `dc4b8d60d5`, main `5d16a37f3`. In progress (cap full): #8413, #8426 and #8469.
+
+## r966 — 2026-09-23T23:17Z (cron)
+
+* **#8402 merged** (23:06:21Z, `improve/rowexch-style`, kind 2).
+* #8413 is `awaiting-review` with no board yet (ready 23:04:55Z, so step 4 opens no earlier than 00:05Z). #8426's `sandboxed-build`
+  started at 23:13:28Z (a background waiter is armed); #8469's is still queued (105 queued, 19 running repo-wide).
+* In progress (cap full): #8413, #8426 and #8469. No step 5. Pin `dc4b8d60d5`, main `dbb95106b`.
