@@ -8,7 +8,6 @@ module
 public import TauCeti.RepresentationTheory.FiniteIndex
 public import TauCeti.RepresentationTheory.Homological.GroupHomology.Functoriality
 public import TauCeti.RepresentationTheory.Homological.GroupHomology.Shapiro
-public import TauCeti.RepresentationTheory.RelativeNorm
 
 /-!
 # Transfer in group homology
