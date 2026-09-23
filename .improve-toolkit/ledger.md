@@ -41833,3 +41833,8 @@ stays open. Pin `dc4b8d60d5`, main `bd81eef0c`.
   gate **12 ok / 0 failed / 0 UNRUN** (`stalequal` and `ghostref` ok). Pushed with a lease; body v2 and a new title via REST PATCH. CI is
   rebuilding (waiter running); the push re-reviews on its own, so no thread reply was needed.
 * In progress: #8295 (awaiting CI and then re-review). The third slot stays open. Pin `dc4b8d60d5`, main `7669537a3`.
+
+## r918 — 2026-09-23T15:14Z (cron; step 4 hard-stopped)
+
+#8295: its board (on `ab4d3f380`) is BEHIND the head `08d0a50ca`. The fix is pushed and CI is rebuilding (waiter running), so nothing to re-fix.
+#8291 is `ready-to-merge`. No new merges. Pin `dc4b8d60d5`, main `14fe11163`. Two slots are open (no eligible target).

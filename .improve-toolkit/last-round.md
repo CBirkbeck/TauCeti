@@ -1,4 +1,4 @@
-# Last round — r917 (2026-09-23T15:10Z)
+# Last round — r918 (2026-09-23T15:15Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -55,7 +55,7 @@ open, deliberately:** every kind is blocked or dry (r913 ledger).
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `8197db4e8`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `cddfb00f6`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -150,7 +150,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r917 did
+## What r703–r918 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -374,6 +374,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r915: no change; #8295 was marked ready (14:40:03Z).
 * r916: #8291 and #8295 are both `review-in-progress`.
 * r917: **#8291 approved**. **#8295 got one `api-design` finding** (the private Ioi-split helper is general infrastructure). Fixed by deleting it in favour of Mathlib's `intervalIntegral.integral_interval_add_Ioi` (`08d0a50ca`, gate 12/0/0, body v2).
+* r918: #8295 is rebuilding on the fix (its board is BEHIND the head, as expected); #8291 is `ready-to-merge`.
 
 ## Candidates for a later step 5
 
