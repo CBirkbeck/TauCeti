@@ -23,9 +23,8 @@ translate of `congruenceLattice 𝔪 (FractionalIdeal.mk0 K 𝔞)`.
 The lattice being translated depends only on `𝔪` and `𝔞`, not on the element chosen to name the
 translate, so those images are the points of one translate of a fixed lattice.
 
-A later result imposes the further conditions — that the element generate `𝔞`, and that `𝔞`
-represent a given ray class — under which this set is what a ray-class ideal count runs over.
-Nothing here assumes either.
+Nothing here asks that `𝔞` represent a given ray class, nor divides out the congruence roots of
+unity acting on the ray fundamental domain; a ray-class ideal count imposes both itself.
 
 ## Main results
 
