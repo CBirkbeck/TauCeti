@@ -41719,3 +41719,8 @@ No new change: #8224 is still MERGING; #8235 (198 min) and #8273 (ready 12:50:19
   `ha.monotone hij`), and at `i = j` both sides are 0 (`Ioc i i = ∅`). The one caller, `schwarzChristoffelEdgeAngle_comp_strictMono`,
   passes `hij.le` and keeps its own strict `hij` for the `Finset.mem_Ioc` witness. No open PR touches the file. Gate **12 ok / 0 failed /
   0 UNRUN**. For the PR body: Roadmap: ConformalMapping (as #6904).
+
+## r907 — 2026-09-23T13:24Z (cron; step 4 hard-stopped)
+
+**#8235 is `review-in-progress`** (an external reviewer picked it up, 228 min after ready). #8273 (34 min) and #8275 (27 min)
+are `awaiting-review`. No merges. Pin `dc4b8d60d5`, main `6333907d5`. The cap is full, and kind 3 stays staged (`26b23a436`).
