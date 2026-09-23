@@ -5,9 +5,9 @@ Authors: Claude
 -/
 module
 
-public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Shapiro
 public import TauCeti.RepresentationTheory.Induction.TrivialSubgroup
+import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 
 /-!
 # Cohomology of modules coinduced from the trivial subgroup
