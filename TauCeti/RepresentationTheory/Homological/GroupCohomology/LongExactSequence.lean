@@ -5,7 +5,6 @@ Authors: Claude
 -/
 module
 
-public import Mathlib.Algebra.Homology.HomologySequenceLemmas
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LongExactSequence
 
 /-!
@@ -25,11 +24,6 @@ of `G`-representations, and a morphism `Φ : Res_f Y ⟶ X` of short complexes, 
 formed by the two connecting maps and the change-of-group maps `groupCohomology.map f Φ.τᵢ`
 commutes. Restriction to a subgroup and inflation from a quotient are both change-of-group maps,
 so this contains the compatibility of `δ` with each of them.
-
-The proof is Mathlib's `HomologicalComplex.HomologySequence.δ_naturality`, applied to the morphism
-of short exact sequences of cochain complexes that `Φ` induces through
-`groupCohomology.cochainsMap`. Its two squares are `Φ.comm₁₂` and `Φ.comm₂₃`, transported by the
-functoriality `groupCohomology.cochainsMap_comp`.
 
 ## Main definitions
 
