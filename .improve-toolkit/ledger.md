@@ -42059,3 +42059,22 @@ No merges. Pin `dc4b8d60d5`, main `d66b14525`.
   guards held: every check green, head unchanged, pin `dc4b8d60d5` at both base and main, and the file untouched.
 * #8339 is green on `21eca0421`, `awaiting-review` (its board is on the old head, as expected). #8332 is rebuilding on the reconciled
   wording `ccc663cf3` (started 18:31:24Z). No merges. Main `81d2aae95`. In progress (cap full): #8332, #8339 and #8344.
+
+## r939 — 2026-09-23T18:44Z (cron)
+
+* #8332 is green on `ccc663cf3` (18:43:39Z) and `awaiting-review`; its board is on the old head.
+* **#8339 and #8344 went `awaiting-author`, both over the roadmap bullet I had put back at r934:**
+  * #8339 `documentation` ([r4085974249](https://github.com/TauCetiProject/TauCeti/pull/8339#discussion_r4085974249)): "Remove the
+    Roadmap bullet; keep the Roadmap line in the PR description."
+  * #8344 `documentation` ([r4086003602](https://github.com/TauCetiProject/TauCeti/pull/8344#discussion_r4086003602)): "roadmap
+    attribution, not a mathematical reference … will become stale", **and** #8344 `attribution`
+    ([r4086003465](https://github.com/TauCetiProject/TauCeti/pull/8344#discussion_r4086003465)): "The file still credits the project's own
+    roadmap, which must be credited only through the PR description's `Roadmap:` line."
+* **Implemented on both (the reviewers' exact proposal):** #8339 `4f18336f9` and #8344 `ba8ab38b9` remove the bullet; gates 12/0/0; pushed;
+  body v3 (one `Roadmap:` line each).
+* **Correction to r934/r937:** three rubric runs (two `documentation`, one `attribution`) say roadmap credit belongs **only** in the PR
+  description; #8332's round-1 `attribution` ask to keep a module-level credit was the outlier. The r934 proactive re-adds on #8339 and #8344
+  were wrong, and together with the r935 lesson they cost a 10/10 approval and two review cycles. **#8332:** no push now (its head
+  `ccc663cf3` has no board yet). If `documentation` fires again there, delete the sentence, and reply in the round-1 `attribution` thread
+  linking #8344's `attribution` finding.
+* No merges. Pin `dc4b8d60d5`, main `9c54f1f46`.

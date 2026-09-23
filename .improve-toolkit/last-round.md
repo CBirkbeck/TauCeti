@@ -1,4 +1,4 @@
-# Last round — r938 (2026-09-23T18:36Z)
+# Last round — r939 (2026-09-23T18:52Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,18 +44,17 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8332** | `ccc663cf3` | rebuilding | kind 2 (`ProductKernel.lean`). Round 2: `attribution` ✅, `documentation` asked to drop the "is part of the roadmap" status. The conflict was resolved by provenance wording ("Its design follows … the Exchangeability roadmap"), r937; body v3 links both threads | **CI**, then re-review. If `documentation` re-fires, **contest** quoting `attribution` round 1 |
-| **#8339** | `21eca0421` | green | kind 2 (`ViaKoopman/Decoupling.lean`: 100 `↦`; the References bullet keeps a stage-free roadmap credit, per r934; `Roadmap: Exchangeability`). Ready 17:51:36Z; astra: no findings | **external reviewers** (its board is on the old head) |
-| **#8344** | `caefae5b0` | green | kind 2 (`Slice/Density.lean`: 92 `↦`, 4 induction arms kept; the References bullet keeps a stage-free roadmap citation; `Roadmap: OneParameterSemigroups`). Astra accepted it; **marked ready 18:34:55Z** | **external reviewers** |
+| **#8332** | `ccc663cf3` | green (18:43:39Z) | kind 2 (`ProductKernel.lean`). Round 2: `attribution` ✅, `documentation` asked to drop the "is part of the roadmap" status. The conflict was resolved by provenance wording ("Its design follows … the Exchangeability roadmap"), r937; body v3 links both threads | **CI**, then re-review. If `documentation` re-fires, **contest** quoting `attribution` round 1 |
+| **#8339** | `4f18336f9` | rebuilding | kind 2 (`ViaKoopman/Decoupling.lean`: 100 `↦`; roadmap bullet removed, per `documentation` r4085974249; `Roadmap: Exchangeability`). Body v3 | **CI**, then re-review |
+| **#8344** | `ba8ab38b9` | rebuilding | kind 2 (`Slice/Density.lean`: 92 `↦`; roadmap bullet removed, per `documentation` + `attribution`; `Roadmap: OneParameterSemigroups`). Body v3 | **CI**, then re-review |
 
-**In progress (cap full): #8332 (rebuilding on the r937 provenance wording), #8339 and #8344 (green, `awaiting-review`).** Eleven
-of this session's PRs merged on 2026-09-23.
+**In progress (cap full): #8332 (green on `ccc663cf3`, awaiting re-review), #8339 and #8344 (rebuilding on the r939 bullet removals).**
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `da8dd2a45`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `fa1eab3a5`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -65,8 +64,10 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r934):** in progress (cap full) are #8332, #8339 and #8344 (kind 2), rebuilding on the roadmap-credit commits. #8344 was marked ready at r938. #8332's `attribution` (r1) and `documentation` (r2) findings conflicted; r937 reconciled them with provenance wording (`ccc663cf3`). **Rule:** a style pass
-   drops roadmap *stage* wording but keeps a stage-free `TauCetiRoadmap/<Area>` credit. (#8339's proactive push superseded a 10/10 approval: read the board first.) Next kind 2: `Contour/Winding/RealIntegral/OnCurve.lean`.
+0. **Now (r939):** cap full: #8332 (awaiting re-review on the provenance wording `ccc663cf3`; **if `documentation` fires again, delete the
+   sentence and reply in its round-1 `attribution` thread linking #8344's r4086003465**), and #8339/#8344 rebuilding after dropping the
+   roadmap bullets (reviewer proposals, r939). Roadmap credit goes ONLY in the PR description (trap below). Next kind 2 when a slot frees:
+   `Contour/Winding/RealIntegral/OnCurve.lean`.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
    `merge-sweep` re-enqueues a green TauCeti/-only PR afterwards (r798–r799). A `MERGING` PR's group build is the check-runs of
@@ -146,7 +147,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r938 did
+## What r703–r939 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -389,6 +390,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r936: #8332's rebuild is done (`awaiting-review`); #8339 and #8344 are still building.
 * r937: #8332 round 2 — `documentation` contradicted `attribution` round 1 over the roadmap sentence. Reconciled with provenance wording (`ccc663cf3`), and body v3 links both threads.
 * r938: #8344 marked ready (its rebuild went green). #8339 is green and awaiting review; #8332 is rebuilding.
+* r939: **#8339 and #8344 got `documentation` (+ `attribution` on #8344) findings: remove the roadmap bullet.** Done on both. This corrects r934: roadmap credit goes only in the PR description.
 
 ## Candidates for a later step 5
 
@@ -455,10 +457,11 @@ Re-run `nscand.py` first. Skip `TauCeti.LinearEquiv.toLinearEquiv_generalLinearE
 
 ## Standing traps
 
-* **Roadmap credit in docstrings is contested territory (r934–r937).** `attribution` wants a code-level roadmap credit; `documentation`
-  rejects roadmap *status* ("is part of the roadmap") because it dates. The wording that satisfies both is provenance: "Its design follows
-  the … blueprint of the <Area> roadmap (`TauCetiRoadmap/<Area>`)". Use that shape in future style passes; plain References citations
-  are fine.
+* **Roadmap credit belongs ONLY in the PR description (r939, replacing the r934/r937 note).** Three rubric runs (#8339 and #8344
+  `documentation`, #8344 `attribution`) require removing every roadmap mention from docstrings — stage wording *and* plain credit — and
+  keeping only the PR body's `Roadmap:` line. #8332's round-1 `attribution` ask was the outlier. Style passes: delete roadmap
+  sentences and bullets outright (the #8101 approach, which merged). Never re-add a credit speculatively; the r934 re-adds cost an
+  approval and two review cycles.
 
 * **Read the board before any speculative push (r935).** At r934 a proactive fix went to #8339 minutes after it had been approved 10/10 on
   its old head, and the push threw that approval away for a change no reviewer asked for. Push only to answer a finding on *that* PR, or
