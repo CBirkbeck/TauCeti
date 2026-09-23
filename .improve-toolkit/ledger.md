@@ -41665,3 +41665,14 @@ merge-tree clean ( ok ok ok ok). Waiting on the user.
 ## r901 — 2026-09-23T12:24Z (cron; step 4 hard-stopped)
 
 No change (186/178/168 min without a real board). No merges. Main `90ff820df` (pin unchanged); merge-tree: ok ok ok ok. Waiting on the user.
+
+## r902 — 2026-09-23T12:34Z (cron; step 4 hard-stopped)
+
+* **#8233 approved 10/10** (board by `Robertboy18`, 12:28:02Z, on head `77df94016`) and is now `ready-to-merge`, **MERGING at
+  queue position 2** (depth 3). The external reviewers reached it 3 h after ready_for_review, without any drive. That frees a slot:
+  in progress are #8224 (only the r889 error board) and #8235 (no board, 178 min).
+* **Step 5: kind 2 in kind 1's slot (the pin is still `dc4b8d60d5`) — opened draft #8273**, the staged, astra-cleared
+  `improve/condindep-conditional-style`, rebased onto `3bbef7660` → **`0f704c040`** (+101/−85, unchanged). Re-gate: **12 ok / 0 failed /
+  0 UNRUN**. `Roadmap: Exchangeability`: the file's only importer is `DeFinetti/PrefixDeletion.lean`. #2978 on this file used `none`,
+  and its origin PRs (#566, #739, #723) predate the convention. The body carries the `/mathlibable` result (no projection form or
+  Kallenberg 1.3 in Mathlib at the pin). A build waiter is running; mark it ready when green.
