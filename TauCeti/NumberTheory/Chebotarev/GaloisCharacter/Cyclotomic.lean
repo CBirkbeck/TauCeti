@@ -7,7 +7,7 @@ module
 
 public import Mathlib.NumberTheory.Cyclotomic.Gal
 public import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.Weight
-public import TauCeti.NumberTheory.NumberField.Global.RayClass.Character
+public import TauCeti.NumberTheory.NumberField.Global.RayClass.Character.Basic
 public import TauCeti.NumberTheory.NumberField.Ideal.ArtinMap
 import TauCeti.NumberTheory.NumberField.Cyclotomic.Frobenius
 import TauCeti.NumberTheory.NumberField.Cyclotomic.Ramification
