@@ -1,4 +1,4 @@
-# Last round — r885 (2026-09-23T09:45Z)
+# Last round — r886 (2026-09-23T10:01Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -50,9 +50,16 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 **In progress (cap full): #8224 (`awaiting-review`, ready 09:18:43Z), #8233 (`awaiting-review`, ready 09:26:40Z) and #8235
 (`awaiting-review`, ready 09:36:14Z).** **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z). The next opening is kind 1
-if the pin has moved, otherwise kind 2. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
+if the pin has moved, otherwise kind 2.
+
+**Staged for the next free slot (kind 2, local only, NOT pushed):** `improve/condindep-conditional-style` @ `dddfd9f96`, from
+`9ca651002`, a style pass on `Probability/Independence/Conditional.lean` (+101/−85: 82 `↦` and 12 chains split; the anonymous-constructor
+chain in `isPiSystem_inter_measurableSet` stays). Gate 12/0/0. `/mathlibable` found no counterpart for any of the three public theorems
+(r886 ledger). gpt-6-astra's answer lands in `$SP/astra-condindep-0959.txt`; codex PID and paths are in `$SP/astra-condindep.current`.
+**When a slot frees**, if the pin has not moved: read astra's answer, rebase onto fresh `origin/main`, re-gate, push to `fork`, and open
+as a draft with `Roadmap:` taken from the file's last roadmap-attributed PR. If the pin has moved, run the kind-1 scan first. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `2d137180a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `3ac4899a5`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `8fd84bbbf`
 (r882); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -139,7 +146,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r885 did
+## What r703–r886 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -337,6 +344,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r883: #8233 went green (09:24:57Z) and was marked ready (09:26:40Z) with the pin unchanged. #8235 was still on its first build; the cap is full.
 * r884: #8235 went green (09:35:30Z) and was marked ready (09:36:14Z); all three PRs are now `awaiting-review`.
 * r885: no change; drive clocks open at 10:18Z (#8224), 10:26Z (#8233) and 10:36Z (#8235).
+* r886: board unchanged. Kind 2 is staged locally as `improve/condindep-conditional-style` @ `dddfd9f96` (`Independence/Conditional.lean`: 82 `↦`, 12 chains split; gate 12/0/0), with astra running.
 
 ## Candidates for a later step 5
 

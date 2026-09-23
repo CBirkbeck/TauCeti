@@ -41512,3 +41512,28 @@ No change. #8224 (ready 09:18:43Z) and #8233 (ready 09:26:40Z) are `awaiting-rev
 
 No change. #8224, #8233 and #8235 are `awaiting-review`, CI green, with no board; their drive clocks open at 10:18Z, 10:26Z and
 10:36Z. No merges since #8101. Pin `dc4b8d60d5`, main `9ca651002`. The cap is full.
+
+## r886 — 2026-09-23T09:54Z (cron)
+
+**Board unchanged:** #8224, #8233 and #8235 are `awaiting-review`, green, with no board; their drive clocks open at 10:18Z, 10:26Z
+and 10:36Z. No merges since #8101. Pin `dc4b8d60d5`, main `9ca651002`. The cap is full.
+
+**Research for the next opening, staged locally (not pushed).** The pin is unchanged, so the next opening is kind 2.
+`improve/condindep-conditional-style` @ `dddfd9f96` is branched from `9ca651002`, and nothing is pushed.
+
+* **Target:** r882's second-ranked file, `Probability/Independence/Conditional.lean` (505 lines). No open PR touches it (checked
+  against a fresh listing), and it was last changed on 2026-08-17 (the copyright normalisation).
+* **Edits** (+101/−85, surface only): 82 `fun … =>` → `↦` (asserted; the file has no other `=>`), and 12 chains split by line number.
+  One split has its statement on a continuation line (`have h_eq : (fun …)` / `= fun … := by funext ω; ring`); its tactics go to
+  the `have`'s column + 2 (6), as the file's own `h_expand` does at lines 426–427. The chain inside
+  `isPiSystem_inter_measurableSet`'s anonymous constructor (`⟨…, by ext ω; …; tauto⟩`) stays, as a term.
+* **Gate** on `9ca651002`: **12 ok / 0 failed / 0 UNRUN**.
+* **`/mathlibable`:** Mathlib at the pin has the product characterisation (`condIndep_iff`, `condIndepSets_iff`,
+  `condIndepFun_iff_condExp_inter_preimage_eq_mul`) but not the drop-information/projection form. Neither
+  `condIndep_of_indicator_condExp_eq` nor `condExp_indicator_sup_eq_of_condIndep` has a counterpart (no conditional expectation on
+  `m ⊔ m'` anywhere in `Probability/` or `ConditionalExpectation/`), and neither does Kallenberg Lemma 1.3
+  (`condExp_indicator_eq_of_law_eq_of_comap_le`); Mathlib's Kallenberg hits are only citations. Nothing is to be deleted. If
+  anything, all three are upstream candidates.
+* **gpt-6-astra** was launched at 09:59Z with a unique target, `astra-condindep-0959.txt`; the waiter keys on the codex PID (the r882 rule).
+
+No toolkit edits.
