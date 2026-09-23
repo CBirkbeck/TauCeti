@@ -41708,3 +41708,14 @@ No new change: #8224 is still MERGING; #8235 (198 min) and #8273 (ready 12:50:19
   `integral_Ioi_eq_Ioc_add_Ioi` (`Resolvent/Basic.lean:184`, `0 < h` used only as `hh.le`).
 * In progress (cap full): #8235 (208 min, no board), #8273 (14 min) and #8275 (7 min), all `awaiting-review`. Pin `dc4b8d60d5`,
   main `44de2e34a`.
+
+## r906 — 2026-09-23T13:14Z (cron; step 4 hard-stopped)
+
+* No change: #8235 (218 min), #8273 and #8275 are `awaiting-review` with no board. Pin `dc4b8d60d5`, main `51ffd556a`. The cap is full.
+* **Rotation note:** the next opening would be kind 2 (kind 1 is dry), but gpt-6-astra is out of quota until 2026-09-27T15:04Z, so
+  no new file pass can be cleared. The next slot goes to **kind 3** instead, as the r889 hard-stop note provides.
+* **Staged kind 3 locally (not pushed):** `improve/sc-edgeangle-sub-le` @ `26b23a436`, from `51ffd556a`, +3/−3.
+  `schwarzChristoffelEdgeAngle_sub_eq_neg_pi_mul_sum_Ioc` weakened from `i < j` to `i ≤ j`: its proof used only `hij.le` (now
+  `ha.monotone hij`), and at `i = j` both sides are 0 (`Ioc i i = ∅`). The one caller, `schwarzChristoffelEdgeAngle_comp_strictMono`,
+  passes `hij.le` and keeps its own strict `hij` for the `Finset.mem_Ioc` witness. No open PR touches the file. Gate **12 ok / 0 failed /
+  0 UNRUN**. For the PR body: Roadmap: ConformalMapping (as #6904).

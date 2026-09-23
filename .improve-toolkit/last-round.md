@@ -1,4 +1,4 @@
-# Last round — r905 (2026-09-23T13:05Z)
+# Last round — r906 (2026-09-23T13:16Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -51,9 +51,11 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 **In progress (cap full): #8235 (`awaiting-review`, no board), #8273 (`awaiting-review`, ready 12:50:19Z) and #8275 (`awaiting-review`, ready 12:57:21Z).** **#8233 merged 12:41:47Z** and **#8224 merged 12:55:04Z**. **#8101 merged 09:19:24Z** (as `2d137180a`; ready 08:59:00Z, approved 09:07:14Z, queued 09:07:36Z).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
-has moved, otherwise kind 2 (re-run the r882 scoring on fresh main first). Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `44de2e34a`, the Mathlib pin
+has moved; otherwise **kind 3**, because kind 2 needs astra, which is out of quota until 2026-09-27T15:04Z. **Staged for it (local, NOT
+pushed):** `improve/sc-edgeangle-sub-le` @ `26b23a436` (from `51ffd556a`; the `GlobalTurning.lean` `i < j` → `i ≤ j` weakening; gate
+12/0/0; body line `Roadmap: ConformalMapping`). When a slot frees: rebase onto fresh main, re-gate, push, and open as a draft. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `44de2e34a`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `37ed7c719`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `e7edda2a4`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -147,7 +149,7 @@ pin), plus grep. Never the file-based lean-lsp tools. ChatGPT: `codex exec -m gp
 Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 `~/.claude/plugins/marketplaces/mathlib-quality-plugins/skills/mathlib-quality/references/`.
 
-## What r703–r905 did
+## What r703–r906 did
 
 * `decldiff`/`rootsurplus` learned `open` (ROOTED-VIA-OPEN, still blocking; FLAGGED-VIA-OPEN) — 152/0.
 * #6800's scheduled drive: 10/10, $0.98, queued.
@@ -359,6 +361,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r903: **#8233 merged**. **#8224 approved 10/10** by `sqrt-of-2`, despite my error board, and is MERGING. Kind 3 opened as draft **#8275** (`RelNorm.lean` dead `hJ'`; gate 12/0/0).
 * r904: no new change; #8273 marked ready (12:50:19Z, via the r903 waiter), and #8275 is still building.
 * r905: **#8224 merged** (12:55:04Z). #8235, #8273 and #8275 are all `awaiting-review`; the cap is full.
+* r906: no change. With astra out, the next slot goes to kind 3; the `GlobalTurning.lean` `i ≤ j` weakening is staged locally (`26b23a436`, gate 12/0/0).
 
 ## Candidates for a later step 5
 
