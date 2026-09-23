@@ -41804,5 +41804,5 @@ on its first build (waiter running). No merges. Pin `dc4b8d60d5`, main `d89f18ca
 
 ## r914 — 2026-09-23T14:34Z (cron; step 4 hard-stopped)
 
-**#8275 merged** 14:30:25Z, the sixth today. #8286 is MERGING, #8291 is `awaiting-review` (21 min), and #8295 is on its first build
+**#8275 merged** 14:30:25Z, the sixth today. **#8286 merged** 14:34:50Z (the seventh today; `queuepos` reported a merged PR as EJECTED, since it only sees that the PR left the queue), #8291 is `awaiting-review` (21 min), and #8295 is on its first build
 (waiter running). The third slot stays open (every kind is dry or blocked, per r913). Pin `dc4b8d60d5`, main `05649787a`.
