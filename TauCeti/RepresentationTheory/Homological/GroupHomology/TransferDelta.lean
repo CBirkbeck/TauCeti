@@ -52,8 +52,7 @@ variable {R G : Type u} [CommRing R] [Group G] (S : Subgroup G)
 `S`-representations, the inverse of `Hₙ(G, Ind_S^G Y) ≅ Hₙ(S, Y)` intertwines the connecting map
 of `Y` with the connecting map of the induced sequence `Ind_S^G Y`. Exactness of `Ind_S^G Y` is a
 hypothesis because Mathlib provides left exactness of induction only for finite-index `S`, where
-`hIY` is `hY.map_of_exact _`. For naturality of Shapiro's isomorphism along a single morphism of
-coefficients, see `indIso_inv_naturality`. -/
+`hIY` is `hY.map_of_exact _`. -/
 @[reassoc]
 theorem δ_comp_indIso_inv [DecidableEq G] {Y : ShortComplex (Rep.{u} R S)} (hY : Y.ShortExact)
     (hIY : (Y.map (indFunctor R S.subtype)).ShortExact) (i j : ℕ) (hij : j + 1 = i) :
@@ -65,8 +64,7 @@ theorem δ_comp_indIso_inv [DecidableEq G] {Y : ShortComplex (Rep.{u} R S)} (hY 
 
 /-- **The transfer commutes with the connecting maps.** For a finite-index subgroup `S ≤ G` and a
 short exact sequence `X` of `G`-representations, the transfer intertwines the connecting map of
-`X` with the connecting map of its restriction `Res_S X` to `S`. For naturality of the transfer
-along a single morphism of coefficients, see `map_comp_transfer`. -/
+`X` with the connecting map of its restriction `Res_S X` to `S`. -/
 @[reassoc]
 theorem δ_comp_transfer [S.FiniteIndex] {X : ShortComplex (Rep.{u} R G)} (hX : X.ShortExact)
     (i j : ℕ) (hij : j + 1 = i) :
