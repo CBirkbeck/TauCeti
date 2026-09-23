@@ -41907,3 +41907,8 @@ slot is open (no eligible target). Pin `dc4b8d60d5`, main `80f9ab2de`.
   nothing else can break. Commit **`4f4ff931e`**; gate **12 ok / 0 failed / 0 UNRUN** (`importcover` ok); pushed with a lease; body v2
   (REST PATCH). The rebuild waiter is running, and the push re-reviews on its own.
 * In progress: #8305 (fix pushed). One slot is open. Pin `dc4b8d60d5`, main `7783dbc4b`.
+
+## r924 — 2026-09-23T16:14Z (cron; step 4 hard-stopped)
+
+#8305: its board is BEHIND the head `4f4ff931e` (the `placement` fix is pushed) and CI is pending (waiter running), so nothing to re-fix. #8304 is
+`ready-to-merge`. No new merges. Pin `dc4b8d60d5`, main `4e6d15352`.
