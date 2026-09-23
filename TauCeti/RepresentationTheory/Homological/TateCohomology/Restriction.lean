@@ -82,7 +82,7 @@ namespace TauCeti.TateCohomology
 variable {R G : Type u} [CommRing R] [Group G] [Fintype G] (M : Rep R G)
   (H : Subgroup G)
 
-attribute [local instance] fintypeSubgroup Subgroup.fintypeQuotientOfFiniteIndex
+attribute [local instance] Subgroup.fintypeOfFinite Subgroup.fintypeQuotientOfFiniteIndex
 
 section Negative
 

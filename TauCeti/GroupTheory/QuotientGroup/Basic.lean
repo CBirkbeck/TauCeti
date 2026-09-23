@@ -9,6 +9,7 @@ public import Mathlib.Algebra.Group.Subgroup.Pointwise
 public import Mathlib.GroupTheory.GroupAction.Quotient
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.QuotientGroup.Basic
+public import TauCeti.Algebra.Group.Subgroup.Finite
 
 /-!
 # Left translation on a coset space
@@ -112,16 +113,7 @@ theorem quotientBot_smul_eq_self_iff (g : G) (q : G ⧸ (⊥ : Subgroup G)) :
 
 section Finite
 
--- Not a global instance: Mathlib's `Subgroup.instFintypeSubtypeMemOfDecidablePred` asks for
--- decidable membership instead, and the two structures are not definitionally equal. Files about
--- the subgroups of a finite group install this one with `attribute [local instance]`, so that
--- their statements share one `Fintype` structure.
-/-- The `Fintype` structure on a subgroup of a finite group given by `Fintype.ofFinite`. -/
-@[instance_reducible, expose]
-noncomputable def fintypeSubgroup [Finite G] (H : Subgroup G) : Fintype H :=
-  Fintype.ofFinite H
-
-attribute [local instance] fintypeSubgroup Subgroup.fintypeQuotientOfFiniteIndex
+attribute [local instance] Subgroup.fintypeOfFinite Subgroup.fintypeQuotientOfFiniteIndex
 
 variable {M : Type*} [AddCommMonoid M] [Fintype G] (H : Subgroup G)
 

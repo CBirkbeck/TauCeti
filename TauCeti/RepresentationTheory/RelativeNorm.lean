@@ -100,7 +100,7 @@ section Norm
 
 variable [Fintype G] {ρ H}
 
-attribute [local instance] TauCeti.fintypeSubgroup Subgroup.fintypeQuotientOfFiniteIndex
+attribute [local instance] Subgroup.fintypeOfFinite Subgroup.fintypeQuotientOfFiniteIndex
 
 private theorem norm_apply' (x : V) : ρ.norm x = ∑ g : G, ρ g x := by
   simp [Representation.norm]
