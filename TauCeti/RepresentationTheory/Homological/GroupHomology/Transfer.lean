@@ -103,9 +103,9 @@ section DegreeZero
 
 attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex
 
-/-- In the `G`-coinvariants of an induced representation `Ind_S^G A`, the class of `⟦h ⊗ a⟧` does
-not depend on `h ∈ G`: the element is `h⁻¹` acting on `⟦1 ⊗ a⟧`. -/
-theorem coinvariantsMk_indVMk (S : Subgroup G) (A : Rep R S) (h : G) (a : A.V) :
+-- In the `G`-coinvariants of an induced representation `Ind_S^G A`, the class of `⟦h ⊗ a⟧` does
+-- not depend on `h ∈ G`: the element is `h⁻¹` acting on `⟦1 ⊗ a⟧`.
+private theorem coinvariantsMk_indVMk (S : Subgroup G) (A : Rep R S) (h : G) (a : A.V) :
     Representation.Coinvariants.mk (Representation.ind S.subtype A.ρ)
         (Representation.IndV.mk S.subtype A.ρ h a) =
       Representation.Coinvariants.mk (Representation.ind S.subtype A.ρ)
@@ -115,18 +115,23 @@ theorem coinvariantsMk_indVMk (S : Subgroup G) (A : Rep R S) (h : G) (a : A.V) :
     rw [Representation.ind_mk, one_mul, inv_inv]
   rw [hmk, Representation.Coinvariants.mk_self_apply]
 
-/-- In the `G`-coinvariants of an induced representation `Ind_S^G A`, acting by `s ∈ S` on the
-second factor of `⟦1 ⊗ a⟧` does not change its class: `⟦1 ⊗ s • a⟧ = ⟦s⁻¹ ⊗ a⟧` in `Ind_S^G A`,
-and `coinvariantsMk_indVMk` removes the `s⁻¹`. -/
-theorem coinvariantsMk_indVMk_one_apply (S : Subgroup G) (A : Rep R S) (s : S) (a : A.V) :
+-- In the `G`-coinvariants of an induced representation `Ind_S^G A`, acting by `s ∈ S` on the
+-- second factor of `⟦1 ⊗ a⟧` does not change its class: `⟦1 ⊗ s • a⟧ = ⟦s⁻¹ ⊗ a⟧` in `Ind_S^G A`,
+-- and `coinvariantsMk_indVMk` removes the `s⁻¹`.
+private theorem coinvariantsMk_indVMk_one_apply (S : Subgroup G) (A : Rep R S) (s : S) (a : A.V) :
     Representation.Coinvariants.mk (Representation.ind S.subtype A.ρ)
         (Representation.IndV.mk S.subtype A.ρ 1 (A.ρ s a)) =
       Representation.Coinvariants.mk (Representation.ind S.subtype A.ρ)
         (Representation.IndV.mk S.subtype A.ρ 1 a) := by
   have hbal : Representation.IndV.mk S.subtype A.ρ 1 (A.ρ s a) =
       Representation.IndV.mk S.subtype A.ρ (s⁻¹ : S) a := by
-    simpa using Representation.Coinvariants.mk_tmul_inv
-      ((Representation.leftRegular R G).comp S.subtype) A.ρ (MonoidAlgebra.single 1 1) a s⁻¹
+    -- `IndV.mk S.subtype A.ρ h a` is the class of `single h 1 ⊗ₜ a` in the coinvariants of the
+    -- tensor product, where `mk_tmul_inv` moves `s⁻¹` from the left factor to the right one.
+    simpa only [LinearMap.coe_comp, Function.comp_apply, TensorProduct.mk_apply,
+      InvMemClass.coe_inv, inv_inv, MonoidHom.coe_comp, Subgroup.coe_subtype,
+      Representation.ofMulAction_single, smul_eq_mul, mul_one] using
+      Representation.Coinvariants.mk_tmul_inv ((Representation.leftRegular R G).comp S.subtype)
+        A.ρ (MonoidAlgebra.single 1 1) a s⁻¹
   rw [hbal, coinvariantsMk_indVMk]
 
 open scoped Classical in
