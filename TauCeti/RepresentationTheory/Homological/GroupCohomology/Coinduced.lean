@@ -14,9 +14,9 @@ import Mathlib.RepresentationTheory.Homological.GroupCohomology.Shapiro
 # Cohomology of modules coinduced from the trivial subgroup
 
 By Shapiro's lemma, the representation `Coind_⊥^G X` coinduced from the trivial subgroup has
-vanishing cohomology in positive degrees, and so does its restriction to any subgroup `S`, since
-that restriction is again coinduced from the trivial subgroup (`Rep.resCoindBotIso`)
-(Milne, *Class Field Theory*, II 1.11–1.12).
+vanishing cohomology in positive degrees (Milne, *Class Field Theory*, II 1.11–1.12), and so does
+its restriction to any subgroup `S`, since that restriction is again coinduced from the trivial
+subgroup (`Rep.resCoindBotIso`).
 
 The statements follow `ClassFieldTheory/Cohomology/IndCoind/TrivialCohomology.lean` in
 `kbuzzard/ClassFieldTheory`, commit `ccc3323c6750abca25b49b35106f54eb3a398509`.
