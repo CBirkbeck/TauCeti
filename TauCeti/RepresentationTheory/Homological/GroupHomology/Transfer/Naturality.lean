@@ -49,7 +49,7 @@ variable (e : G ≃* G') {S : Subgroup G} {S' : Subgroup G'} (he : S.map (e : G 
 private theorem transfer_res_equiv_succ [S.FiniteIndex]
     {Y : ShortComplex (Rep.{u} R G')} (hY : Y.ShortExact) (n : ℕ)
     (hY₂ : Limits.IsZero (groupHomology (res S'.subtype Y.X₂) (n + 1))) :
-    haveI := Subgroup.finiteIndex_of_map_eq e he
+    haveI := S.finiteIndex_of_map_eq (e : G →* G') e.surjective he
     (transfer (res (e : G →* G') Y.X₁) S n ≫ map (Subgroup.congrOfMapEq e he : S →* S')
         (Rep.isIntertwiningMap_res_res Y.X₁ (Subgroup.subtype_comp_congrOfMapEq e he)).toRes n =
       map (e : G →* G') (𝟙 _) n ≫ transfer Y.X₁ S' n) →
@@ -57,7 +57,7 @@ private theorem transfer_res_equiv_succ [S.FiniteIndex]
         (Rep.isIntertwiningMap_res_res Y.X₃
           (Subgroup.subtype_comp_congrOfMapEq e he)).toRes (n + 1) =
       map (e : G →* G') (𝟙 _) (n + 1) ≫ transfer Y.X₃ S' (n + 1) := by
-  have := Subgroup.finiteIndex_of_map_eq e he
+  have := S.finiteIndex_of_map_eq (e : G →* G') e.surjective he
   intro ih
   have hX := (shortExact_res (e : G →* G')).2 hY
   have hYS' := (shortExact_res S'.subtype).2 hY
@@ -81,11 +81,11 @@ private theorem transfer_res_equiv_succ [S.FiniteIndex]
 -- The case of identity coefficients of `map_comp_transfer_congrOfMapEq`.
 attribute [local instance] Subgroup.fintypeQuotientOfFiniteIndex in
 private theorem transfer_res_equiv [S.FiniteIndex] (N : Rep.{u} R G') (n : ℕ) :
-    haveI := Subgroup.finiteIndex_of_map_eq e he
+    haveI := S.finiteIndex_of_map_eq (e : G →* G') e.surjective he
     transfer (res (e : G →* G') N) S n ≫ map (Subgroup.congrOfMapEq e he : S →* S')
         (Rep.isIntertwiningMap_res_res N (Subgroup.subtype_comp_congrOfMapEq e he)).toRes n =
       map (e : G →* G') (𝟙 _) n ≫ transfer N S' n := by
-  have := Subgroup.finiteIndex_of_map_eq e he
+  have := S.finiteIndex_of_map_eq (e : G →* G') e.surjective he
   induction n generalizing N with
   | zero =>
     -- On `H₀`, the coinvariants, the transfer is the relative transfer (`transfer_zero_H0π`).
@@ -111,14 +111,14 @@ case where `e` is the identity, to a change of group. -/
 @[reassoc, elementwise]
 theorem map_comp_transfer_congrOfMapEq [S.FiniteIndex] {M : Rep.{u} R G}
     {N : Rep.{u} R G'} (φ : M ⟶ res (e : G →* G') N) (n : ℕ) :
-    haveI := Subgroup.finiteIndex_of_map_eq e he
+    haveI := S.finiteIndex_of_map_eq (e : G →* G') e.surjective he
     map (e : G →* G') φ n ≫ transfer N S' n =
       transfer M S n ≫ map (Subgroup.congrOfMapEq e he : S →* S') ((resFunctor S.subtype).map φ ≫
         (Rep.isIntertwiningMap_res_res N (Subgroup.subtype_comp_congrOfMapEq e he)).toRes) n := by
   -- Split the map over `S` at `Res_S φ`, then paste the naturality square of `φ` with the case of
   -- identity coefficients. `map_comp` recombines the maps over `G` into
   -- `map (e.comp (MonoidHom.id G)) (φ ≫ resMap _ (𝟙 _))`, which is `map e φ` by `map_congr`.
-  have := Subgroup.finiteIndex_of_map_eq e he
+  have := S.finiteIndex_of_map_eq (e : G →* G') e.surjective he
   refine ((whisker_eq _ (map_comp (MonoidHom.id S) _ _ _ n)).trans ?_).symm
   rw [← map_comp_transfer_assoc, transfer_res_equiv e he N, ← map_comp_assoc]
   exact congrArg (· ≫ transfer N S' n) (map_congr (MonoidHom.comp_id _) (by simp) n)

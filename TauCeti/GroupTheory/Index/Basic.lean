@@ -40,8 +40,8 @@ centre gives the `Γ.withCenter` readings.
 * `Subgroup.finiteIndex_of_finiteIndex_subgroupOf`: finite index composes along `V ≤ U ≤ G`.
 * `Subgroup.finiteIndex_inf_comap`: `H ⊓ f⁻¹(K)` has finite index when `H` does and
   `K` has finite index relative to `f(H)`.
-* `Subgroup.finiteIndex_of_map_eq`: the image of a finite-index subgroup under a group
-  isomorphism has finite index.
+* `Subgroup.finiteIndex_of_map_eq`: the image of a finite-index subgroup under a surjective
+  homomorphism has finite index.
 * `MonoidHom.finiteIndex_range_comp`: finite index of ranges is preserved by composition
   with a homomorphism of finite-index range.
 * `MonoidHom.mk_mul_out_bijective`: right cosets of a composite range are represented by
@@ -175,10 +175,13 @@ theorem finiteIndex_inf_comap {G N : Type*} [Group G] [Group N] (H : Subgroup G)
     relIndex_comap]
   exact mul_ne_zero IsFiniteRelIndex.relIndex_ne_zero FiniteIndex.index_ne_zero
 
-/-- The image of a finite-index subgroup under a group isomorphism has finite index. -/
-theorem finiteIndex_of_map_eq {G N : Type*} [Group G] [Group N] (e : G ≃* N) {H : Subgroup G}
-    {K : Subgroup N} (h : H.map (e : G →* N) = K) [H.FiniteIndex] : K.FiniteIndex :=
-  ⟨by rw [← h, index_map_equiv]; exact FiniteIndex.index_ne_zero⟩
+/-- The image of a finite-index subgroup under a surjective homomorphism has finite index. -/
+@[to_additive /-- The image of a finite-index additive subgroup under a surjective homomorphism
+has finite index. -/]
+theorem finiteIndex_of_map_eq {G N : Type*} [Group G] [Group N] (H : Subgroup G) [H.FiniteIndex]
+    (f : G →* N) (hf : Function.Surjective f) {K : Subgroup N} (h : H.map f = K) :
+    K.FiniteIndex :=
+  ⟨h ▸ ne_zero_of_dvd_ne_zero FiniteIndex.index_ne_zero (H.index_map_dvd hf)⟩
 
 /-- `Γ` with the centre of the ambient group adjoined. For `Γ ≤ SL(2, ℤ)` the centre is
 `{±I}`, which acts trivially on `ℍ`; it is the cosets of `Γ·{±I}` — not those of `Γ` itself —
