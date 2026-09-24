@@ -42448,3 +42448,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `=>`, no chains, no roadmap text, no open-PR overlap). Edit: 47 arrows (asserted), nothing else. Gate 12/0/0. Astra (three-dot diff, 1
   file): **cleared** ("No edits to reject"). A build waiter is armed.
 * In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `df538400d`.
+
+## r983 — 2026-09-24T02:05Z (cron)
+
+* **#8473 merged** (02:01:52Z, `improve/arrays-rowcoding-style`, kind 2), the twenty-second of this session's PRs to merge. #8476 is
+  `ready-to-merge`.
+* #8492's `sandboxed-build` started at 02:02:43Z (waiter armed). #8487 (37 min since ready) and #8491 (2 min) are `awaiting-review` with
+  no board. No findings.
+* In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `b87aee64b`.
