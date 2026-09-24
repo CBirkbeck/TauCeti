@@ -89,6 +89,9 @@ cohomology uses this file's locally constant coinduction on discrete modules.
 The trace construction follows Brown, *Cohomology of Groups*, III §9.
 -/
 
+-- Blueprint: Layer 7 (coinduced modules and Shapiro's lemma) of the human-authored roadmap
+-- `TauCetiRoadmap/ProfiniteCohomology/README.md`.
+
 public section
 
 namespace TauCeti
