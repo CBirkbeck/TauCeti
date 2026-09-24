@@ -42881,3 +42881,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **Step 4: drove #8530** at 09:05Z (73 min past `max(CI-green 07:51:21Z, ready 07:52:04Z)`, no board, `awaiting-review` only; quota
   probe "ok" first; background, log `drive-8530-0905.log`).
 * #8531 is at 55 min and #8534 at 16 min. No merges, no findings. In progress (cap full): #8530, #8531 and #8534. Main `bed3bd6bb`.
+* (late in r1024) **The #8530 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5811206186, 09:07Z; $0.88).
+* (late in r1024) **Step 5, kind 2 (the staged branch): opened draft #8538**, `improve/specht-standardbasis-style` @ `0e917e5c7`,
+  rebased from `a440533b7` onto `bed3bd6bb` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
+  `Roadmap: RepresentationTheory`. A build waiter is armed. Nothing is staged now (next: the r1022 re-score list).
+* In progress (cap full): #8531, #8534 and #8538. #8530 is approved.
