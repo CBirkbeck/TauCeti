@@ -10,6 +10,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PointImage
 -- Proof-only: the tautological point is the generic point pushed along the pullback.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.GenericPoint
+-- Proof-only: the `q`-power map is additive.
+import TauCeti.FieldTheory.Finite.Frobenius
 
 /-!
 # The Frobenius acts on points as the `q`-power map
@@ -21,14 +23,11 @@ on the points of `W` over `K` as the `q`-power map on coordinates:
 
     π (x, y) = (x ^ q, y ^ q),
 
-the point map induced by the `q`-power Frobenius of `K` over `F`. This is the lemma "the
-Frobenius isogeny induces `(x, y) ↦ (x ^ q, y ^ q)` on points" of the roadmap's Hasse bound.
-
-The proof reads `π (P)` as the reduction of the tautological point
-`(genericX ^ q, genericY ^ q)` at the place of `P` (`TauCeti.Isogeny.pointImage`). For
-`P = (a, b)`, `genericX ^ q - a ^ q = (genericX - a) ^ q` vanishes at the place of `P` because
-`genericX - a` does, and likewise for `y`; for `P = O`, `genericX ^ q` has a pole at infinity
-because `genericX` does.
+the point map induced by the `q`-power Frobenius of `K` over `F`. So the points of `W` over `K`
+fixed by `π` are those with coordinates in `F`, and `π` commutes with every point map induced by a
+field map over `F`. On the torsion of `W` over a separable closure of `F`, `π` is therefore the
+Galois Frobenius of `F`, which is the form in which it enters the count of the points of `W` over
+`F` and the Hasse bound.
 
 ## Main definitions
 
@@ -83,14 +82,6 @@ theorem fieldPullback_baseChangeFrobenius_genericY :
       genericY (W⁄K).toAffine ^ Nat.card F :=
   FunctionField.map_genericY W (algebraMap F K) ▸ fieldPullback_baseChangeFrobenius_map W _
 
--- In a ring receiving the finite field `F`, raising to the order of `F` is additive.
-private theorem sub_pow_natCard {L : Type*} [CommRing L] (g : F →+* L) (x y : L) :
-    (x - y) ^ Nat.card F = x ^ Nat.card F - y ^ Nat.card F := by
-  let _ := g.toAlgebra
-  let _ := Fintype.ofFinite F
-  simpa only [FiniteField.coe_frobeniusAlgHom, Nat.card_eq_fintype_card] using
-    map_sub (FiniteField.frobeniusAlgHom F L) x y
-
 variable [DecidableEq K] [W.IsElliptic]
 
 /-- **The Frobenius acts on points as the `q`-power map on coordinates**: `π (x, y) = (x^q, y^q)`,
@@ -112,17 +103,15 @@ theorem pointImage_baseChangeFrobenius (P : (W⁄K).toAffine.Point) :
   · have hQ : (W⁄K).toAffine.Nonsingular (FiniteField.frobeniusAlgHom F K a)
         (FiniteField.frobeniusAlgHom F K b) :=
       (W.baseChange_nonsingular (FiniteField.frobeniusAlgHom F K).injective a b).mpr h
-    have hQ' : ((W⁄K).toAffine⁄K).toAffine.Nonsingular (FiniteField.frobeniusAlgHom F K a)
-        (FiniteField.frobeniusAlgHom F K b) :=
-      ((W⁄K).toAffine.map_nonsingular (algebraMap K K).injective _ _).mpr hQ
     -- a constant of `F(W⁄K)` raised to the `q`-th power is the image of its `q`-power Frobenius
     have hc (c : K) :
         algebraMap K (W⁄K).toAffine.FunctionField (FiniteField.frobeniusAlgHom F K c) =
           algebraMap K _ c ^ Nat.card F := by
       rw [FiniteField.coe_frobeniusAlgHom, map_pow, Nat.card_eq_fintype_card]
-    have hsub :=
-      sub_pow_natCard ((algebraMap K (W⁄K).toAffine.FunctionField).comp (algebraMap F K))
-    rw [Point.map_some, Point.equivBaseChangeSelf_some _ _ hQ',
+    let _ : Algebra F (W⁄K).toAffine.FunctionField :=
+      ((algebraMap K (W⁄K).toAffine.FunctionField).comp (algebraMap F K)).toAlgebra
+    have hsub := TauCeti.FiniteField.sub_pow_natCard F (W⁄K).toAffine.FunctionField
+    rw [Point.map_some, Point.equivBaseChangeSelf_some _ hQ,
       some_sub_baseChange_mem_polePoints_iff, coe_pointEquivDegreeOnePlace_some,
       fieldPullback_baseChangeFrobenius_genericX, fieldPullback_baseChangeFrobenius_genericY, hc,
       hc, ← hsub, ← hsub, map_pow, map_pow]

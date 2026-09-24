@@ -61,10 +61,10 @@ statements produce, are read on `W` itself through it. -/
 noncomputable def equivBaseChangeSelf : W.Point ≃+ (W⁄F).toAffine.Point :=
   AddEquiv.cast (M := fun W' : Affine F ↦ W'.Point) W.baseChange_self.symm
 
-/-- **`equivBaseChangeSelf` keeps the coordinates of an affine point.** Both nonsingularity proofs
-are hypotheses, the two being about the same pair `(x, y)`. -/
-theorem equivBaseChangeSelf_some {x y : F} (h : W.Nonsingular x y)
-    (h' : (W⁄F).toAffine.Nonsingular x y) : equivBaseChangeSelf W (.some x y h) = .some x y h' :=
+/-- **`equivBaseChangeSelf` keeps the coordinates of an affine point.** -/
+@[simp]
+theorem equivBaseChangeSelf_some {x y : F} (h : W.Nonsingular x y) :
+    equivBaseChangeSelf W (.some x y h) = .some x y (W.baseChange_self.symm ▸ h) :=
   Point.cast_some _ h
 
 end WeierstrassCurve.Affine.Point

@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.PointPlace
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.DegreeOneReduction
 
@@ -72,6 +72,7 @@ theorem valuation_pointPlace_genericY_sub_lt_one {x y : F} (h : W.Equation x y) 
 variable [DecidableEq F]
 
 /-- **The generic point reduces to `P` at the place of `P`.** -/
+@[simp]
 theorem reductionOfDegreeEqOne_genericPoint (P : W.Point) :
     reductionOfDegreeEqOne W (W.pointEquivDegreeOnePlace P).2 (genericPoint W) =
       Point.equivBaseChangeSelf W P := by
@@ -80,9 +81,7 @@ theorem reductionOfDegreeEqOne_genericPoint (P : W.Point) :
   · rw [coe_pointEquivDegreeOnePlace_zero, ← Point.zero_def, map_zero, map_zero, sub_zero,
       mem_polePoints_iff, xCoord_genericPoint, Place.valuation_infinity, genericX_eq_algebraMap]
     exact Or.inr (one_lt_infinityPlace_X W)
-  · have hF : (W⁄F).toAffine.Nonsingular x y :=
-      (W.map_nonsingular (algebraMap F F).injective x y).mpr h
-    rw [Point.equivBaseChangeSelf_some W h hF, genericPoint_eq_some,
+  · rw [Point.equivBaseChangeSelf_some W h, genericPoint_eq_some,
       some_sub_baseChange_mem_polePoints_iff, coe_pointEquivDegreeOnePlace_some]
     exact ⟨valuation_pointPlace_genericX_sub_lt_one W h.1,
       valuation_pointPlace_genericY_sub_lt_one W h.1⟩

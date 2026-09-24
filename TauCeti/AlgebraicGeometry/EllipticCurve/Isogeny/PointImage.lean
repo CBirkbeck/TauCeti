@@ -5,8 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPointReduction
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfinity
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.GenericPoint.Reduction
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.TautologicalPoint
+-- Proof-only: the pulled-back `x` has a pole at the place at infinity.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace
 
 /-!
 # The image of a point under an isogeny
@@ -20,9 +22,9 @@ place of `F(W₁)` of degree one, and `φ(P)` is the reduction of `t_φ` there: 
 
 Geometrically, `t_φ` is `φ` evaluated at the generic point of `W₁`, and reducing it at the place of
 `P` evaluates `φ` at `P`. For the identity isogeny this is the statement that the generic point
-reduces to `P` at the place of `P` (`WeierstrassCurve.Affine.reductionOfDegreeEqOne_genericPoint`),
-and since reduction is additive, `[n]`, whose tautological point is `n` times the generic point,
-acts on points as multiplication by `n` (`TauCeti.Isogeny.pointImage_mulByIntIsogeny`).
+reduces to `P` at the place of `P` (`WeierstrassCurve.Affine.reductionOfDegreeEqOne_genericPoint`).
+The action of `[n]` is in `Isogeny/MulByInt/PointImage.lean`, and that of the Frobenius in
+`Isogeny/Frobenius/PointImage.lean`.
 
 The map here is read off the function field of `W₁` through reduction, and it needs nothing about
 the isogeny beyond its tautological point, inseparable isogenies included.
@@ -37,7 +39,7 @@ induced map of points.
 
 * `TauCeti.Isogeny.pointImage_eq_iff`: `φ(P) = Q` exactly when `t_φ - Q` lies in the kernel of
   reduction at the place of `P`.
-* `TauCeti.Isogeny.pointImage_mulByIntIsogeny`: `[n]` sends `P` to `n • P`.
+* `TauCeti.Isogeny.pointImage_zero`: `φ(O) = O`.
 
 ## References
 
@@ -66,13 +68,14 @@ theorem pointImage_eq_iff {φ : Isogeny W₁ W₂} {P : W₁.Point} {Q : W₂.Po
         polePoints W₂ (W₁.pointEquivDegreeOnePlace P).1 := by
   rw [pointImage, AddEquiv.symm_apply_eq, reductionOfDegreeEqOne_eq_iff]
 
-/-- **`[n]` acts on points as multiplication by `n`**: its tautological point is `n` times the
-generic point, and reduction is additive. -/
-theorem pointImage_mulByIntIsogeny {W : WeierstrassCurve.Affine F} [W.IsElliptic] {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (P : W.Point) :
-    (mulByIntIsogeny W hn).pointImage P = n • P := by
-  rw [pointImage, mulByIntIsogeny_pullback, tautologicalPoint_mulByIntPullback, map_zsmul,
-    reductionOfDegreeEqOne_genericPoint, ← map_zsmul, AddEquiv.symm_apply_apply]
+/-- **An isogeny sends `O` to `O`.** -/
+@[simp]
+theorem pointImage_zero (φ : Isogeny W₁ W₂) : φ.pointImage 0 = 0 := by
+  rw [pointImage_eq_iff, map_zero (Point.equivBaseChangeSelf W₂),
+    map_zero (Point.baseChange (W' := W₂) F W₁.FunctionField), sub_zero, Point.zero_def,
+    coe_pointEquivDegreeOnePlace_zero, mem_polePoints_iff, Place.valuation_infinity,
+    CoordinatePullback.xCoord_tautologicalPoint, ← AdjoinRoot.algebraMap_eq]
+  exact Or.inr (one_lt_infinityPlace_pullback_X φ)
 
 end TauCeti.Isogeny
 
