@@ -22,6 +22,8 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.CoordinateRi
 import TauCeti.RingTheory.DedekindDomain.AdicValuation.Basic
 -- Proof-only: the place at infinity is the only place at which `x` has a pole.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.InfinityPlace.Unique
+-- Proof-only: the place at infinity is not the place of an affine point.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.PointPlace
 
 /-!
 # The place of a point restricts along `[n]` to the place of its multiple
@@ -231,19 +233,6 @@ theorem isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero {x y : F}
     (by rwa [evalEval_C])
     fun h0 ↦ pow_ne_zero 2 hn (by rw [psiFunctionField_sq, h0, map_zero])
 
-omit [DecidableEq F] in
--- The place at infinity is not the place of an affine point: `x` has a pole at one and not at the
--- other.
-private theorem not_isEquiv_infinityPlace_pointPlace {x y : F} (h : W.toAffine.Equation x y) :
-    ¬ (infinityPlace W.toAffine).IsEquiv
-      ((CoordinateRing.pointPlace h).valuation W.toAffine.FunctionField) := by
-  intro hE
-  have hle : (CoordinateRing.pointPlace h).valuation W.toAffine.FunctionField
-      (algebraMap F[X] W.toAffine.FunctionField Polynomial.X) ≤ 1 := by
-    rw [IsScalarTower.algebraMap_apply F[X] W.toAffine.CoordinateRing]
-    exact HeightOneSpectrum.valuation_le_one _ _
-  exact absurd (hE.le_one_iff_le_one.mpr hle) (not_le.mpr (one_lt_infinityPlace_X W.toAffine))
-
 /-- **The affine points over the place at infinity are the `n`-torsion points.** For an
 `F`-rational affine point `P`, the place of `P` restricts along `[n]` to the place at infinity
 exactly when `n • P = 0`. -/
@@ -260,7 +249,7 @@ theorem isEquiv_comap_pointPlace_infinityPlace_iff {x y : F} (h : W.toAffine.Non
   -- otherwise `n • P` is affine, and the restriction is also the place of `n • P`, at which `x`
   -- has no pole
   obtain ⟨x', y', h', hnP⟩ := Affine.Point.exists_eq_some_of_ne_zero hP0
-  exact not_isEquiv_infinityPlace_pointPlace W h'.left
+  exact Place.not_isEquiv_infinityPlace_valuation (CoordinateRing.pointPlace h'.left)
     ((isEquiv_comap_pointPlace W h h' hnP).symm.trans hinf).symm
 
 /-- **The affine points over the place of `T` are its `[n]`-preimages.** For `F`-rational affine
@@ -280,7 +269,7 @@ theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) 
   -- a point that `[n]` kills restricts to the place at infinity, which is not the place of `T`
   by_cases hP0 : n • Affine.Point.some x y h = 0
   · exact absurd ((isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero W h hn hP0).symm.trans
-      hab) (not_isEquiv_infinityPlace_pointPlace W h'.left)
+      hab) (Place.not_isEquiv_infinityPlace_valuation (CoordinateRing.pointPlace h'.left))
   -- otherwise `n • P` has affine coordinates, and both places restrict to the same one
   obtain ⟨x'', y'', h'', hnP⟩ := Affine.Point.exists_eq_some_of_ne_zero hP0
   have hb := isEquiv_comap_pointPlace W h h'' hnP
