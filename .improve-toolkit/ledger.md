@@ -42817,3 +42817,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   gains a **Review history** paragraph explaining the resolution. Pushed; the head is `8ae84de0c`; waiter armed.
 * #8526 is `ready-to-merge` (drive board). #8530 is 13 min since ready; #8531's build has run since 07:59:33Z (waiter armed). No merges.
 * In progress (cap full): #8525, #8530 and #8531. Pin `dc4b8d60d5`, main `65037724d`.
+* (late in r1018) **#8531 went green at 08:08:53Z and was marked ready at 08:09Z.** Guards: all latest check-runs green, head `6a627ae8a`
+  unchanged, pin `dc4b8d60d5` at base `9979a4b21` and at main, file untouched since the base. No drafts remain.
