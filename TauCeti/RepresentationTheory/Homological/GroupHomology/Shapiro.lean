@@ -101,8 +101,11 @@ theorem indIso_inv (n : ℕ) :
       map S.subtype ((indResAdjunction.{u, u, u, u} k S.subtype).unit.app A) n := by
   -- The comparison, through `Tor`, of the bar resolution of `S` with the restricted bar resolution
   -- of `G` is the map induced on homology by the chain map between them.
+  -- `resFunctor` is pinned: with `k` and its universe left open, instance search for the
+  -- restricted resolution first fails slowly.
   have hnat := ProjectiveResolution.isoLeftDerivedObj_hom_naturality (𝟙 _)
-    (barResolution k S) ((resFunctor S.subtype).mapProjectiveResolution (barResolution k G))
+    (barResolution k S)
+    ((resFunctor.{u} (k := k) S.subtype).mapProjectiveResolution (barResolution k G))
     (TauCeti.Rep.barComplex.resChainMap S.subtype)
     ((TauCeti.Rep.barComplex.resChainMap_f_zero_comp_π S.subtype).trans
       (Category.comp_id _).symm) ((coinvariantsTensor k S).obj A) n
