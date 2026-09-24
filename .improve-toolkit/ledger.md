@@ -42331,3 +42331,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **#8426 merged** (23:47:10Z, `improve/arrays-condlaw-style`, kind 2), the twentieth of this session's PRs to merge today.
 * The drafts #8469, #8473 and #8476 still have `sandboxed-build` queued; no board is due and no findings are open. In progress (cap
   full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `7bd3207be`.
+
+## r971 — 2026-09-24T00:05Z (cron)
+
+* No new merges. #8469's `sandboxed-build` started at 00:02:17Z (a background waiter is armed; mark it ready when green, after the
+  guards). #8473 and #8476 are still queued. No boards are due and no findings are open.
+* In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `9af4e63f2`.
