@@ -42894,3 +42894,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   ok at 09:04Z; background, log `drive-8531-0915.log`).
 * #8534 is at 26 min; #8538's build has run since 09:11:35Z (waiter armed). No merges, no findings.
 * In progress (cap full): #8531, #8534 and #8538. Pin `dc4b8d60d5`, main `10ac8080c`.
+* (late in r1025) **The #8531 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5811356161, 09:17Z; $1.31).
+* (late in r1025) **Step 5, kind 2: opened draft #8541**, `improve/dgl-applications-style` @ `3496b0a19` from `f0619a1b8`;
+  `Roadmap: DenseGraphLimits` (as #5371). Target from the r1022 re-score: `Combinatorics/DenseGraphLimits/Applications.lean` (461 lines,
+  40 `fun … =>`, no other `=>`, no chains, no roadmap/provenance text, no open-PR overlap). Edit: 40 arrows (asserted). Gate 12/0/0.
+  Astra (three-dot diff, 1 file): **cleared** ("I would approve this style-only diff"). A build waiter is armed.
+* In progress (cap full): #8534, #8538 and #8541. #8530 and #8531 are approved.
