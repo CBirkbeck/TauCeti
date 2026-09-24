@@ -41,13 +41,12 @@ statements are equivalences rather than equalities.
 ## Main results
 
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace`: the place of `P` restricted along `[n]` is
-  equivalent to the place of `n • P`.
+  equivalent to the place of `n • P`, when `n • P` is affine.
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace_infinityPlace_iff`: the place of an affine point `P`
   restricts to the place at infinity exactly when `n • P = 0`, over any field.
 * `TauCeti.Isogeny.isEquiv_comap_pointPlace_iff`: and conversely, the place of an affine point
   restricts to the place of `T` only if the point is an `[n]`-preimage of `T`, so the affine
-  `F`-rational places over the place of `T` are exactly those of its `[n]`-preimages. Stated for a
-  `P` that `[n]` does not kill, which is all the converse needs.
+  `F`-rational places over the place of `T` are exactly those of its `[n]`-preimages.
 
 ## References
 
@@ -160,7 +159,8 @@ private theorem comap_algebraMap_coordinateRing_le_one {x y : F}
   exact CoordinateRing.valuation_pointPlace_div_le_one _ h.left
     (by rw [evalEval_C]; exact eval_ΨSq_ne_zero_of_zsmul_ne_zero W h hP)
 
-/-- **The place of `P` restricts along `[n]` to the place of `n • P`.** -/
+/-- **The place of `P` restricts along `[n]` to the place of `n • P`**, for an affine `n • P`. The
+case `n • P = 0` is `isEquiv_comap_pointPlace_infinityPlace_iff`. -/
 -- Normalizing the restricted valuation and taking its centre on the coordinate ring names a height
 -- one prime; the two division-polynomial coordinate identities put the ideal of `n • P` inside
 -- that centre, and maximality of the point ideal forces the two to agree.
@@ -208,31 +208,6 @@ theorem isEquiv_comap_pointPlace {x y : F} (h : W.toAffine.Nonsingular x y) {n :
   rw [← CoordinateRing.eq_pointPlace_of_mem_asIdeal h'.left hmemX hmemY]
   exact hQu.symm
 
-/-- **The affine points over the place of `T` are its `[n]`-preimages.** For an `F`-rational
-affine point `P` off the kernel of `[n]`, the place of `P` restricts along `[n]` to the place of
-`T` precisely when `n • P = T`. -/
--- The left-hand side is stated with the coercion rather than `fieldPullback.toRingHom`, which is
--- what `AlgHom.toRingHom_eq_coe` normalises it to; in the `toRingHom` spelling `simpNF` rejects
--- the attribute, since simp would rewrite the term the lemma keys on.
-@[simp]
-theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
-    {x' y' : F} (h' : W.toAffine.Nonsingular x' y')
-    (hP0 : n • Affine.Point.some x y h ≠ 0) :
-    (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
-        (mulByIntIsogenyOfNeZero W (left_ne_zero_of_smul hP0)).fieldPullback).IsEquiv
-      ((CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField) ↔
-      n • Affine.Point.some x y h = Affine.Point.some x' y' h' := by
-  refine ⟨fun hab ↦ ?_, isEquiv_comap_pointPlace W h h'⟩
-  -- `n • P` is not the point at infinity, so it has affine coordinates to compare against
-  obtain ⟨x'', y'', h'', hnP⟩ := Affine.Point.exists_eq_some_of_ne_zero hP0
-  -- both places restrict to the same one, and a height one prime is determined by its valuation
-  have hb := isEquiv_comap_pointPlace W h h'' hnP
-  have hpq : CoordinateRing.pointPlace h''.left = CoordinateRing.pointPlace h'.left :=
-    HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (hb.symm.trans hab)
-  obtain ⟨rfl, rfl⟩ := (CoordinateRing.pointPlace_eq_iff h''.left h'.left).mp hpq
-  rw [hnP]
-
-
 /-- **The place of an affine `n`-torsion point restricts along `[n]` to the place at infinity.**
 For `P = (x, y)` with `n • P = 0`, the valuation `z ↦ v_P([n]^* z)` of `F(W)` is equivalent to the
 place at infinity: `[n]*x = Φₙ/ΨSqₙ` has a pole at `P`. No closure hypothesis on `F` is needed. -/
@@ -256,6 +231,19 @@ theorem isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero {x y : F}
     (by rwa [evalEval_C])
     fun h0 ↦ pow_ne_zero 2 hn (by rw [psiFunctionField_sq, h0, map_zero])
 
+omit [DecidableEq F] in
+-- The place at infinity is not the place of an affine point: `x` has a pole at one and not at the
+-- other.
+private theorem not_isEquiv_infinityPlace_pointPlace {x y : F} (h : W.toAffine.Equation x y) :
+    ¬ (infinityPlace W.toAffine).IsEquiv
+      ((CoordinateRing.pointPlace h).valuation W.toAffine.FunctionField) := by
+  intro hE
+  have hle : (CoordinateRing.pointPlace h).valuation W.toAffine.FunctionField
+      (algebraMap F[X] W.toAffine.FunctionField Polynomial.X) ≤ 1 := by
+    rw [IsScalarTower.algebraMap_apply F[X] W.toAffine.CoordinateRing]
+    exact HeightOneSpectrum.valuation_le_one _ _
+  exact absurd (hE.le_one_iff_le_one.mpr hle) (not_le.mpr (one_lt_infinityPlace_X W.toAffine))
+
 /-- **The affine points over the place at infinity are the `n`-torsion points.** For an
 `F`-rational affine point `P`, the place of `P` restricts along `[n]` to the place at infinity
 exactly when `n • P = 0`. -/
@@ -272,12 +260,34 @@ theorem isEquiv_comap_pointPlace_infinityPlace_iff {x y : F} (h : W.toAffine.Non
   -- otherwise `n • P` is affine, and the restriction is also the place of `n • P`, at which `x`
   -- has no pole
   obtain ⟨x', y', h', hnP⟩ := Affine.Point.exists_eq_some_of_ne_zero hP0
-  have hpt := (isEquiv_comap_pointPlace W h h' hnP).symm.trans hinf
-  have hle : (CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField
-      (algebraMap F[X] W.toAffine.FunctionField Polynomial.X) ≤ 1 := by
-    rw [IsScalarTower.algebraMap_apply F[X] W.toAffine.CoordinateRing]
-    exact HeightOneSpectrum.valuation_le_one _ _
-  exact absurd (hpt.le_one_iff_le_one.mp hle) (not_le.mpr (one_lt_infinityPlace_X W.toAffine))
+  exact not_isEquiv_infinityPlace_pointPlace W h'.left
+    ((isEquiv_comap_pointPlace W h h' hnP).symm.trans hinf).symm
+
+/-- **The affine points over the place of `T` are its `[n]`-preimages.** For `F`-rational affine
+points `P` and `T`, the place of `P` restricts along `[n]` to the place of `T` precisely when
+`n • P = T`. -/
+-- The left-hand side is stated with the coercion rather than `fieldPullback.toRingHom`, which is
+-- what `AlgHom.toRingHom_eq_coe` normalises it to; in the `toRingHom` spelling `simpNF` rejects
+-- the attribute, since simp would rewrite the term the lemma keys on.
+@[simp]
+theorem isEquiv_comap_pointPlace_iff {x y : F} (h : W.toAffine.Nonsingular x y) {n : ℤ}
+    (hn : psiFunctionField W n ≠ 0) {x' y' : F} (h' : W.toAffine.Nonsingular x' y') :
+    (((CoordinateRing.pointPlace h.left).valuation W.toAffine.FunctionField).comap
+        (mulByIntIsogeny W hn).fieldPullback).IsEquiv
+      ((CoordinateRing.pointPlace h'.left).valuation W.toAffine.FunctionField) ↔
+      n • Affine.Point.some x y h = Affine.Point.some x' y' h' := by
+  refine ⟨fun hab ↦ ?_, isEquiv_comap_pointPlace W h h'⟩
+  -- a point that `[n]` kills restricts to the place at infinity, which is not the place of `T`
+  by_cases hP0 : n • Affine.Point.some x y h = 0
+  · exact absurd ((isEquiv_comap_pointPlace_infinityPlace_of_zsmul_eq_zero W h hn hP0).symm.trans
+      hab) (not_isEquiv_infinityPlace_pointPlace W h'.left)
+  -- otherwise `n • P` has affine coordinates, and both places restrict to the same one
+  obtain ⟨x'', y'', h'', hnP⟩ := Affine.Point.exists_eq_some_of_ne_zero hP0
+  have hb := isEquiv_comap_pointPlace W h h'' hnP
+  have hpq : CoordinateRing.pointPlace h''.left = CoordinateRing.pointPlace h'.left :=
+    HeightOneSpectrum.eq_of_valuation_isEquiv_valuation (hb.symm.trans hab)
+  obtain ⟨rfl, rfl⟩ := (CoordinateRing.pointPlace_eq_iff h''.left h'.left).mp hpq
+  rw [hnP]
 
 end TauCeti.Isogeny
 end
