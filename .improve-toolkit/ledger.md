@@ -42502,3 +42502,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** (the local instance stays in scope; "I would reject none of these edits").
 * #8492 is at 62 min since ready with no board: held one round (the pipeline's usual window runs to ~64 min). #8497's build is running.
 * In progress (cap full): #8492, #8497 and #8499. Pin `dc4b8d60d5`, main `86e9a36e9`.
+
+## r989 — 2026-09-24T03:16Z (cron; queued right behind r988)
+
+* No merges, no findings. #8492 is 63 min past ready with no board (drive at the next round if still boardless). #8497's build has run
+  since 03:07:50Z and #8499's since 03:15:18Z. #8491 is `ready-to-merge`. In progress (cap full): #8492, #8497 and #8499. Main `623e4fb5b`.
