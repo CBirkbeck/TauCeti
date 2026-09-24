@@ -43029,3 +43029,17 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No change: #8563, #8565 and #8566 `ready-to-merge`; #8570 building, #8577 and #8578 queued (waiter armed). No merges, no findings.
   In progress (cap full): #8570, #8577 and #8578. Main `15c434e4b`.
+
+## r1039 — 2026-09-24T11:40Z (cron)
+
+* **#8566 merged** (11:29:22Z, `improve/pvaggregation-style`) and **#8565 merged** (11:34:18Z, `improve/wishart-inverse-moments-style`),
+  the forty-third and forty-fourth of this session's PRs. #8563 is `ready-to-merge`.
+* **#8570 (green 11:29:38Z) was marked ready at 11:34:53Z; #8577 (green 11:39:06Z) and #8578 (green 11:38:27Z) at 11:40Z.** Guards for all
+  three: latest check-runs green, heads unchanged, pin `dc4b8d60d5` at their bases and at main, files untouched since the bases. No drafts.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/quotient-asymptotics-style` @ `d7bcb3f0f` from `7cfe63813`. Target
+  `Analysis/Contour/Chord/QuotientAsymptotics.lean` (404 lines, 38 `fun … =>`, no roadmap text; its "Provenance" section credits the
+  AINTLIB `LeanModularForms` sources in timeless wording and is untouched). Edits: 38 arrows (asserted); the first calc step's
+  `by congr 1; ring` split, with tactics at column 10 (the step's term begins at column 9); the term-level `fun … ↦ by …; …` and
+  `show … from by …; …` forms stay. Gate 12/0/0. Astra **cleared** (it confirmed the first-step split parses). Body `pr-body-qasym.md`,
+  `Roadmap: ContourIntegration` (#933 carried `roadmap/ContourIntegration`).
+* In progress (cap full): #8570, #8577 and #8578. Pin `dc4b8d60d5`, main `7cfe63813`.
