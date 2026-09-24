@@ -42691,3 +42691,12 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   #8510 is `ready-to-merge`.
 * #8513 is 63 min past ready (drive next round if still boardless). #8521 is at 1 min. #8525's build has run since 06:15:40Z (waiter
   armed). No findings. In progress (cap full): #8513, #8521 and #8525. Pin `dc4b8d60d5`, main `7bd3737e3`.
+
+## r1008 — 2026-09-24T06:25Z (cron)
+
+* **#8510 merged** (06:23:34Z, `improve/drift-maxprinciple-style`, kind 2, approved by the r1006 drive), the thirty-first of this session's PRs.
+* **#8525 went green at 06:24:34Z and was marked ready at 06:24:54Z.** Guards: all latest check-runs green, head `bce26feba` unchanged,
+  pin `dc4b8d60d5` at base `a3fbe61a2` and at main, `Grid/Grading/Parity.lean` untouched since the base. No drafts remain.
+* **Step 4: drove #8513** at 06:25Z (72 min past `max(CI-green 05:12:39Z, ready 05:13:04Z)`, no board, `awaiting-review` only; quota
+  probed ok at 05:54Z and drives since have succeeded; background, log `drive-8513-0625.log`).
+* #8521 is at 9 min. No findings. In progress (cap full): #8513, #8521 and #8525. Pin `dc4b8d60d5`, main `47ee36187`.
