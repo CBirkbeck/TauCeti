@@ -42708,3 +42708,15 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   that paragraph (which had a broken wrap) reflowed. Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would accept the
   entire diff"). A build waiter is armed.
 * In progress (cap full): #8521, #8525 and #8526. #8513 is approved.
+
+## r1009 — 2026-09-24T06:40Z (cron)
+
+* #8513 is `ready-to-merge` (drive board). #8521 (19 min since ready) and #8525 (10 min) are `awaiting-review`; #8526's build has run
+  since 06:32:38Z (waiter armed). No merges, no findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/energyform-variablelp-style` @ `d2fbba022` from `afdaec38a`. Target
+  `Analysis/PDE/EnergyForm/VariableLp.lean` (45 `fun … =>`, no other `=>`, no chains, no open-PR overlap). Edits: 45 arrows (asserted);
+  the docstring's "Lane D, item 16 of the PDE roadmap asks for the bounded bilinear form associated to a divergence-form operator" is
+  replaced by the motivation it carried, "A divergence-form operator with bounded coefficients has an associated bounded bilinear form,
+  its energy form." Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**, and judged the new sentence mathematically accurate
+  (|E(U,V)| ≤ ‖B‖_∞‖U‖₂‖V‖₂; no symmetry or positivity claimed). Body: scratchpad `pr-body-varlp.md`, `Roadmap: PDE`.
+* In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `afdaec38a`.
