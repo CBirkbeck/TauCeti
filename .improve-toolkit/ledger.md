@@ -42590,3 +42590,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   closing `rw [h1, h2]; linarith [hlap hy])` of a multi-line `(fun y hy ↦ by …)`). Gate 12/0/0. Astra (three-dot diff, 1 file):
   **cleared** ("I would reject none of these edits"). A build waiter is armed.
 * In progress (cap full): #8503, #8508 and #8510. #8497 and #8499 are approved.
+
+## r998 — 2026-09-24T04:45Z (cron)
+
+* **#8497 merged** (04:40:40Z, `improve/condexp-contractable-style`, kind 2, approved by the r996 drive), the twenty-seventh of this
+  session's PRs. #8499 is `ready-to-merge`.
+* #8503 is 62 min past ready with no board: held one round (the pipeline's window runs to ~64 min). #8508 is at 2 min. #8510's build has
+  run since 04:42:27Z (waiter armed). No findings.
+* In progress (cap full): #8503, #8508 and #8510. Pin `dc4b8d60d5`, main `d189aa947`.
