@@ -23,7 +23,7 @@ As elsewhere in this development, `ℚ/ℤ` is the rational circle `AddCircle (1
 ## Main definitions
 
 * `TauCeti.TateCohomology.characterConnectingClass`: the connecting class `δχ ∈ H²(G, ℤ)` of a
-  character `χ : Gᵃᵇ → ℚ/ℤ`, in the Tate group of degree `2`.
+  character `χ : Gᵃᵇ → ℚ/ℤ`, in the Tate group of degree `2`, as an additive map in `χ`.
 
 ## Main results
 
@@ -48,13 +48,16 @@ variable (G : Type) [Group G] [Fintype G]
 /-- The **connecting class** `δχ ∈ H²(G, ℤ)` of a character `χ : Gᵃᵇ → ℚ/ℤ` of a finite group `G`,
 in the Tate group of degree `2`: the image of `χ`, as a class in `H¹(G, ℚ/ℤ)` for the trivial
 action, under the connecting map of `0 → ℤ → ℚ → ℚ/ℤ → 0`. The character is read on `G` through
-the abelianization map `G → Gᵃᵇ`. -/
-def characterConnectingClass (χ : Additive (Abelianization G) →+ AddCircle (1 : ℚ)) :
-    tateCohomology (Rep.trivial ℤ G ℤ) 2 :=
-  (_root_.TateCohomology.isoGroupCohomology 2).inv.app (Rep.trivial ℤ G ℤ) <|
-    groupCohomology.δ (Rep.ratAddCircleShortComplex_shortExact G) 1 2 rfl <|
-      (groupCohomology.H1IsoOfIsTrivial (Rep.trivial ℤ G (AddCircle (1 : ℚ)))).inv <|
-        χ.comp Abelianization.of.toAdditive
+the abelianization map `G → Gᵃᵇ`. It is additive in the character. -/
+def characterConnectingClass :
+    (Additive (Abelianization G) →+ AddCircle (1 : ℚ)) →+ tateCohomology (Rep.trivial ℤ G ℤ) 2 :=
+  ((_root_.TateCohomology.isoGroupCohomology 2).inv.app
+      (Rep.trivial ℤ G ℤ)).hom.toAddMonoidHom.comp <|
+    (groupCohomology.δ (Rep.ratAddCircleShortComplex_shortExact G) 1 2
+        rfl).hom.toAddMonoidHom.comp <|
+      (groupCohomology.H1IsoOfIsTrivial
+          (Rep.trivial ℤ G (AddCircle (1 : ℚ)))).inv.hom.toAddMonoidHom.comp <|
+        AddMonoidHom.compHom' Abelianization.of.toAdditive
 
 /-- The connecting class of `χ` is the connecting map applied to the class of `G → Gᵃᵇ → ℚ/ℤ`
 in `H¹(G, ℚ/ℤ)`, carried to Tate cohomology by the comparison of positive degrees. -/

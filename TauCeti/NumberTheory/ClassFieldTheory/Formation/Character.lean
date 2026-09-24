@@ -29,6 +29,8 @@ As elsewhere in this development, `ℚ/ℤ` is the rational circle `AddCircle (1
 
 * `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_def`: `δχ` is the connecting
   class `TauCeti.TateCohomology.characterConnectingClass` of the finite group `Γ`.
+* `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_add`,
+  `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_zero`: `δχ` is additive in `χ`.
 
 ## References
 
@@ -58,5 +60,18 @@ its Galois group. -/
 theorem characterConnectingClass_def (χ : Additive (Abelianization L.Gal) →+ AddCircle (1 : ℚ)) :
     L.characterConnectingClass χ = TateCohomology.characterConnectingClass L.Gal χ :=
   (rfl)
+
+/-- The connecting class is additive in the character. -/
+@[simp]
+theorem characterConnectingClass_add
+    (χ₁ χ₂ : Additive (Abelianization L.Gal) →+ AddCircle (1 : ℚ)) :
+    L.characterConnectingClass (χ₁ + χ₂) =
+      L.characterConnectingClass χ₁ + L.characterConnectingClass χ₂ := by
+  simp only [characterConnectingClass_def, map_add]
+
+/-- The connecting class of the trivial character vanishes. -/
+@[simp]
+theorem characterConnectingClass_zero : L.characterConnectingClass 0 = 0 := by
+  simp only [characterConnectingClass_def, map_zero]
 
 end TauCeti.ClassFieldTheory.NormalLayer
