@@ -30,7 +30,9 @@ As elsewhere in this development, `ℚ/ℤ` is the rational circle `AddCircle (1
 * `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_def`: `δχ` is the connecting
   class `TauCeti.TateCohomology.characterConnectingClass` of the finite group `Γ`.
 * `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_add`,
-  `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_zero`: `δχ` is additive in `χ`.
+  `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_zero`,
+  `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_neg`,
+  `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_sub`: `δχ` is additive in `χ`.
 
 ## References
 
@@ -73,5 +75,19 @@ theorem characterConnectingClass_add
 @[simp]
 theorem characterConnectingClass_zero : L.characterConnectingClass 0 = 0 := by
   simp only [characterConnectingClass_def, map_zero]
+
+/-- The connecting class of the negated character is the negated class. -/
+@[simp]
+theorem characterConnectingClass_neg (χ : Additive (Abelianization L.Gal) →+ AddCircle (1 : ℚ)) :
+    L.characterConnectingClass (-χ) = -L.characterConnectingClass χ := by
+  simp only [characterConnectingClass_def, map_neg]
+
+/-- The connecting class of a difference of characters is the difference of their classes. -/
+@[simp]
+theorem characterConnectingClass_sub
+    (χ₁ χ₂ : Additive (Abelianization L.Gal) →+ AddCircle (1 : ℚ)) :
+    L.characterConnectingClass (χ₁ - χ₂) =
+      L.characterConnectingClass χ₁ - L.characterConnectingClass χ₂ := by
+  simp only [characterConnectingClass_def, map_sub]
 
 end TauCeti.ClassFieldTheory.NormalLayer
