@@ -130,6 +130,7 @@ theorem IsUnitary.congr {π : ContRepresentation 𝕜 G V} (hπ : IsUnitary π) 
 -- The `simp` lemmas below take the continuity of the transported representation, as it occurs on
 -- the left-hand side, and derive that of `π` on the right: a hypothesis occurring on the left only
 -- inside a proof is not assigned by unification, and `simp` cannot prove it for a symbolic `π`.
+-- This follows #8348.
 /-- **Transport along a linear isometry equivalence does not change matrix coefficients.** The
 matrix coefficient of the transported representation at the transported vectors is the matrix
 coefficient of the original. -/
