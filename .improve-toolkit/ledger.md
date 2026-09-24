@@ -42509,3 +42509,7 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   since 03:07:50Z and #8499's since 03:15:18Z. #8491 is `ready-to-merge`. In progress (cap full): #8492, #8497 and #8499. Main `623e4fb5b`.
 * (late in r989) **#8497 went green at 03:16:23Z and was marked ready at 03:17Z.** Guards: all latest check-runs green, head `c3ceabacb`
   unchanged, pin `dc4b8d60d5` at base `10ecfcfd4` and at main, `CondExp.lean` untouched since the base. A waiter is armed for #8499.
+* (late in r989) **#8499 went green at 03:24:11Z and was marked ready at 03:24:24Z.** Guards: all latest check-runs green, head
+  `f9c163254` unchanged, pin `dc4b8d60d5` at base `86e9a36e9` and at main, file untouched since the base. No drafts remain.
+* (late in r989) **Step 4: drove #8492** at 03:24Z (71 min past ready 02:13:06Z, no board, `awaiting-review` only; background, log
+  `drive-8492-0324.log`).
