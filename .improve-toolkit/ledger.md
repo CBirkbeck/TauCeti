@@ -42751,3 +42751,20 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * No merges, no findings. #8525 now carries `review-in-progress` (the pipeline picked it up at 50 min). #8521 is at 59 min since ready
   (drive next round if still boardless) and #8526 at 30 min. Both staged branches wait. In progress (cap full): #8521, #8525 and #8526.
   Main `b8003b8c2`.
+
+## r1014 — 2026-09-24T07:30Z (cron)
+
+* **#8525 is `awaiting-author`**: board (07:17:20Z, by `sqrt-of-2`, on head `bce26feba`) is 9/10; **`documentation` requested changes**
+  ([r4090933140](https://github.com/TauCetiProject/TauCeti/pull/8525#discussion_r4090933140)): "The References paragraph says the Lean
+  proof was adapted to current `main` from a split-branch commit. This describes project history … _Fix:_ Keep the mathematical
+  reference in the module docstring and move the provenance sentence to the PR description." `attribution` had approved, noting the
+  split-branch provenance was preserved. **Step 3: implemented the proposal** at `e5b5676d1` (`docs(KnotTheory/Grid): move Parity.lean's
+  proof provenance to the PR`): the docstring keeps "… are from Ozsváth--Stipsicz--Szabó, *Grid Homology for Knots and Links*, Chapter
+  4.3." and the provenance sentence is gone. The PR body (REST PATCH) gains a **Provenance** line naming `05c2722248`, so attribution
+  still has it (the #8332 pattern). Gate 12/0/0. Pushed to fork; the PR head is `e5b5676d1`. A build waiter is armed; the pipeline
+  re-reviews on its own after CI.
+* **Lesson:** the `documentation` rubric now treats proof-provenance sentences ("adapted from … commit") as dated project history, like
+  roadmap status. Keep mathematical references in docstrings and put provenance in the PR body.
+* **Step 4: drove #8521** at 07:29Z (73 min past `max(CI-green 06:12:54Z, ready 06:15:32Z)`, no board, `awaiting-review` only; quota probe
+  "ok" at 07:29Z; background, log `drive-8521-0729.log`).
+* #8526 is at 40 min. No merges. In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `b8003b8c2`.
