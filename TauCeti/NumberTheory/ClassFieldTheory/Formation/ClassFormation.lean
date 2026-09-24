@@ -264,7 +264,8 @@ theorem fundamentalClass_restrict_generates (cf : ClassFormation F)
 /-! ### The norm quotient of a cyclic layer -/
 
 /-- **Norm index of a cyclic layer.** In a cyclic layer the norm quotient `A^U / N_{U/V}(A^V)` has
-exactly `[U : V]` elements. -/
+exactly `[U : V]` elements. See E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §1, and
+J.-P. Serre, *Local Fields*, Chapter XI, §3. -/
 theorem card_normQuotient (cf : ClassFormation F) (L : NormalLayer G) [IsCyclic L.Gal] :
     Nat.card (L.NormQuotient F) = L.degree :=
   -- `A^U / N A^V ≃ TateH 0 ≅ TateH 2` (two-periodicity) `≅ H 2`, which has `[U : V]` elements.
