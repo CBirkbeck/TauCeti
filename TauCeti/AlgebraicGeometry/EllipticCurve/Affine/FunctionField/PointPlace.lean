@@ -352,6 +352,14 @@ theorem coe_pointEquivDegreeOnePlace_mk {x y : F} (h : W.Equation x y) :
   exact Place.coe_degreeOneAffineOrInfinityEquiv_some W
     (CoordinateRing.equationEquivDegreeOnePlace W ⟨(x, y), h⟩)
 
+/-- The point--place dictionary sends a nonsingular point `(x, y)` to the normalized place of its
+maximal ideal. -/
+@[simp]
+theorem coe_pointEquivDegreeOnePlace_some {x y : F} (h : W.Nonsingular x y) :
+    (pointEquivDegreeOnePlace W (.some x y h)).1 =
+      Place.ofPrime F W.FunctionField (CoordinateRing.pointPlace h.left) :=
+  coe_pointEquivDegreeOnePlace_mk W h.left
+
 /-- Reading the place at infinity backwards through the dictionary recovers the point at
 infinity. -/
 @[simp]
