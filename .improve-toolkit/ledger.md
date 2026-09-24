@@ -42615,3 +42615,18 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `rw [← cancel_mono e.inv, e.hom_inv_id, Category.assoc]; exact hs` chains split. Gate 12/0/0. Astra (three-dot diff, 1 file):
   **cleared** ("I would reject none of the shown edits"). A build waiter is armed. **The r976 roadmap-free list is now used up.**
 * In progress (cap full): #8508, #8510 and #8513. #8503 is approved.
+
+## r1000 — 2026-09-24T05:10Z (cron)
+
+* #8503 is `ready-to-merge` (drive board). #8508 (22 min since ready) and #8510 (10 min) are `awaiting-review`; #8513's build has run
+  since 05:01:51Z (waiter armed). No merges, no findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/arrays-basic-style` @ `fb9e0f3d4` from `50e5fa02e`. Target
+  `Probability/Exchangeability/Arrays/Basic.lean` (104 `fun … =>`, no other `=>`, no open-PR overlap), the first roadmap-bearing r976
+  hit read: its one roadmap sentence ("This is the entry point of the Layer 8 target … in `TauCetiRoadmap/Exchangeability/README.md`")
+  is status text, not a design source, so it is dropped and the paragraph reflowed. Also: 104 arrows (asserted); the two `ext; simp`
+  chains in `measurableSet_symmetricArraysWithDiag` split. Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would accept every
+  edit shown"; the paragraph "still reads correctly"). Body: scratchpad `pr-body-arraysbasic.md`, `Roadmap: Exchangeability`.
+* Also read (not yet taken): `EnergyForm/Integrated/Basic.lean` (Lane D motivation + "the roadmap's weak-derivative Sobolev spaces"),
+  `JHolomorphic/Prod/Basic.lean` ("used by the analytic Heegaard Floer roadmap"), `Grid/Grading/Parity.lean` ("completes … Lane G.2"),
+  `EnergyForm/VariableLp.lean` ("Lane D, item 16 … asks for"). All are status/motivation sentences, not design sources.
+* In progress (cap full): #8508, #8510 and #8513. Pin `dc4b8d60d5`, main `50e5fa02e`.
