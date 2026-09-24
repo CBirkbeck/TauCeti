@@ -79,10 +79,12 @@ def cochainEquiv0 : M ≃+ (ofDiscreteModule ℤ G M).ρ.coind₁.invariants whe
     ext g
     exact smul_add g m n
 
+/-- `cochainEquiv0` sends `m ∈ M` to the homogeneous `0`-cochain `g ↦ g • m`. -/
 @[simp]
 theorem cochainEquiv0_apply (m : M) (g : G) :
     (cochainEquiv0 G M m).val g = g • m := (rfl)
 
+/-- The inverse of `cochainEquiv0` evaluates a homogeneous `0`-cochain at `1`. -/
 @[simp]
 theorem cochainEquiv0_symm_apply
     (c : (ofDiscreteModule ℤ G M).ρ.coind₁.invariants) :
@@ -131,10 +133,14 @@ def cochainEquiv1 : C1 G M ≃+
     simp only [homogeneous1_apply]
     exact smul_add g (c.val (g⁻¹ * h)) (d.val (g⁻¹ * h))
 
+/-- `cochainEquiv1` sends a continuous `1`-cochain `c` to its homogeneous form `(g, h) ↦
+homogeneous1 c g h`, curried. -/
 @[simp]
 theorem cochainEquiv1_apply (c : C1 G M) (g h : G) :
     (cochainEquiv1 G M c).val g h = homogeneous1 c.val g h := (rfl)
 
+/-- The inverse of `cochainEquiv1` sends a homogeneous cochain `c` to the `1`-cochain `g ↦ c 1 g`.
+-/
 @[simp]
 theorem cochainEquiv1_symm_apply
     (c : (ofDiscreteModule ℤ G M).ρ.coind₁.coind₁.invariants) (g : G) :
@@ -256,10 +262,14 @@ def cochainEquiv2 : C2 G M ≃+
     simp only [homogeneous2_apply]
     exact smul_add g (c.val (g⁻¹ * h, h⁻¹ * k)) (d.val (g⁻¹ * h, h⁻¹ * k))
 
+/-- `cochainEquiv2` sends a continuous `2`-cochain `c` to its homogeneous form `(g, h, k) ↦
+homogeneous2 c g h k`, curried. -/
 @[simp]
 theorem cochainEquiv2_apply (c : C2 G M) (g h k : G) :
     (cochainEquiv2 G M c).val g h k = homogeneous2 c.val g h k := (rfl)
 
+/-- The inverse of `cochainEquiv2` sends a homogeneous cochain `c` to the `2`-cochain `(g, h) ↦ c 1
+g (g * h)`. -/
 @[simp]
 theorem cochainEquiv2_symm_apply
     (c : (ofDiscreteModule ℤ G M).ρ.coind₁.coind₁.coind₁.invariants) (g h : G) :
