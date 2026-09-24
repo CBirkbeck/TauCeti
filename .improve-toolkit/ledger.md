@@ -42875,3 +42875,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8530 is 63 min past ready: held one round (the pipeline's window runs to ~64 min). #8531 is at
   45 min and #8534 at 6 min. Specht stays staged. In progress (cap full): #8530, #8531 and #8534. Main `3cb095e86`.
+
+## r1024 — 2026-09-24T09:05Z (cron)
+
+* **Step 4: drove #8530** at 09:05Z (73 min past `max(CI-green 07:51:21Z, ready 07:52:04Z)`, no board, `awaiting-review` only; quota
+  probe "ok" first; background, log `drive-8530-0905.log`).
+* #8531 is at 55 min and #8534 at 16 min. No merges, no findings. In progress (cap full): #8530, #8531 and #8534. Main `bed3bd6bb`.

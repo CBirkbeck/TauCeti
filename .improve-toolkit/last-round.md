@@ -1,4 +1,4 @@
-# Last round — r1023 (2026-09-24T08:55Z)
+# Last round — r1024 (2026-09-24T09:05Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,11 +44,11 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8530** | `6e6558ec9` | green (07:51:21Z) | kind 2 (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 07:52:05Z** (r1016) | **external reviewers** |
+| **#8530** | `6e6558ec9` | green (07:51:21Z) | kind 2 (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 07:52:05Z** (r1016) ; no board at 73 min, so **driven** at 09:05Z (r1024) | **review drive** |
 | **#8531** | `6a627ae8a` | green (08:08:53Z) | kind 2 (`PDE/EnergyForm/Integrated/Basic.lean`: 156 `↦`, three roadmap references replaced by the mathematics they point at; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 08:09Z** (r1018) | **external reviewers** |
 | **#8534** | `1bf8aa9d9` | green (08:47:28Z) | kind 2 (`Conformal/Hyperbolic/Length.lean`: 73 `↦`, one calc chain split, the upstream-coordination section reduced to its Mathlib-comparison fact; gate 12/0/0; `Roadmap: ConformalMapping`). Astra cleared it; **marked ready 08:48:55Z** (r1022) | **external reviewers** |
 
-**In progress (cap full): #8530 (ready 07:52Z; drive if boardless past 08:56Z), #8531 (ready 08:09Z; 09:09Z) and #8534 (ready 08:49Z; 09:49Z). No drafts.** **#8525 merged 08:43:36Z** (r1022), the thirty-fifth.
+**In progress (cap full): #8530 (driven 09:05Z), #8531 (ready 08:09Z; 09:09Z) and #8534 (ready 08:49Z; 09:49Z). No drafts.** **#8525 merged 08:43:36Z** (r1022), the thirty-fifth.
 **Staged (not opened; the cap is full):** `improve/specht-standardbasis-style` @ `d5c1c838b` from `a440533b7` (`Symmetric/Specht/StandardBasis.lean`: 44 `↦`, nothing else; gate 12/0/0; astra cleared it; body `pr-body-specht.md`, `Roadmap: RepresentationTheory` as #2745). **Open it as the next kind 2** when a slot frees. **r1022 re-score** (`snap-main12`, main `a440533b7`; arrow-only files, ≥35 `fun … =>`, no roadmap/provenance text, excluding open-PR and ledger-named files), next after Specht: `Sobolev/Poincare/Wirtinger/W1p.lean` (44, 2 chains), `Contour/Crossing/PVAggregation.lean` (43, 1), `DenseGraphLimits/Representability/Moebius.lean` (43, 2), `Normed/Module/Complexification.lean` (41, 1), `DenseGraphLimits/Applications.lean` (40, 0), `KnotTheory/PDCode/Kauffman.lean` (38, 0), `Wishart/Inverse/Moments.lean` (36, 0), `Wishart/Transforms.lean` (36, 0).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `106dad50a`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `5b90b52f4`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -482,6 +482,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1021: **#8525 approved 10/10** on fix 2 (the source-citation wording satisfied both `documentation` and `attribution`). Hyperbolic/Length rebased onto `2d6f52f7d`, re-gated, opened as draft **#8534**.
 * r1022: **#8525 merged** (08:43:36Z). #8534 went green and was marked ready. Re-scored main (`snap-main12`) and staged `improve/specht-standardbasis-style` (astra ✓, gate 12/0/0).
 * r1023: no change; #8530 at 63 min (held one round; drive next round if boardless).
+* r1024: **#8530 driven** (73 min; quota probe ok). #8531 at 55 min, #8534 at 16 min.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
