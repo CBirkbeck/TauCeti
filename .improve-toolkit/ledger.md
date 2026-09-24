@@ -42513,3 +42513,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `f9c163254` unchanged, pin `dc4b8d60d5` at base `86e9a36e9` and at main, file untouched since the base. No drafts remain.
 * (late in r989) **Step 4: drove #8492** at 03:24Z (71 min past ready 02:13:06Z, no board, `awaiting-review` only; background, log
   `drive-8492-0324.log`).
+
+## r990 — 2026-09-24T03:26Z (cron)
+
+* **#8491 merged** (03:24:45Z, `improve/graphon-cutnorm-style`, kind 2, approved by the r986 drive), the twenty-fifth of this session's PRs.
+* #8492's drive (03:24Z) is running (`review-in-progress`). #8497 (8 min since ready) and #8499 (1 min) are `awaiting-review`. No findings.
+* In progress (cap full): #8492, #8497 and #8499. Pin `dc4b8d60d5`, main `8e3f7558f`.
