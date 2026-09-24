@@ -5,7 +5,7 @@ Authors: Claude
 -/
 module
 
-public import TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced
+public import TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced.Discrete
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.ExplicitFunctoriality
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.Homogeneous
 
