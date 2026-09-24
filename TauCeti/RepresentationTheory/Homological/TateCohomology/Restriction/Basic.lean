@@ -52,9 +52,8 @@ homology, `TauCeti.groupHomology.transfer_comp_map_subtype_id`, with corestricti
 
 ## Main results
 
-* `TauCeti.TateCohomology.negSuccRes_comp_isoGroupHomology_hom`,
-  `TauCeti.TateCohomology.negSuccRes_comp_negSuccIso_hom`: negative restriction agrees with
-  homological transfer through Mathlib's comparison with group homology.
+* `TauCeti.TateCohomology.negSuccRes_comp_negSuccIso_hom`: negative restriction agrees with
+  homological transfer through `TauCeti.TateCohomology.negSuccIso`.
 * `TauCeti.TateCohomology.H0π_comp_H0Res`, `TauCeti.TateCohomology.H0π_comp_H0Cor`,
   `TauCeti.TateCohomology.HNegOneπ_comp_HNegOneRes`,
   `TauCeti.TateCohomology.HNegOneπ_comp_HNegOneCor`: the effect of each map on the class of a
@@ -98,29 +97,18 @@ def negSuccRes (n : ℕ) [NeZero n] :
       (_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n (Int.negSucc_eq n)).inv.app
         (Rep.res H.subtype M)
 
-/-- Negative-degree Tate restriction is the homological transfer through Mathlib's comparison
-between Tate cohomology in degree `-(n+1)` and group homology in degree `n`. -/
-@[reassoc (attr := simp), elementwise (attr := simp)]
-theorem negSuccRes_comp_isoGroupHomology_hom (n : ℕ) [NeZero n] :
-    negSuccRes M H n ≫
-        (_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n
-          (Int.negSucc_eq n)).hom.app (Rep.res H.subtype M) =
-      (_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n
-        (Int.negSucc_eq n)).hom.app M ≫ TauCeti.groupHomology.transfer M H n :=
-  -- Cancelling the comparison isomorphism against the definition, rather than rewriting with
-  -- `Iso.inv_hom_id_app`: the objects involved appear both as `tateCohomology` and as values of
-  -- `tateCohomologyFunctor`, so the rewrite does not match syntactically, while this equation
-  -- holds by `rfl`.
-  (Iso.eq_comp_inv _).1 rfl
-
 /-- Negative-degree Tate restriction is the homological transfer through
 `TauCeti.TateCohomology.negSuccIso`. -/
 @[reassoc (attr := simp)]
 theorem negSuccRes_comp_negSuccIso_hom (n : ℕ) [NeZero n] :
     negSuccRes M H n ≫ (negSuccIso (Rep.res H.subtype M) n).hom =
       (negSuccIso M n).hom ≫ TauCeti.groupHomology.transfer M H n := by
-  rw [negSuccIso_hom, negSuccIso_hom]
-  exact negSuccRes_comp_isoGroupHomology_hom M H n
+  simp only [negSuccIso_hom]
+  -- Cancelling the comparison isomorphism against the definition, rather than rewriting with
+  -- `Iso.inv_hom_id_app`: the objects involved appear both as `tateCohomology` and as values of
+  -- `tateCohomologyFunctor`, so the rewrite does not match syntactically, while this equation
+  -- holds by `rfl`.
+  exact (Iso.eq_comp_inv _).1 (by rfl)
 
 /-- Restriction to a subgroup in degree `-2` Tate cohomology. Under the comparison with first
 group homology, this is the homological transfer. -/

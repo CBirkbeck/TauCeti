@@ -40,9 +40,8 @@ a cohomological corestriction construction.
 
 ## Main results
 
-* `TauCeti.TateCohomology.negSuccCor_comp_isoGroupHomology_hom`,
-  `TauCeti.TateCohomology.negSuccCor_comp_negSuccIso_hom`: negative corestriction agrees
-  with ordinary group-homology corestriction through Mathlib's comparison.
+* `TauCeti.TateCohomology.negSuccCor_comp_negSuccIso_hom`: negative corestriction agrees
+  with ordinary group-homology corestriction through `TauCeti.TateCohomology.negSuccIso`.
 * `TauCeti.TateCohomology.map_comp_negSuccCor`: negative corestriction is natural in its
   coefficients.
 
@@ -79,21 +78,6 @@ def negSuccCor (M : Rep R G) (f : H →* G) (n : ℕ) [NeZero n] :
       tateCohomology M (Int.negSucc n) :=
   (negSuccCorNatTrans f n).app M
 
-/-- Negative-degree Tate corestriction is the ordinary group-homology map through Mathlib's
-comparison between Tate cohomology in degree `-(n+1)` and group homology in degree `n`. -/
-@[reassoc (attr := simp), elementwise (attr := simp)]
-theorem negSuccCor_comp_isoGroupHomology_hom (M : Rep R G) (f : H →* G) (n : ℕ)
-    [NeZero n] :
-    negSuccCor M f n ≫
-        (TateCohomology.isoGroupHomology (Int.negSucc n) n (by
-          rw [Int.negSucc_eq])).hom.app M =
-      (TateCohomology.isoGroupHomology (Int.negSucc n) n (by
-        rw [Int.negSucc_eq])).hom.app (Rep.res f M) ≫
-        (groupHomology.coresNatTrans R f n).app M :=
-  -- `negSuccCor` unfolds definitionally to `hom ≫ cores ≫ inv`, so cancelling the comparison
-  -- isomorphism holds by `rfl`; `simp` does not perform this cancellation here.
-  (Iso.eq_comp_inv ((TateCohomology.isoGroupHomology _ n (Int.negSucc_eq n)).app M)).1 rfl
-
 /-- Negative-degree Tate corestriction is the ordinary group-homology map through
 `TauCeti.TateCohomology.negSuccIso`. -/
 -- The right side is stated through `groupHomology.map`, the `simp` normal form of
@@ -102,8 +86,10 @@ theorem negSuccCor_comp_isoGroupHomology_hom (M : Rep R G) (f : H →* G) (n : �
 theorem negSuccCor_comp_negSuccIso_hom (M : Rep R G) (f : H →* G) (n : ℕ) [NeZero n] :
     negSuccCor M f n ≫ (negSuccIso M n).hom =
       (negSuccIso (Rep.res f M) n).hom ≫ groupHomology.map f (𝟙 (Rep.res f M)) n := by
-  rw [negSuccIso_hom, negSuccIso_hom]
-  exact negSuccCor_comp_isoGroupHomology_hom M f n
+  simp only [negSuccIso_hom]
+  -- `negSuccCor` unfolds definitionally to `hom ≫ cores ≫ inv`, so cancelling the comparison
+  -- isomorphism holds by `rfl`; `simp` does not perform this cancellation here.
+  exact (Iso.eq_comp_inv _).1 (by rfl)
 
 /-- Negative-degree Tate corestriction is natural in the coefficient representation. -/
 -- Stated with `Rep.resMap f φ`, the form to which `simp` reduces `(Rep.resFunctor f).map φ`
@@ -133,7 +119,11 @@ theorem HNegTwoCor_comp_isoGroupHomology_hom (M : Rep R G) (f : H →* G) :
     HNegTwoCor M f ≫
         (TateCohomology.isoGroupHomology (-2) 1 rfl).hom.app M =
       (TateCohomology.isoGroupHomology (-2) 1 rfl).hom.app (Rep.res f M) ≫
-        (groupHomology.coresNatTrans R f 1).app M :=
-  negSuccCor_comp_isoGroupHomology_hom M f 1
+        (groupHomology.coresNatTrans R f 1).app M := by
+  have h := negSuccCor_comp_negSuccIso_hom M f 1
+  simp only [negSuccIso_hom] at h
+  -- `h` is stated in degree `Int.negSucc 1` and through `groupHomology.map`; both agree with this
+  -- statement's `-2` and `coresNatTrans` definitionally.
+  exact h
 
 end TauCeti.TateCohomology
