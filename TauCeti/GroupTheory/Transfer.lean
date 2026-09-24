@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.GroupTheory.Transfer
+import TauCeti.GroupTheory.Coset.Basic
 
 /-!
 # Transitivity of the transfer homomorphism
@@ -40,6 +41,7 @@ public section
 namespace MonoidHom
 
 open Subgroup Subgroup.leftTransversals
+open QuotientGroup (mk_out_smul mk_mul_out_smul)
 
 variable {G : Type*} [Group G] {H : Subgroup G} {A : Type*} [CommGroup A]
 
@@ -57,18 +59,16 @@ theorem transfer_eq_prod_of_bijective [H.FiniteIndex] {ι : Type*} [Fintype ι] 
     (hπ : ∀ i, (f (π i) : G ⧸ H) = (g * f i : G)) :
     transfer ϕ g = ∏ i, ϕ ⟨(f (π i))⁻¹ * (g * f i), QuotientGroup.eq.mp (hπ i)⟩ := by
   let σ := Equiv.ofBijective _ hf
-  have hσ : ∀ q, ((f (σ.symm q) : G) : G ⧸ H) = q := σ.apply_symm_apply
+  have hσ : ∀ q, ((f (σ.symm q) : G) : G ⧸ H) = q := Equiv.ofBijective_apply_symm_apply _ hf
   let _ := H.fintypeQuotientOfFiniteIndex
-  have hgσ : ∀ i, σ (π i) = g • σ i := hπ
+  have hgσ : ∀ i, σ (π i) = g • σ i := fun i ↦ by
+    simpa [σ, Equiv.ofBijective_apply, MulAction.Quotient.smul_mk] using hπ i
   rw [transfer_def ϕ ⟨_, isComplement_range_left hσ⟩, diff]
-  -- Reindex the product over `G ⧸ H` along the bijection `σ ∘ π = (g • ·) ∘ σ : ι → G ⧸ H`.
-  refine (Fintype.prod_bijective (σ ∘ π) ((funext hgσ : σ ∘ π = (g • ·) ∘ σ) ▸
-    (MulAction.bijective g).comp σ.bijective) _ _ fun i ↦ ?_).symm
+  -- Reindex the product over `G ⧸ H` along the bijection `(g • ·) ∘ σ : ι → G ⧸ H`; the factor
+  -- at `g • σ i` is matched with the one at `i` using `σ⁻¹ (g • σ i) = π i`.
+  refine (Fintype.prod_bijective _ ((MulAction.bijective g).comp σ.bijective) _ _ fun i ↦ ?_).symm
   simp [smul_apply_eq_smul_apply_inv_smul, IsComplement.leftQuotientEquiv_apply hσ,
-    inv_smul_eq_iff.mpr (hgσ _)]
-
-private theorem mk_out_smul (g : G) (q : G ⧸ H) : ((g • q).out : G ⧸ H) = (g * q.out : G) := by
-  simp [← smul_eq_mul]
+    σ.symm_apply_eq.mpr (hgσ i).symm]
 
 private theorem transfer_eq_prod_out [H.FiniteIndex] [Fintype (G ⧸ H)] (g : G) : transfer ϕ g =
     ∏ q : G ⧸ H, ϕ ⟨(g • q).out⁻¹ * (g * q.out), QuotientGroup.eq.mp (mk_out_smul g q)⟩ :=
@@ -87,31 +87,14 @@ theorem transfer_apply_of_mulEquiv {G' : Type*} [Group G'] (e : G ≃* G') {H' :
     [H.FiniteIndex] [H'.FiniteIndex] (he : ∀ g, e g ∈ H' ↔ g ∈ H) (ϕ' : H' →* A)
     (hϕ : ∀ h : H, ϕ' ⟨e h, (he h).2 h.2⟩ = ϕ h) (g : G) : transfer ϕ' (e g) = transfer ϕ g := by
   let _ := H.fintypeQuotientOfFiniteIndex
-  have hmk : ∀ a b : G, ((e a : G') : G' ⧸ H') = e b ↔ (a : G ⧸ H) = b := by
-    simp [QuotientGroup.eq, ← he]
   -- `e` carries the `Quotient.out` transversal of `H` to a transversal of `H'`, though not to
   -- the one `Quotient.out` picks there.
-  have hf : Function.Bijective fun q : G ⧸ H ↦ ((e q.out : G') : G' ⧸ H') :=
-    ⟨fun q q' h ↦ by simpa using (hmk _ _).1 h,
-      fun q' ↦ ⟨e.symm q'.out, by simpa using (hmk _ (e.symm q'.out)).2 (QuotientGroup.out_eq' _)⟩⟩
-  rw [transfer_eq_prod_of_bijective ϕ' _ hf (e g) (g • ·)
-    (fun q ↦ by rw [← map_mul, hmk, mk_out_smul]), transfer_eq_prod_out]
+  rw [transfer_eq_prod_of_bijective ϕ' _ (bijective_mk_mulEquiv_out e he) (e g) (g • ·)
+    (fun q ↦ by simpa [QuotientGroup.eq, ← he] using QuotientGroup.eq.mp (mk_out_smul g q)),
+    transfer_eq_prod_out]
   simp [← hϕ]
 
 end
-
--- Coset representatives of `H` in `G` times coset representatives of `K` in `H` are coset
--- representatives of `K` in `G`.
-private theorem bijective_mk_out_mul_out {K : Subgroup G} (hKH : K ≤ H) : Function.Bijective
-    fun i : (G ⧸ H) × (H ⧸ K.subgroupOf H) ↦ ((i.1.out * (i.2.out : G) : G) : G ⧸ K) := by
-  convert (quotientEquivProdOfLE hKH).symm.bijective with ⟨p, k⟩
-  conv_rhs => rw [quotientEquivProdOfLE_symm_apply, ← QuotientGroup.out_eq' k, Quotient.map'_mk'']
-
--- In `G ⧸ K`, the representative of `h • k` (for `h ∈ H`, `k ∈ H ⧸ K`) may be replaced by `h`
--- times the representative of `k`, after left multiplication by any `a`.
-private theorem mk_mul_out_smul {K : Subgroup G} (a : G) (h : H) (k : H ⧸ K.subgroupOf H) :
-    ((a * (h • k).out : G) : G ⧸ K) = (a * h * k.out : G) := by
-  simpa [QuotientGroup.eq, mem_subgroupOf, mul_assoc] using QuotientGroup.eq.mp (mk_out_smul h k)
 
 /-- **Transitivity of the transfer.** For subgroups `K ≤ H ≤ G` of finite index, the transfer
 from `G` to `K` is the transfer from `G` to `H` of the transfer from `H` to `K`; the inner
@@ -131,6 +114,9 @@ theorem transfer_transfer {K : Subgroup G} (hKH : K ≤ H) [K.FiniteIndex] [H.Fi
     (fun i ↦ (g • i.1, h i.1 • i.2)) fun _ ↦ by simp [h, mk_mul_out_smul, mul_assoc],
     Fintype.prod_prod_type]
   -- Expanding each inner transfer, the two double products agree term by term.
-  simp [transfer_eq_prod_out, h, mul_assoc, subgroupOfEquivOfLe]
+  simp only [transfer_eq_prod_out, MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom]
+  refine Fintype.prod_congr _ _ fun p ↦ Fintype.prod_congr _ _ fun k ↦ congrArg ϕ (Subtype.ext ?_)
+  -- `subgroupOfEquivOfLe_apply_coe` reads off the underlying element of `G`.
+  simp [h, mul_assoc]
 
 end MonoidHom
