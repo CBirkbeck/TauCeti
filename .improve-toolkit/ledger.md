@@ -42768,3 +42768,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **Step 4: drove #8521** at 07:29Z (73 min past `max(CI-green 06:12:54Z, ready 06:15:32Z)`, no board, `awaiting-review` only; quota probe
   "ok" at 07:29Z; background, log `drive-8521-0729.log`).
 * #8526 is at 40 min. No merges. In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `b8003b8c2`.
+* (late in r1014) **The #8521 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5809804699, 07:32Z; $1.06).
+* (late in r1014) **Step 5, kind 2 (the first staged branch): opened draft #8530**, `improve/energyform-variablelp-style` @ `6e6558ec9`,
+  rebased from `afdaec38a` onto `b8003b8c2` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
+  `Roadmap: PDE`. A build waiter is armed. `improve/energyform-integrated-style` stays staged.
+* In progress (cap full): #8525, #8526 and #8530. #8521 is approved.
