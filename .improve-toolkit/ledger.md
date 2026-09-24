@@ -42486,3 +42486,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **Step 4: drove #8491** at 03:08Z (65 min past ready 02:02:43Z, no board; background, log `drive-8491-0308.log`).
 * #8492 is at 55 min since ready. A build waiter is armed for #8497. No findings.
 * In progress (cap full): #8491, #8492 and #8497. Pin `dc4b8d60d5`, main `86e9a36e9`.
+
+## r987 — 2026-09-24T03:10Z (cron; the 03:03 prompt, queued behind r986)
+
+* No change since r986: #8491 carries `review-in-progress` (the r986 drive is running), #8492 is at 55 min since ready, #8497's build is
+  running. No merges, no findings. In progress (cap full): #8491, #8492 and #8497.
