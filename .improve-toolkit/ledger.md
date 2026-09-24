@@ -42673,3 +42673,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   probed ok at 05:54Z; background, log `drive-8510-0605.log`).
 * #8513 is at 52 min. #8521's build has run since 06:02:28Z (waiter armed). No merges, no findings.
 * In progress (cap full): #8510, #8513 and #8521. Pin `dc4b8d60d5`, main `a3fbe61a2`.
+* (late in r1006) **The #8510 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5808718616, 06:10Z; $0.96).
+* (late in r1006) **Step 5, kind 2: opened draft #8525**, `improve/grid-parity-style` @ `bce26feba` from `a3fbe61a2`;
+  `Roadmap: CombinatorialHeegaardFloer` (as #4479, #4336, #4217). Target from the r976 re-score: `KnotTheory/Grid/Grading/Parity.lean`
+  (47 `fun … =>`, no other `=>`, no chains, no open-PR overlap). Edits: 47 arrows (asserted); the References paragraph's first
+  sentence ("This completes the integer-valuedness and parity portion of `TauCetiRoadmap/…`, Lane G.2; the rectangle marking-count
+  formulas are separate") is dropped, and the OSS Chapter 4.3 attribution and the `05c2722248` provenance are kept verbatim (reflowed).
+  Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** (attribution preserved; "I would reject none of these edits"). Waiter armed.
+* (late in r1006) **#8521 went green at 06:12:54Z and was marked ready at 06:15:32Z.** Guards: all latest check-runs green, head
+  `6ef89f720` unchanged, pin `dc4b8d60d5` at base `a3fbe61a2` and at main, file untouched since the base.
+* #8513 is 62 min past ready with no board: held one round.
+* In progress (cap full): #8513, #8521 and #8525. #8508 and #8510 are approved.
