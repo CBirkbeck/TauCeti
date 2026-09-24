@@ -42344,3 +42344,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `dd374a490`.
 * (late in r972) **#8469 went green at 00:14:42Z and was marked ready.** Guards: all latest check-runs green, head `75cce7ae9` unchanged,
   pin `dc4b8d60d5` at base `6c75046e3` and at main, `Arrays/Block.lean` untouched on main since the base.
+
+## r973 — 2026-09-24T00:25Z (cron)
+
+* No merges, no findings. #8469 is `awaiting-review` with no board yet (ready 00:15:12Z, so step 4 opens no earlier than 01:15Z).
+  #8473's `sandboxed-build` started at 00:23:18Z (a waiter is armed); #8476 is still queued.
+* In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `b91fff4f4`.
