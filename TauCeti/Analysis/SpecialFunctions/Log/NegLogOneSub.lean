@@ -127,8 +127,7 @@ end Real
 namespace Complex
 
 /-- For complex `z` with `‖z‖ ≤ 1 / 2`, the quadratic remainder `-log (1 - z) - z` has norm at most
-`‖z‖ ^ 2`. This is Mathlib's `Complex.norm_log_one_add_sub_self_le` at `-z`, with the factor
-`(1 - ‖z‖)⁻¹ / 2` bounded by `1`. -/
+`‖z‖ ^ 2`. -/
 theorem norm_neg_log_one_sub_sub_le {z : ℂ} (hz : ‖z‖ ≤ 1 / 2) :
     ‖-log (1 - z) - z‖ ≤ ‖z‖ ^ 2 := by
   have h := norm_log_one_add_sub_self_le (z := -z) (by simpa using hz.trans_lt one_half_lt_one)

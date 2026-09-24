@@ -8,7 +8,6 @@ module
 public import Mathlib.NumberTheory.NumberField.DirichletDensity
 public import TauCeti.NumberTheory.Chebotarev.FrobeniusPrimeSet
 import TauCeti.Analysis.SpecialFunctions.Log.OneDivSub
-import TauCeti.NumberTheory.ArithmeticDirichletSeries.EulerProduct.Logarithm.PrimeSum
 import TauCeti.NumberTheory.ArithmeticDirichletSeries.Prime.IdealZetaSum
 import TauCeti.NumberTheory.Chebotarev.Density.Ramification
 import TauCeti.NumberTheory.Chebotarev.GaloisCharacter.PrimeSum
