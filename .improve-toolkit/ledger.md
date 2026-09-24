@@ -42572,3 +42572,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `5832ba2dd` onto `a0749c0b4` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0. `Roadmap: PDE`. A build
   waiter is armed.
 * In progress (cap full): #8499, #8503 and #8508. #8497 is approved.
+
+## r997 — 2026-09-24T04:35Z (cron)
+
+* #8497 is `ready-to-merge` (drive board).
+* **Step 4: drove #8499** at 04:35Z (70 min past `max(CI-green 03:24:11Z, ready 03:24:24Z)`, no board, `awaiting-review` only; quota
+  probed ok at 04:24Z; background, log `drive-8499-0435.log`).
+* #8503 is at 52 min. #8508's build has run since 04:31:36Z (waiter armed). No merges, no findings.
+* In progress (cap full): #8499, #8503 and #8508. Pin `dc4b8d60d5`, main `a0749c0b4`.
