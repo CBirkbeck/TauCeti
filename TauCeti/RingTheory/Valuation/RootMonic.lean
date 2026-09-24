@@ -31,10 +31,10 @@ have inverses.
   `ν`-integral coefficients and `1 < ν t`.
 * `Valuation.le_one_of_root_monic`: a root of a monic polynomial with `ν`-integral coefficients
   has value at most one.
-* `Valuation.map_quadratic_eq_of_one_lt` and `Valuation.one_lt_map_sq_add_mul_sub_iff`: the
-  first statement above for a monic quadratic, and its consequence that `t² + at - c` has a pole
-  exactly where `t` does — the `x`-coordinate `λ² + a₁λ - a₂ - x₁ - x₂` of a chord sum, read in
-  its slope `λ`.
+* `Valuation.map_quadratic_eq_of_one_lt` and `Valuation.one_lt_map_sq_add_mul_sub_iff`:
+  `map_eval_eq_of_one_lt` for the monic quadratic `t² + at + c`, and its consequence that
+  `t² + at - c` has a pole exactly where `t` does — the `x`-coordinate `λ² + a₁λ - a₂ - x₁ - x₂`
+  of a chord sum, read in its slope `λ`.
 * `Valuation.map_cubic_eq_of_one_lt` and `Valuation.le_one_of_root_cubic`: the two statements above
   for the monic cubic `t³ + at² + bt + c`, which is the shape a Weierstrass equation takes.
 
@@ -125,8 +125,7 @@ lemma one_lt_map_sq_add_mul_sub_iff (ha : ν a ≤ 1) (hc : ν c ≤ 1) :
   refine ⟨fun h ↦ ?_, fun ht ↦ ?_⟩
   · by_contra ht
     push Not at ht
-    refine absurd h (not_lt.mpr ((ν.map_sub _ _).trans (max_le ((ν.map_add _ _).trans
-      (max_le ?_ ?_)) hc)))
+    refine h.not_ge (ν.map_sub_le (ν.map_add_le ?_ ?_) hc)
     · rw [map_pow]
       exact pow_le_one₀ zero_le ht
     · rw [map_mul]
