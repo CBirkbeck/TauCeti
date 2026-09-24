@@ -42660,3 +42660,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   probe "ok" first; background, log `drive-8508-0555.log`).
 * #8510 is 60 min past ready with no board: held one round. #8513 is at 42 min. No merges, no findings.
 * In progress (cap full): #8508, #8510 and #8513. Pin `dc4b8d60d5`, main `a3fbe61a2`.
+* (late in r1005) **The #8508 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5808571226, 05:58Z; $0.84).
+* (late in r1005) **Step 5, kind 2 (the staged branch): opened draft #8521**, `improve/arrays-basic-style` @ `6ef89f720`, rebased from
+  `50e5fa02e` onto `a3fbe61a2` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
+  `Roadmap: Exchangeability`. A build waiter is armed.
+* In progress (cap full): #8510, #8513 and #8521. #8508 is approved.
