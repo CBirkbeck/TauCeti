@@ -42665,3 +42665,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `50e5fa02e` onto `a3fbe61a2` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
   `Roadmap: Exchangeability`. A build waiter is armed.
 * In progress (cap full): #8510, #8513 and #8521. #8508 is approved.
+
+## r1006 — 2026-09-24T06:05Z (cron)
+
+* #8508 is `ready-to-merge` (drive board).
+* **Step 4: drove #8510** at 06:05Z (70 min past `max(CI-green 04:53:58Z, ready 04:54:33Z)`, no board, `awaiting-review` only; quota
+  probed ok at 05:54Z; background, log `drive-8510-0605.log`).
+* #8513 is at 52 min. #8521's build has run since 06:02:28Z (waiter armed). No merges, no findings.
+* In progress (cap full): #8510, #8513 and #8521. Pin `dc4b8d60d5`, main `a3fbe61a2`.

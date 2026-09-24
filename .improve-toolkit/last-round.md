@@ -1,4 +1,4 @@
-# Last round — r1005 (2026-09-24T06:03Z)
+# Last round — r1006 (2026-09-24T06:05Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,12 +44,12 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8508** | `c720da984` | green (04:40:25Z) | kind 2 (`Laplacian/HopfLemma.lean`: 48 `↦`, seven `;` chains split; `Roadmap: PDE`). **Approved 10/10** by the r1005 drive (board 5808571226, 05:58Z; $0.84) | **queue** |
-| **#8510** | `ba4d3cf65` | green (04:53:58Z) | kind 2 (`Laplacian/DriftMaximumPrinciple.lean`: 48 `↦`, five `;` chains split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 04:54:34Z** (r998) | **external reviewers** |
+| **#8508** | `c720da984` | green (04:40:25Z) | kind 2 (`Laplacian/HopfLemma.lean`: 48 `↦`, seven `;` chains split; `Roadmap: PDE`). **Approved 10/10** by the r1005 drive (board 5808571226, 05:58Z; $0.84); `ready-to-merge` | **queue** |
+| **#8510** | `ba4d3cf65` | green (04:53:58Z) | kind 2 (`Laplacian/DriftMaximumPrinciple.lean`: 48 `↦`, five `;` chains split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 04:54:34Z** (r998) ; no board at 70 min, so **driven** at 06:05Z (r1006) | **review drive** |
 | **#8513** | `baefb2a43` | green (05:12:39Z) | kind 2 (`CategoryTheory/AlmostSplit/Basic.lean`: 45 `↦`, two `;` chains split; gate 12/0/0; `Roadmap: RepresentationTheory`). Astra cleared it; **marked ready 05:13Z** (r1000) | **external reviewers** |
-| **#8521** | `6ef89f720` | queued | kind 2 (`Exchangeability/Arrays/Basic.lean`: 104 `↦`, two `ext; simp` chains split, the "Layer 8 entry point" sentence dropped; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r1000); base `a3fbe61a2` | **CI** — mark ready when green |
+| **#8521** | `6ef89f720` | running (since 06:02:28Z) | kind 2 (`Exchangeability/Arrays/Basic.lean`: 104 `↦`, two `ext; simp` chains split, the "Layer 8 entry point" sentence dropped; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r1000); base `a3fbe61a2` | **CI** — mark ready when green |
 
-**In progress (cap full): #8510 (ready 04:54Z; drive next round if still boardless), #8513 (ready 05:13Z; 06:13Z) and the draft #8521 (Arrays/Basic; astra ✓; build queued).** #8508 approved by its drive; #8503 merged 05:10:13Z; twenty-nine merged this session.
+**In progress (cap full): #8510 (driven 06:05Z), #8513 (ready 05:13Z; 06:13Z) and the draft #8521 (Arrays/Basic; astra ✓; building since 06:02Z).** #8508 approved by its drive; #8503 merged 05:10:13Z; twenty-nine merged this session.
 **Staged:** nothing (the Arrays/Basic branch went as #8521 at r1005).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -57,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `5c14e3c76`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `4def450aa`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -462,6 +462,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1003: no change (52/40/22 min).
 * r1004: no change (62/50/32 min); #8508 held one round (drive next round if still boardless).
 * r1005: **#8508 driven** (72 min; quota probe ok) → **approved 10/10** ($0.84). #8510 (60 min) held one round. Arrays/Basic rebased onto `a3fbe61a2`, re-gated, opened as draft **#8521**.
+* r1006: #8508 `ready-to-merge`. **#8510 driven** (70 min). #8521 building.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
