@@ -42684,3 +42684,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `6ef89f720` unchanged, pin `dc4b8d60d5` at base `a3fbe61a2` and at main, file untouched since the base.
 * #8513 is 62 min past ready with no board: held one round.
 * In progress (cap full): #8513, #8521 and #8525. #8508 and #8510 are approved.
+
+## r1007 — 2026-09-24T06:17Z (cron; the 06:13 prompt, queued behind r1006)
+
+* **#8508 merged** (06:11:47Z, `improve/hopf-lemma-style`, kind 2, approved by the r1005 drive), the thirtieth of this session's PRs.
+  #8510 is `ready-to-merge`.
+* #8513 is 63 min past ready (drive next round if still boardless). #8521 is at 1 min. #8525's build has run since 06:15:40Z (waiter
+  armed). No findings. In progress (cap full): #8513, #8521 and #8525. Pin `dc4b8d60d5`, main `7bd3737e3`.
