@@ -1,4 +1,4 @@
-# Last round — r1011 (2026-09-24T06:55Z)
+# Last round — r1012 (2026-09-24T07:09Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -49,14 +49,14 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8526** | `dde86dd6e` | green (06:44:12Z) | kind 2 (`Symplectic/JHolomorphic/Prod/Basic.lean`: 48 `↦`, the "used by the analytic Heegaard Floer roadmap" clause dropped; gate 12/0/0; `Roadmap: HeegaardFloer`). Astra cleared it; **marked ready 06:44:53Z** (r1010) | **external reviewers** |
 
 **In progress (cap full): #8521 (ready 06:15Z; 07:15Z), #8525 (ready 06:25Z; 07:25Z) and #8526 (ready 06:45Z; 07:45Z). No drafts.** **#8513 merged 06:38:11Z** (r1010), the thirty-second.
-**Staged (not opened; the cap is full):** `improve/energyform-variablelp-style` @ `d2fbba022` from `afdaec38a` (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; astra cleared it, including the new sentence's accuracy; body in the scratchpad `pr-body-varlp.md`, `Roadmap: PDE`). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved).
+**Staged (not opened; the cap is full):** `improve/energyform-variablelp-style` @ `d2fbba022` from `afdaec38a` (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; astra cleared it, including the new sentence's accuracy; body in the scratchpad `pr-body-varlp.md`, `Roadmap: PDE`). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved). **Second staged branch:** `improve/energyform-integrated-style` @ `2c2be6774` from `a0f0b6e24` (`PDE/EnergyForm/Integrated/Basic.lean`: 156 `↦`, three roadmap references replaced by the mathematics they point at; gate 12/0/0; astra cleared it; body `pr-body-integrated.md`, `Roadmap: PDE` as #714). Open VariableLp first, then this.
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `eaa742bec`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `3d12bac9d`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -68,7 +68,7 @@ a usage-limit error means the stop applies again (a drive then posts an all-⚠�
 
 0. **Now (r1010):** #8513 merged. In progress (cap full): #8521 (ready 06:15Z; 07:15Z), #8525 (ready 06:25Z; 07:25Z) and #8526
    (ready 06:45Z; 07:45Z). No drafts. VariableLp is staged (above). Next kind 2: the read
-   roadmap-bearing r976 hits `EnergyForm/Integrated/Basic.lean` (156 arrows), [`JHolomorphic/Prod/Basic.lean` #8526], [`VariableLp.lean` staged]
+   roadmap-bearing r976 hits [`Integrated/Basic.lean` staged], [`JHolomorphic/Prod/Basic.lean` #8526], [`VariableLp.lean` staged]
    (status/motivation roadmap text), or re-score. Drives cost ~$1 each, not ~$16, but the process then hangs ~15–20 min in its archive push to `TauCetiData` (403 retries) after
    posting: run drives in the background and read the board, not the exit. Probe the codex quota
    before any drive. **Next kind 2**, from the r976 re-score (`snap-main11`, main
@@ -467,6 +467,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1009: #8513 `ready-to-merge`; #8526 building. Staged `improve/energyform-variablelp-style` (astra ✓, gate 12/0/0).
 * r1010: **#8513 merged** (06:38:11Z). #8526 went green (06:44:12Z) and was marked ready.
 * r1011: no change (39/30/10 min); VariableLp still merges cleanly.
+* r1012: no change (49/40/20 min). Staged a second branch, `improve/energyform-integrated-style` (astra ✓, gate 12/0/0).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

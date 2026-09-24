@@ -42733,3 +42733,15 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8521 (39 min since ready), #8525 (30 min) and #8526 (10 min) are `awaiting-review`. The staged
   VariableLp branch still merges cleanly into main `2379e11c5`. In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`.
+
+## r1012 — 2026-09-24T07:09Z (cron)
+
+* No merges, no findings, no boards. #8521 (49 min since ready; step 4 at 07:15Z), #8525 (40 min) and #8526 (20 min) are `awaiting-review`.
+* **Staged a second kind 2 (not opened; the cap is full):** `improve/energyform-integrated-style` @ `2c2be6774` from `a0f0b6e24`. Target
+  `Analysis/PDE/EnergyForm/Integrated/Basic.lean` (156 `fun … =>`, no other `=>`, no chains, no open-PR overlap). Edits: 156 arrows
+  (asserted); three roadmap references replaced by the mathematics they point at ("Lane D of the PDE roadmap asks for the weak energy
+  form" → "The weak energy form of a divergence-form operator is"; "once Lane A supplies `W^{k,p}(Ω)`, its value-gradient jets can feed
+  this definition" → "the value-gradient jets of Sobolev functions can feed this definition"; "the roadmap's weak-derivative Sobolev
+  spaces" → "weak-derivative Sobolev spaces"). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** (all three replacements accurate).
+  Body: `pr-body-integrated.md`, `Roadmap: PDE` (as #714). Queue order: VariableLp first, then this.
+* In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `a0f0b6e24`.
