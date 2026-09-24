@@ -42526,3 +42526,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `fun _ ↦ by rw [...]; infer_instance` instance arguments and stay inline (recipe). Gate 12/0/0. Astra (three-dot diff, 1 file):
   **cleared** ("No edits to reject"). A build waiter is armed.
 * In progress (cap full): #8497, #8499 and #8503. #8492 is approved.
+
+## r991 — 2026-09-24T03:35Z (cron)
+
+* No merges, no findings. #8492 is `ready-to-merge` (drive board). #8503's build has run since 03:31:37Z (waiter armed). #8497 (17 min
+  since ready) and #8499 (10 min) are `awaiting-review`. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `b3decc754`.
