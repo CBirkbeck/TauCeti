@@ -42886,3 +42886,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   rebased from `a440533b7` onto `bed3bd6bb` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
   `Roadmap: RepresentationTheory`. A build waiter is armed. Nothing is staged now (next: the r1022 re-score list).
 * In progress (cap full): #8531, #8534 and #8538. #8530 is approved.
+
+## r1025 — 2026-09-24T09:15Z (cron)
+
+* #8530 is `ready-to-merge` (drive board).
+* **Step 4: drove #8531** at 09:15Z (65 min past `max(CI-green 08:08:53Z, ready 08:09:36Z)`, no board, `awaiting-review` only; quota probe
+  ok at 09:04Z; background, log `drive-8531-0915.log`).
+* #8534 is at 26 min; #8538's build has run since 09:11:35Z (waiter armed). No merges, no findings.
+* In progress (cap full): #8531, #8534 and #8538. Pin `dc4b8d60d5`, main `10ac8080c`.
