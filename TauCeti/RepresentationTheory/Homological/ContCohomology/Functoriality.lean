@@ -90,6 +90,7 @@ theorem coeffMap_def {X Y : TopRep R G} (f : X ⟶ Y) (n : ℕ) :
     coeffMap f n = _root_.ContinuousCohomology.map (X := X) (ContinuousMonoidHom.id G) f n :=
   (rfl)
 
+/-- Coefficient maps preserve identities. -/
 @[simp]
 theorem coeffMap_id (X : TopRep R G) (n : ℕ) : coeffMap (𝟙 X) n = 𝟙 _ :=
   _root_.ContinuousCohomology.map_id X n
@@ -155,6 +156,7 @@ noncomputable def resNatTrans (n : ℕ) :
   app X := res S X n
   naturality _ _ f := coeffMap_comp_res S f n
 
+/-- The component at `X` of the restriction natural transformation is restriction `res S X n`. -/
 @[simp]
 theorem resNatTrans_app (X : TopRep R G) (n : ℕ) : (resNatTrans R S n).app X = res S X n :=
   (rfl)
@@ -220,6 +222,7 @@ noncomputable def inflNatTrans (n : ℕ) :
   app X := infl N X n
   naturality _ _ f := coeffMap_comp_infl N f n
 
+/-- The component at `X` of the inflation natural transformation is inflation `infl N X n`. -/
 @[simp]
 theorem inflNatTrans_app (X : TopRep R G) (n : ℕ) : (inflNatTrans R N n).app X = infl N X n :=
   (rfl)
