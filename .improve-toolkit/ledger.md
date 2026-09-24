@@ -42491,3 +42491,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No change since r986: #8491 carries `review-in-progress` (the r986 drive is running), #8492 is at 55 min since ready, #8497's build is
   running. No merges, no findings. In progress (cap full): #8491, #8492 and #8497.
+
+## r988 — 2026-09-24T03:15Z (cron)
+
+* **The #8491 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5806781128, 03:10:30Z; ~$1). This time the drive finished in ~3 min;
+  the `TauCetiData` 403 retries came after the board and did not hang long. #8491 is `ready-to-merge`.
+* **Step 5, kind 2: opened draft #8499**, `improve/sobolev-diffquot-style` @ `f9c163254` from `86e9a36e9`; `Roadmap: PDE` (as #7677 and
+  #7834). Target from the r976 re-score: `Analysis/Sobolev/W1p/DifferenceQuotient.lean` (342 lines, 53 `fun … =>`, no other `=>`, no
+  roadmap text, no open-PR overlap). Edits: 53 arrows (asserted); `let _ : nu.IsAddHaarMeasure := by rw [htop]; infer_instance` split.
+  Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** (the local instance stays in scope; "I would reject none of these edits").
+* #8492 is at 62 min since ready with no board: held one round (the pipeline's usual window runs to ~64 min). #8497's build is running.
+* In progress (cap full): #8492, #8497 and #8499. Pin `dc4b8d60d5`, main `86e9a36e9`.
