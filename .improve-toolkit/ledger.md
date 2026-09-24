@@ -42839,3 +42839,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8525, #8530 and #8531. Pin `dc4b8d60d5`, main `83e68369e`.
 * (late in r1019) **#8525's fix 2 `8ae84de0c` went green at 08:19:15Z**; the label moved back to `awaiting-review`, so the pipeline
   re-reviews on its own (step 4's clock restarts at 08:19Z).
+
+## r1020 — 2026-09-24T08:25Z (cron)
+
+* No merges, no findings. #8525 awaits the pipeline's re-review of fix 2 `8ae84de0c` (green 08:19Z; board still behind). #8530 (33 min since
+  ready) and #8531 (15 min) are `awaiting-review`. Hyperbolic/Length stays staged. In progress (cap full): #8525, #8530 and #8531.

@@ -1,4 +1,4 @@
-# Last round — r1019 (2026-09-24T08:20Z)
+# Last round — r1020 (2026-09-24T08:25Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `8fdeb850a`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `568506bb3`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -478,6 +478,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
   Later: the drive **approved #8526 10/10** ($0.92); Integrated/Basic rebased onto `9979a4b21`, re-gated, opened as draft **#8531**.
 * r1018: **#8525 round 2**: documentation ✅, `attribution` asked to keep the proof credit in the docstring (the #8332 conflict again). Fix 2 `8ae84de0c`: credit as a plain source citation, no dated wording. #8526 `ready-to-merge`.
 * r1019: **#8526 merged** (08:06:09Z). #8525 fix 2 building. Staged `improve/hyperbolic-length-style` (astra ✓, gate 12/0/0); declined four roadmap-sourced files.
+* r1020: no change (#8525 awaiting re-review of fix 2; #8530/#8531 at 33/15 min).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
