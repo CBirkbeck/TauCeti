@@ -42779,3 +42779,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * #8521 is `ready-to-merge` (drive board). #8525 is `awaiting-CI` on the fix `e5b5676d1` (build running since 07:28:46Z; its board is
   behind the head, so the fix is already pushed: nothing to re-fix). #8526 is 52 min since ready. #8530's build is queued (waiter armed).
   No merges. In progress (cap full): #8525, #8526 and #8530.
+* (late in r1015) **#8525's fix `e5b5676d1` went green at 07:38:16Z**; the label moved back to `awaiting-review`, so the pipeline re-reviews
+  on its own (step 4's clock restarts at 07:38Z).

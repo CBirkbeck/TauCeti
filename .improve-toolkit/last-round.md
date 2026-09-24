@@ -45,7 +45,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#8521** | `6ef89f720` | green (06:12:54Z) | kind 2 (`Exchangeability/Arrays/Basic.lean`: 104 `↦`, two `ext; simp` chains split, the "Layer 8 entry point" sentence dropped; `Roadmap: Exchangeability`). **Approved 10/10** by the r1014 drive (board 5809804699, 07:32Z; $1.06); `ready-to-merge` | **queue** |
-| **#8525** | `e5b5676d1` | building (fix) | kind 2 (`KnotTheory/Grid/Grading/Parity.lean`: 47 `↦`, the roadmap sentence dropped; `Roadmap: CombinatorialHeegaardFloer`). Board 07:17Z on `bce26feba`: 9/10, **`documentation` requested changes** (the split-branch provenance sentence "will date"; fix: keep the OSS reference, move provenance to the PR description). **Fixed at `e5b5676d1`** (r1014) and the PR body now carries a **Provenance** line | **CI**, then the pipeline re-reviews |
+| **#8525** | `e5b5676d1` | green (07:38:16Z) | kind 2 (`KnotTheory/Grid/Grading/Parity.lean`: 47 `↦`, the roadmap sentence dropped; `Roadmap: CombinatorialHeegaardFloer`). Board 07:17Z on `bce26feba`: 9/10, **`documentation` requested changes** (the split-branch provenance sentence "will date"; fix: keep the OSS reference, move provenance to the PR description). **Fixed at `e5b5676d1`** (r1014) and the PR body now carries a **Provenance** line | **external reviewers** (re-review; step 4 no earlier than 08:38Z) |
 | **#8526** | `dde86dd6e` | green (06:44:12Z) | kind 2 (`Symplectic/JHolomorphic/Prod/Basic.lean`: 48 `↦`, the "used by the analytic Heegaard Floer roadmap" clause dropped; gate 12/0/0; `Roadmap: HeegaardFloer`). Astra cleared it; **marked ready 06:44:53Z** (r1010) | **external reviewers** |
 | **#8530** | `6e6558ec9` | queued | kind 2 (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; `Roadmap: PDE`). **Draft**; **astra cleared it** (r1009); base `b8003b8c2` | **CI** — mark ready when green |
 
@@ -57,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `d371b13c2`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `69f0361ab`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
