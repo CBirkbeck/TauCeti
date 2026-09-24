@@ -43052,3 +43052,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   onto `9889e2022` (file untouched; astra-cleared diff unchanged). Re-gated 12/0/0. `Roadmap: ContourIntegration`. Waiter armed.
 * #8577 and #8578 are `awaiting-review` (5 min). No findings.
 * In progress (cap full): #8577, #8578 and #8586. Pin `dc4b8d60d5`, main `9889e2022`.
+
+## r1041 — 2026-09-24T12:01Z (cron)
+
+* **#8586 went green at 11:58:21Z and was marked ready at 12:00:25Z.** Guards: all latest check-runs green, head `fb68ebd34` unchanged, pin
+  `dc4b8d60d5` at base `9889e2022` and at main, file untouched since the base. No drafts remain.
+* #8577 and #8578 are `review-in-progress`; #8570 is `ready-to-merge`. No merges, no findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/arrays-extreme-style` @ `5b5748218` from `35c80453b`. Target
+  `Probability/Exchangeability/Arrays/Extreme.lean` (323 lines, 38 `fun … =>`, no roadmap text). Edits: 38 arrows (asserted); the bullet
+  `· rintro ⟨hν, hp⟩; exact ⟨…⟩` and the `rw [jointlyExchangeableProbabilityMeasures_eq]; exact …` chains split. Gate 12/0/0. Astra
+  **cleared**. Body `pr-body-extreme.md`, `Roadmap: Exchangeability` (as #7072).
+* In progress (cap full): #8577, #8578 and #8586. Pin `dc4b8d60d5`, main `35c80453b`.
