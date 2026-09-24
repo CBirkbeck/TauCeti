@@ -686,6 +686,8 @@ theorem map_id :
   rfl
 
 -- Hypotheses on the left-hand side: see the comment on `TauCeti.coindMap_comp_coindMap`.
+/-- Composing the maps of coinduced functions induced by two equivariant linear maps gives the map
+induced by their composite. -/
 @[simp]
 theorem map_comp_map (f : A →ₗ[R] B) (hf) (f' : B →ₗ[R] C) (hf') :
     (map (G := G) (U := U) f' hf').comp (map (G := G) (U := U) f hf) =
@@ -903,6 +905,7 @@ private theorem coindCounit_apply_impl (A : SmoothDiscreteTopRep.{u, v, w} R U)
     (f : DiscreteCoind G U A.obj.V) : coindCounit R G U A f = f 1 := rfl
 
 -- `dsimp% only` on the left-hand side: see the comment on `coindDiscreteFunctor_map_apply`.
+/-- The counit of coinduction evaluates a coinduced function at the identity. -/
 @[simp]
 theorem coindCounit_apply (A : SmoothDiscreteTopRep.{u, v, w} R U)
     (f : DiscreteCoind G U A.obj.V) : (dsimp% only (coindCounit R G U A f)) = f 1 :=
