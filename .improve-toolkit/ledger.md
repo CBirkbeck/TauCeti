@@ -42787,3 +42787,7 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * No merges, no findings. #8521 is `ready-to-merge`. #8525 awaits its re-review (fix green 07:38:16Z). #8526 is 60 min past ready with
   no board: held one round. #8530's build has run since 07:39:40Z (waiter armed). In progress (cap full): #8525, #8526 and #8530.
   Main `1149bbba0`.
+* (late in r1016) **#8530 went green at 07:51:21Z and was marked ready at 07:52:05Z.** Guards: all latest check-runs green, head
+  `6e6558ec9` unchanged, pin `dc4b8d60d5` at base `b8003b8c2` and at main, file untouched since the base. No drafts remain.
+* (late in r1016) **Step 4: drove #8526** at 07:52Z (67 min past `max(CI-green 06:44:12Z, ready 06:44:52Z)`, no board,
+  `awaiting-review` only; quota probe ok at 07:29Z; background, log `drive-8526-0752.log`).
