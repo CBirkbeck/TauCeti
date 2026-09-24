@@ -42844,3 +42844,15 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings. #8525 awaits the pipeline's re-review of fix 2 `8ae84de0c` (green 08:19Z; board still behind). #8530 (33 min since
   ready) and #8531 (15 min) are `awaiting-review`. Hyperbolic/Length stays staged. In progress (cap full): #8525, #8530 and #8531.
+
+## r1021 — 2026-09-24T08:39Z (cron)
+
+* **#8525 approved 10/10** on fix 2 `8ae84de0c` (board 08:29:54Z); now `ready-to-merge`. The plain source-citation wording ("The Lean proof
+  is adapted from Tau Ceti split-branch commit `05c2722248`.") satisfied both `documentation` (round 1 objected to "adapted to current
+  `main` from the earlier …") and `attribution` (round 2 wanted the credit in the file). **Rule for provenance:** keep source credit in the
+  docstring, worded as a timeless citation; drop only the dated framing.
+* **Step 5, kind 2 (the staged branch): opened draft #8534**, `improve/hyperbolic-length-style` @ `1bf8aa9d9`, rebased from `83e68369e`
+  onto `2d6f52f7d` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0. `Roadmap: ConformalMapping`. A build
+  waiter is armed. **Nothing is staged now.**
+* #8530 (43 min since ready) and #8531 (25 min) are `awaiting-review`. No merges.
+* In progress (cap full): #8530, #8531 and #8534. #8525 is approved. Pin `dc4b8d60d5`, main `2d6f52f7d`.
