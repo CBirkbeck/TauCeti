@@ -153,6 +153,7 @@ open IsDedekindDomain
 
 /-- The absolute norm of a height-one prime of `𝓞 ℚ` is the rational prime generating its image
 in `ℤ`. -/
+@[simp]
 theorem absNorm_asIdeal (v : HeightOneSpectrum (𝓞 ℚ)) :
     Ideal.absNorm v.asIdeal = natGenerator v := by
   rw [← Ideal.absNorm_map_of_ringEquiv (Rat.IsIntegralClosure.intEquiv (𝓞 ℚ)),

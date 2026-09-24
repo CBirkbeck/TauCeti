@@ -62,7 +62,8 @@ private theorem primeVonMangoldtCoeff_rat_prime {p : ℕ} (hp : p.Prime) :
       {𝔭 : HeightOneSpectrum (𝓞 ℚ) | Ideal.absNorm 𝔭.asIdeal % m = a % m} p =
       vonMangoldt.residueClass (a : ZMod m) p := by
   obtain ⟨v, hv⟩ := Rat.HeightOneSpectrum.exists_absNorm_eq hp
-  have := primeVonMangoldtCoeff_rat_absNorm_pow
+  rw [Rat.HeightOneSpectrum.absNorm_asIdeal] at hv
+  have := primeVonMangoldtCoeff_rat_natGenerator_pow
     {𝔭 : HeightOneSpectrum (𝓞 ℚ) | Ideal.absNorm 𝔭.asIdeal % m = a % m} v one_pos
   rw [pow_one, hv] at this
   rw [this, vonMangoldt.residueClass, Set.indicator_apply]
