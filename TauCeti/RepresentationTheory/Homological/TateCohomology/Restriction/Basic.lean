@@ -173,8 +173,7 @@ private theorem h0_cor_le :
       Submodule.comap (Representation.relNormInvariants M.ρ H)
         ((range M.ρ.norm).submoduleOf M.ρ.invariants) := by
   rintro ⟨x, hx⟩ ⟨y, rfl⟩
-  refine ⟨y, ?_⟩
-  simpa using (Representation.relNorm_norm_apply (ρ := M.ρ) (H := H) y).symm
+  exact ⟨y, by simp [Representation.relNorm_norm_apply]⟩
 
 /-- Restriction to a subgroup in degree zero Tate cohomology, induced by the inclusion of the
 invariants `Mᴳ ⊆ Mᴴ`. -/
@@ -237,10 +236,9 @@ private theorem hNegOne_res_le :
       Submodule.comap (Representation.relTransferKerNorm M.ρ H)
         ((Coinvariants.ker (Rep.res H.subtype M).ρ).submoduleOf
           (ker (Rep.res H.subtype M).ρ.norm)) :=
-  fun x hx => by
-    rw [Submodule.mem_comap, Submodule.submoduleOf, Submodule.mem_comap, Submodule.subtype_apply,
-      Representation.coe_relTransferKerNorm]
-    exact Representation.relTransfer_mem_coinvariantsKer (H := H) hx
+  fun _ hx => by
+    simpa only [Submodule.mem_comap, Submodule.submoduleOf, Submodule.subtype_apply,
+      Representation.coe_relTransferKerNorm] using Representation.relTransfer_mem_coinvariantsKer hx
 
 private theorem hNegOne_cor_le :
     (Coinvariants.ker (Rep.res H.subtype M).ρ).submoduleOf (ker (Rep.res H.subtype M).ρ.norm) ≤
@@ -295,8 +293,7 @@ theorem HNegOneCor_comp_HNegOneRes_apply (x : tateCohomology M (-1)) :
   | h y =>
     rw [HNegOneπ_comp_HNegOneRes_apply, HNegOneπ_comp_HNegOneCor_apply, ← map_nsmul,
       HNegOneπ_eq_iff]
-    refine Submodule.mem_comap.2 ?_
-    simpa using Representation.relTransfer_sub_index_nsmul_mem (ρ := M.ρ) (H := H) (y : M.V)
+    simp [Submodule.submoduleOf, Representation.relTransfer_sub_index_nsmul_mem]
 
 /-- Restriction followed by corestriction is multiplication by the index, in degree `-1`. -/
 theorem HNegOneRes_comp_HNegOneCor :
