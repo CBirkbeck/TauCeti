@@ -42390,3 +42390,12 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * No merges, no findings, no boards. #8469 is at 49 min since ready (step 4 opens at 01:15Z), #8473 at 30 min, #8476 at 20 min.
 * The staged `improve/monodromy-style` still merges cleanly into main `2593f5f40`, and the file is untouched since its base.
 * In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`.
+
+## r978 — 2026-09-24T01:19Z (cron)
+
+* **#8469 approved** (board on head `75cce7ae9`, updated 01:08:07Z, 53 min after ready); now `ready-to-merge`.
+* **Step 5, kind 2 (the staged branch): opened draft #8487**, `improve/monodromy-style` @ `385acf845`, rebased from `f941ad804` onto fresh
+  main `53ab872de` (the file was untouched in between, so the rebase is clean; the astra-cleared diff is unchanged). Re-gated: 12/0/0.
+  `Roadmap: ConformalMapping`. Target `Analysis/Complex/Conformal/Monodromy.lean` (see r975 for the edits and astra's verdict).
+* #8473 (40 min since ready) and #8476 (30 min) are `awaiting-review` with no board. No findings, no merges.
+* In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `53ab872de`.

@@ -1,4 +1,4 @@
-# Last round — r977 (2026-09-24T01:05Z)
+# Last round — r978 (2026-09-24T01:19Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,19 +44,20 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8469** | `75cce7ae9` | green (00:14:42Z) | kind 2 (`Exchangeability/Arrays/Block.lean`: 61 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:15Z** (r972) | **external reviewers** |
+| **#8469** | `75cce7ae9` | green (00:14:42Z) | kind 2 (`Exchangeability/Arrays/Block.lean`: 61 `↦`; `Roadmap: Exchangeability`). **Approved** (board 01:08:07Z); `ready-to-merge` | **queue** |
 | **#8473** | `f52a3a755` | green (00:34:19Z) | kind 2 (`Exchangeability/Arrays/RowCoding.lean`: 65 `↦`, and the roadmap sentence in the module docstring replaced by a scope sentence; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:34:49Z** (r974) | **external reviewers** |
 | **#8476** | `1f0198742` | green (00:43:16Z) | kind 2 (`Exchangeability/Contractability.lean`: 63 `↦`, two `;` chains split, the "Layer 0 home" docstring clause dropped; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:44Z** (r974) | **external reviewers** |
+| **#8487** | `385acf845` | queued | kind 2 (`Analysis/Complex/Conformal/Monodromy.lean`: 61 `↦`, three top-level chains split, two roadmap passages dropped; gate 12/0/0; `Roadmap: ConformalMapping`). **Draft**; **astra cleared it** (r975) | **CI** — mark ready when green |
 
-**In progress (cap full): #8469 (ready 00:15Z; step 4 no earlier than 01:15Z), #8473 (ready 00:34:49Z; no earlier than 01:35Z) and #8476 (ready 00:44Z; no earlier than 01:44Z). No drafts left.**
-**Staged (not opened; the cap is full):** `improve/monodromy-style` @ `38bb064b4` from `f941ad804` (`Conformal/Monodromy.lean`: 61 `↦`, three top-level chains split, two roadmap passages dropped; gate 12/0/0; astra cleared it; body in the scratchpad `pr-body-monodromy.md`, `Roadmap: ConformalMapping`). **Open it as the next kind 2** when a slot frees: first check `git merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved.
+**In progress (cap full): #8473 (ready 00:34:49Z; step 4 no earlier than 01:35Z), #8476 (ready 00:44Z; no earlier than 01:44Z) and the draft #8487 (astra ✓, build queued).** #8469 is approved.
+**Staged:** nothing (the Monodromy branch went as #8487 at r978).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `df8a3c323`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `21608ac27`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -66,9 +67,9 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r975):** In progress (cap full), all `awaiting-review` with no board yet: #8469 (ready 00:15Z; step 4 no earlier than
-   01:15Z), #8473 (ready 00:34:49Z; 01:35Z) and #8476 (ready 00:44Z; 01:44Z). Probe the codex quota before any drive.
-   **Next kind 2 is staged:** `improve/monodromy-style` (see above). After it, from the r976 re-score (`snap-main11`, main
+0. **Now (r978):** #8469 approved. In progress (cap full): #8473 (ready 00:34:49Z; step 4 no earlier than 01:35Z), #8476 (ready
+   00:44Z; 01:44Z) and the draft #8487 (Monodromy; base `53ab872de`; mark ready when green, after the guards). Probe the codex quota
+   before any drive. **Next kind 2**, from the r976 re-score (`snap-main11`, main
    `e697269a7`; arrow-only files with ≥45 `fun … =>`, excluding open-PR and ledger-named files; columns arrows/roadmap/chains), roadmap-free first:
    `Exchangeability/CondExp.lean` (57/0/0), `DenseGraphLimits/Graphon/CutNormLimit.lean` (54/0/0), `Sobolev/W1p/DifferenceQuotient.lean`
    (53/0/3), `PDE/Spectrum.lean` (47/0/0), `Distributions/Wishart/Basic.lean` (45/0/0), `Laplacian/DriftMaximumPrinciple.lean` (48/0/7),
@@ -430,6 +431,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r975: all three `awaiting-review`. Declined `Rational.lean`; staged `improve/monodromy-style` (astra ✓, gate 12/0/0).
 * r976: all three still `awaiting-review` (no board; #8469 at 39 min). Re-scored kind-2 candidates on `snap-main11`.
 * r977: no change (#8469 at 49 min). The staged Monodromy branch still merges cleanly.
+* r978: **#8469 approved**. The staged Monodromy branch was rebased onto `53ab872de`, re-gated (12/0/0) and opened as draft **#8487**.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
