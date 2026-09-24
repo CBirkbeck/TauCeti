@@ -15,9 +15,7 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.DegreeOneRedu
 Let `W` be an elliptic curve over a field `F`. The generic point `(genericX, genericY)` is a
 point of `W` over its own function field `F(W)`, and every point `P` of `W` has a place of
 `F(W)`, of degree one (`WeierstrassCurve.Affine.pointEquivDegreeOnePlace`). At that place the
-generic point **reduces to `P`**: for `P = (a, b)` the functions `x - a` and `y - b` vanish at
-the place of `P`, their classes lying in the point ideal, and for `P = O` the function `x` has a
-pole at the place at infinity.
+generic point **reduces to `P`**.
 
 In the language of `Affine/Point/DegreeOneReduction.lean`, this is the statement that
 `reductionOfDegreeEqOne` of the generic point at the place of `P` is `P`

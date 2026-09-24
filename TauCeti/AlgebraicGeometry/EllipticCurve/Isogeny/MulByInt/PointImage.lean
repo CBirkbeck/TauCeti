@@ -12,8 +12,8 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PointImage
 # Multiplication by `n` acts on points as `n •`
 
 The image of a point under the isogeny `[n]` (`TauCeti.Isogeny.pointImage`) is `n • P`
-(`TauCeti.Isogeny.pointImage_mulByIntIsogeny`). The tautological point of `[n]` is `n` times the
-generic point, and reduction at the place of `P` is additive and sends the generic point to `P`.
+(`TauCeti.Isogeny.pointImage_mulByIntIsogeny`): the point map of an isogeny recovers, for `[n]`,
+the group's own multiplication by `n`.
 
 ## Main results
 

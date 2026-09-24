@@ -5,8 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.BaseChange
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.Basic
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Frobenius.BaseChange
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PointImage
 -- Proof-only: the tautological point is the generic point pushed along the pullback.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.GenericPoint
@@ -29,16 +28,10 @@ field map over `F`. On the torsion of `W` over a separable closure of `F`, `π` 
 Galois Frobenius of `F`, which is the form in which it enters the count of the points of `W` over
 `F` and the Hasse bound.
 
-## Main definitions
-
-* `TauCeti.Isogeny.baseChangeFrobenius`: the `q`-power Frobenius of `W`, as an isogeny of `W⁄K`.
-
 ## Main results
 
-* `TauCeti.Isogeny.fieldPullback_baseChangeFrobenius_genericX` and
-  `TauCeti.Isogeny.fieldPullback_baseChangeFrobenius_genericY`: its pullback raises the generic
-  coordinates to the `q`-th power.
-* `TauCeti.Isogeny.pointImage_baseChangeFrobenius`: it acts on points as
+* `TauCeti.Isogeny.pointImage_baseChangeFrobenius`: the base-changed Frobenius
+  `TauCeti.Isogeny.baseChangeFrobenius` acts on points as
   `Point.map (FiniteField.frobeniusAlgHom F K)`, the `q`-power map on coordinates.
 
 ## References
@@ -54,38 +47,11 @@ namespace TauCeti.Isogeny
 
 variable {F K : Type*} [Field F] [Finite F] [Field K] [Algebra F K] (W : WeierstrassCurve.Affine F)
 
-variable (K) in
-/-- **The Frobenius of `W` over an extension `K` of its finite base**: the base change of the
-`q`-power Frobenius isogeny, read as an isogeny of `W⁄K`. -/
-noncomputable def baseChangeFrobenius : Isogeny (W⁄K).toAffine (W⁄K).toAffine :=
-  (frobeniusIsogeny W).map (algebraMap F K)
-
-/-- **The pullback of `baseChangeFrobenius` raises the functions defined over `F` to the `q`-th
-power.** -/
-theorem fieldPullback_baseChangeFrobenius_map (z : W.FunctionField) :
-    (baseChangeFrobenius K W).fieldPullback (FunctionField.map W (algebraMap F K) z) =
-      FunctionField.map W (algebraMap F K) z ^ Nat.card F := by
-  refine (map_fieldPullback_map (frobeniusIsogeny W) (algebraMap F K) z).trans ?_
-  rw [fieldPullback_frobeniusIsogeny_apply, map_pow]
-
-/-- **The pullback of `baseChangeFrobenius` raises the generic `x`-coordinate to the `q`-th
-power.** -/
-theorem fieldPullback_baseChangeFrobenius_genericX :
-    (baseChangeFrobenius K W).fieldPullback (genericX (W⁄K).toAffine) =
-      genericX (W⁄K).toAffine ^ Nat.card F :=
-  FunctionField.map_genericX W (algebraMap F K) ▸ fieldPullback_baseChangeFrobenius_map W _
-
-/-- **The pullback of `baseChangeFrobenius` raises the generic `y`-coordinate to the `q`-th
-power.** -/
-theorem fieldPullback_baseChangeFrobenius_genericY :
-    (baseChangeFrobenius K W).fieldPullback (genericY (W⁄K).toAffine) =
-      genericY (W⁄K).toAffine ^ Nat.card F :=
-  FunctionField.map_genericY W (algebraMap F K) ▸ fieldPullback_baseChangeFrobenius_map W _
-
 variable [DecidableEq K] [W.IsElliptic]
 
 /-- **The Frobenius acts on points as the `q`-power map on coordinates**: `π (x, y) = (x^q, y^q)`,
 the point map induced by the `q`-power Frobenius of `K` over `F`. -/
+@[simp]
 theorem pointImage_baseChangeFrobenius (P : (W⁄K).toAffine.Point) :
     letI := Fintype.ofFinite F
     (baseChangeFrobenius K W).pointImage P = Point.map (FiniteField.frobeniusAlgHom F K) P := by
