@@ -43024,3 +43024,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
     **cleared**. `Roadmap: RepresentationTheory` (as #6513).
   A waiter is armed for all three builds.
 * In progress (cap full): #8570, #8577 and #8578. Pin `dc4b8d60d5`, main `aa1f85987`.
+
+## r1038 — 2026-09-24T11:28Z (cron; queued right behind r1037)
+
+* No change: #8563, #8565 and #8566 `ready-to-merge`; #8570 building, #8577 and #8578 queued (waiter armed). No merges, no findings.
+  In progress (cap full): #8570, #8577 and #8578. Main `15c434e4b`.

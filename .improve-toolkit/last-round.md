@@ -1,4 +1,4 @@
-# Last round — r1037 (2026-09-24T11:28Z)
+# Last round — r1038 (2026-09-24T11:28Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -59,7 +59,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `46f4fd430`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `e33afc044`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -499,6 +499,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1035: #8563 (10:48:13Z) and #8565 (10:54:41Z) went green and were marked ready; #8566 (10:56:17Z) too. No drafts.
 * r1036: **#8538 and #8549 merged**. #8563/#8565/#8566 `review-in-progress`. Staged `improve/dgl-moebius-style` (astra ✓, gate 12/0/0).
 * r1037: the pipeline **approved #8563, #8565 and #8566** (11:06–11:07Z); **#8548 merged**. All three slots opened: Moebius rebased and opened as **#8570**; `Wishart/Transforms.lean` (**#8577**) and `Induction/Mackey/Decomposition.lean` (**#8578**) prepared, gated, cleared by astra and opened.
+* r1038: queued prompt right behind r1037; no change (#8570 building, #8577/#8578 queued).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
