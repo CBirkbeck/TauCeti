@@ -17,20 +17,15 @@ import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.IsSepClosed
 /-!
 # The pullback of a point along `[n]`
 
-Let `W` be an elliptic curve over a field `F` and `n` an integer invertible in `F`. Pulling the
-divisor `(T)` of a point back along multiplication by `n` gives the points `R` with `n • R = T`,
-each with multiplicity one. Among the places of points, the places over the place of `T` are the
-places of the `[n]`-preimages of `T` (`TauCeti.Isogeny.isEquiv_comap_pointPlace_iff` and
-`TauCeti.Isogeny.isEquiv_comap_pointPlace_infinityPlace_iff`), and `[n]` is unramified because it
-is separable. Over a separably closed field `[n]` splits every place completely, so a place over a
-point place has degree one and is itself a point place, and the pullback is the sum over the
-fibre.
+Let `W` be an elliptic curve over a field `F` and `n` an integer invertible in `F`. The
+coefficient of `[n]^* D` at the place of a point `R` is the coefficient of `D` at the place of
+`n • R`. Over a separably closed field, pulling the divisor `(T)` of a point back along
+multiplication by `n` gives the points `R` with `n • R = T`, each with multiplicity one.
 
-At an `n`-torsion point `T` the fibre over `T` is a translate of the fibre `E[n]` over `O`, and
-`#E[n] = n ²`, so the sum of `[n]^* (T) - [n]^* (O)` is `n • T = O` and the divisor is principal.
-This is the second input to the divisor construction of the Weil pairing (Silverman III.8.1),
-after `WeierstrassCurve.Affine.exists_principal_zsmul_pointPlace_sub_infinity`: the pairing is
-built from a function with this divisor.
+At an `n`-torsion point `T`, the divisor `[n]^* (T) - [n]^* (O)` is principal. This is the second
+input to the divisor construction of the Weil pairing (Silverman III.8.1), after
+`WeierstrassCurve.Affine.exists_principal_zsmul_pointPlace_sub_infinity`: the pairing is built
+from a function with this divisor.
 
 ## Main results
 
@@ -59,8 +54,8 @@ proves both results in its own divisor framework, in
 `projectiveDivisorOf_pullback_eq_pullbackDivisor` identifies it with the divisor of `k ∘ φ` by
 per-place order transport over an algebraically closed field, and `WeilFunction.lean`'s
 `pullbackDiv_sub_isPrincipal` (used by `Pairing.lean`'s `weilFunction_isPrincipal`) proves the
-fibre difference principal by the same translate-and-sum argument as here. Nothing is ported:
-here the pullback is the conorm `TauCeti.Isogeny.divisorPullback`, read off places.
+fibre difference principal. Nothing is ported: here the pullback is the conorm
+`TauCeti.Isogeny.divisorPullback`, read off places.
 -/
 
 public section
