@@ -42519,3 +42519,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **#8491 merged** (03:24:45Z, `improve/graphon-cutnorm-style`, kind 2, approved by the r986 drive), the twenty-fifth of this session's PRs.
 * #8492's drive (03:24Z) is running (`review-in-progress`). #8497 (8 min since ready) and #8499 (1 min) are `awaiting-review`. No findings.
 * In progress (cap full): #8492, #8497 and #8499. Pin `dc4b8d60d5`, main `8e3f7558f`.
+* (late in r990) **The #8492 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5806965488, 03:27Z; $1.02; 3 min end to end).
+* (late in r990) **Step 5, kind 2: opened draft #8503**, `improve/wishart-basic-style` @ `b201b7fc4` from `b3decc754`;
+  `Roadmap: StandardDistributions` (as #6575). Target from the r976 re-score: `Probability/Distributions/Wishart/Basic.lean` (425 lines,
+  45 `fun … =>`, no other `=>`, no roadmap text, no open-PR overlap). Edit: 45 arrows (asserted). The two `;` sites are term-level
+  `fun _ ↦ by rw [...]; infer_instance` instance arguments and stay inline (recipe). Gate 12/0/0. Astra (three-dot diff, 1 file):
+  **cleared** ("No edits to reject"). A build waiter is armed.
+* In progress (cap full): #8497, #8499 and #8503. #8492 is approved.

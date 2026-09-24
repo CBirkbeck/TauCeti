@@ -1,4 +1,4 @@
-# Last round — r990 (2026-09-24T03:26Z)
+# Last round — r990 (2026-09-24T03:32Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,11 +44,12 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8492** | `193b30cea` | green (02:12:47Z) | kind 2 (`Analysis/PDE/Spectrum.lean`: 47 `↦`, nothing else; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 02:13Z** (r983) ; no board at 71 min, so **driven** at 03:24Z (r989) | **review drive** |
+| **#8492** | `193b30cea` | green (02:12:47Z) | kind 2 (`Analysis/PDE/Spectrum.lean`: 47 `↦`, nothing else; `Roadmap: PDE`). **Approved 10/10** by the r989 drive (board 5806965488, 03:27Z; $1.02) | **queue** |
 | **#8497** | `c3ceabacb` | green (03:16:23Z) | kind 2 (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 03:17Z** (r989) | **external reviewers** |
 | **#8499** | `f9c163254` | green (03:24:11Z) | kind 2 (`Sobolev/W1p/DifferenceQuotient.lean`: 53 `↦`, one `let _ … := by` chain split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 03:24:24Z** (r989) | **external reviewers** |
+| **#8503** | `b201b7fc4` | queued | kind 2 (`Distributions/Wishart/Basic.lean`: 45 `↦`, nothing else; gate 12/0/0; `Roadmap: StandardDistributions`). **Draft**; **astra cleared it** (r990); base `b3decc754` | **CI** — mark ready when green |
 
-**In progress (cap full): #8492 (driven 03:24Z), #8497 (ready 03:17Z; step 4 no earlier than 04:17Z) and #8499 (ready 03:24Z; no earlier than 04:24Z). No drafts.** **#8491 merged 03:24:45Z** (r990) and #8487 at 03:05:55Z; twenty-five merged this session.
+**In progress (cap full): #8497 (ready 03:17Z; step 4 no earlier than 04:17Z), #8499 (ready 03:24Z; 04:24Z) and the draft #8503 (Wishart; astra ✓; build queued).** #8492 approved by its drive; **#8491 merged 03:24:45Z**; twenty-five merged this session.
 **Staged:** nothing (the CondExp branch went as #8497 at r986).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -56,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `b3611587d`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `208c6a7f6`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -66,13 +67,13 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r990):** #8491 merged. In progress (cap full): #8492 (driven 03:24Z; read its board), #8497 (ready 03:17Z; step 4 no
-   earlier than 04:17Z) and #8499 (ready 03:24Z; 04:24Z). No drafts. Drives cost ~$1 each, not ~$16, but the process then hangs ~15–20 min in its archive push to `TauCetiData` (403 retries) after
+0. **Now (r990):** #8491 merged; #8492 approved (drive). In progress (cap full): #8497 (ready 03:17Z; 04:17Z), #8499 (ready
+   03:24Z; 04:24Z) and the draft #8503 (Wishart; base `b3decc754`; mark ready when green, after the guards). Drives cost ~$1 each, not ~$16, but the process then hangs ~15–20 min in its archive push to `TauCetiData` (403 retries) after
    posting: run drives in the background and read the board, not the exit. Probe the codex quota
    before any drive. **Next kind 2**, from the r976 re-score (`snap-main11`, main
    `e697269a7`; arrow-only files with ≥45 `fun … =>`, excluding open-PR and ledger-named files; columns arrows/roadmap/chains), roadmap-free first:
    [`CondExp.lean` #8497], [`CutNormLimit.lean` #8491], [`DifferenceQuotient.lean` #8499],
-   [`PDE/Spectrum.lean` #8492], `Distributions/Wishart/Basic.lean` (45/0/0), `Laplacian/DriftMaximumPrinciple.lean` (48/0/7),
+   [`PDE/Spectrum.lean` #8492], [`Wishart/Basic.lean` #8503], `Laplacian/DriftMaximumPrinciple.lean` (48/0/7),
    `Laplacian/HopfLemma.lean` (48/0/6). The biggest is `PDE/EnergyForm/Integrated/Basic.lean` (156/2/0); read its 2 roadmap lines first. **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
    section and four prose mentions), so removing it invites an `attribution` finding and keeping it a `documentation` one, the #8332 conflict.
    Roadmap mentions in docstrings are deleted outright (r939 rule), or replaced by a plain scope statement.
@@ -443,7 +444,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r987: queued prompt right after r986; #8491 shows `review-in-progress` (the drive); nothing else changed.
 * r988: **#8491 approved 10/10** by the drive. Kind 2 opened as draft **#8499** (`Sobolev/W1p/DifferenceQuotient.lean`), cleared by astra.
 * r989: queued prompt; #8492 at 63 min (drive next round). #8497 went green at 03:16:23Z and was marked ready; #8499 went green at 03:24:11Z and was marked ready. **#8492 driven** at 71 min.
-* r990: **#8491 merged** (03:24:45Z). #8492's drive is running (`review-in-progress`).
+* r990: **#8491 merged** (03:24:45Z). #8492's drive **approved it 10/10** ($1.02). Kind 2 opened as draft **#8503** (`Wishart/Basic.lean`, 45 `↦`), cleared by astra.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
