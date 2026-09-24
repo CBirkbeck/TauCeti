@@ -42965,3 +42965,20 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings. #8538 is 62 min past ready with no board: held one round. #8534 and #8541 are still `ready-to-merge` (in the
   queue). #8548 and #8549 are at 10 min. Wirtinger stays staged. In progress (cap full): #8538, #8548 and #8549. Main `d3aec47a6`.
+
+## r1033 — 2026-09-24T10:47Z (cron)
+
+* **The pipeline approved #8538, #8548 and #8549** (boards 10:28:53Z, 10:29:10Z, 10:29:02Z: #8538 at 66 min, the two newest only 15 min
+  after ready). All three are `ready-to-merge`, like #8534. **#8541 merged** (10:29:33Z), the thirty-eighth of this session's PRs.
+* **All three slots opened** (step 5, kind 2 ×3):
+  * **#8563**: the staged `improve/wirtinger-w1p-style` @ `ca4b1517f`, rebased from `118570ecf` onto `1f035cbe2` (file untouched);
+    re-gated 12/0/0; `Roadmap: PDE`.
+  * **#8565**: `improve/wishart-inverse-moments-style` @ `2ec28a80f` from `1f035cbe2`. `Probability/Distributions/Wishart/Inverse/Moments.lean`
+    (443 lines, 36 `fun … =>`, no roadmap text): 36 arrows (asserted) plus `have hn' … := by push_cast; linarith` split; the
+    anonymous-constructor/parenthesised `by …; …` terms (lines 184, 207, 227) stay. Gate 12/0/0. Astra **cleared**. `Roadmap:
+    StandardDistributions` (as #7981).
+  * **#8566**: `improve/pvaggregation-style` @ `5c592bf3a` from `1f035cbe2`. `Analysis/Contour/Crossing/PVAggregation.lean` (237 lines,
+    43 `fun … =>`, no roadmap text; its one `;` is an anonymous constructor `⟨…, by rw […]; ring⟩`, kept). 43 arrows (asserted). Gate
+    12/0/0. Astra **cleared**. `Roadmap: ContourIntegration` (#946 carried the `roadmap/ContourIntegration` label).
+  A waiter is armed for all three builds.
+* In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `1f035cbe2`.
