@@ -115,8 +115,6 @@ side is wrapped, and with `only`, so that the right-hand side keeps the form it 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV.
 * J. Neukirch, *Class Field Theory*, Chapter III.
 * J.-P. Serre, *Local Fields*, Chapter XI.
-* [Class field theory roadmap](https://github.com/TauCetiProject/TauCetiRoadmap/blob/main/TauCetiRoadmap/ClassFieldTheory/Suggested.lean),
-  which specifies `zeroTateClass`.
 -/
 
 public noncomputable section
@@ -582,10 +580,10 @@ theorem tateHZeroEquivNormQuotient_H0π (x : (L.rep F).ρ.invariants) :
   have h := TateCohomology.H0π_comp_H0IsoNormQuotient_hom_apply (L.rep F) x
   simp [tateHZeroEquivNormQuotient, h]
 
+-- Specified by the class field theory roadmap, `TauCetiRoadmap/ClassFieldTheory/Suggested.lean`.
 /-- The **zero-dimensional Tate class** `a₀` of an element `a` of the ground level `A^U`: the class
 of `a` in the degree-zero Tate group `H^0(U/V, A^V)`, reading `a` as an invariant of the
-coefficient module `A^V`, as specified in the class field theory roadmap
-(`TauCetiRoadmap/ClassFieldTheory/Suggested.lean`). -/
+coefficient module `A^V`. -/
 def zeroTateClass : F.level L.ground →+ L.TateH F 0 :=
   ((TateCohomology.H0π (L.rep F)).hom ∘ₗ (L.groundLevelEquiv F).symm.toLinearMap).toAddMonoidHom
 

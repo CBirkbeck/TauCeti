@@ -68,8 +68,6 @@ fundamental class (`ClassFormation.fundamentalClass_restrict_generates`).
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §§1–4.
 * J.-P. Serre, *Local Fields*, Chapter XI, §§1–3.
-* [Class field theory roadmap](https://github.com/TauCetiProject/TauCetiRoadmap/blob/main/TauCetiRoadmap/ClassFieldTheory/Suggested.lean),
-  which specifies `tateFundamentalClass`.
 -/
 
 public noncomputable section
@@ -177,11 +175,11 @@ theorem addOrderOf_fundamentalClass (cf : ClassFormation F) (L : NormalLayer G) 
 
 /-! ### The fundamental class in Tate degree two -/
 
+-- Specified by the class field theory roadmap, `TauCetiRoadmap/ClassFieldTheory/Suggested.lean`.
 /-- The **Tate fundamental class** of a finite normal layer: the fundamental class `u_{K/F}`
 transported from ordinary `H²(Γ, C)` to Tate cohomology in degree `2` along the canonical
 identification `NormalLayer.tateHIsoH` of positive-degree Tate cohomology with ordinary
-cohomology, as specified in the class field theory roadmap
-(`TauCetiRoadmap/ClassFieldTheory/Suggested.lean`). -/
+cohomology. -/
 def tateFundamentalClass (cf : ClassFormation F) (L : NormalLayer G) : L.TateH F 2 :=
   (L.tateHIsoH F 2).inv (cf.fundamentalClass L)
 
