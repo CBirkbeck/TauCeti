@@ -47,6 +47,8 @@ relative degree `[E : F]` in every degree.
 * `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_zero_H0π` and
   `TauCeti.ClassFieldTheory.LayerRestriction.tateHZeroEquivNormQuotient_tateRes_H0π`: in degree
   zero, restriction is the ground-level inclusion on representatives and norm quotients.
+* `TauCeti.ClassFieldTheory.LayerRestriction.trivialTateRes_zero_H0π`: in degree zero,
+  trivial-coefficient restriction is the identity on integral representatives.
 * `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_neg_one_HNegOneπ`: in degree minus one,
   restriction is the relative transfer `kerNormTransfer` on representatives.
 * `TauCeti.ClassFieldTheory.LayerRestriction.tateCor_tateRes`: `cor ∘ res = [E : F]` in every
@@ -399,6 +401,21 @@ theorem trivialTateRes_zero (T : LayerRestriction small big) :
       TauCeti.TateCohomology.H0Res (Rep.trivial ℤ big.Gal ℤ) T.galHom.range ≫
         (T.trivialTateRangeIso 0).inv :=
   (rfl)
+
+-- Not `@[simp]`: the `@[simp]` lemma `trivialTateRes_zero` rewrites its left-hand side first, so
+-- `simpNF` rejects it.
+/-- **In degree zero, trivial-coefficient restriction is the identity on integral
+representatives.** The class of an integer in `Hhat⁰(Gal(K/F), ℤ)` restricts to the class of the
+same integer in `Hhat⁰(Gal(K/E), ℤ)`. Corestriction instead multiplies representatives by the
+relative degree `[E : F]` (`trivialTateCor_zero_H0π`). -/
+theorem trivialTateRes_zero_H0π (T : LayerRestriction small big)
+    (x : (Rep.trivial ℤ big.Gal ℤ).ρ.invariants) :
+    T.trivialTateRes 0 (TauCeti.TateCohomology.H0π _ x) =
+      TauCeti.TateCohomology.H0π (Rep.trivial ℤ small.Gal ℤ) ⟨(x : ℤ), fun _ ↦ rfl⟩ := by
+  rw [trivialTateRes_zero, ModuleCat.comp_apply, TauCeti.TateCohomology.H0π_comp_H0Res_apply]
+  -- The range comparison fixes the integral representative, hence so does its inverse.
+  exact (congrArg _ (T.trivialTateRangeIso_hom_H0π ⟨(x : ℤ), fun _ ↦ rfl⟩).symm).trans <|
+    Iso.hom_inv_id_apply _ _
 
 /-- In a positive degree, trivial-coefficient Tate restriction is ordinary cohomological
 restriction to the image subgroup, followed by the range comparison. -/
