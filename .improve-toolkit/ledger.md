@@ -42803,3 +42803,17 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `Roadmap: PDE`. A build waiter is armed. **Nothing is staged now**; the next kind 2 needs prospecting (remaining r976 hits listed in
   last-round).
 * In progress (cap full): #8525, #8530 and #8531. #8526 is approved.
+
+## r1018 — 2026-09-24T08:09Z (cron)
+
+* **#8525 is `awaiting-author` again** (round 2, board 07:54:38Z on `e5b5676d1`): `documentation` now passes, but **`attribution`
+  requested changes** ([r4091209531](https://github.com/TauCetiProject/TauCeti/pull/8525#discussion_r4091209531)): "The References
+  paragraph no longer credits split-branch commit `05c2722248` … _Fix:_ Keep the proof-provenance sentence in the module docstring."
+* **The two findings conflict** (the #8332 pattern), but have a shared implementation, so no contest (step 3): documentation's objection
+  was to the dated wording ("adapted to current `main` from the earlier … commit" describes project history); attribution needs the credit
+  in the file. **Fix 2 at `8ae84de0c`**: the References paragraph ends "The Lean proof is adapted from Tau Ceti split-branch commit
+  `05c2722248`.", a plain source citation in the form the repo already uses (`Contractability.lean`'s "adapted from the
+  `cameronfreer/exchangeability` … sources pinned at …", approved by documentation in #8476). Gate 12/0/0. The PR body (REST PATCH)
+  gains a **Review history** paragraph explaining the resolution. Pushed; the head is `8ae84de0c`; waiter armed.
+* #8526 is `ready-to-merge` (drive board). #8530 is 13 min since ready; #8531's build has run since 07:59:33Z (waiter armed). No merges.
+* In progress (cap full): #8525, #8530 and #8531. Pin `dc4b8d60d5`, main `65037724d`.
