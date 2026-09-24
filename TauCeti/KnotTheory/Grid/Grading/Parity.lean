@@ -62,7 +62,8 @@ the two marking permutations, hence the sign of the component permutation `𝕏�
 ## References
 
 Integrality of `A` on a knot diagram, and the half-integer shift for an even number of components,
-are from Ozsváth--Stipsicz--Szabó, *Grid Homology for Knots and Links*, Chapter 4.3.
+are from Ozsváth--Stipsicz--Szabó, *Grid Homology for Knots and Links*, Chapter 4.3. The Lean proof
+is adapted from Tau Ceti split-branch commit `05c2722248`.
 -/
 
 public section
