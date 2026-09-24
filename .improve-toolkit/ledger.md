@@ -43008,3 +43008,19 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   are parenthesised `(by ext G; simp)` or a term-level `fun ⟨…⟩ ↦ by …` inside an anonymous constructor, all kept). Edit: 43 arrows
   (asserted). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**. Body `pr-body-moebius.md`, `Roadmap: DenseGraphLimits` (as #7430).
 * In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `8b00dffe0`.
+
+## r1037 — 2026-09-24T11:28Z (cron)
+
+* **The pipeline approved #8563, #8565 and #8566** (boards 11:07:26Z, 11:06:44Z, 11:06:23Z: 9–12 min after ready); all `ready-to-merge`.
+  **#8548 merged** (11:08:29Z, `improve/pdcode-kauffman-style`), the forty-second of this session's PRs.
+* **All three slots opened** (step 5, kind 2 ×3):
+  * **#8570**: the staged `improve/dgl-moebius-style` @ `ee586dc07`, rebased from `8b00dffe0` onto `f0657d9e6` (file untouched); re-gated
+    12/0/0; `Roadmap: DenseGraphLimits`.
+  * **#8577**: `improve/wishart-transforms-style` @ `e6b34bcb5` from `aa1f85987`. `Probability/Distributions/Wishart/Transforms.lean`
+    (467 lines, 36 `fun … =>`, no chains outside docstrings, no roadmap text): 36 arrows (asserted). Gate 12/0/0. Astra **cleared**.
+    `Roadmap: StandardDistributions` (as #6533).
+  * **#8578**: `improve/mackey-decomposition-style` @ `64f6f0612` from `aa1f85987`. `RepresentationTheory/Induction/Mackey/Decomposition.lean`
+    (454 lines, 38 `fun … =>`; its one `;` is a parenthesised `(by rw […]; rfl)`, kept): 38 arrows (asserted). Gate 12/0/0. Astra
+    **cleared**. `Roadmap: RepresentationTheory` (as #6513).
+  A waiter is armed for all three builds.
+* In progress (cap full): #8570, #8577 and #8578. Pin `dc4b8d60d5`, main `aa1f85987`.

@@ -1,4 +1,4 @@
-# Last round — r1036 (2026-09-24T11:09Z)
+# Last round — r1037 (2026-09-24T11:28Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,20 +44,22 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8548** | `c023ebdb1` | green | kind 2 (`KnotTheory/PDCode/Kauffman.lean`: 38 `↦`). **Approved** by the pipeline (10:29:10Z, 15 min after ready); `ready-to-merge` | **queue** |
-| **#8563** | `ca4b1517f` | green (10:48:13Z) | kind 2 (`Sobolev/Poincare/Wirtinger/W1p.lean`: 44 `↦`, two top-level chains split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 10:55Z** (r1035) | **external reviewers** |
-| **#8565** | `2ec28a80f` | green (10:54:41Z) | kind 2 (`Wishart/Inverse/Moments.lean`: 36 `↦`, one `have … := by push_cast; linarith` split; gate 12/0/0; `Roadmap: StandardDistributions`). Astra cleared it; **marked ready 10:55Z** (r1035) | **external reviewers** |
-| **#8566** | `5c592bf3a` | green (10:56:17Z) | kind 2 (`Contour/Crossing/PVAggregation.lean`: 43 `↦`, nothing else; gate 12/0/0; `Roadmap: ContourIntegration`). Astra cleared it; **marked ready 10:57Z** (r1035) | **external reviewers** |
+| **#8563** | `ca4b1517f` | green | kind 2 (`Sobolev/Poincare/Wirtinger/W1p.lean`). **Approved** by the pipeline (11:07:26Z, 12 min after ready); `ready-to-merge` | **queue** |
+| **#8565** | `2ec28a80f` | green | kind 2 (`Wishart/Inverse/Moments.lean`). **Approved** by the pipeline (11:06:44Z, 12 min); `ready-to-merge` | **queue** |
+| **#8566** | `5c592bf3a` | green | kind 2 (`Contour/Crossing/PVAggregation.lean`). **Approved** by the pipeline (11:06:23Z, 9 min); `ready-to-merge` | **queue** |
+| **#8570** | `ee586dc07` | queued | kind 2 (`DenseGraphLimits/Representability/Moebius.lean`: 43 `↦`, nothing else; gate 12/0/0; `Roadmap: DenseGraphLimits`). **Draft**; **astra cleared it** (r1036); base `f0657d9e6` | **CI** — mark ready when green |
+| **#8577** | `e6b34bcb5` | queued | kind 2 (`Wishart/Transforms.lean`: 36 `↦`, nothing else; gate 12/0/0; `Roadmap: StandardDistributions`). **Draft**; **astra cleared it** (r1037); base `aa1f85987` | **CI** — mark ready when green |
+| **#8578** | `64f6f0612` | queued | kind 2 (`Induction/Mackey/Decomposition.lean`: 38 `↦`, nothing else; gate 12/0/0; `Roadmap: RepresentationTheory`). **Draft**; **astra cleared it** (r1037); base `aa1f85987` | **CI** — mark ready when green |
 
-**In progress (cap full): #8563, #8565 and #8566, all `review-in-progress` (the pipeline picked them up within ~7 min of ready).** #8548 is `ready-to-merge`; **#8538 (10:59:22Z) and #8549 (11:02:55Z) merged** (r1036), the fortieth and forty-first.
-**Staged (not opened; the cap is full):** `improve/dgl-moebius-style` @ `717663dc6` from `8b00dffe0` (`DenseGraphLimits/Representability/Moebius.lean`: 43 `↦`, nothing else; gate 12/0/0; astra cleared it; body `pr-body-moebius.md`, `Roadmap: DenseGraphLimits` as #7430). **Open it as the next kind 2** when a slot frees. After it: `Wishart/Transforms.lean` (36, 0), then the r1022 list's 36–38-arrow tail (`Contour/Chord/QuotientAsymptotics.lean`, `Arrays/Extreme.lean`, `MixedIID/Const.lean`, `Induction/Mackey/Decomposition.lean`, …); or re-score.
+**In progress (cap full): the drafts #8570 (Moebius), #8577 (Wishart/Transforms) and #8578 (Mackey/Decomposition), all astra ✓ and building.** #8563, #8565 and #8566 are approved (`ready-to-merge`); **#8548 merged 11:08:29Z** (r1037), the forty-second.
+**Staged:** nothing (Moebius went as #8570, and #8577/#8578 were prepared and opened at r1037). Next kind 2 from the r1022 list's tail: `Contour/Chord/QuotientAsymptotics.lean` (38, 1), `Arrays/Extreme.lean` (38, 2), `MixedIID/Const.lean` (38, 2), `WorkedExamples/HalfDisc/Basic.lean` (37, 3), `Kostant/Form.lean` (36, 1), `ProbabilityMeasure/Ext.lean` (36, 1); or re-score (`snap-main12` is from 08:45Z).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `7979a7153`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `46f4fd430`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -496,6 +498,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1034: **#8534 merged** (10:38:16Z). The three drafts are building.
 * r1035: #8563 (10:48:13Z) and #8565 (10:54:41Z) went green and were marked ready; #8566 (10:56:17Z) too. No drafts.
 * r1036: **#8538 and #8549 merged**. #8563/#8565/#8566 `review-in-progress`. Staged `improve/dgl-moebius-style` (astra ✓, gate 12/0/0).
+* r1037: the pipeline **approved #8563, #8565 and #8566** (11:06–11:07Z); **#8548 merged**. All three slots opened: Moebius rebased and opened as **#8570**; `Wishart/Transforms.lean` (**#8577**) and `Induction/Mackey/Decomposition.lean` (**#8578**) prepared, gated, cleared by astra and opened.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
