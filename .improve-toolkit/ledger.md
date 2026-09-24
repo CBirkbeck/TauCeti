@@ -42648,3 +42648,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8508 (52 min since ready; step 4 at 05:42Z), #8510 (40 min) and #8513 (22 min) are
   `awaiting-review`. Main unchanged at `017606680`. In progress (cap full): #8508, #8510 and #8513.
+
+## r1004 — 2026-09-24T05:45Z (cron)
+
+* No merges, no findings, no boards. #8508 is 62 min past ready: held one round (the pipeline's window runs to ~64 min; drive next
+  round if still boardless). #8510 is at 50 min and #8513 at 32 min. In progress (cap full): #8508, #8510 and #8513. Main `017606680`.
