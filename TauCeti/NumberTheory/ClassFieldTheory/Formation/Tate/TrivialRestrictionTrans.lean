@@ -25,6 +25,13 @@ for integral coefficients.
 * `TauCeti.ClassFieldTheory.LayerRestriction.trivialTateRes_trans`: trivial-coefficient Tate
   restriction is functorial along a tower of restrictions, in every integer degree.
 
+## Implementation notes
+
+The case split by degree follows the corestriction counterpart
+`LayerRestriction.trivialTateCor_trans` in `Formation/Tate/TrivialCorestrictionTrans.lean`. Below
+degree minus one the argument follows `tateRes_negSucc_succ_trans` in
+`Formation/Tate/Restriction.lean`, the same step with formation coefficients.
+
 ## References
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §§2–4.
@@ -41,16 +48,6 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Compa
   [TotallyDisconnectedSpace G] {a b c : NormalLayer G}
 
 attribute [local instance] instFintypeRange
-
-/-! ### Degree zero -/
-
-private theorem trivialTateRes_zero_H0π {small big : NormalLayer G} (T : LayerRestriction small big)
-    (x : (Rep.trivial ℤ big.Gal ℤ).ρ.invariants) :
-    T.trivialTateRes 0 (TauCeti.TateCohomology.H0π _ x) =
-      TauCeti.TateCohomology.H0π (Rep.trivial ℤ small.Gal ℤ) ⟨(x : ℤ), fun _ ↦ rfl⟩ := by
-  rw [trivialTateRes_zero, ModuleCat.comp_apply, TauCeti.TateCohomology.H0π_comp_H0Res_apply]
-  exact (congrArg (T.trivialTateRangeIso 0).inv
-    (T.trivialTateRangeIso_hom_H0π ⟨(x : ℤ), fun _ ↦ rfl⟩).symm).trans (Iso.hom_inv_id_apply _ _)
 
 /-! ### Positive degrees -/
 
@@ -82,15 +79,6 @@ private theorem trivialTateRes_comp_isoGroupCohomology_hom_eq_trivialCohomologyR
 
 /-! ### Degrees below minus one -/
 
-private theorem trivialTateRangeIso_hom_negSucc_succ {small big : NormalLayer G}
-    (T : LayerRestriction small big) (n : ℕ) : (T.trivialTateRangeIso (Int.negSucc (n + 1))).hom =
-      TauCeti.TateCohomology.map (e := MonoidHom.ofInjective T.galHom_injective) (φ := LinearMap.id)
-        ⟨fun _ _ ↦ rfl⟩ (Int.negSucc (n + 1)) := by
-  rw [← cancel_mono ((TateCohomology.isoGroupHomology _ (n + 1) (Int.negSucc_eq _)).hom.app _),
-    TauCeti.TateCohomology.map_comp_isoGroupHomology_hom]
-  exact (T.trivialTateRangeIso_hom_comp_isoGroupHomology_hom n).trans <| congrArg _ <|
-    groupHomology.map_congr rfl (by ext; simpa using T.trivialRangeRepHom_apply 1) _
-
 attribute [local instance] Subgroup.fintypeOfFinite in
 private theorem trivialTateRes_negSucc_succ_trans (T : LayerRestriction a b)
     (T' : LayerRestriction b c) (n : ℕ) : (T.trans T').trivialTateRes (Int.negSucc (n + 1)) =
@@ -100,17 +88,17 @@ private theorem trivialTateRes_negSucc_succ_trans (T : LayerRestriction a b)
   rw [← TauCeti.TateCohomology.negSuccRes_trans_assoc _ (galHom_range_trans_le T T')]
   refine congrArg (_ ≫ ·) ((Iso.eq_inv_comp _).2 ?_)
   -- ...and compatible with the identification of the middle Galois group with its image.
-  simp only [trivialTateRangeIso_hom_negSucc_succ,
+  simp only [trivialTateRangeIso_hom,
     TauCeti.TateCohomology.map_comp_negSuccRes_assoc _ (MonoidHom.ofInjective T'.galHom_injective) _
       (galHom_range_map_ofInjective T T') (n + 1)]
   refine congrArg (_ ≫ ·) ?_
   -- It remains to compose the identifications of Galois groups and coefficients along the tower.
-  rw [TauCeti.TateCohomology.map_comp_assoc, Iso.comp_inv_eq, Iso.eq_inv_comp]
-  -- `rw [trivialTateRangeIso_hom_negSucc_succ]` would be far slower here than `simp only`.
-  simp only [trivialTateRangeIso_hom_negSucc_succ, TauCeti.TateCohomology.map_comp]
+  -- (`simp only`, not `rw`: rewriting with `trivialTateRangeIso_hom` is far slower here.)
+  simp only [TauCeti.TateCohomology.map_comp_assoc, Iso.comp_inv_eq, Iso.eq_inv_comp,
+    trivialTateRangeIso_hom, TauCeti.TateCohomology.map_comp]
   -- The coefficient maps are all the identity, so only the Galois groups need comparing.
   refine TauCeti.TateCohomology.map_congr (MulEquiv.ext fun γ ↦ Subtype.ext ?_) rfl _
-  simp [TauCeti.Subgroup.coe_congrOfMapEq_apply, MonoidHom.ofInjective_apply, galHom_trans T T']
+  simp [MonoidHom.ofInjective_apply, galHom_trans T T']
 
 -- The positive degrees of `trivialTateRes_trans`, where restriction is group-cohomology
 -- restriction along the inclusion of Galois groups.
