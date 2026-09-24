@@ -8,6 +8,8 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.PolePoints
 -- Proof-only: a point with integral `x`-coordinate has integral `y`-coordinate.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.ValuationIntegrality
+-- Proof-only: `λ² + a₁λ - c` has a pole exactly where `λ` does.
+import TauCeti.RingTheory.Valuation.RootMonic
 
 /-!
 # Reduction of points at a place of degree one
@@ -65,31 +67,6 @@ sends `A` to the projective class of the reduction here, read through
 public section
 
 open TauCeti
-
-section Valuation
-
-variable {K Γ₀ : Type*} [Field K] [LinearOrderedCommGroupWithZero Γ₀] (v : Valuation K Γ₀)
-
--- `λ² + a₁ λ - c` has a pole exactly when `λ` does, for integral `a₁` and `c`.
-private theorem one_lt_valuation_sq_add_mul_sub_iff {l a₁ c : K} (ha₁ : v a₁ ≤ 1) (hc : v c ≤ 1) :
-    1 < v (l ^ 2 + a₁ * l - c) ↔ 1 < v l := by
-  refine ⟨fun h ↦ ?_, fun hl ↦ ?_⟩
-  · by_contra hl
-    push Not at hl
-    refine absurd h (not_lt.mpr ((v.map_sub _ _).trans (max_le ((v.map_add _ _).trans
-      (max_le ?_ ?_)) hc)))
-    · rw [map_pow]; exact pow_le_one₀ zero_le hl
-    · rw [map_mul]; exact mul_le_one' ha₁ hl
-  · have hsq : v (a₁ * l - c) < v (l ^ 2) := by
-      rw [map_pow]
-      refine lt_of_le_of_lt (v.map_sub _ _) (max_lt ?_ ?_)
-      · rw [map_mul, sq]
-        exact mul_lt_mul_of_pos_right (lt_of_le_of_lt ha₁ hl) (zero_lt_one.trans hl)
-      · exact lt_of_le_of_lt hc (one_lt_pow₀ hl two_ne_zero)
-    rw [add_sub_assoc, v.map_add_eq_of_lt_left hsq, map_pow]
-    exact one_lt_pow₀ hl two_ne_zero
-
-end Valuation
 
 namespace WeierstrassCurve.Affine
 
@@ -277,9 +254,9 @@ private theorem nonsingular_of_valuation_sub_lt_one [W.IsElliptic] {x y : K}
       (x - algebraMap F K a) - (x - algebraMap F K a) * (x ^ 2 + x * algebraMap F K a +
       algebraMap F K a ^ 2 + algebraMap F K W.a₂ * (x + algebraMap F K a) +
       algebraMap F K W.a₄)) := by
+    simp only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂,
+      WeierstrassCurve.map_a₃, WeierstrassCurve.map_a₄, WeierstrassCurve.map_a₆] at heq
     simp only [hδ, map_sub, map_add, map_mul, map_pow]
-    change y ^ 2 + algebraMap F K W.a₁ * x * y + algebraMap F K W.a₃ * y =
-      x ^ 3 + algebraMap F K W.a₂ * x ^ 2 + algebraMap F K W.a₄ * x + algebraMap F K W.a₆ at heq
     linear_combination heq
   have hδ0 : δ = 0 := by
     by_contra hne
@@ -305,15 +282,13 @@ variable [DecidableEq K] [W.IsElliptic]
 -- difference is `0` in the first case; in the second it is the constant affine point `-2 (a, b)`,
 -- and `y₁` is the unit distance `b' - b` away from `b`.
 private theorem some_sub_some_mem_polePoints_iff_of_X_eq {y₁ : K} {a b : F}
-    (h₁ : (W⁄K).toAffine.Nonsingular (algebraMap F K a) y₁) (hQ : W.Nonsingular a b) :
-    Point.some (algebraMap F K a) y₁ h₁ - Point.some (algebraMap F K a) (algebraMap F K b)
-        (show (W⁄K).toAffine.Nonsingular (algebraMap F K a) (algebraMap F K b) from
-          (W.map_nonsingular (algebraMap F K).injective a b).mpr hQ) ∈ polePoints W w ↔
+    (h₁ : (W⁄K).toAffine.Nonsingular (algebraMap F K a) y₁)
+    (hQK : (W⁄K).toAffine.Nonsingular (algebraMap F K a) (algebraMap F K b)) :
+    Point.some (algebraMap F K a) y₁ h₁ - Point.some (algebraMap F K a) (algebraMap F K b) hQK ∈
+        polePoints W w ↔
       w.valuation (algebraMap F K a - algebraMap F K a) < 1 ∧
         w.valuation (y₁ - algebraMap F K b) < 1 := by
   classical
-  have hQK : (W⁄K).toAffine.Nonsingular (algebraMap F K a) (algebraMap F K b) :=
-    (W.map_nonsingular (algebraMap F K).injective a b).mpr hQ
   have hnegY : (W⁄K).toAffine.negY (algebraMap F K a) (algebraMap F K b) =
       algebraMap F K (W.negY a b) := W.map_negY (algebraMap F K) a b
   by_cases hy : y₁ = algebraMap F K b
@@ -342,19 +317,17 @@ private theorem some_sub_some_mem_polePoints_iff_of_X_eq {y₁ : K} {a b : F}
 -- through `(x₁, y₁)` and `-(a, b)` has `x`-coordinate `λ² + a₁λ - a₂ - x₁ - a`, which has a pole
 -- exactly when `λ` does.
 private theorem some_sub_algebraMap_mem_polePoints_iff {x₁ y₁ : K}
-    (h₁ : (W⁄K).toAffine.Nonsingular x₁ y₁) {a b : F} (hQ : W.Nonsingular a b) :
-    Point.some x₁ y₁ h₁ - Point.some (algebraMap F K a) (algebraMap F K b)
-        (show (W⁄K).toAffine.Nonsingular (algebraMap F K a) (algebraMap F K b) from
-          (W.map_nonsingular (algebraMap F K).injective a b).mpr hQ) ∈ polePoints W w ↔
+    (h₁ : (W⁄K).toAffine.Nonsingular x₁ y₁) {a b : F} (hQ : W.Nonsingular a b)
+    (hQK : (W⁄K).toAffine.Nonsingular (algebraMap F K a) (algebraMap F K b)) :
+    Point.some x₁ y₁ h₁ - Point.some (algebraMap F K a) (algebraMap F K b) hQK ∈
+        polePoints W w ↔
       w.valuation (x₁ - algebraMap F K a) < 1 ∧ w.valuation (y₁ - algebraMap F K b) < 1 := by
   set v := w.valuation
   have hc : ∀ c : F, v (algebraMap F K c) ≤ 1 := fun c ↦
     Valuation.IsTrivialOn.valuation_algebraMap_le_one v c
-  have hQK : (W⁄K).toAffine.Nonsingular (algebraMap F K a) (algebraMap F K b) :=
-    (W.map_nonsingular (algebraMap F K).injective a b).mpr hQ
   by_cases hx : x₁ = algebraMap F K a
   · subst hx
-    exact some_sub_some_mem_polePoints_iff_of_X_eq W w h₁ hQ
+    exact some_sub_some_mem_polePoints_iff_of_X_eq W w h₁ hQK
   rw [sub_eq_add_neg, Point.neg_some, Point.add_of_X_ne hx]
   simp only [mem_polePoints_iff, reduceCtorEq, false_or, Point.xCoord_some]
   by_cases hx₁ : 1 < v x₁
@@ -377,14 +350,10 @@ private theorem some_sub_algebraMap_mem_polePoints_iff {x₁ y₁ : K}
   have hy₁ : v y₁ ≤ 1 := valuation_y_le_one_of_valuation_x_le_one v h₁.1 hx₁
   have hnegY : (W⁄K).toAffine.negY (algebraMap F K a) (algebraMap F K b) =
       algebraMap F K (W.negY a b) := W.map_negY (algebraMap F K) a b
-  rw [slope_of_X_ne hx, hnegY, addX,
-    show ∀ l : K, l ^ 2 + (W⁄K).toAffine.a₁ * l - (W⁄K).toAffine.a₂ - x₁ - algebraMap F K a =
-      l ^ 2 + algebraMap F K W.a₁ * l - (algebraMap F K W.a₂ + x₁ + algebraMap F K a) from
-      fun l ↦ by
-        change l ^ 2 + algebraMap F K W.a₁ * l - algebraMap F K W.a₂ - x₁ - algebraMap F K a = _
-        ring,
-    one_lt_valuation_sq_add_mul_sub_iff v (hc _)
-      ((v.map_add _ _).trans (max_le ((v.map_add _ _).trans (max_le (hc _) hx₁)) (hc _)))]
+  rw [slope_of_X_ne hx, hnegY, addX]
+  simp only [WeierstrassCurve.baseChange, WeierstrassCurve.map_a₁, WeierstrassCurve.map_a₂]
+  rw [sub_sub, sub_sub, Valuation.one_lt_map_sq_add_mul_sub_iff v (hc _)
+    ((v.map_add _ _).trans (max_le (hc _) ((v.map_add _ _).trans (max_le hx₁ (hc _)))))]
   exact one_lt_valuation_slope_iff W w h₁.1 hQ hx₁ hy₁ hx
 
 variable [DecidableEq F]
@@ -400,7 +369,7 @@ theorem some_sub_baseChange_mem_polePoints_iff {x₁ y₁ : K}
   rw [Point.baseChange, Point.map_some]
   simp only [Algebra.ofId_apply]
   exact some_sub_algebraMap_mem_polePoints_iff W w h₁
-    ((W.map_nonsingular (algebraMap F F).injective a b).mp hQ)
+    ((W.map_nonsingular (algebraMap F F).injective a b).mp hQ) _
 
 /-- **Every point reduces to a point of `W` over `F` at a place of degree one.** For a place `w` of
 `K / F` with residue field `F`, every point of `W` over `K` differs from a point of `W` over `F` by
