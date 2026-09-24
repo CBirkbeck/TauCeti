@@ -91,40 +91,24 @@ private theorem trivialHomologyCor_trans (T : LayerRestriction a b)
   ext
   rfl
 
-private theorem homCongr_trivialTateCor_negSucc {small big : NormalLayer G}
+@[reassoc]
+private theorem trivialTateCor_comp_negSuccIso_hom {small big : NormalLayer G}
     (T : LayerRestriction small big) (n : ℕ) :
-    ((TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-          (by rw [Int.negSucc_eq])).app (Rep.trivial ℤ small.Gal ℤ)).homCongr
-        ((TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-          (by rw [Int.negSucc_eq])).app (Rep.trivial ℤ big.Gal ℤ))
-        (T.trivialTateCor (Int.negSucc (n + 1))) =
-      trivialHomologyCor T (n + 1) := by
+    T.trivialTateCor (Int.negSucc (n + 1)) ≫
+        (TauCeti.TateCohomology.negSuccIso (Rep.trivial ℤ big.Gal ℤ) (n + 1)).hom =
+      (TauCeti.TateCohomology.negSuccIso (Rep.trivial ℤ small.Gal ℤ) (n + 1)).hom ≫
+        trivialHomologyCor T (n + 1) := by
   let : Fintype T.galHom.range := Fintype.ofFinite _
-  rw [Iso.homCongr_apply]
-  refine (Iso.inv_comp_eq ((TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-    (by rw [Int.negSucc_eq])).app _)).2 ?_
-  rw [Iso.app_hom, Iso.app_hom, trivialTateCor_negSucc_succ, Category.assoc,
-    TauCeti.TateCohomology.negSuccCor_comp_isoGroupHomology_hom]
   have h := T.trivialTateRangeIso_hom_comp_isoGroupHomology_hom n
-  have hcor := congrArg
-    (fun f ↦ f ≫ (groupHomology.coresNatTrans ℤ T.galHom.range.subtype (n + 1)).app
-      (Rep.trivial ℤ big.Gal ℤ)) h
-  have hmap : groupHomology.map (MonoidHom.ofInjective T.galHom_injective)
-        T.trivialRangeRepHom (n + 1) ≫
-        (groupHomology.coresNatTrans ℤ T.galHom.range.subtype (n + 1)).app
-          (Rep.trivial ℤ big.Gal ℤ) = trivialHomologyCor T (n + 1) := by
-    rw [groupHomology.coresNatTrans_app]
-    refine (groupHomology.map_comp (MonoidHom.ofInjective T.galHom_injective)
-      T.galHom.range.subtype T.trivialRangeRepHom
-      (𝟙 (Rep.res T.galHom.range.subtype (Rep.trivial ℤ big.Gal ℤ))) (n + 1)).symm.trans ?_
-    rw [trivialHomologyCor]
-    apply groupHomology.map_congr _ _ (n + 1)
-    · ext x
-      exact MonoidHom.ofInjective_apply T.galHom_injective
-    · ext
-      exact T.trivialRangeRepHom_apply 1
-  refine (Category.assoc _ _ _).symm.trans (hcor.trans ?_)
-  exact (Category.assoc _ _ _).trans (congrArg (_ ≫ ·) hmap)
+  simp only [← Iso.app_hom, ← TauCeti.TateCohomology.negSuccIso_hom] at h
+  rw [trivialTateCor_negSucc_succ, Category.assoc,
+    TauCeti.TateCohomology.negSuccCor_comp_negSuccIso_hom, ← Category.assoc]
+  -- `h` keeps the `groupHomology.functor` objects of Mathlib's comparison, so `rw [h]` fails.
+  refine (congrArg (· ≫ _) h).trans ((Category.assoc _ _ _).trans (congrArg (_ ≫ ·) ?_))
+  refine (groupHomology.map_comp _ _ _ _ _).symm.trans
+    (groupHomology.map_congr (MonoidHom.ext fun x ↦ ?_) (LinearMap.ext_ring ?_) (n + 1))
+  · exact MonoidHom.ofInjective_apply T.galHom_injective
+  · exact T.trivialRangeRepHom_apply 1
 
 /-- Trivial-coefficient Tate corestriction is functorial in towers of finite normal layers. -/
 theorem trivialTateCor_trans (T : LayerRestriction a b)
@@ -161,15 +145,8 @@ theorem trivialTateCor_trans (T : LayerRestriction a b)
       TauCeti.TateCohomology.subsingleton_tateCohomology_negOne_trivial_int c.Gal
     ext x
     exact Subsingleton.elim _ _
-  · apply ((TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-        (by rw [Int.negSucc_eq])).app (Rep.trivial ℤ a.Gal ℤ)).homCongr
-      ((TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-        (by rw [Int.negSucc_eq])).app (Rep.trivial ℤ c.Gal ℤ)) |>.injective
-    rw [Iso.homCongr_comp _
-        ((TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-          (by rw [Int.negSucc_eq])).app (Rep.trivial ℤ b.Gal ℤ)),
-      homCongr_trivialTateCor_negSucc, homCongr_trivialTateCor_negSucc,
-      homCongr_trivialTateCor_negSucc]
-    exact trivialHomologyCor_trans T T' (n + 1)
+  · rw [← cancel_mono (TauCeti.TateCohomology.negSuccIso (Rep.trivial ℤ c.Gal ℤ) (n + 1)).hom,
+      Category.assoc, trivialTateCor_comp_negSuccIso_hom, trivialTateCor_comp_negSuccIso_hom,
+      trivialTateCor_comp_negSuccIso_hom_assoc, trivialHomologyCor_trans]
 
 end TauCeti.ClassFieldTheory.LayerRestriction
