@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Tate.Basic
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Tate.Corestriction
-import TauCeti.RepresentationTheory.Homological.TateCohomology.RestrictionTrans
+import TauCeti.RepresentationTheory.Homological.TateCohomology.Restriction.Trans
 
 /-!
 # Restriction of finite-layer Tate cohomology
@@ -55,8 +55,9 @@ relative degree `[E : F]` in every degree.
   of norm kernels is transitive along a tower modulo the augmentation submodule.
 * `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_trans_of_neg_one_le`: Tate restriction is
   functorial along towers in every degree at least minus one.
-* `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_trans`: Tate restriction is functorial along
-  towers in every degree.
+* `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_trans_eq_comp` and
+  `TauCeti.ClassFieldTheory.LayerRestriction.tateRes_trans`: Tate restriction is functorial along
+  towers of layers in every degree.
 
 ## References
 
@@ -317,19 +318,26 @@ private theorem tateRes_negSucc_succ_trans (T : LayerRestriction a b) (T' : Laye
   · exact (T'.repIso_hom_apply_coe F _).trans
       ((T.repIso_hom_apply_coe F x).trans ((T.trans T').repIso_hom_apply_coe F x).symm)
 
+/-- **Tate restriction is functorial along a tower, in every integer degree**, as an identity of
+morphisms: restricting from `K/F` to `K/E'` is restricting from `K/F` to `K/E` and then from `K/E`
+to `K/E'`. -/
+@[reassoc]
+theorem tateRes_trans_eq_comp (T : LayerRestriction a b) (T' : LayerRestriction b c)
+    (F : Formation G) (r : ℤ) : (T.trans T').tateRes F r = T'.tateRes F r ≫ T.tateRes F r := by
+  -- The degrees are left to unification: instantiating at the literal `-1` rather than
+  -- `Int.negSucc 0` makes `exact` markedly slower.
+  rcases r with _ | (_ | n)
+  · exact tateRes_trans_of_neg_one_le T T' F _ (by lia)
+  · exact tateRes_trans_of_neg_one_le T T' F _ le_rfl
+  · exact tateRes_negSucc_succ_trans T T' F n
+
 /-- **Tate restriction is functorial along a tower, in every integer degree.** Restricting from
-`K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`. For degrees
-at least `-1`, `tateRes_trans_of_neg_one_le` states this as an identity of morphisms. -/
+`K/F` to `K/E` and then to `K/E'` agrees with direct restriction from `K/F` to `K/E'`. -/
+-- Not `@[simp]`: `LayerRestriction` is a `Prop`, so the left-hand side does not mention `T`, `T'`
+-- or the middle layer, and `simp` could never instantiate them.
 theorem tateRes_trans (T : LayerRestriction a b) (T' : LayerRestriction b c) (F : Formation G)
     (r : ℤ) (x : c.TateH F r) : (T.trans T').tateRes F r x = T.tateRes F r (T'.tateRes F r x) := by
-  have key : (T.trans T').tateRes F r = T'.tateRes F r ≫ T.tateRes F r := by
-    -- The degrees are left to unification: instantiating at the literal `-1` rather than
-    -- `Int.negSucc 0` makes `exact` markedly slower.
-    rcases r with _ | (_ | n)
-    · exact tateRes_trans_of_neg_one_le T T' F _ (by lia)
-    · exact tateRes_trans_of_neg_one_le T T' F _ le_rfl
-    · exact tateRes_negSucc_succ_trans T T' F n
-  rw [key, ModuleCat.comp_apply]
+  rw [tateRes_trans_eq_comp, ModuleCat.comp_apply]
 
 end Towers
 

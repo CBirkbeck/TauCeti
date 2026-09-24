@@ -7,7 +7,7 @@ module
 
 public import TauCeti.Algebra.Group.Subgroup.Map
 public import TauCeti.RepresentationTheory.Homological.TateCohomology.Functoriality
-public import TauCeti.RepresentationTheory.Homological.TateCohomology.Restriction
+public import TauCeti.RepresentationTheory.Homological.TateCohomology.Restriction.Basic
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Naturality
 import TauCeti.RepresentationTheory.Homological.GroupHomology.Transfer.Trans
 
