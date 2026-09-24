@@ -9,7 +9,7 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.MordellWeil.XSubT
 public import TauCeti.AlgebraicGeometry.EllipticCurve.NormalForms
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.BaseChange
 -- Proof-only: `Point.cast_some`, the coordinates of a point transported along `AddEquiv.cast`.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.VariableChange
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 
 /-!
 # Base change of the étale algebra, and the local condition of `2`-descent
