@@ -42909,3 +42909,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   session's PRs. #8531 is `ready-to-merge`.
 * #8534 (36 min since ready) and #8538 (2 min) are `awaiting-review`; #8541's build has run since 09:22:26Z (waiter armed). No findings.
 * In progress (cap full): #8534, #8538 and #8541. Pin `dc4b8d60d5`, main `787e425c5`.
+* (late in r1026) **#8541 went green at 09:31:28Z and was marked ready at 09:32Z.** Guards: all latest check-runs green, head `3496b0a19`
+  unchanged, pin `dc4b8d60d5` at base `f0619a1b8` and at main, file untouched since the base. No drafts remain.
