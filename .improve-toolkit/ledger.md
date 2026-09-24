@@ -42399,3 +42399,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `Roadmap: ConformalMapping`. Target `Analysis/Complex/Conformal/Monodromy.lean` (see r975 for the edits and astra's verdict).
 * #8473 (40 min since ready) and #8476 (30 min) are `awaiting-review` with no board. No findings, no merges.
 * In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `53ab872de`.
+
+## r979 — 2026-09-24T01:25Z (cron)
+
+* **#8469 merged** (01:20:26Z, `improve/arrays-block-style`, kind 2), the twenty-first of this session's PRs to merge.
+* #8487's `sandboxed-build` started at 01:18:36Z (a waiter is armed; the CI queue has drained). #8473 (50 min since ready) and #8476
+  (40 min) are `awaiting-review` with no board; step 4 opens for #8473 at 01:35Z. No findings.
+* In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
