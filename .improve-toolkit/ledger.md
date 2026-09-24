@@ -42602,3 +42602,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `ba4d3cf65` unchanged, pin `dc4b8d60d5` at base `a0749c0b4` and at main, file untouched since the base. No drafts remain.
 * (late in r998) **Step 4: drove #8503** at 04:55Z (71 min past ready 03:42:52Z, no board, `awaiting-review` only; quota probed ok at
   04:24Z; background, log `drive-8503-0455.log`).
+
+## r999 — 2026-09-24T04:56Z (cron)
+
+* **#8499 merged** (04:50:46Z, `improve/sobolev-diffquot-style`, kind 2, approved by the r997 drive), the twenty-eighth of this session's PRs.
+* #8503's drive (04:55Z) is running (`review-in-progress`). #8508 (13 min since ready) and #8510 (1 min) are `awaiting-review`. No findings.
+* In progress (cap full): #8503, #8508 and #8510. Pin `dc4b8d60d5`, main `50e5fa02e`.
