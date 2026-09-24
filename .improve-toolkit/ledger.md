@@ -42424,3 +42424,13 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   The codex quota probe answered "ok" first, and a re-check just before the drive found no board.
 * #8476 is 60m22s past ready: held one more round (the pipeline's usual window runs to ~64 min). #8487 is at 17 min.
 * No merges, no findings. In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
+* (late in r981) **The #8473 drive approved it 10/10** (all rubrics `codex/gpt-5.6-sol`, board id 5805997217, 01:47:50Z, head `f52a3a755`;
+  review spend $0.94, far below the ~$16 estimate). `documentation`: "removes roadmap-specific process text without overclaiming". After
+  posting, the runner's archive push to `TauCetiProject/TauCetiData` failed with a 403 (outbox kept locally). That affects only the data
+  archive; the board posted. With #8473 approved, one slot is open.
+* (late in r981) **Step 5, kind 2: opened draft #8491**, `improve/graphon-cutnorm-style` @ `5c0611468` from `df538400d`;
+  `Roadmap: DenseGraphLimits` (as #8140, which added the file on 2026-09-22). Target from the r976 re-score:
+  `Combinatorics/DenseGraphLimits/Graphon/CutNormLimit.lean` (319 lines, 54 `fun … =>`, no other `=>`, no roadmap text, no open-PR
+  overlap). Edits: 54 arrows (asserted); the calc step `_ ≤ c * (ε / (c + 1)) := by gcongr; exact (hN i hi j hj).le` split, with tactics
+  at indent 10 like the next step's block. Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would reject none of these edits").
+* In progress (cap full): #8476, #8487 and #8491. #8473 is approved.
