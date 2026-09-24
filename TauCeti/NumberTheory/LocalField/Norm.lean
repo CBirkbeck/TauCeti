@@ -5,8 +5,11 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.NumberTheory.LocalField.InertiaDegree
+import Mathlib.RingTheory.Localization.NormTrace
 public import TauCeti.NumberTheory.LocalField.FiniteExtension.Basic
+public import TauCeti.NumberTheory.LocalField.InertiaDegree
+public import TauCeti.NumberTheory.LocalField.Uniformizer
+public import TauCeti.NumberTheory.LocalField.UnitFiltration.Basic
 public import TauCeti.RingTheory.Norm.Units
 import Mathlib.RingTheory.Norm.Transitivity
 import Mathlib.RingTheory.Valuation.Integral
@@ -35,13 +38,13 @@ records only the valuation computation that that argument uses.
 
 ## References
 
-* J.-P. Serre, *Local Fields*, Chapter V, §2.
-* J. Neukirch, *Algebraic Number Theory*, Chapter II, §7.
+* J.-P. Serre, *Local Fields*, Chapter I, §4 and Chapter V, §2.
+* J. Neukirch, *Algebraic Number Theory*, Chapter II, §§4 and 7.
 -/
 
 public section
 
-open ValuativeRel IsNonarchimedeanLocalField
+open ValuativeRel IsLocalRing IsNonarchimedeanLocalField
 
 namespace TauCeti
 
@@ -143,5 +146,54 @@ theorem normalizedValuationWithZero_norm (x : L) :
         normalizedValuationWithZero_coe, normalizedValuation_norm]
       exact WithZero.coe_pow _ _
     simpa only [x', Units.val_mk0] using hnorm
+
+omit [FiniteDimensional K L] in
+/-- The norm of `𝒪[L]` over `𝒪[K]`, a free module of finite rank, is the restriction of the field
+norm of `L/K`. -/
+@[simp]
+theorem coe_norm_integerRing (y : 𝒪[L]) :
+    ((Algebra.norm 𝒪[K] y : 𝒪[K]) : K) = Algebra.norm K (y : L) := by
+  have := isLocalization_integerRing K L
+  exact (Algebra.norm_localization 𝒪[K] (nonZeroDivisors 𝒪[K]) y).symm
+
+omit [FiniteDimensional K L] in
+/-- The norm of an element of `𝒪[L]` lies in `𝒪[K]`. -/
+theorem norm_mem_integer {y : L} (hy : y ∈ 𝒪[L]) : Algebra.norm K y ∈ 𝒪[K] := by
+  simpa using (Algebra.norm 𝒪[K] (⟨y, hy⟩ : 𝒪[L])).2
+
+/-- A unit of `L` is a unit of `𝒪[L]` exactly when its norm is a unit of `𝒪[K]`. -/
+-- The left-hand side simplifies via `unitFiltration_zero`, so this is not a simp lemma.
+theorem normUnits_mem_unitFiltration_zero_iff {y : Lˣ} :
+    Algebra.normUnits K y ∈ unitFiltration K 0 ↔ y ∈ unitFiltration L 0 := by
+  rw [mem_unitFiltration_zero, mem_unitFiltration_zero, ← normalizedValuation_eq_one_iff,
+    ← normalizedValuation_eq_one_iff, normalizedValuation_norm,
+    pow_eq_one_iff_left (inertiaDegree_pos (K := K) (L := L)).ne']
+
+variable (K L) in
+/-- The norm carries the units of `𝒪[L]` into the units of `𝒪[K]`: `N_{L/K}(U(L,0)) ⊆ U(K,0)`. -/
+theorem map_normUnits_unitFiltration_zero_le :
+    (unitFiltration L 0).map (Algebra.normUnits K) ≤ unitFiltration K 0 := by
+  rintro _ ⟨y, hy, rfl⟩
+  exact normUnits_mem_unitFiltration_zero_iff.2 hy
+
+/-- The norm of a uniformizer of `L` is a uniformizer of `K` exactly when the residue degree is
+`1`, that is when `L/K` is totally ramified. -/
+theorem isUniformizer_normUnits_iff {ϖ : Lˣ} (hϖ : IsUniformizer L ϖ) :
+    IsUniformizer K (Algebra.normUnits K ϖ) ↔ inertiaDegree K L = 1 := by
+  rw [isUniformizer_def] at hϖ ⊢
+  rw [normalizedValuation_norm, hϖ, ← ofAdd_nsmul, Multiplicative.ofAdd.injective.eq_iff,
+    nsmul_one]
+  exact Nat.cast_eq_one
+
+variable (L) in
+/-- The normalized valuation of an element of the norm group `N_{L/K}(Lˣ)` is divisible by the
+residue degree `f(L/K)`. -/
+theorem inertiaDegree_dvd_of_mem_normGroup {x : Kˣ}
+    (hx : x ∈ normGroup K L) :
+    (inertiaDegree K L : ℤ) ∣ (normalizedValuation K x).toAdd := by
+  obtain ⟨y, hy⟩ := mem_normGroup_iff.mp hx
+  have h : Algebra.normUnits K y = x := Units.ext (by simpa using hy)
+  subst x
+  exact ⟨_, toAdd_normalizedValuation_norm y⟩
 
 end TauCeti
