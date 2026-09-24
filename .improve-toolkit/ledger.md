@@ -42988,3 +42988,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **#8534 merged** (10:38:16Z, `improve/hyperbolic-length-style`, kind 2, approved by the r1029 drive), the thirty-ninth of this session's PRs.
 * #8538, #8548 and #8549 are `ready-to-merge`. The drafts #8563 (since 10:38:39Z), #8565 and #8566 (since 10:46:21Z) are building (waiter
   armed). No findings. In progress (cap full): #8563, #8565 and #8566. Main `28b0f0811`.
+
+## r1035 — 2026-09-24T10:55Z (cron)
+
+* **#8563 (green 10:48:13Z) and #8565 (green 10:54:41Z) were marked ready at 10:55Z.** Guards for both: all latest check-runs green,
+  heads unchanged (`ca4b1517f`, `2ec28a80f`), pin `dc4b8d60d5` at base `1f035cbe2` and at main, files untouched since the base.
+* #8566's build is still running (waiter armed). #8538, #8548 and #8549 are `ready-to-merge`. No merges, no findings.
+* In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `7d3c3918c`.
