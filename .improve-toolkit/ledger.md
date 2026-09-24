@@ -42982,3 +42982,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
     12/0/0. Astra **cleared**. `Roadmap: ContourIntegration` (#946 carried the `roadmap/ContourIntegration` label).
   A waiter is armed for all three builds.
 * In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `1f035cbe2`.
+
+## r1034 — 2026-09-24T10:48Z (cron; queued right behind r1033)
+
+* **#8534 merged** (10:38:16Z, `improve/hyperbolic-length-style`, kind 2, approved by the r1029 drive), the thirty-ninth of this session's PRs.
+* #8538, #8548 and #8549 are `ready-to-merge`. The drafts #8563 (since 10:38:39Z), #8565 and #8566 (since 10:46:21Z) are building (waiter
+  armed). No findings. In progress (cap full): #8563, #8565 and #8566. Main `28b0f0811`.
