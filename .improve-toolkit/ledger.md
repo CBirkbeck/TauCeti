@@ -42533,3 +42533,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   since ready) and #8499 (10 min) are `awaiting-review`. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `b3decc754`.
 * (late in r991) **#8503 went green at 03:42:10Z and was marked ready at 03:42Z.** Guards: all latest check-runs green, head `b201b7fc4`
   unchanged, pin `dc4b8d60d5` at base `b3decc754` and at main, `Wishart/Basic.lean` untouched since the base. No drafts remain.
+
+## r992 — 2026-09-24T03:49Z (cron)
+
+* **#8492 merged** (03:40:27Z, `improve/pde-spectrum-style`, kind 2, approved by the r989 drive), the twenty-sixth of this session's PRs.
+* #8497 (27 min since ready), #8499 (20 min) and #8503 (2 min) are `awaiting-review`. No findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/hopf-lemma-style` @ `2eca7da4a` from `5832ba2dd`. Target
+  `Analysis/InnerProductSpace/Laplacian/HopfLemma.lean` (48 `fun … =>`, no other `=>`, no roadmap text in the file, no open-PR overlap).
+  Edits: 48 arrows (asserted); seven chains split (five `have … := by a; b`: `he0`, `hpneg`, `hpcoef`, `hδpos`, `hεpos`; two bullets
+  `· rw [...]; exact ...`). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would reject none of these edits"). Body:
+  scratchpad `pr-body-hopf.md`, `Roadmap: PDE` (as #6255).
+* In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `5832ba2dd`.

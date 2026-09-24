@@ -1,4 +1,4 @@
-# Last round — r991 (2026-09-24T03:35Z)
+# Last round — r992 (2026-09-24T03:49Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,20 +44,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8492** | `193b30cea` | green (02:12:47Z) | kind 2 (`Analysis/PDE/Spectrum.lean`: 47 `↦`, nothing else; `Roadmap: PDE`). **Approved 10/10** by the r989 drive (board 5806965488, 03:27Z; $1.02) | **queue** |
 | **#8497** | `c3ceabacb` | green (03:16:23Z) | kind 2 (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 03:17Z** (r989) | **external reviewers** |
 | **#8499** | `f9c163254` | green (03:24:11Z) | kind 2 (`Sobolev/W1p/DifferenceQuotient.lean`: 53 `↦`, one `let _ … := by` chain split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 03:24:24Z** (r989) | **external reviewers** |
 | **#8503** | `b201b7fc4` | green (03:42:10Z) | kind 2 (`Distributions/Wishart/Basic.lean`: 45 `↦`, nothing else; gate 12/0/0; `Roadmap: StandardDistributions`). Astra cleared it; **marked ready 03:42Z** (r991) | **external reviewers** |
 
-**In progress (cap full): #8497 (ready 03:17Z; step 4 no earlier than 04:17Z), #8499 (ready 03:24Z; 04:24Z) and #8503 (ready 03:42Z; 04:42Z). No drafts.** #8492 approved by its drive; **#8491 merged 03:24:45Z**; twenty-five merged this session.
-**Staged:** nothing (the CondExp branch went as #8497 at r986).
+**In progress (cap full): #8497 (ready 03:17Z; step 4 no earlier than 04:17Z), #8499 (ready 03:24Z; 04:24Z) and #8503 (ready 03:42Z; 04:42Z). No drafts.** **#8492 merged 03:40:27Z** (r992); twenty-six merged this session.
+**Staged (not opened; the cap is full):** `improve/hopf-lemma-style` @ `2eca7da4a` from `5832ba2dd` (`Laplacian/HopfLemma.lean`: 48 `↦`, seven `;` chains split; gate 12/0/0; astra cleared it; body in the scratchpad `pr-body-hopf.md`, `Roadmap: PDE`). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `66af58e3b`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `f39a361ae`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -67,14 +66,14 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r990):** #8491 merged; #8492 approved (drive). In progress (cap full): #8497 (ready 03:17Z; 04:17Z), #8499 (ready
-   03:24Z; 04:24Z) and #8503 (Wishart; ready 03:42Z; 04:42Z). No drafts. Drives cost ~$1 each, not ~$16, but the process then hangs ~15–20 min in its archive push to `TauCetiData` (403 retries) after
+0. **Now (r992):** #8492 merged. In progress (cap full): #8497 (ready 03:17Z; 04:17Z), #8499 (ready 03:24Z; 04:24Z) and #8503
+   (ready 03:42Z; 04:42Z). No drafts. Next kind 2 is staged (HopfLemma, above). Drives cost ~$1 each, not ~$16, but the process then hangs ~15–20 min in its archive push to `TauCetiData` (403 retries) after
    posting: run drives in the background and read the board, not the exit. Probe the codex quota
    before any drive. **Next kind 2**, from the r976 re-score (`snap-main11`, main
    `e697269a7`; arrow-only files with ≥45 `fun … =>`, excluding open-PR and ledger-named files; columns arrows/roadmap/chains), roadmap-free first:
    [`CondExp.lean` #8497], [`CutNormLimit.lean` #8491], [`DifferenceQuotient.lean` #8499],
    [`PDE/Spectrum.lean` #8492], [`Wishart/Basic.lean` #8503], `Laplacian/DriftMaximumPrinciple.lean` (48/0/7),
-   `Laplacian/HopfLemma.lean` (48/0/6). The biggest is `PDE/EnergyForm/Integrated/Basic.lean` (156/2/0); read its 2 roadmap lines first. **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
+   [`HopfLemma.lean` staged]. The biggest is `PDE/EnergyForm/Integrated/Basic.lean` (156/2/0); read its 2 roadmap lines first. **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
    section and four prose mentions), so removing it invites an `attribution` finding and keeping it a `documentation` one, the #8332 conflict.
    Roadmap mentions in docstrings are deleted outright (r939 rule), or replaced by a plain scope statement.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -446,6 +445,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r989: queued prompt; #8492 at 63 min (drive next round). #8497 went green at 03:16:23Z and was marked ready; #8499 went green at 03:24:11Z and was marked ready. **#8492 driven** at 71 min.
 * r990: **#8491 merged** (03:24:45Z). #8492's drive **approved it 10/10** ($1.02). Kind 2 opened as draft **#8503** (`Wishart/Basic.lean`, 45 `↦`), cleared by astra.
 * r991: #8492 `ready-to-merge`; #8503 went green at 03:42:10Z and was marked ready; #8497/#8499 at 17/10 min.
+* r992: **#8492 merged** (03:40:27Z). Staged `improve/hopf-lemma-style` (astra ✓, gate 12/0/0).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
