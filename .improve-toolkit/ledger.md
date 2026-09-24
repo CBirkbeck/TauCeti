@@ -42700,3 +42700,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **Step 4: drove #8513** at 06:25Z (72 min past `max(CI-green 05:12:39Z, ready 05:13:04Z)`, no board, `awaiting-review` only; quota
   probed ok at 05:54Z and drives since have succeeded; background, log `drive-8513-0625.log`).
 * #8521 is at 9 min. No findings. In progress (cap full): #8513, #8521 and #8525. Pin `dc4b8d60d5`, main `47ee36187`.
+* (late in r1008) **The #8513 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5808944026, 06:27Z; $0.88).
+* (late in r1008) **Step 5, kind 2: opened draft #8526**, `improve/jholomorphic-prod-style` @ `dde86dd6e` from `afdaec38a`;
+  `Roadmap: HeegaardFloer` (the file was created by #310, labelled `roadmap/HeegaardFloer`; its later PRs #809/#1001/#3617 were
+  chores). Target from the r976 re-score: `Geometry/Symplectic/JHolomorphic/Prod/Basic.lean` (48 `fun … =>`, no other `=>`, no chains,
+  no open-PR overlap). Edits: 48 arrows (asserted); the opening sentence's "used by the analytic Heegaard Floer roadmap" clause dropped and
+  that paragraph (which had a broken wrap) reflowed. Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would accept the
+  entire diff"). A build waiter is armed.
+* In progress (cap full): #8521, #8525 and #8526. #8513 is approved.
