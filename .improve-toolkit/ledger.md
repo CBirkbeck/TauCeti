@@ -42720,3 +42720,11 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   its energy form." Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**, and judged the new sentence mathematically accurate
   (|E(U,V)| ≤ ‖B‖_∞‖U‖₂‖V‖₂; no symmetry or positivity claimed). Body: scratchpad `pr-body-varlp.md`, `Roadmap: PDE`.
 * In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `afdaec38a`.
+
+## r1010 — 2026-09-24T06:45Z (cron)
+
+* **#8513 merged** (06:38:11Z, `improve/almostsplit-basic-style`, kind 2, approved by the r1008 drive), the thirty-second of this session's PRs.
+* **#8526 went green at 06:44:12Z and was marked ready at 06:44:53Z.** Guards: all latest check-runs green, head `dde86dd6e` unchanged,
+  pin `dc4b8d60d5` at base `afdaec38a` and at main, file untouched since the base. No drafts remain.
+* #8521 (29 min since ready) and #8525 (20 min) are `awaiting-review`. No findings. VariableLp stays staged.
+* In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `c5900e988`.
