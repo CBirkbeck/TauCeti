@@ -42359,3 +42359,18 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * No merges, no findings. In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `dd99e7e51`.
 * (late in r974) **#8476 went green at 00:43:16Z and was marked ready at 00:44Z.** Guards: all latest check-runs green, head `1f0198742`
   unchanged, pin `dc4b8d60d5` at base `3ea237062` and at main, `Contractability.lean` untouched on main since the base. No drafts remain.
+
+## r975 — 2026-09-24T00:55Z (cron)
+
+* No merges, no findings. #8469, #8473 and #8476 are all `awaiting-review` with no board; none has reached step 4's hour (earliest 01:15Z).
+* **Declined `RepresentationTheory/ClassicalGroups/Rational.lean`** as a kind-2 target: the roadmap is its cited design source (a
+  References section linking the ClassicalGroups README and `Suggested.lean`, "where `IsRationalRep` is pinned", plus four prose mentions
+  such as "as the roadmap pins them"). Deleting it invites an `attribution` finding and keeping it a `documentation` one (#8332's conflict).
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/monodromy-style` @ `38bb064b4` from `f941ad804`. Target
+  `Analysis/Complex/Conformal/Monodromy.lean` (no open-PR overlap, not in the ledger). Edits: 61 arrows (asserted); three top-level
+  chains split (`rw [hga]; exact …` in `h₀`, the bullet `· rw [hsrc]; exact …`, and `hconst`'s `funext x; simp`); the parenthesised
+  `(by …; linarith)` / `(by simp only …; exact …)` terms and the anonymous-constructor `⟨by …; …, …⟩` stay; the module docstring's
+  "L4 milestone" sentence and its roadmap-L4/shim-deletion paragraph are dropped. Gate 12/0/0 (re-run after the amend). Astra (three-dot
+  diff, 1 file) **accepted** the diff and noted that `funext x; simp` was left; that split was then added (same transformation it had
+  just cleared for the other two). Body: scratchpad `pr-body-monodromy.md`, `Roadmap: ConformalMapping` (as #1558).
+* In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `f941ad804`.

@@ -1,4 +1,4 @@
-# Last round — r974 (2026-09-24T00:35Z)
+# Last round — r975 (2026-09-24T00:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -49,13 +49,14 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8476** | `1f0198742` | green (00:43:16Z) | kind 2 (`Exchangeability/Contractability.lean`: 63 `↦`, two `;` chains split, the "Layer 0 home" docstring clause dropped; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:44Z** (r974) | **external reviewers** |
 
 **In progress (cap full): #8469 (ready 00:15Z; step 4 no earlier than 01:15Z), #8473 (ready 00:34:49Z; no earlier than 01:35Z) and #8476 (ready 00:44Z; no earlier than 01:44Z). No drafts left.**
+**Staged (not opened; the cap is full):** `improve/monodromy-style` @ `38bb064b4` from `f941ad804` (`Conformal/Monodromy.lean`: 61 `↦`, three top-level chains split, two roadmap passages dropped; gate 12/0/0; astra cleared it; body in the scratchpad `pr-body-monodromy.md`, `Roadmap: ConformalMapping`). **Open it as the next kind 2** when a slot frees: first check `git merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved.
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `d4b246ed2`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `b3cb9b068`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -65,11 +66,11 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r970):** #8413 and #8426 merged. In progress (cap full): the drafts #8469, #8473 and #8476, all
-   astra-cleared — **mark each ready once its build is green** (guards: latest check-runs green, head unchanged, pin at base = pin at
-   main, file untouched on main since the base). Bases: #8469 `6c75046e3`, #8473 `dbb95106b`, #8476 `3ea237062`.
-   Next kind 2 (kind 1 is dry at `dc4b8d60d5`): `ClassicalGroups/Rational.lean` (roadmap text in 6 lines) or `Conformal/Monodromy.lean`
-   (7 chain-like lines, 3 roadmap lines); re-score `snap-main` for more once those are used.
+0. **Now (r975):** In progress (cap full), all `awaiting-review` with no board yet: #8469 (ready 00:15Z; step 4 no earlier than
+   01:15Z), #8473 (ready 00:34:49Z; 01:35Z) and #8476 (ready 00:44Z; 01:44Z). Probe the codex quota before any drive.
+   **Next kind 2 is staged:** `improve/monodromy-style` (see above). After it: re-score `snap-main` for fresh kind-2 files (the
+   r951 list is used up). **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
+   section and four prose mentions), so removing it invites an `attribution` finding and keeping it a `documentation` one, the #8332 conflict.
    Roadmap mentions in docstrings are deleted outright (r939 rule), or replaced by a plain scope statement.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
    `RemovedFromMergeQueueEvent.reason`): a bot Mathlib-bump flush reads `manual`, is not a failure, and
@@ -423,6 +424,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r971: #8469's build started at 00:02Z (waiter armed); #8473 and #8476 are still queued.
 * r973: #8473's build started at 00:23Z (waiter armed); #8476 is still queued; #8469 awaits its board.
 * r974: #8473 went green (00:34:19Z) and was marked ready; #8476's build started at 00:31Z, went green at 00:43:16Z, and it was marked ready too.
+* r975: all three `awaiting-review`. Declined `Rational.lean`; staged `improve/monodromy-style` (astra ✓, gate 12/0/0).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
