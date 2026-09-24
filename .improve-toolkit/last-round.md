@@ -1,4 +1,4 @@
-# Last round — r995 (2026-09-24T04:15Z)
+# Last round — r996 (2026-09-24T04:26Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,11 +44,11 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8497** | `c3ceabacb` | green (03:16:23Z) | kind 2 (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 03:17Z** (r989) | **external reviewers** |
+| **#8497** | `c3ceabacb` | green (03:16:23Z) | kind 2 (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 03:17Z** (r989); no board at 67 min, so **driven** at 04:25Z (r996) | **review drive** |
 | **#8499** | `f9c163254` | green (03:24:11Z) | kind 2 (`Sobolev/W1p/DifferenceQuotient.lean`: 53 `↦`, one `let _ … := by` chain split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 03:24:24Z** (r989) | **external reviewers** |
 | **#8503** | `b201b7fc4` | green (03:42:10Z) | kind 2 (`Distributions/Wishart/Basic.lean`: 45 `↦`, nothing else; gate 12/0/0; `Roadmap: StandardDistributions`). Astra cleared it; **marked ready 03:42Z** (r991) | **external reviewers** |
 
-**In progress (cap full): #8497 (ready 03:17Z; step 4 no earlier than 04:17Z), #8499 (ready 03:24Z; 04:24Z) and #8503 (ready 03:42Z; 04:42Z). No drafts.** **#8492 merged 03:40:27Z** (r992); twenty-six merged this session.
+**In progress (cap full): #8497 (driven 04:25Z), #8499 (ready 03:24Z; drive next round if still boardless) and #8503 (ready 03:42Z; 04:42Z). No drafts.** **#8492 merged 03:40:27Z** (r992); twenty-six merged this session.
 **Staged (not opened; the cap is full):** `improve/hopf-lemma-style` @ `2eca7da4a` from `5832ba2dd` (`Laplacian/HopfLemma.lean`: 48 `↦`, seven `;` chains split; gate 12/0/0; astra cleared it; body in the scratchpad `pr-body-hopf.md`, `Roadmap: PDE`). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `101e429c3`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `857e1fd32`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -449,6 +449,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r993: no change (#8497/#8499/#8503 at 37/30/12 min).
 * r994: no change (47/40/22 min); main still `5832ba2dd`, so the staged HopfLemma branch is current.
 * r995: no change (57/50/32 min). Main `a34466e9c`; HopfLemma still merges cleanly.
+* r996: **#8497 driven** (67 min, no board; quota probe ok). #8499 (60 min) held one round.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

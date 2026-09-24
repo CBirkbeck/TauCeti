@@ -42560,3 +42560,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * No merges, no findings, no boards. #8497 (57 min since ready; step 4 at 04:17Z), #8499 (50 min) and #8503 (32 min) are `awaiting-review`.
   Main moved to `a34466e9c`; the staged HopfLemma branch still merges cleanly and its file is untouched. In progress (cap full): #8497,
   #8499 and #8503. Pin `dc4b8d60d5`.
+
+## r996 — 2026-09-24T04:26Z (cron)
+
+* **Step 4: drove #8497** at 04:25Z (67 min past `max(CI-green 03:16:23Z, ready 03:17:09Z)`, no board, `awaiting-review` only; quota
+  probe "ok" first; background, log `drive-8497-0425.log`).
+* #8499 is 60 min past ready with no board: held one round (the pipeline's usual window runs to ~64 min). #8503 is at 42 min.
+* No merges, no findings. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `a0749c0b4`.
