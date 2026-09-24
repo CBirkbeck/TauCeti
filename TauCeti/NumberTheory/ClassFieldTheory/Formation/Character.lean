@@ -6,7 +6,7 @@ Authors: Claude
 module
 
 public import TauCeti.NumberTheory.ClassFieldTheory.Formation.Basic
-public import TauCeti.RepresentationTheory.Rep.Trivial
+public import TauCeti.RepresentationTheory.Homological.TateCohomology.Character
 
 /-!
 # The connecting class of a character of a finite normal layer
@@ -27,9 +27,8 @@ As elsewhere in this development, `ℚ/ℤ` is the rational circle `AddCircle (1
 
 ## Main results
 
-* `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_def`: `δχ` is the connecting map
-  of `Rep.ratAddCircleShortComplex` applied to the class of `χ` in `H¹(Γ, ℚ/ℤ)`, read in Tate
-  cohomology.
+* `TauCeti.ClassFieldTheory.NormalLayer.characterConnectingClass_def`: `δχ` is the connecting
+  class `TauCeti.TateCohomology.characterConnectingClass` of the finite group `Γ`.
 
 ## References
 
@@ -48,23 +47,16 @@ variable {G : Type} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Compa
 
 /-- The **connecting class** `δχ ∈ H²(Γ, ℤ)` of a character `χ : Γ^ab → ℚ/ℤ` of the Galois group
 `Γ` of a finite normal layer, in the Tate group of degree `2`: the image of `χ`, as a class in
-`H¹(Γ, ℚ/ℤ)` for the trivial action, under the connecting map of `0 → ℤ → ℚ → ℚ/ℤ → 0`. The
-character is read on `Γ` through the abelianization map `Γ → Γ^ab`. -/
+`H¹(Γ, ℚ/ℤ)` for the trivial action, under the connecting map of `0 → ℤ → ℚ → ℚ/ℤ → 0`. This is
+`TauCeti.TateCohomology.characterConnectingClass` for the finite group `Γ`. -/
 def characterConnectingClass (χ : Additive (Abelianization L.Gal) →+ AddCircle (1 : ℚ)) :
     L.TrivialTateH 2 :=
-  (TateCohomology.isoGroupCohomology 2).inv.app (Rep.trivial ℤ L.Gal ℤ) <|
-    groupCohomology.δ (Rep.ratAddCircleShortComplex_shortExact L.Gal) 1 2 rfl <|
-      (groupCohomology.H1IsoOfIsTrivial (Rep.trivial ℤ L.Gal (AddCircle (1 : ℚ)))).inv <|
-        χ.comp Abelianization.of.toAdditive
+  TateCohomology.characterConnectingClass L.Gal χ
 
-/-- The connecting class of `χ` is the connecting map applied to the class of `Γ → Γ^ab → ℚ/ℤ`
-in `H¹(Γ, ℚ/ℤ)`, carried to Tate cohomology by the comparison of positive degrees. -/
+/-- The connecting class of a character of a layer is the connecting class of the character of
+its Galois group. -/
 theorem characterConnectingClass_def (χ : Additive (Abelianization L.Gal) →+ AddCircle (1 : ℚ)) :
-    L.characterConnectingClass χ =
-      (TateCohomology.isoGroupCohomology 2).inv.app (Rep.trivial ℤ L.Gal ℤ)
-        (groupCohomology.δ (Rep.ratAddCircleShortComplex_shortExact L.Gal) 1 2 rfl
-          ((groupCohomology.H1IsoOfIsTrivial (Rep.trivial ℤ L.Gal (AddCircle (1 : ℚ)))).inv
-            (χ.comp Abelianization.of.toAdditive))) :=
+    L.characterConnectingClass χ = TateCohomology.characterConnectingClass L.Gal χ :=
   (rfl)
 
 end TauCeti.ClassFieldTheory.NormalLayer

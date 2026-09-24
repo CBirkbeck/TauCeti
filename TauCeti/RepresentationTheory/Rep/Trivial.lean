@@ -25,14 +25,18 @@ cohomology send a character `G → ℚ/ℤ` to a class in `H²(G, ℤ)`.
 
 ## Main definitions
 
+* `ModuleCat.ratAddCircleShortComplex`: the short complex `ℤ → ℚ → ℚ/ℤ` of `ℤ`-modules.
 * `Rep.ratAddCircleShortComplex`: the short complex `ℤ → ℚ → ℚ/ℤ` of trivial integral
   representations of `G`.
 
 ## Main results
 
 * `Rep.shortExact_map_trivialFunctor`: the trivial-action functor preserves short exactness.
+* `ModuleCat.ratAddCircleShortComplex_shortExact`: `0 → ℤ → ℚ → ℚ/ℤ → 0` is short exact.
 * `Rep.ratAddCircleShortComplex_shortExact`: `0 → ℤ → ℚ → ℚ/ℤ → 0` is short exact as a sequence of
   trivial representations.
+* `Rep.ratAddCircleShortComplex_f_hom_apply`, `Rep.ratAddCircleShortComplex_g_hom_apply`: its maps
+  are the inclusion of the integers and reduction modulo `1`.
 -/
 
 public noncomputable section
@@ -56,11 +60,27 @@ theorem shortExact_map_trivialFunctor {S : ShortComplex (ModuleCat.{w} k)} (hS :
   -- definitionally, so short exactness is reflected from `hS`
   ShortExact.reflects_shortExact_of_faithful (forget₂ (Rep k G) (ModuleCat k)) hS
 
+/-- The short complex `ℤ → ℚ → ℚ/ℤ` of `ℤ`-modules, with `ℚ/ℤ` the rational circle
+`AddCircle (1 : ℚ)`: the inclusion of the integers followed by reduction modulo `1`. -/
+abbrev _root_.ModuleCat.ratAddCircleShortComplex : ShortComplex (ModuleCat.{0} ℤ) :=
+  .mk (ModuleCat.ofHom (Int.castAddHom ℚ).toIntLinearMap)
+    (ModuleCat.ofHom (QuotientAddGroup.mk' (AddSubgroup.zmultiples (1 : ℚ))).toIntLinearMap)
+    (by ext; exact AddCircle.coe_period (1 : ℚ))
+
+/-- The sequence `0 → ℤ → ℚ → ℚ/ℤ → 0` of `ℤ`-modules is short exact. -/
+theorem _root_.ModuleCat.ratAddCircleShortComplex_shortExact :
+    ModuleCat.ratAddCircleShortComplex.ShortExact :=
+  -- exactness at `ℚ` says that `x : ℚ` vanishes modulo `1` iff it lies in `zmultiples 1`, the
+  -- image of `Int.cast`
+  ModuleCat.shortComplex_shortExact _ (fun _ ↦ by simp [AddSubgroup.mem_zmultiples_iff])
+    Int.cast_injective (QuotientAddGroup.mk'_surjective _)
+
 variable (G)
 
 -- The objects are stated as `Rep.trivial` and the definition is reducible, so that the connecting
 -- maps of this sequence are syntactically maps out of and into `Rep.trivial`, where Mathlib's
--- lemmas about trivial coefficients (`groupCohomology.H1IsoOfIsTrivial`, ...) apply.
+-- lemmas about trivial coefficients (`groupCohomology.H1IsoOfIsTrivial`, ...) apply. It is
+-- definitionally the image of `ModuleCat.ratAddCircleShortComplex` under `trivialFunctor`.
 /-- The short complex `ℤ → ℚ → ℚ/ℤ` of trivial integral representations of `G`, with `ℚ/ℤ` the
 rational circle `AddCircle (1 : ℚ)`: the inclusion of the integers followed by reduction
 modulo `1`. -/
@@ -68,22 +88,24 @@ abbrev ratAddCircleShortComplex : ShortComplex (Rep ℤ G) where
   X₁ := Rep.trivial ℤ G ℤ
   X₂ := Rep.trivial ℤ G ℚ
   X₃ := Rep.trivial ℤ G (AddCircle (1 : ℚ))
-  f := (trivialFunctor ℤ G).map (ModuleCat.ofHom (Int.castAddHom ℚ).toIntLinearMap)
-  g := (trivialFunctor ℤ G).map
-    (ModuleCat.ofHom (QuotientAddGroup.mk' (AddSubgroup.zmultiples (1 : ℚ))).toIntLinearMap)
-  zero := by
-    ext
-    exact AddCircle.coe_period (1 : ℚ)
+  f := (trivialFunctor ℤ G).map ModuleCat.ratAddCircleShortComplex.f
+  g := (trivialFunctor ℤ G).map ModuleCat.ratAddCircleShortComplex.g
+  zero := (ModuleCat.ratAddCircleShortComplex.map (trivialFunctor ℤ G)).zero
 
 /-- The sequence `0 → ℤ → ℚ → ℚ/ℤ → 0` of trivial integral representations is short exact. -/
 theorem ratAddCircleShortComplex_shortExact : (ratAddCircleShortComplex G).ShortExact :=
-  -- the complex is the image under `trivialFunctor` of the same complex of `ℤ`-modules; there,
-  -- exactness at `ℚ` says that `x : ℚ` vanishes modulo `1` iff it lies in `zmultiples 1`, the
-  -- image of `Int.cast`
-  shortExact_map_trivialFunctor (S := .mk (ModuleCat.ofHom (Int.castAddHom ℚ).toIntLinearMap)
-    (ModuleCat.ofHom (QuotientAddGroup.mk' (AddSubgroup.zmultiples (1 : ℚ))).toIntLinearMap)
-    (by ext; exact AddCircle.coe_period (1 : ℚ))) <| ModuleCat.shortComplex_shortExact _
-      (fun _ ↦ by simp [AddSubgroup.mem_zmultiples_iff]) Int.cast_injective
-      (QuotientAddGroup.mk'_surjective _)
+  shortExact_map_trivialFunctor ModuleCat.ratAddCircleShortComplex_shortExact
+
+-- Not `@[simp]`: `simp` already evaluates both maps through `Rep.trivialFunctor_map_hom` and
+-- `ModuleCat.hom_ofHom`, so the `simpNF` linter rejects these as simp lemmas.
+/-- The first map of `ℤ → ℚ → ℚ/ℤ` is the inclusion of the integers. -/
+theorem ratAddCircleShortComplex_f_hom_apply (n : ℤ) :
+    (ratAddCircleShortComplex G).f.hom n = (n : ℚ) :=
+  rfl
+
+/-- The second map of `ℤ → ℚ → ℚ/ℤ` is reduction modulo `1`. -/
+theorem ratAddCircleShortComplex_g_hom_apply (q : ℚ) :
+    (ratAddCircleShortComplex G).g.hom q = (q : AddCircle (1 : ℚ)) :=
+  rfl
 
 end Rep
