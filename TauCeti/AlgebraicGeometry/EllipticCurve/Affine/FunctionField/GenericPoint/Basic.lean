@@ -262,12 +262,14 @@ theorem algebraMap_mk_C_C (c : F) :
     ← IsScalarTower.algebraMap_apply F W.CoordinateRing W.FunctionField]
 
 /-- **The class of `X - x` in the function field is `genericX - x`.** -/
+@[simp]
 theorem algebraMap_XClass (x : F) :
     algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.XClass W x) =
       genericX W - algebraMap F W.FunctionField x := by
   rw [CoordinateRing.XClass, C_sub, map_sub, map_sub, ← genericX_def, algebraMap_mk_C_C]
 
 /-- **The class of `Y - y` in the function field is `genericY - y`.** -/
+@[simp]
 theorem algebraMap_YClass (y : F) :
     algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.YClass W (C y)) =
       genericY W - algebraMap F W.FunctionField y := by
