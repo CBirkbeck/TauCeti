@@ -1,4 +1,4 @@
-# Last round — r1010 (2026-09-24T06:45Z)
+# Last round — r1011 (2026-09-24T06:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `72164a794`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `eaa742bec`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -466,6 +466,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1008: **#8510 merged** (06:23:34Z). #8525 went green (06:24:34Z) and was marked ready. **#8513 driven** (72 min) → **approved 10/10** ($0.88). Kind 2 opened as draft **#8526** (`JHolomorphic/Prod/Basic.lean`), cleared by astra.
 * r1009: #8513 `ready-to-merge`; #8526 building. Staged `improve/energyform-variablelp-style` (astra ✓, gate 12/0/0).
 * r1010: **#8513 merged** (06:38:11Z). #8526 went green (06:44:12Z) and was marked ready.
+* r1011: no change (39/30/10 min); VariableLp still merges cleanly.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
