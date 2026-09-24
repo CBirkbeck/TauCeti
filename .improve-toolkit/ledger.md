@@ -42947,3 +42947,6 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * #8534 and #8541 are `ready-to-merge`. #8538 is 42 min since ready. #8548 (since 09:58:48Z) and #8549 (since 10:02:51Z) are building
   (waiter armed). No merges, no findings. In progress (cap full): #8538, #8548 and #8549. Main `aa37756be`.
+* (late in r1030) **#8548 (green 10:08:16Z) and #8549 (green 10:13:06Z) were marked ready at 10:14Z.** Guards for both: all latest
+  check-runs green, heads unchanged (`c023ebdb1`, `13b14a880`), pin `dc4b8d60d5` at their bases (`0c20df3de`, `4942f86cd`) and at main,
+  files untouched since the bases. No drafts remain.

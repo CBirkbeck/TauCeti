@@ -47,10 +47,10 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8534** | `1bf8aa9d9` | green (08:47:28Z) | kind 2 (`Conformal/Hyperbolic/Length.lean`: 73 `↦`, one calc chain split, the upstream-coordination section reduced; `Roadmap: ConformalMapping`). **Approved 10/10** by the r1029 drive (board 5811947411, 09:58Z; $1.17); `ready-to-merge` | **queue** |
 | **#8538** | `0e917e5c7` | green (09:21:36Z) | kind 2 (`Symmetric/Specht/StandardBasis.lean`: 44 `↦`, nothing else; gate 12/0/0; `Roadmap: RepresentationTheory`). Astra cleared it; **marked ready 09:22Z** (r1025) | **external reviewers** |
 | **#8541** | `3496b0a19` | green (09:31:28Z) | kind 2 (`DenseGraphLimits/Applications.lean`: 40 `↦`, nothing else; `Roadmap: DenseGraphLimits`). **Approved 10/10** by the pipeline (board 09:54:12Z, 22 min after ready); `ready-to-merge` | **queue** |
-| **#8548** | `c023ebdb1` | running (since 09:58:48Z) | kind 2 (`KnotTheory/PDCode/Kauffman.lean`: 38 `↦`, nothing else; gate 12/0/0; `Roadmap: GeometricTopology`). **Draft**; **astra cleared it** (r1027); base `0c20df3de` | **CI** — mark ready when green |
-| **#8549** | `13b14a880` | running (since 10:02:51Z) | kind 2 (`Normed/Module/Complexification.lean`: 41 `↦`, one calc chain split; gate 12/0/0; `Roadmap: OneParameterSemigroups`). **Draft**; **astra cleared it** (r1029); base `4942f86cd` | **CI** — mark ready when green |
+| **#8548** | `c023ebdb1` | green (10:08:16Z) | kind 2 (`KnotTheory/PDCode/Kauffman.lean`: 38 `↦`, nothing else; gate 12/0/0; `Roadmap: GeometricTopology`). Astra cleared it; **marked ready 10:14Z** (r1030) | **external reviewers** |
+| **#8549** | `13b14a880` | green (10:13:06Z) | kind 2 (`Normed/Module/Complexification.lean`: 41 `↦`, one calc chain split; gate 12/0/0; `Roadmap: OneParameterSemigroups`). Astra cleared it; **marked ready 10:14Z** (r1030) | **external reviewers** |
 
-**In progress (cap full): #8538 (ready 09:22Z; 10:22Z) and the drafts #8548 (Kauffman) and #8549 (Complexification), both astra ✓ and building.** #8534 (drive) and #8541 (pipeline) approved; #8531 merged 09:31:17Z; thirty-seven merged this session.
+**In progress (cap full): #8538 (ready 09:22Z; 10:22Z), #8548 (ready 10:14Z; 11:14Z) and #8549 (ready 10:14Z; 11:14Z). No drafts.** #8534 and #8541 `ready-to-merge`; #8531 merged 09:31:17Z; thirty-seven merged this session.
 **Staged:** nothing (Kauffman went as #8548 and Complexification as #8549 at r1029). Next kind 2 from the r1022 re-score: `Sobolev/Poincare/Wirtinger/W1p.lean` (44, 2 chains), `Contour/Crossing/PVAggregation.lean` (43, 1), `DenseGraphLimits/Representability/Moebius.lean` (43, 2), `Wishart/Inverse/Moments.lean` (36, 0), `Wishart/Transforms.lean` (36, 0).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -58,7 +58,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `a4b6c4618`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `3bd0e92b9`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -490,7 +490,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1027: **#8531 merged** (09:31:17Z). Staged `improve/pdcode-kauffman-style` (astra ✓, gate 12/0/0).
 * r1028: no change (#8534/#8538/#8541 at 56/22/12 min).
 * r1029: **#8541 approved** by the pipeline (22 min). **#8534 driven** (66 min) → **approved 10/10** ($1.17). Two slots opened: Kauffman rebased onto `0c20df3de` and opened as draft **#8548**; Complexification staged, cleared by astra and opened as draft **#8549**.
-* r1030: #8534 and #8541 `ready-to-merge`; #8548 and #8549 building; #8538 at 42 min.
+* r1030: #8534 and #8541 `ready-to-merge`. #8548 (10:08:16Z) and #8549 (10:13:06Z) went green and were marked ready; #8538 at 42 min.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
