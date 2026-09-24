@@ -57,7 +57,7 @@ functor between categories of smooth discrete representations, and compared with
 
 Surjectivity is where the topology does real work. Lifting a locally constant `U`-equivariant map
 `G → B` through a surjection `A ↠ B` means choosing preimages coherently along the right cosets
-`U \ G`, and the choice has to stay locally constant. Layer 0's continuous section of `G → G ⧸ U`
+`U \ G`, and the choice has to stay locally constant. The continuous section of `G → G ⧸ U`
 (`TauCeti.exists_continuous_section`, Ribes-Zalesskii Prop. 2.2.2) supplies it: inverting turns a
 continuous section of the *left* coset space into a continuous choice `s'` of representatives of
 the *right* cosets, and `g ↦ g * (s' g)⁻¹` is then a continuous `U`-valued cocycle by which the
@@ -71,9 +71,9 @@ representation language: in this file's notation, a `Submodule R C(G, V)` attach
 `ContRepresentation R U V` and the inclusion `U → G`. It is not used here because the
 `ContRepresentation` carrier imposes no continuity of the action in the group variable, which is
 needed by `TauCeti.coindMap_surjective`; `TauCeti.coindEvalTopEquiv` similarly requires continuity
-of each orbit map. It is also not used because the roadmap fixes the unbundled classes
-`[DistribMulAction U A]`, `[DiscreteTopology A]`, `[ContinuousSMul U A]` for this layer, with local
-constancy as a predicate on plain functions rather than a bundled `C(G, A)`.
+of each orbit map. The discrete coefficient modules here are also given by the unbundled classes
+`[DistribMulAction U A]`, `[DiscreteTopology A]`, `[ContinuousSMul U A]`, and local constancy is a
+predicate on plain functions rather than a bundled `C(G, A)`.
 
 For finite-index subgroups, Mathlib's algebraic `Rep.coindResAdjunction` has the trace as its
 counit. Its coinduced object consists of all equivariant functions in `Rep k G`, whereas this file
@@ -87,9 +87,6 @@ because their coefficients live in the purely algebraic category `Rep k G`, whil
 cohomology uses this file's locally constant coinduction on discrete modules.
 
 The trace construction follows Brown, *Cohomology of Groups*, III §9.
-
-This is the "coinduced module" milestone of Layer 7 of the human-authored roadmap at
-`TauCetiRoadmap/ProfiniteCohomology/README.md`.
 -/
 
 public section
@@ -434,7 +431,7 @@ variable {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [Comp
 /-- **Coinduction preserves surjectivity**, and this is where the topology does the work: a
 locally constant `U`-equivariant map `G → B` is lifted through `φ` by choosing preimages along a
 *continuous* factorization of `G` over the right cosets of `U`
-(`TauCeti.exists_continuous_rightCosetFactorization`, from Layer 0's continuous section). The
+(`TauCeti.exists_continuous_rightCosetFactorization`, from the continuous coset section). The
 factor `w g •` is forced — without it the lift is not `U`-equivariant — and it is exactly what
 discreteness of `A` and continuity of the `U`-action make locally constant again.
 

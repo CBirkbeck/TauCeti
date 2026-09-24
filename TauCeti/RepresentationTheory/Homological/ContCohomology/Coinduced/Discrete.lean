@@ -16,8 +16,8 @@ import all TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced
 For a topological group `G`, a subgroup `U` and a `U`-module `A`, the coinduced module
 `Coind_U^G A` of `TauCeti.coind` is an additive subgroup of `G → A`. This file carries it as a
 *discrete* `G`-module, `TauCeti.DiscreteCoind G U A`: the same additive group with the discrete
-topology imposed. It is the coefficient object the explicit low-degree cohomology of Layer 2
-takes, and the one Shapiro's lemma is stated against.
+topology imposed. It is the coefficient object of the explicit low-degree continuous cohomology,
+and the one Shapiro's lemma is stated against.
 
 ## Main definitions
 
