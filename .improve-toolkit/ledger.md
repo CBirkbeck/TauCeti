@@ -42900,3 +42900,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   40 `fun … =>`, no other `=>`, no chains, no roadmap/provenance text, no open-PR overlap). Edit: 40 arrows (asserted). Gate 12/0/0.
   Astra (three-dot diff, 1 file): **cleared** ("I would approve this style-only diff"). A build waiter is armed.
 * In progress (cap full): #8534, #8538 and #8541. #8530 and #8531 are approved.
+* (late in r1025) **#8538 went green at 09:21:36Z and was marked ready at 09:22Z.** Guards: all latest check-runs green, head `0e917e5c7`
+  unchanged, pin `dc4b8d60d5` at base `bed3bd6bb` and at main, file untouched since the base.
