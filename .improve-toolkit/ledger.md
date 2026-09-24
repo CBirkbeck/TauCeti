@@ -42870,3 +42870,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `pr-body-specht.md`, `Roadmap: RepresentationTheory` (as #2745).
 * #8530 is at 57 min since ready (drive next round if boardless); #8531 at 40 min. No findings.
 * In progress (cap full): #8530, #8531 and #8534. Pin `dc4b8d60d5`, main `a440533b7`.
+
+## r1023 — 2026-09-24T08:55Z (cron)
+
+* No merges, no findings, no boards. #8530 is 63 min past ready: held one round (the pipeline's window runs to ~64 min). #8531 is at
+  45 min and #8534 at 6 min. Specht stays staged. In progress (cap full): #8530, #8531 and #8534. Main `3cb095e86`.

@@ -1,4 +1,4 @@
-# Last round — r1022 (2026-09-24T08:49Z)
+# Last round — r1023 (2026-09-24T08:55Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `4f708ed27`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `106dad50a`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -481,6 +481,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1020: no change (#8525 awaiting re-review of fix 2; #8530/#8531 at 33/15 min).
 * r1021: **#8525 approved 10/10** on fix 2 (the source-citation wording satisfied both `documentation` and `attribution`). Hyperbolic/Length rebased onto `2d6f52f7d`, re-gated, opened as draft **#8534**.
 * r1022: **#8525 merged** (08:43:36Z). #8534 went green and was marked ready. Re-scored main (`snap-main12`) and staged `improve/specht-standardbasis-style` (astra ✓, gate 12/0/0).
+* r1023: no change; #8530 at 63 min (held one round; drive next round if boardless).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
