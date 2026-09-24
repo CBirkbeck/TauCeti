@@ -48,10 +48,8 @@ tower `F ⊆ E ⊆ E' ⊆ K` of ground fields in every degree.
   zero, corestriction is the ground-level norm.
 * `TauCeti.ClassFieldTheory.LayerRestriction.tateCor_neg_one_HNegOneπ`: in degree minus one,
   corestriction is the inclusion of norm kernels `kerNormInclusion`.
-* `TauCeti.ClassFieldTheory.LayerRestriction.tateCor_negSucc_succ_comp_negSuccIso_hom` and
-  `TauCeti.ClassFieldTheory.LayerRestriction.tateCor_negSucc_succ_comp_isoGroupHomology_hom`: in
-  degrees at most minus two, corestriction is `groupHomology.map` along the inclusion of Galois
-  groups.
+* `TauCeti.ClassFieldTheory.LayerRestriction.tateCor_negSucc_succ_comp_negSuccIso_hom`: in degrees
+  at most minus two, corestriction is `groupHomology.map` along the inclusion of Galois groups.
 * `TauCeti.ClassFieldTheory.LayerRestriction.trivialTateCor_zero_H0π`: in degree zero,
   trivial-coefficient corestriction multiplies an integral representative by the relative degree.
 * `TauCeti.ClassFieldTheory.LayerRestriction.tateCor_trans`: Tate corestriction is functorial
@@ -161,22 +159,6 @@ theorem tateCor_negSucc_succ_comp_negSuccIso_hom (T : LayerRestriction small big
     Rep.hom_id, IntertwiningMap.toLinearMap_id, IsIntertwiningMap.toRes_hom_toLinearMap,
     LinearMap.id_comp]
   rfl
-
-/-- **In degrees at most minus two, layer Tate corestriction is the covariant map on group
-homology** along the inclusion of Galois groups, with the canonical identification of coefficients,
-read through Mathlib's comparison of Tate cohomology with group homology. -/
-@[reassoc]
-theorem tateCor_negSucc_succ_comp_isoGroupHomology_hom (T : LayerRestriction small big)
-    (F : Formation G) (n : ℕ) :
-    T.tateCor F (Int.negSucc (n + 1)) ≫
-        (TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-          (by rw [Int.negSucc_eq])).hom.app (big.rep F) =
-      (TateCohomology.isoGroupHomology (Int.negSucc (n + 1)) (n + 1)
-          (by rw [Int.negSucc_eq])).hom.app (small.rep F) ≫
-        groupHomology.map T.galHom (T.repIso F).hom (n + 1) := by
-  have h := T.tateCor_negSucc_succ_comp_negSuccIso_hom F n
-  simp only [TauCeti.TateCohomology.negSuccIso_hom] at h
-  exact h
 
 /-- The **inclusion of norm kernels** along a restriction: an element of the top level `A^V` whose
 norm for the layer `K/E` vanishes has vanishing norm for the layer `K/F`. It moves no element of
