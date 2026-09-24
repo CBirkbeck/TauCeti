@@ -42598,3 +42598,7 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * #8503 is 62 min past ready with no board: held one round (the pipeline's window runs to ~64 min). #8508 is at 2 min. #8510's build has
   run since 04:42:27Z (waiter armed). No findings.
 * In progress (cap full): #8503, #8508 and #8510. Pin `dc4b8d60d5`, main `d189aa947`.
+* (late in r998) **#8510 went green at 04:53:58Z and was marked ready at 04:54:34Z.** Guards: all latest check-runs green, head
+  `ba4d3cf65` unchanged, pin `dc4b8d60d5` at base `a0749c0b4` and at main, file untouched since the base. No drafts remain.
+* (late in r998) **Step 4: drove #8503** at 04:55Z (71 min past ready 03:42:52Z, no board, `awaiting-review` only; quota probed ok at
+  04:24Z; background, log `drive-8503-0455.log`).
