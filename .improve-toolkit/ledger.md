@@ -42415,3 +42415,12 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   #8476 is at 50 min and #8487 at 7 min. **Next round (~01:44Z): if #8473 and #8476 still have no board, probe the codex quota and drive
   them** (both will be past the hour).
 * In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
+
+## r981 — 2026-09-24T01:46Z (cron)
+
+* **Step 4: drove #8473** at 01:45:03Z (`tauceti-review 8473 --reviewer codex --post`, background; log `drive-8473-0145.log` in the
+  scratchpad). It had sat 70 min past `max(CI-green 00:34:19Z, ready 00:34:48Z)` with no board, no comments and no review-in-progress
+  label, while the pipeline was active (boards on #8483, #8474, #8371, #8480 … in the last 30 min, including #8474, opened after #8473).
+  The codex quota probe answered "ok" first, and a re-check just before the drive found no board.
+* #8476 is 60m22s past ready: held one more round (the pipeline's usual window runs to ~64 min). #8487 is at 17 min.
+* No merges, no findings. In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
