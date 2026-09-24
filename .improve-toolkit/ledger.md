@@ -42337,3 +42337,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * No new merges. #8469's `sandboxed-build` started at 00:02:17Z (a background waiter is armed; mark it ready when green, after the
   guards). #8473 and #8476 are still queued. No boards are due and no findings are open.
 * In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `9af4e63f2`.
+
+## r972 — 2026-09-24T00:15Z (cron)
+
+* No merges, no findings. #8469's `sandboxed-build` is still running (since 00:02:17Z; waiter armed); #8473 and #8476 are queued.
+  In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `dd374a490`.
