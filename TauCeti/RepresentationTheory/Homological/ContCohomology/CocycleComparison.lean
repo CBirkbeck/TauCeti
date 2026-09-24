@@ -49,6 +49,7 @@ comparison is a plain currying, whose inverse is evaluation. -/
 noncomputable def cocycleEquiv1 :
     Z1 G M ≃+ _root_.ContinuousCohomology.cocycles (ofDiscreteModule ℤ G M) 1 :=
   -- Ascribed: typed on its own, the cochain meets the kernel's carrier in one cheap check.
+  -- (This follows the ascription idiom of #8346.)
   ({ toFun c := ⟨(cochainEquiv1 G M ⟨c.val, Z1_le_C1 G M c.property⟩ :),
         (d_cochainEquiv1_eq_zero_iff G M _).mpr c.property⟩
      invFun c := ⟨((cochainEquiv1 G M).symm c.val).val,
@@ -69,6 +70,7 @@ noncomputable def cocycleEquiv1 :
       Z1 G M ≃+ TopModuleCat.ker
         ((TopRep.homogeneousCochains (ofDiscreteModule ℤ G M)).d 1 2)).trans
     -- Ascribed: elaborated alone, the `_` is read off `cyclesIsKernel`, not unified via the kernel.
+    -- (This follows the ascription idiom of #8346.)
     ((Limits.IsLimit.conePointUniqueUpToIso (TopModuleCat.isLimitKer _)
       ((TopRep.homogeneousCochains (ofDiscreteModule ℤ G M)).cyclesIsKernel 1 2
         (by simp))).toContinuousLinearEquiv.toAddEquiv :)
@@ -104,6 +106,7 @@ theorem cocycleEquiv1_d0 (m : M) :
     cocycleEquiv1 G M ⟨d0 G M m, B1_le_Z1 G M (d0_mem_B1 m)⟩ =
       (TopRep.homogeneousCochains (ofDiscreteModule ℤ G M)).toCycles 0 1
         -- Ascribed: typed on its own, the argument meets the cochain carrier in one cheap check.
+        -- (This follows the ascription idiom of #8346.)
         (cochainEquiv0 G M m :) := by
   apply (cocycleEquiv1 G M).symm.injective
   apply Subtype.ext
@@ -174,6 +177,7 @@ homogeneous cochain complex. -/
 noncomputable def cocycleEquiv2 :
     Z2 G M ≃+ _root_.ContinuousCohomology.cocycles (ofDiscreteModule ℤ G M) 2 :=
   -- Ascribed: typed on its own, the cochain meets the kernel's carrier in one cheap check.
+  -- (This follows the ascription idiom of #8346.)
   ({ toFun c := ⟨(cochainEquiv2 G M ⟨c.val, Z2_le_C2 G M c.property⟩ :),
         (d_cochainEquiv2_eq_zero_iff G M _).mpr c.property⟩
      invFun c := ⟨((cochainEquiv2 G M).symm c.val).val,
@@ -194,6 +198,7 @@ noncomputable def cocycleEquiv2 :
       Z2 G M ≃+ TopModuleCat.ker
         ((TopRep.homogeneousCochains (ofDiscreteModule ℤ G M)).d 2 3)).trans
     -- Ascribed: elaborated alone, the `_` is read off `cyclesIsKernel`, not unified via the kernel.
+    -- (This follows the ascription idiom of #8346.)
     ((Limits.IsLimit.conePointUniqueUpToIso (TopModuleCat.isLimitKer _)
       ((TopRep.homogeneousCochains (ofDiscreteModule ℤ G M)).cyclesIsKernel 2 3
         (by simp))).toContinuousLinearEquiv.toAddEquiv :)
@@ -231,6 +236,7 @@ theorem cocycleEquiv2_d1 (c : C1 G M) :
           (mem_B2_iff.mpr ⟨c.val, mem_C1_iff.mp c.property, rfl⟩)⟩ =
       (TopRep.homogeneousCochains (ofDiscreteModule ℤ G M)).toCycles 1 2
         -- Ascribed: typed on its own, the argument meets the cochain carrier in one cheap check.
+        -- (This follows the ascription idiom of #8346.)
         (cochainEquiv1 G M c :) := by
   apply (cocycleEquiv2 G M).symm.injective
   apply Subtype.ext
