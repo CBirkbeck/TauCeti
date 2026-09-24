@@ -42549,3 +42549,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8497 (37 min since ready), #8499 (30 min) and #8503 (12 min) are `awaiting-review`. HopfLemma stays
   staged. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `5832ba2dd`.
+
+## r994 — 2026-09-24T04:05Z (cron)
+
+* No merges, no findings, no boards. #8497 (47 min since ready), #8499 (40 min) and #8503 (22 min) are `awaiting-review`. Main is still
+  `5832ba2dd`, the staged HopfLemma branch's base. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`.
