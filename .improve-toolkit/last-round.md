@@ -1,4 +1,4 @@
-# Last round — r983 (2026-09-24T02:05Z)
+# Last round — r984 (2026-09-24T02:19Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,20 +44,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8476** | `1f0198742` | green (00:43:16Z) | kind 2 (`Exchangeability/Contractability.lean`: 63 `↦`, two chains split, "Layer 0 home" clause dropped; `Roadmap: Exchangeability`). **Approved 10/10** by the r982 drive (board 5806095579, 01:58Z; $1.17); `ready-to-merge` | **queue** |
 | **#8487** | `385acf845` | green (01:27:42Z) | kind 2 (`Analysis/Complex/Conformal/Monodromy.lean`: 61 `↦`, three top-level chains split, two roadmap passages dropped; gate 12/0/0; `Roadmap: ConformalMapping`). Astra cleared it; **marked ready 01:28Z** (r979) | **external reviewers** |
 | **#8491** | `5c0611468` | green (02:02:17Z) | kind 2 (`DenseGraphLimits/Graphon/CutNormLimit.lean`: 54 `↦`, one calc-step chain split; gate 12/0/0; `Roadmap: DenseGraphLimits`). Astra cleared it; **marked ready 02:02:44Z** (r982) | **external reviewers** |
 | **#8492** | `193b30cea` | green (02:12:47Z) | kind 2 (`Analysis/PDE/Spectrum.lean`: 47 `↦`, nothing else; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 02:13Z** (r983) | **external reviewers** |
 
-**In progress (cap full): #8487 (ready 01:28Z; step 4 no earlier than 02:28Z), #8491 (ready 02:02:44Z; no earlier than 03:03Z) and #8492 (ready 02:13Z; no earlier than 03:13Z). No drafts.** **#8473 merged 02:01:52Z** (r983), the twenty-second this session; #8476 is `ready-to-merge`.
-**Staged:** nothing (the Monodromy branch went as #8487 at r978).
+**In progress (cap full): #8487 (ready 01:28Z; step 4 no earlier than 02:28Z), #8491 (ready 02:02:44Z; no earlier than 03:03Z) and #8492 (ready 02:13Z; no earlier than 03:13Z). No drafts.** **#8473 merged 02:01:52Z** (r983), the twenty-second this session; **#8476 merged 02:11:49Z** (r984), the twenty-third.
+**Staged (not opened; the cap is full):** `improve/condexp-contractable-style` @ `c3ceabacb` from `10ecfcfd4` (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; astra cleared it; body in the scratchpad `pr-body-condexp.md`, `Roadmap: Exchangeability`). **Open it as the next kind 2** when a slot frees (check `git merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `ba23645cc`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `bcd901955`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -67,11 +66,11 @@ Step 4 drives and kind-2 astra passes are back. Before any drive or astra run, p
 a usage-limit error means the stop applies again (a drive then posts an all-⚠️ error board, as at r889).
 
 
-0. **Now (r983):** #8473 merged; #8476 approved (drive). In progress (cap full): #8487 (ready 01:28Z; 02:28Z), #8491 (ready 02:02:44Z;
+0. **Now (r984):** #8473 and #8476 merged. Next kind 2 is staged (CondExp, above). In progress (cap full): #8487 (ready 01:28Z; 02:28Z), #8491 (ready 02:02:44Z;
    03:03Z) and #8492 (Spectrum; ready 02:13Z; 03:13Z). Drives cost ~$1 each, not ~$16. Probe the codex quota
    before any drive. **Next kind 2**, from the r976 re-score (`snap-main11`, main
    `e697269a7`; arrow-only files with ≥45 `fun … =>`, excluding open-PR and ledger-named files; columns arrows/roadmap/chains), roadmap-free first:
-   `Exchangeability/CondExp.lean` (57/0/0), [`CutNormLimit.lean` #8491], `Sobolev/W1p/DifferenceQuotient.lean`
+   [`CondExp.lean` staged], [`CutNormLimit.lean` #8491], `Sobolev/W1p/DifferenceQuotient.lean`
    (53/0/3), [`PDE/Spectrum.lean` #8492], `Distributions/Wishart/Basic.lean` (45/0/0), `Laplacian/DriftMaximumPrinciple.lean` (48/0/7),
    `Laplacian/HopfLemma.lean` (48/0/6). The biggest is `PDE/EnergyForm/Integrated/Basic.lean` (156/2/0); read its 2 roadmap lines first. **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
    section and four prose mentions), so removing it invites an `attribution` finding and keeping it a `documentation` one, the #8332 conflict.
@@ -437,6 +436,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r981: **#8473 driven** (70 min, no board; quota probe ok). #8476 (60m22s) gets one more round inside the pipeline's 46–64 min window. The drive approved #8473 10/10 ($0.94). Kind 2 opened as draft **#8491** (`Graphon/CutNormLimit.lean`), cleared by astra.
 * r982: **#8476 driven** (70 min, no board) and **approved 10/10** ($1.17). #8491 went green and was marked ready. Kind 2 opened as draft **#8492** (`PDE/Spectrum.lean`, 47 `↦`), cleared by astra.
 * r983: **#8473 merged** (02:01:52Z). #8492 went green at 02:12:47Z and was marked ready.
+* r984: **#8476 merged** (02:11:49Z). Staged `improve/condexp-contractable-style` (astra ✓, gate 12/0/0).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

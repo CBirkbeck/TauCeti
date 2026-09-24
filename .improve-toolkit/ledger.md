@@ -42458,3 +42458,13 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `b87aee64b`.
 * (late in r983) **#8492 went green at 02:12:47Z and was marked ready at 02:13Z.** Guards: all latest check-runs green, head `193b30cea`
   unchanged, pin `dc4b8d60d5` at base `df538400d` and at main, `PDE/Spectrum.lean` untouched since the base. No drafts remain.
+
+## r984 — 2026-09-24T02:19Z (cron)
+
+* **#8476 merged** (02:11:49Z, `improve/contractability-style`, kind 2), the twenty-third of this session's PRs to merge.
+* #8487 (47 min since ready), #8491 (12 min) and #8492 (1 min) are `awaiting-review` with no board. No findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/condexp-contractable-style` @ `c3ceabacb` from `10ecfcfd4`. Target
+  `Probability/Exchangeability/CondExp.lean` (188 lines, 57 `fun … =>`, no other `=>`, no chains, no roadmap text; "the shared
+  exchangeability layer" describes the code, not a roadmap layer, and stays). Edit: 57 arrows (asserted). Gate 12/0/0. Astra (three-dot
+  diff, 1 file): **cleared** ("I would accept the entire supplied diff"). Body: scratchpad `pr-body-condexp.md`.
+* In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `10ecfcfd4`.
