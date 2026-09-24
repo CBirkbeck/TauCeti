@@ -42745,3 +42745,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   spaces" → "weak-derivative Sobolev spaces"). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** (all three replacements accurate).
   Body: `pr-body-integrated.md`, `Roadmap: PDE` (as #714). Queue order: VariableLp first, then this.
 * In progress (cap full): #8521, #8525 and #8526. Pin `dc4b8d60d5`, main `a0f0b6e24`.
+
+## r1013 — 2026-09-24T07:15Z (cron)
+
+* No merges, no findings. #8525 now carries `review-in-progress` (the pipeline picked it up at 50 min). #8521 is at 59 min since ready
+  (drive next round if still boardless) and #8526 at 30 min. Both staged branches wait. In progress (cap full): #8521, #8525 and #8526.
+  Main `b8003b8c2`.
