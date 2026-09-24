@@ -50,6 +50,10 @@ public section
 open MulAction
 open scoped Pointwise
 
+-- Mathlib's `Subgroup.quotientEquivOfEq_mk` (a `rfl` lemma) is not a `simp` lemma. With it, `simp`
+-- carries the class of a representative across an equality of subgroups.
+attribute [simp] Subgroup.quotientEquivOfEq_mk
+
 namespace TauCeti
 
 variable {G : Type*} [Group G]
