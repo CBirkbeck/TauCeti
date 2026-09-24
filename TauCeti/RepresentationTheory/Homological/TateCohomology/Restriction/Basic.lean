@@ -196,8 +196,9 @@ theorem H0π_comp_H0Res :
     H0π M ≫ H0Res M H =
       ModuleCat.ofHom (Submodule.inclusion
         (Representation.invariants_le_invariants_comp_subtype (ρ := M.ρ) (H := H))) ≫
-        H0π (Rep.res H.subtype M) :=
-  ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
+        H0π (Rep.res H.subtype M) := by
+  rw [H0Res]
+  exact ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
     (H0π_comp_H0IsoNormQuotient_hom _) _ _
 
 /-- Corestriction in degree zero sends the class of an `H`-invariant element to the class of its
@@ -205,8 +206,9 @@ relative norm. -/
 @[reassoc (attr := simp), elementwise (attr := simp)]
 theorem H0π_comp_H0Cor :
     H0π (Rep.res H.subtype M) ≫ H0Cor M H =
-      ModuleCat.ofHom (Representation.relNormInvariants M.ρ H) ≫ H0π M :=
-  ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
+      ModuleCat.ofHom (Representation.relNormInvariants M.ρ H) ≫ H0π M := by
+  rw [H0Cor]
+  exact ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
     (H0π_comp_H0IsoNormQuotient_hom _) _ _
 
 /-- Corestriction of the restriction of a degree-zero class is the index multiple of it. -/
@@ -266,8 +268,9 @@ relative transfer. -/
 theorem HNegOneπ_comp_HNegOneRes :
     HNegOneπ M ≫ HNegOneRes M H =
       ModuleCat.ofHom (Representation.relTransferKerNorm M.ρ H) ≫
-        HNegOneπ (Rep.res H.subtype M) :=
-  ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
+        HNegOneπ (Rep.res H.subtype M) := by
+  rw [HNegOneRes]
+  exact ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
     (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _) _ _
 
 /-- Corestriction in degree `-1` sends the class of a norm-zero element to the class of the same
@@ -277,8 +280,9 @@ theorem HNegOneπ_comp_HNegOneCor :
     HNegOneπ (Rep.res H.subtype M) ≫ HNegOneCor M H =
       ModuleCat.ofHom (Submodule.inclusion
         (Representation.ker_norm_comp_subtype_le_ker_norm (ρ := M.ρ) (H := H))) ≫
-        HNegOneπ M :=
-  ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
+        HNegOneπ M := by
+  rw [HNegOneCor]
+  exact ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
     (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _) _ _
 
 /-- Corestriction of the restriction of a degree `-1` class is the index multiple of it. -/
