@@ -1,4 +1,4 @@
-# Last round — r1017 (2026-09-24T07:55Z)
+# Last round — r1017 (2026-09-24T08:00Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -45,18 +45,19 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
 | **#8525** | `e5b5676d1` | green (07:38:16Z) | kind 2 (`KnotTheory/Grid/Grading/Parity.lean`: 47 `↦`, the roadmap sentence dropped; `Roadmap: CombinatorialHeegaardFloer`). Board 07:17Z on `bce26feba`: 9/10, **`documentation` requested changes** (the split-branch provenance sentence "will date"; fix: keep the OSS reference, move provenance to the PR description). **Fixed at `e5b5676d1`** (r1014) and the PR body now carries a **Provenance** line | **external reviewers** (re-review; step 4 no earlier than 08:38Z) |
-| **#8526** | `dde86dd6e` | green (06:44:12Z) | kind 2 (`Symplectic/JHolomorphic/Prod/Basic.lean`: 48 `↦`, the "used by the analytic Heegaard Floer roadmap" clause dropped; gate 12/0/0; `Roadmap: HeegaardFloer`). Astra cleared it; **marked ready 06:44:53Z** (r1010) ; no board at 67 min, so **driven** at 07:52Z (r1016) | **review drive** |
+| **#8526** | `dde86dd6e` | green (06:44:12Z) | kind 2 (`Symplectic/JHolomorphic/Prod/Basic.lean`: 48 `↦`, the roadmap clause dropped; `Roadmap: HeegaardFloer`). **Approved 10/10** by the r1016 drive (board 5810126912, 07:55Z; $0.92) | **queue** |
 | **#8530** | `6e6558ec9` | green (07:51:21Z) | kind 2 (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 07:52:05Z** (r1016) | **external reviewers** |
+| **#8531** | `6a627ae8a` | queued | kind 2 (`PDE/EnergyForm/Integrated/Basic.lean`: 156 `↦`, three roadmap references replaced by the mathematics they point at; gate 12/0/0; `Roadmap: PDE`). **Draft**; **astra cleared it** (r1012); base `9979a4b21` | **CI** — mark ready when green |
 
-**In progress (cap full): #8525 (fix green 07:38Z; re-review in progress), #8526 (driven 07:52Z) and #8530 (ready 07:52Z; 08:52Z). No drafts.** **#8521 merged 07:50:55Z** (r1017), the thirty-third.
-**Staged (not opened; the cap is full):** `improve/energyform-integrated-style` @ `2c2be6774` from `a0f0b6e24` (`PDE/EnergyForm/Integrated/Basic.lean`: 156 `↦`, three roadmap references replaced by the mathematics they point at; gate 12/0/0; astra cleared it; body `pr-body-integrated.md`, `Roadmap: PDE` as #714). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved). (VariableLp went as #8530 at r1014.)
+**In progress (cap full): #8525 (re-review in progress), #8530 (ready 07:52Z; 08:52Z) and the draft #8531 (Integrated/Basic; astra ✓; build queued).** #8526 approved by its drive; **#8521 merged 07:50:55Z**, the thirty-third.
+**Staged:** nothing (Integrated/Basic went as #8531 at r1017). **Next kind 2 needs prospecting:** the remaining r976 roadmap-bearing hits are `Hyperbolic/Length.lean` (73 arrows), `ConditionallyIID/Construct.lean` (68), `ContCohomology/ShortExact.lean` (60), `Arrays/Dissociated.lean` (57), `ConditionallyIID/Map.lean` (55), `Young/Tableau.lean` (51), `ContinuousLog/Basic.lean` (51), `DeFinetti/BlockFactorization.lean` (48), `L2/Cesaro/ToCondExp.lean` (47); read each file's roadmap/provenance lines first (r1014: provenance goes to the PR body), or re-score `snap-main`.
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `ef11fcec6`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `59c2a36e2`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -475,6 +476,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1016: #8525 fix green, awaiting re-review; #8526 at 60 min (drive next round if boardless); #8530 building.
   Later: #8530 went green (07:51:21Z) and was marked ready; **#8526 driven** at 67 min.
 * r1017: **#8521 merged** (07:50:55Z). #8525's re-review and #8526's drive are both `review-in-progress`.
+  Later: the drive **approved #8526 10/10** ($0.92); Integrated/Basic rebased onto `9979a4b21`, re-gated, opened as draft **#8531**.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

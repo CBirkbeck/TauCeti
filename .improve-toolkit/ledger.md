@@ -42797,3 +42797,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **#8521 merged** (07:50:55Z, `improve/arrays-basic-style`, kind 2, approved by the r1014 drive), the thirty-third of this session's PRs.
 * #8525 is `review-in-progress` (the pipeline's re-review of the fix `e5b5676d1`); #8526 is `review-in-progress` (the r1016 drive);
   #8530 is 3 min since ready. No findings. In progress (cap full): #8525, #8526 and #8530. Pin `dc4b8d60d5`, main `9979a4b21`.
+* (late in r1017) **The #8526 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5810126912, 07:55Z; $0.92).
+* (late in r1017) **Step 5, kind 2 (the second staged branch): opened draft #8531**, `improve/energyform-integrated-style` @ `6a627ae8a`,
+  rebased from `a0f0b6e24` onto `9979a4b21` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
+  `Roadmap: PDE`. A build waiter is armed. **Nothing is staged now**; the next kind 2 needs prospecting (remaining r976 hits listed in
+  last-round).
+* In progress (cap full): #8525, #8530 and #8531. #8526 is approved.
