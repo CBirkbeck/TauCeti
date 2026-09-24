@@ -42456,3 +42456,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * #8492's `sandboxed-build` started at 02:02:43Z (waiter armed). #8487 (37 min since ready) and #8491 (2 min) are `awaiting-review` with
   no board. No findings.
 * In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `b87aee64b`.
+* (late in r983) **#8492 went green at 02:12:47Z and was marked ready at 02:13Z.** Guards: all latest check-runs green, head `193b30cea`
+  unchanged, pin `dc4b8d60d5` at base `df538400d` and at main, `PDE/Spectrum.lean` untouched since the base. No drafts remain.
