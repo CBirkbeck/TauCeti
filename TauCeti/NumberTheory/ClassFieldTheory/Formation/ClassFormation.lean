@@ -55,7 +55,7 @@ fundamental class (`ClassFormation.fundamentalClass_restrict_generates`).
 
 In a layer with cyclic Galois group, two-periodicity of Tate cohomology carries the count of `H²`
 to degree zero: the norm quotient `A^U / N_{U/V}(A^V)` has exactly `[U : V]` elements
-(`ClassFormation.card_normQuotient`).
+(`ClassFormation.natCard_normQuotient`).
 
 ## Main definitions
 
@@ -266,7 +266,7 @@ theorem fundamentalClass_restrict_generates (cf : ClassFormation F)
 /-- **Norm index of a cyclic layer.** In a cyclic layer the norm quotient `A^U / N_{U/V}(A^V)` has
 exactly `[U : V]` elements. See E. Artin and J. Tate, *Class Field Theory*, Chapter XIV, §1, and
 J.-P. Serre, *Local Fields*, Chapter XI, §3. -/
-theorem card_normQuotient (cf : ClassFormation F) (L : NormalLayer G) [IsCyclic L.Gal] :
+theorem natCard_normQuotient (cf : ClassFormation F) (L : NormalLayer G) [IsCyclic L.Gal] :
     Nat.card (L.NormQuotient F) = L.degree :=
   -- `A^U / N A^V ≃ TateH 0 ≅ TateH 2` (two-periodicity) `≅ H 2`, which has `[U : V]` elements.
   (Nat.card_congr (L.tateHZeroEquivNormQuotient F).toEquiv).symm.trans <|
