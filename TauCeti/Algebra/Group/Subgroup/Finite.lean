@@ -8,12 +8,16 @@ module
 public import Mathlib.Algebra.Group.Subgroup.Finite
 
 /-!
-# A `Fintype` structure on the subgroups of a finite group
+# Enumerating the elements of a subgroup of a finite group
+
+For a subgroup `H` of a finite group, `Subgroup.fintypeOfFinite H` is a `Fintype` structure on the
+elements of `H`, so that finite sums and products can be indexed over `H`. Examples are the sum
+over a subgroup in the relative norm, and the sums over a subgroup and its cosets in the transfer.
 
 ## Main definitions
 
-* `Subgroup.fintypeOfFinite`: the `Fintype` structure `Fintype.ofFinite` on a subgroup of a finite
-  group.
+* `Subgroup.fintypeOfFinite`: the `Fintype` structure `Fintype.ofFinite` on the elements of a
+  subgroup of a finite group.
 -/
 
 public section
