@@ -258,11 +258,13 @@ def conjugateGroundEquiv : L.ground ≃* (L.conjugate g).ground :=
   Subgroup.congrOfMapEq (MulAut.conj g) <| by
     exact Subgroup.map_equiv_eq_comap_symm (MulAut.conj g) _
 
+/-- On elements of `G`, the ground-subgroup equivalence is conjugation `u ↦ g * u * g⁻¹`. -/
 @[simp]
 theorem conjugateGroundEquiv_apply_coe (u : L.ground) :
     ((L.conjugateGroundEquiv g u : (L.conjugate g).ground) : G) = g * u * g⁻¹ :=
   (Subgroup.coe_congrOfMapEq_apply _ _ u).trans (MulAut.conj_apply g u)
 
+/-- On elements of `G`, the inverse ground-subgroup equivalence is conjugation `v ↦ g⁻¹ * v * g`. -/
 @[simp]
 theorem conjugateGroundEquiv_symm_apply_coe (v : (L.conjugate g).ground) :
     (((L.conjugateGroundEquiv g).symm v : L.ground) : G) = g⁻¹ * v * g :=
@@ -288,6 +290,8 @@ theorem map_relativeTop_conjugateGroundEquiv :
 def conjugateGalEquiv : L.Gal ≃* (L.conjugate g).Gal :=
   QuotientGroup.congr _ _ (L.conjugateGroundEquiv g) (L.map_relativeTop_conjugateGroundEquiv g)
 
+/-- The Galois-group equivalence sends the class of a representative `u` to the class of its
+conjugate `g * u * g⁻¹`. -/
 @[simp]
 theorem conjugateGalEquiv_mk (u : L.ground) :
     L.conjugateGalEquiv g (QuotientGroup.mk u) =
