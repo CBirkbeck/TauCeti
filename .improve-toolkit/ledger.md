@@ -42580,3 +42580,13 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   probed ok at 04:24Z; background, log `drive-8499-0435.log`).
 * #8503 is at 52 min. #8508's build has run since 04:31:36Z (waiter armed). No merges, no findings.
 * In progress (cap full): #8499, #8503 and #8508. Pin `dc4b8d60d5`, main `a0749c0b4`.
+* (late in r997) **The #8499 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5807778658, 04:37Z; $1.07).
+* (late in r997) **#8508 went green at 04:40:25Z and was marked ready at 04:42:17Z.** Guards: all latest check-runs green, head
+  `c720da984` unchanged, pin `dc4b8d60d5` at base `a0749c0b4` and at main, `HopfLemma.lean` untouched since the base.
+* (late in r997) **Step 5, kind 2: opened draft #8510**, `improve/drift-maxprinciple-style` @ `ba4d3cf65` from `a0749c0b4`;
+  `Roadmap: PDE` (as #2310; the file's other PRs were `Roadmap: none` chores). Target from the r976 re-score:
+  `Analysis/InnerProductSpace/Laplacian/DriftMaximumPrinciple.lean` (48 `fun … =>`, no other `=>`, no roadmap text, no open-PR overlap).
+  Edits: 48 arrows (asserted); five chains split (a `calc` step's `rw [Finset.mul_sum]; exact …`; `hgx`, `hgz`, `hxle`'s `by a; b`; the
+  closing `rw [h1, h2]; linarith [hlap hy])` of a multi-line `(fun y hy ↦ by …)`). Gate 12/0/0. Astra (three-dot diff, 1 file):
+  **cleared** ("I would reject none of these edits"). A build waiter is armed.
+* In progress (cap full): #8503, #8508 and #8510. #8497 and #8499 are approved.
