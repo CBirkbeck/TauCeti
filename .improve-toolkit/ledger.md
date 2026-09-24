@@ -42911,3 +42911,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8534, #8538 and #8541. Pin `dc4b8d60d5`, main `787e425c5`.
 * (late in r1026) **#8541 went green at 09:31:28Z and was marked ready at 09:32Z.** Guards: all latest check-runs green, head `3496b0a19`
   unchanged, pin `dc4b8d60d5` at base `f0619a1b8` and at main, file untouched since the base. No drafts remain.
+
+## r1027 — 2026-09-24T09:39Z (cron)
+
+* **#8531 merged** (09:31:17Z, `improve/energyform-integrated-style`, kind 2, approved by the r1025 drive), the thirty-seventh of this
+  session's PRs.
+* #8534 (46 min since ready), #8538 (12 min) and #8541 (2 min) are `awaiting-review`. No findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/pdcode-kauffman-style` @ `0d6880a41` from `d8c04aec8`. Target
+  `KnotTheory/PDCode/Kauffman.lean` (579 lines, 38 `fun … =>`, no other `=>`, no roadmap text; its one `;` is a term-level
+  `fun s ↦ by funext i; simp`, kept inline). Edit: 38 arrows (asserted). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**.
+  Body `pr-body-kauffman.md`, `Roadmap: GeometricTopology` (as #6977).
+* In progress (cap full): #8534, #8538 and #8541. Pin `dc4b8d60d5`, main `d8c04aec8`.
