@@ -42942,3 +42942,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   1 file): **cleared** ("I would reject none of the edits"). A waiter is armed for both new drafts.
 * #8538 is at 32 min since ready. No merges, no findings.
 * In progress (cap full): #8538, #8548 and #8549. #8534 and #8541 are approved. Pin `dc4b8d60d5`, main `0c20df3de`.
+
+## r1030 — 2026-09-24T10:05Z (cron)
+
+* #8534 and #8541 are `ready-to-merge`. #8538 is 42 min since ready. #8548 (since 09:58:48Z) and #8549 (since 10:02:51Z) are building
+  (waiter armed). No merges, no findings. In progress (cap full): #8538, #8548 and #8549. Main `aa37756be`.
