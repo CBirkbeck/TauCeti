@@ -157,6 +157,21 @@ theorem mk_eq_mk_iff {σ τ : G.oneCochains A} :
 theorem ker_mk : (mk G A).ker = (G.coboundary A).range :=
   QuotientGroup.ker_mk' _
 
+/-- An equivalence of one-cochain groups preserving coboundaries induces an equivalence of
+first cohomology groups. -/
+def congr {W : Type*} {H : SimpleGraph W} (e : G.oneCochains A ≃* H.oneCochains A)
+    (he : (G.coboundary A).range.map e = (H.coboundary A).range) :
+    G.FirstCohomology A ≃* H.FirstCohomology A :=
+  QuotientGroup.congr _ _ e he
+
+/-- The induced equivalence sends the class of a cochain to the class of its image. -/
+@[simp]
+theorem congr_mk {W : Type*} {H : SimpleGraph W} (e : G.oneCochains A ≃* H.oneCochains A)
+    (he : (G.coboundary A).range.map e = (H.coboundary A).range)
+    (σ : G.oneCochains A) :
+    congr e he (mk G A σ) = mk H A (e σ) :=
+  QuotientGroup.congr_mk' _ _ e he σ
+
 end FirstCohomology
 
 end SimpleGraph

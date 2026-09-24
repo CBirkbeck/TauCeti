@@ -199,7 +199,10 @@ def conjugate (L : NormalLayer G) (g : G) : NormalLayer G where
     ((continuous_mul_const g).comp (continuous_const_mul g⁻¹))
   top := L.top.comap ((MulAut.conj g).symm : G ≃* G)
     ((continuous_mul_const g).comp (continuous_const_mul g⁻¹))
-  top_le_ground _ hx := OpenSubgroup.mem_comap.2 (L.top_le_ground (OpenSubgroup.mem_comap.1 hx))
+  -- A tactic proof is elaborated once `ground` and `top` are known; as a term, the memberships
+  -- are unified against their metavariables, which fails slowly.
+  top_le_ground _ hx := by
+    exact OpenSubgroup.mem_comap.2 (L.top_le_ground (OpenSubgroup.mem_comap.1 hx))
   normal := by
     constructor
     rintro ⟨n, hn⟩ hmem ⟨u, hu⟩

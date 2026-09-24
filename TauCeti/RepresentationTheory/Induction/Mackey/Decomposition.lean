@@ -167,10 +167,12 @@ noncomputable def mackeyDirectSumFunctor : Rep.{u} k H ⥤ Rep.{u} k K where
       rw [CategoryTheory.Functor.map_id]
       rfl
     refine Rep.hom_ext (IntertwiningMap.ext ?_)
-    -- The `map` field above is being defined, so no `_map` lemma exists yet; unfold the `Rep.ofHom`
-    -- and `IntertwiningMap` wrappers around it definitionally to expose the `DirectSum.lmap`.
-    change DirectSum.lmap _ = LinearMap.id
+    -- The `map` field above is being defined, so no `_map` lemma exists yet; strip the `Rep.ofHom`
+    -- wrapper around it to expose the `DirectSum.lmap`.  (A `change` to that form works too, but
+    -- unifying its placeholder through the wrappers is several times slower.)
+    dsimp only [Rep.hom_ofHom]
     simp only [h, DirectSum.lmap_id]
+    rfl
   map_comp {A B C} f g := by
     have h (s : G) :
         ((mackeySummandFunctor H K s).map (f ≫ g)).hom.toLinearMap =
@@ -180,8 +182,8 @@ noncomputable def mackeyDirectSumFunctor : Rep.{u} k H ⥤ Rep.{u} k K where
       rfl
     refine Rep.hom_ext (IntertwiningMap.ext ?_)
     -- As for `map_id`: the `map` field is under definition, so the `Rep.ofHom` and
-    -- `IntertwiningMap` wrappers can only be removed definitionally.
-    change DirectSum.lmap _ = DirectSum.lmap _ ∘ₗ DirectSum.lmap _
+    -- `IntertwiningMap` wrappers are stripped by their `dsimp` lemmas.
+    dsimp only [Rep.hom_comp, Rep.hom_ofHom, IntertwiningMap.comp_toLinearMap]
     simp only [h, DirectSum.lmap_comp]
 
 /-- The direct sum functor sends a representation of `H` to the direct sum of its Mackey
