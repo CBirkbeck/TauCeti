@@ -36,11 +36,13 @@ pullback. It is nondegenerate in `T`: if `e_N(·, T)` is trivial then `g_T` is f
 `N`-torsion translations, hence a pullback `[N]^* h`, and `div h = (T) - (O)` forces `T = O`.
 
 This is the construction of Silverman III.8.1. It is a divisor construction, and its inputs are
-Layer 0's divisor calculus and the fibre of `[N]`; it does not use Weil reciprocity, which the
-alternative construction through evaluation of functions on divisors requires.
+the divisor calculus of the function field and the fibre of `[N]`; it does not use Weil
+reciprocity, which the alternative construction through evaluation of functions on divisors
+requires.
 
 ## Main definitions
 
+* `TauCeti.Isogeny.weilPairingDivisor`: the divisor `[N]^* (T) - [N]^* (O)` of `g_T`.
 * `TauCeti.Isogeny.weilPairing`: the pairing `E[N] →+ E[N] →+ μ_N`, additive in both variables.
 
 ## Main results
@@ -72,26 +74,43 @@ local instance : IsDedekindDomain W.toAffine.CoordinateRing :=
 
 attribute [local instance] isIntegrallyClosedIn_functionField
 
+/-- **The divisor `[n]^* (T) - [n]^* (O)`**, the pullback along `[n]` of `(T) - (O)`. The Weil
+pairing is built from a function with this divisor (Silverman III.8.1). -/
+noncomputable def weilPairingDivisor {n : ℤ} (hchar : (n : F) ≠ 0) (T : W.toAffine.Point) :
+    Divisor F W.toAffine.FunctionField :=
+  letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.toAlgebra
+  (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
+      (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
+    (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
+      (WeilDivisor.ofPoint (Place.infinity W.toAffine))
+
+omit [DecidableEq F] in
+/-- The defining equation of `weilPairingDivisor`. -/
+-- A lemma rather than left to unfolding: the body is not exposed across a module boundary.
+theorem weilPairingDivisor_def {n : ℤ} (hchar : (n : F) ≠ 0) (T : W.toAffine.Point) :
+    letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.toAlgebra
+    weilPairingDivisor W hchar T =
+      (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
+          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
+        (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
+          (WeilDivisor.ofPoint (Place.infinity W.toAffine)) :=
+  (rfl)
+
 /-- **A function with divisor `[n]^* (T) - [n]^* (O)` has its `n`-th power pulled back along
 `[n]`**, at an `n`-torsion point `T`: that power has divisor `[n]^* (n (T) - n (O))`, the pullback
 of a principal divisor. -/
 theorem zpow_mem_fieldRange_mulByIntIsogeny {n : ℤ} (hchar : (n : F) ≠ 0)
     {T : W.toAffine.Point} (hT : n • T = 0) {g : W.toAffine.FunctionFieldˣ}
-    (hg : letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.toAlgebra
-      Divisor.principal W.toAffine.isFunctionField g =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine))) :
+    (hg : Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hchar T) :
     (g : W.toAffine.FunctionField) ^ n ∈
       (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.fieldRange := by
   let _ := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.toAlgebra
-  obtain ⟨f, hf⟩ := W.toAffine.exists_principal_zsmul_ofPoint_sub_infinity hT
+  obtain ⟨f, hf⟩ := W.toAffine.exists_principal_eq_zsmul_ofPoint_sub_infinity hT
   have hdiv : Divisor.principal W.toAffine.isFunctionField (g ^ n) =
       Divisor.principal W.toAffine.isFunctionField
         (Units.map (algebraMap W.toAffine.FunctionField W.toAffine.FunctionField : _ →* _) f) := by
-    rw [← divisorPullback_principal _ (fun _ ↦ rfl), hf, map_zsmul, map_sub, ← hg,
-      Divisor.principal_zpow]
+    rw [← divisorPullback_principal _ (fun _ ↦ rfl), hf, map_zsmul, map_sub,
+      ← weilPairingDivisor_def W hchar T, ← hg, Divisor.principal_zpow]
   obtain ⟨c, hc⟩ := Divisor.exists_units_algebraMap_mul_of_principal_eq _
     (isIntegrallyClosedIn_functionField W.toAffine) hdiv
   rw [← Units.val_zpow_eq_zpow_val, hc]
@@ -113,67 +132,56 @@ private noncomputable def torsionToKer :
       rw [← map_zsmul, (Submodule.mem_torsionBy_iff _ _).mp S.2, map_zero]
 
 omit [NeZero N] in
-/-- **The Weil function of `T`**: a function with divisor `[N]^* (T) - [N]^* (O)`. -/
-theorem exists_weilFunction (T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)) :
-    letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
-    ∃ g : W.toAffine.FunctionFieldˣ, Divisor.principal W.toAffine.isFunctionField g =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine)) :=
+-- A function `g_T` with divisor `[N]^* (T) - [N]^* (O)`, the stable term that `weilPairingAux`
+-- chooses from.
+private theorem exists_principal_eq_weilPairingDivisor
+    (T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)) :
+    ∃ g : W.toAffine.FunctionFieldˣ,
+      Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hN T :=
   exists_principal_eq_divisorPullback_mulByIntIsogeny_sub W hN
     ((Submodule.mem_torsionBy_iff _ _).mp T.2)
 
 omit [IsSepClosed F] [NeZero N] in
--- The `N`-th power of a Weil function is a pullback along `[N]`.
+-- The `N`-th power of `g_T` is a pullback along `[N]`.
 private theorem pow_mem_fieldRange_of_principal_eq
     {T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)} {g : W.toAffine.FunctionFieldˣ}
-    (hg : letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
-      Divisor.principal W.toAffine.isFunctionField g =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine))) :
+    (hg : Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hN T) :
     (g : W.toAffine.FunctionField) ^ N ∈
       (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.fieldRange := by
   have := zpow_mem_fieldRange_mulByIntIsogeny W hN
     ((Submodule.mem_torsionBy_iff _ _).mp T.2) hg
   rwa [zpow_natCast] at this
 
--- `S ↦ e_N(S, T)`, through a chosen Weil function of `T`.
+-- `S ↦ e_N(S, T)`, through a chosen function `g_T`.
 private noncomputable def weilPairingAux (T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)) :
     Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ) →+ Additive (rootsOfUnity N F) :=
   MonoidHom.toAdditiveRight (((mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).kummerCharacter N
-    (exists_weilFunction W N hN T).choose
-    (pow_mem_fieldRange_of_principal_eq W N hN (exists_weilFunction W N hN T).choose_spec)).comp
+    (exists_principal_eq_weilPairingDivisor W N hN T).choose
+    (pow_mem_fieldRange_of_principal_eq W N hN
+      (exists_principal_eq_weilPairingDivisor W N hN T).choose_spec)).comp
       (AddMonoidHom.toMultiplicative (torsionToKer W N hN)))
 
--- The choice of Weil function does not matter.
+-- The choice of `g_T` does not matter.
 private theorem weilPairingAux_eq {T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)}
     {g : W.toAffine.FunctionFieldˣ}
-    (hg : letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
-      Divisor.principal W.toAffine.isFunctionField g =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine))) :
+    (hg : Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hN T) :
     weilPairingAux W N hN T = MonoidHom.toAdditiveRight
       (((mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).kummerCharacter N g
       (pow_mem_fieldRange_of_principal_eq W N hN hg)).comp
         (AddMonoidHom.toMultiplicative (torsionToKer W N hN))) := by
   rw [weilPairingAux, kummerCharacter_eq_of_principal_eq _ _
-    ((exists_weilFunction W N hN T).choose_spec.trans hg.symm)]
+    ((exists_principal_eq_weilPairingDivisor W N hN T).choose_spec.trans hg.symm)]
 
--- Additivity in `T`: `g_{T₁} g_{T₂} [N]^* h` is a Weil function of `T₁ + T₂`, for `h` the line
+-- Additivity in `T`: `g_{T₁} g_{T₂} [N]^* h` is a choice of `g_{T₁ + T₂}`, for `h` the line
 -- function of `T₁` and `T₂`, and the Kummer character of `[N]^* h` is trivial.
 private theorem weilPairingAux_add (T₁ T₂ : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)) :
     weilPairingAux W N hN (T₁ + T₂) = weilPairingAux W N hN T₁ + weilPairingAux W N hN T₂ := by
   let _ := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
   obtain ⟨h, hh⟩ := W.toAffine.exists_principal_eq_ofPoint_add_sub (T₁ : W.toAffine.Point) T₂
-  have hg₁ := (exists_weilFunction W N hN T₁).choose_spec
-  have hg₂ := (exists_weilFunction W N hN T₂).choose_spec
-  set g₁ := (exists_weilFunction W N hN T₁).choose
-  set g₂ := (exists_weilFunction W N hN T₂).choose
+  have hg₁ := (exists_principal_eq_weilPairingDivisor W N hN T₁).choose_spec
+  have hg₂ := (exists_principal_eq_weilPairingDivisor W N hN T₂).choose_spec
+  set g₁ := (exists_principal_eq_weilPairingDivisor W N hN T₁).choose
+  set g₂ := (exists_principal_eq_weilPairingDivisor W N hN T₂).choose
   let h' := Units.map (algebraMap W.toAffine.FunctionField W.toAffine.FunctionField :
     W.toAffine.FunctionField →* W.toAffine.FunctionField) h
   have hh' : Divisor.principal W.toAffine.isFunctionField h' =
@@ -181,11 +189,9 @@ private theorem weilPairingAux_add (T₁ T₂ : Submodule.torsionBy ℤ W.toAffi
         (Divisor.principal W.toAffine.isFunctionField h) :=
     (divisorPullback_principal _ (fun _ ↦ rfl) h).symm
   have hprod : Divisor.principal W.toAffine.isFunctionField (g₁ * g₂ * h') =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine (T₁ + T₂ :)).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine)) := by
-    rw [Divisor.principal_mul, Divisor.principal_mul, hg₁, hg₂, hh', hh]
+      weilPairingDivisor W hN (T₁ + T₂ :) := by
+    rw [Divisor.principal_mul, Divisor.principal_mul, hg₁, hg₂, hh', hh, weilPairingDivisor_def,
+      weilPairingDivisor_def, weilPairingDivisor_def]
     simp only [map_sub, Submodule.coe_add]
     abel
   have hp₁ := pow_mem_fieldRange_of_principal_eq W N hN hg₁
@@ -198,8 +204,8 @@ private theorem weilPairingAux_add (T₁ T₂ : Submodule.torsionBy ℤ W.toAffi
     exact mul_mem hp₁ hp₂
   rw [weilPairingAux_eq W N hN hprod, weilPairingAux, weilPairingAux,
     kummerCharacter_mul hp₁₂ (pow_mem hmem N) _, kummerCharacter_mul hp₁ hp₂ _,
-    kummerCharacter_eq_one_of_mem_fieldRange _ hmem, mul_one]
-  exact AddMonoidHom.ext fun _ ↦ rfl
+    kummerCharacter_eq_one_of_mem_fieldRange _ hmem, mul_one, MonoidHom.mul_comp]
+  exact AddMonoidHom.ext fun _ ↦ ofMul_mul _ _
 
 /-- **The Weil pairing** `e_N(S, T) = τ_S g_T / g_T` (Silverman III.8.1), over a separably closed
 field in which `N` is invertible, additive in both variables. -/
@@ -212,28 +218,18 @@ noncomputable def weilPairing :
 `[N]^* (T) - [N]^* (O)`. -/
 theorem algebraMap_weilPairing {S T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)}
     {g : W.toAffine.FunctionFieldˣ}
-    (hg : letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
-      Divisor.principal W.toAffine.isFunctionField g =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine))) :
+    (hg : Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hN T) :
     algebraMap F W.toAffine.FunctionField ((weilPairing W N hN S T).toMul : Fˣ) =
       translation W.toAffine (Point.equivBaseChangeSelf W.toAffine S) g / g := by
   rw [weilPairing, AddMonoidHom.flip_apply, AddMonoidHom.mk'_apply, weilPairingAux_eq W N hN hg]
   exact algebraMap_kummerCharacter (pow_mem_fieldRange_of_principal_eq W N hN hg)
     (Multiplicative.ofAdd (torsionToKer W N hN S))
 
--- If `e_N(·, T)` is trivial, every `N`-torsion translation fixes the Weil functions of `T`.
+-- If `e_N(·, T)` is trivial, every `N`-torsion translation fixes each choice of `g_T`.
 private theorem translation_eq_of_forall_weilPairing_eq_zero
     {T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)} (hT : ∀ S, weilPairing W N hN S T = 0)
     {g : W.toAffine.FunctionFieldˣ}
-    (hg : letI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
-      Divisor.principal W.toAffine.isFunctionField g =
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine T).1) -
-        (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).divisorPullback (fun _ ↦ rfl)
-          (WeilDivisor.ofPoint (Place.infinity W.toAffine)))
+    (hg : Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hN T)
     {P : (W.toAffine⁄F).toAffine.Point} (hP : (N : ℤ) • P = 0) :
     translation W.toAffine P g = g := by
   let S : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ) :=
@@ -250,7 +246,7 @@ theorem eq_zero_of_forall_weilPairing_eq_zero
     {T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)} (hT : ∀ S, weilPairing W N hN S T = 0) :
     T = 0 := by
   let _ := (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)).fieldPullback.toAlgebra
-  obtain ⟨g, hg⟩ := exists_weilFunction W N hN T
+  obtain ⟨g, hg⟩ := exists_principal_eq_weilPairingDivisor W N hN T
   -- `g` is fixed by the `N`-torsion translations, hence a pullback `[N]^* h`
   obtain ⟨h, hh⟩ := AlgHom.mem_fieldRange.mp
     ((mem_fieldRange_mulByIntIsogeny_iff W.toAffine hN).mpr
@@ -264,7 +260,7 @@ theorem eq_zero_of_forall_weilPairing_eq_zero
         WeilDivisor.ofPoint (Place.infinity W.toAffine) := by
     refine divisorPullback_injective
       (mulByIntIsogeny W (psiFunctionField_ne_zero W hN)) (fun _ ↦ rfl) ?_
-    rw [divisorPullback_principal, map_sub, ← hg]
+    rw [divisorPullback_principal, map_sub, ← weilPairingDivisor_def W hN T, ← hg]
     congr 1
     exact Units.ext hh
   have hσ := W.toAffine.divisorSum_eq_zero_iff

@@ -24,7 +24,7 @@ multiplication by `n` gives the points `R` with `n • R = T`, each with multipl
 
 At an `n`-torsion point `T`, the divisor `[n]^* (T) - [n]^* (O)` is principal. This is the second
 input to the divisor construction of the Weil pairing (Silverman III.8.1), after
-`WeierstrassCurve.Affine.exists_principal_zsmul_ofPoint_sub_infinity`: the pairing is built
+`WeierstrassCurve.Affine.exists_principal_eq_zsmul_ofPoint_sub_infinity`: the pairing is built
 from a function with this divisor.
 
 ## Main results

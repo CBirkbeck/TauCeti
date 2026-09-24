@@ -31,6 +31,7 @@ monoid is arbitrary.
 
 * `TauCeti.algebraMap_kummerCharacter`: its value at `σ`, read in `L`, is `σ α / α`.
 * `TauCeti.kummerCharacter_mul`: it is multiplicative in `α`.
+* `TauCeti.kummerCharacter_algebraMap_mul`: it is unchanged by a constant factor.
 * `TauCeti.kummerCharacter_eq_one_iff`: it is trivial exactly when `G` fixes `α`.
 
 ## References
@@ -52,6 +53,12 @@ private noncomputable def ratio {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) =
   rootsOfUnity.mkOfPowEq (ρ σ α / α) <| by
     rw [div_pow, ← map_pow, hα, div_self (pow_ne_zero _ α.ne_zero)]
 
+omit [IsIntegrallyClosedIn F L] in
+@[simp]
+private theorem coe_ratio {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) (σ : G) :
+    ((ratio ρ n hα σ : Lˣ) : L) = ρ σ α / α :=
+  rootsOfUnity.coe_mkOfPowEq _
+
 /-- **The Kummer character of `α`**: `σ ↦ σ α / α`, which lies in the `n`-th roots of unity of `F`
 as soon as no element of `G` moves `αⁿ`. -/
 noncomputable def kummerCharacter (α : Lˣ) (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :
@@ -60,21 +67,24 @@ noncomputable def kummerCharacter (α : Lˣ) (hα : ∀ σ, ρ σ ((α : L) ^ n)
   map_one' := by
     rw [MulEquiv.symm_apply_eq, map_one]
     ext
-    simp [ratio]
+    simp
   map_mul' σ τ := by
     rw [MulEquiv.symm_apply_eq, map_mul, MulEquiv.apply_symm_apply, MulEquiv.apply_symm_apply]
     ext
     have hτ : ρ τ α = ((ratio ρ n hα τ : Lˣ) : L) * α := by
-      simp [ratio, div_mul_cancel₀ _ α.ne_zero]
+      rw [coe_ratio, div_mul_cancel₀ _ α.ne_zero]
     -- `ρ σ` fixes the constant `τ α / α`, which is how it commutes past the second factor.
     have hc : ρ σ ((ratio ρ n hα τ : Lˣ) : L) = ((ratio ρ n hα τ : Lˣ) : L) := by
       rw [← MulEquiv.apply_symm_apply (rootsOfUnityMulEquiv F L n) (ratio ρ n hα τ),
         coe_rootsOfUnityMulEquiv, AlgEquiv.commutes]
-    simp only [ratio, rootsOfUnity.coe_mkOfPowEq, Subgroup.coe_mul, Units.val_mul, map_mul,
-      AlgEquiv.mul_apply]
-    rw [hτ, map_mul, hc]
-    simp only [ratio, rootsOfUnity.coe_mkOfPowEq]
+    simp only [coe_ratio, Subgroup.coe_mul, Units.val_mul, map_mul, AlgEquiv.mul_apply]
+    rw [← coe_ratio ρ n hα τ, hτ, map_mul, hc, coe_ratio]
     field_simp
+
+private theorem kummerCharacter_apply (α : Lˣ) (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n)
+    (σ : G) :
+    kummerCharacter ρ n α hα σ = (rootsOfUnityMulEquiv F L n).symm (ratio ρ n hα σ) :=
+  rfl
 
 variable {ρ n}
 
@@ -82,9 +92,8 @@ variable {ρ n}
 @[simp]
 theorem algebraMap_kummerCharacter {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) (σ : G) :
     algebraMap F L (kummerCharacter ρ n α hα σ : Fˣ) = ρ σ α / α := by
-  rw [← coe_rootsOfUnityMulEquiv F L n, kummerCharacter, MonoidHom.coe_mk, OneHom.coe_mk,
-    MulEquiv.apply_symm_apply]
-  simp [ratio]
+  rw [← coe_rootsOfUnityMulEquiv F L n, kummerCharacter_apply, MulEquiv.apply_symm_apply,
+    coe_ratio]
 
 /-- **The Kummer character moves `α` by its value**: `σ α = χ(σ) α`. -/
 theorem apply_eq_algebraMap_kummerCharacter_mul {α : Lˣ}
@@ -102,6 +111,19 @@ theorem kummerCharacter_mul {α β : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = 
   simp only [MonoidHom.mul_apply, Subgroup.coe_mul, Units.val_mul, map_mul,
     algebraMap_kummerCharacter]
   exact mul_div_mul_comm _ _ _ _
+
+/-- **The Kummer character is unchanged by a constant factor**: `G` fixes the constant `c`, so it
+moves `c α` and `α` by the same roots of unity. -/
+theorem kummerCharacter_algebraMap_mul {α : Lˣ} (c : Fˣ)
+    (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n)
+    (hcα : ∀ σ, ρ σ (((Units.map (algebraMap F L : F →* L) c * α : Lˣ) : L) ^ n) =
+      ((Units.map (algebraMap F L : F →* L) c * α : Lˣ) : L) ^ n) :
+    kummerCharacter ρ n (Units.map (algebraMap F L : F →* L) c * α) hcα =
+      kummerCharacter ρ n α hα := by
+  ext σ
+  refine (algebraMap F L).injective ?_
+  rw [algebraMap_kummerCharacter, algebraMap_kummerCharacter, Units.val_mul, Units.coe_map,
+    MonoidHom.coe_coe, map_mul, AlgEquiv.commutes, mul_div_mul_left _ _ (by simp)]
 
 /-- **The Kummer character is trivial exactly when `G` fixes `α`.** -/
 theorem kummerCharacter_eq_one_iff {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :

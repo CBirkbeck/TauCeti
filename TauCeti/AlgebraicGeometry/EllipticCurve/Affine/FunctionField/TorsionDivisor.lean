@@ -8,30 +8,24 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divisor.Sum
 
 /-!
-# Two principal divisors from the group law
+# The function with divisor `n(T) - n(O)` at an `n`-torsion point
 
-A degree-zero divisor on an elliptic curve is principal exactly when its sum is `O`
-(`WeierstrassCurve.Affine.divisorSum_eq_zero_iff`), and the sum of `(P) - (Q)` is `P - Q`
-(`WeierstrassCurve.Affine.divisorSum_ofPoint_sub_ofPoint`). This file records the two instances the
-divisor construction of the Weil pairing (Silverman III.8.1) uses:
+The sum of `(T) - (O)` is `T`, so the sum of `n(T) - n(O)` is `n • T`, and a degree-zero divisor is
+principal exactly when its sum is `O`. At an `n`-torsion point, therefore, `n(T) - n(O)` is
+principal.
 
-* at an `n`-torsion point `T`, the divisor `n(T) - n(O)` is principal, its sum being `n • T`;
-* for any points `P` and `Q`, the divisor `(P + Q) - (P) - ((Q) - (O))` is principal, its sum being
-  `O`. This is the divisor of the line function relating `P`, `Q` and `P + Q`.
-
-Points are read as places through `WeierstrassCurve.Affine.pointEquivDegreeOnePlace`, which sends
-`O` to the place at infinity.
+This is the first input to the divisor construction of the Weil pairing (Silverman III.8): the
+pairing is built from such a function together with a second one whose `n`-th power is its
+pullback along `[n]`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.exists_principal_zsmul_ofPoint_sub_infinity`: at an `n`-torsion point
-  `T`, the divisor `n(T) - n(O)` is the divisor of a function.
-* `WeierstrassCurve.Affine.exists_principal_eq_ofPoint_add_sub`: `(P + Q) - (P) - ((Q) - (O))` is
-  the divisor of a function.
+* `WeierstrassCurve.Affine.exists_principal_eq_zsmul_ofPoint_sub_infinity`: at an `n`-torsion
+  point `T`, the divisor `n(T) - n(O)` is the divisor of a function.
 
 ## References
 
-* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.3.5, III.8.1.
+* [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.8.1.
 * [H. Stichtenoth, *Algebraic Function Fields and Codes*][stichtenoth2009], I.4.
 -/
 
@@ -45,27 +39,13 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
   [IsDedekindDomain W.CoordinateRing] [DecidableEq F] [W.IsElliptic]
 
 /-- **At an `n`-torsion point, `n(T) - n(O)` is the divisor of a function** (Silverman III.8.1). -/
-theorem exists_principal_zsmul_ofPoint_sub_infinity {n : ℤ} {T : W.Point} (hT : n • T = 0) :
+theorem exists_principal_eq_zsmul_ofPoint_sub_infinity {n : ℤ} {T : W.Point} (hT : n • T = 0) :
     ∃ z : W.FunctionFieldˣ, Divisor.principal W.isFunctionField z =
       n • (WeilDivisor.ofPoint (W.pointEquivDegreeOnePlace T).1 -
         WeilDivisor.ofPoint (Place.infinity W)) := by
   rw [← coe_pointEquivDegreeOnePlace_zero]
   exact W.divisorSum_eq_zero_iff (D := n • ⟨_, W.ofPoint_sub_ofPoint_mem_ker_degree T .zero⟩) |>.1
     (by rw [map_zsmul, divisorSum_ofPoint_sub_ofPoint, ← Point.zero_def, sub_zero, hT])
-
-/-- **The line function**: `(P + Q) - (P) - ((Q) - (O))` is the divisor of a function, its sum
-being `(P + Q) - P - Q = O` (Silverman III.3.5). -/
-theorem exists_principal_eq_ofPoint_add_sub (P Q : W.Point) :
-    ∃ z : W.FunctionFieldˣ, Divisor.principal W.isFunctionField z =
-      WeilDivisor.ofPoint (W.pointEquivDegreeOnePlace (P + Q)).1 -
-        WeilDivisor.ofPoint (W.pointEquivDegreeOnePlace P).1 -
-        (WeilDivisor.ofPoint (W.pointEquivDegreeOnePlace Q).1 -
-          WeilDivisor.ofPoint (Place.infinity W)) := by
-  rw [← coe_pointEquivDegreeOnePlace_zero]
-  exact W.divisorSum_eq_zero_iff (D := ⟨_, W.ofPoint_sub_ofPoint_mem_ker_degree (P + Q) P⟩ -
-    ⟨_, W.ofPoint_sub_ofPoint_mem_ker_degree Q .zero⟩) |>.1
-    (by rw [map_sub, divisorSum_ofPoint_sub_ofPoint, divisorSum_ofPoint_sub_ofPoint,
-      ← Point.zero_def, sub_zero, add_sub_cancel_left, sub_self])
 
 end WeierstrassCurve.Affine
 
