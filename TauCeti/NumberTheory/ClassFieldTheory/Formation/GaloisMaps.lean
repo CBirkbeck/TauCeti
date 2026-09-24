@@ -143,26 +143,35 @@ theorem transferHom_of (T : LayerRestriction small big) (x : big.Gal) :
 `Gal(K/F)^ab → Gal(K/E)^ab` followed by the transfer `Gal(K/E)^ab → Gal(K/E')^ab`. -/
 theorem transferHom_trans (T : LayerRestriction a b) (T' : LayerRestriction b c) :
     (T.trans T').transferHom = T.transferHom.comp T'.transferHom := by
+  have hle := galHom_range_trans_le T T'
+  -- Transported along `T'.galHom`, the transfer from `Gal(K/E)` to the image of `Gal(K/E')` is
+  -- the transfer from the image of `Gal(K/E)` to that of `Gal(K/E')`, both inside `Gal(K/F)`.
+  -- The identification `subgroupOfEquivOfLe` enters as a coercion, the form `transfer_transfer`
+  -- is stated in.
+  have htransport : (MonoidHom.transfer (Abelianization.of.comp
+        (MonoidHom.ofInjective T.galHom_injective).symm.toMonoidHom)).comp
+        (MonoidHom.ofInjective T'.galHom_injective).symm.toMonoidHom =
+      MonoidHom.transfer ((Abelianization.of.comp
+        (MonoidHom.ofInjective (T.trans T').galHom_injective).symm.toMonoidHom).comp
+        (MonoidHomClass.toMonoidHom (Subgroup.subgroupOfEquivOfLe hle))) := by
+    ext z
+    obtain ⟨m, rfl⟩ := (MonoidHom.ofInjective T'.galHom_injective).surjective z
+    rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulEquiv.symm_apply_apply]
+    refine (MonoidHom.transfer_apply_of_mulEquiv _ _ (galHom_range_map_ofInjective T T') _
+      (fun h ↦ congrArg Abelianization.of ((T.trans T').galHom_injective ?_)) m).symm
+    simp only [MulEquiv.coe_toMonoidHom, MonoidHom.apply_ofInjective_symm]
+    simp [galHom_trans T T', MonoidHom.ofInjective_apply]
   refine AddMonoidHom.ext fun x ↦ ?_
   obtain ⟨x, rfl⟩ := Additive.ofMul.surjective x
   obtain ⟨y, rfl⟩ : ∃ y, Abelianization.of y = x := QuotientGroup.mk_surjective x
   rw [AddMonoidHom.comp_apply, transferHom_of, transferHom_of, transferHom,
     MonoidHom.toAdditive_apply_apply, toMul_ofMul]
-  congr 1
+  -- Naturality in the target (`transfer_comp`) moves the outer `Abelianization.lift` inside the
+  -- transfer to `Gal(K/E)`, where it becomes the inner transfer transported along `T'.galHom`;
+  -- `htransport` and the tower law `transfer_transfer` then give the transfer of `T.trans T'`.
   rw [← MonoidHom.comp_apply (Abelianization.lift _), ← MonoidHom.transfer_comp,
-    ← MonoidHom.comp_assoc, ← Abelianization.lift_symm_apply, Equiv.symm_apply_apply,
-    ← MonoidHom.transfer_transfer (galHom_range_trans_le T T')]
-  -- Along the tower, the transfer from the image of the middle Galois group to the image of the
-  -- smallest one is the transfer from the middle Galois group to the image of the smallest one,
-  -- transported along `galHom`.
-  congr 2 with z
-  obtain ⟨m, rfl⟩ := (MonoidHom.ofInjective T'.galHom_injective).surjective z
-  rw [MonoidHom.comp_apply, MulEquiv.coe_toMonoidHom, MulEquiv.symm_apply_apply]
-  refine MonoidHom.transfer_apply_of_mulEquiv _ _ (fun _ ↦ ?_) _ (fun _ ↦ ?_) m
-  · simp [← galHom_range_map_ofInjective T T']
-  · refine congrArg Abelianization.of ((T.trans T').galHom_injective ?_)
-    simp only [MulEquiv.coe_toMonoidHom, MonoidHom.apply_ofInjective_symm]
-    simp [galHom_trans T T', MonoidHom.ofInjective_apply]
+    ← MonoidHom.comp_assoc, ← Abelianization.lift_symm_apply, Equiv.symm_apply_apply, htransport,
+    MonoidHom.transfer_transfer]
 
 end LayerRestriction
 

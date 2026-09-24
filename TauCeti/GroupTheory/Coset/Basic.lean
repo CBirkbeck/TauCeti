@@ -27,9 +27,9 @@ The additive versions are generated for `AddSubgroup.addGroupEquivQuotientProdAd
 The file also records how the chosen representatives behave along a tower of subgroups, along an
 isomorphism of groups, and under translation:
 
-* `Subgroup.bijective_mk_out_mul_out`: for `K ≤ H`, the products `p.out * k.out` of chosen
+* `Subgroup.mk_out_mul_out_bijective`: for `K ≤ H`, the products `p.out * k.out` of chosen
   representatives of `G ⧸ H` and of `H ⧸ K.subgroupOf H` form a transversal of `K` in `G`;
-* `Subgroup.bijective_mk_mulEquiv_out`: an isomorphism `e : G ≃* G'` carrying `H` onto `H'` carries
+* `Subgroup.mk_mulEquiv_out_bijective`: an isomorphism `e : G ≃* G'` carrying `H` onto `H'` carries
   the chosen representatives of `G ⧸ H` to a transversal of `H'` in `G'`;
 * `QuotientGroup.mk_out_smul` and `QuotientGroup.mk_mul_out_smul`: the representative of a
   translated coset `g • q` lies in the coset of `g * q.out`.
@@ -90,7 +90,7 @@ theorem groupEquivQuotientProdSubgroup_apply_snd_coe (g : α) :
 `p.out * k.out` of the chosen representatives of the cosets `p ∈ G ⧸ H` and
 `k ∈ H ⧸ K.subgroupOf H` represent each coset of `K` in `G` exactly once. -/
 @[to_additive]
-theorem bijective_mk_out_mul_out {G : Type*} [Group G] {H K : Subgroup G} (hKH : K ≤ H) :
+theorem mk_out_mul_out_bijective {G : Type*} [Group G] {H K : Subgroup G} (hKH : K ≤ H) :
     Function.Bijective
       fun i : (G ⧸ H) × (H ⧸ K.subgroupOf H) ↦ ((i.1.out * (i.2.out : G) : G) : G ⧸ K) := by
   convert (quotientEquivProdOfLE hKH).symm.bijective with ⟨p, k⟩
@@ -101,7 +101,7 @@ theorem bijective_mk_out_mul_out {G : Type*} [Group G] {H K : Subgroup G} (hKH :
 onto `H'`, then the images under `e` of the chosen representatives of the cosets of `H` represent
 each coset of `H'` exactly once. Neither subgroup need be normal. -/
 @[to_additive]
-theorem bijective_mk_mulEquiv_out {G G' : Type*} [Group G] [Group G'] {H : Subgroup G}
+theorem mk_mulEquiv_out_bijective {G G' : Type*} [Group G] [Group G'] {H : Subgroup G}
     {H' : Subgroup G'} (e : G ≃* G') (he : ∀ g, e g ∈ H' ↔ g ∈ H) :
     Function.Bijective fun q : G ⧸ H ↦ ((e q.out : G') : G' ⧸ H') := by
   -- `e` carries "same left coset of `H`" to "same left coset of `H'`".

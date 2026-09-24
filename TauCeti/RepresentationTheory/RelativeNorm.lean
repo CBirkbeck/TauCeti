@@ -338,7 +338,7 @@ theorem relTransfer_map_sub_mem {G' V' : Type*} [Group G'] [AddCommGroup V'] [Mo
   -- Carrying the `Quotient.out` transversal of `H` across `e` gives a transversal of `H'`, but
   -- not the one `Quotient.out` picks there.
   simpa [relTransfer_apply, hφ, sub_mem_comm_iff] using relTransfer_sub_sum_mem _
-    (Subgroup.bijective_mk_mulEquiv_out e fun _ => by simp) (φ x)
+    (Subgroup.mk_mulEquiv_out_bijective e fun _ => by simp) (φ x)
 
 /-- **The relative transfer is transitive along a tower `K ≤ H ≤ G`, modulo the augmentation
 submodule of `K`.** Transferring from `G` to `H` and then from `H` to `K` agrees with the
@@ -353,7 +353,7 @@ theorem relTransfer_relTransfer_sub_relTransfer_mem {K : Subgroup G} (hKH : K �
   simpa only [relTransfer_apply, map_sum, MonoidHom.coe_comp, Subgroup.coe_subtype,
     Function.comp_apply, InvMemClass.coe_inv, sub_mem_comm_iff, mul_inv_rev, map_mul,
     Module.End.mul_apply, Fintype.sum_prod_type] using
-    relTransfer_sub_sum_mem _ (Subgroup.bijective_mk_out_mul_out hKH) x
+    relTransfer_sub_sum_mem _ (Subgroup.mk_out_mul_out_bijective hKH) x
 
 end Coinvariants
 
