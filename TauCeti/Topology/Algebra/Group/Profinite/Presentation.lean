@@ -54,6 +54,13 @@ noncomputable def of {X : Type u} (rels : Set (freeProfiniteGroup X)) (x : X) :
     presentedProfiniteGroup X rels :=
   mk rels (freeProfiniteGroup.of x)
 
+/-- The canonical generators of a presented profinite group are the images of the free
+generators under the quotient map. -/
+@[simp]
+theorem mk_of {X : Type u} (rels : Set (freeProfiniteGroup X)) (x : X) :
+    mk rels (freeProfiniteGroup.of x) = of rels x :=
+  (rfl)
+
 variable {X : Type u} {rels : Set (freeProfiniteGroup X)}
 
 /-- The quotient map kills every relator. -/
@@ -163,6 +170,13 @@ theorem mk_surjective (p : ℕ) {X : Type u} (rels : Set (freeProP p X)) :
 noncomputable def of (p : ℕ) {X : Type u} (rels : Set (freeProP p X)) (x : X) :
     presentedProP p X rels :=
   mk p rels (freeProP.of x)
+
+/-- The canonical generators of a presented pro-`p` group are the images of the free generators
+under the quotient map. -/
+@[simp]
+theorem mk_of (p : ℕ) {X : Type u} (rels : Set (freeProP p X)) (x : X) :
+    mk p rels (freeProP.of x) = of p rels x :=
+  (rfl)
 
 /-- A presented pro-`p` group is pro-`p`, since it is a quotient of a free pro-`p` group. -/
 theorem isProP (p : ℕ) (X : Type u) (rels : Set (freeProP p X)) :
