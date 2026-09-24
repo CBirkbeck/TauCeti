@@ -42630,3 +42630,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `JHolomorphic/Prod/Basic.lean` ("used by the analytic Heegaard Floer roadmap"), `Grid/Grading/Parity.lean` ("completes … Lane G.2"),
   `EnergyForm/VariableLp.lean` ("Lane D, item 16 … asks for"). All are status/motivation sentences, not design sources.
 * In progress (cap full): #8508, #8510 and #8513. Pin `dc4b8d60d5`, main `50e5fa02e`.
+* (late in r1000) **#8513 went green at 05:12:39Z and was marked ready at 05:13Z.** Guards: all latest check-runs green, head `baefb2a43`
+  unchanged, pin `dc4b8d60d5` at base `50e5fa02e` and at main, file untouched since the base. No drafts remain.

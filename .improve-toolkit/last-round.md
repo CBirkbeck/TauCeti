@@ -47,9 +47,9 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8503** | `b201b7fc4` | green (03:42:10Z) | kind 2 (`Distributions/Wishart/Basic.lean`: 45 `↦`, nothing else; `Roadmap: StandardDistributions`). **Approved 10/10** by the r998 drive (board 5807960054, 04:57Z; $0.90); `ready-to-merge` | **queue** |
 | **#8508** | `c720da984` | green (04:40:25Z) | kind 2 (`Laplacian/HopfLemma.lean`: 48 `↦`, seven `;` chains split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 04:42:17Z** (r997) | **external reviewers** |
 | **#8510** | `ba4d3cf65` | green (04:53:58Z) | kind 2 (`Laplacian/DriftMaximumPrinciple.lean`: 48 `↦`, five `;` chains split; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 04:54:34Z** (r998) | **external reviewers** |
-| **#8513** | `baefb2a43` | running (since 05:01:51Z) | kind 2 (`CategoryTheory/AlmostSplit/Basic.lean`: 45 `↦`, two `;` chains split; gate 12/0/0; `Roadmap: RepresentationTheory`). **Draft**; **astra cleared it** (r999); base `50e5fa02e` | **CI** — mark ready when green |
+| **#8513** | `baefb2a43` | green (05:12:39Z) | kind 2 (`CategoryTheory/AlmostSplit/Basic.lean`: 45 `↦`, two `;` chains split; gate 12/0/0; `Roadmap: RepresentationTheory`). Astra cleared it; **marked ready 05:13Z** (r1000) | **external reviewers** |
 
-**In progress (cap full): #8508 (ready 04:42Z; 05:42Z), #8510 (ready 04:54Z; 05:54Z) and the draft #8513 (AlmostSplit; astra ✓; build queued).** #8503 approved by its drive; **#8499 merged 04:50:46Z**, the twenty-eighth.
+**In progress (cap full): #8508 (ready 04:42Z; 05:42Z), #8510 (ready 04:54Z; 05:54Z) and #8513 (ready 05:13Z; 06:13Z). No drafts.** #8503 approved by its drive; **#8499 merged 04:50:46Z**, the twenty-eighth.
 **Staged (not opened; the cap is full):** `improve/arrays-basic-style` @ `fb9e0f3d4` from `50e5fa02e` (`Exchangeability/Arrays/Basic.lean`: 104 `↦`, two `ext; simp` chains split, the "entry point of the Layer 8 target" sentence dropped; gate 12/0/0; astra cleared it; body in the scratchpad `pr-body-arraysbasic.md`, `Roadmap: Exchangeability`). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -57,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `a1395b5bd`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `c8d50bf5e`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -68,7 +68,7 @@ a usage-limit error means the stop applies again (a drive then posts an all-⚠�
 
 
 0. **Now (r999):** #8499 merged; #8503 approved (drive). In progress (cap full): #8508 (ready 04:42Z; 05:42Z), #8510 (ready 04:54Z;
-   05:54Z) and the draft #8513 (AlmostSplit; base `50e5fa02e`; mark ready when green, after the guards). **The r976 roadmap-free list is
+   05:54Z) and #8513 (AlmostSplit; ready 05:13Z; 06:13Z). No drafts. **The r976 roadmap-free list is
    used up**; `Arrays/Basic.lean` is staged (above). After it, the next kind 2 is a roadmap-bearing r976 hit (read its roadmap lines first; decline if the roadmap is the cited design source,
    as `Rational.lean`) or a fresh re-score. Drives cost ~$1 each, not ~$16, but the process then hangs ~15–20 min in its archive push to `TauCetiData` (403 retries) after
    posting: run drives in the background and read the board, not the exit. Probe the codex quota
@@ -456,7 +456,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r997: #8497 `ready-to-merge`. **#8499 driven** (70 min) → **approved 10/10** ($1.07). #8508 went green and was marked ready. Kind 2 opened as draft **#8510** (`DriftMaximumPrinciple.lean`), cleared by astra.
 * r998: **#8497 merged** (04:40:40Z). #8510 went green (04:53:58Z) and was marked ready. **#8503 driven** at 71 min.
 * r999: **#8499 merged** (04:50:46Z). The drive **approved #8503 10/10** ($0.90). Kind 2 opened as draft **#8513** (`AlmostSplit/Basic.lean`), cleared by astra.
-* r1000: #8503 `ready-to-merge`; #8513 building. Staged `improve/arrays-basic-style` (astra ✓, gate 12/0/0).
+* r1000: #8503 `ready-to-merge`; #8513 went green (05:12:39Z) and was marked ready. Staged `improve/arrays-basic-style` (astra ✓, gate 12/0/0).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
