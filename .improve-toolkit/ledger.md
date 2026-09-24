@@ -43043,3 +43043,12 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `show … from by …; …` forms stay. Gate 12/0/0. Astra **cleared** (it confirmed the first-step split parses). Body `pr-body-qasym.md`,
   `Roadmap: ContourIntegration` (#933 carried `roadmap/ContourIntegration`).
 * In progress (cap full): #8570, #8577 and #8578. Pin `dc4b8d60d5`, main `7cfe63813`.
+
+## r1040 — 2026-09-24T11:49Z (cron)
+
+* **#8563 merged** (11:36:11Z, `improve/wirtinger-w1p-style`), the forty-fifth of this session's PRs. **The pipeline approved #8570**
+  (board 11:42:48Z, 8 min after ready); `ready-to-merge`.
+* **Step 5, kind 2 (the staged branch): opened draft #8586**, `improve/quotient-asymptotics-style` @ `fb68ebd34`, rebased from `7cfe63813`
+  onto `9889e2022` (file untouched; astra-cleared diff unchanged). Re-gated 12/0/0. `Roadmap: ContourIntegration`. Waiter armed.
+* #8577 and #8578 are `awaiting-review` (5 min). No findings.
+* In progress (cap full): #8577, #8578 and #8586. Pin `dc4b8d60d5`, main `9889e2022`.

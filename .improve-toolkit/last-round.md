@@ -1,4 +1,4 @@
-# Last round — r1039 (2026-09-24T11:40Z)
+# Last round — r1040 (2026-09-24T11:49Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -44,20 +44,20 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8563** | `ca4b1517f` | green | kind 2 (`Sobolev/Poincare/Wirtinger/W1p.lean`). **Approved** by the pipeline (11:07:26Z, 12 min after ready); `ready-to-merge` | **queue** |
-| **#8570** | `ee586dc07` | green (11:29:38Z) | kind 2 (`DenseGraphLimits/Representability/Moebius.lean`: 43 `↦`; `Roadmap: DenseGraphLimits`). Astra cleared it; **marked ready 11:34:53Z** (r1039) | **external reviewers** |
+| **#8570** | `ee586dc07` | green | kind 2 (`DenseGraphLimits/Representability/Moebius.lean`: 43 `↦`). **Approved** by the pipeline (11:42:48Z, 8 min after ready); `ready-to-merge` | **queue** |
 | **#8577** | `e6b34bcb5` | green (11:39:06Z) | kind 2 (`Wishart/Transforms.lean`: 36 `↦`; `Roadmap: StandardDistributions`). Astra cleared it; **marked ready 11:40Z** (r1039) | **external reviewers** |
 | **#8578** | `64f6f0612` | green (11:38:27Z) | kind 2 (`Induction/Mackey/Decomposition.lean`: 38 `↦`; `Roadmap: RepresentationTheory`). Astra cleared it; **marked ready 11:40Z** (r1039) | **external reviewers** |
+| **#8586** | `fb68ebd34` | queued | kind 2 (`Contour/Chord/QuotientAsymptotics.lean`: 38 `↦`, the first calc step's chain split; gate 12/0/0; `Roadmap: ContourIntegration`). **Draft**; **astra cleared it** (r1039); base `9889e2022` | **CI** — mark ready when green |
 
-**In progress (cap full): #8570 (ready 11:35Z), #8577 and #8578 (ready 11:40Z). No drafts.** #8563 is `ready-to-merge`; **#8566 (11:29:22Z) and #8565 (11:34:18Z) merged** (r1039), the forty-third and forty-fourth.
-**Staged (not opened; the cap is full):** `improve/quotient-asymptotics-style` @ `d7bcb3f0f` from `7cfe63813` (`Contour/Chord/QuotientAsymptotics.lean`: 38 `↦`, the first calc step's `by congr 1; ring` split; gate 12/0/0; astra cleared it, including the calc-split parse; body `pr-body-qasym.md`, `Roadmap: ContourIntegration` as #933). **Open it as the next kind 2** when a slot frees. After it: `Arrays/Extreme.lean` (38, 2), `MixedIID/Const.lean` (38, 2), `WorkedExamples/HalfDisc/Basic.lean` (37, 3), `Kostant/Form.lean` (36, 1), `ProbabilityMeasure/Ext.lean` (36, 1); or re-score.
+**In progress (cap full): #8577 and #8578 (ready 11:40Z; 12:40Z) and the draft #8586 (QuotientAsymptotics; astra ✓; build queued).** #8570 is `ready-to-merge`; **#8563 merged 11:36:11Z** (r1040), the forty-fifth.
+**Staged:** nothing (QuotientAsymptotics went as #8586 at r1040). Next kind 2: `Arrays/Extreme.lean` (38, 2), `MixedIID/Const.lean` (38, 2), `WorkedExamples/HalfDisc/Basic.lean` (37, 3), `Kostant/Form.lean` (36, 1), `ProbabilityMeasure/Ext.lean` (36, 1); or re-score.
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `d09406209`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `5c20c37ec`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -499,6 +499,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1037: the pipeline **approved #8563, #8565 and #8566** (11:06–11:07Z); **#8548 merged**. All three slots opened: Moebius rebased and opened as **#8570**; `Wishart/Transforms.lean` (**#8577**) and `Induction/Mackey/Decomposition.lean` (**#8578**) prepared, gated, cleared by astra and opened.
 * r1038: queued prompt right behind r1037; no change (#8570 building, #8577/#8578 queued).
 * r1039: **#8566 and #8565 merged**. #8570, #8577 and #8578 went green and were marked ready. Staged `improve/quotient-asymptotics-style` (astra ✓, gate 12/0/0).
+* r1040: **#8563 merged**; the pipeline **approved #8570** (8 min). QuotientAsymptotics rebased onto `9889e2022` and opened as draft **#8586**.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
