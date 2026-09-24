@@ -7,8 +7,7 @@ module
 
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import Mathlib.RepresentationTheory.Rep.Basic
-public import Mathlib.Topology.Instances.AddCircle.Defs
-import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+public import TauCeti.Algebra.Category.ModuleCat.RatAddCircle
 import Mathlib.CategoryTheory.Abelian.ShortExact
 
 /-!
@@ -25,14 +24,12 @@ cohomology send a character `G → ℚ/ℤ` to a class in `H²(G, ℤ)`.
 
 ## Main definitions
 
-* `ModuleCat.ratAddCircleShortComplex`: the short complex `ℤ → ℚ → ℚ/ℤ` of `ℤ`-modules.
 * `Rep.ratAddCircleShortComplex`: the short complex `ℤ → ℚ → ℚ/ℤ` of trivial integral
   representations of `G`.
 
 ## Main results
 
 * `Rep.shortExact_map_trivialFunctor`: the trivial-action functor preserves short exactness.
-* `ModuleCat.ratAddCircleShortComplex_shortExact`: `0 → ℤ → ℚ → ℚ/ℤ → 0` is short exact.
 * `Rep.ratAddCircleShortComplex_shortExact`: `0 → ℤ → ℚ → ℚ/ℤ → 0` is short exact as a sequence of
   trivial representations.
 * `Rep.ratAddCircleShortComplex_f_hom_apply`, `Rep.ratAddCircleShortComplex_g_hom_apply`: its maps
@@ -59,21 +56,6 @@ theorem shortExact_map_trivialFunctor {S : ShortComplex (ModuleCat.{w} k)} (hS :
   -- the forgetful functor to `ModuleCat k` is faithful and sends the mapped complex back to `S`
   -- definitionally, so short exactness is reflected from `hS`
   ShortExact.reflects_shortExact_of_faithful (forget₂ (Rep k G) (ModuleCat k)) hS
-
-/-- The short complex `ℤ → ℚ → ℚ/ℤ` of `ℤ`-modules, with `ℚ/ℤ` the rational circle
-`AddCircle (1 : ℚ)`: the inclusion of the integers followed by reduction modulo `1`. -/
-abbrev _root_.ModuleCat.ratAddCircleShortComplex : ShortComplex (ModuleCat.{0} ℤ) :=
-  .mk (ModuleCat.ofHom (Int.castAddHom ℚ).toIntLinearMap)
-    (ModuleCat.ofHom (QuotientAddGroup.mk' (AddSubgroup.zmultiples (1 : ℚ))).toIntLinearMap)
-    (by ext; exact AddCircle.coe_period (1 : ℚ))
-
-/-- The sequence `0 → ℤ → ℚ → ℚ/ℤ → 0` of `ℤ`-modules is short exact. -/
-theorem _root_.ModuleCat.ratAddCircleShortComplex_shortExact :
-    ModuleCat.ratAddCircleShortComplex.ShortExact :=
-  -- exactness at `ℚ` says that `x : ℚ` vanishes modulo `1` iff it lies in `zmultiples 1`, the
-  -- image of `Int.cast`
-  ModuleCat.shortComplex_shortExact _ (fun _ ↦ by simp [AddSubgroup.mem_zmultiples_iff])
-    Int.cast_injective (QuotientAddGroup.mk'_surjective _)
 
 variable (G)
 
