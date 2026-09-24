@@ -7,11 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Divisor.Sum
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.DivisorPullback
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.MapsInfinity
--- Proof-only: the places over a point along `[n]`, affine and at infinity.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.PointPlace
--- Proof-only: the place at infinity restricts to itself.
-import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.InfinityPlace
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.PointPlace
 -- Proof-only: `[n]` is separable, hence unramified, when `n` is invertible.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.Separability
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Unramified
@@ -38,21 +34,33 @@ built from a function with this divisor.
 
 ## Main results
 
-* `TauCeti.Isogeny.isEquiv_comap_valuation_pointEquivDegreeOnePlace_iff`: the place of `R`
-  restricts along `[n]` to the place of `T` exactly when `n • R = T`, for every pair of points.
 * `TauCeti.Isogeny.coeff_divisorPullback_mulByIntIsogeny`: the coefficient of `[n]^* D` at the
   place of `R` is the coefficient of `D` at the place of `n • R`.
-* `TauCeti.Isogeny.finite_setOf_zsmul_eq`: the fibre `{R | n • R = T}` is finite.
-* `TauCeti.Isogeny.restrict_eq_pointEquivDegreeOnePlace_iff`: over a separably closed field, the
-  places over the place of `T` are exactly the places of its `[n]`-preimages.
 * `TauCeti.Isogeny.divisorPullback_mulByIntIsogeny_ofPoint`: over a separably closed field,
   `[n]^* (T) = ∑_{n • R = T} (R)`.
 * `TauCeti.Isogeny.exists_principal_eq_divisorPullback_mulByIntIsogeny_sub`: at an `n`-torsion
   point `T`, `[n]^* (T) - [n]^* (O)` is the divisor of a function.
 
+The place-level inputs are in `Isogeny/MulByInt/PointPlace.lean`
+(`isEquiv_comap_valuation_pointEquivDegreeOnePlace_iff`, `finite_setOf_zsmul_eq`,
+`restrict_eq_pointEquivDegreeOnePlace_iff`), and the torsion counts on the points of `W` in
+`Isogeny/MulByInt/IsSepClosed.lean`.
+
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.4.10, III.8.1.
+
+## Prior art
+
+AINTLIB (`github.com/CBirkbeck/AINTLIB` @ `f622f4aa0bd7b9d8b8cb931b5f8cb709f1d179e2`, Apache-2.0)
+proves both results in its own divisor framework, in
+`projects/HasseWeil/HasseWeil/HasseBound/WeilPairing/`: `Pullback.lean` defines the fibre divisor
+`pullbackDiv` combinatorially, `DivisorPullback.lean`'s
+`projectiveDivisorOf_pullback_eq_pullbackDivisor` identifies it with the divisor of `k ∘ φ` by
+per-place order transport over an algebraically closed field, and `WeilFunction.lean`'s
+`pullbackDiv_sub_isPrincipal` (used by `Pairing.lean`'s `weilFunction_isPrincipal`) proves the
+fibre difference principal by the same translate-and-sum argument as here. Nothing is ported:
+here the pullback is the conorm `TauCeti.Isogeny.divisorPullback`, read off places.
 -/
 
 public section
@@ -70,37 +78,10 @@ local instance : IsDedekindDomain W.toAffine.CoordinateRing :=
   have := WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing W.toAffine
   W.toAffine.isDedekindDomain_coordinateRing_of_isIntegrallyClosed
 
-/-- **The places over the place of `T` along `[n]` are the places of the `[n]`-preimages of
-`T`**, among the places of points. -/
-theorem isEquiv_comap_valuation_pointEquivDegreeOnePlace_iff {n : ℤ}
-    (hn : psiFunctionField W n ≠ 0) (R T : W.toAffine.Point) :
-    (((pointEquivDegreeOnePlace W.toAffine R).1.valuation).comap
-        (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv
-      (pointEquivDegreeOnePlace W.toAffine T).1.valuation ↔ n • R = T := by
-  have hinf : ((infinityPlace W.toAffine).comap
-      (mulByIntIsogeny W hn).fieldPullback.toRingHom).IsEquiv (infinityPlace W.toAffine) :=
-    isEquiv_comap_infinityPlace _
-  rcases R with _ | ⟨xR, yR, hR⟩ <;> rcases T with _ | ⟨xT, yT, hT⟩
-  · rw [coe_pointEquivDegreeOnePlace_zero, Place.valuation_infinity, ← Affine.Point.zero_def,
-      smul_zero]
-    exact iff_of_true hinf rfl
-  · rw [coe_pointEquivDegreeOnePlace_zero, Place.valuation_infinity,
-      coe_pointEquivDegreeOnePlace_some, Place.valuation_ofPrime, ← Affine.Point.zero_def,
-      smul_zero]
-    exact iff_of_false
-      (fun hE ↦ Place.not_isEquiv_infinityPlace_valuation (CoordinateRing.pointPlace hT.left)
-        (hinf.symm.trans hE))
-      (Affine.Point.some_ne_zero hT).symm
-  · rw [coe_pointEquivDegreeOnePlace_some, Place.valuation_ofPrime,
-      coe_pointEquivDegreeOnePlace_zero, Place.valuation_infinity, ← Affine.Point.zero_def]
-    exact isEquiv_comap_pointPlace_infinityPlace_iff W hR hn
-  · rw [coe_pointEquivDegreeOnePlace_some, coe_pointEquivDegreeOnePlace_some,
-      Place.valuation_ofPrime, Place.valuation_ofPrime]
-    exact isEquiv_comap_pointPlace_iff W hR hn hT
-
 /-- **The coefficient of `[n]^* D` at the place of `R` is the coefficient of `D` at the place of
 `n • R`**, for `n` invertible in `F`: the place of `R` lies over that of `n • R`, and `[n]` is
 unramified, being separable. -/
+@[simp]
 theorem coeff_divisorPullback_mulByIntIsogeny {n : ℤ} (hchar : (n : F) ≠ 0)
     (D : Divisor F W.toAffine.FunctionField) (R : W.toAffine.Point) :
     letI := (mulByIntIsogeny W
@@ -118,64 +99,13 @@ theorem coeff_divisorPullback_mulByIntIsogeny {n : ℤ} (hchar : (n : F) ≠ 0)
     (Place.restrict_eq_iff_isEquiv_comap F W.toAffine.FunctionField _ _).mpr
       ((isEquiv_comap_valuation_pointEquivDegreeOnePlace_iff W _ R (n • R)).mpr rfl)]
 
-omit [DecidableEq F] in
-private theorem place_injective :
-    Function.Injective fun R : W.toAffine.Point ↦ (pointEquivDegreeOnePlace W.toAffine R).1 :=
-  Subtype.val_injective.comp (pointEquivDegreeOnePlace W.toAffine).injective
-
-/-- **The `[n]`-fibre over a point is finite**: the places of its points lie over the place of
-`T`, and a place has finitely many places above it in the finite extension `[n]`. -/
-theorem finite_setOf_zsmul_eq {n : ℤ} (hn : psiFunctionField W n ≠ 0) (T : W.toAffine.Point) :
-    {R : W.toAffine.Point | n • R = T}.Finite := by
-  let _ := (mulByIntIsogeny W hn).fieldPullback.toRingHom.toAlgebra
-  have := isScalarTower_of_algebraMap_eq_fieldPullback (mulByIntIsogeny W hn) fun _ ↦ rfl
-  have := (mulByIntIsogeny W hn).finiteDimensional_functionField fun _ ↦ rfl
-  exact ((Place.finite_setOf_restrict_eq (k' := F) (F' := W.toAffine.FunctionField) F
-    W.toAffine.FunctionField (pointEquivDegreeOnePlace W.toAffine T).1).preimage
-      (place_injective W).injOn).subset fun R hR ↦
-    (Place.restrict_eq_iff_isEquiv_comap F _ _ _).mpr
-      ((isEquiv_comap_valuation_pointEquivDegreeOnePlace_iff W hn R T).mpr hR)
-
 section SepClosed
 
 variable [IsSepClosed F]
 
-/-- **The places over the place of `T` along `[n]` are the places of its `[n]`-preimages**, over
-a separably closed field in which `n` is invertible: a place above a point place has degree one,
-since `[n]` splits every place completely. -/
-theorem restrict_eq_pointEquivDegreeOnePlace_iff {n : ℤ} (hchar : (n : F) ≠ 0)
-    (T : W.toAffine.Point) (P : Place F W.toAffine.FunctionField) :
-    letI := (mulByIntIsogeny W
-      (psiFunctionField_ne_zero W hchar)).fieldPullback.toRingHom.toAlgebra
-    haveI := isScalarTower_of_algebraMap_eq_fieldPullback
-      (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)) (fun _ ↦ rfl)
-    haveI := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).finiteDimensional_functionField
-      (fun _ ↦ rfl)
-    P.restrict F W.toAffine.FunctionField = (pointEquivDegreeOnePlace W.toAffine T).1 ↔
-      ∃ R, n • R = T ∧ (pointEquivDegreeOnePlace W.toAffine R).1 = P := by
-  let _ := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.toRingHom.toAlgebra
-  have := isScalarTower_of_algebraMap_eq_fieldPullback
-    (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)) (fun _ ↦ rfl)
-  have := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).finiteDimensional_functionField
-    (fun _ ↦ rfl)
-  have := (isSeparable_mulByIntIsogeny_iff W (psiFunctionField_ne_zero W hchar)).2 hchar
-  have hover (R : W.toAffine.Point) :
-      (pointEquivDegreeOnePlace W.toAffine R).1.restrict F W.toAffine.FunctionField =
-        (pointEquivDegreeOnePlace W.toAffine T).1 ↔ n • R = T :=
-    (Place.restrict_eq_iff_isEquiv_comap F _ _ _).trans
-      (isEquiv_comap_valuation_pointEquivDegreeOnePlace_iff W _ R T)
-  refine ⟨fun hP ↦ ?_, fun ⟨R, hR, hRP⟩ ↦ by rw [← hRP]; exact (hover R).mpr hR⟩
-  -- a place over a place of degree one has degree one, the relative degree being one
-  have hdeg : P.degree = 1 := by
-    rw [Place.degree_eq_degree_restrict_mul_relativeDegree F W.toAffine.FunctionField P, hP,
-      (pointEquivDegreeOnePlace W.toAffine T).2, one_mul]
-    exact (isSplitCompletely _ (fun _ ↦ rfl) _).relativeDegree_eq_one hP
-  obtain ⟨R, hR⟩ : ∃ R, (pointEquivDegreeOnePlace W.toAffine R).1 = P :=
-    ⟨(pointEquivDegreeOnePlace W.toAffine).symm ⟨P, hdeg⟩, by simp⟩
-  exact ⟨R, (hover R).mp (by rw [hR]; exact hP), hR⟩
-
 /-- **The pullback of a point along `[n]` is its fibre**: over a separably closed field in which
 `n` is invertible, `[n]^* (T) = ∑_{n • R = T} (R)`. -/
+@[simp]
 theorem divisorPullback_mulByIntIsogeny_ofPoint {n : ℤ} (hchar : (n : F) ≠ 0)
     (T : W.toAffine.Point) :
     letI := (mulByIntIsogeny W
@@ -191,11 +121,14 @@ theorem divisorPullback_mulByIntIsogeny_ofPoint {n : ℤ} (hchar : (n : F) ≠ 0
   have := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).finiteDimensional_functionField
     (fun _ ↦ rfl)
   have := (isSeparable_mulByIntIsogeny_iff W (psiFunctionField_ne_zero W hchar)).2 hchar
-  rw [show ∑ R ∈ (finite_setOf_zsmul_eq W (psiFunctionField_ne_zero W hchar) T).toFinset,
+  -- the fibre sum is the finite-set divisor of the places of the fibre
+  have hsum : ∑ R ∈ (finite_setOf_zsmul_eq W (psiFunctionField_ne_zero W hchar) T).toFinset,
         WeilDivisor.ofPoint (pointEquivDegreeOnePlace W.toAffine R).1 =
       WeilDivisor.ofFinset ((finite_setOf_zsmul_eq W (psiFunctionField_ne_zero W hchar)
-        T).toFinset.map ⟨_, place_injective W⟩) by
-    rw [WeilDivisor.ofFinset_eq_sum, Finset.sum_map]; rfl]
+        T).toFinset.map ⟨fun R ↦ (pointEquivDegreeOnePlace W.toAffine R).1,
+          Subtype.val_injective.comp (pointEquivDegreeOnePlace W.toAffine).injective⟩) := by
+    rw [WeilDivisor.ofFinset_eq_sum, Finset.sum_map, Function.Embedding.coeFn_mk]
+  rw [hsum]
   ext P
   rw [coeff_divisorPullback, ramificationIdx_eq_one _ (fun _ ↦ rfl), Nat.cast_one, one_mul,
     WeilDivisor.coeff_ofFinset]
@@ -208,36 +141,13 @@ theorem divisorPullback_mulByIntIsogeny_ofPoint {n : ℤ} (hchar : (n : F) ≠ 0
   · refine WeilDivisor.coeff_ofPoint_of_ne fun hP ↦ hmem ?_
     obtain ⟨R, hR, rfl⟩ := (restrict_eq_pointEquivDegreeOnePlace_iff W hchar T P).mp hP
     exact Finset.mem_map_of_mem _
-      ((Set.Finite.mem_toFinset hfin).mpr (show R ∈ {R | n • R = T} from hR))
+      ((Set.Finite.mem_toFinset hfin).mpr (by simpa only [Set.mem_ofPred_eq] using hR))
 
 /-! ### The divisor `[n]^* (T) - [n]^* (O)` -/
 
-/-- The points of `W` are those of its base change to `F`, where the torsion counts live. -/
-private noncomputable def pointEquivBaseChangeSelf :
-    W.toAffine.Point ≃+ (W.toAffine⁄F).toAffine.Point :=
-  AddEquiv.cast (M := fun W' : Affine F ↦ W'.Point) W.toAffine.baseChange_self.symm
-
-private theorem exists_zsmul_eq {n : ℤ} (hchar : (n : F) ≠ 0) {T : W.toAffine.Point}
-    (hT : n • T = 0) : ∃ R : W.toAffine.Point, n • R = T := by
-  obtain ⟨P, hP, -⟩ := W.toAffine.exists_zsmul_eq_of_zsmul_eq_zero hchar
-    (T := pointEquivBaseChangeSelf W T) (by rw [← map_zsmul, hT, map_zero])
-  exact ⟨(pointEquivBaseChangeSelf W).symm P, by rw [← map_zsmul, hP, AddEquiv.symm_apply_apply]⟩
-
-private theorem natCard_setOf_zsmul_eq_zero {n : ℤ} (hchar : (n : F) ≠ 0) :
-    Nat.card {R : W.toAffine.Point | n • R = 0} = n.natAbs ^ 2 := by
-  rw [← W.toAffine.natCard_torsionBy hchar]
-  refine Nat.card_congr ((pointEquivBaseChangeSelf W).toEquiv.subtypeEquiv fun R ↦ ?_)
-  simp only [Set.mem_ofPred_eq, AddEquiv.toEquiv_eq_coe, EquivLike.coe_coe]
-  refine ⟨fun h ↦ (Submodule.mem_torsionBy_iff _ _).mpr ?_, fun h ↦ ?_⟩
-  · rw [← map_zsmul, h, map_zero]
-  · have := (Submodule.mem_torsionBy_iff _ _).mp h
-    rwa [← map_zsmul, AddEquiv.map_eq_zero_iff] at this
-
 /-- **`[n]^* (T) - [n]^* (O)` is principal** at an `n`-torsion point `T`, over a separably closed
-field in which `n` is invertible (Silverman III.8.1).
-
-With `n • R₀ = T`, the fibre over `T` is the translate by `R₀` of the fibre over `O`, so the
-divisor is `∑_{n • S = O} ((R₀ + S) - (S))`. Its sum is `#E[n] • R₀ = n • (n • R₀) = O`. -/
+field in which `n` is invertible (Silverman III.8.1). A function with this divisor is the
+function `g_T` from which the Weil pairing is built. -/
 theorem exists_principal_eq_divisorPullback_mulByIntIsogeny_sub {n : ℤ}
     (hchar : (n : F) ≠ 0) {T : W.toAffine.Point} (hT : n • T = 0) :
     letI := (mulByIntIsogeny W
@@ -248,7 +158,9 @@ theorem exists_principal_eq_divisorPullback_mulByIntIsogeny_sub {n : ℤ}
         (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).divisorPullback (fun _ ↦ rfl)
           (WeilDivisor.ofPoint (Place.infinity W.toAffine)) := by
   let _ := (mulByIntIsogeny W (psiFunctionField_ne_zero W hchar)).fieldPullback.toRingHom.toAlgebra
-  obtain ⟨R₀, hR₀⟩ := exists_zsmul_eq W hchar hT
+  -- with `n • R₀ = T` the divisor is `∑_{n • S = O} ((R₀ + S) - (S))`, whose sum is
+  -- `#E[n] • R₀ = n • (n • R₀) = O`
+  obtain ⟨R₀, hR₀⟩ := W.toAffine.exists_point_zsmul_eq_of_zsmul_eq_zero hchar hT
   rw [← coe_pointEquivDegreeOnePlace_zero, divisorPullback_mulByIntIsogeny_ofPoint W hchar T,
     divisorPullback_mulByIntIsogeny_ofPoint W hchar .zero]
   set s₀ := (finite_setOf_zsmul_eq W (psiFunctionField_ne_zero W hchar) 0).toFinset with hs₀
@@ -267,7 +179,7 @@ theorem exists_principal_eq_divisorPullback_mulByIntIsogeny_sub {n : ℤ}
   have hσ : W.toAffine.divisorSum D = 0 := by
     simp only [D, map_sum, divisorSum_ofPoint_sub_ofPoint, add_sub_cancel_right,
       Finset.sum_const]
-    rw [hs₀, ← Nat.card_eq_card_finite_toFinset, natCard_setOf_zsmul_eq_zero W hchar,
+    rw [hs₀, ← Nat.card_eq_card_finite_toFinset, W.toAffine.natCard_setOf_zsmul_eq_zero hchar,
       ← natCast_zsmul, Nat.cast_pow, Int.natAbs_sq, sq, mul_smul, hR₀, hT]
   obtain ⟨z, hz⟩ := W.toAffine.divisorSum_eq_zero_iff.mp hσ
   exact ⟨z, hz.trans (by simp [D])⟩

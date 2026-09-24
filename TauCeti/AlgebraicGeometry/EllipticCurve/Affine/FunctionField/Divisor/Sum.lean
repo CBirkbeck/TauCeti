@@ -112,6 +112,7 @@ theorem ofPoint_sub_ofPoint_mem_ker_degree (P Q : W.Point) :
 
 /-- **`σ((P) - (Q)) = P - Q`**, for the places the point--place dictionary attaches to `P`
 and `Q`. -/
+@[simp]
 theorem divisorSum_ofPoint_sub_ofPoint (P Q : W.Point) :
     W.divisorSum ⟨_, W.ofPoint_sub_ofPoint_mem_ker_degree P Q⟩ = P - Q := by
   have hO (R : W.Point) : W.divisorSum ⟨_, W.ofPoint_sub_ofPoint_mem_ker_degree R 0⟩ = R := by
