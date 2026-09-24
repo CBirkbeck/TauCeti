@@ -42384,3 +42384,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `Laplacian/DriftMaximumPrinciple.lean` (48, 7), `Laplacian/HopfLemma.lean` (48, 6). Largest: `PDE/EnergyForm/Integrated/Basic.lean`
   (156 arrows, 2 roadmap lines). The staged `improve/monodromy-style` goes first.
 * In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `e697269a7`.
+
+## r977 — 2026-09-24T01:05Z (cron)
+
+* No merges, no findings, no boards. #8469 is at 49 min since ready (step 4 opens at 01:15Z), #8473 at 30 min, #8476 at 20 min.
+* The staged `improve/monodromy-style` still merges cleanly into main `2593f5f40`, and the file is untouched since its base.
+* In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`.
