@@ -20,7 +20,8 @@ product away from `S`, which forgets the coordinates indexed by `S`. This is Mat
 `RestrictedProduct.mapAlongMonoidHom` along the inclusion `{i // i ∉ S} → ι`, which carries the
 cofinite filter to the cofinite filter because it is injective. Its coordinate formula, its
 continuity for every reference family, and its compatibility with nested index sets are the
-facts a decomposition of a restricted product along a finite set of indices needs.
+facts the decomposition `awayDecomposition` of a restricted product along a finite set of indices
+needs.
 
 No finiteness of `S` is assumed anywhere: the away-`S` restricted product and the restriction to
 it make sense for every set of indices.

@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Topology.Algebra.RestrictedProduct.Away
+public import TauCeti.Topology.Algebra.RestrictedProduct.Away.Decomposition
 public import TauCeti.Topology.Algebra.RestrictedProduct.Sum
 public import TauCeti.Topology.Algebra.RestrictedProduct.TopologicalSpace
 public import Mathlib.NumberTheory.Real.Irrational
@@ -42,10 +42,11 @@ The same set `W` shows that recombining a coordinate at `0` with an element of t
 product over the indices `n ≠ 0` is not continuous
 (`not_continuous_restrictedProduct_of_apply_eq_rat_bot`): here the open neighbourhoods of `0` come
 from the plain product over `{0}` and from the restricted product away from `0`, and the same
-choice of `t` and `s` escapes `W`. This is the discontinuity of the inverse of the decomposition of
-a restricted product into the product over a finite set of indices times the restricted product
-away from it, when the reference subgroups away from that set are not open; compare
-`continuous_restrictedProduct_of_apply_eq_of_isOpen`.
+choice of `t` and `s` escapes `W`. The inverse of the decomposition `awayDecomposition` of a
+restricted product into the product over a finite set of indices times the restricted product
+away from it is such a map, so it is not continuous when the reference subgroups away from that
+set are not open (`not_continuous_awayDecomposition_symm`); compare
+`continuous_awayDecomposition_symm` and `continuous_restrictedProduct_of_apply_eq_of_isOpen`.
 
 The openness of the witness is checked stage by stage with `isOpen_restrictedProduct_iff`, and the
 neighbourhood argument uses `continuous_restrictedProduct_mulSingle`.
@@ -322,5 +323,19 @@ theorem not_continuous_restrictedProduct_of_apply_eq_rat_bot
   rw [h0, hn', RestrictedProduct.mulSingle_eq_same] at hmemW
   simp only [toAdd_ofAdd] at hmemW
   exact absurd hmemW (not_lt.2 hts)
+
+/-- The inverse of the decomposition `awayDecomposition` of a restricted product along a finite set
+of indices is not continuous in general: for `Πʳ n : ℕ, [Multiplicative ℚ, ⊥]` and `S = {0}`, with
+the trivial, non-open, reference subgroup at every index, it is a discontinuous bijection. The
+openness hypothesis of `continuous_awayDecomposition_symm` on the reference subgroups away from `S`
+therefore cannot be dropped. -/
+theorem not_continuous_awayDecomposition_symm :
+    ¬ Continuous (awayDecomposition ({0} : Set ℕ) (Set.finite_singleton 0)
+      fun _ : ℕ ↦ (⊥ : Subgroup (Multiplicative ℚ))).symm :=
+  not_continuous_restrictedProduct_of_apply_eq_rat_bot
+    (fun p i ↦ awayDecomposition_symm_apply_of_mem {0} (Set.finite_singleton 0)
+      (fun _ ↦ (⊥ : Subgroup (Multiplicative ℚ))) p i.1 i.2)
+    fun p j ↦ awayDecomposition_symm_apply_of_notMem {0} (Set.finite_singleton 0)
+      (fun _ ↦ (⊥ : Subgroup (Multiplicative ℚ))) p j.1 j.2
 
 end TauCeti
