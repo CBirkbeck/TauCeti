@@ -42408,3 +42408,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
 * (late in r979) **#8487 went green at 01:27:42Z and was marked ready at 01:28Z.** Guards: all latest check-runs green, head `385acf845`
   unchanged, pin `dc4b8d60d5` at base `53ab872de` and at main, `Monodromy.lean` untouched on main since the base. No drafts remain.
+
+## r980 — 2026-09-24T01:35Z (cron)
+
+* No merges, no findings, no boards. #8473 is 59m45s past `max(CI-green 00:34:19Z, ready 00:34:48Z)`: not yet an hour, so not driven.
+  #8476 is at 50 min and #8487 at 7 min. **Next round (~01:44Z): if #8473 and #8476 still have no board, probe the codex quota and drive
+  them** (both will be past the hour).
+* In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
