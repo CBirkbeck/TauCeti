@@ -66,20 +66,6 @@ private theorem lipschitzToOrthogonal_surjective_of_invertible
   exact lipschitzToOrthogonal_surjective Q hQ
 
 omit [FiniteDimensional K V] in
-private theorem inclusion_spinToSpecialOrthogonal_eq_spinToOrthogonal
-    (Q : QuadraticForm K V) (x : spinGroup Q) :
-    Subgroup.inclusion (QuadraticMap.specialOrthogonalGroup_le_orthogonalGroup Q)
-      (spinToSpecialOrthogonal Q x) = spinToOrthogonal Q x := by
-  apply Subtype.ext
-  apply LinearEquiv.ext
-  intro v
-  -- Imported bundled definitions are opaque here, so compare their public vector equations.
-  change (((spinToSpecialOrthogonal Q x : QuadraticMap.specialOrthogonalGroup Q) :
-    V ≃ₗ[K] V) v) = (((spinToOrthogonal Q x : QuadraticMap.orthogonalGroup Q) :
-      V ≃ₗ[K] V) v)
-  rw [coe_spinToSpecialOrthogonal_apply, coe_spinToOrthogonal_apply]
-
-omit [FiniteDimensional K V] in
 private theorem pinToOrthogonal_eq_lipschitzToOrthogonal
     (Q : QuadraticForm K V) (p : pinGroup Q) :
     pinToOrthogonal Q p = lipschitzToOrthogonal Q (pinToLipschitz Q p) := by
@@ -185,22 +171,21 @@ theorem orthogonalSpinorNorm_eq_detSquareClass_of_isSquare_apply
 /-- The spinor norm on `SO(Q)`, obtained by restricting the orthogonal spinor norm. -/
 noncomputable def spinorNorm (Q : QuadraticForm K V) (hQ : Q.Nondegenerate) :
     QuadraticMap.specialOrthogonalGroup Q →* Multiplicative (SquareClassGroup K) :=
-  (orthogonalSpinorNorm Q hQ).comp
-    (Subgroup.inclusion (QuadraticMap.specialOrthogonalGroup_le_orthogonalGroup Q))
+  (orthogonalSpinorNorm Q hQ).comp (_root_.QuadraticMap.specialOrthogonalToOrthogonal Q)
 
 /-- The spinor norm is the restriction of the orthogonal spinor norm to `SO(Q)`. -/
 @[simp]
 theorem spinorNorm_apply (Q : QuadraticForm K V) (hQ : Q.Nondegenerate)
     (g : QuadraticMap.specialOrthogonalGroup Q) :
-    spinorNorm Q hQ g = orthogonalSpinorNorm Q hQ
-      (Subgroup.inclusion (QuadraticMap.specialOrthogonalGroup_le_orthogonalGroup Q) g) := by
+    spinorNorm Q hQ g =
+      orthogonalSpinorNorm Q hQ (_root_.QuadraticMap.specialOrthogonalToOrthogonal Q g) := by
   rw [spinorNorm, MonoidHom.comp_apply]
 
 /-- The Spin action has trivial spinor norm. -/
 @[simp high]
 theorem spinorNorm_spinToSpecialOrthogonal (Q : QuadraticForm K V) (hQ : Q.Nondegenerate)
     (x : spinGroup Q) : spinorNorm Q hQ (spinToSpecialOrthogonal Q x) = 1 := by
-  rw [spinorNorm_apply, inclusion_spinToSpecialOrthogonal_eq_spinToOrthogonal]
+  rw [spinorNorm_apply, specialOrthogonalToOrthogonal_spinToSpecialOrthogonal]
   rw [← pinToOrthogonal_spinToPin]
   rw [pinToOrthogonal_eq_lipschitzToOrthogonal,
     orthogonalSpinorNorm_lipschitzToOrthogonal,
@@ -256,12 +241,12 @@ theorem range_spinToSpecialOrthogonal_eq_ker_spinorNorm
     exact MonoidHom.mem_ker.mpr (spinorNorm_spinToSpecialOrthogonal Q hQ x)
   · intro g hg
     have hg' : orthogonalSpinorNorm Q hQ
-        (Subgroup.inclusion (QuadraticMap.specialOrthogonalGroup_le_orthogonalGroup Q) g) = 1 :=
+        (_root_.QuadraticMap.specialOrthogonalToOrthogonal Q g) = 1 :=
       MonoidHom.mem_ker.mp hg
     obtain ⟨p, hp⟩ := exists_pinToOrthogonal_eq_of_spinorNorm_eq_one Q hQ _ hg'
     have hpEven : (p : CliffordAlgebra Q) ∈ even Q :=
       mem_even_of_det_pinToOrthogonal_eq_one Q p (by
-        rw [hp]
+        rw [hp, _root_.QuadraticMap.coe_specialOrthogonalToOrthogonal]
         exact (QuadraticMap.mem_specialOrthogonalGroup_iff.mp g.2).2)
     let x : spinGroup Q := ⟨(p : CliffordAlgebra Q), p.2, hpEven⟩
     refine ⟨x, ?_⟩
@@ -269,15 +254,10 @@ theorem range_spinToSpecialOrthogonal_eq_ker_spinorNorm
       apply Subtype.ext
       rw [coe_spinToPin_apply]
     have horth : spinToOrthogonal Q x =
-        Subgroup.inclusion (QuadraticMap.specialOrthogonalGroup_le_orthogonalGroup Q) g := by
+        _root_.QuadraticMap.specialOrthogonalToOrthogonal Q g := by
       rw [← pinToOrthogonal_spinToPin, hxp, hp]
-    apply Subtype.ext
-    apply LinearEquiv.ext
-    intro v
-    rw [coe_spinToSpecialOrthogonal_apply]
-    have hv := congrArg (fun z : QuadraticMap.orthogonalGroup Q => ((z : V ≃ₗ[K] V) v)) horth
-    rw [coe_spinToOrthogonal_apply] at hv
-    exact hv
+    apply _root_.QuadraticMap.specialOrthogonalToOrthogonal_injective
+    rw [specialOrthogonalToOrthogonal_spinToSpecialOrthogonal, horth]
 
 /-- The Spin action with codomain restricted to the kernel of the spinor norm. -/
 noncomputable def spinToSpinorNormKernel
@@ -325,11 +305,10 @@ theorem spinToSpecialOrthogonal_surjective_of_isSquare_apply
   rw [MonoidHom.mem_ker, spinorNorm_apply,
     orthogonalSpinorNorm_eq_detSquareClass_of_isSquare_apply Q hQ hsq]
   rw [QuadraticMap.orthogonalDetSquareClass_apply]
-  have hgdet := (QuadraticMap.mem_specialOrthogonalGroup_iff.mp g.2).2
-  have hgdet' : LinearEquiv.det
-      ((Subgroup.inclusion (QuadraticMap.specialOrthogonalGroup_le_orthogonalGroup Q) g :
-        QuadraticMap.orthogonalGroup Q) : V ≃ₗ[K] V) = 1 := by
-    simpa only [Subgroup.coe_inclusion] using hgdet
-  rw [hgdet', map_one]
+  have hdet : LinearEquiv.det (g : V ≃ₗ[K] V) = 1 :=
+    (QuadraticMap.mem_specialOrthogonalGroup_iff.mp g.2).2
+  rw [← _root_.QuadraticMap.orthogonalDet_apply,
+    _root_.QuadraticMap.orthogonalDet_apply,
+    _root_.QuadraticMap.coe_specialOrthogonalToOrthogonal, hdet, map_one]
 
 end CliffordAlgebra
