@@ -130,8 +130,9 @@ arbitrary Weierstrass curve over a commutative ring. -/
 /-- What Mathlib's `AddEquiv.cast` — transport of the point group along an equality of Weierstrass
 curves — does to a point given by coordinates. The equiv itself is `AddEquiv.cast` and is not
 restated here; only its value needs a name, since Mathlib states `cast` through `Equiv.cast` and
-so gives no equation for it. Public because the quadratic-twist point isomorphism rewrites with
-it as well; within this file it is used only by `equivVariableChange_symm_some`. -/
+so gives no equation for it. Public because the quadratic-twist point isomorphism and the
+base-change point map `WeierstrassCurve.Affine.pointMap` (`MordellWeil/LocalCondition.lean`)
+rewrite with it as well; within this file it is used only by `equivVariableChange_symm_some`. -/
 -- not `@[simp]`: Mathlib's `AddEquiv.cast_apply` is itself a simp lemma and rewrites this
 -- left-hand side to the raw `cast` first, so `simpNF` reports the statement is not in
 -- simp-normal form and the lemma could never fire. It is used by `rw`, which is syntactic.
