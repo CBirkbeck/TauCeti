@@ -1056,9 +1056,12 @@ private theorem coindCounitNatTrans_app_hom_impl (A : SmoothDiscreteTopRep.{u, v
           (smoothDiscreteResFunctor_obj R G U (coindTopRep R G U A)))) ≫
         TopRep.ofHom (coindCounit R G U A) := rfl
 
+-- A pre-lemma (`simp↓`): otherwise `Functor.comp_obj` and `Functor.id_obj` rewrite the implicit
+-- source and target of the component first, and the left-hand side no longer matches. `dsimp%` does
+-- not help here, since it also rewrites the dependent implicit arguments that `simp` leaves alone.
 /-- The components of the coinduction counit evaluate at `1`. The object transport identifies the
 restricted opaque coinduced object with the restriction of `coindTopRep`. -/
-@[simp]
+@[simp↓]
 theorem coindCounitNatTrans_app_apply (A : SmoothDiscreteTopRep.{u, v, max v w} R U)
     (f : DiscreteCoind G U A.obj.V) :
     (show ContIntertwiningMap ((coindTopRep R G U A).obj.ρ.restrict U.subtype) A.obj.ρ from
