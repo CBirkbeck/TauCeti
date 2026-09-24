@@ -223,8 +223,9 @@ theorem H0Cor_comp_H0Res_apply (x : tateCohomology M 0) :
 
 /-- Restriction followed by corestriction is multiplication by the index, in degree zero. -/
 theorem H0Res_comp_H0Cor :
-    H0Res M H ≫ H0Cor M H = H.index • 𝟙 (tateCohomology M 0) :=
-  ModuleCat.hom_ext <| LinearMap.ext <| H0Cor_comp_H0Res_apply M H
+    H0Res M H ≫ H0Cor M H = H.index • 𝟙 (tateCohomology M 0) := by
+  ext x
+  simpa using H0Cor_comp_H0Res_apply M H x
 
 end Zero
 
@@ -296,8 +297,9 @@ theorem HNegOneCor_comp_HNegOneRes_apply (x : tateCohomology M (-1)) :
 
 /-- Restriction followed by corestriction is multiplication by the index, in degree `-1`. -/
 theorem HNegOneRes_comp_HNegOneCor :
-    HNegOneRes M H ≫ HNegOneCor M H = H.index • 𝟙 (tateCohomology M (-1)) :=
-  ModuleCat.hom_ext <| LinearMap.ext <| HNegOneCor_comp_HNegOneRes_apply M H
+    HNegOneRes M H ≫ HNegOneCor M H = H.index • 𝟙 (tateCohomology M (-1)) := by
+  ext x
+  simpa using HNegOneCor_comp_HNegOneRes_apply M H x
 
 end NegOne
 
