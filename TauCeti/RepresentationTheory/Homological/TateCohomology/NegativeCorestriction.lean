@@ -5,8 +5,7 @@ Authors: Codex
 -/
 module
 
-public import Mathlib.RepresentationTheory.Homological.GroupHomology.Functoriality
-public import Mathlib.RepresentationTheory.Homological.TateCohomology.Basic
+public import TauCeti.RepresentationTheory.Homological.TateCohomology.Functoriality
 
 /-!
 # Corestriction in negative Tate degrees
@@ -41,10 +40,12 @@ a cohomological corestriction construction.
 
 ## Main results
 
-* `TauCeti.TateCohomology.negSuccCor_comp_isoGroupHomology_hom`: negative corestriction agrees
+* `TauCeti.TateCohomology.negSuccCor_comp_isoGroupHomology_hom`,
+  `TauCeti.TateCohomology.negSuccCor_comp_negSuccIso_hom`: negative corestriction agrees
   with ordinary group-homology corestriction through Mathlib's comparison.
 * `TauCeti.TateCohomology.map_comp_negSuccCor`: negative corestriction is natural in its
   coefficients.
+
 ## References
 
 * E. Artin and J. Tate, *Class Field Theory*, Chapter IV, §6 and Chapter XIV, §4.
@@ -61,11 +62,6 @@ namespace TauCeti.TateCohomology
 
 variable {R G H : Type u} [CommRing R] [Group G] [Group H] [Fintype G] [Fintype H]
 
-private abbrev negSuccIsoGroupHomology (R G : Type u) [CommRing R] [Group G] [Fintype G]
-    (n : ℕ) [NeZero n] :=
-  TateCohomology.isoGroupHomology (R := R) (G := G) (Int.negSucc n) n (by
-    rw [Int.negSucc_eq])
-
 /-- **Corestriction along a homomorphism in Tate degree `-(n+1)`**, natural in the coefficient
 representation, where `n > 0`. Through Mathlib's negative-degree Tate comparison this is the
 ordinary covariant map on `n`th group homology induced by the homomorphism. -/
@@ -73,9 +69,9 @@ def negSuccCorNatTrans (f : H →* G) (n : ℕ) [NeZero n] :
     Rep.resFunctor f ⋙
         tateCohomologyFunctor (R := R) (G := H) (Int.negSucc n) ⟶
       tateCohomologyFunctor (R := R) (G := G) (Int.negSucc n) :=
-  (𝟙 (Rep.resFunctor f) ◫ (negSuccIsoGroupHomology R H n).hom) ≫
+  Functor.whiskerLeft _ (TateCohomology.isoGroupHomology _ n (Int.negSucc_eq n)).hom ≫
     groupHomology.coresNatTrans R f n ≫
-    (negSuccIsoGroupHomology R G n).inv
+      (TateCohomology.isoGroupHomology _ n (Int.negSucc_eq n)).inv
 
 /-- Corestriction along `f : H → G` in Tate degree `-(n+1)`, where `n > 0`. -/
 def negSuccCor (M : Rep R G) (f : H →* G) (n : ℕ) [NeZero n] :
@@ -93,18 +89,21 @@ theorem negSuccCor_comp_isoGroupHomology_hom (M : Rep R G) (f : H →* G) (n : �
           rw [Int.negSucc_eq])).hom.app M =
       (TateCohomology.isoGroupHomology (Int.negSucc n) n (by
         rw [Int.negSucc_eq])).hom.app (Rep.res f M) ≫
-        (groupHomology.coresNatTrans R f n).app M := by
-  dsimp only [negSuccCor, negSuccCorNatTrans]
-  rw [NatTrans.comp_app, NatTrans.comp_app, NatTrans.id_hcomp_app]
-  -- The public statement uses Mathlib's comparison directly, while the construction shares a
-  -- private abbreviation to keep its proof-irrelevant degree witness syntactically fixed.
-  change (negSuccIsoGroupHomology R H n).hom.app (Rep.res f M) ≫
-      (groupHomology.coresNatTrans R f n).app M ≫
-        (negSuccIsoGroupHomology R G n).inv.app M ≫
-          (negSuccIsoGroupHomology R G n).hom.app M =
-      (negSuccIsoGroupHomology R H n).hom.app (Rep.res f M) ≫
-        (groupHomology.coresNatTrans R f n).app M
-  rw [(negSuccIsoGroupHomology R G n).inv_hom_id_app, Category.comp_id]
+        (groupHomology.coresNatTrans R f n).app M :=
+  -- `negSuccCor` unfolds definitionally to `hom ≫ cores ≫ inv`, so cancelling the comparison
+  -- isomorphism holds by `rfl`; `simp` does not perform this cancellation here.
+  (Iso.eq_comp_inv ((TateCohomology.isoGroupHomology _ n (Int.negSucc_eq n)).app M)).1 rfl
+
+/-- Negative-degree Tate corestriction is the ordinary group-homology map through
+`TauCeti.TateCohomology.negSuccIso`. -/
+-- The right side is stated through `groupHomology.map`, the `simp` normal form of
+-- `(groupHomology.coresNatTrans R f n).app M`.
+@[reassoc (attr := simp)]
+theorem negSuccCor_comp_negSuccIso_hom (M : Rep R G) (f : H →* G) (n : ℕ) [NeZero n] :
+    negSuccCor M f n ≫ (negSuccIso M n).hom =
+      (negSuccIso (Rep.res f M) n).hom ≫ groupHomology.map f (𝟙 (Rep.res f M)) n := by
+  rw [negSuccIso_hom, negSuccIso_hom]
+  exact negSuccCor_comp_isoGroupHomology_hom M f n
 
 /-- Negative-degree Tate corestriction is natural in the coefficient representation. -/
 -- Stated with `Rep.resMap f φ`, the form to which `simp` reduces `(Rep.resFunctor f).map φ`

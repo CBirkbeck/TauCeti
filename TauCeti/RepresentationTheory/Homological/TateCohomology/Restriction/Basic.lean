@@ -111,8 +111,7 @@ theorem negSuccRes_comp_isoGroupHomology_hom (n : ℕ) [NeZero n] :
   -- `Iso.inv_hom_id_app`: the objects involved appear both as `tateCohomology` and as values of
   -- `tateCohomologyFunctor`, so the rewrite does not match syntactically, while this equation
   -- holds by `rfl`.
-  (Iso.eq_comp_inv ((_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n
-    (Int.negSucc_eq n)).app (Rep.res H.subtype M))).1 rfl
+  (Iso.eq_comp_inv _).1 rfl
 
 /-- Negative-degree Tate restriction is the homological transfer through
 `TauCeti.TateCohomology.negSuccIso`. -/
@@ -137,7 +136,6 @@ theorem HNegTwoRes_def :
         TauCeti.groupHomology.transfer M H 1 ≫
           (_root_.TateCohomology.isoGroupHomology (-2) 1 (by norm_num)).inv.app
             (Rep.res H.subtype M) := by
-  rw [HNegTwoRes, negSuccRes]
   rfl
 
 /-- Restriction followed by corestriction is multiplication by the index, in every Tate degree
@@ -146,15 +144,12 @@ theorem HNegTwoRes_def :
 theorem negSuccRes_comp_negSuccCor (n : ℕ) [NeZero n] :
     negSuccRes M H n ≫ negSuccCor M H.subtype n =
       H.index • 𝟙 (tateCohomology M (Int.negSucc n)) := by
-  rw [← cancel_mono ((_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n
-    (Int.negSucc_eq n)).hom.app M), Preadditive.nsmul_comp, Category.id_comp, Category.assoc,
-    negSuccCor_comp_isoGroupHomology_hom, negSuccRes_comp_isoGroupHomology_hom_assoc,
-    groupHomology.coresNatTrans_app]
-  -- Through the comparison with group homology this is `cor ∘ transfer = [G : H]`; the two
-  -- sides are composed across the `groupHomology.functor` presentation of the same object, so
-  -- the identity is applied as a term rather than by rewriting.
-  exact (congrArg (_ ≫ ·) (TauCeti.groupHomology.transfer_comp_map_subtype_id M H n)).trans
-    ((Preadditive.comp_nsmul _ _ _).trans (congrArg (H.index • ·) (Category.comp_id _)))
+  -- Through the comparison with group homology this is `cor ∘ transfer = [G : H]`. Squeezed:
+  -- the bare `simp` is several times slower.
+  rw [← cancel_mono (negSuccIso M n).hom]
+  simp only [Category.assoc, negSuccCor_comp_negSuccIso_hom, negSuccRes_comp_negSuccIso_hom_assoc,
+    TauCeti.groupHomology.transfer_comp_map_subtype_id, Linear.comp_smul, Linear.smul_comp,
+    Category.comp_id, Category.id_comp]
 
 end Negative
 
@@ -173,8 +168,7 @@ private theorem h0_cor_le :
       Submodule.comap (Representation.relNormInvariants M.ρ H)
         ((range M.ρ.norm).submoduleOf M.ρ.invariants) := by
   rintro ⟨x, hx⟩ ⟨y, rfl⟩
-  refine ⟨y, ?_⟩
-  simpa using (Representation.relNorm_norm_apply (ρ := M.ρ) (H := H) y).symm
+  exact ⟨y, by simp [Representation.relNorm_norm_apply]⟩
 
 /-- Restriction to a subgroup in degree zero Tate cohomology, induced by the inclusion of the
 invariants `Mᴳ ⊆ Mᴴ`. -/
@@ -197,9 +191,8 @@ theorem H0π_comp_H0Res :
     H0π M ≫ H0Res M H =
       ModuleCat.ofHom (Submodule.inclusion
         (Representation.invariants_le_invariants_comp_subtype (ρ := M.ρ) (H := H))) ≫
-        H0π (Rep.res H.subtype M) := by
-  rw [H0Res]
-  exact ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
+        H0π (Rep.res H.subtype M) :=
+  ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
     (H0π_comp_H0IsoNormQuotient_hom _) _ _
 
 /-- Corestriction in degree zero sends the class of an `H`-invariant element to the class of its
@@ -207,9 +200,8 @@ relative norm. -/
 @[reassoc (attr := simp), elementwise (attr := simp)]
 theorem H0π_comp_H0Cor :
     H0π (Rep.res H.subtype M) ≫ H0Cor M H =
-      ModuleCat.ofHom (Representation.relNormInvariants M.ρ H) ≫ H0π M := by
-  rw [H0Cor]
-  exact ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
+      ModuleCat.ofHom (Representation.relNormInvariants M.ρ H) ≫ H0π M :=
+  ModuleCat.comp_conj_mapQ _ _ (H0π_comp_H0IsoNormQuotient_hom _)
     (H0π_comp_H0IsoNormQuotient_hom _) _ _
 
 /-- Corestriction of the restriction of a degree-zero class is the index multiple of it. -/
@@ -224,9 +216,8 @@ theorem H0Cor_comp_H0Res_apply (x : tateCohomology M 0) :
 
 /-- Restriction followed by corestriction is multiplication by the index, in degree zero. -/
 theorem H0Res_comp_H0Cor :
-    H0Res M H ≫ H0Cor M H = H.index • 𝟙 (tateCohomology M 0) := by
-  ext x
-  simpa using H0Cor_comp_H0Res_apply M H x
+    H0Res M H ≫ H0Cor M H = H.index • 𝟙 (tateCohomology M 0) :=
+  ModuleCat.hom_ext <| LinearMap.ext <| H0Cor_comp_H0Res_apply M H
 
 end Zero
 
@@ -237,10 +228,9 @@ private theorem hNegOne_res_le :
       Submodule.comap (Representation.relTransferKerNorm M.ρ H)
         ((Coinvariants.ker (Rep.res H.subtype M).ρ).submoduleOf
           (ker (Rep.res H.subtype M).ρ.norm)) :=
-  fun x hx => by
-    rw [Submodule.mem_comap, Submodule.submoduleOf, Submodule.mem_comap, Submodule.subtype_apply,
-      Representation.coe_relTransferKerNorm]
-    exact Representation.relTransfer_mem_coinvariantsKer (H := H) hx
+  fun _ hx => by
+    simpa only [Submodule.mem_comap, Submodule.submoduleOf, Submodule.subtype_apply,
+      Representation.coe_relTransferKerNorm] using Representation.relTransfer_mem_coinvariantsKer hx
 
 private theorem hNegOne_cor_le :
     (Coinvariants.ker (Rep.res H.subtype M).ρ).submoduleOf (ker (Rep.res H.subtype M).ρ.norm) ≤
@@ -271,9 +261,8 @@ relative transfer. -/
 theorem HNegOneπ_comp_HNegOneRes :
     HNegOneπ M ≫ HNegOneRes M H =
       ModuleCat.ofHom (Representation.relTransferKerNorm M.ρ H) ≫
-        HNegOneπ (Rep.res H.subtype M) := by
-  rw [HNegOneRes]
-  exact ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
+        HNegOneπ (Rep.res H.subtype M) :=
+  ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
     (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _) _ _
 
 /-- Corestriction in degree `-1` sends the class of a norm-zero element to the class of the same
@@ -283,9 +272,8 @@ theorem HNegOneπ_comp_HNegOneCor :
     HNegOneπ (Rep.res H.subtype M) ≫ HNegOneCor M H =
       ModuleCat.ofHom (Submodule.inclusion
         (Representation.ker_norm_comp_subtype_le_ker_norm (ρ := M.ρ) (H := H))) ≫
-        HNegOneπ M := by
-  rw [HNegOneCor]
-  exact ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
+        HNegOneπ M :=
+  ModuleCat.comp_conj_mapQ _ _ (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _)
     (HNegOneπ_comp_HNegOneIsoNormKernelQuotient_hom _) _ _
 
 /-- Corestriction of the restriction of a degree `-1` class is the index multiple of it. -/
@@ -295,14 +283,12 @@ theorem HNegOneCor_comp_HNegOneRes_apply (x : tateCohomology M (-1)) :
   | h y =>
     rw [HNegOneπ_comp_HNegOneRes_apply, HNegOneπ_comp_HNegOneCor_apply, ← map_nsmul,
       HNegOneπ_eq_iff]
-    refine Submodule.mem_comap.2 ?_
-    simpa using Representation.relTransfer_sub_index_nsmul_mem (ρ := M.ρ) (H := H) (y : M.V)
+    simp [Submodule.submoduleOf, Representation.relTransfer_sub_index_nsmul_mem]
 
 /-- Restriction followed by corestriction is multiplication by the index, in degree `-1`. -/
 theorem HNegOneRes_comp_HNegOneCor :
-    HNegOneRes M H ≫ HNegOneCor M H = H.index • 𝟙 (tateCohomology M (-1)) := by
-  ext x
-  simpa using HNegOneCor_comp_HNegOneRes_apply M H x
+    HNegOneRes M H ≫ HNegOneCor M H = H.index • 𝟙 (tateCohomology M (-1)) :=
+  ModuleCat.hom_ext <| LinearMap.ext <| HNegOneCor_comp_HNegOneRes_apply M H
 
 end NegOne
 
