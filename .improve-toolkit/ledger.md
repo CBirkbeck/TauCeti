@@ -42902,3 +42902,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8534, #8538 and #8541. #8530 and #8531 are approved.
 * (late in r1025) **#8538 went green at 09:21:36Z and was marked ready at 09:22Z.** Guards: all latest check-runs green, head `0e917e5c7`
   unchanged, pin `dc4b8d60d5` at base `bed3bd6bb` and at main, file untouched since the base.
+
+## r1026 — 2026-09-24T09:25Z (cron)
+
+* **#8530 merged** (09:18:13Z, `improve/energyform-variablelp-style`, kind 2, approved by the r1024 drive), the thirty-sixth of this
+  session's PRs. #8531 is `ready-to-merge`.
+* #8534 (36 min since ready) and #8538 (2 min) are `awaiting-review`; #8541's build has run since 09:22:26Z (waiter armed). No findings.
+* In progress (cap full): #8534, #8538 and #8541. Pin `dc4b8d60d5`, main `787e425c5`.
