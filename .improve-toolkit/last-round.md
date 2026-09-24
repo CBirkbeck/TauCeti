@@ -44,18 +44,18 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 
 | PR | head | CI | state | whose move |
 |---|---|---|---|---|
-| **#8469** | `75cce7ae9` | running (since 00:02:17Z) | kind 2 (`Exchangeability/Arrays/Block.lean`: 61 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r965) | **CI** — mark ready when green |
+| **#8469** | `75cce7ae9` | green (00:14:42Z) | kind 2 (`Exchangeability/Arrays/Block.lean`: 61 `↦`; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:15Z** (r972) | **external reviewers** |
 | **#8473** | `f52a3a755` | queued | kind 2 (`Exchangeability/Arrays/RowCoding.lean`: 65 `↦`, and the roadmap sentence in the module docstring replaced by a scope sentence; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r967) | **CI** — mark ready when green |
 | **#8476** | `1f0198742` | queued | kind 2 (`Exchangeability/Contractability.lean`: 63 `↦`, two `;` chains split, the "Layer 0 home" docstring clause dropped; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r968) | **CI** — mark ready when green |
 
-**In progress (cap full): the drafts #8469 (building since 00:02Z), #8473 and #8476 (queued); all astra ✓.**
+**In progress (cap full): #8469 (ready 00:15Z; step 4 opens no earlier than 01:15Z) and the drafts #8473 and #8476 (queued; both astra ✓).**
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
 **The staged kind-2 branch was opened as #8273 (r902), and kind 3 as #8275 (r903, `RelNorm.lean`).** The next opening is kind 1 if the pin
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `c9bf6ff51`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `cf71c7b78`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -421,7 +421,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r969: **#8413 merged** (23:37:48Z). All three drafts are still queued for CI (103 queued repo-wide). The cap is full.
 * r970: **#8426 merged** (23:47:10Z). The three drafts are still queued for CI.
 * r971: #8469's build started at 00:02Z (waiter armed); #8473 and #8476 are still queued.
-* r972: no change; #8469 is still building, #8473 and #8476 queued.
+* r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
 

@@ -42342,3 +42342,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings. #8469's `sandboxed-build` is still running (since 00:02:17Z; waiter armed); #8473 and #8476 are queued.
   In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `dd374a490`.
+* (late in r972) **#8469 went green at 00:14:42Z and was marked ready.** Guards: all latest check-runs green, head `75cce7ae9` unchanged,
+  pin `dc4b8d60d5` at base `6c75046e3` and at main, `Arrays/Block.lean` untouched on main since the base.
