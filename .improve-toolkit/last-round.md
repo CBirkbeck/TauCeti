@@ -46,9 +46,9 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 |---|---|---|---|---|
 | **#8473** | `f52a3a755` | green (00:34:19Z) | kind 2 (`Exchangeability/Arrays/RowCoding.lean`: 65 `↦`, and the roadmap sentence in the module docstring replaced by a scope sentence; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:34:49Z** (r974) | **external reviewers** |
 | **#8476** | `1f0198742` | green (00:43:16Z) | kind 2 (`Exchangeability/Contractability.lean`: 63 `↦`, two `;` chains split, the "Layer 0 home" docstring clause dropped; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 00:44Z** (r974) | **external reviewers** |
-| **#8487** | `385acf845` | running (since 01:18:36Z) | kind 2 (`Analysis/Complex/Conformal/Monodromy.lean`: 61 `↦`, three top-level chains split, two roadmap passages dropped; gate 12/0/0; `Roadmap: ConformalMapping`). **Draft**; **astra cleared it** (r975) | **CI** — mark ready when green |
+| **#8487** | `385acf845` | green (01:27:42Z) | kind 2 (`Analysis/Complex/Conformal/Monodromy.lean`: 61 `↦`, three top-level chains split, two roadmap passages dropped; gate 12/0/0; `Roadmap: ConformalMapping`). Astra cleared it; **marked ready 01:28Z** (r979) | **external reviewers** |
 
-**In progress (cap full): #8473 (ready 00:34:49Z; step 4 no earlier than 01:35Z), #8476 (ready 00:44Z; no earlier than 01:44Z) and the draft #8487 (astra ✓, building since 01:18Z).** **#8469 merged 01:20:26Z** (r979), the twenty-first this session.
+**In progress (cap full): #8473 (ready 00:34:49Z; step 4 no earlier than 01:35Z), #8476 (ready 00:44Z; no earlier than 01:44Z) and #8487 (ready 01:28Z; no earlier than 02:28Z). No drafts.** **#8469 merged 01:20:26Z** (r979), the twenty-first this session.
 **Staged:** nothing (the Monodromy branch went as #8487 at r978).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `4af4c1332`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `0463c7236`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -67,7 +67,7 @@ a usage-limit error means the stop applies again (a drive then posts an all-⚠�
 
 
 0. **Now (r979):** #8469 merged. In progress (cap full): #8473 (ready 00:34:49Z; step 4 no earlier than 01:35Z), #8476 (ready
-   00:44Z; 01:44Z) and the draft #8487 (Monodromy; base `53ab872de`; mark ready when green, after the guards). Probe the codex quota
+   00:44Z; 01:44Z) and #8487 (Monodromy; ready 01:28Z; 02:28Z). Probe the codex quota
    before any drive. **Next kind 2**, from the r976 re-score (`snap-main11`, main
    `e697269a7`; arrow-only files with ≥45 `fun … =>`, excluding open-PR and ledger-named files; columns arrows/roadmap/chains), roadmap-free first:
    `Exchangeability/CondExp.lean` (57/0/0), `DenseGraphLimits/Graphon/CutNormLimit.lean` (54/0/0), `Sobolev/W1p/DifferenceQuotient.lean`
@@ -431,7 +431,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r976: all three still `awaiting-review` (no board; #8469 at 39 min). Re-scored kind-2 candidates on `snap-main11`.
 * r977: no change (#8469 at 49 min). The staged Monodromy branch still merges cleanly.
 * r978: **#8469 approved**. The staged Monodromy branch was rebased onto `53ab872de`, re-gated (12/0/0) and opened as draft **#8487**.
-* r979: **#8469 merged** (01:20:26Z). #8487's build started at 01:18Z (waiter armed).
+* r979: **#8469 merged** (01:20:26Z). #8487's build started at 01:18Z, went green at 01:27:42Z, and it was marked ready.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

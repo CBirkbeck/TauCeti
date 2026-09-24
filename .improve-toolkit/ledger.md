@@ -42406,3 +42406,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * #8487's `sandboxed-build` started at 01:18:36Z (a waiter is armed; the CI queue has drained). #8473 (50 min since ready) and #8476
   (40 min) are `awaiting-review` with no board; step 4 opens for #8473 at 01:35Z. No findings.
 * In progress (cap full): #8473, #8476 and #8487. Pin `dc4b8d60d5`, main `df538400d`.
+* (late in r979) **#8487 went green at 01:27:42Z and was marked ready at 01:28Z.** Guards: all latest check-runs green, head `385acf845`
+  unchanged, pin `dc4b8d60d5` at base `53ab872de` and at main, `Monodromy.lean` untouched on main since the base. No drafts remain.
