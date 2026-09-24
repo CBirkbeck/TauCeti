@@ -42922,3 +42922,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   `fun s ↦ by funext i; simp`, kept inline). Edit: 38 arrows (asserted). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**.
   Body `pr-body-kauffman.md`, `Roadmap: GeometricTopology` (as #6977).
 * In progress (cap full): #8534, #8538 and #8541. Pin `dc4b8d60d5`, main `d8c04aec8`.
+
+## r1028 — 2026-09-24T09:45Z (cron)
+
+* No merges, no findings, no boards. #8534 (56 min since ready), #8538 (22 min) and #8541 (12 min) are `awaiting-review`. Kauffman stays
+  staged; main unchanged at `d8c04aec8`. In progress (cap full): #8534, #8538 and #8541.
