@@ -42856,3 +42856,17 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   waiter is armed. **Nothing is staged now.**
 * #8530 (43 min since ready) and #8531 (25 min) are `awaiting-review`. No merges.
 * In progress (cap full): #8530, #8531 and #8534. #8525 is approved. Pin `dc4b8d60d5`, main `2d6f52f7d`.
+
+## r1022 — 2026-09-24T08:49Z (cron)
+
+* **#8525 merged** (08:43:36Z, `improve/grid-parity-style`, kind 2, approved on fix 2), the thirty-fifth of this session's PRs.
+* **#8534 went green at 08:47:28Z and was marked ready at 08:48:55Z.** Guards: all latest check-runs green, head `1bf8aa9d9` unchanged,
+  pin `dc4b8d60d5` at base `2d6f52f7d` and at main, file untouched since the base. No drafts remain.
+* **Kind-2 re-score** on `snap-main12` (main `a440533b7`): arrow-only files, ≥35 `fun … =>`, excluding the 421 files open PRs touch and
+  ledger-named files; sorted by roadmap/provenance mentions first. 50 hits; 20 have **no** roadmap/"adapted"/split-branch text.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/specht-standardbasis-style` @ `d5c1c838b` from `a440533b7`. Target
+  `RepresentationTheory/Symmetric/Specht/StandardBasis.lean` (378 lines, 44 `fun … =>`, no other `=>`, no chains, no roadmap text). Edit:
+  44 arrows (asserted). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would accept the entire diff"). Body
+  `pr-body-specht.md`, `Roadmap: RepresentationTheory` (as #2745).
+* #8530 is at 57 min since ready (drive next round if boardless); #8531 at 40 min. No findings.
+* In progress (cap full): #8530, #8531 and #8534. Pin `dc4b8d60d5`, main `a440533b7`.
