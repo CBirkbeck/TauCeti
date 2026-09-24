@@ -42927,3 +42927,18 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8534 (56 min since ready), #8538 (22 min) and #8541 (12 min) are `awaiting-review`. Kauffman stays
   staged; main unchanged at `d8c04aec8`. In progress (cap full): #8534, #8538 and #8541.
+
+## r1029 — 2026-09-24T10:03Z (cron)
+
+* **#8541 approved 10/10 by the pipeline** (board 09:54:12Z, 22 min after ready); `ready-to-merge`.
+* **Step 4: drove #8534** at 09:55Z (66 min past `max(CI-green 08:47:28Z, ready 08:48:54Z)`, no board; quota probe "ok" first).
+  **Approved 10/10** (`codex/gpt-5.6-sol`, board 5811947411, 09:58Z; $1.17).
+* **Two slots opened.** Step 5 (kind 2, staged branch): **opened draft #8548**, `improve/pdcode-kauffman-style` @ `c023ebdb1`, rebased from
+  `d8c04aec8` onto `0c20df3de` (file untouched; astra-cleared diff unchanged); re-gated 12/0/0; `Roadmap: GeometricTopology`.
+* Step 5 (kind 2, new): **opened draft #8549**, `improve/complexification-style` @ `13b14a880` from `4942f86cd`; `Roadmap:
+  OneParameterSemigroups` (as #6613). Target from the r1022 re-score: `Analysis/Normed/Module/Complexification.lean` (432 lines,
+  41 `fun … =>`, no other `=>`, no roadmap text, no open-PR overlap). Edits: 41 arrows (asserted); the calc step
+  `_ ≤ ‖c‖ * (‖c⁻¹‖ * ‖c • z‖) := by gcongr; exact hle _ _` split (tactics at the step's indent + 2). Gate 12/0/0. Astra (three-dot diff,
+  1 file): **cleared** ("I would reject none of the edits"). A waiter is armed for both new drafts.
+* #8538 is at 32 min since ready. No merges, no findings.
+* In progress (cap full): #8538, #8548 and #8549. #8534 and #8541 are approved. Pin `dc4b8d60d5`, main `0c20df3de`.
