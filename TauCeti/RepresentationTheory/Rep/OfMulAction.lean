@@ -113,10 +113,6 @@ noncomputable def quotientIsoCongr {H K : Subgroup G} (h : H = K) :
     induction q using QuotientGroup.induction_on with
     | H x => rfl
 
--- Mathlib's `Subgroup.quotientEquivOfEq_mk` is not a `simp` lemma. With it, `simp` evaluates
--- `quotientIsoCongr` on the basis element of a representative's coset.
-attribute [simp] Subgroup.quotientEquivOfEq_mk
-
 @[simp]
 theorem quotientIsoCongr_hom_hom_single {H K : Subgroup G} (h : H = K) (q : G ⧸ H) (r : k) :
     (dsimp% only ((quotientIsoCongr k h).hom.hom (MonoidAlgebra.single q r))) =
