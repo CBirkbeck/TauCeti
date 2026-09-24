@@ -42473,3 +42473,16 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8487 is at 57 min since ready (step 4 opens at 02:28Z; drive next round if it is still boardless),
   #8491 at 22 min and #8492 at 11 min. The CondExp branch stays staged. Pin `dc4b8d60d5`, main `10ecfcfd4`.
+
+## r986 — 2026-09-24T03:09Z (cron; long round: ran 02:34–03:09Z under load average ~59)
+
+* **Step 4: drove #8487** at 02:35Z (67 min past ready 01:28:03Z, no board, `awaiting-review` only; quota probe "ok" at 02:34Z).
+  **Approved 10/10** (`codex/gpt-5.6-sol`, board 5806522637; review spend $1.15). **#8487 merged at 03:05:55Z**, the twenty-fourth
+  of this session's PRs to merge. After posting, the runner hung ~15 min in `archive.py sync` retrying the `TauCetiData` push (403),
+  so the drive's exit came long after its board. Run drives in the background and read the board, not the exit.
+* **Step 5, kind 2 (the staged branch): opened draft #8497**, `improve/condexp-contractable-style` @ `c3ceabacb` on `10ecfcfd4`
+  (the rebase was a no-op; main had not moved). Re-gated 12/0/0; the gate took ~15 min (another session's `lake build` held the load
+  at ~59). Before opening, main had moved to `86e9a36e9`, but the file is untouched and `merge-tree` is clean. Astra cleared the diff at r984.
+* **Step 4: drove #8491** at 03:08Z (65 min past ready 02:02:43Z, no board; background, log `drive-8491-0308.log`).
+* #8492 is at 55 min since ready. A build waiter is armed for #8497. No findings.
+* In progress (cap full): #8491, #8492 and #8497. Pin `dc4b8d60d5`, main `86e9a36e9`.
