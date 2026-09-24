@@ -42643,3 +42643,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings, no boards. #8508 (42 min since ready), #8510 (30 min) and #8513 (12 min) are `awaiting-review`. The staged
   `improve/arrays-basic-style` still merges cleanly into main `017606680` (file untouched). In progress (cap full): #8508, #8510 and #8513.
+
+## r1003 — 2026-09-24T05:35Z (cron)
+
+* No merges, no findings, no boards. #8508 (52 min since ready; step 4 at 05:42Z), #8510 (40 min) and #8513 (22 min) are
+  `awaiting-review`. Main unchanged at `017606680`. In progress (cap full): #8508, #8510 and #8513.
