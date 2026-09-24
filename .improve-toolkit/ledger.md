@@ -42531,3 +42531,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings. #8492 is `ready-to-merge` (drive board). #8503's build has run since 03:31:37Z (waiter armed). #8497 (17 min
   since ready) and #8499 (10 min) are `awaiting-review`. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `b3decc754`.
+* (late in r991) **#8503 went green at 03:42:10Z and was marked ready at 03:42Z.** Guards: all latest check-runs green, head `b201b7fc4`
+  unchanged, pin `dc4b8d60d5` at base `b3decc754` and at main, `Wishart/Basic.lean` untouched since the base. No drafts remain.
