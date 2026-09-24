@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Topology.Algebra.Group.LowerCentralSeries
+public import TauCeti.Topology.Algebra.Group.LowerCentralSeries.Graded
 public import TauCeti.Topology.Algebra.Group.Profinite.ProP.FiniteGeneration
 
 /-!
@@ -22,8 +22,9 @@ subgroup is the whole group.
 
 For a topologically finitely generated profinite group and a prime `p`, every `λ_k` is open, hence
 of finite index, and in a topologically finitely generated pro-`p` group the quotients `G ⧸ λ_k`
-are finite `p`-groups. Without finite generation the terms need not be open: an infinite product
-of copies of `ℤ ⧸ p` has `λ_1 = 1`.
+are finite `p`-groups; in particular the graded pieces `gr_k(G) = λ_k ⧸ λ_{k+1}` are finite.
+Without finite generation the terms need not be open: an infinite product of copies of `ℤ ⧸ p`
+has `λ_1 = 1`, so `gr_0(G) = G` is infinite.
 
 ## Main results
 
@@ -31,8 +32,9 @@ of copies of `ℤ ⧸ p` has `λ_1 = 1`.
   Frattini subgroup of a profinite group.
 * `TauCeti.IsTopologicallyFinitelyGenerated.isOpen_pLowerCentralSeries`: for a prime `p`, in a
   topologically finitely generated profinite group every `λ_k` is open, so
-  `TauCeti.IsTopologicallyFinitelyGenerated.finite_quotient_pLowerCentralSeries` and, for a pro-`p`
-  group, `TauCeti.IsProP.isPGroup_quotient_pLowerCentralSeries`.
+  `TauCeti.IsTopologicallyFinitelyGenerated.finite_quotient_pLowerCentralSeries`,
+  `TauCeti.IsTopologicallyFinitelyGenerated.finite_gradedPiece` and, for a pro-`p` group,
+  `TauCeti.IsProP.isPGroup_quotient_pLowerCentralSeries`.
 
 ## References
 
@@ -90,6 +92,14 @@ theorem IsTopologicallyFinitelyGenerated.finite_quotient_pLowerCentralSeries
     (hG : IsTopologicallyFinitelyGenerated G) (hp : p.Prime) (k : ℕ) :
     Finite (G ⧸ pLowerCentralSeries p G k) :=
   quotient_finite_of_isOpen _ (hG.isOpen_pLowerCentralSeries hp k)
+
+/-- For a prime `p`, in a topologically finitely generated profinite group every graded piece
+`gr_k(G) = λ_k ⧸ λ_{k+1}` of the lower `p`-series is finite. -/
+theorem IsTopologicallyFinitelyGenerated.finite_gradedPiece
+    (hG : IsTopologicallyFinitelyGenerated G) (hp : p.Prime) (k : ℕ) :
+    Finite (gradedPiece p G k) :=
+  have := hG.finite_quotient_pLowerCentralSeries hp (k + 1)
+  Finite.of_injective _ (gradedPieceInclusion_injective k)
 
 /-- For a prime `p`, in a topologically finitely generated pro-`p` group every quotient `G ⧸ λ_k`
 is a finite `p`-group. -/

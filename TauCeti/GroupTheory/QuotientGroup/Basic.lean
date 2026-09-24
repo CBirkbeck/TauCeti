@@ -43,6 +43,8 @@ For a finite group, a sum can also be split over the left or right cosets of a s
   only when it is the identity.
 * `Subgroup.sum_eq_sum_leftCosets` and `Subgroup.sum_eq_sum_rightCosets`: split a finite sum
   along the left or right cosets of a subgroup.
+* `QuotientGroup.eq_subgroupOf`: two elements of a subgroup `H` lie in the same left coset of
+  `N.subgroupOf H` exactly when they lie in the same left coset of `N`.
 -/
 
 public section
@@ -114,6 +116,14 @@ theorem quotientBot_smul_eq_self_iff (g : G) (q : G ⧸ (⊥ : Subgroup G)) :
     | H x => simpa [quotientBot_smul] using this
   · rintro rfl
     exact one_smul _ _
+
+/-- Two elements of a subgroup `H` lie in the same left coset of `N.subgroupOf H` exactly when they
+lie in the same left coset of `N`. -/
+theorem _root_.QuotientGroup.eq_subgroupOf {H N : Subgroup G} {x y : H} :
+    (QuotientGroup.mk x : H ⧸ N.subgroupOf H) = QuotientGroup.mk y ↔
+      ((x : G) : G ⧸ N) = ((y : G) : G ⧸ N) := by
+  rw [QuotientGroup.eq, QuotientGroup.eq, Subgroup.mem_subgroupOf, Subgroup.coe_mul,
+    Subgroup.coe_inv]
 
 section Finite
 
