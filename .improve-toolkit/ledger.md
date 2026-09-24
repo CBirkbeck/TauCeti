@@ -42995,3 +42995,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   heads unchanged (`ca4b1517f`, `2ec28a80f`), pin `dc4b8d60d5` at base `1f035cbe2` and at main, files untouched since the base.
 * #8566's build is still running (waiter armed). #8538, #8548 and #8549 are `ready-to-merge`. No merges, no findings.
 * In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `7d3c3918c`.
+* (late in r1035) **#8566 went green at 10:56:17Z and was marked ready at 10:57Z.** Guards: all latest check-runs green, head `5c592bf3a`
+  unchanged, pin `dc4b8d60d5` at base `1f035cbe2` and at main, file untouched since the base. No drafts remain.
