@@ -42507,3 +42507,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 
 * No merges, no findings. #8492 is 63 min past ready with no board (drive at the next round if still boardless). #8497's build has run
   since 03:07:50Z and #8499's since 03:15:18Z. #8491 is `ready-to-merge`. In progress (cap full): #8492, #8497 and #8499. Main `623e4fb5b`.
+* (late in r989) **#8497 went green at 03:16:23Z and was marked ready at 03:17Z.** Guards: all latest check-runs green, head `c3ceabacb`
+  unchanged, pin `dc4b8d60d5` at base `10ecfcfd4` and at main, `CondExp.lean` untouched since the base. A waiter is armed for #8499.

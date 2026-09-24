@@ -46,10 +46,10 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 |---|---|---|---|---|
 | **#8491** | `5c0611468` | green (02:02:17Z) | kind 2 (`DenseGraphLimits/Graphon/CutNormLimit.lean`: 54 `↦`, one calc-step chain split; `Roadmap: DenseGraphLimits`). **Approved 10/10** by the r986 drive (board 5806781128, 03:10Z); `ready-to-merge` | **queue** |
 | **#8492** | `193b30cea` | green (02:12:47Z) | kind 2 (`Analysis/PDE/Spectrum.lean`: 47 `↦`, nothing else; gate 12/0/0; `Roadmap: PDE`). Astra cleared it; **marked ready 02:13Z** (r983) | **external reviewers** |
-| **#8497** | `c3ceabacb` | queued | kind 2 (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; `Roadmap: Exchangeability`). **Draft**; **astra cleared it** (r984); base `10ecfcfd4` | **CI** — mark ready when green |
+| **#8497** | `c3ceabacb` | green (03:16:23Z) | kind 2 (`Exchangeability/CondExp.lean`: 57 `↦`, nothing else; gate 12/0/0; `Roadmap: Exchangeability`). Astra cleared it; **marked ready 03:17Z** (r989) | **external reviewers** |
 | **#8499** | `f9c163254` | queued | kind 2 (`Sobolev/W1p/DifferenceQuotient.lean`: 53 `↦`, one `let _ … := by` chain split; gate 12/0/0; `Roadmap: PDE`). **Draft**; **astra cleared it** (r988); base `86e9a36e9` | **CI** — mark ready when green |
 
-**In progress (cap full): #8492 (ready 02:13Z; 62 min at r988; drive next round if still boardless) and the drafts #8497 (CondExp; building) and #8499 (DifferenceQuotient; queued), both astra ✓.** #8491 approved by its drive; #8487 merged 03:05:55Z; twenty-four merged this session.
+**In progress (cap full): #8492 (ready 02:13Z; 62 min at r988; drive next round if still boardless) #8497 (CondExp; ready 03:17Z; no earlier than 04:17Z) and the draft #8499 (DifferenceQuotient; building; astra ✓).** #8491 approved by its drive; #8487 merged 03:05:55Z; twenty-four merged this session.
 **Staged:** nothing (the CondExp branch went as #8497 at r986).
 **#8426 merged 23:47:10Z** (r970), #8413 at 23:37:48Z (r969) and #8402 at 23:06:21Z (r966). Twenty of this session's PRs merged on 2026-09-23. Skip `VanishingMoments.lean` as a kind-2 target (roadmap text is woven through its docstrings).
 
@@ -57,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `776562ff9`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `cdca1de71`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -443,7 +443,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r986: **#8487 driven** (67 min) → **approved 10/10** ($1.15) → **merged 03:05:55Z**. CondExp opened as draft **#8497**. **#8491 driven** (65 min).
 * r987: queued prompt right after r986; #8491 shows `review-in-progress` (the drive); nothing else changed.
 * r988: **#8491 approved 10/10** by the drive. Kind 2 opened as draft **#8499** (`Sobolev/W1p/DifferenceQuotient.lean`), cleared by astra.
-* r989: queued prompt; #8497 and #8499 building; #8492 at 63 min (drive next round).
+* r989: queued prompt; #8492 at 63 min (drive next round). #8497 went green at 03:16:23Z and was marked ready; #8499 building (waiter armed).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
