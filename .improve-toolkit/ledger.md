@@ -42781,3 +42781,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   No merges. In progress (cap full): #8525, #8526 and #8530.
 * (late in r1015) **#8525's fix `e5b5676d1` went green at 07:38:16Z**; the label moved back to `awaiting-review`, so the pipeline re-reviews
   on its own (step 4's clock restarts at 07:38Z).
+
+## r1016 — 2026-09-24T07:45Z (cron)
+
+* No merges, no findings. #8521 is `ready-to-merge`. #8525 awaits its re-review (fix green 07:38:16Z). #8526 is 60 min past ready with
+  no board: held one round. #8530's build has run since 07:39:40Z (waiter armed). In progress (cap full): #8525, #8526 and #8530.
+  Main `1149bbba0`.

@@ -1,4 +1,4 @@
-# Last round — r1015 (2026-09-24T07:38Z)
+# Last round — r1016 (2026-09-24T07:45Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -47,7 +47,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 | **#8521** | `6ef89f720` | green (06:12:54Z) | kind 2 (`Exchangeability/Arrays/Basic.lean`: 104 `↦`, two `ext; simp` chains split, the "Layer 8 entry point" sentence dropped; `Roadmap: Exchangeability`). **Approved 10/10** by the r1014 drive (board 5809804699, 07:32Z; $1.06); `ready-to-merge` | **queue** |
 | **#8525** | `e5b5676d1` | green (07:38:16Z) | kind 2 (`KnotTheory/Grid/Grading/Parity.lean`: 47 `↦`, the roadmap sentence dropped; `Roadmap: CombinatorialHeegaardFloer`). Board 07:17Z on `bce26feba`: 9/10, **`documentation` requested changes** (the split-branch provenance sentence "will date"; fix: keep the OSS reference, move provenance to the PR description). **Fixed at `e5b5676d1`** (r1014) and the PR body now carries a **Provenance** line | **external reviewers** (re-review; step 4 no earlier than 08:38Z) |
 | **#8526** | `dde86dd6e` | green (06:44:12Z) | kind 2 (`Symplectic/JHolomorphic/Prod/Basic.lean`: 48 `↦`, the "used by the analytic Heegaard Floer roadmap" clause dropped; gate 12/0/0; `Roadmap: HeegaardFloer`). Astra cleared it; **marked ready 06:44:53Z** (r1010) | **external reviewers** |
-| **#8530** | `6e6558ec9` | queued | kind 2 (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; `Roadmap: PDE`). **Draft**; **astra cleared it** (r1009); base `b8003b8c2` | **CI** — mark ready when green |
+| **#8530** | `6e6558ec9` | running (since 07:39:40Z) | kind 2 (`PDE/EnergyForm/VariableLp.lean`: 45 `↦`, the "Lane D, item 16" sentence replaced by its motivation; gate 12/0/0; `Roadmap: PDE`). **Draft**; **astra cleared it** (r1009); base `b8003b8c2` | **CI** — mark ready when green |
 
 **In progress (cap full): #8525 (documentation fix pushed at `e5b5676d1`; re-review follows CI), #8526 (ready 06:45Z; 07:45Z) and the draft #8530 (VariableLp; astra ✓; build queued).** #8521 approved by its drive; #8513 merged 06:38:11Z; thirty-two merged this session.
 **Staged (not opened; the cap is full):** `improve/energyform-integrated-style` @ `2c2be6774` from `a0f0b6e24` (`PDE/EnergyForm/Integrated/Basic.lean`: 156 `↦`, three roadmap references replaced by the mathematics they point at; gate 12/0/0; astra cleared it; body `pr-body-integrated.md`, `Roadmap: PDE` as #714). **Open it as the next kind 2** when a slot frees (check `merge-tree` against fresh main and that the file is untouched since the base; rebase and re-gate if the pin moved). (VariableLp went as #8530 at r1014.)
@@ -57,7 +57,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `69f0361ab`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `6ff147b5e`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -473,6 +473,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r1013: #8525 `review-in-progress` (the pipeline picked it up); #8521 at 59 min; #8526 at 30 min.
 * r1014: **#8525 `awaiting-author`**: `documentation` asked to move the split-branch provenance sentence to the PR description; done at `e5b5676d1`. **#8521 driven** (73 min) → **approved 10/10** ($1.06). VariableLp rebased onto `b8003b8c2`, re-gated, opened as draft **#8530**.
 * r1015: queued prompt; #8521 `ready-to-merge`; #8525 `awaiting-CI` on the fix (board behind the head, as expected); #8530 queued.
+* r1016: #8525 fix green, awaiting re-review; #8526 at 60 min (drive next round if boardless); #8530 building.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5
