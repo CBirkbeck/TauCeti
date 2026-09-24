@@ -42819,3 +42819,21 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8525, #8530 and #8531. Pin `dc4b8d60d5`, main `65037724d`.
 * (late in r1018) **#8531 went green at 08:08:53Z and was marked ready at 08:09Z.** Guards: all latest check-runs green, head `6a627ae8a`
   unchanged, pin `dc4b8d60d5` at base `9979a4b21` and at main, file untouched since the base. No drafts remain.
+
+## r1019 — 2026-09-24T08:20Z (cron)
+
+* **#8526 merged** (08:06:09Z, `improve/jholomorphic-prod-style`, kind 2, approved by the r1016 drive), the thirty-fourth of this session's PRs.
+* #8525 is `awaiting-CI` on fix 2 `8ae84de0c` (board behind the head: already fixed, nothing to redo). #8530 (23 min since ready) and #8531
+  (5 min) are `awaiting-review`. No findings.
+* **Prospecting (cap full, so staged):** read the roadmap/provenance lines of five remaining r976 hits. **Declined:** `Young/Tableau.lean`
+  (References cites the Schur–Weyl roadmap as a source), `L2/Cesaro/ToCondExp.lean` and `ConditionallyIID/Map.lean` (the roadmap is the
+  name/provenance map to `cameronfreer/exchangeability`: "the roadmap refers to the second as `conditionallyIID_transfer`"), and
+  `ContinuousLog/Basic.lean` (a long "Roadmap role" section of open-frontier status; a docs rewrite, not a style pass).
+* **Staged:** `improve/hyperbolic-length-style` @ `f83e4696c` from `83e68369e`. Target `Analysis/Complex/Conformal/Hyperbolic/Length.lean`
+  (73 `fun … =>`, no other `=>`, no open-PR overlap). Edits: 73 arrows (asserted); `rw [norm_mul]; ring` in a calc step split; the
+  "Coordination with upstream Mathlib" section (roadmap pointer + in-progress mathlib4#33505 + "should be refactored onto it") reduced to
+  "Mathlib has the hyperbolic metric on the upper half-plane (…) but neither a disc version nor a length-metric characterisation of it"
+  and retitled "Mathlib's upper-half-plane metric" (the file already has a "Relation to Mathlib's `Manifold.pathELength`" section; a
+  first attempt reused "Relation to Mathlib" and was amended before any push). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**
+  ("removes no lasting mathematical information"). Body `pr-body-hyplen.md`, `Roadmap: ConformalMapping` (as #1832).
+* In progress (cap full): #8525, #8530 and #8531. Pin `dc4b8d60d5`, main `83e68369e`.
