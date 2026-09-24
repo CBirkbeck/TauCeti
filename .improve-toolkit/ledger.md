@@ -42638,3 +42638,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **#8503 merged** (05:10:13Z, `improve/wishart-basic-style`, kind 2, approved by the r998 drive), the twenty-ninth of this session's PRs.
 * #8508 (32 min since ready), #8510 (20 min) and #8513 (2 min) are `awaiting-review`. No findings. `improve/arrays-basic-style` stays staged.
 * In progress (cap full): #8508, #8510 and #8513. Pin `dc4b8d60d5`, main `3a133d78e`.
+
+## r1002 — 2026-09-24T05:25Z (cron)
+
+* No merges, no findings, no boards. #8508 (42 min since ready), #8510 (30 min) and #8513 (12 min) are `awaiting-review`. The staged
+  `improve/arrays-basic-style` still merges cleanly into main `017606680` (file untouched). In progress (cap full): #8508, #8510 and #8513.
