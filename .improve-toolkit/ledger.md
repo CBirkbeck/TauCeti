@@ -42837,3 +42837,5 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   first attempt reused "Relation to Mathlib" and was amended before any push). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**
   ("removes no lasting mathematical information"). Body `pr-body-hyplen.md`, `Roadmap: ConformalMapping` (as #1832).
 * In progress (cap full): #8525, #8530 and #8531. Pin `dc4b8d60d5`, main `83e68369e`.
+* (late in r1019) **#8525's fix 2 `8ae84de0c` went green at 08:19:15Z**; the label moved back to `awaiting-review`, so the pipeline
+  re-reviews on its own (step 4's clock restarts at 08:19Z).
