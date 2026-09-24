@@ -42567,3 +42567,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   probe "ok" first; background, log `drive-8497-0425.log`).
 * #8499 is 60 min past ready with no board: held one round (the pipeline's usual window runs to ~64 min). #8503 is at 42 min.
 * No merges, no findings. In progress (cap full): #8497, #8499 and #8503. Pin `dc4b8d60d5`, main `a0749c0b4`.
+* (late in r996) **The #8497 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5807689809, 04:27Z; $0.78).
+* (late in r996) **Step 5, kind 2 (the staged branch): opened draft #8508**, `improve/hopf-lemma-style` @ `c720da984`, rebased from
+  `5832ba2dd` onto `a0749c0b4` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0. `Roadmap: PDE`. A build
+  waiter is armed.
+* In progress (cap full): #8499, #8503 and #8508. #8497 is approved.
