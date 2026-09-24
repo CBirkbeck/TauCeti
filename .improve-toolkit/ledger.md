@@ -42997,3 +42997,14 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `7d3c3918c`.
 * (late in r1035) **#8566 went green at 10:56:17Z and was marked ready at 10:57Z.** Guards: all latest check-runs green, head `5c592bf3a`
   unchanged, pin `dc4b8d60d5` at base `1f035cbe2` and at main, file untouched since the base. No drafts remain.
+
+## r1036 — 2026-09-24T11:09Z (cron)
+
+* **#8538 merged** (10:59:22Z, `improve/specht-standardbasis-style`) and **#8549 merged** (11:02:55Z, `improve/complexification-style`),
+  both kind 2, the fortieth and forty-first of this session's PRs. #8548 is `ready-to-merge`.
+* #8563, #8565 and #8566 are all `review-in-progress` (the pipeline picked them up within ~7 min of ready). No findings.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/dgl-moebius-style` @ `717663dc6` from `8b00dffe0`. Target
+  `Combinatorics/DenseGraphLimits/Representability/Moebius.lean` (272 lines, 43 `fun … =>`, no other `=>`, no roadmap text; its `;` sites
+  are parenthesised `(by ext G; simp)` or a term-level `fun ⟨…⟩ ↦ by …` inside an anonymous constructor, all kept). Edit: 43 arrows
+  (asserted). Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**. Body `pr-body-moebius.md`, `Roadmap: DenseGraphLimits` (as #7430).
+* In progress (cap full): #8563, #8565 and #8566. Pin `dc4b8d60d5`, main `8b00dffe0`.
