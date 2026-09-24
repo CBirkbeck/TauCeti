@@ -42434,3 +42434,17 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   overlap). Edits: 54 arrows (asserted); the calc step `_ ≤ c * (ε / (c + 1)) := by gcongr; exact (hN i hi j hj).le` split, with tactics
   at indent 10 like the next step's block. Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared** ("I would reject none of these edits").
 * In progress (cap full): #8476, #8487 and #8491. #8473 is approved.
+
+## r982 — 2026-09-24T02:03Z (cron)
+
+* **#8473 is `ready-to-merge`** (the r981 drive's 10/10 board).
+* **Step 4: drove #8476** at 01:55Z (70 min past ready 00:44:11Z, no board, labels `awaiting-review` only; quota probed ok at 01:45Z).
+  **Approved 10/10** (`codex/gpt-5.6-sol`, board 5806095579, review spend $1.17). Both drives today cost about $1, not the ~$16 the
+  standing prompt quotes (that figure predates the `gpt-5.6-sol` reviewer).
+* **#8491 went green at 02:02:17Z and was marked ready at 02:02:44Z.** Guards: all latest check-runs green, head `5c0611468` unchanged,
+  pin `dc4b8d60d5` at base `df538400d` and at main, file untouched since the base.
+* **Step 5, kind 2** (the #8476 approval freed a slot): **opened draft #8492**, `improve/pde-spectrum-style` @ `193b30cea` from
+  `df538400d`; `Roadmap: PDE` (as #5632). Target from the r976 re-score: `Analysis/PDE/Spectrum.lean` (658 lines, 47 `fun … =>`, no other
+  `=>`, no chains, no roadmap text, no open-PR overlap). Edit: 47 arrows (asserted), nothing else. Gate 12/0/0. Astra (three-dot diff, 1
+  file): **cleared** ("No edits to reject"). A build waiter is armed.
+* In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `df538400d`.
