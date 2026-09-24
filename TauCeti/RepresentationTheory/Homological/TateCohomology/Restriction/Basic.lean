@@ -119,8 +119,9 @@ theorem negSuccRes_comp_isoGroupHomology_hom (n : ℕ) [NeZero n] :
 @[reassoc (attr := simp)]
 theorem negSuccRes_comp_negSuccIso_hom (n : ℕ) [NeZero n] :
     negSuccRes M H n ≫ (negSuccIso (Rep.res H.subtype M) n).hom =
-      (negSuccIso M n).hom ≫ TauCeti.groupHomology.transfer M H n :=
-  negSuccRes_comp_isoGroupHomology_hom M H n
+      (negSuccIso M n).hom ≫ TauCeti.groupHomology.transfer M H n := by
+  rw [negSuccIso_hom, negSuccIso_hom]
+  exact negSuccRes_comp_isoGroupHomology_hom M H n
 
 /-- Restriction to a subgroup in degree `-2` Tate cohomology. Under the comparison with first
 group homology, this is the homological transfer. -/

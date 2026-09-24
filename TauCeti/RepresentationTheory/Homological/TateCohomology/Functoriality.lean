@@ -58,7 +58,8 @@ invariants of its conjugate through the resulting map in degree two.
   is `groupCohomology.map` along `e.symm`.
 * `TauCeti.TateCohomology.map_comp_isoGroupHomology_hom`: in degrees at most `-2` it is
   `groupHomology.map` along `e`; `TauCeti.TateCohomology.map_comp_negSuccIso_hom` restates this
-  through `TauCeti.TateCohomology.negSuccIso`.
+  through `TauCeti.TateCohomology.negSuccIso`, which `TauCeti.TateCohomology.negSuccIso_hom`
+  identifies with Mathlib's comparison.
 * `TauCeti.TateCohomology.map_comp_H0IsoNormQuotient_hom`: in degree zero the construction is
   the map induced on the quotient of invariants by the norm image.
 * `TauCeti.TateCohomology.HNegOneπ_comp_map`: in degree `-1` the construction sends the class of
@@ -501,11 +502,17 @@ theorem map_comp_isoGroupHomology_hom {e : G ≃* H} {φ : M.V →ₗ[R] N.V}
 variable (M) in
 /-- Tate cohomology in degree `-(n+1)`, for `n > 0`, is group homology in degree `n`: the
 component at `M` of Mathlib's comparison `TateCohomology.isoGroupHomology`. -/
--- Exposed: importing modules prove its characterising lemmas, such as
--- `negSuccRes_comp_negSuccIso_hom`, by unfolding it to Mathlib's comparison.
-@[expose] def negSuccIso (n : ℕ) [NeZero n] :
+def negSuccIso (n : ℕ) [NeZero n] :
     tateCohomology M (Int.negSucc n) ≅ groupHomology M n :=
   (_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n (Int.negSucc_eq n)).app M
+
+variable (M) in
+/-- `TauCeti.TateCohomology.negSuccIso` is the component at `M` of Mathlib's comparison
+`TateCohomology.isoGroupHomology`. -/
+theorem negSuccIso_hom (n : ℕ) [NeZero n] :
+    (negSuccIso M n).hom =
+      ((_root_.TateCohomology.isoGroupHomology (Int.negSucc n) n (Int.negSucc_eq n)).app M).hom :=
+  (rfl)
 
 /-- **In degrees `-(n+1)` with `n > 0` the construction is the ordinary homological
 change-of-group map** along `e`, read through `TauCeti.TateCohomology.negSuccIso`. -/
