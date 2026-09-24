@@ -1,4 +1,4 @@
-# Last round — r975 (2026-09-24T00:55Z)
+# Last round — r976 (2026-09-24T01:00Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `b3cb9b068`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `881c32f33`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -68,8 +68,11 @@ a usage-limit error means the stop applies again (a drive then posts an all-⚠�
 
 0. **Now (r975):** In progress (cap full), all `awaiting-review` with no board yet: #8469 (ready 00:15Z; step 4 no earlier than
    01:15Z), #8473 (ready 00:34:49Z; 01:35Z) and #8476 (ready 00:44Z; 01:44Z). Probe the codex quota before any drive.
-   **Next kind 2 is staged:** `improve/monodromy-style` (see above). After it: re-score `snap-main` for fresh kind-2 files (the
-   r951 list is used up). **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
+   **Next kind 2 is staged:** `improve/monodromy-style` (see above). After it, from the r976 re-score (`snap-main11`, main
+   `e697269a7`; arrow-only files with ≥45 `fun … =>`, excluding open-PR and ledger-named files; columns arrows/roadmap/chains), roadmap-free first:
+   `Exchangeability/CondExp.lean` (57/0/0), `DenseGraphLimits/Graphon/CutNormLimit.lean` (54/0/0), `Sobolev/W1p/DifferenceQuotient.lean`
+   (53/0/3), `PDE/Spectrum.lean` (47/0/0), `Distributions/Wishart/Basic.lean` (45/0/0), `Laplacian/DriftMaximumPrinciple.lean` (48/0/7),
+   `Laplacian/HopfLemma.lean` (48/0/6). The biggest is `PDE/EnergyForm/Integrated/Basic.lean` (156/2/0); read its 2 roadmap lines first. **Declined `ClassicalGroups/Rational.lean`** (r975): the roadmap is its cited design source (References
    section and four prose mentions), so removing it invites an `attribution` finding and keeping it a `documentation` one, the #8332 conflict.
    Roadmap mentions in docstrings are deleted outright (r939 rule), or replaced by a plain scope statement.
 1. **Queue:** `queuepos.py` each round; act only on `EJECTED`, and first read the removal reason (GraphQL
@@ -425,6 +428,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r973: #8473's build started at 00:23Z (waiter armed); #8476 is still queued; #8469 awaits its board.
 * r974: #8473 went green (00:34:19Z) and was marked ready; #8476's build started at 00:31Z, went green at 00:43:16Z, and it was marked ready too.
 * r975: all three `awaiting-review`. Declined `Rational.lean`; staged `improve/monodromy-style` (astra ✓, gate 12/0/0).
+* r976: all three still `awaiting-review` (no board; #8469 at 39 min). Re-scored kind-2 candidates on `snap-main11`.
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

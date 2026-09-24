@@ -42374,3 +42374,13 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   diff, 1 file) **accepted** the diff and noted that `funext x; simp` was left; that split was then added (same transformation it had
   just cleared for the other two). Body: scratchpad `pr-body-monodromy.md`, `Roadmap: ConformalMapping` (as #1558).
 * In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `f941ad804`.
+
+## r976 — 2026-09-24T01:00Z (cron)
+
+* No merges, no findings. #8469 (39 min since ready), #8473 and #8476 are `awaiting-review` with no board; step 4 opens for #8469 at 01:15Z.
+* **Kind-2 re-score** on `snap-main11` (main `e697269a7`): arrow-only files (no other `=>`) with ≥45 `fun … =>`, excluding the 393 files
+  open PRs touch and ledger-named files: 22 hits. Roadmap-free: `Exchangeability/CondExp.lean` (57 arrows), `Graphon/CutNormLimit.lean`
+  (54), `Sobolev/W1p/DifferenceQuotient.lean` (53, 3 chain-like lines), `PDE/Spectrum.lean` (47), `Wishart/Basic.lean` (45),
+  `Laplacian/DriftMaximumPrinciple.lean` (48, 7), `Laplacian/HopfLemma.lean` (48, 6). Largest: `PDE/EnergyForm/Integrated/Basic.lean`
+  (156 arrows, 2 roadmap lines). The staged `improve/monodromy-style` goes first.
+* In progress (cap full): #8469, #8473 and #8476. Pin `dc4b8d60d5`, main `e697269a7`.
