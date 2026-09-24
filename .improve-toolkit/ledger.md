@@ -42950,3 +42950,13 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * (late in r1030) **#8548 (green 10:08:16Z) and #8549 (green 10:13:06Z) were marked ready at 10:14Z.** Guards for both: all latest
   check-runs green, heads unchanged (`c023ebdb1`, `13b14a880`), pin `dc4b8d60d5` at their bases (`0c20df3de`, `4942f86cd`) and at main,
   files untouched since the bases. No drafts remain.
+
+## r1031 — 2026-09-24T10:19Z (cron)
+
+* No merges, no findings. #8534 and #8541 are `ready-to-merge`; #8538 is at 52 min since ready; #8548 and #8549 were marked ready at 10:14Z.
+* **Staged the next kind 2 (not opened; the cap is full):** `improve/wirtinger-w1p-style` @ `da7c52378` from `118570ecf`. Target
+  `Analysis/Sobolev/Poincare/Wirtinger/W1p.lean` (329 lines, 44 `fun … =>`, no other `=>`, no roadmap text, no open-PR overlap). Edits:
+  44 arrows (asserted); two top-level chains split (a calc step's `rw [Lp.enorm_def]; exact …`, `hpos`'s `rw [hOmega]; exact …`); the two
+  anonymous-constructor `⟨by …; …⟩` terms stay. Gate 12/0/0. Astra (three-dot diff, 1 file): **cleared**. Body `pr-body-wirt.md`,
+  `Roadmap: PDE` (as #7843).
+* In progress (cap full): #8538, #8548 and #8549. Pin `dc4b8d60d5`, main `118570ecf`.
