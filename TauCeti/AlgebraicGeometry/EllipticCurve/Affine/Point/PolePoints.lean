@@ -147,6 +147,8 @@ variable [DecidableEq F]
 
 /-- **A point of `W` over `F` lies in the kernel of reduction only if it is the point at
 infinity**: the `x`-coordinate of a constant point has no pole. -/
+-- not `@[simp]`: `mem_polePoints_iff` is, and it unfolds the membership on the left-hand side
+-- first, so this lemma would never fire and `simpNF` rejects it. Apply it, or `rw` with it.
 theorem baseChange_mem_polePoints_iff (P : TauCeti.Place F K) (Q : (W⁄F).toAffine.Point) :
     Point.baseChange (W' := W) F K Q ∈ polePoints W P ↔ Q = 0 := by
   rw [mem_polePoints_iff, map_eq_zero_iff _ (Point.map_injective (W' := W) _), or_iff_left_iff_imp]

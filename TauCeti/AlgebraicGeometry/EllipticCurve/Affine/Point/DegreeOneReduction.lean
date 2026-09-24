@@ -350,6 +350,8 @@ variable [DecidableEq F]
 to that point.** For a place `w` of `K / F`, an affine point `(x₁, y₁)` of `W` over `K` and an
 affine point `(a, b)` of `W` over `F`, the difference `(x₁, y₁) - (a, b)` is the point at infinity
 or has `x`-coordinate with a pole at `w` exactly when `x₁ ≡ a` and `y₁ ≡ b` modulo `w`. -/
+-- not `@[simp]`: `mem_polePoints_iff` is, and it unfolds the membership on the left-hand side
+-- first, so this lemma would never fire and `simpNF` rejects it. Apply it, or `rw` with it.
 theorem some_sub_baseChange_mem_polePoints_iff {x₁ y₁ : K}
     (h₁ : (W⁄K).toAffine.Nonsingular x₁ y₁) {a b : F} (hQ : (W⁄F).toAffine.Nonsingular a b) :
     Point.some x₁ y₁ h₁ - Point.baseChange (W' := W) F K (.some a b hQ) ∈ polePoints W w ↔
@@ -397,6 +399,8 @@ noncomputable def reductionOfDegreeEqOne : (W⁄K).toAffine.Point →+ (W⁄F).t
       (exists_sub_mem_polePoints W w hw B).choose_spec
 
 /-- A point is congruent to its reduction modulo the kernel of reduction. -/
+-- not `@[simp]`: `mem_polePoints_iff` is, and it unfolds the membership on the left-hand side
+-- first, so this lemma would never fire and `simpNF` rejects it. Apply it, or `rw` with it.
 theorem sub_reductionOfDegreeEqOne_mem_polePoints (A : (W⁄K).toAffine.Point) :
     A - Point.baseChange (W' := W) F K (reductionOfDegreeEqOne W hw A) ∈ polePoints W w :=
   (exists_sub_mem_polePoints W w hw A).choose_spec
@@ -426,6 +430,7 @@ theorem reductionOfDegreeEqOne_baseChange (Q : (W⁄F).toAffine.Point) :
   exact zero_mem _
 
 /-- **The kernel of the reduction map is the kernel of reduction** `polePoints W w`. -/
+@[simp]
 theorem ker_reductionOfDegreeEqOne : (reductionOfDegreeEqOne W hw).ker = polePoints W w := by
   ext A
   rw [AddMonoidHom.mem_ker, reductionOfDegreeEqOne_eq_iff, map_zero, sub_zero]

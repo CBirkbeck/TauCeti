@@ -38,8 +38,8 @@ theorem Y_sub_Y_mul_Y_add_Y_eq (h₁ : W.Equation x₁ y₁) (h₂ : W.Equation 
   rw [equation_iff] at h₁ h₂
   linear_combination h₁ - h₂
 
-/-- The chord identity with second factor `y₁ - negY x₂ y₂`: over `x₂` it vanishes only at the
-two points `(x₂, y₂)` and `-(x₂, y₂)`. -/
+/-- The chord identity with second factor `y₁ - negY x₂ y₂`. Over a field, its case `x₁ = x₂` says
+that the only points over `x₂` are `(x₂, y₂)` and `-(x₂, y₂)`. -/
 theorem Y_sub_Y_mul_Y_sub_negY_eq (h₁ : W.Equation x₁ y₁) (h₂ : W.Equation x₂ y₂) :
     (y₁ - y₂) * (y₁ - W.negY x₂ y₂) =
       (x₁ - x₂) * (x₁ ^ 2 + x₁ * x₂ + x₂ ^ 2 + W.a₂ * (x₁ + x₂) + W.a₄ - W.a₁ * y₁) := by
