@@ -42773,3 +42773,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   rebased from `afdaec38a` onto `b8003b8c2` (file untouched in between; the astra-cleared diff is unchanged). Re-gated 12/0/0.
   `Roadmap: PDE`. A build waiter is armed. `improve/energyform-integrated-style` stays staged.
 * In progress (cap full): #8525, #8526 and #8530. #8521 is approved.
+
+## r1015 — 2026-09-24T07:38Z (cron; queued right behind r1014)
+
+* #8521 is `ready-to-merge` (drive board). #8525 is `awaiting-CI` on the fix `e5b5676d1` (build running since 07:28:46Z; its board is
+  behind the head, so the fix is already pushed: nothing to re-fix). #8526 is 52 min since ready. #8530's build is queued (waiter armed).
+  No merges. In progress (cap full): #8525, #8526 and #8530.
