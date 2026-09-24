@@ -42632,3 +42632,9 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * In progress (cap full): #8508, #8510 and #8513. Pin `dc4b8d60d5`, main `50e5fa02e`.
 * (late in r1000) **#8513 went green at 05:12:39Z and was marked ready at 05:13Z.** Guards: all latest check-runs green, head `baefb2a43`
   unchanged, pin `dc4b8d60d5` at base `50e5fa02e` and at main, file untouched since the base. No drafts remain.
+
+## r1001 — 2026-09-24T05:15Z (cron)
+
+* **#8503 merged** (05:10:13Z, `improve/wishart-basic-style`, kind 2, approved by the r998 drive), the twenty-ninth of this session's PRs.
+* #8508 (32 min since ready), #8510 (20 min) and #8513 (2 min) are `awaiting-review`. No findings. `improve/arrays-basic-style` stays staged.
+* In progress (cap full): #8508, #8510 and #8513. Pin `dc4b8d60d5`, main `3a133d78e`.
