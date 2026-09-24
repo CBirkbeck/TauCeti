@@ -826,8 +826,12 @@ noncomputable def toShortComplex : ShortComplex (TopRep.{uS} ℤ G) where
   g := ofDiscreteModuleMap S.proj.toIntLinearMap S.proj_equivariant
   zero := TopRep.hom_ext <| DFunLike.ext _ _ fun a : A ↦ S.proj_incl a
 
+-- A pre-lemma (`simp↓`): otherwise the `@[simps]` lemma `toShortComplex_g` rewrites
+-- `S.toShortComplex.g` first, and `ofDiscreteModuleMap_hom_apply` does not match the result, whose
+-- implicit objects `S.toShortComplex.X₂` and `S.toShortComplex.X₃` are not reducibly
+-- `ofDiscreteModule ℤ G B` and `ofDiscreteModule ℤ G C`.
 /-- The projection of the coefficient short complex is the given projection on elements. -/
-@[simp] theorem toShortComplex_g_hom_apply (b : B) :
+@[simp↓] theorem toShortComplex_g_hom_apply (b : B) :
     S.toShortComplex.g.hom b = S.proj b := rfl
 
 /-- The middle coefficient representation has the given action. -/
