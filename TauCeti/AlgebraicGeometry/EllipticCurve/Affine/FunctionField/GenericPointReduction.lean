@@ -47,7 +47,9 @@ namespace WeierstrassCurve.Affine
 variable {F : Type*} [Field F] (W : Affine F) [W.IsElliptic]
 
 /-- The coordinate ring of an elliptic curve is a Dedekind domain. -/
-local instance : IsDedekindDomain W.CoordinateRing :=
+-- Named: an anonymous `local instance` here gets the same generated name as the one in
+-- `Affine/FunctionField/Genus.lean`, and the two modules are siblings under `PointPlace.lean`.
+local instance isDedekindDomain_coordinateRing_of_isElliptic : IsDedekindDomain W.CoordinateRing :=
   have := isIntegrallyClosed_coordinateRing W
   W.isDedekindDomain_coordinateRing_of_isIntegrallyClosed
 
