@@ -42608,3 +42608,10 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
 * **#8499 merged** (04:50:46Z, `improve/sobolev-diffquot-style`, kind 2, approved by the r997 drive), the twenty-eighth of this session's PRs.
 * #8503's drive (04:55Z) is running (`review-in-progress`). #8508 (13 min since ready) and #8510 (1 min) are `awaiting-review`. No findings.
 * In progress (cap full): #8503, #8508 and #8510. Pin `dc4b8d60d5`, main `50e5fa02e`.
+* (late in r999) **The #8503 drive approved it 10/10** (`codex/gpt-5.6-sol`, board 5807960054, 04:57Z; $0.90).
+* (late in r999) **Step 5, kind 2: opened draft #8513**, `improve/almostsplit-basic-style` @ `baefb2a43` from `50e5fa02e`;
+  `Roadmap: RepresentationTheory` (as #6900 and #5548). Target from the r976 re-score: `CategoryTheory/AlmostSplit/Basic.lean` (45
+  `fun … =>`, no other `=>`, no roadmap text, no open-PR overlap). Edits: 45 arrows (asserted); the two identical
+  `rw [← cancel_mono e.inv, e.hom_inv_id, Category.assoc]; exact hs` chains split. Gate 12/0/0. Astra (three-dot diff, 1 file):
+  **cleared** ("I would reject none of the shown edits"). A build waiter is armed. **The r976 roadmap-free list is now used up.**
+* In progress (cap full): #8508, #8510 and #8513. #8503 is approved.
