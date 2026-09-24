@@ -1,4 +1,4 @@
-# Last round — r984 (2026-09-24T02:19Z)
+# Last round — r985 (2026-09-24T02:25Z)
 
 ## PR rotation (user directive, 2026-09-14) — read this first
 
@@ -56,7 +56,7 @@ flag is required: without it codex prints `Not inside a trusted directory` and e
 has moved; otherwise kind 3 again while astra is out (until 2026-09-27T15:04Z). The staged GlobalTurning branch went as #8286 (r908). The r843 `not_mem_maxAvoid` rename went as #8291 (r910).
 Remaining kind-3 target: the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, cosmetic); re-run the scanners for more. Remaining kind-3 targets: the `GlobalTurning.lean` `i ≤ j` weakening (item 5), and the private `integral_Ioi_eq_Ioc_add_Ioi` in `Resolvent/Basic.lean` (`0 < h` → `0 ≤ h`, only `hh.le` used), now unblocked since #8224 merged. #6952 and #6953 merged on 2026-09-22 (15:27:14Z and 18:02:40Z). Main is `cdd847a11`, the Mathlib pin
 `dc4b8d60d5`, and the toolchain `leanprover/lean4:v4.34.0-rc2`. **Cron `4b5d0e55`** fires this round every 10 minutes (at
-:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `bcd901955`
+:03/:13/…/:53); it is session-only and expires 2026-09-30. **Handover:** `fork handover/improve-toolkit` tip is `cbf12dc2f`
 (r902); sync each round from the tip recorded here, with a lease on it.
 
 ## What to expect next
@@ -437,6 +437,7 @@ Full artifact: `pending/quadratic-discriminant-report.md`. Reference docs:
 * r982: **#8476 driven** (70 min, no board) and **approved 10/10** ($1.17). #8491 went green and was marked ready. Kind 2 opened as draft **#8492** (`PDE/Spectrum.lean`, 47 `↦`), cleared by astra.
 * r983: **#8473 merged** (02:01:52Z). #8492 went green at 02:12:47Z and was marked ready.
 * r984: **#8476 merged** (02:11:49Z). Staged `improve/condexp-contractable-style` (astra ✓, gate 12/0/0).
+* r985: no change; #8487 at 57 min (drive next round if still boardless).
 * r972: #8469 went green (00:14:42Z) and was marked ready; #8473 and #8476 are still queued.
 
 ## Candidates for a later step 5

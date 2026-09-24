@@ -42468,3 +42468,8 @@ CI is still recovering (128 queued, 16 running). The three astra-cleared drafts 
   exchangeability layer" describes the code, not a roadmap layer, and stays). Edit: 57 arrows (asserted). Gate 12/0/0. Astra (three-dot
   diff, 1 file): **cleared** ("I would accept the entire supplied diff"). Body: scratchpad `pr-body-condexp.md`.
 * In progress (cap full): #8487, #8491 and #8492. Pin `dc4b8d60d5`, main `10ecfcfd4`.
+
+## r985 — 2026-09-24T02:25Z (cron)
+
+* No merges, no findings, no boards. #8487 is at 57 min since ready (step 4 opens at 02:28Z; drive next round if it is still boardless),
+  #8491 at 22 min and #8492 at 11 min. The CondExp branch stays staged. Pin `dc4b8d60d5`, main `10ecfcfd4`.
