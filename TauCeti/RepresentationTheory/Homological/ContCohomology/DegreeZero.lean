@@ -186,6 +186,7 @@ theorem res_comp_zeroIso_hom (S : Subgroup G) (X : TopRep R G) :
 theorem infl_comp_zeroIso_hom (N : Subgroup G) [N.Normal] (X : TopRep R G) :
     TauCeti.ContinuousCohomology.infl N X 0 ≫ (zeroIso X).hom =
       -- Ascribed: otherwise an open `max v ?w` universe sends `=` into a slow coercion search.
+      -- (This follows the ascription idiom of #8346, for the universe issue fixed in #8353.)
       ((zeroIso (TopRep.quotientToInvariants X N)).hom ≫
         TopRep.invariantsResMap (QuotientGroup.mk' N : G →* G ⧸ N)
           (TopRep.quotientToInvariantsι X N) :) := by
