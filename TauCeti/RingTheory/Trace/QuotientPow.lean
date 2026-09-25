@@ -27,8 +27,9 @@ time, through the short exact sequence
 
 `0 → B ⧸ P --· a--> B ⧸ P ^ (n + 1) → B ⧸ P ^ n → 0`,
 
-where `a` is any element of `P ^ n` not in `P ^ (n + 1)`; injectivity of multiplication by `a` and
-exactness in the middle are the two Dedekind facts
+where `a` is any element of `P ^ n` not in `P ^ (n + 1)`; injectivity of multiplication by `a`
+(`Ideal.mapQ_mulLeft_pow_succ_injective`) and exactness in the middle
+(`Ideal.exact_mapQ_mulLeft_pow_succ`) come from the two Dedekind facts
 `Ideal.IsPrime.mem_pow_mul` and `Ideal.exists_mul_add_mem_pow_succ`, and the trace
 identity is `LinearMap.trace_eq_add_of_exact`.
 
@@ -41,11 +42,55 @@ computation for `B ⧸ p · B`, `Algebra.trace_quotient_eq_of_isDedekindDomain`)
 ## Main results
 
 * `Algebra.trace_quotient_pow_mk`: the trace formula `Tr_{B ⧸ P ^ n} = n · Tr_{B ⧸ P}`.
+* `Ideal.exact_mapQ_mulLeft_pow_succ`: exactness of `B ⧸ P → B ⧸ P ^ (n + 1) → B ⧸ P ^ n`.
 -/
 
 public section
 
 open Module
+
+namespace Ideal
+
+variable {B : Type*} [CommRing B]
+
+/-- Multiplication by an element `a ∈ I ^ n` carries `I` into `I ^ (n + 1)`. This is the
+compatibility condition under which `LinearMap.mulLeft B a` descends, via `Submodule.mapQ`, to a
+`B`-linear map `B ⧸ I → B ⧸ I ^ (n + 1)`. -/
+theorem le_comap_mulLeft_pow_succ {I : Ideal B} {a : B} {n : ℕ} (ha : a ∈ I ^ n) :
+    I ≤ Submodule.comap (LinearMap.mulLeft B a) (I ^ (n + 1)) := fun x hx ↦ by
+  rw [Submodule.mem_comap, LinearMap.mulLeft_apply, pow_succ]
+  exact mul_mem_mul ha hx
+
+variable [IsDedekindDomain B] {P : Ideal B} [P.IsPrime] {a : B} {n : ℕ}
+
+/-- For a prime `P` of a Dedekind domain and `a ∈ P ^ n` with `a ∉ P ^ (n + 1)`, multiplication by
+`a` induces an injective `B`-linear map `B ⧸ P → B ⧸ P ^ (n + 1)`. Unlike
+`Ideal.exact_mapQ_mulLeft_pow_succ`, this does not need `P ≠ ⊥`. -/
+theorem mapQ_mulLeft_pow_succ_injective (ha : a ∈ P ^ n) (ha' : a ∉ P ^ (n + 1)) :
+    Function.Injective
+      (Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a) (le_comap_mulLeft_pow_succ ha)) := by
+  refine (injective_iff_map_eq_zero _).2 fun y hy ↦ ?_
+  obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
+  rw [Submodule.mapQ_apply, LinearMap.mulLeft_apply, Submodule.Quotient.mk_eq_zero] at hy
+  exact (Submodule.Quotient.mk_eq_zero _).2 ((IsPrime.mem_pow_mul P hy).resolve_left ha')
+
+/-- For a nonzero prime `P` of a Dedekind domain and `a ∈ P ^ n` with `a ∉ P ^ (n + 1)`, the
+sequence `B ⧸ P → B ⧸ P ^ (n + 1) → B ⧸ P ^ n`, whose first map is multiplication by `a` and
+whose second map is the quotient map, is exact. -/
+theorem exact_mapQ_mulLeft_pow_succ (hP : P ≠ ⊥) (ha : a ∈ P ^ n) (ha' : a ∉ P ^ (n + 1)) :
+    Function.Exact
+      (Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a) (le_comap_mulLeft_pow_succ ha))
+      (Submodule.factor (pow_le_pow_right (I := P) (n.le_add_right 1))) := by
+  intro y
+  obtain ⟨u, rfl⟩ := Submodule.Quotient.mk_surjective _ y
+  simp only [Submodule.mapQ_apply, LinearMap.id_apply, Submodule.Quotient.mk_eq_zero, Set.mem_range,
+    (Submodule.Quotient.mk_surjective _).exists, LinearMap.mulLeft_apply, Submodule.Quotient.eq]
+  refine ⟨fun hu ↦ ?_, fun ⟨x, hx⟩ ↦ ?_⟩
+  · obtain ⟨x, w, hw, rfl⟩ := exists_mul_add_mem_pow_succ hP a u ha ha' hu
+    exact ⟨x, by rwa [sub_add_cancel_left, neg_mem_iff]⟩
+  · exact (Submodule.sub_mem_iff_right _ (mul_mem_right x _ ha)).1 (pow_le_pow_right n.le_succ hx)
+
+end Ideal
 
 namespace Algebra
 
@@ -53,6 +98,40 @@ variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B] [IsDedekindDomain
 variable {p : Ideal A} [p.IsMaximal] {P : Ideal B} [P.IsMaximal]
 
 attribute [local instance] Ideal.Quotient.field
+
+/-- One step of the `P`-adic filtration: for `P ≠ ⊥`, the trace over `A ⧸ p` of the residue of `z`
+in `B ⧸ P ^ (n + 1)` is the sum of its traces over `A ⧸ p` in `B ⧸ P` and in `B ⧸ P ^ n`, for any
+`A ⧸ p`-algebra structures on these quotients compatible with `A`. -/
+private theorem trace_quotient_pow_succ_mk [Module.Finite A B] (hP : P ≠ ⊥) (n : ℕ)
+    [Algebra (A ⧸ p) (B ⧸ P ^ (n + 1))] [IsScalarTower A (A ⧸ p) (B ⧸ P ^ (n + 1))]
+    [Algebra (A ⧸ p) (B ⧸ P ^ n)] [IsScalarTower A (A ⧸ p) (B ⧸ P ^ n)]
+    [Algebra (A ⧸ p) (B ⧸ P)] [IsScalarTower A (A ⧸ p) (B ⧸ P)] (z : B) :
+    Algebra.trace (A ⧸ p) (B ⧸ P ^ (n + 1)) (Ideal.Quotient.mk _ z) =
+      Algebra.trace (A ⧸ p) (B ⧸ P) (Ideal.Quotient.mk _ z) +
+        Algebra.trace (A ⧸ p) (B ⧸ P ^ n) (Ideal.Quotient.mk _ z) := by
+  have := Module.Finite.of_restrictScalars_finite A (A ⧸ p) (B ⧸ P ^ (n + 1))
+  obtain ⟨a, ha, ha'⟩ := Ideal.exists_mem_pow_notMem_pow_succ P hP Ideal.IsPrime.ne_top' n
+  have hsurj : Function.Surjective (algebraMap A (A ⧸ p)) :=
+    Ideal.Quotient.algebraMap_eq p ▸ Ideal.Quotient.mk_surjective
+  -- the `B`-linear maps of `0 → B ⧸ P → B ⧸ P ^ (n + 1) → B ⧸ P ^ n → 0`, made `A ⧸ p`-linear
+  let g := Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a)
+    (Ideal.le_comap_mulLeft_pow_succ ha)
+  let π := Submodule.factor (Ideal.pow_le_pow_right (I := P) (n.le_add_right 1))
+  let i := (g.restrictScalars A).extendScalarsOfSurjective hsurj
+  let pi := (π.restrictScalars A).extendScalarsOfSurjective hsurj
+  have hi : ⇑i = g := funext fun _ ↦ by
+    rw [LinearMap.extendScalarsOfSurjective_apply, LinearMap.restrictScalars_apply]
+  have hpi : ⇑pi = π := funext fun _ ↦ by
+    rw [LinearMap.extendScalarsOfSurjective_apply, LinearMap.restrictScalars_apply]
+  simp only [Algebra.trace_apply]
+  refine LinearMap.trace_eq_add_of_exact (i := i) (π := pi) ?_ ?_ ?_ ?_ ?_
+  · rw [hi]; exact Ideal.mapQ_mulLeft_pow_succ_injective ha ha'
+  · rw [hpi]; exact Submodule.factor_surjective _
+  · rw [hi, hpi]; exact Ideal.exact_mapQ_mulLeft_pow_succ hP ha ha'
+  -- multiplication by the residue of `z` is the action of `z ∈ B`, which `B`-linear maps respect
+  all_goals simp only [LinearMap.ext_iff, LinearMap.comp_apply, Algebra.coe_lmul_eq_mul,
+    LinearMap.mul_apply', hi, hpi, ← Ideal.Quotient.algebraMap_eq, ← Algebra.smul_def, map_smul,
+    implies_true]
 
 /-- **The trace of a quotient by a prime power.** For `P` a maximal ideal of a Dedekind domain `B`
 that is module-finite over `A`, and `p` a maximal ideal of `A` making both `B ⧸ P ^ n` and `B ⧸ P`
@@ -68,108 +147,19 @@ theorem trace_quotient_pow_mk [Module.Finite A B] (hP : P ≠ ⊥) (n : ℕ)
     Algebra.trace (A ⧸ p) (B ⧸ P ^ n) (Ideal.Quotient.mk _ z) =
       n • Algebra.trace (A ⧸ p) (B ⧸ P) (Ideal.Quotient.mk _ z) := by
   induction n generalizing instA instT with
-  | zero =>
-      have : Subsingleton (B ⧸ P ^ 0) := by
-        rw [Ideal.Quotient.subsingleton_iff, pow_zero]
-        exact Ideal.one_eq_top
-      rw [Subsingleton.elim (Ideal.Quotient.mk (P ^ 0) z) 0, map_zero, zero_smul]
+  | zero => simp [Ideal.Quotient.eq_zero_iff_mem.mpr (show z ∈ P ^ 0 by simp)]
   | succ n ih =>
-      have := Module.Finite.of_restrictScalars_finite A (A ⧸ p) (B ⧸ P ^ (n + 1))
-      -- the base ideal is carried into `P ^ (n + 1)`, hence into `P ^ n`
-      have hcomap : p ≤ Ideal.comap (algebraMap A B) (P ^ (n + 1)) := by
-        intro x hx
-        have h0 : algebraMap A (B ⧸ P ^ (n + 1)) x = 0 := by
-          rw [IsScalarTower.algebraMap_apply A (A ⧸ p) (B ⧸ P ^ (n + 1)),
-            Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem.mpr hx, map_zero]
-        rwa [Ideal.mem_comap, ← Ideal.Quotient.eq_zero_iff_mem]
-      have hcomap' : p ≤ Ideal.comap (algebraMap A B) (P ^ n) :=
-        hcomap.trans (Ideal.comap_mono (Ideal.pow_le_pow_right n.le_succ))
-      let instA' : Algebra (A ⧸ p) (B ⧸ P ^ n) := Ideal.Quotient.algebraQuotientOfLEComap hcomap'
-      let instT' : IsScalarTower A (A ⧸ p) (B ⧸ P ^ n) := IsScalarTower.of_algebraMap_eq' rfl
-      have := Module.Finite.of_restrictScalars_finite A (A ⧸ p) (B ⧸ P ^ n)
-      have := Module.Finite.of_restrictScalars_finite A (A ⧸ p) (B ⧸ P)
-      -- an element generating `P ^ n` modulo `P ^ (n + 1)`
-      obtain ⟨a, ha, ha'⟩ := Ideal.exists_mem_pow_notMem_pow_succ P hP
-        (Ideal.IsPrime.ne_top inferInstance) n
-      -- the two maps of the short exact sequence, `B`-linearly
-      have hmul : P ≤ Submodule.comap (LinearMap.mulLeft B a) (P ^ (n + 1)) := fun x hx ↦ by
-        simpa [pow_succ] using Ideal.mul_mem_mul ha hx
-      have hfac : P ^ (n + 1) ≤ Submodule.comap (LinearMap.id (R := B) (M := B)) (P ^ n) :=
-        Ideal.pow_le_pow_right n.le_succ
-      have hsurj : Function.Surjective (algebraMap A (A ⧸ p)) := Ideal.Quotient.mk_surjective
-      set i : (B ⧸ P) →ₗ[A ⧸ p] (B ⧸ P ^ (n + 1)) :=
-        ((Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a) hmul).restrictScalars
-          A).extendScalarsOfSurjective hsurj with hi_def
-      set pi : (B ⧸ P ^ (n + 1)) →ₗ[A ⧸ p] (B ⧸ P ^ n) :=
-        ((Submodule.mapQ (P ^ (n + 1)) (P ^ n) LinearMap.id hfac).restrictScalars
-          A).extendScalarsOfSurjective hsurj with hpi_def
-      have hi_apply (x : B) : i (Ideal.Quotient.mk P x) = Ideal.Quotient.mk (P ^ (n + 1)) (a * x) :=
-        by
-          rw [hi_def, LinearMap.extendScalarsOfSurjective_apply,
-            LinearMap.restrictScalars_apply]
-          simpa only [← Ideal.Quotient.mk_eq_mk, LinearMap.mulLeft_apply] using
-            Submodule.mapQ_apply P (P ^ (n + 1)) (LinearMap.mulLeft B a) x
-      have hpi_apply (x : B) :
-          pi (Ideal.Quotient.mk (P ^ (n + 1)) x) = Ideal.Quotient.mk (P ^ n) x := by
-        rw [hpi_def, LinearMap.extendScalarsOfSurjective_apply,
-          LinearMap.restrictScalars_apply]
-        simpa only [← Ideal.Quotient.mk_eq_mk, LinearMap.id_apply] using
-          Submodule.mapQ_apply (P ^ (n + 1)) (P ^ n) LinearMap.id x
-      -- the sequence `0 → B ⧸ P → B ⧸ P ^ (n + 1) → B ⧸ P ^ n → 0` is exact
-      have hinj : Function.Injective i := by
-        rw [injective_iff_map_eq_zero]
-        intro y hy
-        obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-        rw [hi_apply, Ideal.Quotient.eq_zero_iff_mem] at hy
-        rw [Ideal.Quotient.eq_zero_iff_mem]
-        exact (Ideal.IsPrime.mem_pow_mul P hy).resolve_left ha'
-      have hsur : Function.Surjective pi := fun y ↦ by
-        obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-        exact ⟨Ideal.Quotient.mk _ x, hpi_apply x⟩
-      have hex : Function.Exact i pi := by
-        intro y
-        obtain ⟨u, rfl⟩ := Ideal.Quotient.mk_surjective y
-        rw [hpi_apply, Ideal.Quotient.eq_zero_iff_mem]
-        constructor
-        · intro hu
-          obtain ⟨x, w, hw, rfl⟩ :=
-            Ideal.exists_mul_add_mem_pow_succ hP a u ha ha' hu
-          refine ⟨Ideal.Quotient.mk P x, ?_⟩
-          rw [hi_apply, Ideal.Quotient.mk_eq_mk_iff_sub_mem, sub_add_cancel_left]
-          exact neg_mem hw
-        · rintro ⟨y, hy⟩
-          obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-          rw [hi_apply, Ideal.Quotient.mk_eq_mk_iff_sub_mem] at hy
-          rw [← sub_sub_cancel (a * x) u]
-          exact sub_mem (Ideal.mul_mem_right x _ ha) (Ideal.pow_le_pow_right n.le_succ hy)
-      -- multiplication by `z` is an endomorphism of the whole sequence
-      set f : Module.End (A ⧸ p) (B ⧸ P ^ (n + 1)) :=
-        Algebra.lmul (A ⧸ p) _ (Ideal.Quotient.mk _ z) with hf
-      set fN : Module.End (A ⧸ p) (B ⧸ P) :=
-        Algebra.lmul (A ⧸ p) _ (Ideal.Quotient.mk _ z) with hfN
-      set fQ : Module.End (A ⧸ p) (B ⧸ P ^ n) :=
-        Algebra.lmul (A ⧸ p) _ (Ideal.Quotient.mk _ z) with hfQ
-      have hf_apply (y : B ⧸ P ^ (n + 1)) : f y = Ideal.Quotient.mk (P ^ (n + 1)) z * y := rfl
-      have hfN_apply (y : B ⧸ P) : fN y = Ideal.Quotient.mk P z * y := rfl
-      have hfQ_apply (y : B ⧸ P ^ n) : fQ y = Ideal.Quotient.mk (P ^ n) z * y := rfl
-      have hN : f ∘ₗ i = i ∘ₗ fN := by
-        refine LinearMap.ext fun y ↦ ?_
-        obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-        rw [LinearMap.comp_apply, LinearMap.comp_apply, hf_apply, hfN_apply, hi_apply, ← map_mul,
-          ← map_mul, hi_apply]
-        exact congrArg _ (by ring)
-      have hQ : pi ∘ₗ f = fQ ∘ₗ pi := by
-        refine LinearMap.ext fun y ↦ ?_
-        obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
-        rw [LinearMap.comp_apply, LinearMap.comp_apply, hf_apply, hfQ_apply, ← map_mul, hpi_apply,
-          hpi_apply, map_mul]
-      have e1 : Algebra.trace (A ⧸ p) (B ⧸ P ^ (n + 1)) (Ideal.Quotient.mk _ z)
-          = LinearMap.trace (A ⧸ p) _ f := Algebra.trace_apply _ _
-      have e2 : Algebra.trace (A ⧸ p) (B ⧸ P) (Ideal.Quotient.mk _ z)
-          = LinearMap.trace (A ⧸ p) _ fN := Algebra.trace_apply _ _
-      have e3 : Algebra.trace (A ⧸ p) (B ⧸ P ^ n) (Ideal.Quotient.mk _ z)
-          = LinearMap.trace (A ⧸ p) _ fQ := Algebra.trace_apply _ _
-      rw [e1, LinearMap.trace_eq_add_of_exact hinj hsur hex hN hQ, ← e2, ← e3, ih,
-        succ_nsmul']
+      have : Nontrivial (B ⧸ P ^ (n + 1)) := Ideal.Quotient.nontrivial_iff.mpr <|
+        ne_top_of_le_ne_top Ideal.IsPrime.ne_top' (Ideal.pow_le_self n.succ_ne_zero)
+      -- the base ideal is the contraction of `P ^ (n + 1)`, hence lies in that of `P ^ n`
+      have hcomap : p ≤ Ideal.comap (algebraMap A B) (P ^ n) :=
+        (Ideal.comap_eq_of_scalar_tower_quotient (algebraMap (A ⧸ p) _).injective).ge.trans
+          (Ideal.comap_mono (Ideal.pow_le_pow_right n.le_succ))
+      let _ : Algebra (A ⧸ p) (B ⧸ P ^ n) := Ideal.Quotient.algebraQuotientOfLEComap hcomap
+      -- the structure map of `algebraQuotientOfLEComap` is `Ideal.quotientMap` by definition
+      have _ : IsScalarTower A (A ⧸ p) (B ⧸ P ^ n) := .of_algebraMap_eq fun x ↦ by
+        rw [← Ideal.Quotient.mk_algebraMap, Ideal.Quotient.algebraMap_eq]
+        exact Ideal.quotientMap_mk.symm
+      rw [trace_quotient_pow_succ_mk hP n z, ih, succ_nsmul']
 
 end Algebra
