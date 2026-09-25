@@ -37,7 +37,7 @@ namespace TauCeti
 open CommGroup (torsion)
 open Multiplicative
 
-variable {A M T : Type*} [CommGroup A] [AddCommGroup M] [IsAddTorsionFree M] [AddCommGroup T]
+variable {A M T : Type*} [CommGroup A] [AddGroup M] [IsAddTorsionFree M] [AddMonoid T]
   [TopologicalSpace A] [TopologicalSpace M] [TopologicalSpace T]
 
 /-- Under a topological isomorphism `A ≃ₜ* Multiplicative (M × T)` with `M` torsion-free and `T`
