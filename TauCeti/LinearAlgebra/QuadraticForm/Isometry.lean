@@ -69,6 +69,8 @@ theorem _root_.QuadraticMap.IsometryEquiv.nondegenerate_iff
     [AddCommGroup N] [Module R N]
     {Q₁ : QuadraticMap R M₁ N} {Q₂ : QuadraticMap R M₂ N}
     (e : Q₁.IsometryEquiv Q₂) : Q₁.Nondegenerate ↔ Q₂.Nondegenerate := by
+  -- This follows the proof of Mathlib's `QuadraticMap.IsometryEquiv.map_radical`
+  -- (`Mathlib/LinearAlgebra/QuadraticForm/Radical.lean`), with the polar kernel for the radical.
   have hpolar : Q₁.polarBilin.ker.map e.toLinearMap = Q₂.polarBilin.ker := by
     ext
     simp [LinearMap.ext_iff, e.toEquiv.forall_congr_left]
