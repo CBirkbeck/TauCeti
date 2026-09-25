@@ -242,14 +242,9 @@ theorem exists_isMinimalCosetRep (J : Set B) (w : W) :
   rw [hv₀, mul_assoc]
   exact Nat.find_le ⟨v₀ * v, mul_mem hv₀mem hv, rfl⟩
 
-/-- Let `u` be a minimal coset representative for `cs.parabolic J`, and let `v ∈ cs.parabolic J`
-satisfy `ℓ (u * v) = ℓ u + ℓ v`. If `s i ∈ cs.parabolic J` and `i` is not a right descent of `v`,
-then `i` is not a right descent of `u * v`.
-
-The hypothesis `ℓ (u * v) = ℓ u + ℓ v` always holds, by
-`CoxeterSystem.length_mul_of_isMinimalCosetRep`. -/
--- `huv` is nevertheless assumed: this lemma is the inductive step in the proof of that theorem.
-theorem not_isRightDescent_mul_of_isMinimalCosetRep {J : Set B} {u : W}
+/-- The inductive step of `CoxeterSystem.length_mul_of_isMinimalCosetRep`: the exchange condition
+applied to a reduced word for `u * v`, assuming `ℓ (u * v) = ℓ u + ℓ v` for this `v`. -/
+private theorem not_isRightDescent_mul_of_isMinimalCosetRep_aux {J : Set B} {u : W}
     (hu : cs.IsMinimalCosetRep J u) {v : W} (hv : v ∈ cs.parabolic J) (huv : ℓ (u * v) = ℓ u + ℓ v)
     {i : B} (hi : s i ∈ cs.parabolic J) (hvi : ¬ cs.IsRightDescent v i) :
     ¬ cs.IsRightDescent (u * v) i := by
@@ -275,7 +270,7 @@ theorem not_isRightDescent_mul_of_isMinimalCosetRep {J : Set B} {u : W}
       mul_assoc] at hke
     have hle := cs.length_wordProd_le (ω.eraseIdx (k - α.length))
     rw [← mul_left_cancel hke, cs.not_isRightDescent_iff.mp hvi, hωred.eq] at hle
-    have := List.length_eraseIdx_add_one (show k - α.length < ω.length by omega)
+    have := List.length_eraseIdx_add_one (by omega : k - α.length < ω.length)
     omega
 
 /-- **Lengths add across a minimal coset representative.** If `u` has minimal length in
@@ -292,10 +287,23 @@ theorem length_mul_of_isMinimalCosetRep {J : Set B} {u : W} (hu : cs.IsMinimalCo
     have hlen := cs.isRightDescent_iff.mp hdesc
     have hvj : v * s j ∈ cs.parabolic J := mul_mem hv (cs.simple_mem_parabolic hj)
     have hIH := ih hvj (by omega)
-    have h := cs.not_isRightDescent_iff.mp <| cs.not_isRightDescent_mul_of_isMinimalCosetRep hu hvj
-      hIH (cs.simple_mem_parabolic hj) (cs.isRightDescent_iff_not_isRightDescent_mul.mp hdesc)
+    have h := cs.not_isRightDescent_iff.mp <|
+      cs.not_isRightDescent_mul_of_isMinimalCosetRep_aux hu hvj hIH (cs.simple_mem_parabolic hj)
+        (cs.isRightDescent_iff_not_isRightDescent_mul.mp hdesc)
     rw [hIH, ← mul_assoc, cs.simple_mul_simple_cancel_right] at h
     omega
+
+/-- Let `u` be a minimal coset representative for `cs.parabolic J` and let `v ∈ cs.parabolic J`.
+If `s i ∈ cs.parabolic J` and `i` is not a right descent of `v`, then `i` is not a right descent
+of `u * v`. This is the exchange-condition step behind the minimal coset representatives of
+[Björner–Brenti, *Combinatorics of Coxeter Groups*, §2.4] and
+[Humphreys, *Reflection Groups and Coxeter Groups*, §1.10]. -/
+theorem not_isRightDescent_mul_of_isMinimalCosetRep {J : Set B} {u : W}
+    (hu : cs.IsMinimalCosetRep J u) {v : W} (hv : v ∈ cs.parabolic J) {i : B}
+    (hi : s i ∈ cs.parabolic J) (hvi : ¬ cs.IsRightDescent v i) :
+    ¬ cs.IsRightDescent (u * v) i :=
+  cs.not_isRightDescent_mul_of_isMinimalCosetRep_aux hu hv
+    (cs.length_mul_of_isMinimalCosetRep hu hv) hi hvi
 
 /-- Minimality in the coset is the absence of right descents inside `J`. -/
 @[simp]
