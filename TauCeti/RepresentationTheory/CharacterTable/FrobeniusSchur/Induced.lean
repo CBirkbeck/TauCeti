@@ -52,20 +52,6 @@ universe v
 
 variable {G : Type v} [Group G] {N : Subgroup G} {k : Type} [Field k]
 
-/-- On an inverted subgroup `N` of index two, the character of the representation induced from a
-linear character `ψ` of `N` is `ψ + ψ⁻¹`, as a trace of the underlying representation. -/
-private theorem character_ρ_indFDRep_ofLinearCharacter_of_mem [Finite G] (hindex : N.index = 2)
-    {s : G} (hs : s ∉ N) (hinv : ∀ x ∈ N, s * x * s⁻¹ = x⁻¹) (hN : IsUnit (Nat.card N : k))
-    (ψ : N →* kˣ) {g : G} (hg : g ∈ N) :
-    Representation.character (indFDRep (FDRep.ofLinearCharacter ψ)).ρ g =
-      (ψ ⟨g, hg⟩ : k) + ((ψ ⟨g, hg⟩)⁻¹ : kˣ) :=
-  -- `FDRep.character_forget₂_obj` is the explicit bridge between the two character interfaces.
-  -- It is stated for the representation carried by `forget₂`, the one `FDRep.forget₂_ρ`
-  -- identifies with `V.ρ`; rewriting along that identification is not an option here, because
-  -- the motive is ill-typed while `indFDRep` is not `@[expose]`d.
-  (FDRep.character_forget₂_obj _ g).trans
-    (character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ hg)
-
 /-- Over an inverted subgroup `N` of index two, the character of the representation induced from
 a linear character `ψ` of `N` that is not its own inverse sums to zero on squares. -/
 private theorem sum_filter_mem_character_ρ_indFDRep_sq_eq_zero [Fintype G]
@@ -83,8 +69,12 @@ private theorem sum_filter_mem_character_ρ_indFDRep_sq_eq_zero [Fintype G]
   have hinvψ : (ψ ^ 2)⁻¹ ≠ 1 := (inv_ne_one (a := ψ ^ 2)).mpr hψ
   have hstep (x : N) : Representation.character (indFDRep (FDRep.ofLinearCharacter ψ)).ρ
       ((x : G) ^ 2) = (((ψ ^ 2) x : kˣ) : k) + ((((ψ ^ 2)⁻¹) x : kˣ) : k) := by
-    rw [character_ρ_indFDRep_ofLinearCharacter_of_mem hindex hs hinv hN ψ
-      (Subgroup.sq_mem_of_index_two hindex _)]
+    -- `FDRep.character_forget₂_obj` bridges the two character interfaces; its left-hand side is
+    -- the character of the representation carried by `forget₂`, which agrees with this one only
+    -- up to definitional unfolding, so it is composed as a term rather than rewritten.
+    refine ((FDRep.character_forget₂_obj _ _).trans
+      (character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ
+        (Subgroup.sq_mem_of_index_two hindex _))).trans ?_
     simp [← SubmonoidClass.mk_pow]
   rw [Finset.sum_subtype (p := (· ∈ N)) _ (fun x => by simp) _,
     Finset.sum_congr rfl fun x _ => hstep x, Finset.sum_add_distrib, hzeroSum _ hψ,
@@ -109,9 +99,11 @@ private theorem sum_filter_notMem_character_ρ_indFDRep_sq [Fintype G] [Decidabl
       Representation.character (indFDRep (FDRep.ofLinearCharacter ψ)).ρ (x ^ 2) =
         2 * (ψ z : k) := by
     intro x hx
-    rw [sq_eq_sq_of_notMem_of_index_two hindex hs hinv (Finset.mem_filter.mp hx).2,
-      character_ρ_indFDRep_ofLinearCharacter_of_mem hindex hs hinv hN ψ
-        (Subgroup.sq_mem_of_index_two hindex s), ← hzdef, hψz, two_mul]
+    rw [sq_eq_sq_of_notMem_of_index_two hindex hs hinv (Finset.mem_filter.mp hx).2]
+    refine ((FDRep.character_forget₂_obj _ _).trans
+      (character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ
+        (Subgroup.sq_mem_of_index_two hindex s))).trans ?_
+    rw [← hzdef, hψz, two_mul]
   rw [Finset.sum_congr rfl houterStep, Finset.sum_const, nsmul_eq_mul,
     card_filter_notMem_eq_card_of_index_two hindex]
 
