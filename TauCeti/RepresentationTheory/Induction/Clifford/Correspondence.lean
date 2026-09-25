@@ -175,25 +175,6 @@ theorem mackey_hom_apply_inclusion {V : FDRep k N} {A B : FDRep k (inertia V)} {
   rw [hres, hy] at h
   exact h
 
-/-- If an intertwiner `g : V → σ` followed by an intertwiner `p` from the conjugate of `σ` by `s⁻¹`
-back to `V` is nonzero, then the composite is a nonzero intertwiner `V → {}^{s⁻¹} V`, so `s⁻¹` lies
-in the inertia group of `V`. -/
-private theorem inv_mem_inertia_of_comp_ne_zero {V : FDRep k N} [Simple V] {W : Type*}
-    [AddCommMonoid W] [Module k W] {σ : Representation k N W} {s : G}
-    (p : IntertwiningMap (σ.comp (MulAut.conjNormal s⁻¹).toMonoidHom) V.ρ)
-    (g : IntertwiningMap V.ρ σ) (hpg : p.toLinearMap ∘ₗ g.toLinearMap ≠ 0) : s⁻¹ ∈ inertia V := by
-  -- `{}^{s⁻¹} V` has the same underlying space as `V` (`conjNormalFDRep_V`), so the composite
-  -- `p ∘ g`, an endomorphism of that space, is a candidate intertwiner `V → {}^{s⁻¹} V`.
-  let pg : V →ₗ[k] V := p.toLinearMap ∘ₗ g.toLinearMap
-  let q : IntertwiningMap V.ρ (conjNormalFDRep s⁻¹ V).ρ :=
-    LinearMap.intertwiningMap_of_isIntertwiningMap _ _ pg fun n v => by
-      have hp := IntertwiningMap.isIntertwining _ _ p (MulAut.conjNormal s n) (g v)
-      simp only [MonoidHom.coe_comp, MulEquiv.coe_toMonoidHom, Function.comp_apply, map_inv,
-        MulAut.inv_apply, MulEquiv.symm_apply_apply] at hp
-      rw [conjNormalFDRep_ρ, inv_inv]
-      exact (congrArg p (IntertwiningMap.isIntertwining _ _ g n v)).trans hp
-  exact q.mem_inertia fun hzero => hpg (LinearMap.ext fun v => DFunLike.congr_fun hzero v)
-
 /-- **A nonzero intertwiner into a conjugate of a representation lying over `V`.**  If `B` is an
 irreducible representation of the inertia group of `V` lying over `V`, and some intertwiner from
 `V` to the conjugate by `s⁻¹` of the restriction of `B` to `N` is nonzero, then `s ∈ inertia V`. -/
@@ -214,7 +195,7 @@ private theorem mem_inertia_of_intertwiningMap_conj_ne_zero [Finite N] [NeZero (
       ← IntertwiningMap.toLinearMap_apply, hzero, eq_comm] at hpv
   obtain ⟨gB, hgB⟩ :=
     not_forall.mp (mt (linearMap_eq_zero_of_comp_intertwiningMap_eq_zero V B hB _) hp0)
-  exact (inertia V).inv_mem_iff.mp (inv_mem_inertia_of_comp_ne_zero p gB hgB)
+  exact (inertia V).inv_mem_iff.mp (p.inv_mem_inertia_of_comp_ne_zero gB hgB)
 
 /-- **Off-inertia Mackey terms vanish.** If `A` and `B` are irreducible representations of the
 inertia group of `V`, both lying over `V`, then an intertwiner from the relevant restriction of
