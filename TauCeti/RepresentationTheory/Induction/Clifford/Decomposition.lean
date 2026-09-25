@@ -30,7 +30,8 @@ The orbit, its inertia-coset indexing and the common Hom-space dimension are alr
 `TauCeti/RepresentationTheory/Induction/Clifford/Orbit/Index.lean` and
 `TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean`.  This file assembles them
 using the irreducible-character basis: pairing either side with an irreducible character counts
-the same constituent, and a transversal contains exactly one representative when it occurs.
+the same constituent, and a transversal contains exactly one representative when it occurs, so
+the two sides agree by `TauCeti.ClassFunction.eq_of_forall_characterPairing_ofCharacter_eq`.
 
 ## Main result
 
@@ -262,18 +263,6 @@ private theorem characterPairing_resFDRep_eq_ite [Fintype G] [Fintype N]
       _ = ((0 : ℕ) : k) := congrArg (fun m : ℕ ↦ (m : k)) hzero
       _ = 0 := Nat.cast_zero
 
--- A class function on a finite group is determined by its pairings with the irreducible characters.
-open ClassFunction in
-private theorem eq_of_forall_characterPairing_irreducibleRepresentation_eq {H : Type*} [Group H]
-    [Fintype H] [IsAlgClosed k] [Invertible (Nat.card H : k)] {f₁ f₂ : ClassFunction k H}
-    (h : ∀ i, characterPairing (ofCharacter (irreducibleRepresentation k i)) f₁ =
-      characterPairing (ofCharacter (irreducibleRepresentation k i)) f₂) : f₁ = f₂ := by
-  -- Both sides are their expansions in the orthonormal basis of irreducible characters.
-  have hexp := sum_characterPairing_smul_ofCharacter (G := H) (irreducibleRepresentation k)
-    (pairwise_isEmpty_equiv_irreducibleRepresentation k) (by simp)
-  rw [← hexp f₁, ← hexp f₂]
-  simp_rw [h]
-
 -- Clifford's theorem, class-function form: if `σ` is an irreducible constituent of `Res_N W` and
 -- every irreducible constituent occurs with multiplicity `e`, then the class function of
 -- `Res_N W` is `e` times the sum of the class functions of the conjugates of `σ` over a left
@@ -291,12 +280,17 @@ private theorem ofFDRep_resFDRep_eq_smul_sum [Fintype G] [IsAlgClosed k]
   let _ : Fintype N := Fintype.ofFinite N
   let _ : Representation.IsIrreducible (FDRep.of sigma.toRepresentation).ρ :=
     Representation.isIrreducible_toRepresentation_of_isAtom hsigma
-  refine eq_of_forall_characterPairing_irreducibleRepresentation_eq fun i ↦ ?_
+  refine ClassFunction.eq_of_forall_characterPairing_ofCharacter_eq (irreducibleRepresentation k)
+    (pairwise_isEmpty_equiv_irreducibleRepresentation k) (by simp) fun i ↦ ?_
   let U : FDRep k N := FDRep.of (irreducibleRepresentation k i)
-  let _ : Representation.IsIrreducible U.ρ :=
-    inferInstanceAs (irreducibleRepresentation k i).IsIrreducible
-  rw [show ClassFunction.ofCharacter (irreducibleRepresentation k i) = ClassFunction.ofFDRep U from
-    (ClassFunction.ofFDRep_eq_ofCharacter U).symm]
+  have hρU : U.ρ = irreducibleRepresentation k i := FDRep.of_ρ' _
+  let _ : Representation.IsIrreducible U.ρ := by
+    rw [hρU]
+    infer_instance
+  have hU : ClassFunction.ofCharacter (irreducibleRepresentation k i) =
+      ClassFunction.ofFDRep U := by
+    rw [ClassFunction.ofFDRep_eq_ofCharacter, hρU]
+  rw [hU]
   exact (characterPairing_resFDRep_eq_ite W sigma hsigma U e hcommon).trans
     (characterPairing_smul_sum_conjNormalFDRep _ U e).symm
 
