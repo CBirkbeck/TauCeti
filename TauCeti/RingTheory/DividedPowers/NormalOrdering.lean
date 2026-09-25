@@ -215,28 +215,19 @@ private theorem mul_classTwoSeries {x y z : A} (hxy : x * y = y * x + z) (hxz : 
     (hyz : Commute y z) (n k : ℕ) :
     x * classTwoSeries y z n k =
       classTwoSeries y z n k * x + (k + 1) • classTwoSeries y z n (k + 1) := by
-  have hxzk : ∀ j, Commute x (dividedPower j z) := fun j ↦ by
-    simpa using commute_dividedPower_dividedPower hxz 1 j
-  rcases lt_trichotomy k n with hkn | hkn | hkn
-  · have hnk : n - k = (n - (k + 1)) + 1 := by omega
-    have hstep : x * dividedPower (n - k) y =
+  rcases lt_trichotomy k n with hkn | rfl | hkn
+  · have hstep : x * dividedPower (n - k) y =
         dividedPower (n - k) y * x + dividedPower (n - (k + 1)) y * z := by
-      rw [hnk]
+      rw [show n - k = n - (k + 1) + 1 by lia]
       exact mul_dividedPower_of_commutator_eq hxy hyz _
-    rw [classTwoSeries_eq_of_le hkn.le, classTwoSeries_eq_of_le hkn]
-    calc x * (dividedPower (n - k) y * dividedPower k z)
-        = x * dividedPower (n - k) y * dividedPower k z := by rw [mul_assoc]
-      _ = dividedPower (n - k) y * (x * dividedPower k z) +
-            dividedPower (n - (k + 1)) y * (z * dividedPower k z) := by
-          rw [hstep, add_mul, mul_assoc, mul_assoc]
-      _ = _ := by
-          rw [(hxzk k).eq, ← mul_assoc, self_mul_dividedPower, mul_smul_comm]
-  · have hnk : n - k = 0 := by omega
-    rw [classTwoSeries_eq_of_le hkn.le, classTwoSeries_eq_zero_of_lt (by omega), hnk,
+    -- Move `x` past the `y`-power using `hstep`, then past the `z`-power.
+    rw [classTwoSeries_eq_of_le hkn.le, classTwoSeries_eq_of_le hkn, ← mul_assoc, hstep, add_mul,
+      mul_assoc, mul_assoc, (hxz.dividedPower_right k).eq, self_mul_dividedPower, mul_smul_comm,
+      ← mul_assoc]
+  · rw [classTwoSeries_eq_of_le le_rfl, classTwoSeries_eq_zero_of_lt k.lt_succ_self, Nat.sub_self,
       dividedPower_zero, one_mul, smul_zero, add_zero]
-    exact (hxzk k).eq
-  · rw [classTwoSeries_eq_zero_of_lt hkn, classTwoSeries_eq_zero_of_lt (by omega), mul_zero,
-      zero_mul, smul_zero, add_zero]
+    exact (hxz.dividedPower_right k).eq
+  · simp [classTwoSeries_eq_zero_of_lt, hkn, hkn.trans k.lt_succ_self]
 
 /-- **Coefficient-one normal ordering for divided powers with central commutator.** Suppose
 `x * y = y * x + z`, and `z` commutes with both `x` and `y`. Then

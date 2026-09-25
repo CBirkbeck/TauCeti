@@ -70,6 +70,19 @@ variable {A : Type*} [Semiring A] [Algebra ℚ A] {x y z w : A}
 
 /-! ## Moving one element across a single normal-ordered monomial -/
 
+-- Moving `x` across the tail `z⁽ᵇ⁾ w⁽ᶜ⁾` of a normal-ordered monomial releases one term, trading
+-- a `z` for a `w`.
+private theorem mul_dividedPower_tail (hxz : x * z = z * x + 2 • w) (hxw : Commute x w)
+    (hzw : Commute z w) (b c : ℕ) :
+    x * (dividedPower b z * dividedPower c w) =
+      dividedPower b z * dividedPower c w * x +
+        if 0 < b then (2 * (c + 1)) • (dividedPower (b - 1) z * dividedPower (c + 1) w) else 0 := by
+  rw [← mul_assoc, mul_dividedPower_of_commutator_eq' hxz (hzw.smul_right 2) b, add_mul,
+    ite_zero_mul, (hxw.dividedPower_right c).right_comm]
+  -- The released `w` is absorbed by `w⁽ᶜ⁾`, as `w w⁽ᶜ⁾ = (c + 1) w⁽ᶜ⁺¹⁾`.
+  rw [mul_assoc (dividedPower (b - 1) z), smul_mul_assoc, self_mul_dividedPower, smul_smul,
+    mul_smul_comm]
+
 -- Moving `x` across a normal-ordered monomial `y⁽ᵃ⁾ z⁽ᵇ⁾ w⁽ᶜ⁾` releases at most two terms: one
 -- that trades a `y` for a `z`, and one that trades a `z` for a `w`. The coefficient `2` of the
 -- second commutator is what makes the `w`-coefficient `2 (c + 1)` rather than `c + 1`.
@@ -84,43 +97,14 @@ private theorem mul_dividedPower_triple (hxy : x * y = y * x + z) (hxz : x * z =
           (2 * (c + 1)) •
             (dividedPower a y * dividedPower (b - 1) z * dividedPower (c + 1) w)
           else 0) := by
-  have hxwc : Commute x (dividedPower c w) := by
-    simpa using commute_dividedPower_dividedPower hxw 1 c
-  have hzw2 : Commute z (2 • w) := hzw.smul_right 2
-  -- Split off the two commutator terms, keeping them in unevaluated form.
-  have key : x * (dividedPower a y * dividedPower b z * dividedPower c w) =
-      dividedPower a y * dividedPower b z * dividedPower c w * x +
-        (if 0 < a then dividedPower (a - 1) y * z else 0) *
-          dividedPower b z * dividedPower c w +
-        dividedPower a y *
-          ((if 0 < b then dividedPower (b - 1) z * (2 • w) else 0) * dividedPower c w) := by
-    calc x * (dividedPower a y * dividedPower b z * dividedPower c w)
-        = x * dividedPower a y * dividedPower b z * dividedPower c w := by
-          simp only [mul_assoc]
-      _ = (dividedPower a y * (x * dividedPower b z)) * dividedPower c w +
-            (if 0 < a then dividedPower (a - 1) y * z else 0) *
-              dividedPower b z * dividedPower c w := by
-          rw [mul_dividedPower_of_commutator_eq' hxy hyz a, add_mul, add_mul,
-            mul_assoc (dividedPower a y) x]
-      _ = _ := by
-          rw [mul_dividedPower_of_commutator_eq' hxz hzw2 b, mul_add, add_mul,
-            ← mul_assoc (dividedPower a y) (dividedPower b z) x,
-            mul_assoc (dividedPower a y * dividedPower b z) x (dividedPower c w), hxwc.eq,
-            ← mul_assoc (dividedPower a y * dividedPower b z) (dividedPower c w) x,
-            mul_assoc (dividedPower a y)
-              (if 0 < b then dividedPower (b - 1) z * (2 • w) else 0) (dividedPower c w)]
-          abel
-  rw [key]
-  congr 1
-  · congr 1
-    split_ifs with ha
-    · rw [mul_assoc (dividedPower (a - 1) y) z, self_mul_dividedPower, mul_smul_comm,
-        smul_mul_assoc]
-    · simp
-  · split_ifs with hb
-    · rw [mul_assoc (dividedPower (b - 1) z), smul_mul_assoc, self_mul_dividedPower, smul_smul,
-        mul_smul_comm, mul_smul_comm, mul_assoc]
-    · simp
+  -- Move `x` past `y⁽ᵃ⁾` and then across the tail `z⁽ᵇ⁾ w⁽ᶜ⁾`, absorbing the released `z` into
+  -- `z⁽ᵇ⁾`.
+  rw [mul_assoc, ← mul_assoc x, mul_dividedPower_of_commutator_eq' hxy hyz a, add_mul,
+    mul_assoc (dividedPower a y), mul_dividedPower_tail hxz hxw hzw, mul_add, mul_ite_zero,
+    mul_smul_comm, ite_zero_mul, mul_assoc (dividedPower (a - 1) y), ← mul_assoc z,
+    self_mul_dividedPower, smul_mul_assoc, mul_smul_comm]
+  simp only [mul_assoc]
+  abel
 
 /-! ## The divided-power series of the inner derivation -/
 
