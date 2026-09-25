@@ -8,7 +8,7 @@ module
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.Trace.Basic
 public import TauCeti.LinearAlgebra.Trace.Exact
-import TauCeti.RingTheory.DedekindDomain.IdealQuotientPow
+import TauCeti.RingTheory.DedekindDomain.Ideal.QuotientPow
 
 /-!
 # The trace of a quotient by a power of a prime
@@ -30,7 +30,7 @@ time, through the short exact sequence
 where `a` is any element of `P ^ n` not in `P ^ (n + 1)`; injectivity of multiplication by `a`
 (`Ideal.mapQ_mulLeft_pow_succ_injective`) and exactness in the middle
 (`Ideal.exact_mapQ_mulLeft_pow_succ`) are proved in
-`TauCeti.RingTheory.DedekindDomain.IdealQuotientPow`, and the trace identity is
+`TauCeti.RingTheory.DedekindDomain.Ideal.QuotientPow`, and the trace identity is
 `LinearMap.trace_eq_add_of_exact`.
 
 The formula is what makes the tame case of Dedekind's different theorem work: it produces an
