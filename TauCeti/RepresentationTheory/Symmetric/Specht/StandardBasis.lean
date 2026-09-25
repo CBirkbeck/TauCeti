@@ -339,7 +339,7 @@ noncomputable def standardPolytabloidBasis (μ : YoungDiagram) :
   (Module.Basis.span (linearIndependent_polytabloid μ)).map
     (LinearEquiv.ofEq _ _ (spechtSubrepresentation_eq_span_standard μ).symm)
 
--- The `simp` lemmas below state their left-hand sides through `dsimp% only`: the carrier
+-- The `simp` lemmas below state their left-hand sides through `dsimp% only` (#8315): the carrier
 -- `(permutationModule _).V` of the coercion and of the submodule is indexed unreduced, as
 -- `Rep.V` of a `Rep` structure literal, while `simp` reduces it to the underlying monoid
 -- algebra before it looks a term up, so the plain form is never found.

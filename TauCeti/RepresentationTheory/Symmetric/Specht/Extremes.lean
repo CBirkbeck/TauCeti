@@ -232,7 +232,7 @@ theorem spechtSubrepresentation_toRepresentation_apply_of_rowLen_le_one (h : μ.
 -- A pre-lemma (`simp↓`): otherwise `simp` first rewrites the carrier of `spechtModule _` to that
 -- of the Specht subrepresentation by `FGModuleCat.of_carrier`, and then, wherever
 -- `TauCeti.finrank_spechtSubrepresentation` is imported, the dimension to a `standardCount`, so
--- the plain left-hand side is never looked up.
+-- the plain left-hand side is never looked up. The pattern follows #8642.
 /-- **`S^{(n)}` is a line.** -/
 @[simp↓]
 theorem finrank_spechtModule_indiscrete (n : ℕ) :
