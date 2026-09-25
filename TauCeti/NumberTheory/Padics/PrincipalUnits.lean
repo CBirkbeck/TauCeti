@@ -13,10 +13,12 @@ public import Mathlib.RingTheory.ZMod.UnitsCyclic
 public import Mathlib.Topology.Algebra.Group.Subgroup
 public import Mathlib.Topology.Algebra.Group.Units
 public import TauCeti.NumberTheory.Padics.RingHoms
+public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Subgroup
+import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 import TauCeti.NumberTheory.Padics.PadicIntegers
 
 /-!
-# The principal unit groups `1 + p^f ℤ_p` and the closed subgroups of `1 + p ℤ_p`
+# Principal unit groups `1 + p^f ℤ_p`, their closed subgroups, and pro-`p` subgroups of `ℤ_pˣ`
 
 For a prime `p` and `f : ℕ`, the **principal unit group of level `f`** is
 `U^(f) = 1 + p^f ℤ_p ≤ ℤ_pˣ`, the kernel of reduction modulo `p ^ f` on units. The groups
@@ -37,10 +39,20 @@ one of the `U^(f)`, and `f` is determined by the subgroup through its index.
 The case `p = 2` is the input to the description of all closed subgroups of `ℤ_2ˣ`, which are
 sorted by how they sit over `{±1}` inside `ℤ_2ˣ = {±1} × (1 + 4ℤ_2)`.
 
+The filtration also identifies the pro-`p` subgroups of the profinite group `ℤ_pˣ`: they are
+exactly the subgroups of `1 + pℤ_p`. Every `U^(f)` with `f ≥ 1` is pro-`p`, because its finite
+quotients `U^(f) / U^(f+k)` have order `p ^ k`, and a pro-`p` subgroup has trivial image in the
+quotient `ℤ_pˣ / (1 + pℤ_p)` of order `p - 1`. For `p = 2` the principal unit group `1 + 2ℤ_2`
+is all of `ℤ_2ˣ`, so every subgroup of `ℤ_2ˣ` is pro-`2`.
+
 ## Main declarations
 
 * `TauCeti.unitsPrincipal p f`: the principal unit group `U^(f) = 1 + p^f ℤ_p`, with
-  `TauCeti.mem_unitsPrincipal_iff` (`u ∈ U^(f) ↔ p ^ f ∣ u - 1`) and its norm form.
+  `TauCeti.mem_unitsPrincipal_iff` (`u ∈ U^(f) ↔ p ^ f ∣ u - 1`) and its norm form; at level
+  one, `TauCeti.mem_unitsPrincipal_one_iff_toZMod` and `TauCeti.mem_unitsPrincipal_one_iff_residue`
+  read the condition in `ℤ/pℤ` and in the residue field, and
+  `TauCeti.unitsPrincipal_one_eq_ker_unitsMap_residue` identifies `U^(1)` with the kernel of
+  reduction on units.
 * `TauCeti.isOpen_unitsPrincipal`, `TauCeti.isClosed_unitsPrincipal`,
   `TauCeti.unitsPrincipal_antitone`, `TauCeti.iInf_unitsPrincipal_eq_bot`,
   `TauCeti.hasBasis_nhds_one_unitsPrincipal`: the topology of the filtration.
@@ -61,6 +73,10 @@ sorted by how they sit over `{±1}` inside `ℤ_2ˣ = {±1} × (1 + 4ℤ_2)`.
 * `TauCeti.exists_eq_unitsPrincipal_of_isClosed`: a nontrivial closed subgroup of `U^(f₀)` is
   some `U^(f)` with `f ≥ f₀`; `TauCeti.unitsPrincipal_inj`, `TauCeti.unitsPrincipal_injective`:
   the level is unique, at every level when `p` is odd.
+* `TauCeti.isProP_unitsPrincipal`: `1 + p^f ℤ_p` is pro-`p` for `f ≥ 1`.
+* `TauCeti.IsProP.le_unitsPrincipal_one`, `TauCeti.isProP_iff_le_unitsPrincipal_one`: a subgroup
+  of `ℤ_pˣ` is pro-`p` exactly when it lies in `1 + pℤ_p`.
+* `TauCeti.isProP_two_subgroup_units`: every subgroup of `ℤ_2ˣ` is pro-`2`.
 
 ## References
 
@@ -100,6 +116,29 @@ theorem mem_unitsPrincipal_iff {f : ℕ} {u : ℤ_[p]ˣ} :
 theorem mem_unitsPrincipal_iff_norm {f : ℕ} {u : ℤ_[p]ˣ} :
     u ∈ unitsPrincipal p f ↔ ‖(u : ℤ_[p]) - 1‖ ≤ (p : ℝ) ^ (-(f : ℤ)) := by
   rw [mem_unitsPrincipal_iff, PadicInt.norm_le_pow_iff_mem_span_pow, Ideal.mem_span_singleton]
+
+/-- `u ∈ U^(1)` iff `u ≡ 1 mod p`, read in `ℤ/pℤ`. -/
+theorem mem_unitsPrincipal_one_iff_toZMod {u : ℤ_[p]ˣ} :
+    u ∈ unitsPrincipal p 1 ↔ PadicInt.toZMod (u : ℤ_[p]) = 1 := by
+  rw [mem_unitsPrincipal_iff, pow_one, ← Ideal.mem_span_singleton,
+    ← PadicInt.maximalIdeal_eq_span_p, ← PadicInt.ker_toZMod, RingHom.mem_ker, map_sub, map_one,
+    sub_eq_zero]
+
+/-- `u ∈ U^(1)` iff `u` reduces to `1` in the residue field of `ℤ_p`. -/
+theorem mem_unitsPrincipal_one_iff_residue {u : ℤ_[p]ˣ} :
+    u ∈ unitsPrincipal p 1 ↔ IsLocalRing.residue ℤ_[p] (u : ℤ_[p]) = 1 := by
+  rw [mem_unitsPrincipal_iff, pow_one, ← Ideal.mem_span_singleton,
+    ← PadicInt.maximalIdeal_eq_span_p, ← IsLocalRing.residue_eq_zero_iff, map_sub, map_one,
+    sub_eq_zero]
+
+variable (p) in
+/-- The principal unit group `1 + pℤ_p` is the kernel of reduction on units. -/
+theorem unitsPrincipal_one_eq_ker_unitsMap_residue :
+    unitsPrincipal p 1 =
+      (Units.map (IsLocalRing.residue ℤ_[p] : ℤ_[p] →* IsLocalRing.ResidueField ℤ_[p])).ker := by
+  ext u
+  rw [mem_unitsPrincipal_one_iff_residue, MonoidHom.mem_ker, Units.ext_iff]
+  simp
 
 variable (p) in
 @[simp]
@@ -438,5 +477,52 @@ theorem exists_eq_unitsPrincipal_of_isClosed {f₀ : ℕ} (hf₀ : 0 < f₀) (hf
   rw [← topologicalClosure_zpowers_eq_unitsPrincipal (by omega)
     (fun h2 ↦ by have := hf₀₂ h2; omega) (hAle hbA) hb]
   exact Subgroup.topologicalClosure_minimal _ (Subgroup.zpowers_le.mpr hbA) hA
+
+/-! ### The pro-`p` subgroups of `ℤ_pˣ` -/
+
+variable (p) in
+/-- **The principal unit groups are pro-`p`**: for `f ≥ 1`, `1 + p^f ℤ_p` is a pro-`p` group. -/
+theorem isProP_unitsPrincipal {f : ℕ} (hf : 0 < f) : IsProP p (unitsPrincipal p f) := by
+  rw [Subgroup.isProP_iff_isPGroup_map_mk']
+  intro U g
+  -- `U` contains a principal unit group `U^(k)`, and `u ^ (p ^ k) ∈ U^(f + k) ≤ U^(k)` for
+  -- `u ∈ U^(f)`.
+  obtain ⟨k, -, hk⟩ := (hasBasis_nhds_one_unitsPrincipal p).mem_iff.mp
+    (U.isOpen.mem_nhds (one_mem _))
+  obtain ⟨u, hu, hgu⟩ := Subgroup.mem_map.mp g.2
+  refine ⟨k, Subtype.ext ?_⟩
+  rw [Subgroup.coe_pow, OneMemClass.coe_one, ← hgu, ← map_pow, QuotientGroup.mk'_apply,
+    QuotientGroup.eq_one_iff]
+  exact hk (unitsPrincipal_antitone p (Nat.le_add_left k f) (pow_pow_mem_unitsPrincipal hf hu k))
+
+/-- **A pro-`p` subgroup of `ℤ_pˣ` consists of principal units.** Its image in the quotient
+`ℤ_pˣ / (1 + pℤ_p)`, a group of order `p - 1`, is a `p`-group, hence trivial. -/
+theorem IsProP.le_unitsPrincipal_one {A : Subgroup ℤ_[p]ˣ} (hA : IsProP p A) :
+    A ≤ unitsPrincipal p 1 := by
+  have hU : IsPGroup p (A.map (QuotientGroup.mk' (unitsPrincipal p 1))) :=
+    A.isProP_iff_isPGroup_map_mk'.mp hA
+      ⟨⟨unitsPrincipal p 1, isOpen_unitsPrincipal p 1⟩, inferInstance⟩
+  have : Finite (ℤ_[p]ˣ ⧸ unitsPrincipal p 1) :=
+    Subgroup.quotient_finite_of_isOpen _ (isOpen_unitsPrincipal p 1)
+  obtain ⟨n, hn⟩ := IsPGroup.iff_card.mp hU
+  have hidx : Nat.card (ℤ_[p]ˣ ⧸ unitsPrincipal p 1) = p - 1 := by
+    rw [← Subgroup.index_eq_card, index_unitsPrincipal_of_pos p one_pos]
+    simp
+  have hdvd := Subgroup.card_subgroup_dvd_card (A.map (QuotientGroup.mk' (unitsPrincipal p 1)))
+  rw [hn, hidx] at hdvd
+  have hcop : Nat.Coprime p (p - 1) :=
+    (Nat.coprime_self_sub_right hp.out.one_lt.le).mpr (Nat.coprime_one_right p)
+  rw [(hcop.pow_left n).eq_one_of_dvd hdvd, Subgroup.card_eq_one, Subgroup.map_eq_bot_iff,
+    QuotientGroup.ker_mk'] at hn
+  exact hn
+
+/-- **The pro-`p` subgroups of `ℤ_pˣ`** are exactly the subgroups of `1 + pℤ_p`. -/
+theorem isProP_iff_le_unitsPrincipal_one (A : Subgroup ℤ_[p]ˣ) :
+    IsProP p A ↔ A ≤ unitsPrincipal p 1 :=
+  ⟨IsProP.le_unitsPrincipal_one, fun h ↦ (isProP_unitsPrincipal p one_pos).mono h⟩
+
+/-- Every subgroup of `ℤ_2ˣ` is pro-`2`, because `1 + 2ℤ_2 = ℤ_2ˣ`. -/
+theorem isProP_two_subgroup_units (A : Subgroup ℤ_[2]ˣ) : IsProP 2 A :=
+  (isProP_iff_le_unitsPrincipal_one A).mpr (by rw [unitsPrincipal_two_one]; exact le_top)
 
 end TauCeti
