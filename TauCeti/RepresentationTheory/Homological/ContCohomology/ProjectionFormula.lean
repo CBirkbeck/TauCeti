@@ -280,14 +280,6 @@ theorem cup11ProjectionHomotopy_apply (α : G → M) (β : U → N) (γ : G) :
     cup11ProjectionHomotopy G M N P U μ t ht α β γ =
       ∑ u : G ⧸ U, μ (α (t u)) (t u • β ⟨lWord U t u γ, lWord_mem U t ht u γ⟩) := (rfl)
 
-omit [U.FiniteIndex] in
-/-- The `1`-cocycle law of `α` at the factorization `t (γ • u) * ℓᵗ_{γ • u}(γ) = γ * t u` of
-`TauCeti.transversal_smul_mul_lWord`. -/
-private theorem transversal_smul_apply_lWord {α : G → M} (hα : groupCohomology.IsCocycle₁ α) (γ : G)
-    (u : G ⧸ U) : t (γ • u) • α (lWord U t (γ • u) γ) = γ • α (t u) - α (t (γ • u)) + α γ := by
-  -- Both sides of the rearranged goal are cocycle expansions of `α (γ * t u)`.
-  rw [sub_add_eq_add_sub, eq_sub_iff_add_eq, ← hα, ← hα, transversal_smul_mul_lWord]
-
 /-- Translating the homotopy: `γ • kᵗ(η)` pairs `γ • α (t u)` against `(γ * t u) • β (ℓᵗ_u η)`. -/
 private theorem smul_cup11ProjectionHomotopy
     (hequiv : ∀ (g : G) (m : M) (y : N), μ (g • m) (g • y) = g • μ m y) (α : G → M) (β : U → N)
@@ -306,14 +298,8 @@ private theorem cup11ProjectionHomotopy_mul (α : G → M) {β : U → N}
         ∑ u : G ⧸ U, μ (α (t (γ • u)))
           ((γ * t u) • β ⟨lWord U t u η, lWord_mem U t ht u η⟩) := by
   -- The cocycle law of `β` at `ℓᵗ_u(γ) * ℓᵗ_{γ⁻¹ • u}(η) = ℓᵗ_u(γ * η)` splits each summand.
-  have hsplit (u : G ⧸ U) :
-      t u • β ⟨_, lWord_mem U t ht u (γ * η)⟩ = t u • β ⟨_, lWord_mem U t ht u γ⟩ +
-        (γ * t (γ⁻¹ • u)) • β ⟨_, lWord_mem U t ht (γ⁻¹ • u) η⟩ := by
-    rw [← show (⟨_, lWord_mem U t ht u γ⟩ : U) * ⟨_, lWord_mem U t ht (γ⁻¹ • u) η⟩ =
-      ⟨_, lWord_mem U t ht u (γ * η)⟩ from Subtype.ext (lWord_mul_lWord U t u γ η), hβ,
-      Subgroup.smul_def, smul_add, smul_smul, transversal_mul_lWord, add_comm]
-  rw [cup11ProjectionHomotopy_apply, cup11ProjectionHomotopy_apply,
-    Finset.sum_congr rfl fun u _ => by rw [hsplit u, map_add], Finset.sum_add_distrib]
+  simp only [cup11ProjectionHomotopy_apply, smul_apply_lWord_mul_of_isCocycle₁ G N U t ht hβ γ η,
+    map_add, Finset.sum_add_distrib]
   -- Reindex the second sum by translation by `γ`.
   refine congrArg _ (Fintype.sum_equiv (MulAction.toPerm γ) _ _ fun u => ?_).symm
   simp only [MulAction.toPerm_apply, inv_smul_smul]
@@ -330,7 +316,7 @@ private theorem cochainsCor2_cup11_res_eq_sum
   rw [cochainsCor2_apply]
   refine (Fintype.sum_equiv (MulAction.toPerm γ) _ _ fun u => ?_).symm
   simp only [MulAction.toPerm_apply, inv_smul_smul]
-  rw [← transversal_smul_apply_lWord G M U t hα, ← hequiv, smul_smul, transversal_smul_mul_lWord]
+  rw [← smul_apply_lWord_of_isCocycle₁ G M U t hα, ← hequiv, smul_smul, transversal_smul_mul_lWord]
 
 /-- **The `(1,1)` projection formula on cochains, up to the explicit coboundary.** For a `1`-cocycle
 `α` of `G` and a `1`-cocycle `β` of `U`, the difference between the corestriction of the cup of

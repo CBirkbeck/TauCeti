@@ -275,6 +275,30 @@ theorem map_cochainsCor1 {N : Type w} [AddCommGroup N] [DistribMulAction G N] (�
     φ (cochainsCor1 G M U t ht f γ) = cochainsCor1 G N U t ht (fun x => φ (f x)) γ := by
   simp [map_sum, hφ]
 
+omit [U.FiniteIndex] in
+/-- The `1`-cocycle law of a cochain `c` on `G` at the factorization
+`t (γ • u) * ℓᵗ_{γ • u}(γ) = γ * t u` of `TauCeti.transversal_smul_mul_lWord`: the value of `c` at
+the transversal word `ℓᵗ_{γ • u}(γ)`, translated by `t (γ • u)`, is
+`γ • c (t u) - c (t (γ • u)) + c γ`. -/
+theorem smul_apply_lWord_of_isCocycle₁ {c : G → M} (hc : groupCohomology.IsCocycle₁ c) (γ : G)
+    (u : G ⧸ U) : t (γ • u) • c (lWord U t (γ • u) γ) = γ • c (t u) - c (t (γ • u)) + c γ := by
+  -- Both sides of the rearranged goal are cocycle expansions of `c (γ * t u)`.
+  rw [sub_add_eq_add_sub, eq_sub_iff_add_eq, ← hc, ← hc, transversal_smul_mul_lWord]
+
+omit [U.FiniteIndex] in
+/-- The `1`-cocycle law of a cochain `f` on `U` at the factorization
+`ℓᵗ_u(γ * η) = ℓᵗ_u(γ) * ℓᵗ_{γ⁻¹ • u}(η)` of `TauCeti.lWord_mul_lWord`, translated by `t u`: the
+translated value at `ℓᵗ_u(γ * η)` is the translated value at `ℓᵗ_u(γ)` plus the value at
+`ℓᵗ_{γ⁻¹ • u}(η)` translated by `γ * t (γ⁻¹ • u)`. -/
+theorem smul_apply_lWord_mul_of_isCocycle₁ {f : U → M} (hf : groupCohomology.IsCocycle₁ f)
+    (γ η : G) (u : G ⧸ U) :
+    t u • f ⟨lWord U t u (γ * η), lWord_mem U t ht u (γ * η)⟩ =
+      t u • f ⟨lWord U t u γ, lWord_mem U t ht u γ⟩ +
+        (γ * t (γ⁻¹ • u)) • f ⟨lWord U t (γ⁻¹ • u) η, lWord_mem U t ht (γ⁻¹ • u) η⟩ := by
+  have hmul : (⟨_, lWord_mem U t ht u γ⟩ : U) * ⟨_, lWord_mem U t ht (γ⁻¹ • u) η⟩ =
+      ⟨_, lWord_mem U t ht u (γ * η)⟩ := Subtype.ext (lWord_mul_lWord U t u γ η)
+  rw [← hmul, hf, Subgroup.smul_def, smul_add, smul_smul, transversal_mul_lWord, add_comm]
+
 /-- **The corestriction of a `1`-cocycle is a `1`-cocycle.** The factor `t u •` is what makes this
 true: the transversal identity `t u * ℓᵗ_u(γ) = γ * t (γ⁻¹ • u)` of
 `TauCeti.transversal_mul_lWord` is what converts the `U`-cocycle law for `f` into the `G`-cocycle
@@ -282,21 +306,9 @@ law for `cor¹_t f`, and the reindexed sum is what produces the leading `γ •`
 theorem cochainsCor1_isCocycle₁ {f : U → M} (hf : groupCohomology.IsCocycle₁ f) :
     groupCohomology.IsCocycle₁ (cochainsCor1 G M U t ht f) := by
   intro γ η
-  -- The cocycle law for `f` at the factorization `ℓᵗ_u(γη) = ℓᵗ_u(γ) * ℓᵗ_{γ⁻¹ • u}(η)`.
-  have key : ∀ u : G ⧸ U,
-      t u • f ⟨lWord U t u (γ * η), lWord_mem U t ht u (γ * η)⟩ =
-        γ • (t (γ⁻¹ • u) • f ⟨lWord U t (γ⁻¹ • u) η, lWord_mem U t ht (γ⁻¹ • u) η⟩) +
-          t u • f ⟨lWord U t u γ, lWord_mem U t ht u γ⟩ := by
-    intro u
-    have hmul : (⟨lWord U t u γ, lWord_mem U t ht u γ⟩ : U) *
-        ⟨lWord U t (γ⁻¹ • u) η, lWord_mem U t ht (γ⁻¹ • u) η⟩ =
-          ⟨lWord U t u (γ * η), lWord_mem U t ht u (γ * η)⟩ :=
-      Subtype.ext (lWord_mul_lWord U t u γ η)
-    rw [← hmul, hf, smul_add, Subgroup.mk_smul, smul_smul, transversal_mul_lWord, mul_smul]
-  simp only [cochainsCor1_apply]
-  rw [Finset.sum_congr rfl fun u _ => key u, Finset.sum_add_distrib, ← Finset.smul_sum,
-    sum_translate G U
-      (fun u => t u • f ⟨lWord U t u η, lWord_mem U t ht u η⟩) γ⁻¹]
+  simp only [cochainsCor1_apply, smul_apply_lWord_mul_of_isCocycle₁ G M U t ht hf γ η, mul_smul,
+    Finset.sum_add_distrib, ← Finset.smul_sum]
+  rw [sum_translate G U (fun u => t u • f ⟨lWord U t u η, lWord_mem U t ht u η⟩) γ⁻¹, add_comm]
 
 /-- The degree-one corestriction of a coboundary is the coboundary of the degree-zero
 corestriction. -/
@@ -372,14 +384,10 @@ theorem cochainsCor1_res {c : G → M} (hc : groupCohomology.IsCocycle₁ c) :
     cochainsCor1 G M U t ht (fun x : U => c (x : G)) =
       U.index • c + d0 G M (∑ u : G ⧸ U, c (t u)) := by
   ext γ
-  have key : ∀ u : G ⧸ U,
-      t u • c (lWord U t u γ) = γ • c (t (γ⁻¹ • u)) + c γ - c (t u) := by
-    intro u
-    have h1 := hc (t u) (lWord U t u γ)
-    rw [transversal_mul_lWord, hc γ (t (γ⁻¹ • u))] at h1
-    exact eq_sub_of_add_eq h1.symm
+  have key (u : G ⧸ U) : t u • c (lWord U t u γ) = γ • c (t (γ⁻¹ • u)) - c (t u) + c γ := by
+    simpa only [smul_inv_smul] using smul_apply_lWord_of_isCocycle₁ G M U t hc γ (γ⁻¹ • u)
   simp only [cochainsCor1_apply, Pi.add_apply, Pi.smul_apply, d0_apply]
-  rw [Finset.sum_congr rfl fun u _ => key u, Finset.sum_sub_distrib, Finset.sum_add_distrib,
+  rw [Finset.sum_congr rfl fun u _ => key u, Finset.sum_add_distrib, Finset.sum_sub_distrib,
     ← Finset.smul_sum, sum_translate G U (fun u => c (t u)) γ⁻¹, Finset.sum_const,
     Finset.card_univ, ← Nat.card_eq_fintype_card, ← U.index_eq_card]
   abel
