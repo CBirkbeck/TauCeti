@@ -202,12 +202,13 @@ private theorem card_filter_eq_sum {d : D4 → ℤ}
 
 /-! ### The twelve positive roots -/
 
-/-- **The central coordinate of a root of `D₄` is at most `2`**: a dimension vector of Tits norm
-one, not necessarily nonnegative, has `d center ≤ 2`. -/
-theorem center_le_two_of_titsForm_eq_one {d : D4 → ℤ} (h : titsForm D4 d = 1) : d center ≤ 2 := by
+/-- **The central coordinate of a root of `D₄` has absolute value at most `2`**: a dimension vector
+of Tits norm one, not necessarily nonnegative, has `|d center| ≤ 2`. -/
+theorem abs_center_le_two_of_titsForm_eq_one {d : D4 → ℤ} (h : titsForm D4 d = 1) :
+    |d center| ≤ 2 := by
   have hsum : 0 ≤ ∑ i, (2 * d (outer i) - d center) ^ 2 :=
     Finset.sum_nonneg fun i _ => sq_nonneg _
-  nlinarith [four_mul_titsForm d]
+  exact abs_le.mpr ⟨by nlinarith [four_mul_titsForm d], by nlinarith [four_mul_titsForm d]⟩
 
 /-- **The positive roots of `D₄` with central coordinate `0`** are the three outer simple roots:
 a nonnegative dimension vector of Tits norm one vanishing at the centre is a root vector with a
@@ -279,7 +280,7 @@ theorem titsForm_eq_one_iff_of_nonneg {d : D4 → ℤ} (hd : 0 ≤ d) :
   constructor
   · intro h
     have hc0 := Pi.le_def.mp hd center
-    have hc2 := center_le_two_of_titsForm_eq_one h
+    have hc2 := (abs_le.mp (abs_center_le_two_of_titsForm_eq_one h)).2
     simp only [Pi.zero_apply] at hc0
     obtain hc | hc | hc : d center = 0 ∨ d center = 1 ∨ d center = 2 := by omega
     · obtain ⟨s, hds, hs⟩ := exists_eq_rootVector_zero_of_titsForm_eq_one hd h hc
