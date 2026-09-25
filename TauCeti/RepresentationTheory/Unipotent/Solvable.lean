@@ -7,7 +7,7 @@ module
 
 public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Kolchin
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular.Nilpotent
-import TauCeti.LinearAlgebra.ExtensionBasis
+public import TauCeti.LinearAlgebra.ExtensionBasis
 import Mathlib.RingTheory.Nilpotent.Lemmas
 
 /-!
@@ -21,6 +21,11 @@ solvable.
 
 ## Main declarations
 
+* `TauCeti.toMatrixAlgEquiv_extensionBasis_isUpperUnitriangular`: an endomorphism preserving a
+  submodule, upper unitriangular on the submodule and on the quotient, is upper unitriangular in
+  the extension basis.
+* `Representation.isNilpotent_quotient_sub_one`: unipotent operators stay unipotent on the
+  quotient by an invariant submodule.
 * `Representation.exists_basis_isUpperUnitriangular_of_isUnipotent`: simultaneous
   upper-unitriangularization of a unipotent monoid representation.
 * `Representation.isSolvable_of_injective_of_isUnipotent`: a group with a faithful
@@ -37,6 +42,121 @@ This supplies the Lie--Kolchin solvability step in Layer 5 of the ReductiveGroup
 public section
 
 open Module
+
+namespace TauCeti
+
+section ExtensionBasis
+
+variable {R V : Type*} [CommRing R] [AddCommGroup V] [Module R V] {m n : ℕ}
+variable (p : Submodule R V) (bp : Basis (Fin m) R p) (bq : Basis (Fin n) R (V ⧸ p))
+variable {f : Module.End R V} (hf : p ≤ p.comap f)
+
+/-- In the basis `extensionBasis p bp bq`, the diagonal block of an endomorphism `f` preserving `p`
+indexed by the basis `bp` of `p` is the matrix of the restriction of `f` to `p`. -/
+theorem toMatrixAlgEquiv_extensionBasis_castAdd_castAdd (i j : Fin m) :
+    LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f (Fin.castAdd n i) (Fin.castAdd n j) =
+      LinearMap.toMatrixAlgEquiv bp (f.restrict fun _ hx ↦ Submodule.mem_comap.mp (hf hx)) i j := by
+  rw [LinearMap.toMatrixAlgEquiv_apply, LinearMap.toMatrixAlgEquiv_apply, extensionBasis_castAdd,
+    extensionBasis_repr_castAdd_of_mem p bp bq _ (Submodule.mem_comap.mp (hf (bp j).2)),
+    LinearMap.restrict_apply]
+
+include hf in
+/-- In the basis `extensionBasis p bp bq`, the lower-left block of the matrix of an endomorphism
+preserving `p` vanishes. -/
+theorem toMatrixAlgEquiv_extensionBasis_natAdd_castAdd (i : Fin n) (j : Fin m) :
+    LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f (Fin.natAdd m i) (Fin.castAdd n j) =
+      0 := by
+  rw [LinearMap.toMatrixAlgEquiv_apply, extensionBasis_castAdd]
+  exact extensionBasis_repr_natAdd_of_mem p bp bq _ (Submodule.mem_comap.mp (hf (bp j).2)) i
+
+/-- In the basis `extensionBasis p bp bq`, the diagonal block of an endomorphism `f` preserving `p`
+indexed by the basis `bq` of `V ⧸ p` is the matrix of the endomorphism of `V ⧸ p` induced by
+`f`. -/
+theorem toMatrixAlgEquiv_extensionBasis_natAdd_natAdd (i j : Fin n) :
+    LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f (Fin.natAdd m i) (Fin.natAdd m j) =
+      LinearMap.toMatrixAlgEquiv bq (p.mapQ p f hf) i j := by
+  rw [LinearMap.toMatrixAlgEquiv_apply, LinearMap.toMatrixAlgEquiv_apply,
+    extensionBasis_repr_natAdd, ← extensionBasis_natAdd_mkQ p bp bq j, Submodule.mkQ_apply,
+    Submodule.mapQ_apply]
+
+/-- If an endomorphism `f` preserves a submodule `p` and its restriction to `p` and the induced
+endomorphism of `V ⧸ p` have upper-triangular matrices in the bases `bp` and `bq`, then the
+matrix of `f` in the extension basis `extensionBasis p bp bq` is upper triangular. -/
+theorem toMatrixAlgEquiv_extensionBasis_isUpperTriangular
+    (hp : (LinearMap.toMatrixAlgEquiv bp
+      (f.restrict fun _ hx ↦ Submodule.mem_comap.mp (hf hx))).IsUpperTriangular)
+    (hq : (LinearMap.toMatrixAlgEquiv bq (p.mapQ p f hf)).IsUpperTriangular) :
+    (LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f).IsUpperTriangular := by
+  intro i j hji
+  obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
+  obtain ⟨j, rfl⟩ := finSumFinEquiv.surjective j
+  cases i with
+  | inl i =>
+      cases j with
+      | inl j =>
+          rw [finSumFinEquiv_apply_left, finSumFinEquiv_apply_left,
+            toMatrixAlgEquiv_extensionBasis_castAdd_castAdd p bp bq hf]
+          rw [finSumFinEquiv_apply_left, finSumFinEquiv_apply_left] at hji
+          exact hp ((Fin.strictMono_castAdd n).lt_iff_lt.mp hji)
+      | inr j =>
+          -- A quotient index lies after every submodule index.
+          rw [finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, id_eq, id_eq, Fin.lt_def,
+            Fin.val_natAdd, Fin.val_castAdd] at hji
+          omega
+  | inr i =>
+      cases j with
+      | inl j =>
+          rw [finSumFinEquiv_apply_right, finSumFinEquiv_apply_left,
+            toMatrixAlgEquiv_extensionBasis_natAdd_castAdd p bp bq hf]
+      | inr j =>
+          rw [finSumFinEquiv_apply_right, finSumFinEquiv_apply_right,
+            toMatrixAlgEquiv_extensionBasis_natAdd_natAdd p bp bq hf]
+          rw [finSumFinEquiv_apply_right, finSumFinEquiv_apply_right] at hji
+          exact hq ((Fin.strictMono_natAdd m).lt_iff_lt.mp hji)
+
+/-- If an endomorphism `f` preserves a submodule `p` and its restriction to `p` and the induced
+endomorphism of `V ⧸ p` have upper-unitriangular matrices in the bases `bp` and `bq`, then the
+matrix of `f` in the extension basis `extensionBasis p bp bq` is upper unitriangular. -/
+theorem toMatrixAlgEquiv_extensionBasis_isUpperUnitriangular
+    (hp : (LinearMap.toMatrixAlgEquiv bp
+      (f.restrict fun _ hx ↦ Submodule.mem_comap.mp (hf hx))).IsUpperUnitriangular)
+    (hq : (LinearMap.toMatrixAlgEquiv bq (p.mapQ p f hf)).IsUpperUnitriangular) :
+    (LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f).IsUpperUnitriangular := by
+  rw [Matrix.isUpperUnitriangular_def]
+  refine ⟨toMatrixAlgEquiv_extensionBasis_isUpperTriangular p bp bq hf hp.isUpperTriangular
+    hq.isUpperTriangular, fun i ↦ ?_⟩
+  obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
+  cases i with
+  | inl i =>
+      rw [finSumFinEquiv_apply_left, toMatrixAlgEquiv_extensionBasis_castAdd_castAdd p bp bq hf]
+      exact hp.apply_diag i
+  | inr i =>
+      rw [finSumFinEquiv_apply_right, toMatrixAlgEquiv_extensionBasis_natAdd_natAdd p bp bq hf]
+      exact hq.apply_diag i
+
+end ExtensionBasis
+
+section Quotient
+
+variable {R G V : Type*} [Ring R] [Monoid G] [AddCommGroup V] [Module R V]
+
+/-- If `rho g - 1` is nilpotent, then so is the operator `rho.quotient p hp g - 1` induced on the
+quotient of the representation `rho` by an invariant submodule `p`. -/
+theorem _root_.Representation.isNilpotent_quotient_sub_one (rho : Representation R G V)
+    (p : Submodule R V) (hp : ∀ g, p ≤ p.comap (rho g)) {g : G}
+    (hg : IsNilpotent (rho g - 1)) : IsNilpotent (rho.quotient p hp g - 1) := by
+  have hsub : p ≤ p.comap (rho g - 1) := fun x hx ↦ by
+    rw [Submodule.mem_comap, LinearMap.sub_apply, Module.End.one_apply]
+    exact p.sub_mem (Submodule.mem_comap.mp (hp g hx)) hx
+  have heq : rho.quotient p hp g - 1 = p.mapQ p (rho g - 1) hsub := by
+    ext x
+    simp [Representation.quotient_apply, Submodule.mapQ_apply]
+  rw [heq]
+  exact Module.End.IsNilpotent.mapQ hsub hg
+
+end Quotient
+
+end TauCeti
 
 namespace TauCeti.Representation
 
@@ -61,105 +181,29 @@ theorem _root_.Representation.exists_basis_isUpperUnitriangular_of_isUnipotent
   generalize hdim : finrank K V = d
   induction d using Nat.strong_induction_on generalizing V with
   | h d ih =>
-      by_cases hV : Nontrivial V
-      · let _ : Nontrivial V := hV
-        obtain ⟨p, hpdim, hfixed⟩ :=
-          rho.exists_fixed_submodule_finrank_eq_one_of_isUnipotent hunipotent
-        have hp (g : G) : p ≤ p.comap (rho g) := by
-          intro x hx
-          -- Membership in the comap unfolds to membership of the image in `p`.
-          change rho g x ∈ p
-          rw [hfixed g x hx]
-          exact hx
-        let q : Representation K G (V ⧸ p) := rho.quotient p hp
-        have q_apply (g : G) (x : V) : q g (p.mkQ x) = p.mkQ (rho g x) := by
-          simp [q, Representation.quotient_apply, Submodule.mapQ_apply]
-        have hq (g : G) : IsNilpotent (q g - 1) := by
-          have hsub : p ≤ p.comap (rho g - 1) := by
-            intro x hx
-            -- After unfolding the comap and subtraction of endomorphisms, this is invariance.
-            change rho g x - x ∈ p
-            exact p.sub_mem (hp g hx) hx
-          have hnil := Module.End.IsNilpotent.mapQ hsub (hunipotent g)
-          have heq : q g - 1 = p.mapQ p (rho g - 1) hsub := by
-            ext x
-            simp [q, Representation.quotient_apply, Submodule.mapQ_apply]
-          rw [heq]
-          exact hnil
-        have hqdim : finrank K (V ⧸ p) < d := by
-          have hsum := Module.finrank_quotient_add_finrank_le p
-          rw [hpdim, hdim] at hsum
-          omega
-        obtain ⟨n, bq, hbq⟩ := ih (finrank K (V ⧸ p)) hqdim q hq rfl
-        let bp : Basis (Fin 1) K p := finBasisOfFinrankEq K p hpdim
-        let b := extensionBasis p bp bq
-        refine ⟨1 + n, b, fun g ↦ ?_⟩
-        rw [Matrix.isUpperUnitriangular_def]
-        constructor
-        -- The extension basis lists the fixed line `p` before a lift of the quotient basis.
-        -- We check the four resulting matrix blocks: the first two index configurations are
-        -- impossible below the diagonal, the lower-left block vanishes by invariance of `p`,
-        -- and the lower-right block is upper triangular by the induction hypothesis on `V ⧸ p`.
-        · intro i j hji
-          obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
-          obtain ⟨j, rfl⟩ := finSumFinEquiv.surjective j
-          cases i with
-          | inl i =>
-              cases j with
-              | inl j =>
-                  -- The fixed-line block is `1 × 1`, so it has no entry below the diagonal.
-                  simp only [finSumFinEquiv_apply_left] at hji
-                  have := (Fin.strictMono_castAdd n).lt_iff_lt.mp hji
-                  omega
-              | inr j =>
-                  -- A quotient column follows every fixed-line row in the extension basis.
-                  rw [finSumFinEquiv_apply_left, finSumFinEquiv_apply_right] at hji
-                  -- The order on `Fin (1 + n)` unfolds to the displayed inequality of values.
-                  change 1 + j.val < i.val at hji
-                  omega
-          | inr i =>
-              cases j with
-              | inl j =>
-                  -- The lower-left block is zero because every operator preserves `p`.
-                  rw [finSumFinEquiv_apply_right, finSumFinEquiv_apply_left,
-                    LinearMap.toMatrixAlgEquiv_apply]
-                  have hmem : rho g (bp j : V) ∈ p := hp g (bp j).2
-                  rw [extensionBasis_castAdd,
-                    extensionBasis_repr_natAdd p bp bq (rho g (bp j : V)) i]
-                  simp only [Submodule.mkQ_apply,
-                    (Submodule.Quotient.mk_eq_zero p).mpr hmem, map_zero,
-                    Finsupp.zero_apply]
-              | inr j =>
-                  -- The lower-right block represents the induced action on `V ⧸ p`.
-                  rw [finSumFinEquiv_apply_right, finSumFinEquiv_apply_right,
-                    LinearMap.toMatrixAlgEquiv_apply,
-                    extensionBasis_repr_natAdd]
-                  rw [← q_apply, Submodule.mkQ_apply, extensionBasis_natAdd_mkQ]
-                  simpa only [LinearMap.toMatrixAlgEquiv_apply] using
-                    (hbq g |>.isUpperTriangular
-                      ((Fin.strictMono_natAdd 1).lt_iff_lt.mp hji))
-        -- On the diagonal, the fixed-line block is the identity by construction and the
-        -- quotient block has diagonal entries one by the induction hypothesis.
-        · intro i
-          obtain ⟨i, rfl⟩ := finSumFinEquiv.surjective i
-          cases i with
-          | inl i =>
-              rw [finSumFinEquiv_apply_left, LinearMap.toMatrixAlgEquiv_apply,
-                extensionBasis_castAdd]
-              have hfix : rho g (bp i : V) = bp i := hfixed g (bp i) (bp i).2
-              rw [hfix, extensionBasis_repr_castAdd]
-              simp
-          | inr i =>
-              rw [finSumFinEquiv_apply_right, LinearMap.toMatrixAlgEquiv_apply,
-                extensionBasis_repr_natAdd]
-              rw [← q_apply, Submodule.mkQ_apply, extensionBasis_natAdd_mkQ]
-              simpa only [LinearMap.toMatrixAlgEquiv_apply] using hbq g |>.apply_diag i
-      · let _ : Subsingleton V := not_nontrivial_iff_subsingleton.mp hV
-        have hzero : finrank K V = 0 := Module.finrank_zero_of_subsingleton
-        let b : Basis (Fin 0) K V := finBasisOfFinrankEq K V hzero
-        refine ⟨0, b, fun g ↦ ?_⟩
-        rw [Matrix.isUpperUnitriangular_def]
-        exact ⟨fun i ↦ Fin.elim0 i, fun i ↦ Fin.elim0 i⟩
+      rcases subsingleton_or_nontrivial V with _ | _
+      · exact ⟨0, finBasisOfFinrankEq K V finrank_zero_of_subsingleton, fun _ ↦
+          (Matrix.isUpperUnitriangular_def _).mpr ⟨fun i ↦ i.elim0, fun i ↦ i.elim0⟩⟩
+      obtain ⟨p, hpdim, hfixed⟩ :=
+        rho.exists_fixed_submodule_finrank_eq_one_of_isUnipotent hunipotent
+      have hp (g : G) : p ≤ p.comap (rho g) := fun x hx ↦
+        Submodule.mem_comap.mpr ((hfixed g x hx).symm ▸ hx)
+      have hqdim : finrank K (V ⧸ p) < d := by
+        have := p.finrank_quotient_add_finrank
+        omega
+      obtain ⟨n, bq, hbq⟩ := ih (finrank K (V ⧸ p)) hqdim (rho.quotient p hp)
+        (fun g ↦ rho.isNilpotent_quotient_sub_one p hp (hunipotent g)) rfl
+      let bp : Basis (Fin 1) K p := finBasisOfFinrankEq K p hpdim
+      refine ⟨1 + n, extensionBasis p bp bq, fun g ↦ ?_⟩
+      -- The operator `rho g` fixes the line `p` pointwise, so its block there is the identity;
+      -- its block on `V ⧸ p` is upper unitriangular by the induction hypothesis.
+      refine toMatrixAlgEquiv_extensionBasis_isUpperUnitriangular p bp bq (hp g) ?_ ?_
+      · have hone : (rho g).restrict (fun _ hx ↦ Submodule.mem_comap.mp (hp g hx)) = 1 := by
+          ext x
+          simp [hfixed g x x.2]
+        rw [hone, map_one]
+        exact Matrix.isUpperUnitriangular_one
+      · simpa only [Representation.quotient_apply] using hbq g
 
 end Monoid
 
