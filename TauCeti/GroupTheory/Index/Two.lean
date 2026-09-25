@@ -30,6 +30,8 @@ sum over `G ⧸ N` has exactly those two terms.
 ## Main statements
 
 * `TauCeti.isMulCommutative_of_conj_eq_inv`: **a subgroup inverted by conjugation is abelian.**
+* `TauCeti.sq_eq_one_of_mem_of_conj_eq_inv`: if the inverting element lies in the subgroup, every
+  homomorphism from it to a commutative monoid squares to one.
 * `TauCeti.conj_eq_inv_of_notMem_of_index_two`: **one inverting element outside a subgroup of index
   two makes every element outside it invert.**
 * `TauCeti.sq_eq_sq_of_notMem_of_index_two`: the elements outside such a subgroup all have the same
@@ -60,6 +62,18 @@ theorem isMulCommutative_of_conj_eq_inv {s : G} (hinv : ∀ x ∈ N, s * x * s�
         _ = s * y * s⁻¹ * (s * z * s⁻¹) := by group
         _ = (y : G)⁻¹ * (z : G)⁻¹ := by rw [hinv y y.2, hinv z z.2]
     simpa using congrArg Inv.inv h
+
+/-- **A homomorphism to a commutative monoid squares to one on a subgroup inverted by one of its
+own elements.**  If an element `s ∈ N` satisfies `s * x * s⁻¹ = x⁻¹` for every `x ∈ N`, then every
+homomorphism `ψ : N →* M` to a commutative monoid satisfies `ψ ^ 2 = 1`.  Read contrapositively, a
+single `ψ` with `ψ ^ 2 ≠ 1` places every element inverting `N` outside `N`. -/
+theorem sq_eq_one_of_mem_of_conj_eq_inv {M : Type*} [CommMonoid M] {s : G} (hs : s ∈ N)
+    (hinv : ∀ x ∈ N, s * x * s⁻¹ = x⁻¹) (ψ : N →* M) : ψ ^ 2 = 1 := by
+  ext x
+  -- `s` conjugates `x` to `x⁻¹` inside `N`, and `ψ` is constant on conjugacy classes of `N`.
+  have h : ψ x = ψ x⁻¹ := isConj_iff_eq.mp <| ψ.map_isConj <|
+    isConj_iff.mpr ⟨⟨s, hs⟩, Subtype.ext (by simpa using hinv x x.2)⟩
+  simpa [pow_two, ← h] using map_mul_eq_one ψ (mul_inv_cancel x)
 
 /-- **One inverting element outside a subgroup of index two makes every element outside it
 invert.**  If some `s ∉ N` satisfies `s * x * s⁻¹ = x⁻¹` for every `x ∈ N`, then so does every
