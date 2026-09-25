@@ -580,6 +580,60 @@ theorem baseChangeBaseChange_symm_tmul (Q : _root_.QuadraticForm R M)
 
 end QuadraticForm
 
+namespace TauCeti.QuadraticMap
+
+/-- Conjugating a directly extended orthogonal automorphism by the canonical scalar-tower
+equivalence agrees with extending it successively. -/
+@[simp]
+theorem orthogonalGroupBaseChange_baseChange (Q : _root_.QuadraticForm R M)
+    (g : orthogonalGroup Q) :
+    letI : Invertible (2 : A) :=
+      (Invertible.map (algebraMap R A) 2).copy 2 (map_ofNat _ _).symm
+    orthogonalGroupCongr (QuadraticForm.baseChangeBaseChange (A := A) (B := B) Q)
+        (orthogonalGroupBaseChange (A := B) Q g) =
+      orthogonalGroupBaseChange (A := B) (Q.baseChange A)
+        (orthogonalGroupBaseChange (A := A) Q g) := by
+  apply Subtype.ext
+  apply LinearEquiv.ext
+  intro x
+  simp only [coe_orthogonalGroupCongr_apply,
+    QuadraticForm.baseChangeBaseChange_toLinearEquiv,
+    coe_orthogonalGroupBaseChange]
+  have h := LinearMap.baseChange_baseChange (R := R) (A := A) (B := B)
+    ((g : M ≃ₗ[R] M).toLinearMap)
+  have hx := congrArg (fun f => f x) h
+  convert hx.symm using 1
+  · have hB (y : B ⊗[R] M) :
+        LinearEquiv.baseChange R B M M (g : M ≃ₗ[R] M) y =
+          (g : M ≃ₗ[R] M).toLinearMap.baseChange B y :=
+      DFunLike.congr_fun (LinearEquiv.coe_baseChange R B M M (g : M ≃ₗ[R] M)) y
+    rw [hB]
+    simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe,
+      LinearEquiv.symm_symm]
+  · exact congrArg (fun f => f x)
+      (LinearEquiv.coe_baseChange A B (A ⊗[R] M) (A ⊗[R] M)
+        (LinearEquiv.baseChange R A M M (g : M ≃ₗ[R] M)))
+
+/-- The special-orthogonal scalar-extension maps satisfy the same scalar-tower law, read through
+the canonical inclusion into the orthogonal group. -/
+@[simp]
+theorem specialOrthogonalGroupBaseChange_baseChange [Module.Free R M] [Module.Finite R M]
+    (Q : _root_.QuadraticForm R M) (g : specialOrthogonalGroup Q) :
+    letI : Invertible (2 : A) :=
+      (Invertible.map (algebraMap R A) 2).copy 2 (map_ofNat _ _).symm
+    orthogonalGroupCongr (QuadraticForm.baseChangeBaseChange (A := A) (B := B) Q)
+        (Subgroup.inclusion (specialOrthogonalGroup_le_orthogonalGroup (Q.baseChange B))
+          (specialOrthogonalGroupBaseChange (A := B) Q g)) =
+      Subgroup.inclusion
+        (specialOrthogonalGroup_le_orthogonalGroup ((Q.baseChange A).baseChange B))
+        (specialOrthogonalGroupBaseChange (A := B) (Q.baseChange A)
+          (specialOrthogonalGroupBaseChange (A := A) Q g)) := by
+  simpa only [specialOrthogonalGroupBaseChange_to_orthogonalGroup] using
+    orthogonalGroupBaseChange_baseChange Q
+      (Subgroup.inclusion (specialOrthogonalGroup_le_orthogonalGroup Q) g)
+
+end TauCeti.QuadraticMap
+
 end ScalarTower
 
 section Field
