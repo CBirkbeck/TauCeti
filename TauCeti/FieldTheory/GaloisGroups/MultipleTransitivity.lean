@@ -8,6 +8,7 @@ module
 public import TauCeti.FieldTheory.GaloisGroups.Stabilizer
 public import Mathlib.GroupTheory.GroupAction.MultipleTransitivity
 
+import TauCeti.FieldTheory.IntermediateField.Adjoin.Defs
 import TauCeti.RingTheory.Polynomial.Roots
 
 /-!
@@ -36,13 +37,6 @@ universe u
 
 variable {F : Type u} [Field F] {p : F[X]}
 
--- The generator of `F⟮x⟯` is a root of `p` over `F⟮x⟯`.
-private theorem isRoot_map_gen (x : p.rootSet p.SplittingField) :
-    (p.map (algebraMap F F⟮(x : p.SplittingField)⟯)).IsRoot
-      (IntermediateField.AdjoinSimple.gen F (x : p.SplittingField)) := by
-  rw [IsRoot.def, eval_map_algebraMap, ← ZeroMemClass.coe_eq_zero, AdjoinSimple.coe_aeval_gen_apply]
-  exact aeval_eq_zero_of_mem_rootSet x.2
-
 -- The point stabilizer acting on the other roots is `Gal(L/F⟮x⟯)` acting on the roots of the
 -- quotient.
 private theorem isPretransitive_ofStabilizer_iff [IsGalois F p.SplittingField] (hsep : p.Separable)
@@ -52,10 +46,14 @@ private theorem isPretransitive_ofStabilizer_iff [IsGalois F p.SplittingField] (
         (((p.map (algebraMap F F⟮(x : p.SplittingField)⟯)) /ₘ
           (X - C (IntermediateField.AdjoinSimple.gen F (x : p.SplittingField)))).rootSet
             p.SplittingField) := by
-  -- The roots of the quotient are the roots of `p` other than `x`.
-  have hroots := hsep.map.rootSet_divByMonic_X_sub_C (E := p.SplittingField) (isRoot_map_gen x)
-  rw [rootSet_map, AdjoinSimple.algebraMap_gen] at hroots
-  -- So `y ↦ y` is a bijection onto the roots of the quotient; the target set is read off from
+  -- `x` is a root of `p` over `F⟮x⟯`, and a simple one since `p` is separable.
+  have hx := (AdjoinSimple.isRoot_map_gen_iff x.1).mpr (mem_rootSet'.mp x.2).2
+  have hx' := hsep.map.eval₂_derivative_ne_zero (RingHom.id _) hx
+  -- So the roots of the quotient are the roots of `p` other than `x`; `simp only` matches the
+  -- instances of `rootSet_map` in `hroots` much more cheaply than `rw`.
+  have hroots := rootSet_divByMonic_X_sub_C (E := p.SplittingField) hx hx'
+  simp only [rootSet_map, AdjoinSimple.algebraMap_gen] at hroots
+  -- Hence `y ↦ y` is a bijection onto the roots of the quotient; the target set is read off from
   -- `hroots` rather than restated.
   let eRoots : SubMulAction.ofStabilizer p.Gal x ≃ (_ : Set p.SplittingField) :=
     { toFun := fun y ↦ ⟨y, (Set.ext_iff.mp hroots _).mpr ⟨(y : p.rootSet p.SplittingField).2,
@@ -95,12 +93,14 @@ theorem is_two_pretransitive_iff_irreducible_divByMonic
   let K := F⟮(x : p.SplittingField)⟯
   let L := p.SplittingField
   let q : K[X] := p.map (algebraMap F K) /ₘ (X - C (AdjoinSimple.gen F (x : L)))
-  -- First identify `q`: it is separable, has degree `deg p - 1`, and splits in `L`.
+  -- First identify `q`: it is separable, has degree `deg p - 1`, and splits in `L`. `Iff.mpr`
+  -- (not `.mpr`) lets the expected root statement drive the elaboration of the root fact.
   have hqdvd : q ∣ p.map (algebraMap F K) :=
-    Dvd.intro_left _ (mul_divByMonic_eq_iff_isRoot.mpr (isRoot_map_gen x))
+    Dvd.intro_left _ (mul_divByMonic_eq_iff_isRoot.mpr
+      (Iff.mpr (AdjoinSimple.isRoot_map_gen_iff x.1) (mem_rootSet'.mp x.2).2))
   have hqdeg : 0 < q.natDegree := by
     rw [natDegree_divByMonic _ (monic_X_sub_C _), natDegree_map, natDegree_X_sub_C]
-    omega
+    exact Nat.sub_pos_of_lt hdeg
   have : Fact (q.map (algebraMap K L)).Splits := by
     refine ⟨.of_dvd ?_ (by simp [hp.ne_zero]) (map_dvd _ hqdvd)⟩
     rw [Polynomial.map_map, ← IsScalarTower.algebraMap_eq]
