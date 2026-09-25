@@ -47,8 +47,9 @@ it gives `Representation.char_eq_zero_or_exists_apply_eq_smul`, the form of Isaa
 * `Representation.char_eq_zero_or_norm_char_eq_finrank` and its bundled form
   `FDRep.char_eq_zero_or_norm_char_eq_finrank`: **Burnside's vanishing theorem**, the dichotomy
   `χ(g) = 0 ∨ ‖χ(g)‖ = χ(1)`.
-* `Representation.char_eq_zero_or_exists_apply_eq_smul`: the same dichotomy with the second
-  alternative read as `ρ g` being a scalar.
+* `Representation.char_eq_zero_or_exists_apply_eq_smul` and its bundled form
+  `FDRep.char_eq_zero_or_exists_apply_eq_smul`: the same dichotomy with the second alternative
+  read as `ρ g` being a scalar.
 
 ## References
 
@@ -175,6 +176,14 @@ theorem _root_.FDRep.char_eq_zero_or_norm_char_eq_finrank (X : FDRep ℂ G)
     (h : (Nat.card (ConjClasses.mk g).carrier).Coprime (finrank ℂ X)) :
     X.character g = 0 ∨ ‖X.character g‖ = finrank ℂ X :=
   Representation.char_eq_zero_or_norm_char_eq_finrank X.ρ h
+
+/-- **Burnside's vanishing theorem, scalar form**, for a bundled finite-dimensional complex
+representation. -/
+theorem _root_.FDRep.char_eq_zero_or_exists_apply_eq_smul (X : FDRep ℂ G)
+    [_root_.Representation.IsIrreducible X.ρ] {g : G}
+    (h : (Nat.card (ConjClasses.mk g).carrier).Coprime (finrank ℂ X)) :
+    X.character g = 0 ∨ ∃ μ : ℂ, X.ρ g = μ • 1 :=
+  Representation.char_eq_zero_or_exists_apply_eq_smul X.ρ h
 
 end Bundled
 
