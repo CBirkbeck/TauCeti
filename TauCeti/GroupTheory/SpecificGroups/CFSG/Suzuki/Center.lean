@@ -76,8 +76,9 @@ private theorem upper_eq_zero_of_commute {M : Matrix (Fin 4) (Fin 4) (GaloisFiel
   have m23 : M 2 3 = 0 := by linear_combination h₂₂ + m02 + m12
   exact ⟨m01, m02, m03, m12, m13, m23⟩
 
--- Conjugation by `w` reflects `M` in its antidiagonal, so the entries of `M w = w M` move four
--- of the zeros above to the lower triangle; one more entry of `M u₁ = u₁ M` gives `m₃₂`:
+-- Conjugation by `w` reverses both indices of `M` (a 180° rotation of its entries), so the
+-- entries of `M w = w M` move four of the zeros above to the lower triangle; one more entry of
+-- `M u₁ = u₁ M` gives `m₃₂`:
 --
 --   relation       entry  reads                              gives
 --   `M w = w M`    (0,0)  `m₀₃ = m₃₀`                        `m₃₀ = 0`
