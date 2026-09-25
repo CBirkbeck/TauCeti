@@ -10,6 +10,7 @@ public import TauCeti.Topology.Algebra.Group.TransversalWord
 
 import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 import Mathlib.GroupTheory.Index
+import TauCeti.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 /-!
 # Corestriction in degrees zero, one and two
@@ -610,21 +611,6 @@ theorem cochainsCor2_d1 (c : U → M) :
     sum_translate G U
       (fun u : G ⧸ U => t u • c ⟨lWord U t u η, lWord_mem U t ht u η⟩) γ⁻¹]
 
-/-- A `2`-cocycle identity along two commuting squares: if `d * a' = a * d₁` and
-`d₁ * b' = b * d₂`, then `d • f (a', b')` is an alternating sum of the values of `f` at the factors
-of the two squares and at the products `a' * b'` and `a * b`. -/
-private theorem smul_map_eq_of_isCocycle₂_of_mul_eq_mul {K N : Type*} [Monoid K] [AddCommGroup N]
-    [MulAction K N] {f : K × K → N} (hf : groupCohomology.IsCocycle₂ f) {d a' b' a b d₁ d₂ : K}
-    (h₁ : d * a' = a * d₁) (h₂ : d₁ * b' = b * d₂) :
-    d • f (a', b') = a • f (d₁, b') - a • f (b, d₂) - f (d, a' * b') + f (a * b, d₂) +
-      f (d, a') - f (a, d₁) + f (a, b) := by
-  -- The cocycle law at `(d, a', b')`, `(a, d₁, b')` and `(a, b, d₂)`, matched along `h₁`, `h₂`.
-  have e1 := hf d a' b'
-  have e2 := hf a d₁ b'
-  rw [h₁] at e1
-  rw [h₂] at e2
-  linear_combination (norm := abel) -e1 + e2 - hf a b d₂
-
 omit [U.FiniteIndex] in
 /-- The summand identity behind `cochainsCor2_changeTransversal`. For a `2`-cocycle `f` on `U`,
 with `D v ∈ U` the transversal difference `(t v)⁻¹ * t' v`, the `t'`-summand at `u` is the
@@ -646,9 +632,10 @@ private theorem cochainsCor2_changeTransversal_summand (t' : G ⧸ U → G)
             f (⟨lWord U t u γ, lWord_mem U t ht u γ⟩, D (γ⁻¹ • u))) +
         t u • f (⟨lWord U t u γ, lWord_mem U t ht u γ⟩,
           ⟨lWord U t (γ⁻¹ • u) η, lWord_mem U t ht (γ⁻¹ • u) η⟩) := by
-  -- Three applications of the `2`-cocycle law of `f` (`smul_map_eq_of_isCocycle₂_of_mul_eq_mul`),
-  -- matched along identities between words: the transversal difference intertwines the two
-  -- families of words, `D v * ℓᵗ'_v(g) = ℓᵗ_v(g) * D (g⁻¹ • v)`, and each family multiplies.
+  -- Three applications of the `2`-cocycle law of `f`
+  -- (`TauCeti.groupCohomology.smul_map_eq_of_isCocycle₂_of_mul_eq_mul`), matched along identities
+  -- between words: the transversal difference intertwines the two families of words,
+  -- `D v * ℓᵗ'_v(g) = ℓᵗ_v(g) * D (g⁻¹ • v)`, and each family multiplies.
   have hD' : ∀ v g, D v * ⟨lWord U t' v g, lWord_mem U t' ht' v g⟩ =
       ⟨lWord U t v g, lWord_mem U t ht v g⟩ * D (g⁻¹ • v) := fun v g => Subtype.ext <| by
     rw [Subgroup.coe_mul, Subgroup.coe_mul, hD, hD]
@@ -659,8 +646,8 @@ private theorem cochainsCor2_changeTransversal_summand (t' : G ⧸ U → G)
         ⟨lWord U s u (γ * η), lWord_mem U s hs u (γ * η)⟩ :=
     fun s _ => Subtype.ext (lWord_mul_lWord U s u γ η)
   rw [← transversal_mul_transversalDiff U t t' u, ← hD, mul_smul, ← Subgroup.smul_def,
-    smul_map_eq_of_isCocycle₂_of_mul_eq_mul hf (hD' u γ) (hD' (γ⁻¹ • u) η), hmul t' ht', hmul t ht,
-    mul_inv_rev]
+    groupCohomology.smul_map_eq_of_isCocycle₂_of_mul_eq_mul hf (hD' u γ) (hD' (γ⁻¹ • u) η),
+    hmul t' ht', hmul t ht, mul_inv_rev]
   simp only [smul_add, smul_sub, Subgroup.mk_smul, smul_smul, transversal_mul_lWord]
   abel
 
@@ -706,7 +693,7 @@ private theorem cochainsCor2_res_summand {c : G × G → M} (hc : groupCohomolog
           c (t u, lWord U t u γ) - c (γ, t (γ⁻¹ • u)) + c (γ, η) := by
   -- Three applications of the `G`-cocycle law of `c`, along the factorizations
   -- `t u * ℓᵗ_u(γ) = γ * t (γ⁻¹ • u)` and `t v * ℓᵗ_v(η) = η * t (η⁻¹ • v)`.
-  rw [smul_map_eq_of_isCocycle₂_of_mul_eq_mul hc (transversal_mul_lWord U t u γ)
+  rw [groupCohomology.smul_map_eq_of_isCocycle₂_of_mul_eq_mul hc (transversal_mul_lWord U t u γ)
     (transversal_mul_lWord U t (γ⁻¹ • u) η), lWord_mul_lWord, mul_inv_rev, mul_smul]
   abel
 
