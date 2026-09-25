@@ -22,6 +22,12 @@ many components, for instance when the module is Noetherian, composing with
 
 * `TauCeti.IsSemisimpleModule.linearEquivIsotypicComponents`: a semisimple module is linearly
   equivalent to the direct sum of its isotypic components.
+
+## Main statements
+
+* `TauCeti.IsSemisimpleModule.linearEquivIsotypicComponents_apply_coe` and
+  `TauCeti.IsSemisimpleModule.linearEquivIsotypicComponents_symm_single`: the equivalence and its
+  inverse on a single isotypic component.
 -/
 
 public section
@@ -37,5 +43,31 @@ module-level counterpart of `IsSemisimpleModule.endAlgEquiv`. -/
 noncomputable def linearEquivIsotypicComponents : M ≃ₗ[R] Π₀ c : isotypicComponents R M, c.1 :=
   .symm <| ((sSupIndep_iff _).mp <| sSupIndep_isotypicComponents R M).linearEquiv <|
     (sSup_eq_iSup' _).symm.trans <| sSup_isotypicComponents R M
+
+variable {R M}
+
+/-- The inverse of `linearEquivIsotypicComponents` sends the family that is `x` at the isotypic
+component `c` and zero elsewhere to `x`, viewed as an element of `M`. -/
+@[simp]
+theorem linearEquivIsotypicComponents_symm_single (c : isotypicComponents R M) (x : c.1) :
+    (linearEquivIsotypicComponents R M).symm (DFinsupp.single c x) = x := by
+  simp [linearEquivIsotypicComponents]
+
+/-- `linearEquivIsotypicComponents` sends an element `x` of an isotypic component `c`, viewed as an
+element of `M`, to the family that is `x` at `c` and zero elsewhere. -/
+@[simp]
+theorem linearEquivIsotypicComponents_apply_coe {c : isotypicComponents R M} (x : c.1) :
+    linearEquivIsotypicComponents R M x = DFinsupp.single c x := by
+  rw [← linearEquivIsotypicComponents_symm_single, LinearEquiv.apply_symm_apply]
+
+-- Not `@[simp]`: the component `c` does not occur in the left-hand side, so `simp` could only
+-- find it by solving `x ∈ c.1` for `c`. The simp form is
+-- `linearEquivIsotypicComponents_apply_coe`, as with `DirectSum.decompose_coe` and
+-- `DirectSum.decompose_of_mem`.
+/-- An element `x` of `M` lying in an isotypic component `c` is sent by
+`linearEquivIsotypicComponents` to the family that is `x` at `c` and zero elsewhere. -/
+theorem linearEquivIsotypicComponents_apply_of_mem {c : isotypicComponents R M} {x : M}
+    (hx : x ∈ c.1) : linearEquivIsotypicComponents R M x = DFinsupp.single c ⟨x, hx⟩ :=
+  linearEquivIsotypicComponents_apply_coe ⟨x, hx⟩
 
 end TauCeti.IsSemisimpleModule
