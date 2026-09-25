@@ -119,7 +119,7 @@ theorem frobeniusSchurIndicator_indFDRep_ofLinearCharacter_eq_apply_sq_of_conj_e
       (ψ ⟨s ^ 2, Subgroup.sq_mem_of_index_two hindex s⟩ : k) := by
   classical
   -- `s` lies outside `N`: an inverting element inside `N` would force `ψ ^ 2 = 1`.
-  have hs : s ∉ N := fun hsN => hψ (sq_eq_one_of_mem_of_conj_eq_inv hsN hinv ψ)
+  have hs : s ∉ N := fun hsN => hψ (monoidHom_sq_eq_one_of_mem_of_conj_eq_inv hsN hinv ψ)
   have hcast : (Nat.card G : k) = (Nat.card N : k) * 2 := by
     rw [← Subgroup.card_mul_index N, hindex]; push_cast; ring
   have hNunit : IsUnit (Nat.card N : k) := isUnit_of_mul_isUnit_left (hcast ▸ hG)
