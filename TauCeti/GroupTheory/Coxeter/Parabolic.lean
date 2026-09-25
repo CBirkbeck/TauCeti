@@ -296,8 +296,7 @@ theorem length_mul_of_isMinimalCosetRep {J : Set B} {u : W} (hu : cs.IsMinimalCo
 
 /-- Let `u` be a minimal coset representative for `cs.parabolic J` and let `v ∈ cs.parabolic J`.
 If `s i ∈ cs.parabolic J` and `i` is not a right descent of `v`, then `i` is not a right descent
-of `u * v`. This is the exchange-condition step behind the minimal coset representatives of
-[Björner–Brenti, *Combinatorics of Coxeter Groups*, §2.4] and
+of `u * v`. See [Björner–Brenti, *Combinatorics of Coxeter Groups*, §2.4] and
 [Humphreys, *Reflection Groups and Coxeter Groups*, §1.10]. -/
 theorem not_isRightDescent_mul_of_isMinimalCosetRep {J : Set B} {u : W}
     (hu : cs.IsMinimalCosetRep J u) {v : W} (hv : v ∈ cs.parabolic J) {i : B}
