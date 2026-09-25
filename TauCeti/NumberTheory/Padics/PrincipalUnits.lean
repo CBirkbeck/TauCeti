@@ -47,6 +47,12 @@ sorted by how they sit over `{±1}` inside `ℤ_2ˣ = {±1} × (1 + 4ℤ_2)`.
 * `TauCeti.index_unitsPrincipal`: `[ℤ_pˣ : U^(f)] = φ(p ^ f)`, so `p ^ (f - 1) * (p - 1)`
   for `f ≥ 1`, and `2 ^ (f - 1)` for `p = 2`; `TauCeti.relIndex_unitsPrincipal`:
   `[U^(f) : U^(f+k)] = p ^ k` for `f ≥ 1`.
+* `TauCeti.exists_mem_unitsPrincipal_and_notMem_succ`: every unit other than `1` has an exact
+  level.
+* `TauCeti.neg_one_mem_unitsPrincipal_two_iff`, `TauCeti.neg_mem_unitsPrincipal_two_two_iff`:
+  in `ℤ_2ˣ`, `-1 ∉ U^(f)` for `f ≥ 2`, and `u ≡ ±1 mod 4` with exactly one sign;
+  `TauCeti.inv_mul_mem_unitsPrincipal_two_succ`: two dyadic units of the same exact level are
+  congruent modulo the next level.
 * `TauCeti.pow_pow_mem_unitsPrincipal`, `TauCeti.pow_pow_notMem_unitsPrincipal`: the `p ^ k`-th
   power of an element of exact level `f` has exact level `f + k`.
 * `TauCeti.topologicalClosure_zpowers_eq_unitsPrincipal`: an element of exact level `f`
@@ -107,6 +113,19 @@ theorem unitsPrincipal_antitone : Antitone (unitsPrincipal p) := fun _ _ hfg _ h
   mem_unitsPrincipal_iff.mpr <| (pow_dvd_pow _ hfg).trans (mem_unitsPrincipal_iff.mp hu)
 
 variable (p) in
+/-- No principal unit group is trivial: `1 + p ^ max f 1` is an element of `U^(f)` other than
+`1`. -/
+theorem unitsPrincipal_ne_bot (f : ℕ) : unitsPrincipal p f ≠ ⊥ := by
+  intro h
+  have hunit : IsUnit (1 + (p : ℤ_[p]) ^ max f 1) :=
+    PadicInt.isUnit_one_add_of_dvd (dvd_pow_self _ (by omega))
+  have hmem : hunit.unit ∈ unitsPrincipal p f := by
+    rw [mem_unitsPrincipal_iff, IsUnit.unit_spec, add_sub_cancel_left]
+    exact pow_dvd_pow _ (le_max_left f 1)
+  rw [h, Subgroup.mem_bot, Units.ext_iff, IsUnit.unit_spec, Units.val_one, add_eq_left] at hmem
+  exact pow_ne_zero _ (Nat.cast_ne_zero.mpr hp.out.ne_zero) hmem
+
+variable (p) in
 /-- Every principal unit group is open: it is the kernel of a continuous map to a discrete
 group. -/
 theorem isOpen_unitsPrincipal (f : ℕ) : IsOpen (unitsPrincipal p f : Set ℤ_[p]ˣ) := by
@@ -131,6 +150,26 @@ theorem iInf_unitsPrincipal_eq_bot : ⨅ f, unitsPrincipal p f = ⊥ := by
   intro f
   rw [map_zero, ← RingHom.mem_ker, PadicInt.ker_toZModPow, Ideal.mem_span_singleton]
   exact mem_unitsPrincipal_iff.mp (hu f)
+
+/-- Every unit `u ≠ 1` has an **exact level**: a `f` with `u ∈ U^(f)` but `u ∉ U^(f+1)`, namely
+the `p`-adic valuation of `u - 1`. -/
+theorem exists_mem_unitsPrincipal_and_notMem_succ {u : ℤ_[p]ˣ} (hu : u ≠ 1) :
+    ∃ f, u ∈ unitsPrincipal p f ∧ u ∉ unitsPrincipal p (f + 1) := by
+  classical
+  have hex : ∃ f, u ∉ unitsPrincipal p (f + 1) := by
+    by_contra! h
+    refine hu (Subgroup.mem_bot.mp ?_)
+    rw [← iInf_unitsPrincipal_eq_bot p, Subgroup.mem_iInf]
+    intro f
+    rcases f with - | f
+    · simp
+    · exact h f
+  refine ⟨Nat.find hex, ?_, Nat.find_spec hex⟩
+  rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
+  · rw [h0]
+    simp
+  · have := Nat.find_min hex (Nat.sub_lt h0 one_pos)
+    rwa [not_not, Nat.sub_add_cancel (by omega : 1 ≤ Nat.find hex)] at this
 
 variable (p) in
 /-- The principal unit groups form a neighbourhood basis of `1` in `ℤ_pˣ`. -/
@@ -174,6 +213,28 @@ theorem index_unitsPrincipal_two (f : ℕ) : (unitsPrincipal 2 f).index = 2 ^ (f
 theorem unitsPrincipal_two_one : unitsPrincipal 2 1 = ⊤ :=
   Subgroup.index_eq_one.mp ((index_unitsPrincipal_two 1).trans (pow_zero 2))
 
+/-- `-1 ∈ U^(f)` in `ℤ_2ˣ` iff `f ≤ 1`: `-1 ≡ 1 mod 2 ^ f` iff `2 ^ f ∣ 2`. -/
+theorem neg_one_mem_unitsPrincipal_two_iff {f : ℕ} :
+    (-1 : ℤ_[2]ˣ) ∈ unitsPrincipal 2 f ↔ f ≤ 1 := by
+  rw [mem_unitsPrincipal_iff, Units.val_neg, Units.val_one, Nat.cast_ofNat, ← neg_add',
+    one_add_one_eq_two, dvd_neg,
+    ← pow_dvd_pow_iff (by norm_num : (2 : ℤ_[2]) ≠ 0) PadicInt.p_nonunit (n := f) (m := 1),
+    pow_one]
+
+/-- `U^(2) = 1 + 4ℤ_2` has index `2` in `ℤ_2ˣ` and does not contain `-1`, so a dyadic unit `u`
+lies outside `1 + 4ℤ_2` iff `-u` lies inside: `u ≡ 1` or `u ≡ -1 mod 4`, and not both. -/
+theorem neg_mem_unitsPrincipal_two_two_iff {u : ℤ_[2]ˣ} :
+    -u ∈ unitsPrincipal 2 2 ↔ u ∉ unitsPrincipal 2 2 := by
+  rw [← neg_one_mul, Subgroup.mul_mem_iff_of_index_two (index_unitsPrincipal_two 2),
+    neg_one_mem_unitsPrincipal_two_iff]
+  simp
+
+/-- For `f ≥ 2`, a dyadic unit and its negative are never both in `U^(f)`. -/
+theorem notMem_unitsPrincipal_two_of_neg_mem {f : ℕ} (hf : 2 ≤ f) {u : ℤ_[2]ˣ}
+    (hu : -u ∈ unitsPrincipal 2 f) : u ∉ unitsPrincipal 2 f := fun h ↦
+  neg_mem_unitsPrincipal_two_two_iff.mp (unitsPrincipal_antitone 2 hf hu)
+    (unitsPrincipal_antitone 2 hf h)
+
 instance (f : ℕ) : (unitsPrincipal p f).FiniteIndex :=
   ⟨by rw [index_unitsPrincipal]; exact (Nat.totient_pos.mpr (pow_pos hp.out.pos f)).ne'⟩
 
@@ -186,6 +247,20 @@ theorem relIndex_unitsPrincipal {f : ℕ} (hf : 0 < f) (k : ℕ) :
     show f + k - 1 = k + (f - 1) by omega, pow_add, mul_assoc] at h
   exact mul_right_cancel₀ (Nat.mul_ne_zero (pow_pos hp.out.pos _).ne'
     (Nat.sub_ne_zero_of_lt hp.out.one_lt)) h
+
+/-- At `p = 2`, two elements of exact level `f ≥ 1` are congruent modulo `U^(f+1)`: the quotient
+`U^(f) / U^(f+1)` has order `2`. -/
+theorem inv_mul_mem_unitsPrincipal_two_succ {f : ℕ} (hf : 0 < f) {u x : ℤ_[2]ˣ}
+    (hu : u ∈ unitsPrincipal 2 f) (hu' : u ∉ unitsPrincipal 2 (f + 1))
+    (hx : x ∈ unitsPrincipal 2 f) (hx' : x ∉ unitsPrincipal 2 (f + 1)) :
+    u⁻¹ * x ∈ unitsPrincipal 2 (f + 1) := by
+  have h2 : ((unitsPrincipal 2 (f + 1)).subgroupOf (unitsPrincipal 2 f)).index = 2 := by
+    rw [← Subgroup.relIndex, relIndex_unitsPrincipal 2 hf 1, pow_one]
+  have := (Subgroup.mul_mem_iff_of_index_two h2 (a := ⟨u⁻¹, (unitsPrincipal 2 f).inv_mem hu⟩)
+    (b := ⟨x, hx⟩)).mpr (by
+      simp only [Subgroup.mem_subgroupOf]
+      exact iff_of_false (fun h ↦ hu' ((Subgroup.inv_mem_iff _).mp h)) hx')
+  simpa only [Subgroup.mem_subgroupOf, Subgroup.coe_mul, Subgroup.coe_mk] using this
 
 /-! ### Lifting the exponent -/
 
