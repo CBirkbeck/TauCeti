@@ -7,6 +7,7 @@ module
 
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 public import Mathlib.LinearAlgebra.FixedSubmodule
+import TauCeti.LinearAlgebra.FixedSubmodule
 
 /-!
 # Dimensions of common fixed submodules
@@ -20,6 +21,9 @@ complementary eigenspace.
 * `TauCeti.two_mul_finrank_fixedSubmodule_of_isIdempotentElem`: an idempotent whose fixed vectors
   and kernel are exchanged by maps that are mutually inverse there has a fixed submodule of half
   the dimension.
+* `TauCeti.finrank_fixedSubmodule_restrict_eq_finrank_iInf_insert`: inside a common fixed
+  submodule, the fixed submodule of the restriction of one more endomorphism has the dimension of
+  the enlarged common fixed submodule.
 * `TauCeti.two_mul_finrank_iInf_fixedSubmodule_insert`: adjoining one such idempotent halves the
   common fixed-space dimension.
 * `TauCeti.pow_card_mul_finrank_iInf_fixedSubmodule`: iterating the construction multiplies the
@@ -31,13 +35,6 @@ public section
 open Module
 
 namespace TauCeti
-
-/-- An endomorphism commuting with `g` maps the fixed submodule of `g` into itself. -/
-theorem apply_mem_fixedSubmodule_of_commute {R V : Type*} [Semiring R] [AddCommMonoid V]
-    [Module R V] {f g : Module.End R V} (h : Commute g f) {x : V} (hx : x ∈ g.fixedSubmodule) :
-    f x ∈ g.fixedSubmodule := by
-  rw [LinearMap.mem_fixedSubmodule_iff] at hx ⊢
-  rw [← Module.End.mul_apply, h.eq, Module.End.mul_apply, hx]
 
 /-- If `u` maps the fixed vectors of an idempotent endomorphism `q` of a finite-dimensional space
 into the kernel of `q`, `v` maps the kernel into the fixed vectors, and these two restrictions are
@@ -64,9 +61,12 @@ theorem two_mul_finrank_fixedSubmodule_of_isIdempotentElem {K W : Type*} [Divisi
   -- Rank-nullity for `q`, with its kernel replaced by the isomorphic fixed submodule.
   rw [two_mul, ← q.finrank_range_add_finrank_ker, hr, e.finrank_eq]
 
-private theorem finrank_fixedSubmodule_restrict_eq_finrank_iInf_insert {K V ι : Type*}
-    [Semiring K] [AddCommMonoid V] [Module K V] [DecidableEq ι] (p : ι → Module.End K V)
-    (s : Finset ι) (a : ι)
+/-- Let `S` be the common fixed submodule of the endomorphisms `p i`, `i ∈ s`, and suppose `p a`
+maps `S` into itself. Then the fixed submodule of the restriction of `p a` to `S` has the same
+dimension as the common fixed submodule of the `p i`, `i ∈ insert a s`. The invariance hypothesis
+holds, for instance, when `p a` commutes with every `p i`, `i ∈ s`. -/
+theorem finrank_fixedSubmodule_restrict_eq_finrank_iInf_insert {K V ι : Type*} [Semiring K]
+    [AddCommMonoid V] [Module K V] [DecidableEq ι] {p : ι → Module.End K V} {s : Finset ι} {a : ι}
     (hpS : ∀ x ∈ ⨅ i ∈ s, (p i).fixedSubmodule, p a x ∈ ⨅ i ∈ s, (p i).fixedSubmodule) :
     finrank K ((p a).restrict hpS).fixedSubmodule =
       finrank K ((⨅ i ∈ insert a s, (p i).fixedSubmodule) : Submodule K V) := by
@@ -77,8 +77,8 @@ private theorem finrank_fixedSubmodule_restrict_eq_finrank_iInf_insert {K V ι :
     rw [Submodule.mem_comap, Finset.iInf_insert, Submodule.mem_inf,
       LinearMap.mem_fixedSubmodule_iff, LinearMap.mem_fixedSubmodule_iff, Subtype.ext_iff,
       LinearMap.coe_restrict_apply, Submodule.coe_subtype, and_iff_left x.2]
-  exact ((LinearEquiv.ofEq _ _ hfix).trans
-    (Submodule.comapSubtypeEquivOfLe (biInf_mono fun _ => Finset.mem_insert_of_mem))).finrank_eq
+  rw [hfix]
+  exact (Submodule.comapSubtypeEquivOfLe (biInf_mono fun _ => Finset.mem_insert_of_mem)).finrank_eq
 
 /-- If two endomorphisms exchange the fixed and zero eigenspaces of an idempotent inside the
 common fixed space of a commuting family, adjoining that idempotent halves the dimension.
@@ -109,7 +109,7 @@ theorem two_mul_finrank_iInf_fixedSubmodule_insert
   have hq : IsIdempotentElem q := LinearMap.ext fun x => Subtype.ext <| by
     simpa only [q, Module.End.mul_apply, LinearMap.coe_restrict_apply] using
       LinearMap.congr_fun hpa.eq (x : V)
-  rw [← finrank_fixedSubmodule_restrict_eq_finrank_iInf_insert p s a (hS hcomm),
+  rw [← finrank_fixedSubmodule_restrict_eq_finrank_iInf_insert (hS hcomm),
     two_mul_finrank_fixedSubmodule_of_isIdempotentElem hq (u.restrict (hS huS))
       (v.restrict (hS hvS))]
   -- The four exchange hypotheses restrict from `V` to `S`.
