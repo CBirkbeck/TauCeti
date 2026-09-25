@@ -9,6 +9,7 @@ public import TauCeti.RepresentationTheory.Induction.Clifford.Decomposition
 import TauCeti.LinearAlgebra.Trace.Pi
 import TauCeti.RepresentationTheory.OfModule
 import TauCeti.RepresentationTheory.Simple.Basic
+import TauCeti.RingTheory.SimpleModule.Isotypic
 
 /-
 Roadmap source: `TauCetiRoadmap/RepresentationTheory/InductionRestriction/README.md`, Layer 5.
@@ -181,11 +182,9 @@ private noncomputable def restrictLinearEquivPi {k : Type u} {G : Type v} [Field
   -- `M` is the internal direct sum of its finitely many isotypic components, which
   -- `isotypicComponentsEquivQuotientInertia` indexes by the inertia cosets; each component is `e`
   -- copies of its translated constituent.
-  (((sSupIndep_iff _).mp (sSupIndep_isotypicComponents k[N] M)).linearEquiv
-    ((sSup_eq_iSup' _).symm.trans (sSup_isotypicComponents k[N] M))).symm ≪≫ₗ
-    DFinsupp.linearEquivFunOnFintype ≪≫ₗ
+  IsSemisimpleModule.linearEquivIsotypicComponents k[N] M ≪≫ₗ DFinsupp.linearEquivFunOnFintype ≪≫ₗ
     .piCongrLeft' k[N] (fun c ↦ c.1) (ρ.isotypicComponentsEquivQuotientInertia σ hσ) ≪≫ₗ
-    .piCongrRight fun q ↦ componentLinearEquiv ρ σ hσ e hcommon q
+    .piCongrRight (componentLinearEquiv ρ σ hσ e hcommon)
 
 end TauCeti
 
