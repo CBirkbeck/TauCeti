@@ -38,8 +38,8 @@ at its two nodes.
 * `TauCeti.ContCohomology.explicitRes1_comp_explicitInfl1` and
   `TauCeti.ContCohomology.explicitRes2_comp_explicitInfl2`: restricting an inflated class back to
   `N` gives zero.
-* `TauCeti.ContCohomology.explicitInfl1_eq_explicitMap1` and
-  `explicitInfl2_eq_explicitMap2`: inflation in degrees `1` and `2` is the compatible-pair
+* `TauCeti.ContCohomology.explicitInfl0_eq_explicitMap0`, `explicitInfl1_eq_explicitMap1` and
+  `explicitInfl2_eq_explicitMap2`: inflation in degrees `0`, `1` and `2` is the compatible-pair
   pullback along `G → G ⧸ N`.
 * `TauCeti.ContCohomology.explicitInfl1_injective`: inflation is injective in degree `1`.
 * `TauCeti.ContCohomology.explicitInfRes_exact`: the image of inflation is exactly the kernel of
@@ -108,7 +108,7 @@ end Cosets
 
 section CompatiblePair
 
-variable (G : Type u) [Group G] [TopologicalSpace G]
+variable (G : Type u) [Group G]
   (M : Type v) [AddCommGroup M] [DistribMulAction G M]
   (N : Subgroup G) [N.Normal]
 
@@ -116,11 +116,19 @@ variable (G : Type u) [Group G] [TopologicalSpace G]
 `G ⧸ N`-action on an invariant element, read in `M`, is the `G`-action. This is the
 compatible-pair hypothesis that inflation is the instance of `explicitMap1` and `explicitMap2`
 at. -/
+theorem subtype_mk'_smul (g : G) (m : FixedPoints.addSubgroup N M) :
+    (FixedPoints.addSubgroup N M).subtype (QuotientGroup.mk' N g • m) =
+      g • (FixedPoints.addSubgroup N M).subtype m := by
+  simp only [QuotientGroup.mk'_apply, AddSubgroup.coe_subtype,
+    coe_quotient_smul_fixedPoints_addSubgroup, coe_smul_fixedPoints_addSubgroup]
+
+variable [TopologicalSpace G]
+
+/-- The inclusion `M ^ N ↪ M` is equivariant along the continuous quotient homomorphism. -/
 theorem subtype_quotientMk_smul (g : G) (m : FixedPoints.addSubgroup N M) :
     (FixedPoints.addSubgroup N M).subtype (ContinuousMonoidHom.quotientMk N g • m) =
-      g • (FixedPoints.addSubgroup N M).subtype m := by
-  simp only [ContinuousMonoidHom.quotientMk_apply, AddSubgroup.coe_subtype,
-    coe_quotient_smul_fixedPoints_addSubgroup, coe_smul_fixedPoints_addSubgroup]
+      g • (FixedPoints.addSubgroup N M).subtype m :=
+  subtype_mk'_smul G M N g m
 
 end CompatiblePair
 
@@ -134,15 +142,21 @@ variable (G : Type u) [Group G]
 `G`-invariants of `M`. -/
 def explicitInfl0 : H0 (G ⧸ N) (FixedPoints.addSubgroup N M) →+ H0 G M :=
   explicitMap0 (G ⧸ N) (FixedPoints.addSubgroup N M) (QuotientGroup.mk' N)
-    (FixedPoints.addSubgroup N M).subtype fun g m => by
-      simp only [QuotientGroup.mk'_apply, AddSubgroup.coe_subtype,
-        coe_quotient_smul_fixedPoints_addSubgroup, coe_smul_fixedPoints_addSubgroup]
+    (FixedPoints.addSubgroup N M).subtype (subtype_mk'_smul G M N)
 
 /-- Degree-zero inflation does not change the underlying coefficient. -/
 @[simp]
 theorem coe_explicitInfl0 (m : H0 (G ⧸ N) (FixedPoints.addSubgroup N M)) :
     (explicitInfl0 G M N m : M) = (m : M) :=
   coe_explicitMap0 _ _ _ _ _ m
+
+/-- Inflation in degree zero is the compatible-pair pullback along the quotient homomorphism
+`G → G ⧸ N` and the inclusion of the invariants `M ^ N` into `M`. -/
+theorem explicitInfl0_eq_explicitMap0 :
+    explicitInfl0 G M N =
+      explicitMap0 (G ⧸ N) (FixedPoints.addSubgroup N M) (QuotientGroup.mk' N)
+        (FixedPoints.addSubgroup N M).subtype (subtype_mk'_smul G M N) := by
+  rw [explicitInfl0]
 
 /-- Degree-zero inflation is injective. In fact it is an equivalence, as packaged by
 `TauCeti.ContCohomology.explicitInfl0Equiv`. -/
