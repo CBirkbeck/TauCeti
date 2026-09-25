@@ -84,10 +84,10 @@ section Surjectivity
 variable {k G : Type u} [Field k] [Group G] [Finite G] [IsAlgClosed k] [CharZero k]
   {N : Subgroup G} [N.Normal]
 
-/-- **Multiplicities through the inertia group.**  Write `Uᵢ` for the irreducible representations
-of `T = inertia V`.  The multiplicity of `V` in `Res_N W` is `∑ᵢ aᵢ · bᵢ`, where
+/-- **Hom-space dimensions through the inertia group.**  Write `Uᵢ` for the irreducible
+representations of `T = inertia V`.  Then `dim Hom_N(V, Res_N W) = ∑ᵢ aᵢ · bᵢ`, where
 `aᵢ = dim Hom_T(Uᵢ, Res_T W)` is the multiplicity of `Uᵢ` in `Res_T W` and
-`bᵢ = dim Hom_N(V, Res_N Uᵢ)` is the multiplicity of `V` in `Res_N Uᵢ`. -/
+`bᵢ = dim Hom_N(V, Res_N Uᵢ)`.  When `V` is simple these dimensions are multiplicities. -/
 private theorem finrank_hom_resFDRep_eq_sum (V : FDRep k N) (W : FDRep k G)
     [Invertible (Nat.card (inertia V) : k)] : Module.finrank k (V ⟶ resFDRep N W) =
       ∑ i, Module.finrank k (FDRep.of (irreducibleRepresentation k i) ⟶ resFDRep (inertia V) W) *
