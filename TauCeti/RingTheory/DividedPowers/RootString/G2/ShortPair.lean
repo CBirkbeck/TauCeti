@@ -57,20 +57,6 @@ variable {A : Type*} [Semiring A] [Algebra ℚ A] {x y z w s : A}
 
 /-! ## Moving one element across a normal-ordered monomial -/
 
--- Moving `x` across the tail `z⁽ᵇ⁾ w⁽ᶜ⁾ s⁽ᵈ⁾` of a normal-ordered monomial releases one term,
--- trading a `z` for a `w`.
-private theorem mul_dividedPower_shortPairTail (hxz : x * z = z * x + 2 • w) (hxw : Commute x w)
-    (hxs : Commute x s) (hzw : Commute z w) (b c d : ℕ) :
-    x * (dividedPower b z * (dividedPower c w * dividedPower d s)) =
-      dividedPower b z * (dividedPower c w * dividedPower d s) * x +
-        (if 0 < b then (2 * (c + 1)) • (dividedPower (b - 1) z *
-          (dividedPower (c + 1) w * dividedPower d s)) else 0) := by
-  rw [← mul_assoc, mul_dividedPower_of_commutator_eq' hxz (hzw.smul_right 2) b, add_mul,
-    ((hxw.dividedPower_right c).mul_right (hxs.dividedPower_right d)).right_comm, ite_zero_mul]
-  -- The released `w` is absorbed by `w⁽ᶜ⁾`, as `w w⁽ᶜ⁾ = (c + 1) w⁽ᶜ⁺¹⁾`.
-  rw [mul_assoc (dividedPower (b - 1) z), smul_mul_assoc, ← succ_nsmul_dividedPower_succ_mul,
-    smul_smul, mul_smul_comm]
-
 -- Moving `x` across `y⁽ᵃ⁾ z⁽ᵇ⁾ w⁽ᶜ⁾ s⁽ᵈ⁾` releases one term for each of the three positive
 -- combinations of the roots represented by `x` and `y`.
 private theorem mul_dividedPower_shortPairMonomial (hxy : x * y = y * x + z)
@@ -85,18 +71,14 @@ private theorem mul_dividedPower_shortPairMonomial (hxy : x * y = y * x + z)
           (dividedPower (b - 1) z * (dividedPower (c + 1) w * dividedPower d s))) else 0) +
         (if 1 < a then (d + 1) • (dividedPower (a - 2) y *
           (dividedPower b z * (dividedPower c w * dividedPower (d + 1) s))) else 0) := by
-  have hmove : s * (dividedPower b z * (dividedPower c w * dividedPower d s)) =
-      (d + 1) • (dividedPower b z * (dividedPower c w * dividedPower (d + 1) s)) := by
-    rw [(hzs.symm.dividedPower_right b).left_comm, (hws.symm.dividedPower_right c).left_comm,
-      self_mul_dividedPower, mul_smul_comm, mul_smul_comm]
-  rw [← mul_assoc, mul_dividedPower_of_commutator_eq_two_nsmul hxy hzy hys a, add_mul, add_mul,
-    mul_assoc, mul_dividedPower_shortPairTail hxz hxw hxs hzw, mul_add, ← mul_assoc,
-    mul_ite_zero, mul_smul_comm]
-  -- Absorb the new factor of each of the two terms released by `y⁽ᵃ⁾` into its own divided
-  -- power.
-  rw [ite_zero_mul, ite_zero_mul, mul_assoc (dividedPower (a - 1) y),
-    ← succ_nsmul_dividedPower_succ_mul, mul_smul_comm, mul_assoc (dividedPower (a - 2) y), hmove,
-    mul_smul_comm]
+  rw [← mul_assoc, mul_dividedPower_of_commutator_eq_two_nsmul hxy hzy hys a]
+  -- Move `x` across the tail `z⁽ᵇ⁾ w⁽ᶜ⁾ s⁽ᵈ⁾`, and absorb the new factor of each of the two terms
+  -- released by `y⁽ᵃ⁾` into its own divided power.
+  simp only [add_mul, mul_add, mul_assoc, mul_ite_zero, ite_zero_mul, mul_smul_comm,
+    ← succ_nsmul_dividedPower_succ_mul, self_mul_dividedPower,
+    (hzs.symm.dividedPower_right b).left_comm, (hws.symm.dividedPower_right c).left_comm,
+    mul_dividedPower_mul_dividedPower_mul_of_commutator_eq_nsmul hxz hxw
+      (hxs.dividedPower_right d) hzw]
   abel
 
 /-! ## The divided-power series of the inner derivation -/

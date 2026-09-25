@@ -187,6 +187,7 @@ theorem commute_dividedPower_dividedPower {x y : A} (hxy : Commute x y) (m n : â
 
 /-- An element commuting with `y` commutes with every divided power of `y`. This is the case
 `m = 1` of `commute_dividedPower_dividedPower`. -/
+@[simp]
 theorem _root_.Commute.dividedPower_right {x y : A} (hxy : Commute x y) (n : â„•) :
     Commute x (dividedPower n y) :=
   (hxy.pow_right n).smul_right _
