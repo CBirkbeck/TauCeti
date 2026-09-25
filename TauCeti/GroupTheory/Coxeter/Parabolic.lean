@@ -242,8 +242,9 @@ theorem exists_isMinimalCosetRep (J : Set B) (w : W) :
   rw [hv₀, mul_assoc]
   exact Nat.find_le ⟨v₀ * v, mul_mem hv₀mem hv, rfl⟩
 
-/-- The inductive step of `CoxeterSystem.length_mul_of_isMinimalCosetRep`: the exchange condition
-applied to a reduced word for `u * v`, assuming `ℓ (u * v) = ℓ u + ℓ v` for this `v`. -/
+/-- Let `u` be a minimal coset representative for `cs.parabolic J`, and let `v ∈ cs.parabolic J`
+satisfy `ℓ (u * v) = ℓ u + ℓ v`. If `s i ∈ cs.parabolic J` and `i` is not a right descent of `v`,
+then `i` is not a right descent of `u * v`. -/
 private theorem not_isRightDescent_mul_of_isMinimalCosetRep_aux {J : Set B} {u : W}
     (hu : cs.IsMinimalCosetRep J u) {v : W} (hv : v ∈ cs.parabolic J) (huv : ℓ (u * v) = ℓ u + ℓ v)
     {i : B} (hi : s i ∈ cs.parabolic J) (hvi : ¬ cs.IsRightDescent v i) :
