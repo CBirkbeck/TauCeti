@@ -8,7 +8,7 @@ module
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.Trace.Basic
 public import TauCeti.LinearAlgebra.Trace.Exact
-import Mathlib.RingTheory.Ideal.Norm.AbsNorm
+import TauCeti.RingTheory.DedekindDomain.IdealQuotientPow
 
 /-!
 # The trace of a quotient by a power of a prime
@@ -29,9 +29,9 @@ time, through the short exact sequence
 
 where `a` is any element of `P ^ n` not in `P ^ (n + 1)`; injectivity of multiplication by `a`
 (`Ideal.mapQ_mulLeft_pow_succ_injective`) and exactness in the middle
-(`Ideal.exact_mapQ_mulLeft_pow_succ`) come from the two Dedekind facts
-`Ideal.IsPrime.mem_pow_mul` and `Ideal.exists_mul_add_mem_pow_succ`, and the trace
-identity is `LinearMap.trace_eq_add_of_exact`.
+(`Ideal.exact_mapQ_mulLeft_pow_succ`) are proved in
+`TauCeti.RingTheory.DedekindDomain.IdealQuotientPow`, and the trace identity is
+`LinearMap.trace_eq_add_of_exact`.
 
 The formula is what makes the tame case of Dedekind's different theorem work: it produces an
 element of `B ⧸ P ^ e` with nonzero trace as soon as the residue extension is separable and the
@@ -42,55 +42,11 @@ computation for `B ⧸ p · B`, `Algebra.trace_quotient_eq_of_isDedekindDomain`)
 ## Main results
 
 * `Algebra.trace_quotient_pow_mk`: the trace formula `Tr_{B ⧸ P ^ n} = n · Tr_{B ⧸ P}`.
-* `Ideal.exact_mapQ_mulLeft_pow_succ`: exactness of `B ⧸ P → B ⧸ P ^ (n + 1) → B ⧸ P ^ n`.
 -/
 
 public section
 
 open Module
-
-namespace Ideal
-
-variable {B : Type*} [CommRing B]
-
-/-- Multiplication by an element `a ∈ I ^ n` carries `I` into `I ^ (n + 1)`. This is the
-compatibility condition under which `LinearMap.mulLeft B a` descends, via `Submodule.mapQ`, to a
-`B`-linear map `B ⧸ I → B ⧸ I ^ (n + 1)`. -/
-theorem le_comap_mulLeft_pow_succ {I : Ideal B} {a : B} {n : ℕ} (ha : a ∈ I ^ n) :
-    I ≤ Submodule.comap (LinearMap.mulLeft B a) (I ^ (n + 1)) := fun x hx ↦ by
-  rw [Submodule.mem_comap, LinearMap.mulLeft_apply, pow_succ]
-  exact mul_mem_mul ha hx
-
-variable [IsDedekindDomain B] {P : Ideal B} [P.IsPrime] {a : B} {n : ℕ}
-
-/-- For a prime `P` of a Dedekind domain and `a ∈ P ^ n` with `a ∉ P ^ (n + 1)`, multiplication by
-`a` induces an injective `B`-linear map `B ⧸ P → B ⧸ P ^ (n + 1)`. Unlike
-`Ideal.exact_mapQ_mulLeft_pow_succ`, this does not need `P ≠ ⊥`. -/
-theorem mapQ_mulLeft_pow_succ_injective (ha : a ∈ P ^ n) (ha' : a ∉ P ^ (n + 1)) :
-    Function.Injective
-      (Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a) (le_comap_mulLeft_pow_succ ha)) := by
-  refine (injective_iff_map_eq_zero _).2 fun y hy ↦ ?_
-  obtain ⟨x, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-  rw [Submodule.mapQ_apply, LinearMap.mulLeft_apply, Submodule.Quotient.mk_eq_zero] at hy
-  exact (Submodule.Quotient.mk_eq_zero _).2 ((IsPrime.mem_pow_mul P hy).resolve_left ha')
-
-/-- For a nonzero prime `P` of a Dedekind domain and `a ∈ P ^ n` with `a ∉ P ^ (n + 1)`, the
-sequence `B ⧸ P → B ⧸ P ^ (n + 1) → B ⧸ P ^ n`, whose first map is multiplication by `a` and
-whose second map is the quotient map, is exact. -/
-theorem exact_mapQ_mulLeft_pow_succ (hP : P ≠ ⊥) (ha : a ∈ P ^ n) (ha' : a ∉ P ^ (n + 1)) :
-    Function.Exact
-      (Submodule.mapQ P (P ^ (n + 1)) (LinearMap.mulLeft B a) (le_comap_mulLeft_pow_succ ha))
-      (Submodule.factor (pow_le_pow_right (I := P) (n.le_add_right 1))) := by
-  intro y
-  obtain ⟨u, rfl⟩ := Submodule.Quotient.mk_surjective _ y
-  simp only [Submodule.mapQ_apply, LinearMap.id_apply, Submodule.Quotient.mk_eq_zero, Set.mem_range,
-    (Submodule.Quotient.mk_surjective _).exists, LinearMap.mulLeft_apply, Submodule.Quotient.eq]
-  refine ⟨fun hu ↦ ?_, fun ⟨x, hx⟩ ↦ ?_⟩
-  · obtain ⟨x, w, hw, rfl⟩ := exists_mul_add_mem_pow_succ hP a u ha ha' hu
-    exact ⟨x, by rwa [sub_add_cancel_left, neg_mem_iff]⟩
-  · exact (Submodule.sub_mem_iff_right _ (mul_mem_right x _ ha)).1 (pow_le_pow_right n.le_succ hx)
-
-end Ideal
 
 namespace Algebra
 
@@ -147,7 +103,9 @@ theorem trace_quotient_pow_mk [Module.Finite A B] (hP : P ≠ ⊥) (n : ℕ)
     Algebra.trace (A ⧸ p) (B ⧸ P ^ n) (Ideal.Quotient.mk _ z) =
       n • Algebra.trace (A ⧸ p) (B ⧸ P) (Ideal.Quotient.mk _ z) := by
   induction n generalizing instA instT with
-  | zero => simp [Ideal.Quotient.eq_zero_iff_mem.mpr (show z ∈ P ^ 0 by simp)]
+  | zero =>
+      have hz : z ∈ P ^ 0 := by simp
+      simp [Ideal.Quotient.eq_zero_iff_mem.mpr hz]
   | succ n ih =>
       have : Nontrivial (B ⧸ P ^ (n + 1)) := Ideal.Quotient.nontrivial_iff.mpr <|
         ne_top_of_le_ne_top Ideal.IsPrime.ne_top' (Ideal.pow_le_self n.succ_ne_zero)
