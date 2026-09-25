@@ -339,13 +339,9 @@ noncomputable def standardPolytabloidBasis (μ : YoungDiagram) :
   (Module.Basis.span (linearIndependent_polytabloid μ)).map
     (LinearEquiv.ofEq _ _ (spechtSubrepresentation_eq_span_standard μ).symm)
 
--- The `simp` lemmas below state their left-hand sides through `dsimp% only`: the carrier
--- `(permutationModule _).V` of the coercion and of the submodule is indexed unreduced, as
--- `Rep.V` of a `Rep` structure literal, while `simp` reduces it to the underlying monoid
--- algebra before it looks a term up, so the plain form is never found.
 @[simp]
 theorem coe_standardPolytabloidBasis (μ : YoungDiagram) (T : StandardYoungTableau μ) :
-    (dsimp% only (standardPolytabloidBasis μ T : (permutationModule (shapePartition μ)).V)) =
+    (standardPolytabloidBasis μ T : (permutationModule (shapePartition μ)).V) =
       polytabloid T.toTableau := by
   simp [standardPolytabloidBasis]
 
@@ -357,14 +353,10 @@ noncomputable def spechtModuleStandardBasis {n : ℕ} (μ : n.Partition) :
     Module.Basis (StandardYoungTableau (diagramOf μ)) ℚ (spechtModule μ) :=
   standardPolytabloidBasis (diagramOf μ)
 
--- `simp` also rewrites the `FGModuleCat` carrier of `spechtModule μ` by
--- `FGModuleCat.of_carrier` before it looks this left-hand side up, so it is stated with that
--- rewrite applied as well.
 @[simp]
 theorem coe_spechtModuleStandardBasis {n : ℕ} (μ : n.Partition)
     (T : StandardYoungTableau (diagramOf μ)) :
-    (dsimp% only [FGModuleCat.of_carrier]
-        (spechtModuleStandardBasis μ T : (permutationModule (shapePartition (diagramOf μ))).V)) =
+    (spechtModuleStandardBasis μ T : (permutationModule (shapePartition (diagramOf μ))).V) =
       polytabloid T.toTableau :=
   coe_standardPolytabloidBasis (diagramOf μ) T
 
@@ -372,17 +364,13 @@ theorem coe_spechtModuleStandardBasis {n : ℕ} (μ : n.Partition)
 f^μ`. -/
 @[simp]
 theorem finrank_spechtSubrepresentation (μ : YoungDiagram) :
-    (dsimp% only (Module.finrank ℚ (spechtSubrepresentation μ).toSubmodule)) =
-      standardCount μ := by
+    Module.finrank ℚ (spechtSubrepresentation μ).toSubmodule = standardCount μ := by
   rw [standardCount_def]
   exact Module.finrank_eq_card_basis (standardPolytabloidBasis μ)
 
--- Not a `simp` lemma: `simp` rewrites the carrier of `spechtModule μ` by
--- `FGModuleCat.of_carrier` to that of the Specht subrepresentation, and then
--- `finrank_spechtSubrepresentation` proves this statement, so no form of this left-hand side is
--- ever looked up.
 /-- **The dimension of the Specht module `S^μ` of a partition `μ` of `n` is the number `f^μ` of
 standard Young tableaux of shape `μ`.** -/
+@[simp]
 theorem finrank_spechtModule {n : ℕ} (μ : n.Partition) :
     Module.finrank ℚ (spechtModule μ) = standardCount (diagramOf μ) :=
   finrank_spechtSubrepresentation (diagramOf μ)
