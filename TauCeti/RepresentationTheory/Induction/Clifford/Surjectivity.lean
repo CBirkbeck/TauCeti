@@ -11,10 +11,14 @@ module
 -- `FDRep.simple_indFDRep_of_inertia`, the irreducibility of the induced representation that the
 -- proof uses to upgrade a nonzero intertwiner to an isomorphism.
 public import TauCeti.RepresentationTheory.Induction.Clifford.Injectivity
+-- Non-public: `FDRep.finrank_hom_eq_sum_of_character_eq`, which reads multiplicities off an
+-- identity of characters, is used only inside the proof.
+import TauCeti.RepresentationTheory.CharacterTable.Determined
 -- Non-public: the enumeration `TauCeti.irreducibleRepresentation` of the irreducible
--- representations of the inertia group, and the expansion of a class function in the basis of
--- irreducible characters, are used only inside the proof.
-import TauCeti.RepresentationTheory.CharacterTable.Table
+-- representations of the inertia group, and the expansion
+-- `TauCeti.character_eq_sum_nsmul_irreducibleCharacter` of a character over them, are used only
+-- inside the proof.
+import TauCeti.RepresentationTheory.CharacterTable.VirtualCharacter
 -- Non-public: `TauCeti.finrank_hom_indFDRep`, Frobenius reciprocity as an identity of intertwining
 -- dimensions, is the engine of the proof and occurs in no statement.
 import TauCeti.RepresentationTheory.Induction.FrobeniusReciprocity
@@ -80,42 +84,6 @@ section Surjectivity
 variable {k G : Type u} [Field k] [Group G] [Finite G] [IsAlgClosed k] [CharZero k]
   {N : Subgroup G} [N.Normal]
 
-omit [CharZero k] in
-/-- The character of a representation `X` of a finite group `H` is the sum of the irreducible
-characters `χᵢ` of `H`, each weighted by its multiplicity `dim Hom_H(Uᵢ, X)` in `X`. -/
-private theorem character_eq_sum_finrank_hom_mul_character {H : Type*} [Group H] [Finite H]
-    [Invertible (Nat.card H : k)] (X : FDRep k H) (h : H) : X.character h =
-      ∑ i, (Module.finrank k (FDRep.of (irreducibleRepresentation k i) ⟶ X) : k) *
-        (FDRep.of (irreducibleRepresentation k i)).character h := by
-  -- Algebraic closedness makes the irreducible characters an orthonormal basis of the class
-  -- functions, so the coefficients of the expansion are the pairings, that is, the multiplicities.
-  let _ : Fintype H := Fintype.ofFinite H
-  rw [← ClassFunction.ofFDRep_apply X h]
-  refine (ClassFunction.apply_eq_sum_characterPairing_mul_character _
-    (pairwise_isEmpty_equiv_irreducibleRepresentation k) (by simp) _ h).trans
-    (Finset.sum_congr rfl fun i _ => ?_)
-  -- The pairing `⟨χᵢ, χ_X⟩` is the multiplicity `dim Hom_H(Uᵢ, X)`.
-  rw [← ClassFunction.characterPairing_ofFDRep_eq_finrank, ClassFunction.characterPairing_symm,
-    ClassFunction.ofFDRep_eq_ofCharacter (FDRep.of _)]
-  rfl
-
-omit [IsAlgClosed k] in
-/-- If the character of `X` is a combination `∑ᵢ aᵢ · χ_{Yᵢ}` of characters with natural-number
-coefficients, then for every representation `V` the multiplicity `dim Hom(V, X)` is
-`∑ᵢ aᵢ · dim Hom(V, Yᵢ)`. -/
-private theorem finrank_hom_eq_sum_of_character_eq {H : Type u} [Group H] [Finite H] {ι : Type*}
-    [Fintype ι] (V X : FDRep k H) (Y : ι → FDRep k H) (a : ι → ℕ)
-    (hX : ∀ h, X.character h = ∑ i, (a i : k) * (Y i).character h) :
-    Module.finrank k (V ⟶ X) = ∑ i, a i * Module.finrank k (V ⟶ Y i) := by
-  let _ : Fintype H := Fintype.ofFinite H
-  let _ : Invertible (Nat.card H : k) := invertibleOfNonzero (by simp)
-  have hclass : ClassFunction.ofFDRep X = ∑ i, (a i : k) • ClassFunction.ofFDRep (Y i) :=
-    Subtype.ext <| funext fun h => by simp [hX]
-  have hpair := congrArg (ClassFunction.characterPairing · (ClassFunction.ofFDRep V)) hclass
-  simp only [map_sum, map_smul, LinearMap.sum_apply, LinearMap.smul_apply,
-    ClassFunction.characterPairing_ofFDRep_eq_finrank, smul_eq_mul] at hpair
-  exact_mod_cast hpair
-
 /-- **Multiplicities through the inertia group.**  Write `Uᵢ` for the irreducible representations
 of `T = inertia V`.  The multiplicity of `V` in `Res_N W` is `∑ᵢ aᵢ · bᵢ`, where
 `aᵢ = dim Hom_T(Uᵢ, Res_T W)` is the multiplicity of `Uᵢ` in `Res_T W` and
@@ -123,12 +91,26 @@ of `T = inertia V`.  The multiplicity of `V` in `Res_N W` is `∑ᵢ aᵢ · b�
 private theorem finrank_hom_resFDRep_eq_sum (V : FDRep k N) (W : FDRep k G)
     [Invertible (Nat.card (inertia V) : k)] : Module.finrank k (V ⟶ resFDRep N W) =
       ∑ i, Module.finrank k (FDRep.of (irreducibleRepresentation k i) ⟶ resFDRep (inertia V) W) *
-        Module.finrank k (V ⟶ resInertia V (FDRep.of (irreducibleRepresentation k i))) :=
+        Module.finrank k (V ⟶ resInertia V (FDRep.of (irreducibleRepresentation k i))) := by
+  let _ : Fintype (inertia V) := Fintype.ofFinite _
   -- Restricted to `N`, the expansion of the character of `Res_T W` in the irreducible characters
-  -- of `T` is an expansion of the character of `Res_N W`.
-  finrank_hom_eq_sum_of_character_eq V _ _ _ fun n =>
-    character_eq_sum_finrank_hom_mul_character (resFDRep (inertia V) W)
-      (Subgroup.inclusion (le_inertia V) n)
+  -- of `T` is an expansion of the character of `Res_N W`: read `χ_{Res_N W}` at `n` as
+  -- `χ_{Res_T W}` at the image `t` of `n` in `T`, and expand the latter.
+  refine finrank_hom_eq_sum_of_character_eq V <| funext fun n => ?_
+  rw [character_resFDRep, ← Subgroup.coe_inclusion (le_inertia V) n, ← character_resFDRep,
+    character_eq_sum_nsmul_irreducibleCharacter, Finset.sum_apply, Finset.sum_apply]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  -- The character of `Res_N Uᵢ` at `n` is `χᵢ(t)`, and the coefficient `dim Hom_T(Res_T W, Uᵢ)`
+  -- is `dim Hom_T(Uᵢ, Res_T W)`: both are the pairing of `χᵢ` and `χ_{Res_T W}`, in the two orders.
+  rw [Pi.smul_apply, Pi.smul_apply, character_resInertia, nsmul_eq_mul, nsmul_eq_mul,
+    ← character_irreducibleRepresentation,
+    ← ClassFunction.characterPairing_ofCharacter_eq_finrank,
+    ← ClassFunction.characterPairing_ofFDRep_eq_finrank, ClassFunction.characterPairing_symm,
+    ClassFunction.ofFDRep_eq_ofCharacter, ClassFunction.ofFDRep_eq_ofCharacter (FDRep.of _),
+    FDRep.of_ρ']
+  -- The one definitional step left, `χ_ρ(t) = χ_{FDRep.of ρ}(t)`, unfolds `FDRep.of` and no
+  -- restriction wrapper: neither Mathlib nor Tau Ceti states the character of `FDRep.of ρ`.
+  rfl
 
 /-- An irreducible representation `U` of `inertia V` lying over `V` induces to `W` as soon as it
 occurs in the restriction of the irreducible representation `W` to `inertia V`. -/
