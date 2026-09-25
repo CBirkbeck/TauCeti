@@ -69,12 +69,9 @@ private theorem sum_filter_mem_character_ρ_indFDRep_sq_eq_zero [Fintype G]
   have hinvψ : (ψ ^ 2)⁻¹ ≠ 1 := (inv_ne_one (a := ψ ^ 2)).mpr hψ
   have hstep (x : N) : Representation.character (indFDRep (FDRep.ofLinearCharacter ψ)).ρ
       ((x : G) ^ 2) = (((ψ ^ 2) x : kˣ) : k) + ((((ψ ^ 2)⁻¹) x : kˣ) : k) := by
-    -- `FDRep.character_forget₂_obj` bridges the two character interfaces; its left-hand side is
-    -- the character of the representation carried by `forget₂`, which agrees with this one only
-    -- up to definitional unfolding, so it is composed as a term rather than rewritten.
-    refine ((FDRep.character_forget₂_obj _ _).trans
-      (character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ
-        (Subgroup.sq_mem_of_index_two hindex _))).trans ?_
+    rw [FDRep.character_ρ,
+      character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ
+        (Subgroup.sq_mem_of_index_two hindex _)]
     simp [← SubmonoidClass.mk_pow]
   rw [Finset.sum_subtype (p := (· ∈ N)) _ (fun x => by simp) _,
     Finset.sum_congr rfl fun x _ => hstep x, Finset.sum_add_distrib, hzeroSum _ hψ,
@@ -100,10 +97,9 @@ private theorem sum_filter_notMem_character_ρ_indFDRep_sq [Fintype G] [Decidabl
         2 * (ψ z : k) := by
     intro x hx
     rw [sq_eq_sq_of_notMem_of_index_two hindex hs hinv (Finset.mem_filter.mp hx).2]
-    refine ((FDRep.character_forget₂_obj _ _).trans
-      (character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ
-        (Subgroup.sq_mem_of_index_two hindex s))).trans ?_
-    rw [← hzdef, hψz, two_mul]
+    rw [FDRep.character_ρ,
+      character_indFDRep_ofLinearCharacter_eq_add_inv_of_mem_of_conj_eq_inv hindex hs hinv hN ψ
+        (Subgroup.sq_mem_of_index_two hindex s), ← hzdef, hψz, two_mul]
   rw [Finset.sum_congr rfl houterStep, Finset.sum_const, nsmul_eq_mul,
     card_filter_notMem_eq_card_of_index_two hindex]
 
