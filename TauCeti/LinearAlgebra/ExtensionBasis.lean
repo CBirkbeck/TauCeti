@@ -6,7 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.LinearAlgebra.Dimension.Constructions
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import TauCeti.Algebra.Module.Submodule.Quotient
+public import TauCeti.LinearAlgebra.Matrix.Triangular
 
 /-!
 # Extending a submodule basis by a quotient basis, indexed by `Fin (m + n)`
@@ -18,7 +20,10 @@ the resulting matrices are visibly block triangular.
 
 This file records that reindexing together with the six equations locating the blocks: what the
 basis is on each block, what the coordinates of a vector are there, and the two `_of_mem` variants
-stated for an ambient vector known to lie in the submodule.
+stated for an ambient vector known to lie in the submodule. It then computes the matrix, in this
+basis, of an endomorphism preserving the submodule: its diagonal blocks are the matrices of the
+restriction and of the induced endomorphism of the quotient, and its lower-left block vanishes. So
+the matrix is upper (uni)triangular as soon as both diagonal blocks are.
 
 ## Main definitions
 
@@ -33,6 +38,13 @@ stated for an ambient vector known to lie in the submodule.
   of a vector on the two blocks.
 * `TauCeti.extensionBasis_repr_castAdd_of_mem` and `TauCeti.extensionBasis_repr_natAdd_of_mem`: the
   same for an ambient vector known to lie in the submodule, whose second-block coordinates vanish.
+* `TauCeti.toMatrixAlgEquiv_extensionBasis_castAdd_castAdd`,
+  `TauCeti.toMatrixAlgEquiv_extensionBasis_natAdd_castAdd` and
+  `TauCeti.toMatrixAlgEquiv_extensionBasis_natAdd_natAdd`: the blocks of the matrix of an
+  endomorphism preserving the submodule.
+* `TauCeti.toMatrixAlgEquiv_extensionBasis_isUpperTriangular` and
+  `TauCeti.toMatrixAlgEquiv_extensionBasis_isUpperUnitriangular`: that matrix is upper
+  (uni)triangular when both of its diagonal blocks are.
 -/
 
 public section
@@ -102,6 +114,85 @@ theorem extensionBasis_repr_natAdd_of_mem (p : Submodule R V) (bp : Basis (Fin m
     (extensionBasis p bp bq).repr x (Fin.natAdd m j) = 0 := by
   rw [extensionBasis_repr_natAdd, Submodule.mkQ_apply,
     (Submodule.Quotient.mk_eq_zero p).mpr hx, map_zero, Finsupp.coe_zero, Pi.zero_apply]
+
+section Matrix
+
+variable (p : Submodule R V) (bp : Basis (Fin m) R p) (bq : Basis (Fin n) R (V ⧸ p))
+variable {f : Module.End R V} (hf : p ≤ p.comap f)
+
+-- The three block lemmas are conditional `simp` lemmas: `simp` discharges the invariance
+-- hypothesis `hf` only when it is supplied, as in `simp [hf]`.
+
+/-- In the basis `extensionBasis p bp bq`, the diagonal block of an endomorphism `f` preserving `p`
+indexed by the basis `bp` of `p` is the matrix of the restriction of `f` to `p`. -/
+@[simp]
+theorem toMatrixAlgEquiv_extensionBasis_castAdd_castAdd (i j : Fin m) :
+    LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f (Fin.castAdd n i) (Fin.castAdd n j) =
+      LinearMap.toMatrixAlgEquiv bp (f.restrict fun _ hx ↦ Submodule.mem_comap.mp (hf hx)) i j := by
+  rw [LinearMap.toMatrixAlgEquiv_apply, LinearMap.toMatrixAlgEquiv_apply, extensionBasis_castAdd,
+    extensionBasis_repr_castAdd_of_mem p bp bq _ (Submodule.mem_comap.mp (hf (bp j).2)),
+    LinearMap.restrict_apply]
+
+include hf in
+/-- In the basis `extensionBasis p bp bq`, the lower-left block of the matrix of an endomorphism
+preserving `p` vanishes. -/
+@[simp]
+theorem toMatrixAlgEquiv_extensionBasis_natAdd_castAdd (i : Fin n) (j : Fin m) :
+    LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f (Fin.natAdd m i) (Fin.castAdd n j) =
+      0 := by
+  rw [LinearMap.toMatrixAlgEquiv_apply, extensionBasis_castAdd]
+  exact extensionBasis_repr_natAdd_of_mem p bp bq _ (Submodule.mem_comap.mp (hf (bp j).2)) i
+
+/-- In the basis `extensionBasis p bp bq`, the diagonal block of an endomorphism `f` preserving `p`
+indexed by the basis `bq` of `V ⧸ p` is the matrix of the endomorphism of `V ⧸ p` induced by
+`f`. -/
+@[simp]
+theorem toMatrixAlgEquiv_extensionBasis_natAdd_natAdd (i j : Fin n) :
+    LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f (Fin.natAdd m i) (Fin.natAdd m j) =
+      LinearMap.toMatrixAlgEquiv bq (p.mapQ p f hf) i j := by
+  rw [LinearMap.toMatrixAlgEquiv_apply, LinearMap.toMatrixAlgEquiv_apply,
+    extensionBasis_repr_natAdd, ← extensionBasis_natAdd_mkQ p bp bq j, Submodule.mkQ_apply,
+    Submodule.mapQ_apply]
+
+/-- If an endomorphism `f` preserves a submodule `p` and its restriction to `p` and the induced
+endomorphism of `V ⧸ p` have upper-triangular matrices in the bases `bp` and `bq`, then the
+matrix of `f` in the extension basis `extensionBasis p bp bq` is upper triangular. -/
+theorem toMatrixAlgEquiv_extensionBasis_isUpperTriangular
+    (hp : (LinearMap.toMatrixAlgEquiv bp
+      (f.restrict fun _ hx ↦ Submodule.mem_comap.mp (hf hx))).IsUpperTriangular)
+    (hq : (LinearMap.toMatrixAlgEquiv bq (p.mapQ p f hf)).IsUpperTriangular) :
+    (LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f).IsUpperTriangular := by
+  intro i j hji
+  obtain ⟨i | i, rfl⟩ := finSumFinEquiv.surjective i <;>
+    obtain ⟨j | j, rfl⟩ := finSumFinEquiv.surjective j <;>
+    simp only [finSumFinEquiv_apply_left, finSumFinEquiv_apply_right, id_eq, hf,
+      toMatrixAlgEquiv_extensionBasis_castAdd_castAdd,
+      toMatrixAlgEquiv_extensionBasis_natAdd_castAdd,
+      toMatrixAlgEquiv_extensionBasis_natAdd_natAdd] at hji ⊢
+  · exact hp ((Fin.strictMono_castAdd n).lt_iff_lt.mp hji)
+  · -- A quotient index lies after every submodule index.
+    rw [Fin.lt_def, Fin.val_natAdd, Fin.val_castAdd] at hji
+    omega
+  · exact hq ((Fin.strictMono_natAdd m).lt_iff_lt.mp hji)
+
+/-- If an endomorphism `f` preserves a submodule `p` and its restriction to `p` and the induced
+endomorphism of `V ⧸ p` have upper-unitriangular matrices in the bases `bp` and `bq`, then the
+matrix of `f` in the extension basis `extensionBasis p bp bq` is upper unitriangular. -/
+theorem toMatrixAlgEquiv_extensionBasis_isUpperUnitriangular
+    (hp : (LinearMap.toMatrixAlgEquiv bp
+      (f.restrict fun _ hx ↦ Submodule.mem_comap.mp (hf hx))).IsUpperUnitriangular)
+    (hq : (LinearMap.toMatrixAlgEquiv bq (p.mapQ p f hf)).IsUpperUnitriangular) :
+    (LinearMap.toMatrixAlgEquiv (extensionBasis p bp bq) f).IsUpperUnitriangular := by
+  rw [Matrix.isUpperUnitriangular_def]
+  refine ⟨toMatrixAlgEquiv_extensionBasis_isUpperTriangular p bp bq hf hp.isUpperTriangular
+    hq.isUpperTriangular, fun i ↦ ?_⟩
+  obtain ⟨i | i, rfl⟩ := finSumFinEquiv.surjective i
+  · rw [finSumFinEquiv_apply_left, toMatrixAlgEquiv_extensionBasis_castAdd_castAdd p bp bq hf]
+    exact hp.apply_diag i
+  · rw [finSumFinEquiv_apply_right, toMatrixAlgEquiv_extensionBasis_natAdd_natAdd p bp bq hf]
+    exact hq.apply_diag i
+
+end Matrix
 
 end TauCeti
 
