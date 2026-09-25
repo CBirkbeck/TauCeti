@@ -114,6 +114,7 @@ theorem vertexPreReflection_apply_self_neg_iff_eq_single (hpd : (titsForm Q).Pos
 /-- **A simple reflection keeps a positive root nonnegative unless it is that simple root.** For
 a positive definite Tits form and a nonnegative `d` with `q(d) = 1`, the reflected vector `sᵢ d` is
 nonnegative precisely when `d` is not the simple dimension vector `αᵢ`. -/
+@[simp]
 theorem vertexPreReflection_nonneg_iff_ne_single (hpd : (titsForm Q).PosDef) {i : Q} {d : Q → ℤ}
     (hd : 0 ≤ d) (hroot : titsForm Q d = 1) :
     0 ≤ vertexPreReflection Q i d ↔ d ≠ Pi.single i 1 := by
