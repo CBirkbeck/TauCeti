@@ -343,6 +343,8 @@ noncomputable def standardPolytabloidBasis (μ : YoungDiagram) :
 -- `(permutationModule _).V` of the coercion and of the submodule is indexed unreduced, as
 -- `Rep.V` of a `Rep` structure literal, while `simp` reduces it to the underlying monoid
 -- algebra before it looks a term up, so the plain form is never found.
+/-- The basis vector of the standard polytabloid basis indexed by a standard Young tableau `T` is
+the polytabloid of `T`. -/
 @[simp]
 theorem coe_standardPolytabloidBasis (μ : YoungDiagram) (T : StandardYoungTableau μ) :
     (dsimp% only (standardPolytabloidBasis μ T : (permutationModule (shapePartition μ)).V)) =
@@ -360,6 +362,8 @@ noncomputable def spechtModuleStandardBasis {n : ℕ} (μ : n.Partition) :
 -- `simp` also rewrites the `FGModuleCat` carrier of `spechtModule μ` by
 -- `FGModuleCat.of_carrier` before it looks this left-hand side up, so it is stated with that
 -- rewrite applied as well.
+/-- The basis vector of the standard basis of the Specht module `S^μ` indexed by a standard Young
+tableau `T` is the polytabloid of `T`. -/
 @[simp]
 theorem coe_spechtModuleStandardBasis {n : ℕ} (μ : n.Partition)
     (T : StandardYoungTableau (diagramOf μ)) :
