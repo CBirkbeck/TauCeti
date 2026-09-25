@@ -78,9 +78,12 @@ variable [IsTopologicalGroup G]
 `ofDiscreteModuleQuotient`, is the pullback along the compatible pair of explicit inflation. -/
 @[reassoc]
 theorem coeffMap_ofDiscreteModuleQuotient_comp_infl (n : ℕ) :
-    TauCeti.ContinuousCohomology.coeffMap (ofDiscreteModuleQuotient G M N) n ≫
-        TauCeti.ContinuousCohomology.infl N (ofDiscreteModule ℤ G M) n =
-      _root_.ContinuousCohomology.map (ContinuousMonoidHom.quotientMk N)
+    -- Universes pinned at `.{0, u, u}`, the levels the statement elaborates to: otherwise the
+    -- third level of each constant stays open as `max u ?w`, and the unifier unfolds the
+    -- cohomology objects to compare the two sides (7.5 s).
+    TauCeti.ContinuousCohomology.coeffMap.{0, u, u} (ofDiscreteModuleQuotient G M N) n ≫
+        TauCeti.ContinuousCohomology.infl.{0, u, u} N (ofDiscreteModule ℤ G M) n =
+      _root_.ContinuousCohomology.map.{0, u, u} (ContinuousMonoidHom.quotientMk N)
         (ofDiscreteModulePair (ContinuousMonoidHom.quotientMk N : G →* G ⧸ N)
           (FixedPoints.addSubgroup N M).subtype.toIntLinearMap
           (fun g m ↦ subtype_quotientMk_smul G M N g m)) n := by
