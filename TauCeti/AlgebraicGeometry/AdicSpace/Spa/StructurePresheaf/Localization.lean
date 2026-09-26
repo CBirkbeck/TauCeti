@@ -20,9 +20,9 @@ admissible presentations, when `A⁺` consists of power-bounded elements.
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.locOpensComap` : the open `j⁻¹(V)` of `Spa(A⟨T/s⟩, A_U⁺)`.
 * `TauCeti.ValuationSpectrum.presentationLimitLocIso` : the isomorphism
-  `presentationLimit Aplus V ≅ presentationLimit A_U⁺ j⁻¹(V)` for a rational `V ⊆ R(T/s)`.
+  `presentationLimit Aplus V ≅ presentationLimit A_U⁺ j⁻¹(V)` for a rational `V ⊆ R(T/s)`, where
+  `j⁻¹(V)` is `TauCeti.ValuationSpectrum.locOpensComap`.
 
 ## Main results
 
@@ -47,21 +47,6 @@ variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   (P : PairOfDefinition A) (Aplus : Subring A) (T : Finset A) (s : A)
   (S : Type v) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
   (hden : HasDenominatorPower P T s S)
-
-/-- **The pullback of an open along `Spa` of the structure map**: for an open `V` of `Spa(A, A⁺)`,
-the open `j⁻¹(V)` of `Spa(A⟨T/s⟩, A_U⁺)`, where `j = spaComapLoc` is induced by the structure map
-`A → A⟨T/s⟩`. -/
--- Exposed so that `Opens.comap_mono` proves containments between these opens, as the statement of
--- `presentationLimitMap_comp_presentationLimitLocIso_hom` requires.
-@[expose] noncomputable def locOpensComap (V : Opens ↥(spa Aplus)) :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    Opens ↥(spa (completedPlusSubring P Aplus T s S hden)) :=
-  letI := locUniformSpace P T s S hden
-  letI := isUniformAddGroup_locUniformSpace P T s S hden
-  letI := isTopologicalRing_locUniformSpace P T s S hden
-  Opens.comap ⟨spaComapLoc P Aplus T s S hden, continuous_spaComapLoc P Aplus T s S hden⟩ V
 
 /-! ### A presentation of `V` refining `(T, s)` -/
 
@@ -131,25 +116,6 @@ private theorem isOpen_span_locPresentation_num {p : Presentation P}
   rw [← locUniformSpace_toTopologicalSpace P T s S hden] at hopen
   rw [coe_locPresentation_num, ← Ideal.map_span, hρ, ← Ideal.map_map]
   exact isOpen_map_coeRingHom hopen
-
--- Pulling back `R(T''/s'')` along `Spa` of the structure map gives `R(ρ(T'')/ρ(s''))`.
-private theorem locOpensComap_spaBasicOpen (p : Presentation P) :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    locOpensComap P Aplus T s S hden (spaBasicOpen Aplus p.num p.den) =
-      spaBasicOpen (completedPlusSubring P Aplus T s S hden)
-        (locPresentation P T s S hden p).num (locPresentation P T s S hden p).den := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  ext v
-  simp only [locOpensComap, SetLike.mem_coe, Opens.mem_comap, ContinuousMap.coe_mk,
-    mem_spaBasicOpen, spaComapLoc_val]
-  rw [← comap_preimage_rationalSubset_inter_spa (toCompletionLoc P T s S hden)
-    (continuous_toCompletionLoc P T s S hden)
-    fun _ ha ↦ toCompletionLoc_mem_completedPlusSubring P Aplus T s S hden ha]
-  exact ⟨fun h ↦ ⟨h, v.2⟩, And.left⟩
 
 -- `A_U⁺` consists of power-bounded elements when `A⁺` does.
 private theorem isPowerBounded_of_mem_completedPlusSubring
@@ -307,7 +273,8 @@ private noncomputable def presentationLimitLocIsoAux (hAplus : ∀ ⦃a⦄, a �
       (isOpen_span_locPresentation_num P T s S hden hpV.1)).symm ≪≫
     eqToIso (congrArg (presentationLimit (P := completionLocalization P T s S hden)
       (completedPlusSubring P Aplus T s S hden))
-      ((locOpensComap_spaBasicOpen P Aplus T s S hden p).symm.trans (congrArg _ hpV.2.1.symm)))
+      ((locOpensComap_spaBasicOpen P Aplus T s S hden p.num p.den).symm.trans
+        (congrArg _ hpV.2.1.symm)))
 
 -- Naturality of the isomorphism computed through presentations, for any choice of presentations.
 private theorem presentationLimitMap_comp_presentationLimitLocIsoAux_hom
@@ -322,7 +289,8 @@ private theorem presentationLimitMap_comp_presentationLimitLocIsoAux_hom
     presentationLimitMap (P := P) h ≫
         (presentationLimitLocIsoAux P Aplus T s S hden hAplus hpV').hom =
       (presentationLimitLocIsoAux P Aplus T s S hden hAplus hpV).hom ≫
-        presentationLimitMap (P := completionLocalization P T s S hden) (Opens.comap_mono _ h) := by
+        presentationLimitMap (P := completionLocalization P T s S hden)
+          (locOpensComap_mono P Aplus T s S hden h) := by
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
@@ -332,7 +300,7 @@ private theorem presentationLimitMap_comp_presentationLimitLocIsoAux_hom
       (locPresentation P T s S hden p').num (locPresentation P T s S hden p').den ≤
       spaBasicOpen _ (locPresentation P T s S hden p).num (locPresentation P T s S hden p).den := by
     rw [← locOpensComap_spaBasicOpen, ← locOpensComap_spaBasicOpen]
-    exact Opens.comap_mono _ h
+    exact locOpensComap_mono P Aplus T s S hden h
   have hX := presentationLimitRationalIso_inv_comp_map_comp_hom Aplus hAplus p p' hp hp' h
   have hY := presentationLimitRationalIso_inv_comp_map_comp_hom _
     (isPowerBounded_of_mem_completedPlusSubring P Aplus T s S hden hAplus) _ _
@@ -342,12 +310,11 @@ private theorem presentationLimitMap_comp_presentationLimitLocIsoAux_hom
   rw [← Category.assoc, ← Iso.eq_comp_inv] at hY
   simp only [presentationLimitLocIsoAux, Iso.trans_hom, Iso.symm_hom, eqToIso.hom, eqToHom_refl,
     Category.id_comp, Category.assoc]
-  rw [eqToHom_presentationLimit (locOpensComap_spaBasicOpen P Aplus T s S hden p').symm,
-    eqToHom_presentationLimit (locOpensComap_spaBasicOpen P Aplus T s S hden p).symm,
+  rw [eqToHom_presentationLimit (locOpensComap_spaBasicOpen P Aplus T s S hden p'.num p'.den).symm,
+    eqToHom_presentationLimit (locOpensComap_spaBasicOpen P Aplus T s S hden p.num p.den).symm,
     reassoc_of% hX, reassoc_of% homOfRationalSubsetSubset_comp_locPresentationIso_hom P Aplus T s S
     hden hAplus hle hle' _ (spaBasicOpen_le_spaBasicOpen_iff.mp hB), ← reassoc_of% hY,
-    presentationLimitMap_comp]
-  exact congrArg (_ ≫ _ ≫ _ ≫ ·) (presentationLimitMap_comp _ _).symm
+    presentationLimitMap_comp, presentationLimitMap_comp]
 
 /-! ### Wedhorn's Remark 8.4 -/
 
@@ -384,7 +351,7 @@ theorem presentationLimitMap_comp_presentationLimitLocIso_hom
         (presentationLimitLocIso P Aplus T s S hden hAplus hT V' hV' (h.trans hVW)).hom =
       (presentationLimitLocIso P Aplus T s S hden hAplus hT V hV hVW).hom ≫
         presentationLimitMap (P := completionLocalization P T s S hden)
-          (Opens.comap_mono _ h) :=
+          (locOpensComap_mono P Aplus T s S hden h) :=
   presentationLimitMap_comp_presentationLimitLocIsoAux_hom P Aplus T s S hden hAplus _ _ h
 
 end TauCeti.ValuationSpectrum
