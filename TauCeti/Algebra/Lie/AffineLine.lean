@@ -47,7 +47,10 @@ namespace LieAlgebra
 /-- **The two-dimensional nonabelian Lie algebra** over `K`, the Lie algebra of the group of
 affine transformations `t ↦ a * t + b` of the line: the `K`-module `K × K`, whose first coordinate
 is the dilation coordinate and whose second is the translation coordinate, with the bracket
-determined by `⁅x, y⁆ = y` for the basis `x = (1, 0)`, `y = (0, 1)`. -/
+determined by `⁅x, y⁆ = y` for the basis `x = (1, 0)`, `y = (0, 1)`.
+
+Tested by: 4 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.LieAlgebra.AffineLine) -/
 @[expose, reducible] def AffineLine (K : Type*) : Type _ := K × K
 
 namespace AffineLine
@@ -81,10 +84,16 @@ instance instLieRing : LieRing (AffineLine K) where
 instance instLieAlgebra : LieAlgebra K (AffineLine K) where
   lie_smul c u v := by ext <;> simp; ring
 
-/-- The dilation `x = (1, 0)` of `AffineLine K`. -/
+/-- The dilation `x = (1, 0)` of `AffineLine K`.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.LieAlgebra.AffineLine.dilation) -/
 def dilation (K : Type*) [CommRing K] : AffineLine K := (1, 0)
 
-/-- The translation `y = (0, 1)` of `AffineLine K`. -/
+/-- The translation `y = (0, 1)` of `AffineLine K`.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.LieAlgebra.AffineLine.translation) -/
 def translation (K : Type*) [CommRing K] : AffineLine K := (0, 1)
 
 @[simp] theorem fst_dilation : (dilation K).1 = 1 := (rfl)

@@ -171,7 +171,7 @@ noncomputable def _root_.QuadraticForm.orthogonalPairIsometryEquiv
 different ranks may be compared; `TauCeti.fst_eq_of_presentedForm_equivalent` shows that only
 presentations of equal rank are ever related.
 
-Tested by: 1 unit test
+Tested by: 2 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.regularFormSetoid) -/
 instance regularFormSetoid (K : Type u) [Field K] : Setoid (RegularFormPresentation K) where
   r p q := (presentedForm p).Equivalent (presentedForm q)
