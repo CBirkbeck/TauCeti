@@ -7,12 +7,14 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.PointHom.Place
 import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Unramified
+import TauCeti.GroupTheory.Coset.Fiber
 
 /-!
 # Fibres of the class-group point map
 
 Over a separably closed field, every fibre of a separable isogeny's point map has exactly
-the degree of the isogeny many points. In particular, the point map is surjective.
+the degree of the isogeny many points. In particular, the point map is surjective, and its
+kernel is finite with cardinality equal to the degree.
 
 The map here is `Isogeny.toPointHom`, defined by extension and norm on ideal classes.
 The point--place dictionary intertwines it with restriction of places. Complete splitting
@@ -25,6 +27,8 @@ isogeny is unramified, so every place above a rational place is again rational.
 * `TauCeti.Isogeny.ncard_fiber_toPointHom_eq_degree`: every point fibre has size `deg φ`.
 * `TauCeti.Isogeny.toPointHom_surjective`: a separable isogeny is surjective on points over
   a separably closed field.
+* `TauCeti.Isogeny.card_ker_toPointHom_eq_degree`: the point kernel has cardinality `deg φ`.
+* `TauCeti.Isogeny.finite_ker_toPointHom`: the point kernel is finite.
 
 ## References
 
@@ -86,6 +90,17 @@ theorem toPointHom_surjective : Function.Surjective φ.toPointHom := by
   exact Set.nonempty_of_ncard_ne_zero (s := {P : W₁.Point | φ.toPointHom P = Q}) (by
     rw [φ.ncard_fiber_toPointHom_eq_degree Q]
     exact φ.degree_pos.ne')
+
+/-- The kernel of a separable isogeny's class-group point map has cardinality equal to the
+degree over a separably closed field. -/
+-- Simplify before `AddMonoidHom.mem_ker` rewrites membership in the kernel subtype.
+@[simp↓] theorem card_ker_toPointHom_eq_degree : Nat.card φ.toPointHom.ker = φ.degree := by
+  rw [← φ.ncard_fiber_toPointHom_eq_degree 0, ← Nat.card_coe_set_eq]
+  exact (φ.toPointHom.card_fiber_eq_card_ker (map_zero φ.toPointHom)).symm
+
+/-- The point kernel of a separable isogeny over a separably closed field is finite. -/
+instance finite_ker_toPointHom : Finite φ.toPointHom.ker :=
+  Nat.finite_of_card_ne_zero (φ.card_ker_toPointHom_eq_degree ▸ φ.degree_ne_zero)
 
 end TauCeti.Isogeny
 
