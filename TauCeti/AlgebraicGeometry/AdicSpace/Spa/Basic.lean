@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Cont.Basic
-public import TauCeti.RingTheory.Valuation.Integral.Basic
+import TauCeti.RingTheory.Valuation.Integral.Basic
 import Mathlib.Topology.Algebra.OpenSubgroup
 
 /-!
