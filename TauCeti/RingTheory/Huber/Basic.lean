@@ -228,8 +228,9 @@ theorem IsAdic.comap (e : B ≃+* A) (he : IsInducing e) {I : Ideal A} (h : IsAd
     obtain ⟨n, hn⟩ := hnhds t ht
     exact ⟨n, by rw [hset n]; exact fun b hb ↦ hts (hn hb)⟩
 
-/-- **A continuous homomorphism out of a Tate ring makes a Huber target Tate**: the image of a
-pseudouniformiser of `A` is a pseudouniformiser of `B`.
+/-- **A continuous homomorphism out of a Tate ring makes a Huber target Tate** (Wedhorn,
+*Adic Spaces*, Proposition 6.25): the image of a pseudouniformiser of `A` is a pseudouniformiser
+of `B`.
 
 The target must already be known to be Huber; this supplies only the pseudouniformiser. -/
 theorem IsTateRing.of_continuous {F : Type*} [IsTateRing A] [IsHuberRing B] [FunLike F A B]
