@@ -101,11 +101,12 @@ theorem apply_eq_algebraMap_kummerCharacter_mul {α : Lˣ}
     ρ σ α = algebraMap F L (kummerCharacter ρ n α hα σ : Fˣ) * α := by
   rw [algebraMap_kummerCharacter, div_mul_cancel₀ _ α.ne_zero]
 
-/-- **The Kummer character is multiplicative in `α`.** -/
+/-- **The Kummer character is multiplicative in `α`**; `G` fixes `(α β)ⁿ = αⁿ βⁿ` because it fixes
+both factors. -/
 theorem kummerCharacter_mul {α β : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n)
-    (hβ : ∀ σ, ρ σ ((β : L) ^ n) = (β : L) ^ n)
-    (hαβ : ∀ σ, ρ σ (((α * β : Lˣ) : L) ^ n) = ((α * β : Lˣ) : L) ^ n) :
-    kummerCharacter ρ n (α * β) hαβ = kummerCharacter ρ n α hα * kummerCharacter ρ n β hβ := by
+    (hβ : ∀ σ, ρ σ ((β : L) ^ n) = (β : L) ^ n) :
+    kummerCharacter ρ n (α * β) (fun σ ↦ by rw [Units.val_mul, mul_pow, map_mul, hα, hβ]) =
+      kummerCharacter ρ n α hα * kummerCharacter ρ n β hβ := by
   ext σ
   refine (algebraMap F L).injective ?_
   simp only [MonoidHom.mul_apply, Subgroup.coe_mul, Units.val_mul, map_mul,
@@ -115,10 +116,10 @@ theorem kummerCharacter_mul {α β : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = 
 /-- **The Kummer character is unchanged by a constant factor**: `G` fixes the constant `c`, so it
 moves `c α` and `α` by the same roots of unity. -/
 theorem kummerCharacter_algebraMap_mul {α : Lˣ} (c : Fˣ)
-    (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n)
-    (hcα : ∀ σ, ρ σ (((Units.map (algebraMap F L : F →* L) c * α : Lˣ) : L) ^ n) =
-      ((Units.map (algebraMap F L : F →* L) c * α : Lˣ) : L) ^ n) :
-    kummerCharacter ρ n (Units.map (algebraMap F L : F →* L) c * α) hcα =
+    (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :
+    kummerCharacter ρ n (Units.map (algebraMap F L : F →* L) c * α) (fun σ ↦ by
+      rw [Units.val_mul, mul_pow, map_mul, hα, Units.coe_map, MonoidHom.coe_ofClass,
+        ← map_pow, AlgEquiv.commutes]) =
       kummerCharacter ρ n α hα := by
   ext σ
   refine (algebraMap F L).injective ?_

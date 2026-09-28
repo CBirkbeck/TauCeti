@@ -34,7 +34,8 @@ of unity are constants because `F` is integrally closed in `F(W₁)`. The result
   translations by `ker φ`; in particular it is trivial on a pulled-back function
   (`TauCeti.Isogeny.kummerCharacter_eq_one_of_mem_fieldRange`).
 * `TauCeti.Isogeny.kummerCharacter_eq_of_principal_eq`: it depends on `g` only through its
-  divisor, two functions with the same divisor differing by a constant.
+  divisor, two functions with the same divisor differing by a constant; so does the condition
+  that `gⁿ` be a pullback (`TauCeti.Isogeny.pow_mem_fieldRange_of_principal_eq`).
 
 In Silverman's construction (AEC III.8.1), for `T ∈ E[N]` one takes `g_T` with
 `g_T^N = [N]^* f_T`, where `div f_T = N (T) - N (O)`, and sets `e_N(S, T) = τ_S g_T / g_T`. That is
@@ -88,13 +89,14 @@ theorem algebraMap_kummerCharacter {g : W₁.FunctionFieldˣ}
       translation W₁ (Multiplicative.toAdd S : φ.ker) g / g := by
   rw [kummerCharacter, TauCeti.algebraMap_kummerCharacter, kerTranslationHom_apply]
 
-/-- **The Kummer character is multiplicative in `g`.** -/
+/-- **The Kummer character is multiplicative in `g`**; `(g h)ⁿ = gⁿ hⁿ` is pulled back when both
+factors are. -/
 theorem kummerCharacter_mul {g h : W₁.FunctionFieldˣ}
     (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange)
-    (hh : (h : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange)
-    (hgh : ((g * h : W₁.FunctionFieldˣ) : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange) :
-    φ.kummerCharacter n (g * h) hgh = φ.kummerCharacter n g hg * φ.kummerCharacter n h hh :=
-  TauCeti.kummerCharacter_mul _ _ _
+    (hh : (h : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange) :
+    φ.kummerCharacter n (g * h) (by rw [Units.val_mul, mul_pow]; exact mul_mem hg hh) =
+      φ.kummerCharacter n g hg * φ.kummerCharacter n h hh :=
+  TauCeti.kummerCharacter_mul _ _
 
 /-- **The Kummer character is trivial exactly when the kernel translations fix `g`.** -/
 theorem kummerCharacter_eq_one_iff {g : W₁.FunctionFieldˣ}
@@ -107,24 +109,35 @@ theorem kummerCharacter_eq_one_iff {g : W₁.FunctionFieldˣ}
 /-- **The Kummer character of a pulled-back function is trivial**: the kernel translations fix
 every pullback. -/
 theorem kummerCharacter_eq_one_of_mem_fieldRange {g : W₁.FunctionFieldˣ}
-    (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange)
     (hmem : (g : W₁.FunctionField) ∈ φ.fieldPullback.fieldRange) :
-    φ.kummerCharacter n g hg = 1 :=
-  (kummerCharacter_eq_one_iff hg).mpr
+    φ.kummerCharacter n g (pow_mem hmem n) = 1 :=
+  (kummerCharacter_eq_one_iff _).mpr
     ((mem_translationFixedField_iff _ _).mpr fun _ hS ↦ mem_ker_iff.mp hS _ hmem)
+
+omit [DecidableEq F] [NeZero n] in
+/-- **Whether `gⁿ` is pulled back along `φ` depends only on the divisor of `g`**: two functions
+with the same divisor differ by a constant, and the constants are pullbacks. -/
+theorem pow_mem_fieldRange_of_principal_eq {g g' : W₁.FunctionFieldˣ}
+    (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange)
+    (h : Divisor.principal W₁.isFunctionField g = Divisor.principal W₁.isFunctionField g') :
+    (g' : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange := by
+  obtain ⟨c, hc⟩ := Divisor.exists_units_algebraMap_mul_of_principal_eq _
+    (isIntegrallyClosedIn_functionField W₁) h.symm
+  rw [hc, mul_pow, ← map_pow]
+  exact mul_mem (IntermediateField.algebraMap_mem _ _) hg
 
 /-- **The Kummer character depends on `g` only through its divisor**: two functions with the same
 divisor differ by a constant, which every translation fixes. -/
 theorem kummerCharacter_eq_of_principal_eq {g g' : W₁.FunctionFieldˣ}
     (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange)
-    (hg' : (g' : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange)
     (h : Divisor.principal W₁.isFunctionField g = Divisor.principal W₁.isFunctionField g') :
-    φ.kummerCharacter n g hg = φ.kummerCharacter n g' hg' := by
+    φ.kummerCharacter n g hg =
+      φ.kummerCharacter n g' (pow_mem_fieldRange_of_principal_eq hg h) := by
   obtain ⟨c, hc⟩ := Divisor.exists_units_algebraMap_mul_of_principal_eq _
     (isIntegrallyClosedIn_functionField W₁) h
   obtain rfl : g = Units.map (algebraMap F W₁.FunctionField : F →* W₁.FunctionField) c * g' :=
     Units.ext (by simpa using hc)
-  exact TauCeti.kummerCharacter_algebraMap_mul c _ _
+  exact TauCeti.kummerCharacter_algebraMap_mul c _
 
 end TauCeti.Isogeny
 

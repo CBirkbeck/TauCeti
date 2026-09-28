@@ -8,7 +8,7 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.BaseChange
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.KummerCharacter
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.MulByInt.DivisorPullback
--- Proof-only: `n(T) - n(O)` and the line function are principal.
+-- Proof-only: the divisors `n(T) - n(O)` and `(P + Q) - (P) - (Q) + (O)` are principal.
 import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.TorsionDivisor
 -- Proof-only: `F` is integrally closed in `F(W)`, so functions with equal divisors differ by a
 -- constant.
@@ -30,10 +30,11 @@ character of `g_T` (`TauCeti.Isogeny.kummerCharacter`). The **Weil pairing** is
     e_N(S, T) = τ_S g_T / g_T,
 
 independent of the choice of `g_T`, since two choices differ by a constant. It is additive in `S`
-because the Kummer character is a homomorphism, and additive in `T` because `g_{T₁} g_{T₂} h`,
-with `h` the line function of `T₁` and `T₂`, is a choice of `g_{T₁ + T₂}` and `[N]^* h` is a
-pullback. It is nondegenerate in `T`: if `e_N(·, T)` is trivial then `g_T` is fixed by the
-`N`-torsion translations, hence a pullback `[N]^* h`, and `div h = (T) - (O)` forces `T = O`.
+because the Kummer character is a homomorphism, and additive in `T` because
+`g_{T₁} g_{T₂} [N]^* h`, with `h` a function of divisor `(T₁ + T₂) - (T₁) - (T₂) + (O)`, is a choice
+of `g_{T₁ + T₂}` and the Kummer character of the pullback `[N]^* h` is trivial. It is
+nondegenerate in `T`: if `e_N(·, T)` is trivial then `g_T` is fixed by the `N`-torsion
+translations, hence a pullback `[N]^* h`, and `div h = (T) - (O)` forces `T = O`.
 
 This is the construction of Silverman III.8.1. It is a divisor construction, and its inputs are
 the divisor calculus of the function field and the fibre of `[N]`; it does not use Weil
@@ -133,7 +134,7 @@ private theorem exists_principal_eq_weilPairingDivisor_torsion
 
 omit [IsSepClosed F] [NeZero N] in
 -- The `N`-th power of `g_T` is a pullback along `[N]`.
-private theorem pow_mem_fieldRange_of_principal_eq
+private theorem pow_mem_fieldRange_of_principal_eq_weilPairingDivisor
     {T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)} {g : W.toAffine.FunctionFieldˣ}
     (hg : Divisor.principal W.toAffine.isFunctionField g =
       weilPairingDivisor W (psiFunctionField_natCast_ne_zero W N hN) T) :
@@ -149,7 +150,7 @@ private noncomputable def weilPairingAux (T : Submodule.torsionBy ℤ W.toAffine
   MonoidHom.toAdditiveRight
     (((mulByIntIsogeny W (psiFunctionField_natCast_ne_zero W N hN)).kummerCharacter N
     (exists_principal_eq_weilPairingDivisor_torsion W N hN T).choose
-    (pow_mem_fieldRange_of_principal_eq W N hN
+    (pow_mem_fieldRange_of_principal_eq_weilPairingDivisor W N hN
       (exists_principal_eq_weilPairingDivisor_torsion W N hN T).choose_spec)).comp
       (AddMonoidHom.toMultiplicative (torsionToKer W N hN)))
 
@@ -160,13 +161,13 @@ private theorem weilPairingAux_eq {T : Submodule.torsionBy ℤ W.toAffine.Point 
       weilPairingDivisor W (psiFunctionField_natCast_ne_zero W N hN) T) :
     weilPairingAux W N hN T = MonoidHom.toAdditiveRight
       (((mulByIntIsogeny W (psiFunctionField_natCast_ne_zero W N hN)).kummerCharacter N g
-      (pow_mem_fieldRange_of_principal_eq W N hN hg)).comp
+      (pow_mem_fieldRange_of_principal_eq_weilPairingDivisor W N hN hg)).comp
         (AddMonoidHom.toMultiplicative (torsionToKer W N hN))) := by
-  rw [weilPairingAux, kummerCharacter_eq_of_principal_eq _ _
+  rw [weilPairingAux, kummerCharacter_eq_of_principal_eq _
     ((exists_principal_eq_weilPairingDivisor_torsion W N hN T).choose_spec.trans hg.symm)]
 
--- Additivity in `T`: `g_{T₁} g_{T₂} [N]^* h` is a choice of `g_{T₁ + T₂}`, for `h` the line
--- function of `T₁` and `T₂`, and the Kummer character of `[N]^* h` is trivial.
+-- Additivity in `T`: `g_{T₁} g_{T₂} [N]^* h` is a choice of `g_{T₁ + T₂}`, for `h` a function of
+-- divisor `(T₁ + T₂) - (T₁) - (T₂) + (O)`, and the Kummer character of `[N]^* h` is trivial.
 private theorem weilPairingAux_add (T₁ T₂ : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)) :
     weilPairingAux W N hN (T₁ + T₂) = weilPairingAux W N hN T₁ + weilPairingAux W N hN T₂ := by
   let _ := (mulByIntIsogeny W (psiFunctionField_natCast_ne_zero W N hN)).fieldPullback.toAlgebra
@@ -187,8 +188,8 @@ private theorem weilPairingAux_add (T₁ T₂ : Submodule.torsionBy ℤ W.toAffi
       weilPairingDivisor_def, weilPairingDivisor_def]
     simp only [map_sub, Submodule.coe_add]
     abel
-  have hp₁ := pow_mem_fieldRange_of_principal_eq W N hN hg₁
-  have hp₂ := pow_mem_fieldRange_of_principal_eq W N hN hg₂
+  have hp₁ := pow_mem_fieldRange_of_principal_eq_weilPairingDivisor W N hN hg₁
+  have hp₂ := pow_mem_fieldRange_of_principal_eq_weilPairingDivisor W N hN hg₂
   have hmem : (h' : W.toAffine.FunctionField) ∈
       (mulByIntIsogeny W (psiFunctionField_natCast_ne_zero W N hN)).fieldPullback.fieldRange :=
     ⟨h, rfl⟩
@@ -197,8 +198,8 @@ private theorem weilPairingAux_add (T₁ T₂ : Submodule.torsionBy ℤ W.toAffi
     rw [Units.val_mul, mul_pow]
     exact mul_mem hp₁ hp₂
   rw [weilPairingAux_eq W N hN hprod, weilPairingAux, weilPairingAux,
-    kummerCharacter_mul hp₁₂ (pow_mem hmem N) _, kummerCharacter_mul hp₁ hp₂ _,
-    kummerCharacter_eq_one_of_mem_fieldRange _ hmem, mul_one, MonoidHom.mul_comp]
+    kummerCharacter_mul hp₁₂ (pow_mem hmem N), kummerCharacter_mul hp₁ hp₂,
+    kummerCharacter_eq_one_of_mem_fieldRange hmem, mul_one, MonoidHom.mul_comp]
   exact AddMonoidHom.ext fun _ ↦ ofMul_mul _ _
 
 /-- **The Weil pairing** `e_N(S, T) = τ_S g_T / g_T` (Silverman III.8.1), over a separably closed
@@ -216,7 +217,8 @@ theorem algebraMap_weilPairing {S T : Submodule.torsionBy ℤ W.toAffine.Point (
     algebraMap F W.toAffine.FunctionField ((weilPairing W N hN S T).toMul : Fˣ) =
       translation W.toAffine (Point.equivBaseChangeSelf W.toAffine S) g / g := by
   rw [weilPairing, AddMonoidHom.flip_apply, AddMonoidHom.mk'_apply, weilPairingAux_eq W N hN hg]
-  exact algebraMap_kummerCharacter (pow_mem_fieldRange_of_principal_eq W N hN hg)
+  exact algebraMap_kummerCharacter
+    (pow_mem_fieldRange_of_principal_eq_weilPairingDivisor W N hN hg)
     (Multiplicative.ofAdd (torsionToKer W N hN S))
 
 /-- **The vanishing criterion for the Weil pairing**: `e_N(S, T) = 1` exactly when translation by
