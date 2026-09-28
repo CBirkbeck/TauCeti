@@ -8,16 +8,13 @@ module
 public import Mathlib.LinearAlgebra.FixedSubmodule
 
 /-!
-# Fixed submodules under commuting endomorphisms and restriction
+# Fixed submodules under restriction
 
 This file supplements Mathlib's `LinearMap.fixedSubmodule`, the submodule of vectors fixed by a
-linear endomorphism, with its invariance under commuting endomorphisms and its behaviour under
-restriction to an invariant submodule.
+linear endomorphism, with its behaviour under restriction to an invariant submodule.
 
 ## Main results
 
-* `Commute.apply_mem_fixedSubmodule`: an endomorphism commuting with `g` maps the fixed submodule
-  of `g` into itself.
 * `LinearMap.fixedSubmodule_restrict`: the fixed submodule of the restriction of `f` to an
   invariant submodule `p` is the part of the fixed submodule of `f` that lies in `p`.
 -/
@@ -25,12 +22,6 @@ restriction to an invariant submodule.
 public section
 
 namespace TauCeti
-
-/-- An endomorphism commuting with `g` maps the fixed submodule of `g` into itself. -/
-theorem _root_.Commute.apply_mem_fixedSubmodule {R V : Type*} [Semiring R] [AddCommMonoid V]
-    [Module R V] {f g : Module.End R V} (h : Commute g f) {x : V} (hx : x ∈ g.fixedSubmodule) :
-    f x ∈ g.fixedSubmodule := by
-  simpa [LinearMap.mem_fixedSubmodule_iff.1 hx] using LinearMap.congr_fun h.eq x
 
 /-- If `f` maps a submodule `p` into itself, then the fixed submodule of the restriction of `f`
 to `p` is the part of the fixed submodule of `f` that lies in `p`. -/

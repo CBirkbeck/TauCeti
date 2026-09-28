@@ -34,11 +34,12 @@ open Module
 
 namespace TauCeti
 
-/-- If `u` maps the fixed vectors of an idempotent endomorphism `q` of a finite-dimensional space
-into the kernel of `q`, `v` maps the kernel into the fixed vectors, and these two restrictions are
-mutually inverse, then the fixed submodule of `q` has half the dimension of the space. -/
+/-- If `u` maps the fixed vectors of an idempotent endomorphism `q` into the kernel of `q`, `v`
+maps the kernel into the fixed vectors, and these two restrictions are mutually inverse, then the
+fixed submodule of `q` has half the dimension of the space. In infinite dimension both sides
+are `0`. -/
 theorem _root_.IsIdempotentElem.two_mul_finrank_fixedSubmodule {K W : Type*} [DivisionRing K]
-    [AddCommGroup W] [Module K W] [FiniteDimensional K W] {q : Module.End K W}
+    [AddCommGroup W] [Module K W] {q : Module.End K W}
     (hq : IsIdempotentElem q) (u v : Module.End K W) (hu0 : ∀ x, q x = x → q (u x) = 0)
     (hv1 : ∀ x, q x = 0 → q (v x) = v x) (hvu : ∀ x, q x = x → v (u x) = x)
     (huv : ∀ x, q x = 0 → u (v x) = x) :
@@ -57,7 +58,10 @@ theorem _root_.IsIdempotentElem.two_mul_finrank_fixedSubmodule {K W : Type*} [Di
     (by ext x; simpa only [LinearMap.comp_apply, LinearMap.id_apply, LinearMap.coe_restrict_apply]
       using hvu x (hf.mp x.2))
   -- Rank-nullity for `q`, with its kernel replaced by the isomorphic fixed submodule.
-  rw [two_mul, ← q.finrank_range_add_finrank_ker, hr, e.finrank_eq]
+  have h : 2 * Module.rank K q.fixedSubmodule = Module.rank K W := by
+    rw [two_mul, ← q.rank_range_add_rank_ker, hr, e.rank_eq]
+  -- `finrank` is `Cardinal.toNat` of the rank, which is multiplicative, also on infinite ranks.
+  rw [finrank, finrank, ← h, Cardinal.toNat_mul, Cardinal.toNat_ofNat]
 
 /-- If `f` maps a submodule `p` into itself, then the fixed submodule of the restriction of `f`
 to `p` has the same dimension as `p ⊓ f.fixedSubmodule`. -/
@@ -74,8 +78,7 @@ The maps `u` and `v` are stated on the ambient module so callers can supply natu
 the commuting hypotheses ensure that their restrictions preserve the previous common fixed
 space. -/
 theorem two_mul_finrank_iInf_fixedSubmodule_insert
-    {K V ι : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
-    [FiniteDimensional K V] [DecidableEq ι]
+    {K V ι : Type*} [DivisionRing K] [AddCommGroup V] [Module K V] [DecidableEq ι]
     (p : ι → Module.End K V) (s : Finset ι) (a : ι)
     (hpa : IsIdempotentElem (p a))
     (hcomm : ∀ i ∈ s, Commute (p i) (p a))
@@ -89,9 +92,13 @@ theorem two_mul_finrank_iInf_fixedSubmodule_insert
     2 * finrank K ((⨅ i ∈ insert a s, (p i).fixedSubmodule) : Submodule K V) =
       finrank K ((⨅ i ∈ s, (p i).fixedSubmodule) : Submodule K V) := by
   let S : Submodule K V := ⨅ i ∈ s, (p i).fixedSubmodule
+  -- A map commuting with each `p i` maps the fixed points of `p i` to themselves, so preserves `S`.
   have hS {f : Module.End K V} (hf : ∀ i ∈ s, Commute (p i) f) : ∀ x ∈ S, f x ∈ S :=
-    LinearMap.iInf_invariant f fun i => LinearMap.iInf_invariant f fun hi _ =>
-      (hf i hi).apply_mem_fixedSubmodule
+    LinearMap.iInf_invariant f fun i => LinearMap.iInf_invariant f fun hi x hx => by
+      have hfi : Function.Semiconj f (p i) (p i) := fun y => by
+        simpa only [Module.End.mul_apply] using LinearMap.congr_fun (hf i hi).eq.symm y
+      rw [LinearMap.mem_fixedSubmodule_iff, ← Function.mem_fixedPoints_iff] at hx ⊢
+      exact hfi.mapsTo_fixedPoints hx
   let q : Module.End K S := (p a).restrict (hS hcomm)
   have hq : IsIdempotentElem q := LinearMap.ext fun x => Subtype.ext <| by
     simpa only [q, Module.End.mul_apply, LinearMap.coe_restrict_apply] using
@@ -110,7 +117,6 @@ theorem two_mul_finrank_iInf_fixedSubmodule_insert
 exchanged by inverse endomorphisms that commute with the other idempotents. -/
 theorem pow_card_mul_finrank_iInf_fixedSubmodule
     {K V ι : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
-    [FiniteDimensional K V]
     (p : ι → Module.End K V) (t : Finset ι)
     (hp : ∀ a ∈ t, IsIdempotentElem (p a))
     (hcomm : (t : Set ι).Pairwise fun a b => Commute (p a) (p b))
