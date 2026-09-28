@@ -69,14 +69,6 @@ consumer may rely on that.
 * `WeierstrassCurve.Affine.eq_of_baseChange_eq_sub_map_genericPoint`: an embedding is likewise
   determined by the rational point it displaces the generic point by.
 
-## Roadmap
-
-`TauCetiRoadmap/EllipticCurves/README.md`, **Layer 0.5**, whose third milestone asks for the
-"function-field pullbacks of the translations `τ_P`, with the action and composition laws". Those
-pullbacks are evaluation at the translates of the generic point, built in
-`TauCeti/AlgebraicGeometry/EllipticCurve/Affine/FunctionField/Translation/Basic.lean`; this file is
-the point they translate.
-
 ## References
 
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], II.1, II.2.

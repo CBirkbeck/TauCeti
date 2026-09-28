@@ -61,7 +61,8 @@ namespace TauCeti.FiniteField
 
 /-- **Raising to the order of a finite base field is additive**: in a `K`-algebra,
 `(x - y) ^ q = x ^ q - y ^ q` for `q` the number of elements of `K`. -/
-@[simp]
+-- Not `@[simp]`: whenever a `Fintype K` instance is available, `Nat.card_eq_fintype_card` rewrites
+-- the left-hand side to `(x - y) ^ Fintype.card K`, so the simpNF linter rejects the attribute.
 theorem sub_pow_natCard (K A : Type*) [Field K] [Finite K] [CommRing A] [Algebra K A] (x y : A) :
     (x - y) ^ Nat.card K = x ^ Nat.card K - y ^ Nat.card K := by
   let _ := Fintype.ofFinite K

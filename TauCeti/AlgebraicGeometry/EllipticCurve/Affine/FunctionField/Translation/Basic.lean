@@ -23,9 +23,8 @@ The construction runs through the generic point `g` of
 `TauCeti/AlgebraicGeometry/EllipticCurve/Affine/FunctionField/GenericPoint/Basic.lean`.
 Translating a function by `P` is evaluating it at `g + P`, so the pullback of `τ_P` on the affine
 coordinate ring is `CoordinateRing.evalAlgHom` at the coordinates of the translate `g + P_{F(W)}`,
-and the
-composition law is the associativity of the point group: applying `τ_Q^*` to a coordinate of
-`g + P` moves the generic point to `g + Q`, hence the pair to `g + P + Q`.
+and the composition law is the associativity of the point group: applying `τ_Q^*` to a coordinate
+of `g + P` moves the generic point to `g + Q`, hence the pair to `g + P + Q`.
 
 Two facts make the construction go through, and both come down to the transcendence of the
 coordinate function `x`. First, `g + P` is never the point at infinity, since otherwise `g` would

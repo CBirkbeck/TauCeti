@@ -64,8 +64,9 @@ noncomputable def equivBaseChangeSelf : W.Point ≃+ (W⁄F).toAffine.Point :=
 /-- **`equivBaseChangeSelf` keeps the coordinates of an affine point.** -/
 @[simp]
 theorem equivBaseChangeSelf_some {x y : F} (h : W.Nonsingular x y) :
-    equivBaseChangeSelf W (.some x y h) = .some x y (W.baseChange_self.symm ▸ h) :=
-  Point.cast_some _ h
+    equivBaseChangeSelf W (.some x y h) = .some x y (W.baseChange_self.symm ▸ h) := by
+  rw [equivBaseChangeSelf, AddEquiv.cast_apply]
+  exact Point.cast_some W.baseChange_self.symm h
 
 end WeierstrassCurve.Affine.Point
 
