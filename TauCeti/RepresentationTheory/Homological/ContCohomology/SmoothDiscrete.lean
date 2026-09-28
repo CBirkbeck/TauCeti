@@ -46,6 +46,8 @@ provide the basic examples of smooth discrete objects used by coefficient constr
   `TopRep R G`, read off from its operators.
 * `TauCeti.ofDiscreteModuleMap`: a `G`-equivariant `R`-linear map of discrete modules as a
   morphism of `TopRep R G`.
+* `TauCeti.ofDiscreteModuleIso`: a `G`-equivariant `R`-linear equivalence of discrete modules as an
+  isomorphism of `TopRep R G`.
 * `TauCeti.ofDiscreteModulePair`: a compatible pair `(φ : H →* G, f : M →ₗ[R] N)` as the morphism
   `TopRep.res φ (ofDiscreteModule R G M) ⟶ ofDiscreteModule R H N` that
   `ContinuousCohomology.map` consumes.
@@ -446,6 +448,29 @@ by two `G`-equivariant `R`-linear maps is the morphism named by their composite.
     (congrArg (⇑f') (ofDiscreteModuleMap_hom_apply f hf m).symm).trans <|
       (ofDiscreteModuleMap_hom_apply f' hf' _).symm.trans
         (TopRep.comp_apply (ofDiscreteModuleMap f hf) (ofDiscreteModuleMap f' hf') m).symm).symm
+
+/-- A `G`-equivariant `R`-linear equivalence of discrete modules as an isomorphism of
+`TopRep R G`, with `ofDiscreteModuleMap` of the equivalence and of its inverse as the two
+directions. The inverse is equivariant by `MulActionHom.inverse`. -/
+def ofDiscreteModuleIso (e : M ≃ₗ[R] N) (he : ∀ (g : G) (m : M), e (g • m) = g • e m) :
+    ofDiscreteModule R G M ≅ ofDiscreteModule R G N where
+  hom := ofDiscreteModuleMap e.toLinearMap he
+  inv := ofDiscreteModuleMap e.symm.toLinearMap fun g n ↦ by
+    simpa only [MulActionHom.inverse_apply, LinearEquiv.coe_coe] using
+      (MulActionHom.inverse (M := G) ⟨e, he⟩ e.symm e.symm_apply_apply e.apply_symm_apply).map_smul
+        g n
+  hom_inv_id := by simp
+  inv_hom_id := by simp
+
+/-- The forward direction of `ofDiscreteModuleIso e he` is `ofDiscreteModuleMap` of `e`. -/
+@[simp] lemma ofDiscreteModuleIso_hom (e : M ≃ₗ[R] N)
+    (he : ∀ (g : G) (m : M), e (g • m) = g • e m) :
+    (ofDiscreteModuleIso e he).hom = ofDiscreteModuleMap e.toLinearMap he := (rfl)
+
+/-- The inverse direction of `ofDiscreteModuleIso e he` acts on underlying modules as `e.symm`. -/
+@[simp] lemma ofDiscreteModuleIso_inv_hom_apply (e : M ≃ₗ[R] N)
+    (he : ∀ (g : G) (m : M), e (g • m) = g • e m) (n : N) :
+    (ofDiscreteModuleIso e he).inv.hom n = e.symm n := (rfl)
 
 variable (R G M N)
 
