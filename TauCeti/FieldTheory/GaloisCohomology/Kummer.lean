@@ -83,6 +83,7 @@ corestriction on the invariant `σ b` of the fixing subgroup is the product of t
 ## Main results
 
 * `TauCeti.kummerCocycle_mem_Z1`: `g ↦ g α / α` is a continuous `1`-cocycle.
+* `TauCeti.kummerCocycleClass_def`: the cocycle class is the class of its named cocycle.
 * `TauCeti.kummerCocycleClass_congr`: independence of the choice of `n`th root.
 * `TauCeti.kummerMap_eq_kummerCocycleClass`: the Kummer class of `a` is the class of
   `g ↦ g α / α`.
@@ -178,6 +179,16 @@ def kummerCocycleClass
     H1 (AbsoluteGaloisGroup K) (KummerCoeff K n) :=
   H1pi (AbsoluteGaloisGroup K) (KummerCoeff K n) ⟨kummerCocycle hα, kummerCocycle_mem_Z1 hα⟩
 
+-- Not `@[simp]`: `kummerCocycleClass` is the intended normal form, and this lemma unfolds it.
+/-- **The defining equation of `TauCeti.kummerCocycleClass`**: it is the class in `H¹`
+represented by the cocycle `TauCeti.kummerCocycle`. -/
+theorem kummerCocycleClass_def
+    (hα : α ^ n = Units.map (algebraMap K (SeparableClosure K)).toMonoidHom a) :
+    kummerCocycleClass hα =
+      H1pi (AbsoluteGaloisGroup K) (KummerCoeff K n)
+        ⟨kummerCocycle hα, kummerCocycle_mem_Z1 hα⟩ :=
+  (rfl)
+
 /-- **The Kummer class is independent of the chosen `n`th root.** Two `n`th roots of the same `a`
 differ by an element `ζ` of `μₙ`, and `g (α ζ) / (α ζ) = (g α / α) · (g ζ / ζ)` differs from
 `g α / α` by the coboundary of `ζ`. -/
@@ -202,7 +213,7 @@ theorem kummerCocycleClass_congr
       B1 (AbsoluteGaloisGroup K) (KummerCoeff K n) := by
     rw [key]
     exact d0_mem_B1 ζ
-  rw [kummerCocycleClass, kummerCocycleClass]
+  rw [kummerCocycleClass_def, kummerCocycleClass_def]
   exact ((H1pi_eq_iff (f := ⟨kummerCocycle hβ, kummerCocycle_mem_Z1 hβ⟩)
     (f' := ⟨kummerCocycle hα, kummerCocycle_mem_Z1 hα⟩)).2 hB).symm
 
