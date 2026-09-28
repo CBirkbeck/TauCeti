@@ -47,8 +47,9 @@ private theorem isPretransitive_ofStabilizer_iff [IsGalois F p.SplittingField] (
           (X - C (IntermediateField.AdjoinSimple.gen F (x : p.SplittingField)))).rootSet
             p.SplittingField) := by
   -- `x` is a root of `p` over `F⟮x⟯`, and a simple one since `p` is separable.
-  have hx := (AdjoinSimple.isRoot_map_gen_iff x.1).mpr (mem_rootSet'.mp x.2).2
-  have hx' := hsep.map.eval₂_derivative_ne_zero (RingHom.id _) hx
+  have hx := ((AdjoinSimple.isRoot_map_gen_iff x.1).mpr (mem_rootSet'.mp x.2).2).eq_zero
+  have hx' := hsep.map.eval₂_derivative_ne_zero (RingHom.id _) (eval₂_id.trans hx)
+  rw [eval₂_id] at hx'
   -- So the roots of the quotient are the roots of `p` other than `x`; `simp only` matches the
   -- instances of `rootSet_map` in `hroots` much more cheaply than `rw`.
   have hroots := rootSet_divByMonic_X_sub_C (E := p.SplittingField) hx hx'

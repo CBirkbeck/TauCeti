@@ -72,20 +72,26 @@ theorem _root_.Polynomial.rootSet_mul {g : F[X]} (hf : f.map (algebraMap F E) �
 theorem _root_.Polynomial.rootSet_divByMonic_X_sub_C [FaithfulSMul F E] {a : F} (ha : f.eval a = 0)
     (ha' : f.derivative.eval a ≠ 0) :
     (f /ₘ (X - C a)).rootSet E = f.rootSet E \ {algebraMap F E a} := by
-  classical
   have hinj := FaithfulSMul.algebraMap_injective F E
   -- `a` is not a root of the quotient: the quotient takes the value `f' a ≠ 0` there.
   have hq := congrArg (eval a) (divByMonic_add_X_sub_C_mul_derivative_divByMonic_eq_derivative f a)
   simp only [eval_add, eval_mul, eval_sub, eval_X, eval_C, sub_self, zero_mul, add_zero] at hq
   have hq0 := hq.trans_ne ha'
-  -- The roots of `f = (X - C a) * (f /ₘ (X - C a))` in `E` are `a` together with the roots of the
-  -- quotient.
-  rw [rootSet_def, rootSet_def]
-  conv_rhs => rw [← mul_divByMonic_eq_iff_isRoot.mpr ha, aroots_def, Polynomial.map_mul,
-    roots_mul (((monic_X_sub_C a).map _).mul_right_ne_zero <| (Polynomial.map_ne_zero_iff hinj).mpr
-      fun h ↦ hq0 (congrArg (eval a) h |>.trans eval_zero)), ← aroots_def, aroots_X_sub_C,
-    Multiset.singleton_add, Multiset.toFinset_cons, Finset.coe_insert,
-    Set.insert_sdiff_self_of_notMem <|
-      mt (fun h ↦ (mem_roots'.mp (Multiset.mem_toFinset.mp h)).2.of_map hinj) hq0]
+  have hnotMem : algebraMap F E a ∉ (f /ₘ (X - C a)).rootSet E := fun h ↦ hq0 <| hinj <| by
+    rw [← aeval_algebraMap_apply_eq_algebraMap_eval, aeval_eq_zero_of_mem_rootSet h, map_zero]
+  -- The roots of `f = (X - C a) * (f /ₘ (X - C a))` are those of the two factors.
+  have hsplit : f.rootSet E = (X - C a).rootSet E ∪ (f /ₘ (X - C a)).rootSet E := by
+    rw [← rootSet_mul ((monic_X_sub_C a).map _).ne_zero ((Polynomial.map_ne_zero_iff hinj).mpr
+      fun h ↦ hq0 (by rw [h, eval_zero])), mul_divByMonic_eq_iff_isRoot.mpr (IsRoot.def.mpr ha)]
+  -- The linear factor contributes only `a`, which is not a root of the quotient.
+  ext x
+  rw [hsplit]
+  simp only [Set.mem_sdiff, Set.mem_union, Set.mem_singleton_iff, (monic_X_sub_C a).mem_rootSet,
+    map_sub, aeval_X, aeval_C, sub_eq_zero]
+  constructor
+  · exact fun hx ↦ ⟨Or.inr hx, fun hxa ↦ hnotMem (hxa ▸ hx)⟩
+  · rintro ⟨hxa | hx, hxa'⟩
+    · exact absurd hxa hxa'
+    · exact hx
 
 end TauCeti
