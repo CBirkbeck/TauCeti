@@ -29,12 +29,9 @@ open CategoryTheory
 
 variable {k G : Type*} [Ring k] [TopologicalSpace k] [Monoid G]
 
--- Neither lemma is `@[simp]`: Mathlib's simp set turns casts of morphisms into `eqToHom`
--- (`CategoryTheory.congrArg_cast_hom_left`), and keeping `eqToHom` lets `eqToHom_refl` and
--- `eqToHom_trans` fire, so these are for explicit rewriting.
-
 /-- For an equality `h : X = Y` of topological representations, the transport `eqToHom h` sends
 `x : X` to its cast along the induced equality `X.V = Y.V` of carriers. -/
+@[simp]
 theorem eqToHom_hom_apply {X Y : TopRep k G} (h : X = Y) (x : X) :
     (eqToHom h).hom x = cast (congrArg TopRep.V h) x := by
   subst h
@@ -43,6 +40,7 @@ theorem eqToHom_hom_apply {X Y : TopRep k G} (h : X = Y) (x : X) :
 /-- For equalities `hX : X' = X` and `hY : Y = Y'` of topological representations and a morphism
 `f : X ⟶ Y`, the underlying map of `eqToHom hX ≫ f ≫ eqToHom hY` sends `x : X'` to the cast into
 `Y'.V` of `f` applied to the cast of `x` into `X.V`. -/
+@[simp]
 theorem eqToHom_hom_comp_comp_eqToHom_hom_apply {X X' Y Y' : TopRep k G} (hX : X' = X)
     (hY : Y = Y') (f : X ⟶ Y) (x : X') :
     (((eqToHom hY).hom.comp f.hom).comp (eqToHom hX).hom) x =

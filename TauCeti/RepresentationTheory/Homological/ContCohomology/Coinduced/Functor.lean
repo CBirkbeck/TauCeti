@@ -10,7 +10,7 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced.
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.SmoothDiscrete
 
 import all TauCeti.RepresentationTheory.Homological.ContCohomology.Coinduced.Discrete
-import TauCeti.RepresentationTheory.Continuous.TopRep
+import TauCeti.RepresentationTheory.Continuous.TopRep.EqToHom
 
 /-!
 # Coinduction as a functor of smooth discrete representations
