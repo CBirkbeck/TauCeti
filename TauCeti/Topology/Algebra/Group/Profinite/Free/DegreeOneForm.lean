@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.Matrix.BilinearForm
 public import TauCeti.Topology.Algebra.Group.Profinite.Free.Graded
 public import TauCeti.Topology.Algebra.Group.Profinite.Free.Rank
 import Mathlib.Data.Nat.Choose.Dvd
+import TauCeti.Topology.Algebra.Group.Profinite.ProP.ContinuousDual
 
 /-!
 # The degree-one form of a free pro-`p` group and changes of basis
@@ -42,9 +43,11 @@ of `F` (`TauCeti.freeProP.exists_continuousMulEquiv_continuousZModDualMap_eq`). 
 basis of `F` brings the matrix of the form of `ρ` into any shape a basis of the dual provides, in
 particular into the normal forms of the bilinear-form theory. This normalizes the form of `ρ`
 only: for odd `p` the diagonal factor `(p choose 2)` vanishes in `𝔽_p`, so the form does not see
-the `p`-power coordinates of `ρ`, and bringing a relator of a Demushkin group into normal form
-modulo `λ_2(F)` (Labute, Proposition 4) needs, beyond this normalization, a separate normalization
-of the `p`-power component invisible to the form and the cup-product identification above.
+the `p`-power coordinates of `ρ`. Those coordinates are read off by the coordinate characters
+instead, and they transform under a continuous homomorphism through the values of the coordinate
+characters on the images of the generators. Bringing a relator into normal form modulo `λ_2(F)`
+(Labute, Proposition 4) combines both, and is carried out in
+`TauCeti.Topology.Algebra.Group.Profinite.Demushkin.NormalForm.DegreeOneForm`.
 
 ## Main definitions
 
@@ -59,14 +62,22 @@ of the `p`-power component invisible to the form and the cup-product identificat
   `TauCeti.freeProP.heisenbergFunctional_gradedPow_gradedMkZero`,
   `TauCeti.freeProP.heisenbergFunctional_unique`: the values of the Heisenberg functional on
   brackets and `p`-power classes characterize it.
-* `TauCeti.freeProP.degreeOneForm_swap`, `TauCeti.freeProP.isAlt_degreeOneForm_of_ne_two`: the
-  degree-one form is skew-symmetric, and alternating for odd `p`.
+* `TauCeti.freeProP.degreeOneForm_swap`, `TauCeti.freeProP.isAlt_degreeOneForm_of_ne_two`,
+  `TauCeti.freeProP.isSymm_degreeOneForm_of_two`: the degree-one form is skew-symmetric,
+  alternating for odd `p`, and symmetric for `p = 2`.
 * `TauCeti.freeProP.heisenbergFunctional_gradedMap`, `TauCeti.freeProP.degreeOneForm_gradedMap`:
   the transformation law under a continuous homomorphism between free pro-`p` groups.
 * `TauCeti.freeProP.degreeOneForm_dualBasis_of_lt`,
   `TauCeti.freeProP.degreeOneForm_dualBasis_of_gt`, `TauCeti.freeProP.degreeOneForm_dualBasis_self`:
   the matrix of the degree-one form in the dual basis of the generators is read off the
-  coordinates of the class in the standard basis of `gr_1(F)`.
+  coordinates of the class in the standard basis of `gr_1(F)`; hence at `p = 2` the form
+  determines the class (`TauCeti.freeProP.degreeOneForm_injective_of_two`).
+* `TauCeti.freeProP.degreeOneBasis_repr_gradedBracket_inl`,
+  `TauCeti.freeProP.degreeOneBasis_repr_gradedPow_gradedMkZero_inl`,
+  `TauCeti.freeProP.degreeOneBasis_repr_gradedMap_inl`: the `p`-power coordinates, which the form
+  does not see for odd `p`, vanish on brackets, are read off by the coordinate characters on
+  `p`-power classes, and transform under a continuous homomorphism through the values of the
+  coordinate characters on the images of the generators.
 * `TauCeti.freeProP.exists_continuousMulEquiv_toMatrix_degreeOneForm_gradedMap`: the matrix of
   the degree-one form of a class in any basis of the dual is the matrix, in the dual basis of the
   generators, of the form of the image of the class under some continuous automorphism of `F`.
@@ -438,6 +449,13 @@ theorem isAlt_degreeOneForm_of_ne_two (hp : p ≠ 2) (ρ : gradedPiece p (freePr
         (lt_of_le_of_ne (Nat.Prime.two_le Fact.out) hp.symm)), zero_mul]
   · rw [heisenbergFunctional_gradedBracket_gradedMkZero, LinearMap.zero_apply, mul_comm, sub_self]
 
+/-- **The degree-one form is symmetric at `p = 2`**: skew-symmetry is symmetry when `-1 = 1`. -/
+theorem isSymm_degreeOneForm_of_two (hp : p = 2) (ρ : gradedPiece p (freeProP p X) 1) :
+    (degreeOneForm ρ).IsSymm := by
+  subst hp
+  refine ⟨fun χ ψ ↦ ?_⟩
+  rw [degreeOneForm_swap, ZMod.neg_eq_self_mod_two]
+
 variable {Y : Type u} [Finite Y]
 
 /-- **The transformation law of the degree-one form.** A continuous homomorphism `φ : F → F'`
@@ -551,7 +569,168 @@ theorem degreeOneForm_dualBasis_self (ρ : gradedPiece p (freeProP p X) 1) (i : 
       simp [Pi.single_apply, mul_comm]
   exact (evalDegreeOneForm_apply _ _ ρ).symm.trans (LinearMap.congr_fun h ρ)
 
+/-- **At `p = 2` the degree-one form determines the class**: the diagonal entries of its matrix
+are the `2`-power coordinates and the entries above the diagonal the commutator coordinates. -/
+theorem degreeOneForm_injective_of_two (hp : p = 2) :
+    Function.Injective (degreeOneForm (p := p) (X := X)) := by
+  intro ρ₁ ρ₂ h
+  rw [(degreeOneBasis p X).ext_elem_iff]
+  rintro (k | ⟨⟨i, j⟩, hij⟩)
+  · have h₁ := degreeOneForm_dualBasis_self ρ₁ k
+    have h₂ := degreeOneForm_dualBasis_self ρ₂ k
+    rw [h] at h₁
+    subst hp
+    rw [Nat.choose_self, one_nsmul] at h₁ h₂
+    exact h₁.symm.trans h₂
+  · rw [← degreeOneForm_dualBasis_of_lt ρ₁ hij, ← degreeOneForm_dualBasis_of_lt ρ₂ hij, h]
+
 end Coordinates
+
+/-! ### The `p`-power coordinates
+
+For odd `p` the degree-one form does not see the `p`-power coordinates of a class. They are
+read off by the coordinate characters instead: the coefficient of `π x'_k` in `π ⟦g⟧` is the value
+of the `k`-th coordinate character at `g`, and under a continuous homomorphism the `p`-power
+coordinates transform through the values of the coordinate characters on the images of the
+generators, the brackets contributing nothing. -/
+
+section PowerCoordinates
+
+variable [Finite X] [LinearOrder X]
+
+/-- **Brackets have no `p`-power coordinates**: the coefficient of `π x'_k` in the bracket of two
+degree-zero classes vanishes. On two generator classes the bracket is `± [x'_a, x'_b]` with
+`a ≠ b`, a basis vector other than `π x'_k`, or zero; the general case follows by bilinearity. -/
+theorem degreeOneBasis_repr_gradedBracket_inl (x y : gradedPiece p (freeProP p X) 0) (k : X) :
+    (degreeOneBasis p X).repr (gradedBracket p (freeProP p X) 0 0 x y) (Sum.inl k) = 0 := by
+  have hspan := span_gradedMkZero_image_range_of_eq_top p X
+  have key : ∀ a b : X, (degreeOneBasis p X).repr (gradedBracket p (freeProP p X) 0 0
+      (gradedMkZero p (freeProP p X) (of a)) (gradedMkZero p (freeProP p X) (of b))) (Sum.inl k) =
+      0 := by
+    intro a b
+    rcases lt_trichotomy a b with hab | rfl | hba
+    · have h : gradedBracket p (freeProP p X) 0 0 (gradedMkZero p (freeProP p X) (of a))
+          (gradedMkZero p (freeProP p X) (of b)) = degreeOneBasis p X (Sum.inr ⟨(a, b), hab⟩) := by
+        rw [degreeOneBasis_apply, degreeOneFamily_inr]
+      rw [h, Module.Basis.repr_self, Finsupp.single_eq_of_ne (by simp)]
+    · rw [gradedBracket_self, map_zero, Finsupp.zero_apply]
+    · have h : gradedBracket p (freeProP p X) 0 0 (gradedMkZero p (freeProP p X) (of a))
+          (gradedMkZero p (freeProP p X) (of b)) =
+          -degreeOneBasis p X (Sum.inr ⟨(b, a), hba⟩) := by
+        rw [degreeOneBasis_apply, degreeOneFamily_inr, ← gradedCast_gradedBracket_swap,
+          gradedCast_rfl]
+      rw [h, ← Module.Basis.coord_apply, map_neg, Module.Basis.coord_apply, Module.Basis.repr_self,
+        Finsupp.single_eq_of_ne (by simp), neg_zero]
+  -- Extend from generator classes to all of `gr_0(F)` in each variable by linearity.
+  suffices h : ∀ a : X, ∀ y, (degreeOneBasis p X).repr (gradedBracket p (freeProP p X) 0 0
+      (gradedMkZero p (freeProP p X) (of a)) y) (Sum.inl k) = 0 by
+    have hx : (degreeOneBasis p X).coord (Sum.inl k) ∘ₗ
+        (gradedBracketLinear p (freeProP p X) 0 0).flip y = 0 := by
+      refine LinearMap.ext_on hspan ?_
+      rintro _ ⟨_, ⟨a, rfl⟩, rfl⟩
+      simpa using h a y
+    simpa using LinearMap.congr_fun hx x
+  intro a y
+  have hy : (degreeOneBasis p X).coord (Sum.inl k) ∘ₗ
+      gradedBracketLinear p (freeProP p X) 0 0 (gradedMkZero p (freeProP p X) (of a)) = 0 := by
+    refine LinearMap.ext_on hspan ?_
+    rintro _ ⟨_, ⟨b, rfl⟩, rfl⟩
+    simpa using key a b
+  simpa using LinearMap.congr_fun hy y
+
+omit [Finite X] [LinearOrder X] in
+/-- A continuous `𝔽_p`-character of `F` kills `λ_1(F)`, so it induces a linear functional on
+`gr_0(F)`. -/
+private noncomputable def characterFunctional (χ : continuousZModDual p (freeProP p X)) :
+    gradedPiece p (freeProP p X) 0 →ₗ[ZMod p] ZMod p :=
+  AddMonoidHom.toZModLinearMap p
+    ((MonoidHom.toAdditiveLeft (QuotientGroup.lift (pLowerCentralSeries p (freeProP p X) 1)
+      χ.toMul.toMonoidHom (by
+        rw [pLowerCentralSeries_one_eq_proPFrattini Fact.out]
+        exact proPFrattini_le_ker (by simp) χ.toMul))).comp
+      (gradedPieceZeroEquiv p (freeProP p X)).toAddMonoidHom)
+
+omit [Finite X] [LinearOrder X] in
+private theorem characterFunctional_gradedMkZero (χ : continuousZModDual p (freeProP p X))
+    (g : freeProP p X) :
+    characterFunctional χ (gradedMkZero p (freeProP p X) g) = (χ.toMul g).toAdd := by
+  rw [characterFunctional, AddMonoidHom.coe_toZModLinearMap, AddMonoidHom.coe_comp,
+    Function.comp_apply, AddEquiv.coe_toAddMonoidHom, gradedPieceZeroEquiv_gradedMkZero,
+    MonoidHom.toAdditiveLeft_apply_apply, toMul_ofMul, QuotientGroup.lift_mk]
+  rfl
+
+/-- **The `p`-power coordinates of a `p`-power class**: the coefficient of `π x'_k` in `π ⟦g⟧` is
+the value at `g` of the `k`-th coordinate character. The function `x ↦ coord_{π x'_k} (π x)` is
+linear on `gr_0(F)`, because the defect of additivity of `π` is a bracket, which has no `p`-power
+coordinates. -/
+theorem degreeOneBasis_repr_gradedPow_gradedMkZero_inl (g : freeProP p X) (k : X) :
+    (degreeOneBasis p X).repr (gradedPow p (freeProP p X) 0 (gradedMkZero p (freeProP p X) g))
+      (Sum.inl k) = ((dualBasis p X k).toMul g).toAdd := by
+  let f : gradedPiece p (freeProP p X) 0 →ₗ[ZMod p] ZMod p :=
+    AddMonoidHom.toZModLinearMap p
+      { toFun x := (degreeOneBasis p X).repr (gradedPow p (freeProP p X) 0 x) (Sum.inl k)
+        map_zero' := by rw [gradedPow_zero, map_zero, Finsupp.zero_apply]
+        map_add' := fun x y ↦ by
+          rw [gradedPow_add_zero, map_add, map_add, Finsupp.add_apply, Finsupp.add_apply, map_nsmul,
+            Finsupp.smul_apply, degreeOneBasis_repr_gradedBracket_inl, smul_zero, add_zero] }
+  have hf : f = characterFunctional (dualBasis p X k) := by
+    refine LinearMap.ext_on (span_gradedMkZero_image_range_of_eq_top p X) ?_
+    rintro _ ⟨_, ⟨a, rfl⟩, rfl⟩
+    have h : gradedPow p (freeProP p X) 0 (gradedMkZero p (freeProP p X) (of a)) =
+        degreeOneBasis p X (Sum.inl a) := by
+      rw [degreeOneBasis_apply, degreeOneFamily_inl]
+    simp only [f, AddMonoidHom.coe_toZModLinearMap, AddMonoidHom.coe_mk, ZeroHom.coe_mk,
+      characterFunctional_gradedMkZero, h, Module.Basis.repr_self, toMul_dualBasis_of, toAdd_ofAdd,
+      Finsupp.single_apply, Pi.single_apply, Sum.inl.injEq]
+  have := LinearMap.congr_fun hf (gradedMkZero p (freeProP p X) g)
+  simpa [f, characterFunctional_gradedMkZero] using this
+
+end PowerCoordinates
+
+section Transformation
+
+variable [Fintype X] [LinearOrder X] {Y : Type u} [Finite Y] [LinearOrder Y]
+
+/-- **The transformation law of the `p`-power coordinates.** A continuous homomorphism
+`φ : F → F'` between free pro-`p` groups of finite rank carries a class with `p`-power coordinates
+`c_i` to a class with `p`-power coordinates `c'_k = Σ_i c_i · χ_k(φ x_i)`, where `χ_k` is the
+`k`-th coordinate character of `F'`; the brackets contribute nothing. -/
+theorem degreeOneBasis_repr_gradedMap_inl (φ : freeProP p X →ₜ* freeProP p Y)
+    (ρ : gradedPiece p (freeProP p X) 1) (k : Y) :
+    (degreeOneBasis p Y).repr (gradedMap p φ.toMonoidHom φ.continuous 1 ρ) (Sum.inl k) =
+      ∑ i, (degreeOneBasis p X).repr ρ (Sum.inl i) *
+        ((φ.continuousZModDualMap (dualBasis p Y k)).toMul (of i)).toAdd := by
+  -- Both sides are linear in `ρ`; compare them on the standard basis of `gr_1(F)`.
+  let f : gradedPiece p (freeProP p X) 1 →ₗ[ZMod p] ZMod p :=
+    (degreeOneBasis p Y).coord (Sum.inl k) ∘ₗ
+      (gradedMap p φ.toMonoidHom φ.continuous 1).toZModLinearMap p
+  let g : gradedPiece p (freeProP p X) 1 →ₗ[ZMod p] ZMod p :=
+    ∑ i, ((φ.continuousZModDualMap (dualBasis p Y k)).toMul (of i)).toAdd •
+      (degreeOneBasis p X).coord (Sum.inl i)
+  have hf (j) : f (degreeOneBasis p X j) =
+      (degreeOneBasis p Y).repr (degreeOneFamily p (⇑φ.toMonoidHom ∘ of) j) (Sum.inl k) := by
+    simp only [f, LinearMap.comp_apply, AddMonoidHom.coe_toZModLinearMap,
+      Module.Basis.coord_apply, degreeOneBasis_apply, gradedMap_degreeOneFamily]
+  have hg (j) : g (degreeOneBasis p X j) =
+      ∑ i, ((φ.continuousZModDualMap (dualBasis p Y k)).toMul (of i)).toAdd *
+        if j = Sum.inl i then 1 else 0 := by
+    simp only [g, LinearMap.sum_apply, LinearMap.smul_apply, Module.Basis.coord_apply,
+      Module.Basis.repr_self, Finsupp.single_apply, smul_eq_mul]
+  have hfg : f = g := by
+    refine (degreeOneBasis p X).ext fun j ↦ ?_
+    rw [hf, hg]
+    rcases j with i | ⟨⟨i, j⟩, hij⟩
+    · rw [degreeOneFamily_inl, degreeOneBasis_repr_gradedPow_gradedMkZero_inl,
+        Finset.sum_eq_single i (fun b _ hb ↦ by simp [Ne.symm hb])
+          (fun h ↦ (h (Finset.mem_univ i)).elim), Function.comp_apply,
+        ContinuousMonoidHom.toMul_continuousZModDualMap_apply]
+      simp
+    · rw [degreeOneFamily_inr, degreeOneBasis_repr_gradedBracket_inl]
+      simp
+  have := LinearMap.congr_fun hfg ρ
+  simpa [f, g, mul_comm] using this
+
+end Transformation
 
 /-! ### Normal forms after an automorphism -/
 

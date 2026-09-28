@@ -6,9 +6,11 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.LinearAlgebra.Basis.Basic
+public import Mathlib.RingTheory.Finiteness.Defs
 public import TauCeti.Topology.Algebra.Group.Profinite.Free.ProP
 public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Rank
 import Mathlib.LinearAlgebra.Dimension.ErdosKaplansky
+import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
 import TauCeti.Topology.Algebra.ContinuousMulEquiv
 import Mathlib.LinearAlgebra.Dimension.StrongRankCondition
 import Mathlib.LinearAlgebra.StdBasis
@@ -229,6 +231,10 @@ whose `i`-th vector is the coordinate character `x_j ↦ δ_{ij}`. -/
 noncomputable def dualBasis : Module.Basis X (ZMod p) (continuousZModDual p (freeProP p X)) :=
   (Pi.basisFun (ZMod p) X).map (continuousZModDualEquiv p X).symm
 
+/-- The continuous `𝔽_p`-dual of a free pro-`p` group of finite rank is finite-dimensional. -/
+instance : Module.Finite (ZMod p) (continuousZModDual p (freeProP p X)) :=
+  Module.Finite.of_basis (dualBasis p X)
+
 /-- The `i`-th vector of the dual basis is the character reading off the exponent of `x_i`. -/
 theorem dualBasis_apply [DecidableEq X] (i : X) :
     dualBasis p X i = Additive.ofMul (characterOfFun p X (Pi.single i 1)) := by
@@ -246,6 +252,16 @@ theorem dualBasis_repr (χ : continuousZModDual p (freeProP p X)) (i : X) :
     (dualBasis p X).repr χ i = (χ.toMul (of i)).toAdd := by
   rw [dualBasis, Module.Basis.map_repr, LinearEquiv.trans_apply, LinearEquiv.symm_symm,
     Pi.basisFun_repr, continuousZModDualEquiv_apply]
+
+/-- The `k`-th coordinate character of `freeProP p (Fin n)` takes the value `δ_{k a}` at the
+`ℕ`-indexed generator `x_a`, including out of range, where `x_a = 1`. -/
+theorem toMul_dualBasis_freeProPGen {n : ℕ} (k : Fin n) (a : ℕ) :
+    ((dualBasis p (Fin n) k).toMul (freeProPGen p n a)).toAdd = if (k : ℕ) = a then 1 else 0 := by
+  by_cases h : a < n
+  · rw [freeProPGen_of_lt p h, toMul_dualBasis_of, toAdd_ofAdd, Pi.single_apply]
+    simp [Fin.ext_iff, eq_comm]
+  · rw [freeProPGen_eq_one_of_le p (not_lt.mp h), map_one, toAdd_one, ite_eq_right]
+    omega
 
 end DualBasis
 
