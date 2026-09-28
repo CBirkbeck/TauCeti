@@ -123,7 +123,7 @@ theorem kummerCharacter_algebraMap_mul {α : Lˣ} (c : Fˣ)
   ext σ
   refine (algebraMap F L).injective ?_
   rw [algebraMap_kummerCharacter, algebraMap_kummerCharacter, Units.val_mul, Units.coe_map,
-    MonoidHom.coe_coe, map_mul, AlgEquiv.commutes, mul_div_mul_left _ _ (by simp)]
+    MonoidHom.coe_ofClass, map_mul, AlgEquiv.commutes, mul_div_mul_left _ _ (by simp)]
 
 /-- **The Kummer character is trivial exactly when `G` fixes `α`.** -/
 theorem kummerCharacter_eq_one_iff {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :
