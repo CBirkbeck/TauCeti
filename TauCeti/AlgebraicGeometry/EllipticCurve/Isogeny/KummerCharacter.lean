@@ -75,7 +75,7 @@ noncomputable def kummerCharacter (g : W₁.FunctionFieldˣ)
     (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange) :
     Multiplicative φ.ker →* rootsOfUnity n F :=
   -- The kernel translations fix every pulled-back function, in particular `gⁿ`.
-  TauCeti.kummerCharacter (kerTranslationHom φ) n g fun S ↦ by
+  (kerTranslationHom φ).kummerCharacter n g fun S ↦ by
     rw [kerTranslationHom_apply]
     exact mem_ker_iff.mp (Multiplicative.toAdd S).2 _ hg
 
@@ -87,7 +87,7 @@ theorem algebraMap_kummerCharacter {g : W₁.FunctionFieldˣ}
     (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange) (S : Multiplicative φ.ker) :
     algebraMap F W₁.FunctionField (φ.kummerCharacter n g hg S : Fˣ) =
       translation W₁ (Multiplicative.toAdd S : φ.ker) g / g := by
-  rw [kummerCharacter, TauCeti.algebraMap_kummerCharacter, kerTranslationHom_apply]
+  rw [kummerCharacter, MonoidHom.algebraMap_kummerCharacter, kerTranslationHom_apply]
 
 /-- **The Kummer character is multiplicative in `g`**; `(g h)ⁿ = gⁿ hⁿ` is pulled back when both
 factors are. -/
@@ -96,13 +96,13 @@ theorem kummerCharacter_mul {g h : W₁.FunctionFieldˣ}
     (hh : (h : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange) :
     φ.kummerCharacter n (g * h) (by rw [Units.val_mul, mul_pow]; exact mul_mem hg hh) =
       φ.kummerCharacter n g hg * φ.kummerCharacter n h hh :=
-  TauCeti.kummerCharacter_mul _ _
+  MonoidHom.kummerCharacter_mul _ _
 
 /-- **The Kummer character is trivial exactly when the kernel translations fix `g`.** -/
 theorem kummerCharacter_eq_one_iff {g : W₁.FunctionFieldˣ}
     (hg : (g : W₁.FunctionField) ^ n ∈ φ.fieldPullback.fieldRange) :
     φ.kummerCharacter n g hg = 1 ↔ (g : W₁.FunctionField) ∈ translationFixedField W₁ φ.ker := by
-  rw [kummerCharacter, TauCeti.kummerCharacter_eq_one_iff, mem_translationFixedField_iff]
+  rw [kummerCharacter, MonoidHom.kummerCharacter_eq_one_iff, mem_translationFixedField_iff]
   simp only [kerTranslationHom_apply]
   exact ⟨fun h S hS ↦ h (Multiplicative.ofAdd ⟨S, hS⟩), fun h S ↦ h _ (Multiplicative.toAdd S).2⟩
 
@@ -137,7 +137,7 @@ theorem kummerCharacter_eq_of_principal_eq {g g' : W₁.FunctionFieldˣ}
     (isIntegrallyClosedIn_functionField W₁) h
   obtain rfl : g = Units.map (algebraMap F W₁.FunctionField : F →* W₁.FunctionField) c * g' :=
     Units.ext (by simpa using hc)
-  exact TauCeti.kummerCharacter_algebraMap_mul c _
+  exact MonoidHom.kummerCharacter_algebraMap_mul c _
 
 end TauCeti.Isogeny
 

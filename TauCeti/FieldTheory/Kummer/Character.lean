@@ -25,14 +25,16 @@ monoid is arbitrary.
 
 ## Main definitions
 
-* `TauCeti.kummerCharacter`: the character `σ ↦ σ α / α` of `G` with values in `rootsOfUnity n F`.
+* `MonoidHom.kummerCharacter`: for `ρ : G →* (L ≃ₐ[F] L)`, the character `σ ↦ ρ σ α / α` of `G`
+  with values in `rootsOfUnity n F`, written `ρ.kummerCharacter n α hα`.
 
 ## Main results
 
-* `TauCeti.algebraMap_kummerCharacter`: its value at `σ`, read in `L`, is `σ α / α`.
-* `TauCeti.kummerCharacter_mul`: it is multiplicative in `α`.
-* `TauCeti.kummerCharacter_algebraMap_mul`: it is unchanged by a constant factor.
-* `TauCeti.kummerCharacter_eq_one_iff`: it is trivial exactly when `G` fixes `α`.
+* `MonoidHom.algebraMap_kummerCharacter`: its value at `σ`, read in `L`, is `σ α / α`.
+* `MonoidHom.apply_eq_algebraMap_kummerCharacter_mul`: `σ` moves `α` by its value.
+* `MonoidHom.kummerCharacter_mul`: it is multiplicative in `α`.
+* `MonoidHom.kummerCharacter_algebraMap_mul`: it is unchanged by a constant factor.
+* `MonoidHom.kummerCharacter_eq_one_iff`: it is trivial exactly when `G` fixes `α`.
 
 ## References
 
@@ -42,7 +44,7 @@ monoid is arbitrary.
 
 public section
 
-namespace TauCeti
+namespace MonoidHom
 
 variable {F L G : Type*} [Field F] [Field L] [Algebra F L] [IsIntegrallyClosedIn F L] [Monoid G]
   (ρ : G →* (L ≃ₐ[F] L)) (n : ℕ) [NeZero n]
@@ -63,7 +65,7 @@ private theorem coe_ratio {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α :
 as soon as no element of `G` moves `αⁿ`. -/
 noncomputable def kummerCharacter (α : Lˣ) (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :
     G →* rootsOfUnity n F where
-  toFun σ := (rootsOfUnityMulEquiv F L n).symm (ratio ρ n hα σ)
+  toFun σ := (TauCeti.rootsOfUnityMulEquiv F L n).symm (ratio ρ n hα σ)
   map_one' := by
     rw [MulEquiv.symm_apply_eq, map_one]
     ext
@@ -75,15 +77,15 @@ noncomputable def kummerCharacter (α : Lˣ) (hα : ∀ σ, ρ σ ((α : L) ^ n)
       rw [coe_ratio, div_mul_cancel₀ _ α.ne_zero]
     -- `ρ σ` fixes the constant `τ α / α`, which is how it commutes past the second factor.
     have hc : ρ σ ((ratio ρ n hα τ : Lˣ) : L) = ((ratio ρ n hα τ : Lˣ) : L) := by
-      rw [← MulEquiv.apply_symm_apply (rootsOfUnityMulEquiv F L n) (ratio ρ n hα τ),
-        coe_rootsOfUnityMulEquiv, AlgEquiv.commutes]
+      rw [← MulEquiv.apply_symm_apply (TauCeti.rootsOfUnityMulEquiv F L n) (ratio ρ n hα τ),
+        TauCeti.coe_rootsOfUnityMulEquiv, AlgEquiv.commutes]
     simp only [coe_ratio, Subgroup.coe_mul, Units.val_mul, map_mul, AlgEquiv.mul_apply]
     rw [← coe_ratio ρ n hα τ, hτ, map_mul, hc, coe_ratio]
     field_simp
 
 private theorem kummerCharacter_apply (α : Lˣ) (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n)
     (σ : G) :
-    kummerCharacter ρ n α hα σ = (rootsOfUnityMulEquiv F L n).symm (ratio ρ n hα σ) :=
+    ρ.kummerCharacter n α hα σ = (TauCeti.rootsOfUnityMulEquiv F L n).symm (ratio ρ n hα σ) :=
   rfl
 
 variable {ρ n}
@@ -91,22 +93,22 @@ variable {ρ n}
 /-- **The value of the Kummer character**, read in `L`: `χ(σ) = σ α / α`. -/
 @[simp]
 theorem algebraMap_kummerCharacter {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) (σ : G) :
-    algebraMap F L (kummerCharacter ρ n α hα σ : Fˣ) = ρ σ α / α := by
-  rw [← coe_rootsOfUnityMulEquiv F L n, kummerCharacter_apply, MulEquiv.apply_symm_apply,
+    algebraMap F L (ρ.kummerCharacter n α hα σ : Fˣ) = ρ σ α / α := by
+  rw [← TauCeti.coe_rootsOfUnityMulEquiv F L n, kummerCharacter_apply, MulEquiv.apply_symm_apply,
     coe_ratio]
 
 /-- **The Kummer character moves `α` by its value**: `σ α = χ(σ) α`. -/
 theorem apply_eq_algebraMap_kummerCharacter_mul {α : Lˣ}
     (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) (σ : G) :
-    ρ σ α = algebraMap F L (kummerCharacter ρ n α hα σ : Fˣ) * α := by
+    ρ σ α = algebraMap F L (ρ.kummerCharacter n α hα σ : Fˣ) * α := by
   rw [algebraMap_kummerCharacter, div_mul_cancel₀ _ α.ne_zero]
 
 /-- **The Kummer character is multiplicative in `α`**; `G` fixes `(α β)ⁿ = αⁿ βⁿ` because it fixes
 both factors. -/
 theorem kummerCharacter_mul {α β : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n)
     (hβ : ∀ σ, ρ σ ((β : L) ^ n) = (β : L) ^ n) :
-    kummerCharacter ρ n (α * β) (fun σ ↦ by rw [Units.val_mul, mul_pow, map_mul, hα, hβ]) =
-      kummerCharacter ρ n α hα * kummerCharacter ρ n β hβ := by
+    ρ.kummerCharacter n (α * β) (fun σ ↦ by rw [Units.val_mul, mul_pow, map_mul, hα, hβ]) =
+      ρ.kummerCharacter n α hα * ρ.kummerCharacter n β hβ := by
   ext σ
   refine (algebraMap F L).injective ?_
   simp only [MonoidHom.mul_apply, Subgroup.coe_mul, Units.val_mul, map_mul,
@@ -117,10 +119,10 @@ theorem kummerCharacter_mul {α β : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = 
 moves `c α` and `α` by the same roots of unity. -/
 theorem kummerCharacter_algebraMap_mul {α : Lˣ} (c : Fˣ)
     (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :
-    kummerCharacter ρ n (Units.map (algebraMap F L : F →* L) c * α) (fun σ ↦ by
+    ρ.kummerCharacter n (Units.map (algebraMap F L : F →* L) c * α) (fun σ ↦ by
       rw [Units.val_mul, mul_pow, map_mul, hα, Units.coe_map, MonoidHom.coe_ofClass,
         ← map_pow, AlgEquiv.commutes]) =
-      kummerCharacter ρ n α hα := by
+      ρ.kummerCharacter n α hα := by
   ext σ
   refine (algebraMap F L).injective ?_
   rw [algebraMap_kummerCharacter, algebraMap_kummerCharacter, Units.val_mul, Units.coe_map,
@@ -128,13 +130,13 @@ theorem kummerCharacter_algebraMap_mul {α : Lˣ} (c : Fˣ)
 
 /-- **The Kummer character is trivial exactly when `G` fixes `α`.** -/
 theorem kummerCharacter_eq_one_iff {α : Lˣ} (hα : ∀ σ, ρ σ ((α : L) ^ n) = (α : L) ^ n) :
-    kummerCharacter ρ n α hα = 1 ↔ ∀ σ, ρ σ α = α := by
+    ρ.kummerCharacter n α hα = 1 ↔ ∀ σ, ρ σ α = α := by
   refine ⟨fun h σ ↦ ?_, fun h ↦ MonoidHom.ext fun σ ↦ Subtype.ext <| Units.ext <|
     (algebraMap F L).injective ?_⟩
   · simpa [h] using apply_eq_algebraMap_kummerCharacter_mul hα σ
   · rw [algebraMap_kummerCharacter, h, div_self α.ne_zero]
     simp
 
-end TauCeti
+end MonoidHom
 
 end
