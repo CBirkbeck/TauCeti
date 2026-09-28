@@ -62,9 +62,10 @@ characters on the images of the generators. Bringing a relator into normal form 
   `TauCeti.freeProP.heisenbergFunctional_gradedPow_gradedMkZero`,
   `TauCeti.freeProP.heisenbergFunctional_unique`: the values of the Heisenberg functional on
   brackets and `p`-power classes characterize it.
-* `TauCeti.freeProP.degreeOneForm_swap`, `TauCeti.freeProP.isAlt_degreeOneForm_of_ne_two`,
-  `TauCeti.freeProP.isSymm_degreeOneForm_of_two`: the degree-one form is skew-symmetric,
-  alternating for odd `p`, and symmetric for `p = 2`.
+* `TauCeti.freeProP.degreeOneForm_swap`, `TauCeti.freeProP.isRefl_degreeOneForm`,
+  `TauCeti.freeProP.isAlt_degreeOneForm_of_ne_two`, `TauCeti.freeProP.isSymm_degreeOneForm_of_two`:
+  the degree-one form is skew-symmetric, hence reflexive, alternating for odd `p`, and symmetric
+  for `p = 2`.
 * `TauCeti.freeProP.heisenbergFunctional_gradedMap`, `TauCeti.freeProP.degreeOneForm_gradedMap`:
   the transformation law under a continuous homomorphism between free pro-`p` groups.
 * `TauCeti.freeProP.degreeOneForm_dualBasis_of_lt`,
@@ -435,6 +436,12 @@ theorem degreeOneForm_swap (ρ : gradedPiece p (freeProP p X) 1)
   · rw [LinearMap.neg_apply, heisenbergFunctional_gradedBracket_gradedMkZero,
       heisenbergFunctional_gradedBracket_gradedMkZero]
     ring
+
+/-- **The degree-one form is reflexive**, being skew-symmetric: `B_ρ(χ, ψ) = 0` implies
+`B_ρ(ψ, χ) = 0`. -/
+theorem isRefl_degreeOneForm (ρ : gradedPiece p (freeProP p X) 1) :
+    (degreeOneForm ρ).IsRefl := fun χ ψ h ↦ by
+  rw [degreeOneForm_swap, h, neg_zero]
 
 /-- **The degree-one form is alternating for odd `p`**: the diagonal factor `(p choose 2)` is
 divisible by `p`. -/

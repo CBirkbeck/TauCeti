@@ -31,6 +31,8 @@ the algebraic dual, injectively.
   group, written additively; for a prime `p` it is the continuous `𝔽_p`-dual.
 * `ContinuousMonoidHom.continuousZModDualMap`: precomposition with a continuous homomorphism, the
   transpose map between continuous duals.
+  The transpose of a topological group isomorphism is bijective
+  (`ContinuousMulEquiv.continuousZModDualMap_bijective`).
 * `TauCeti.continuousZModDualToDual`: a continuous `ZMod p`-valued character of a commutative group
   whose additive copy is a `ZMod p`-module, read as a linear functional on that module.
 -/
@@ -97,6 +99,19 @@ theorem _root_.ContinuousMonoidHom.continuousZModDualMap_comp (g : H →ₜ* K) 
     (g.comp f).continuousZModDualMap (n := n) =
       f.continuousZModDualMap.comp g.continuousZModDualMap :=
   LinearMap.ext fun _ ↦ Additive.toMul.injective (ContinuousMonoidHom.ext fun _ ↦ rfl)
+
+/-- **The transpose of a topological group isomorphism is bijective**: its inverse is the
+transpose of the inverse isomorphism. -/
+theorem _root_.ContinuousMulEquiv.continuousZModDualMap_bijective (e : G ≃ₜ* H) :
+    Function.Bijective ((e : G →ₜ* H).continuousZModDualMap (n := n)) := by
+  refine ⟨fun χ ψ hχψ ↦ Additive.toMul.injective (ContinuousMonoidHom.ext fun h ↦ ?_),
+    fun χ ↦ ⟨(e.symm : H →ₜ* G).continuousZModDualMap χ,
+      Additive.toMul.injective (ContinuousMonoidHom.ext fun g ↦ ?_)⟩⟩
+  · have := congrArg (fun x : continuousZModDual n G ↦ Additive.toMul x (e.symm h)) hχψ
+    have he : (e : G →ₜ* H) (e.symm h) = h := e.apply_symm_apply h
+    simpa only [ContinuousMonoidHom.toMul_continuousZModDualMap_apply, he] using this
+  · have he : (e.symm : H →ₜ* G) ((e : G →ₜ* H) g) = g := e.symm_apply_apply g
+    simp only [ContinuousMonoidHom.toMul_continuousZModDualMap_apply, he]
 
 end ZModDual
 

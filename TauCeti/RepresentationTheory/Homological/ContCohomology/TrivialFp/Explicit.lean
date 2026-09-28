@@ -10,7 +10,7 @@ public import TauCeti.RepresentationTheory.Homological.ContCohomology.ExplicitFu
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.H2ZMod
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.TrivialFp
 public import TauCeti.Topology.Algebra.ContinuousZModDual
-import TauCeti.Data.ZMod.TrivialAction
+public import TauCeti.Data.ZMod.TrivialAction
 
 /-!
 # The explicit models of `H¹(G, 𝔽_p)` and `H²(G, 𝔽_p)`
@@ -137,6 +137,22 @@ noncomputable def cohomFpLinearEquivContinuousZModDual :
   let e : cohomFp p G 1 ≃+ continuousZModDual p G :=
     (cohomFpAddEquivH1 p G fun _ _ ↦ rfl).trans (H1EquivOfSmulEqSelf fun _ _ ↦ rfl)
   LinearEquiv.ofBijective (e.toAddMonoidHom.toZModLinearMap p) e.bijective
+
+omit [DistribMulAction G (ZMod p)] [ContinuousSMul G (ZMod p)] htriv in
+/-- **The defining equation of `cohomFpLinearEquivContinuousZModDual`**: for the trivial action
+`trivialZModAction p G`, it is the identification `cohomFpAddEquivH1` of `H¹(G, 𝔽_p)` with the
+explicit model followed by the identification `H1EquivOfSmulEqSelf` of the explicit classes with
+the continuous characters. -/
+-- Not a `simp` lemma: the canonical identification is the intended normal form of a character of
+-- `H¹(G, 𝔽_p)`, and the `simp` lemmas `cohomFpLinearEquivContinuousZModDual_π_characterCocycle` and
+-- `ContinuousMonoidHom.cohomFpLinearEquivContinuousZModDual_zmodFourReductionClass` own its
+-- left-hand side; as a `simp` lemma this equation would rewrite theirs (simpNF).
+theorem cohomFpLinearEquivContinuousZModDual_apply (x : cohomFp p G 1) :
+    letI := trivialZModAction p G
+    haveI : ContinuousSMul G (ZMod p) := ⟨continuous_snd⟩
+    cohomFpLinearEquivContinuousZModDual p G x =
+      H1EquivOfSmulEqSelf (fun _ _ ↦ rfl) (cohomFpAddEquivH1 p G (fun _ _ ↦ rfl) x) :=
+  (rfl)
 
 omit [DistribMulAction G (ZMod p)] [ContinuousSMul G (ZMod p)] htriv in
 /-- The character attached by `cohomFpLinearEquivContinuousZModDual` to the class of a homogeneous
