@@ -21,6 +21,11 @@ The degree-zero statement holds for every `p` and needs only that `λ_1` is open
 bound `gr_0(G)` and `gr_1(G)` in terms of the generators, which is the first step in computing
 the graded pieces of a group given by generators.
 
+In every degree, when `λ_{k+2}` is open, `gr_{k+1}(G) = λ_{k+1} ⧸ λ_{k+2}` is spanned by the
+`p`-powers `π x` of the classes `x ∈ gr_k(G)` and the brackets `[x, y]` of such a class with a
+degree-zero class `y ∈ gr_0(G)`: this is the graded form of `λ_{k+1} = closure (λ_kᵖ ⬝ [λ_k, G])`,
+and it is the induction step for computing the graded pieces degree by degree.
+
 For a linearly ordered index type the generators are packaged as `TauCeti.degreeOneFamily`: the
 `p`-power classes `π y'_i` together with the brackets `[y'_i, y'_j]` for `i < j`. For a free pro-`p`
 group on a finite linearly ordered set this family is a basis, which is proved in
@@ -43,6 +48,10 @@ The openness hypothesis holds in a topologically finitely generated profinite gr
 * `TauCeti.linearMap_ext_gradedPiece_one`: linear maps out of `gr_1(G)` are determined by their
   values on those `p`-power classes and brackets.
 * `TauCeti.span_range_degreeOneFamily_eq_top`: the ordered form of the previous statement.
+* `TauCeti.span_range_gradedPow_union_range_gradedBracket_eq_top`,
+  `TauCeti.eq_top_of_forall_gradedPow_mem_of_forall_gradedBracket_mem`: in every degree, the
+  `p`-powers `π x` of `x ∈ gr_k(G)` and the brackets `[x, y]` with `y ∈ gr_0(G)` span `gr_{k+1}(G)`,
+  when `λ_{k+2}` is open.
 
 ## References
 
@@ -200,6 +209,64 @@ theorem linearMap_ext_gradedPiece_one [NeZero p] {M : Type*} [AddCommMonoid M]
   rintro _ (⟨x, hx, rfl⟩ | ⟨⟨x, y⟩, ⟨hx, hy⟩, rfl⟩)
   · exact hpow x hx
   · exact hbr x hx y hy
+
+/-! ### Higher degrees -/
+
+/-- **The `p`-powers and the brackets with degree-zero classes span the next graded piece**: when
+`λ_{k+2}` is open, `gr_{k+1}(G)` is spanned over `ZMod p` by the classes `π x` for `x ∈ gr_k(G)`
+and the brackets `[x, y]` for `x ∈ gr_k(G)` and `y ∈ gr_0(G)`. This is the graded form of
+`λ_{k+1} = closure (λ_kᵖ ⬝ [λ_k, G])`. -/
+theorem span_range_gradedPow_union_range_gradedBracket_eq_top {k : ℕ}
+    (h : IsOpen (pLowerCentralSeries p G (k + 1 + 1) : Set G)) :
+    span (ZMod p) (Set.range (gradedPow p G k) ∪
+      Set.range fun xy : gradedPiece p G k × gradedPiece p G 0 ↦
+        gradedBracket p G k 0 xy.1 xy.2) = ⊤ := by
+  set W := span (ZMod p) (Set.range (gradedPow p G k) ∪
+    Set.range fun xy : gradedPiece p G k × gradedPiece p G 0 ↦
+      gradedBracket p G k 0 xy.1 xy.2) with hW
+  -- The preimage of `W` in `G`: a union of cosets of the open subgroup `λ_{k+2}`, hence closed.
+  let U : Subgroup G :=
+    { carrier := {g | ∃ w ∈ W, gradedPieceInclusion p G (k + 1) w =
+        Additive.ofMul (g : G ⧸ pLowerCentralSeries p G (k + 1 + 1))}
+      one_mem' := ⟨0, W.zero_mem, by rw [map_zero, QuotientGroup.mk_one, ofMul_one]⟩
+      mul_mem' := by
+        rintro a b ⟨v, hv, hva⟩ ⟨w, hw, hwb⟩
+        exact ⟨v + w, W.add_mem hv hw, by rw [map_add, hva, hwb, QuotientGroup.mk_mul, ofMul_mul]⟩
+      inv_mem' := by
+        rintro a ⟨v, hv, hva⟩
+        exact ⟨-v, W.neg_mem hv, by rw [map_neg, hva, QuotientGroup.mk_inv, ofMul_inv]⟩ }
+  have hU : pLowerCentralSeries p G (k + 1 + 1) ≤ U := fun g hg ↦
+    ⟨0, W.zero_mem, by rw [map_zero, (QuotientGroup.eq_one_iff g).mpr hg, ofMul_one]⟩
+  have hUclosed : IsClosed (U : Set G) := U.isClosed_of_isOpen (Subgroup.isOpen_mono hU h)
+  have hlam : pLowerCentralSeries p G (k + 1) ≤ U := by
+    rw [pLowerCentralSeries_succ]
+    refine (pLowerCentralStep_le_iff hUclosed).mpr ⟨fun g hg ↦ ?_, commutator_le.mpr
+      fun g hg h _ ↦ ?_⟩
+    · exact ⟨_, subset_span (Or.inl ⟨gradedMk p G k ⟨g, hg⟩, rfl⟩), by
+        rw [gradedPow_gradedMk, gradedPieceInclusion_gradedMk]⟩
+    · refine ⟨_, subset_span (Or.inr ⟨(gradedMk p G k ⟨g, hg⟩, gradedMkZero p G h), rfl⟩), ?_⟩
+      dsimp only
+      rw [← gradedMk_zero ⟨h, mem_pLowerCentralSeries_zero p h⟩, gradedBracket_gradedMk,
+        gradedPieceInclusion_gradedMk]
+  rw [eq_top_iff]
+  rintro y -
+  obtain ⟨y, rfl⟩ := gradedMk_surjective (k + 1) y
+  obtain ⟨w, hw, hwy⟩ := hlam y.2
+  rw [← gradedPieceInclusion_gradedMk] at hwy
+  exact gradedPieceInclusion_injective (k + 1) hwy ▸ hw
+
+/-- **A submodule of `gr_{k+1}(G)` containing all `p`-powers `π x` and all brackets `[x, y]` with
+`y` of degree zero is everything**, when `λ_{k+2}` is open. -/
+theorem eq_top_of_forall_gradedPow_mem_of_forall_gradedBracket_mem {k : ℕ}
+    {W : Submodule (ZMod p) (gradedPiece p G (k + 1))}
+    (h : IsOpen (pLowerCentralSeries p G (k + 1 + 1) : Set G))
+    (hpow : ∀ x, gradedPow p G k x ∈ W)
+    (hbracket : ∀ (x : gradedPiece p G k) (y : gradedPiece p G 0), gradedBracket p G k 0 x y ∈ W) :
+    W = ⊤ := by
+  rw [eq_top_iff, ← span_range_gradedPow_union_range_gradedBracket_eq_top h, span_le]
+  rintro _ (⟨x, rfl⟩ | ⟨⟨x, y⟩, rfl⟩)
+  · exact hpow x
+  · exact hbracket x y
 
 /-! ### The degree-one family of an ordered family -/
 
