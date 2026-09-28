@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+public import Mathlib.LinearAlgebra.Dimension.RankNullity
 public import Mathlib.LinearAlgebra.FixedSubmodule
 import TauCeti.LinearAlgebra.FixedSubmodule
 
@@ -14,12 +14,13 @@ import TauCeti.LinearAlgebra.FixedSubmodule
 
 This file computes the dimension of the common fixed submodule of a finite family of commuting
 idempotent endomorphisms when each new fixed-point condition has an explicitly equivalent
-complementary eigenspace.
+complementary eigenspace. The only input on the scalars is rank-nullity, so the results hold over
+any ring with `HasRankNullity`, such as a division ring or a commutative domain.
 
 ## Main results
 
-* `IsIdempotentElem.two_mul_finrank_fixedSubmodule`: an idempotent whose fixed vectors and kernel
-  are exchanged by maps that are mutually inverse there has a fixed submodule of half the dimension.
+* `IsIdempotentElem.two_mul_finrank_fixedSubmodule`: an idempotent whose fixed submodule is
+  linearly equivalent to its kernel has a fixed submodule of half the dimension.
 * `LinearMap.finrank_fixedSubmodule_restrict`: the fixed submodule of the restriction of `f` to an
   invariant submodule `p` has the dimension of `p ⊓ f.fixedSubmodule`.
 * `TauCeti.two_mul_finrank_iInf_fixedSubmodule_insert`: adjoining one such idempotent halves the
@@ -30,34 +31,23 @@ complementary eigenspace.
 
 public section
 
+universe u
+
 open Module
 
 namespace TauCeti
 
-/-- If `u` maps the fixed vectors of an idempotent endomorphism `q` into the kernel of `q`, `v`
-maps the kernel into the fixed vectors, and these two restrictions are mutually inverse, then the
-fixed submodule of `q` has half the dimension of the space. In infinite dimension both sides
-are `0`. -/
-theorem _root_.IsIdempotentElem.two_mul_finrank_fixedSubmodule {K W : Type*} [DivisionRing K]
-    [AddCommGroup W] [Module K W] {q : Module.End K W}
-    (hq : IsIdempotentElem q) (u v : Module.End K W) (hu0 : ∀ x, q x = x → q (u x) = 0)
-    (hv1 : ∀ x, q x = 0 → q (v x) = v x) (hvu : ∀ x, q x = x → v (u x) = x)
-    (huv : ∀ x, q x = 0 → u (v x) = x) :
+/-- If the fixed submodule of an idempotent endomorphism `q` is linearly equivalent to the kernel
+of `q`, then it has half the dimension of the space. In infinite dimension both sides are `0`. -/
+theorem _root_.IsIdempotentElem.two_mul_finrank_fixedSubmodule {K : Type*} {W : Type u} [Ring K]
+    [HasRankNullity.{u} K] [AddCommGroup W] [Module K W] {q : Module.End K W}
+    (hq : IsIdempotentElem q) (e : q.fixedSubmodule ≃ₗ[K] LinearMap.ker q) :
     2 * finrank K q.fixedSubmodule = finrank K W := by
-  have hf {x} := LinearMap.mem_fixedSubmodule_iff (f := q) (v := x)
   -- For an idempotent, the range is exactly the submodule of fixed vectors.
   have hr : LinearMap.range q = q.fixedSubmodule := by
     ext x
-    rw [LinearMap.IsIdempotentElem.mem_range_iff hq, hf]
-  -- `u` and `v` restrict to mutually inverse maps between the fixed vectors and the kernel of `q`.
-  let e : q.fixedSubmodule ≃ₗ[K] LinearMap.ker q := .ofLinearMap
-    (u.restrict fun x hx => LinearMap.mem_ker.mpr (hu0 x (hf.mp hx)))
-    (v.restrict fun x hx => hf.mpr (hv1 x (LinearMap.mem_ker.mp hx)))
-    (by ext x; simpa only [LinearMap.comp_apply, LinearMap.id_apply, LinearMap.coe_restrict_apply]
-      using huv x (LinearMap.mem_ker.mp x.2))
-    (by ext x; simpa only [LinearMap.comp_apply, LinearMap.id_apply, LinearMap.coe_restrict_apply]
-      using hvu x (hf.mp x.2))
-  -- Rank-nullity for `q`, with its kernel replaced by the isomorphic fixed submodule.
+    rw [LinearMap.IsIdempotentElem.mem_range_iff hq, LinearMap.mem_fixedSubmodule_iff]
+  -- Rank-nullity for `q`, with its kernel replaced by the equivalent fixed submodule.
   have h : 2 * Module.rank K q.fixedSubmodule = Module.rank K W := by
     rw [two_mul, ← q.rank_range_add_rank_ker, hr, e.rank_eq]
   -- `finrank` is `Cardinal.toNat` of the rank, which is multiplicative, also on infinite ranks.
@@ -78,7 +68,8 @@ The maps `u` and `v` are stated on the ambient module so callers can supply natu
 the commuting hypotheses ensure that their restrictions preserve the previous common fixed
 space. -/
 theorem two_mul_finrank_iInf_fixedSubmodule_insert
-    {K V ι : Type*} [DivisionRing K] [AddCommGroup V] [Module K V] [DecidableEq ι]
+    {K ι : Type*} {V : Type u} [Ring K] [HasRankNullity.{u} K] [AddCommGroup V] [Module K V]
+    [DecidableEq ι]
     (p : ι → Module.End K V) (s : Finset ι) (a : ι)
     (hpa : IsIdempotentElem (p a))
     (hcomm : ∀ i ∈ s, Commute (p i) (p a))
@@ -103,20 +94,30 @@ theorem two_mul_finrank_iInf_fixedSubmodule_insert
   have hq : IsIdempotentElem q := LinearMap.ext fun x => Subtype.ext <| by
     simpa only [q, Module.End.mul_apply, LinearMap.coe_restrict_apply] using
       LinearMap.congr_fun hpa.eq (x : V)
+  -- Membership in the fixed submodule and in the kernel of `q` is read off in `V`.
+  have hf {x : S} : x ∈ q.fixedSubmodule ↔ p a x = x := by
+    rw [LinearMap.mem_fixedSubmodule_iff, Subtype.ext_iff, LinearMap.coe_restrict_apply]
+  have hk {x : S} : x ∈ LinearMap.ker q ↔ p a x = 0 := by
+    rw [LinearMap.mem_ker, Subtype.ext_iff, LinearMap.coe_restrict_apply, ZeroMemClass.coe_zero]
+  -- `u` and `v` restrict to mutually inverse maps between the fixed vectors and the kernel of `q`.
+  let e : q.fixedSubmodule ≃ₗ[K] LinearMap.ker q := .ofLinearMap
+    ((u.restrict (hS huS)).restrict fun x hx => hk.mpr <| by
+      simpa only [LinearMap.coe_restrict_apply] using hu0 x (hf.mp hx))
+    ((v.restrict (hS hvS)).restrict fun x hx => hf.mpr <| by
+      simpa only [LinearMap.coe_restrict_apply] using hv1 x (hk.mp hx))
+    (by ext x; simpa only [LinearMap.comp_apply, LinearMap.id_apply, LinearMap.coe_restrict_apply]
+      using huv x (hk.mp x.2))
+    (by ext x; simpa only [LinearMap.comp_apply, LinearMap.id_apply, LinearMap.coe_restrict_apply]
+      using hvu x (hf.mp x.2))
   -- Inside `S`, the new common fixed space is the fixed space of `q`.
   rw [Finset.iInf_insert, inf_comm, ← LinearMap.finrank_fixedSubmodule_restrict (hS hcomm),
-    hq.two_mul_finrank_fixedSubmodule (u.restrict (hS huS)) (v.restrict (hS hvS))]
-  -- The four exchange hypotheses restrict from `V` to `S`.
-  all_goals
-    intro x hx
-    simp only [q, Subtype.ext_iff, LinearMap.coe_restrict_apply, ZeroMemClass.coe_zero] at hx ⊢
-  exacts [hu0 _ hx, hv1 _ hx, hvu _ hx, huv _ hx]
+    hq.two_mul_finrank_fixedSubmodule e]
 
 /-- A finite family of commuting idempotent endomorphisms has common fixed-space dimension
 `2 ^ (-|t|)` times the ambient dimension when each idempotent's fixed and zero pieces are
 exchanged by inverse endomorphisms that commute with the other idempotents. -/
 theorem pow_card_mul_finrank_iInf_fixedSubmodule
-    {K V ι : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
+    {K ι : Type*} {V : Type u} [Ring K] [HasRankNullity.{u} K] [AddCommGroup V] [Module K V]
     (p : ι → Module.End K V) (t : Finset ι)
     (hp : ∀ a ∈ t, IsIdempotentElem (p a))
     (hcomm : (t : Set ι).Pairwise fun a b => Commute (p a) (p b))
