@@ -17,8 +17,6 @@ vectors they are casts of the carriers.
 ## Main results
 
 * `TopRep.eqToHom_hom_apply`: a transport between equal objects casts the carrier.
-* `TopRep.eqToHom_hom_comp_comp_eqToHom_hom_apply`: conjugating a morphism by transports between
-  equal objects conjugates its underlying map by casts of the carriers.
 -/
 
 public section
@@ -35,17 +33,6 @@ variable {k G : Type*} [Ring k] [TopologicalSpace k] [Monoid G]
 theorem eqToHom_hom_apply {X Y : TopRep k G} (h : X = Y) (x : X) :
     (eqToHom h).hom x = cast (congrArg TopRep.V h) x := by
   subst h
-  rfl
-
-/-- For equalities `hX : X' = X` and `hY : Y = Y'` of topological representations and a morphism
-`f : X ⟶ Y`, the underlying map of `eqToHom hX ≫ f ≫ eqToHom hY` sends `x : X'` to the cast into
-`Y'.V` of `f` applied to the cast of `x` into `X.V`. -/
-@[simp]
-theorem eqToHom_hom_comp_comp_eqToHom_hom_apply {X X' Y Y' : TopRep k G} (hX : X' = X)
-    (hY : Y = Y') (f : X ⟶ Y) (x : X') :
-    (((eqToHom hY).hom.comp f.hom).comp (eqToHom hX).hom) x =
-      cast (congrArg TopRep.V hY) (f.hom (cast (congrArg TopRep.V hX) x)) := by
-  subst hX hY
   rfl
 
 end TopRep
