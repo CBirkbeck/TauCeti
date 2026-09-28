@@ -10,6 +10,8 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.RepresentationTheory.Continuous.TopRep
 public import Mathlib.Topology.Algebra.MulAction
 
+import TauCeti.RepresentationTheory.Continuous.TopRep.EqToHom
+
 /-!
 # Smooth discrete topological representations
 
@@ -764,6 +766,25 @@ theorem smoothDiscreteResFunctor_map_apply {A B : SmoothDiscreteTopRep.{u, v, w}
           (eqToHom (congrArg (fun X : SmoothDiscreteTopRep.{u, v, w} R U => X.obj)
             (smoothDiscreteResFunctor_obj R G U A).symm)).hom) x)) = f.hom.hom x :=
   smoothDiscreteResFunctor_map_apply_impl R G U f x
+
+-- Not `@[simp]`: the carrier equations `hA` and `hB` do not occur on the left-hand side, and the
+-- casts on the right are not simpler than the restricted map they replace.
+/-- Restriction along `U → G` does not change the underlying map of a morphism, stated with casts
+of carriers: for any identifications `hA`, `hB` of the carriers of the restricted objects with the
+original ones, the restricted map is the underlying map of `f` conjugated by the casts along
+them. -/
+theorem smoothDiscreteResFunctor_map_hom_hom_apply_eq_cast
+    {A B : SmoothDiscreteTopRep.{u, v, w} R G} (f : A ⟶ B)
+    (hA : ((smoothDiscreteResFunctor R G U).obj A).obj.V = A.obj.V)
+    (hB : ((smoothDiscreteResFunctor R G U).obj B).obj.V = B.obj.V)
+    (x : ((smoothDiscreteResFunctor R G U).obj A).obj) :
+    ((smoothDiscreteResFunctor R G U).map f).hom.hom x = cast hB.symm (f.hom.hom (cast hA x)) := by
+  -- `rw`, not `simp`, for the transport lemma: `simp` makes no progress, since the goal is not
+  -- type-correct at the transparency it checks implicit arguments with (the restricted object
+  -- carries a continuity proof for `Subtype.val` where one for `U.subtype` is expected).
+  rw [← smoothDiscreteResFunctor_map_apply R G U f (cast hA x),
+    TopRep.eqToHom_hom_comp_comp_eqToHom_hom_apply]
+  simp only [cast_cast, cast_eq]
 
 end Restriction
 

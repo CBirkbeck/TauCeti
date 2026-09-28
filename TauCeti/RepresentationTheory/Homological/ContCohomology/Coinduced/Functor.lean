@@ -250,20 +250,6 @@ private noncomputable def coindCounitApp (A : SmoothDiscreteTopRep.{u, v, max v 
           (smoothDiscreteResFunctor_obj R G U (coindTopRep R G U A)))) ≫
       TopRep.ofHom (coindCounit R G U A))
 
-omit [IsTopologicalGroup G] [CompactSpace G] in
-private theorem smoothDiscreteResFunctor_map_hom_apply_eq_cast
-    {X Y : SmoothDiscreteTopRep.{u, v, w} R G} (φ : X ⟶ Y)
-    (hX : ((smoothDiscreteResFunctor R G U).obj X).obj.V = X.obj.V)
-    (hY : ((smoothDiscreteResFunctor R G U).obj Y).obj.V = Y.obj.V)
-    (a : ((smoothDiscreteResFunctor R G U).obj X).obj) :
-    ((smoothDiscreteResFunctor R G U).map φ).hom.hom a = cast hY.symm (φ.hom.hom (cast hX a)) := by
-  -- `rw`, not `simp`, for the transport lemma: `simp` makes no progress, since the goal is not
-  -- type-correct at the transparency it checks implicit arguments with (the restricted object
-  -- carries a continuity proof for `Subtype.val` where one for `U.subtype` is expected).
-  rw [← smoothDiscreteResFunctor_map_apply R G U φ (cast hX a),
-    TopRep.eqToHom_hom_comp_comp_eqToHom_hom_apply]
-  simp only [cast_cast, cast_eq]
-
 private theorem coindCounit_cast_naturality {A B : SmoothDiscreteTopRep.{u, v, max v w} R U}
     (f : A ⟶ B) (hA : ((smoothDiscreteResFunctor R G U).obj ((coindFunctor R G U).obj A)).obj.V =
       (TopRep.res (U.subtype : U →* G) (coindTopRep R G U A).obj).V)
@@ -275,7 +261,7 @@ private theorem coindCounit_cast_naturality {A B : SmoothDiscreteTopRep.{u, v, m
       f.hom.hom (coindCounit R G U A (cast hA a)) := by
   -- The restricted map is the coinduced map conjugated by casts. The carrier equations come from
   -- `smoothDiscreteResFunctor_obj`: the carrier of `TopRep.res` is the original one by definition.
-  rw [smoothDiscreteResFunctor_map_hom_apply_eq_cast R G U _
+  rw [smoothDiscreteResFunctor_map_hom_hom_apply_eq_cast R G U _
     (congrArg (·.obj.V) (smoothDiscreteResFunctor_obj R G U _))
     (congrArg (·.obj.V) (smoothDiscreteResFunctor_obj R G U _)), cast_cast]
   -- `coindFunctor_map_apply` takes an element of `DiscreteCoind G U A.obj.V`. The ascription
