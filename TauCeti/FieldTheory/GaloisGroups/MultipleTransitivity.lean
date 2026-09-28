@@ -114,7 +114,7 @@ theorem is_two_pretransitive_iff_irreducible_divByMonic
   -- Double transitivity is transitivity of the point stabilizer on the complement; the ordinary
   -- root-orbit criterion then turns the latter into irreducibility of `q`.
   rw [SubMulAction.ofStabilizer.isMultiplyPretransitive (a := x), is_one_pretransitive_iff,
-    isPretransitive_ofStabilizer_iff hsep x, isPretransitive_algEquiv_rootSet_iff L,
+    isPretransitive_ofStabilizer_iff hsep x, isPretransitive_algEquiv_rootSet_iff_gal L,
     isPretransitive_iff_irreducible L (hsep.map.of_dvd hqdvd) hqdeg]
 
 end TauCeti
