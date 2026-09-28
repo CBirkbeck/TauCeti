@@ -24,7 +24,8 @@ polynomial along a factorisation, for instance the roots of a monic integer poly
 monic irreducible factors.
 
 Third, dividing a polynomial by the linear factor of a simple root removes exactly that root
-from the root set, where a root `a` is simple when the derivative does not vanish at `a`.
+from the root set. Here `a` only has to be a simple root in `E`: `f a` vanishes and `f' a` does
+not vanish after mapping to `E`, so the map `F → E` need not be injective.
 
 ## Main results
 
@@ -32,7 +33,7 @@ from the root set, where a root `a` is simple when the derivative does not vanis
   its root set enumerates its full root multiset after base change.
 * `Polynomial.rootSet_mul`: the root set of a product of polynomials whose base changes to `E` are
   nonzero is the union of the root sets of the factors.
-* `Polynomial.rootSet_divByMonic_X_sub_C`: for a root `a` of `f` with `f' a ≠ 0`, the roots of
+* `Polynomial.rootSet_divByMonic_X_sub_C`: if `f a = 0` and `f' a ≠ 0` in `E`, then the roots of
   `f /ₘ (X - C a)` are the roots of `f` other than `a`.
 -/
 
@@ -66,30 +67,33 @@ theorem _root_.Polynomial.rootSet_mul {g : F[X]} (hf : f.map (algebraMap F E) �
   simp only [Set.mem_union, mem_rootSet', Polynomial.map_mul, map_mul, mul_eq_zero, ne_eq, hf, hg,
     or_self, not_false_eq_true, true_and]
 
-/-- Removing the linear factor of a simple root `a` removes exactly that root: if `f a = 0` and
-`f' a ≠ 0`, then the roots of `f /ₘ (X - C a)` in `E` are the roots of `f` other than `a`. -/
+/-- Removing the linear factor of a simple root `a` removes exactly that root: if, in `E`, `f a`
+vanishes and `f' a` does not, then the roots of `f /ₘ (X - C a)` in `E` are the roots of `f`
+other than `a`. -/
 @[simp]
-theorem _root_.Polynomial.rootSet_divByMonic_X_sub_C [FaithfulSMul F E] {a : F} (ha : f.eval a = 0)
-    (ha' : f.derivative.eval a ≠ 0) :
+theorem _root_.Polynomial.rootSet_divByMonic_X_sub_C {a : F} (ha : algebraMap F E (f.eval a) = 0)
+    (ha' : algebraMap F E (f.derivative.eval a) ≠ 0) :
     (f /ₘ (X - C a)).rootSet E = f.rootSet E \ {algebraMap F E a} := by
-  have hinj := FaithfulSMul.algebraMap_injective F E
-  -- `a` is not a root of the quotient: the quotient takes the value `f' a ≠ 0` there.
+  -- `a` is not a root of the quotient in `E`: the quotient takes the value `f' a` there.
   have hq := congrArg (eval a) (divByMonic_add_X_sub_C_mul_derivative_divByMonic_eq_derivative f a)
   simp only [eval_add, eval_mul, eval_sub, eval_X, eval_C, sub_self, zero_mul, add_zero] at hq
-  have hq0 := hq.trans_ne ha'
-  have hnotMem : algebraMap F E a ∉ (f /ₘ (X - C a)).rootSet E := fun h ↦ hq0 <| hinj <| by
-    rw [← aeval_algebraMap_apply_eq_algebraMap_eval, aeval_eq_zero_of_mem_rootSet h, map_zero]
-  -- The roots of `f = (X - C a) * (f /ₘ (X - C a))` are those of the two factors.
+  have hq0 : aeval (algebraMap F E a) (f /ₘ (X - C a)) ≠ 0 := by
+    rwa [aeval_algebraMap_apply_eq_algebraMap_eval, hq]
+  -- In `E`, `f = (X - C a) * (f /ₘ (X - C a))`, since the remainder `f a` vanishes there.
+  have hmap : ((X - C a) * (f /ₘ (X - C a))).map (algebraMap F E) = f.map (algebraMap F E) := by
+    rw [X_sub_C_mul_divByMonic_eq_sub_modByMonic, modByMonic_X_sub_C_eq_C_eval,
+      Polynomial.map_sub, map_C, ha, C_0, sub_zero]
+  -- So the roots of `f` are those of the two factors.
   have hsplit : f.rootSet E = (X - C a).rootSet E ∪ (f /ₘ (X - C a)).rootSet E := by
-    rw [← rootSet_mul ((monic_X_sub_C a).map _).ne_zero ((Polynomial.map_ne_zero_iff hinj).mpr
-      fun h ↦ hq0 (by rw [h, eval_zero])), mul_divByMonic_eq_iff_isRoot.mpr (IsRoot.def.mpr ha)]
+    rw [← rootSet_map E E f, ← hmap, rootSet_map, rootSet_mul ((monic_X_sub_C a).map _).ne_zero
+      fun h ↦ hq0 (by rw [← eval_map_algebraMap, h, eval_zero])]
   -- The linear factor contributes only `a`, which is not a root of the quotient.
   ext x
   rw [hsplit]
   simp only [Set.mem_sdiff, Set.mem_union, Set.mem_singleton_iff, (monic_X_sub_C a).mem_rootSet,
     map_sub, aeval_X, aeval_C, sub_eq_zero]
   constructor
-  · exact fun hx ↦ ⟨Or.inr hx, fun hxa ↦ hnotMem (hxa ▸ hx)⟩
+  · exact fun hx ↦ ⟨Or.inr hx, fun hxa ↦ hq0 (hxa ▸ aeval_eq_zero_of_mem_rootSet hx)⟩
   · rintro ⟨hxa | hx, hxa'⟩
     · exact absurd hxa hxa'
     · exact hx
