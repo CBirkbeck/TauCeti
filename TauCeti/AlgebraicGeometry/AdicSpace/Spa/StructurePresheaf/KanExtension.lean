@@ -5,10 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.SheafCriterion
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic
-public import Mathlib.CategoryTheory.Sites.DenseSubsite.InducedTopology
-public import Mathlib.Topology.Sheaves.SheafCondition.Sites
 
 /-!
 # The structure presheaf is the limit of its values on rational opens
@@ -16,23 +14,19 @@ public import Mathlib.Topology.Sheaves.SheafCondition.Sites
 Wedhorn §8.1 defines `𝒪_X(V)`, for an open `V ⊆ Spa(A, A⁺)`, as the limit of `𝒪_X(W)` over the
 rational opens `W ⊆ V`. This file proves that `presentationLimitPresheaf`, whose value at `V` is a
 limit over presentations, has this property naturally in `V`: it is the pointwise right Kan
-extension of its restriction to the rational opens. Since the rational opens form a basis, a right
-Kan extension along their inclusion of a sheaf for the restricted topology is a sheaf, so the sheaf
-condition on `Spa(A, A⁺)` reduces to the rational opens, as in the proof of Wedhorn's
-Proposition A.4.
+extension of its restriction to the rational opens (`rationalOpensFunctor`). Since the rational
+opens form a basis, a right Kan extension along their inclusion of a sheaf for the restricted
+topology is a sheaf, so the sheaf condition on `Spa(A, A⁺)` reduces to the rational opens, as in
+the proof of Wedhorn's Proposition A.4.
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.rationalOpensFunctor` : the inclusion of the rational opens of
-  `Spa(A, A⁺)` into all of its opens.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheafIsPointwiseRightKanExtension` :
   `presentationLimitPresheaf` is the pointwise right Kan extension of its restriction to the
   rational opens.
 
 ## Main results
 
-* `(TauCeti.ValuationSpectrum.rationalOpensFunctor Aplus).IsCoverDense` : the rational opens are
-  cover-dense, for a Huber ring `A`.
 * `TauCeti.ValuationSpectrum.isSheaf_presentationLimitPresheaf_of_isSheaf_rational` :
   `presentationLimitPresheaf` is a sheaf once its restriction to the rational opens is a sheaf for
   the restricted topology.
@@ -40,9 +34,13 @@ Proposition A.4.
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), §8.1 and Proposition A.4.
+* M. Artin, A. Grothendieck, J.-L. Verdier, *Théorie des topos et cohomologie étale des schémas*
+  (SGA 4), Tome 1, Exposé III, 2.2: a right Kan extension of a sheaf along a cocontinuous functor
+  is a sheaf. This is Mathlib's `CategoryTheory.ran_isSheaf_of_isCocontinuous`; see also
+  The Stacks Project, [Tag 00XK](https://stacks.math.columbia.edu/tag/00XK).
 -/
 
-@[expose] public section
+public section
 
 open CategoryTheory CategoryTheory.Limits Opposite TopologicalSpace TauCeti.Huber
 
@@ -52,14 +50,6 @@ namespace TauCeti.ValuationSpectrum
 
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {P : PairOfDefinition A} {Aplus : Subring A}
-
-variable (Aplus) in
-/-- The inclusion of the rational opens of `Spa(A, A⁺)` into all of its opens, as a functor out of
-the full subcategory they span. As an abbreviation for `inducedFunctor`, it is full and faithful
-(`InducedCategory.full`, `InducedCategory.faithful`; bundled as `fullyFaithfulInducedFunctor _`). -/
-abbrev rationalOpensFunctor : InducedCategory (Opens ↥(spa Aplus))
-    (Subtype.val : spaRationalOpens Aplus → _) ⥤ Opens ↥(spa Aplus) :=
-  inducedFunctor _
 
 /-! ### Indices as rational opens -/
 
@@ -71,8 +61,9 @@ variable {V : Opens ↥(spa Aplus)}
 rational open `R(i) = spaBasicOpen Aplus i.pres.num i.pres.den` together with its inclusion into
 `V`. For `h : R(j) ≤ R(i)`, `StructuredArrow.homMk (InducedCategory.homMk h.hom).op` is a morphism
 `i.toStructuredArrow ⟶ j.toStructuredArrow`. -/
--- `implicit_reducible`: unifying implicit arguments must see `i.toStructuredArrow.right` as `R(i)`
-@[implicit_reducible]
+-- `expose, implicit_reducible`: statements below, and unification of implicit arguments, must
+-- see `i.toStructuredArrow.right` as `R(i)`
+@[expose, implicit_reducible]
 def PresentationIndex.toStructuredArrow (i : PresentationIndex (P := P) Aplus V) :
     StructuredArrow (op V) (rationalOpensFunctor Aplus).op :=
   -- `StructuredArrow.mk` elaborates `Y` before `T`, so `C` is given for the anonymous constructor
@@ -97,6 +88,27 @@ theorem presentationLimitMap_le_open_comp_πToPresentation (i : PresentationInde
 variable (s : Cone (StructuredArrow.proj (op V) (rationalOpensFunctor Aplus).op ⋙
   (rationalOpensFunctor Aplus).op ⋙ presentationLimitPresheaf P Aplus))
 
+/-- The legs of `s` at the rational opens `R(i)`, read at the presentations of the indices `i`,
+are compatible with the restriction maps between presentations. -/
+-- A named lemma rather than a proof inside `presentationLimitRationalLift`, so that
+-- `presentationLimitRationalLift_comp_πToPresentation` can pass it to
+-- `presentationIndexCone_lift_comp_πToPresentation`.
+private theorem presentationLimitRationalLift_naturality {i j : PresentationIndex (P := P) Aplus V}
+    (f : i ⟶ j) :
+    (s.π.app i.toStructuredArrow ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) ≫
+        presentationLimitπToPresentation Aplus _ ⟨i.pres, i.isOpen_span, le_rfl⟩) ≫
+          PairOfDefinition.Presentation.restrictionHom f.le =
+      s.π.app j.toStructuredArrow ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) ≫
+        presentationLimitπToPresentation Aplus _ ⟨j.pres, j.isOpen_span, le_rfl⟩ := by
+  -- inside `presentationLimit R(i)`, the projection at `j` is the projection at `i` followed by
+  -- restriction, and restricting `s` from `R(i)` to `R(j)` is naturality of `s`
+  have h := spaBasicOpen_le_spaBasicOpen_iff.mpr <|
+    rationalSubset_subset_rationalSubset_of_le Aplus f.le
+  simp [presentationLimitπ_comp_restriction (j := ⟨j.pres, j.isOpen_span, h⟩),
+    presentationLimitMap_le_open_comp_πToPresentation ⟨j.pres, j.isOpen_span, h⟩,
+    ← s.w (StructuredArrow.homMk (InducedCategory.homMk h.hom).op :
+      i.toStructuredArrow ⟶ j.toStructuredArrow)]
+
 /-- **The morphism induced by a cone over the rational opens in `V`**: its projection at an index
 `i` is the leg of `s` at the rational open `R(i) = spaBasicOpen Aplus i.pres.num i.pres.den`
 followed by the projection at the presentation of `i`
@@ -107,15 +119,7 @@ noncomputable def presentationLimitRationalLift : s.pt ⟶ presentationLimit (P 
     presentationLimitLift Aplus V (presentationIndexCone Aplus V s.pt
       (fun i ↦ s.π.app i.toStructuredArrow ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) ≫
         presentationLimitπToPresentation Aplus _ ⟨i.pres, i.isOpen_span, le_rfl⟩)
-      fun {i j} f ↦ by
-        -- inside `presentationLimit R(i)`, the projection at `j` is the projection at `i`
-        -- followed by restriction, and restricting `s` from `R(i)` to `R(j)` is naturality of `s`
-        have h := spaBasicOpen_le_spaBasicOpen_iff.mpr <|
-          rationalSubset_subset_rationalSubset_of_le Aplus f.le
-        simp [presentationLimitπ_comp_restriction (j := ⟨j.pres, j.isOpen_span, h⟩),
-          presentationLimitMap_le_open_comp_πToPresentation ⟨j.pres, j.isOpen_span, h⟩,
-          ← s.w (StructuredArrow.homMk (InducedCategory.homMk h.hom).op :
-            i.toStructuredArrow ⟶ j.toStructuredArrow)])
+      (presentationLimitRationalLift_naturality s))
 
 /-- The projection of `presentationLimitRationalLift s` at an index `i` is the leg of `s` at the
 rational open `R(i) = spaBasicOpen Aplus i.pres.num i.pres.den`, followed by the projection at the
@@ -127,7 +131,9 @@ theorem presentationLimitRationalLift_comp_πToPresentation (i : PresentationInd
     presentationLimitRationalLift s ≫ presentationLimitπToPresentation Aplus V i =
       s.π.app i.toStructuredArrow ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) ≫
         presentationLimitπToPresentation Aplus _ ⟨i.pres, i.isOpen_span, le_rfl⟩ := by
-  simp [presentationLimitRationalLift]
+  rw [presentationLimitRationalLift, Category.assoc]
+  exact presentationIndexCone_lift_comp_πToPresentation Aplus V s.pt _
+    (presentationLimitRationalLift_naturality s) i
 
 /-- **The induced morphism restricts to the legs of the cone**: for a rational open `W ⊆ V`, given
 by `g` with `W = g.right.unop`, the lift `presentationLimitRationalLift s` followed by the
@@ -171,28 +177,23 @@ noncomputable def presentationLimitPresheafIsPointwiseRightKanExtension : (Funct
       presentationLimit_hom_ext_toPresentation fun i ↦ by
         simp [← hm, presentationLimitMap_le_open_comp_πToPresentation])
 
-/-- The rational opens are cover-dense in `Spa(A, A⁺)`: every open is covered by the rational opens
-it contains. Mathlib's instances then make `rationalOpensFunctor Aplus` cocontinuous
-(`Functor.IsCocontinuous`) and a dense subsite (`Functor.IsDenseSubsite`) for the restricted
-topology `Functor.restrictedTopology` on the rational opens. -/
-instance [IsHuberRing A] : (rationalOpensFunctor Aplus).IsCoverDense
-    (Opens.grothendieckTopology ↥(spa Aplus)) :=
-  -- the rational opens form a basis of the topology of `Spa(A, A⁺)`
-  TopCat.Opens.coverDense_inducedFunctor (X := TopCat.of ↥(spa Aplus))
-    (Subtype.range_coe ▸ isBasis_spaRationalOpens Aplus)
-
 /-- **The sheaf condition on the rational opens suffices**: if the restriction of
 `presentationLimitPresheaf` to the rational opens is a sheaf for the restricted topology, then
 `presentationLimitPresheaf` is a sheaf on `Spa(A, A⁺)`. With the rational opens as the basis, this
 is the step in the proof of Wedhorn's Proposition A.4 from a sheaf on the basis to a sheaf on the
-whole space. A sieve on a rational open covers for the restricted topology exactly when its image
-covers in `Spa(A, A⁺)` (`Functor.mem_restrictedTopology_iff`), so the hypothesis only involves
-covers of rational opens by rational opens. -/
-theorem isSheaf_presentationLimitPresheaf_of_isSheaf_rational [IsHuberRing A] (h : Presheaf.IsSheaf
+whole space. It is SGA 4 III 2.2 (a right Kan extension of a sheaf along a cocontinuous functor is
+a sheaf; Mathlib's `RanIsSheafOfIsCocontinuous.isLimitMultifork`) for the cocontinuous functor
+`rationalOpensFunctor Aplus`, applied to `presentationLimitPresheafIsPointwiseRightKanExtension`.
+A sieve on a rational open covers for the restricted topology exactly when its image covers in
+`Spa(A, A⁺)` (`Functor.mem_restrictedTopology_iff`), so the hypothesis only involves covers of
+rational opens by rational opens. -/
+theorem isSheaf_presentationLimitPresheaf_of_isSheaf_rational (h : Presheaf.IsSheaf
       ((rationalOpensFunctor Aplus).restrictedTopology (Opens.grothendieckTopology ↥(spa Aplus)))
       ((rationalOpensFunctor Aplus).op ⋙ presentationLimitPresheaf P Aplus)) :
     Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
       (presentationLimitPresheaf P Aplus) :=
+  -- `P` makes `A` a Huber ring, so the rational opens are cover-dense
+  have : IsHuberRing A := ⟨⟨P⟩⟩
   -- a pointwise right Kan extension of a sheaf along a cocontinuous functor is a sheaf; the
   -- rational opens are cover-dense, so `rationalOpensFunctor Aplus` is cocontinuous
   (Presheaf.isSheaf_iff_multifork _ _).mpr fun _ S ↦ ⟨RanIsSheafOfIsCocontinuous.isLimitMultifork h
