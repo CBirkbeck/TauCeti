@@ -61,10 +61,10 @@ variable {V : Opens ↥(spa Aplus)}
 rational open `R(i) = spaBasicOpen Aplus i.pres.num i.pres.den` together with its inclusion into
 `V`. For `h : R(j) ≤ R(i)`, `StructuredArrow.homMk (InducedCategory.homMk h.hom).op` is a morphism
 `i.toStructuredArrow ⟶ j.toStructuredArrow`. -/
--- `expose, implicit_reducible`: statements below, and unification of implicit arguments, must
--- see `i.toStructuredArrow.right` as `R(i)`
-@[expose, implicit_reducible]
-def PresentationIndex.toStructuredArrow (i : PresentationIndex (P := P) Aplus V) :
+-- `implicit_reducible`: statements below, and unification of implicit arguments, must see
+-- `i.toStructuredArrow.right` as `R(i)`
+@[implicit_reducible]
+private def PresentationIndex.toStructuredArrow (i : PresentationIndex (P := P) Aplus V) :
     StructuredArrow (op V) (rationalOpensFunctor Aplus).op :=
   -- `StructuredArrow.mk` elaborates `Y` before `T`, so `C` is given for the anonymous constructor
   StructuredArrow.mk (C := (InducedCategory _ (Subtype.val : spaRationalOpens Aplus → _))ᵒᵖ)
@@ -76,7 +76,8 @@ at an index `i` is the restriction to the rational open
 of `i`, read as an index of `R(i)`. -/
 -- Not `@[simp]`: `presentationLimitMap_comp_πToPresentation` rewrites the left-hand side, so the
 -- left-hand side is not in simp-normal form.
-theorem presentationLimitMap_le_open_comp_πToPresentation (i : PresentationIndex (P := P) Aplus V) :
+private theorem presentationLimitMap_le_open_comp_πToPresentation
+    (i : PresentationIndex (P := P) Aplus V) :
     presentationLimitMap i.le_open ≫
         presentationLimitπToPresentation Aplus _ ⟨i.pres, i.isOpen_span, le_rfl⟩ =
       presentationLimitπToPresentation Aplus V i := by
@@ -114,7 +115,8 @@ private theorem presentationLimitRationalLift_naturality {i j : PresentationInde
 followed by the projection at the presentation of `i`
 (`presentationLimitRationalLift_comp_πToPresentation`), and its restriction to a rational open
 `W ⊆ V` is the leg of `s` at `W` (`presentationLimitRationalLift_comp_presentationLimitMap`). -/
-noncomputable def presentationLimitRationalLift : s.pt ⟶ presentationLimit (P := P) Aplus V :=
+private noncomputable def presentationLimitRationalLift :
+    s.pt ⟶ presentationLimit (P := P) Aplus V :=
   eqToHom (presentationIndexCone_pt Aplus V s.pt _ _).symm ≫
     presentationLimitLift Aplus V (presentationIndexCone Aplus V s.pt
       (fun i ↦ s.π.app i.toStructuredArrow ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) ≫
@@ -127,7 +129,7 @@ presentation of `i`, read as an index of `R(i)`. Together with
 `presentationLimit_hom_ext_toPresentation`, this identifies `presentationLimitRationalLift s` as
 the only morphism into `presentationLimit V` with these projections. -/
 @[simp]
-theorem presentationLimitRationalLift_comp_πToPresentation (i : PresentationIndex Aplus V) :
+private theorem presentationLimitRationalLift_comp_πToPresentation (i : PresentationIndex Aplus V) :
     presentationLimitRationalLift s ≫ presentationLimitπToPresentation Aplus V i =
       s.π.app i.toStructuredArrow ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) ≫
         presentationLimitπToPresentation Aplus _ ⟨i.pres, i.isOpen_span, le_rfl⟩ := by
@@ -140,7 +142,7 @@ by `g` with `W = g.right.unop`, the lift `presentationLimitRationalLift s` follo
 restriction map `presentationLimitMap` from `V` to `W` is the leg `s.π.app g`, read in
 `presentationLimit W` along `presentationLimitPresheaf_obj`. -/
 @[reassoc (attr := simp)]
-theorem presentationLimitRationalLift_comp_presentationLimitMap
+private theorem presentationLimitRationalLift_comp_presentationLimitMap
     (g : StructuredArrow (op V) (rationalOpensFunctor Aplus).op) :
     presentationLimitRationalLift s ≫ presentationLimitMap (leOfHom g.hom.unop) =
       s.π.app g ≫ eqToHom (presentationLimitPresheaf_obj P Aplus _) := by
