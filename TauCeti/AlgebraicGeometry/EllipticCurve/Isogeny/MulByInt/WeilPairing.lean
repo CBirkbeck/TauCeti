@@ -48,6 +48,8 @@ requires.
 
 * `TauCeti.Isogeny.algebraMap_weilPairing`: `e_N(S, T) = τ_S g / g` for every `g` with divisor
   `[N]^* (T) - [N]^* (O)`.
+* `TauCeti.Isogeny.weilPairing_eq_zero_iff`: `e_N(S, T) = 1` exactly when translation by `S` fixes
+  a function with divisor `[N]^* (T) - [N]^* (O)`.
 * `TauCeti.Isogeny.eq_zero_of_forall_weilPairing_eq_zero`: the pairing is nondegenerate in its
   second variable.
 
@@ -217,21 +219,16 @@ theorem algebraMap_weilPairing {S T : Submodule.torsionBy ℤ W.toAffine.Point (
   exact algebraMap_kummerCharacter (pow_mem_fieldRange_of_principal_eq W N hN hg)
     (Multiplicative.ofAdd (torsionToKer W N hN S))
 
--- If `e_N(·, T)` is trivial, every `N`-torsion translation fixes each choice of `g_T`.
-private theorem translation_eq_of_forall_weilPairing_eq_zero
-    {T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)} (hT : ∀ S, weilPairing W N hN S T = 0)
-    {g : W.toAffine.FunctionFieldˣ}
-    (hg : Divisor.principal W.toAffine.isFunctionField g =
-      weilPairingDivisor W (psiFunctionField_natCast_ne_zero W N hN) T)
-    {P : (W.toAffine⁄F).toAffine.Point} (hP : (N : ℤ) • P = 0) :
-    translation W.toAffine P g = g := by
-  let S : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ) :=
-    ⟨(Point.equivBaseChangeSelf W.toAffine).symm P, (Submodule.mem_torsionBy_iff _ _).mpr
-      (by rw [← map_zsmul, hP, map_zero])⟩
-  have h1 := algebraMap_weilPairing W N hN (S := S) hg
-  rw [hT S, AddEquiv.apply_symm_apply] at h1
-  simp only [toMul_zero, OneMemClass.coe_one, Units.val_one, map_one] at h1
-  exact (div_eq_one_iff_eq g.ne_zero).mp h1.symm
+/-- **The vanishing criterion for the Weil pairing**: `e_N(S, T) = 1` exactly when translation by
+`S` fixes a function `g` with divisor `[N]^* (T) - [N]^* (O)`. -/
+theorem weilPairing_eq_zero_iff {S T : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ)}
+    {g : W.toAffine.FunctionFieldˣ} {hψ : psiFunctionField W N ≠ 0}
+    (hg : Divisor.principal W.toAffine.isFunctionField g = weilPairingDivisor W hψ T) :
+    weilPairing W N hN S T = 0 ↔
+      translation W.toAffine (Point.equivBaseChangeSelf W.toAffine S) g = g := by
+  rw [← div_eq_one_iff_eq g.ne_zero, ← algebraMap_weilPairing W N hN hg,
+    (algebraMap F W.toAffine.FunctionField).injective.eq_iff' (map_one _), Units.val_eq_one,
+    OneMemClass.coe_eq_one, toMul_eq_one]
 
 /-- **The Weil pairing is nondegenerate in its second variable**: if `e_N(S, T) = 1` for every
 `S`, then `T = O`. -/
@@ -243,7 +240,12 @@ theorem eq_zero_of_forall_weilPairing_eq_zero
   -- `g` is fixed by the `N`-torsion translations, hence a pullback `[N]^* h`
   obtain ⟨h, hh⟩ := AlgHom.mem_fieldRange.mp
     ((mem_fieldRange_mulByIntIsogeny_iff W.toAffine (intCast_natCast_ne_zero N hN)).mpr
-      fun _ ↦ translation_eq_of_forall_weilPairing_eq_zero W N hN hT hg)
+      fun P hP ↦ by
+        -- `P` is the image of an `N`-torsion point `S` of `W`
+        let S : Submodule.torsionBy ℤ W.toAffine.Point (N : ℤ) :=
+          ⟨(Point.equivBaseChangeSelf W.toAffine).symm P, (Submodule.mem_torsionBy_iff _ _).mpr
+            (by rw [← map_zsmul, hP, map_zero])⟩
+        simpa [S] using (weilPairing_eq_zero_iff W N hN (S := S) hg).mp (hT S))
   have h0 : h ≠ 0 := by
     rintro rfl
     exact g.ne_zero (by rw [← hh, map_zero])
