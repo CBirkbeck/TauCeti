@@ -36,7 +36,11 @@ theorem _root_.Commute.apply_mem_fixedSubmodule {R V : Type*} [Semiring R] [AddC
 to `p` is the part of the fixed submodule of `f` that lies in `p`. -/
 theorem _root_.LinearMap.fixedSubmodule_restrict {R V : Type*} [Semiring R] [AddCommMonoid V]
     [Module R V] {f : V →ₗ[R] V} {p : Submodule R V} (hf : ∀ x ∈ p, f x ∈ p) :
-    (f.restrict hf).fixedSubmodule = f.fixedSubmodule.comap p.subtype :=
-  Submodule.ext fun _ => Subtype.ext_iff
+    (f.restrict hf).fixedSubmodule = f.fixedSubmodule.comap p.subtype := by
+  ext x
+  -- `x` is fixed by the restriction iff its value in `V` is fixed by `f`, since the restriction
+  -- acts on `x` as `f` acts on `(x : V)`.
+  rw [LinearMap.mem_fixedSubmodule_iff, Submodule.mem_comap, Submodule.subtype_apply,
+    LinearMap.mem_fixedSubmodule_iff, Subtype.ext_iff, LinearMap.coe_restrict_apply]
 
 end TauCeti
