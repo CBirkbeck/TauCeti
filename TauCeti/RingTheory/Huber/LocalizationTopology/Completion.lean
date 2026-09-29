@@ -34,11 +34,12 @@ complete Hausdorff targets.
   uniformity on the localization.
 * `locUniformSpace_congr`: presentations sharing a ring of definition share the uniformity, so
   the two completions `A⟨T/s⟩` are the same object.
-* `locUniformSpace_congr_pairOfDefinition`: two pairs of definition give the same uniformity.
 * `toCompletionLoc_heq`: the two structure maps `A → A⟨T/s⟩` into them agree. This is what
   `locUniformSpace_congr` alone does not give — it identifies only the codomains — and it is what
   a statement about the maps *out of* `A⟨T/s⟩` needs before it can be carried between
   presentations. The maps out of it remain a further question.
+* `locUniformSpace_congr_pairOfDefinition` and `toCompletionLoc_heq_pairOfDefinition`: the same
+  two statements for two pairs of definition of `A` and one presentation `(T, s)`.
 * `isUniformAddGroup_locUniformSpace` and `isTopologicalRing_locUniformSpace`: the two companions
   of `locUniformSpace`. Since `locTopology` is not an instance, a statement about `A⟨T/s⟩` has to
   name its structures; these three declarations are what it names.
@@ -269,6 +270,20 @@ theorem toCompletionLoc_heq [IsTopologicalRing A] (P : PairOfDefinition A) (T T'
     HEq (toCompletionLoc P T' s' S hden') (toCompletionLoc P T s S hden) :=
   (algebraMap A S).completionCoe_comp_heq
     (locUniformSpace_congr P T T' s s' S hden hden' h) _ _ _ _
+
+/-- **A change of pair of definition leaves the structure map alone.**
+`locUniformSpace_congr_pairOfDefinition` identifies the two completions; this identifies the two
+structure maps `A → A⟨T/s⟩` into them, which is what a statement about `A⟨T/s⟩` as an object
+under `A` needs before it can be carried between pairs of definition.
+
+As for `toCompletionLoc_heq`, the conclusion is `HEq` rather than `=` because the type
+`UniformSpace.Completion S` mentions the uniformity on `S`. -/
+theorem toCompletionLoc_heq_pairOfDefinition [IsTopologicalRing A] (P P' : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) (hden' : HasDenominatorPower P' T s S) :
+    HEq (toCompletionLoc P T s S hden) (toCompletionLoc P' T s S hden') :=
+  (algebraMap A S).completionCoe_comp_heq
+    (locUniformSpace_congr_pairOfDefinition P P' T s S hden hden') _ _ _ _
 
 
 /-- The localisation pair `localization`, transported along `locUniformSpace_toTopologicalSpace`
