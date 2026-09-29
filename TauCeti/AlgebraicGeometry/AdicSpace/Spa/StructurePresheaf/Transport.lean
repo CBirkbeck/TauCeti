@@ -17,15 +17,17 @@ import TauCeti.RingTheory.Huber.OpenIdeal
 /-!
 # Transporting the sheaf property along isomorphisms and completion
 
-This file compares the presentation-limit presheaves `presentationLimitPresheaf` of two Huber
-pairs that should have the same adic spectrum, and shows that one is a sheaf exactly when the other
-is:
+This file compares the presentation-limit presheaves `presentationLimitPresheaf` of two
+topological rings, each with a pair of definition and a subring (the plus subring `A⁺`, `B⁺`),
+whose adic spectra correspond, and shows that one is a sheaf exactly when the other is. The plus
+subrings need not be rings of integral elements:
 
-* along an isomorphism of topological rings `e : A ≃+* B` carrying `A⁺` onto `B⁺`, for arbitrary
-  pairs of definition of `A` and of `B`. At the identity of `A` this compares two pairs of
-  definition of one ring.
-* along the completion `A → Â`, with `Â⁺` the closure of the image of `A⁺`, when `A⁺` consists of
-  power-bounded elements. The adic spectra are then identified by Wedhorn's Proposition 7.48
+* along an isomorphism of topological rings `e : A ≃+* B`, continuous in both directions, carrying
+  `A⁺` onto `B⁺`. The pairs of definition of `A` and of `B` are arbitrary, and no condition is put
+  on `A⁺`. At the identity of `A` this compares two pairs of definition of one ring.
+* along the completion `A → Â` of a Huber ring `A` with a uniform structure, with `Â⁺` the closure
+  of the image of `A⁺`, when every element of `A⁺` is power-bounded. The pairs of definition of `A`
+  and of `Â` are arbitrary. The adic spectra are then identified by Wedhorn's Proposition 7.48
   (`spaCompletionHomeomorph`), and `Â⟨T/s⟩` with `A⟨T/s⟩`.
 
 In both cases the presentation-limit presheaf of `(A, A⁺)` is isomorphic to the pushforward of the
