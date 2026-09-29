@@ -7,9 +7,7 @@ module
 
 public import TauCeti.LinearAlgebra.FiniteBilinearModule.Orthogonal.Quotient
 public import Mathlib.Algebra.Group.Subgroup.Map
-public import Mathlib.LinearAlgebra.Isomorphisms
-public import Mathlib.LinearAlgebra.QuadraticForm.Radical
-public import Mathlib.LinearAlgebra.QuadraticForm.Prod
+public import TauCeti.LinearAlgebra.QuadraticForm.Radical
 
 /-!
 # Finite quadratic modules
@@ -26,8 +24,6 @@ the polar pairing is therefore `B(x, y)` modulo `ℤ`.
 
 ## Main definitions
 
-* `QuadraticMap.liftOfSurjective`: descent of a quadratic map along a surjection whose
-  kernel lies in the radical.
 * `TauCeti.FiniteQuadraticModule`: a finite abelian group with an `AddCircle (1 : ℚ)`-valued
   quadratic map.
 * `TauCeti.FiniteQuadraticModule.ofQuadraticMap`: the finite quadratic module presented by a
@@ -53,40 +49,11 @@ the polar pairing is therefore `B(x, y)` modulo `ℤ`.
 
 * V. V. Nikulin, *Integral symmetric bilinear forms and some of their applications*, §1.1.
 * W. Ebeling, *Lattices and Codes*, Chapter 1.
-
-This is the finite-quadratic-module part of Layer 3 of
-`TauCetiRoadmap/IntegralLattices/README.md`.
 -/
 
 public section
 
 universe u v
-
-/-! ## Descent of a quadratic map along a surjection -/
-
-namespace QuadraticMap
-
-variable {R M N P : Type*} [CommRing R] [AddCommGroup M] [AddCommGroup N] [AddCommGroup P]
-  [Module R M] [Module R N] [Module R P]
-
-/-- Descend a quadratic map along a surjective linear map whose kernel lies in its radical.
-
-Mathlib's `QuadraticMap.lift` descends along the quotient by a submodule of the radical.  A
-quotient is usually presented instead by a surjection onto a concrete group — reduction modulo `m`
-onto `ZMod m`, say — and this is that formulation. -/
-noncomputable def liftOfSurjective (Q : QuadraticMap R M P) (f : M →ₗ[R] N)
-    (hf : Function.Surjective f) (h : LinearMap.ker f ≤ Q.radical) : QuadraticMap R N P :=
-  (Q.lift (LinearMap.ker f) h).comp (f.quotKerEquivOfSurjective hf).symm.toLinearMap
-
-/-- The descended quadratic map takes the original value on every representative. -/
-@[simp]
-theorem liftOfSurjective_apply (Q : QuadraticMap R M P) (f : M →ₗ[R] N)
-    (hf : Function.Surjective f) (h : LinearMap.ker f ≤ Q.radical) (x : M) :
-    liftOfSurjective Q f hf h (f x) = Q x := by
-  rw [liftOfSurjective, QuadraticMap.comp_apply, LinearEquiv.coe_coe,
-    LinearMap.quotKerEquivOfSurjective_symm_apply, QuadraticMap.lift_mk]
-
-end QuadraticMap
 
 namespace TauCeti
 
