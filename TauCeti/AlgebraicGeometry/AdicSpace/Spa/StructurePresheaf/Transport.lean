@@ -200,11 +200,11 @@ private noncomputable def PresentationIndex.map (hplus : ∀ a ∈ Aplus, φ a �
     (hUV : ∀ w, spaComap φ hφ Aplus Bplus hplus w ∈ U → w ∈ V)
     (i : PresentationIndex (P := P) Aplus U) : PresentationIndex (P := P') Bplus V where
   pres := ⟨i.pres.num.image φ, φ i.pres.den, hasDenominatorPower_of_isOpen_span P' _ _ _ (by
-    rw [Finset.coe_image]
-    exact isOpen_span_image hopen i.isOpen_span)⟩
+    rw [Finset.coe_image, ← Ideal.map_span]
+    exact hopen i.isOpen_span)⟩
   isOpen_span := by
-    rw [Finset.coe_image]
-    exact isOpen_span_image hopen i.isOpen_span
+    rw [Finset.coe_image, ← Ideal.map_span]
+    exact hopen i.isOpen_span
   le_open w hw := hUV w <| i.le_open <| mem_spaBasicOpen.mpr <|
     (Set.ext_iff.mp (spaComap_preimage_rationalSubset φ hφ Aplus Bplus hplus
       i.pres.num i.pres.den) w).mpr (mem_spaBasicOpen.mp hw)
