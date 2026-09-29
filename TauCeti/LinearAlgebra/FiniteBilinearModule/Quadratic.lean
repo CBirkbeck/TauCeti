@@ -128,6 +128,17 @@ theorem adjointEquiv_apply (hA : A.IsNondegenerate) (x : A) :
     A.adjointEquiv hA x = A.toFiniteBilinearModule.pairing x :=
   A.toFiniteBilinearModule.adjointEquiv_apply hA x
 
+variable {A} in
+/-- The quadratic radical of a nondegenerate finite quadratic module is trivial: an element of the
+radical pairs to zero with everything under the polar pairing. -/
+theorem IsNondegenerate.quadratic_radical_eq_bot (hA : A.IsNondegenerate) :
+    A.quadratic.radical = ⊥ := by
+  refine eq_bot_iff.2 fun x hx => (Submodule.mem_bot _).2 ?_
+  refine FiniteBilinearModule.IsNondegenerate.eq_zero_of_forall_pairing_eq_zero
+    (A := A.toFiniteBilinearModule) hA fun y => ?_
+  rw [← A.polar_eq_pairing, ← QuadraticMap.polarBilin_apply_apply,
+    LinearMap.mem_ker.1 (QuadraticMap.radical_le_ker_polarBilin hx), LinearMap.zero_apply]
+
 /-! ## Morphisms and isometries -/
 
 /-- A morphism of finite quadratic modules is an additive homomorphism preserving the quadratic
@@ -210,10 +221,6 @@ theorem toFiniteBilinearModule_comp (g : Hom B C) (f : Hom A B) :
   ext x
   rw [toFiniteBilinearModule_apply, comp_apply, FiniteBilinearModule.Hom.comp_apply,
     toFiniteBilinearModule_apply, toFiniteBilinearModule_apply]
-
-/-- A morphism out of a nondegenerate finite quadratic module is injective. -/
-theorem injective (f : Hom A B) (hA : A.IsNondegenerate) : Function.Injective f :=
-  fun _ _ hxy ↦ f.toFiniteBilinearModule.injective hA hxy
 
 end Hom
 
