@@ -32,7 +32,7 @@ a nonzero nilpotent element is not uniform.
 * `TauCeti.Huber.isUniform_iff_exists_pairOfDefinition_ringOfDefinition_eq`: a Huber ring is
   uniform exactly when `A°` is a ring of definition.
 * `TauCeti.Huber.isUniform_iff_of_ringEquiv`: uniformity transports along topological ring
-  isomorphisms; `TauCeti.Huber.isUniform_iff_of_iso` is the same statement for isomorphisms in
+  isomorphisms; `CategoryTheory.Iso.isUniform_iff` is the same statement for isomorphisms in
   `TopCommRingCat`.
 * `TauCeti.Huber.IsUniform.nilradical_le_closure_bot`: in a uniform Tate ring every nilpotent
   element lies in the closure of zero.
@@ -92,16 +92,6 @@ theorem isUniform_iff_of_ringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Co
 theorem IsUniform.of_ringEquiv [IsUniform A] (e : A ≃+* B) (he : Continuous e)
     (he' : Continuous e.symm) : IsUniform B :=
   (isUniform_iff_of_ringEquiv e he he').mp ‹_›
-
-/-- **Uniformity is invariant under isomorphism in `TopCommRingCat`.** For an isomorphism `e` in the
-full subcategory of an object property `P`, apply this to `P.ι.mapIso e`, its image under the
-inclusion. The unbundled form, for a ring isomorphism continuous in both directions, is
-`isUniform_iff_of_ringEquiv`. -/
-theorem isUniform_iff_of_iso {R S : TopCommRingCat} (e : R ≅ S) : IsUniform R ↔ IsUniform S :=
-  -- a morphism `⟨f, hf⟩` of `TopCommRingCat` is a ring homomorphism `f` with `hf : Continuous f`,
-  -- and applying it applies `f`, so `Iso.inv_hom_id_apply` is the inverse law for `e.hom.1`
-  isUniform_iff_of_ringEquiv (RingEquiv.ofRingHom e.hom.1 e.inv.1 (RingHom.ext e.inv_hom_id_apply)
-    (RingHom.ext e.hom_inv_id_apply)) e.hom.2 e.inv.2
 
 end Transport
 
@@ -176,3 +166,19 @@ theorem IsUniform.isReduced [IsTateRing A] [IsUniform A] [T0Space A] : IsReduced
 end Huber
 
 end TauCeti.Huber
+
+namespace CategoryTheory.Iso
+
+open TauCeti.Huber
+
+/-- **Uniformity is invariant under isomorphism in `TopCommRingCat`.** For an isomorphism `e` in the
+full subcategory of an object property `P`, apply this to `P.ι.mapIso e`, its image under the
+inclusion. The unbundled form, for a ring isomorphism continuous in both directions, is
+`TauCeti.Huber.isUniform_iff_of_ringEquiv`. -/
+theorem isUniform_iff {R S : TopCommRingCat} (e : R ≅ S) : IsUniform R ↔ IsUniform S :=
+  -- a morphism `⟨f, hf⟩` of `TopCommRingCat` is a ring homomorphism `f` with `hf : Continuous f`,
+  -- and applying it applies `f`, so `Iso.inv_hom_id_apply` is the inverse law for `e.hom.1`
+  isUniform_iff_of_ringEquiv (RingEquiv.ofRingHom e.hom.1 e.inv.1 (RingHom.ext e.inv_hom_id_apply)
+    (RingHom.ext e.hom_inv_id_apply)) e.hom.2 e.inv.2
+
+end CategoryTheory.Iso

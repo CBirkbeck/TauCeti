@@ -95,7 +95,7 @@ stably uniform exactly when its admissible completed rational localizations `A�
 are uniform. Unlike `isStablyUniform_iff`, which ranges over all pairs of definition, the
 localizations here are the bundled objects `P.completionLocObj` of
 `CompleteSeparatedTopCommRingCat`, so uniformity can be moved along isomorphisms of these objects
-with `isUniform_iff_of_iso`. -/
+with `CategoryTheory.Iso.isUniform_iff`. -/
 theorem isStablyUniform_iff_forall_isUniform_completionLocObj (P : PairOfDefinition A) :
     IsStablyUniform A ↔ ∀ (T : Finset A) (s : A) (hT : IsOpen (Ideal.span (T : Set A) : Set A)),
       IsUniform (P.completionLocObj T s (Localization.Away s)

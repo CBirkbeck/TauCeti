@@ -56,7 +56,7 @@ theorem isStablyUniform_iff_forall_isUniform_presentationLimit (P : PairOfDefini
       ∀ V ∈ spaRationalOpens Aplus, IsUniform (presentationLimit (P := P) Aplus V) := by
   -- on a rational open `R(T/s)`, `presentationLimit` is `A⟨T/s⟩`, so uniformity transfers
   have hrat (T : Finset A) (s : A) (hT : IsOpen (Ideal.span (T : Set A) : Set A)) :=
-    isUniform_iff_of_iso <| TopCommRingCat.isCompleteSeparated.ι.mapIso <|
+    Iso.isUniform_iff <| TopCommRingCat.isCompleteSeparated.ι.mapIso <|
       presentationLimitRationalIso Aplus hAplus
         ⟨T, s, hasDenominatorPower_of_isOpen_span P T s _ hT⟩ hT
   rw [isStablyUniform_iff_forall_isUniform_completionLocObj P]
@@ -93,7 +93,7 @@ theorem PairOfDefinition.isStablyUniform_completion_locTopology [IsStablyUniform
   -- `W` is the pullback of a rational `V ⊆ R(T/s)` of `Spa(A, A°)` (Wedhorn, Proposition 8.2 (2))
   obtain ⟨V, hV, hVT, rfl⟩ := exists_mem_spaRationalOpens_locOpensComap_eq P _ T s S hden hT W hW
   -- by Wedhorn's Remark 8.4 the presheaf of `A⟨T/s⟩` on `W` is that of `A` on `V`, which is uniform
-  exact (isUniform_iff_of_iso <| TopCommRingCat.isCompleteSeparated.ι.mapIso <|
+  exact (Iso.isUniform_iff <| TopCommRingCat.isCompleteSeparated.ι.mapIso <|
     presentationLimitLocIso P _ T s S hden hAplus hT V hV hVT).mp <|
     (isStablyUniform_iff_forall_isUniform_presentationLimit P hAplus).mp ‹_› V hV
 
