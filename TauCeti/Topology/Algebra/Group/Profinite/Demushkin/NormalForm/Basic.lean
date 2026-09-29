@@ -41,7 +41,8 @@ the presented group has topological generator rank exactly `n`.
 * `TauCeti.demushkinWordNeTwo`, `TauCeti.demushkinWordTwoOdd`, `TauCeti.demushkinWordTwoEven`:
   the three normal-form relator words, on an arbitrary tuple; `TauCeti.demushkinWordTwoRankTwo`:
   the even word of rank two, `x₁^{2+α} (x₁, x₂)`, with no level; `TauCeti.demushkinWordTwoEven_two`
-  reads the even word at rank two as it.
+  reads the even word at rank two as it, and `TauCeti.demushkinWordTwoOdd_one` reads the odd word
+  at rank one as `x₁²`.
 
 ## Main results
 
@@ -182,6 +183,13 @@ theorem demushkinWordTwoOdd_def (f n : ℕ) (x : ℕ → H) :
       x 0 ^ 2 * x 1 ^ 2 ^ f *
         ((List.range (n / 2)).map fun i ↦ labuteComm (x (2 * i + 1)) (x (2 * i + 2))).prod :=
   (rfl)
+
+/-- At rank one the odd word is `x₁²`, whatever the level `f`: the factor `x₂^{2^f}` is `1` because
+the second generator is out of range, and the commutator product is empty. -/
+@[simp]
+theorem demushkinWordTwoOdd_one (f : ℕ) (x : ℕ → H) (hx : x 1 = 1) :
+    demushkinWordTwoOdd f 1 x = x 0 ^ 2 := by
+  simp [demushkinWordTwoOdd_def, hx]
 
 /-- The `q = 2`, `n` even normal-form word `x₁^{2+a} (x₁, x₂) x₃^{2^f} (x₃, x₄) ⋯ (x_{n-1}, x_n)`,
 on an arbitrary tuple `x : ℕ → H`, with `x 0` playing the role of `x₁`. The exponent `2 + a` is
