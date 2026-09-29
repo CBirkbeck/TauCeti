@@ -34,6 +34,7 @@ complete Hausdorff targets.
   uniformity on the localization.
 * `locUniformSpace_congr`: presentations sharing a ring of definition share the uniformity, so
   the two completions `A⟨T/s⟩` are the same object.
+* `locUniformSpace_congr_pairOfDefinition`: two pairs of definition give the same uniformity.
 * `toCompletionLoc_heq`: the two structure maps `A → A⟨T/s⟩` into them agree. This is what
   `locUniformSpace_congr` alone does not give — it identifies only the codomains — and it is what
   a statement about the maps *out of* `A⟨T/s⟩` needs before it can be carried between
@@ -176,6 +177,23 @@ theorem locUniformSpace_congr [IsTopologicalRing A] (P : PairOfDefinition A) (T 
       (isUniformAddGroup_locUniformSpace P T s S hden)]
   congr 1
   exact proof_irrel_heq _ _
+
+/-- **`locUniformSpace` does not depend on the pair of definition.** Two pairs of definition for
+which `(T, s)` satisfies the standing hypothesis `HasDenominatorPower` give `Aₛ` the same
+uniformity. When `T` spans an open ideal, `hasDenominatorPower_of_isOpen_span` supplies that
+hypothesis for both pairs. This is the uniform counterpart of `locTopology_congr_pairOfDefinition`.
+
+Compare `locUniformSpace_congr`, which instead fixes the pair of definition and changes the
+presentation `(T, s)` to one with the same ring of definition. -/
+theorem locUniformSpace_congr_pairOfDefinition [IsTopologicalRing A] (P P' : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) (hden' : HasDenominatorPower P' T s S) :
+    locUniformSpace P T s S hden = locUniformSpace P' T s S hden' :=
+  -- both are uniform additive group structures, so they agree once their topologies do; the
+  -- topologies sit in the instance argument of `𝓝 0`, hence `+instances`
+  (isUniformAddGroup_locUniformSpace P T s S hden).ext
+    (isUniformAddGroup_locUniformSpace P' T s S hden') <| by
+      simp +instances [locTopology_congr_pairOfDefinition P P' T s S hden hden']
 
 /-- `Aₛ` is a Huber ring for the topology `locUniformSpace` induces. The third companion of
 `locUniformSpace`, alongside the two above. A consumer working at the uniformity can reach the
