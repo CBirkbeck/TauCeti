@@ -19,7 +19,8 @@ import TauCeti.RingTheory.Huber.RingOfDefinition
 presentation-indexed limit presheaf `presentationLimitPresheaf P Aplus` to be a sheaf of complete
 separated topological rings for every pair of definition `P` contained in `Aplus`. Such a pair
 exists because `Aplus` is open. The universal condition is nevertheless equivalent to sheafhood
-for any single pair of definition, compatible or not (`isSheafyForEveryPresentation_iff_isSheaf`).
+for any single pair of definition, compatible or not
+(`isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf`).
 
 On rational opens, `presentationLimitRationalIso` identifies the presheaf's values with the
 completed rational localizations, and `presentationLimitRationalIso_inv_comp_map_comp_hom`
@@ -30,9 +31,9 @@ presentation-indexed presheaves; it makes no claim about a canonical pair-level 
 
 ## Main results
 
-* `TauCeti.Huber.isSheafyForEveryPresentation_iff_isSheaf` : `IsSheafyForEveryPresentation A⁺`
-  holds exactly when `A⁺` is a ring of integral elements and the presentation-limit presheaf of any
-  one pair of definition of `A` is a sheaf.
+* `TauCeti.Huber.isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf` :
+  `IsSheafyForEveryPresentation A⁺` holds exactly when `A⁺` is a ring of integral elements and
+  the presentation-limit presheaf of any one pair of definition of `A` is a sheaf.
 * `TauCeti.Huber.isSheafyForEveryPresentation_iff_of_ringEquiv` and
   `TauCeti.Huber.IsSheafyForEveryPresentation.map` : the condition is invariant under
   isomorphisms of topological rings carrying one plus ring onto the other.
@@ -87,7 +88,8 @@ theorem IsSheafyForEveryPresentation.exists_compatible_isSheaf {Aplus : Subring 
 /-- **`IsSheafyForEveryPresentation` is the sheaf condition for any one pair of definition**: the
 presentation-limit presheaves of all pairs of definition of `A` are sheaves together, so the
 universal condition reduces to a single pair, which need not be compatible with `A⁺`. -/
-theorem isSheafyForEveryPresentation_iff_isSheaf {Aplus : Subring A} (P : PairOfDefinition A) :
+theorem isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf {Aplus : Subring A}
+    (P : PairOfDefinition A) :
     IsSheafyForEveryPresentation Aplus ↔ IsRingOfIntegralElements Aplus ∧
       Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
         (presentationLimitPresheaf P Aplus) := by
@@ -145,7 +147,8 @@ theorem isSheafyForEveryPresentation_completionPlus_iff
   obtain ⟨P'⟩ := IsHuberRing.nonempty_pairOfDefinition (A := Completion A)
   have hA' : IsRingOfIntegralElements (completionPlus Aplus) :=
     completionPlus_def Aplus ▸ hA.completion
-  rw [isSheafyForEveryPresentation_iff_isSheaf P', isSheafyForEveryPresentation_iff_isSheaf P,
+  rw [isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf P',
+    isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf P,
     isSheaf_presentationLimitPresheaf_completionPlus_iff P P'
       fun _ ha ↦ mem_powerBoundedSubring.mp (hA.le_powerBoundedSubring ha)]
   exact ⟨fun h ↦ ⟨hA, h.2⟩, fun h ↦ ⟨hA', h.2⟩⟩
