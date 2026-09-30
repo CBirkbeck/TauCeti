@@ -54,7 +54,8 @@ converge because `Â` is complete, and their sums exhibit the element as a combi
 * `TauCeti.Huber.isPowerBounded_completion_coe_iff`: the two power-bounded directions together —
   Wedhorn's Lemma 7.47(1) at the level of elements, that `A⁰` is the preimage of `Â⁰`.
 * `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_completion`: the closures of the images of
-  the powers `Iⁿ` are a neighbourhood basis of zero in `Â`.
+  the powers `Iⁿ` are a neighbourhood basis of zero in `Â`; `mem_nhds_completion_iff` and
+  `exists_coe_sub_mem_completionIdealImage` are its forms at an arbitrary point of `Â`.
 * `TauCeti.Huber.PairOfDefinition.completionIdeal_pow`: `Îⁿ` is the closure of the image of `Iⁿ`.
 * `TauCeti.Huber.PairOfDefinition.completionIdealImage_le_of_image_subset` and
   `TauCeti.Huber.isOpen_map_coeRingHom`: an ideal of `Â` containing the image of `Iⁿ` contains the
@@ -137,6 +138,7 @@ theorem coe_mem_completionIdealImage (P : PairOfDefinition A) {n : ℕ} {a : A}
 /-- An element of `A` lies in the closure of the image of `Iⁿ` in `Â` exactly when it lies in the
 image of `Iⁿ`. There is no separation hypothesis on `A`, so this holds even when `A → Â` is not
 injective; the implication from right to left is `coe_mem_completionIdealImage`. -/
+@[simp]
 theorem coe_mem_completionIdealImage_iff (P : PairOfDefinition A) {n : ℕ} {a : A} :
     (a : Completion A) ∈ P.completionIdealImage n ↔ a ∈ P.idealImage n := by
   -- `Iⁿ` is open, hence closed, in `A`, so it is the preimage of the closure of its image in `Â`
@@ -175,6 +177,21 @@ theorem hasBasis_nhds_zero_completion (P : PairOfDefinition A) :
   · rintro ⟨n, -, hn⟩
     exact Filter.mem_of_superset
       ((P.isOpen_completionIdealImage n).mem_nhds (P.completionIdealImage n).zero_mem) hn
+
+/-- A set is a neighbourhood of `x` in `Â` exactly when it contains the translate by `x` of one of
+the closures `completionIdealImage n`. This is `hasBasis_nhds_zero_completion` at the point `x`. -/
+theorem mem_nhds_completion_iff (P : PairOfDefinition A) {x : Completion A}
+    {u : Set (Completion A)} : u ∈ 𝓝 x ↔ ∃ n, ∀ z ∈ P.completionIdealImage n, x + z ∈ u := by
+  simp only [(P.hasBasis_nhds_zero_completion.nhds_of_zero' x).mem_iff, true_and,
+    Set.vadd_set_subset_iff, vadd_eq_add, SetLike.mem_coe]
+
+/-- **Approximation from `A`.** Every point of `Â` lies within `completionIdealImage n` of the image
+of some element of `A`, for each `n`: the image of `A` is dense, and `completionIdealImage n` is a
+neighbourhood of zero. -/
+theorem exists_coe_sub_mem_completionIdealImage (P : PairOfDefinition A) (n : ℕ)
+    (x : Completion A) : ∃ a : A, (a : Completion A) - x ∈ P.completionIdealImage n :=
+  Completion.denseRange_coe.mem_nhds <|
+    (P.hasBasis_nhds_zero_completion.nhds_of_zero x).mem_of_mem trivial
 
 /-- The closure of the image of `Iⁿ` absorbs multiplication by the ring of definition of the
 completion, because `Iⁿ` is an ideal of `A₀` and multiplication is continuous. -/

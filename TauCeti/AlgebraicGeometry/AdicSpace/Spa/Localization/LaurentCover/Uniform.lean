@@ -27,10 +27,12 @@ set, the augmented Čech sequence of this cover,
 A → A⟨U₁⟩ × A⟨U₂⟩ → A⟨U₁ ∩ U₂⟩,      a ↦ (a, a),      (x, y) ↦ x|U₁∩U₂ - y|U₁∩U₂,
 ```
 
-is exact, and its first map is a closed embedding. This is Corollary 4 of Buzzard–Verberkmoes,
-the case of a Laurent cover in their theorem that stably uniform Tate rings are sheafy (their
-Theorem 7). The statements have the same form as `laurentCover_exact` and
-`isClosedEmbedding_laurentCover`, which assume strong noetherianness instead of uniformity.
+is exact, and its first map is a closed embedding. These are the injectivity and the exactness in
+the middle in Corollary 4 of Buzzard–Verberkmoes, the case of a Laurent cover in their theorem that
+stably uniform Tate rings are sheafy (their Theorem 7); Corollary 4 also asserts that the second
+map is surjective, which is not part of the results here. The statements have the same form as
+`laurentCover_exact` and `isClosedEmbedding_laurentCover`, which assume strong noetherianness
+instead of uniformity.
 
 ## Main results
 
@@ -316,52 +318,6 @@ private theorem exists_sub_mem_locIdealImage (n : ℕ) {w : S₂}
 
 end Decomposition
 
-/-! ### Neighbourhoods of zero in a completed rational localisation -/
-
-section Completion
-
-variable {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B]
-  (Q : PairOfDefinition B)
-
--- Every point of `B̂` is approximated from `B` to within each `Q.completionIdealImage n`.
-private theorem exists_coe_sub_mem_completionIdealImage (n : ℕ) (x : Completion B) :
-    ∃ y : B, (y : Completion B) - x ∈ Q.completionIdealImage n :=
-  -- the dense image of `B` meets the neighbourhood `{z | z - x ∈ Q.completionIdealImage n}` of `x`
-  UniformSpace.Completion.denseRange_coe.mem_nhds <|
-    (Q.hasBasis_nhds_zero_completion.nhds_of_zero x).mem_of_mem trivial
-
--- A neighbourhood of `x` in `B̂` contains a translate `x + Q.completionIdealImage n`.
-private theorem exists_add_mem_of_mem_nhds {x : Completion B} {u : Set (Completion B)}
-    (hu : u ∈ 𝓝 x) : ∃ n, ∀ z ∈ Q.completionIdealImage n, x + z ∈ u := by
-  obtain ⟨n, -, h⟩ := (Q.hasBasis_nhds_zero_completion.nhds_of_zero' x).mem_iff.1 hu
-  exact ⟨n, Set.vadd_set_subset_iff.1 h⟩
-
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-  (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S]
-  [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
-
--- Write `Kₙ` for the closure in `A⟨T/s⟩` of `image(Jⁿ)`. If `x + Kₙ ⊆ u` and `y ∈ Aₛ` lies
--- within `Kₘ` of `x`, where `n ≤ m`, then `u` contains the image in `A⟨T/s⟩` of every `a ∈ A`
--- with `a - y ∈ image(Jᵐ)` in `Aₛ`.
-private theorem toCompletionLoc_mem_of_sub_mem :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    ∀ {x : Completion S} {u : Set (Completion S)} {n m : ℕ} {y : S} {a : A},
-      (∀ z ∈ (localizationUniform P T s S hden).completionIdealImage n, x + z ∈ u) → n ≤ m →
-      (y : Completion S) - x ∈ (localizationUniform P T s S hden).completionIdealImage m →
-      algebraMap A S a - y ∈ locIdealImage P T s S m → toCompletionLoc P T s S hden a ∈ u := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  intro x u n m y a hu hnm hy ha
-  rw [← localizationUniform_idealImage P T s S hden, ← coe_mem_completionIdealImage_iff] at ha
-  -- `a = x + ((y - x) + (a - y))`, and the bracket lies in `Kₘ ⊆ Kₙ`
-  simpa [UniformSpace.Completion.coe_sub] using
-    hu _ (completionIdealImage_anti _ hnm (add_mem hy ha))
-
-end Completion
-
 /-! ### Approximation on the Laurent cover -/
 
 section Approximation
@@ -419,7 +375,7 @@ private theorem awayLift_sub_mem_locIdealImage :
     (restrictionRingHom_mem_completionIdealImage P {1} f S₂ hden₂ {f * f, f, 1} (1 * f) S₁₂
       hden₁₂ 1 (mul_comm 1 f) (by simp) n _ hb) using 1
   -- the `x₁`, `x₂` terms cancel by `h`, and both sides restrict `a` to the overlap
-  simp [h, restrictionRingHom_coe, UniformSpace.Completion.coe_sub]
+  simp [h, UniformSpace.Completion.coe_sub]
 
 -- Pairs agreeing on the overlap lie in the closure of the image of `A`: approximate them from
 -- `A` and `A_f`, and remove the error on the overlap by the strictness of the difference map.
@@ -452,22 +408,27 @@ private theorem mem_closure_range_laurentCover :
   intro x₁ x₂ h
   refine mem_closure_iff_nhds.2 fun t ht ↦ ?_
   obtain ⟨u, hu, v, hv, huv⟩ := mem_nhds_prod_iff.1 ht
-  obtain ⟨n₁, hn₁⟩ := exists_add_mem_of_mem_nhds (localizationUniform P {f, 1} 1 S₁ hden₁) hu
-  obtain ⟨n₂, hn₂⟩ := exists_add_mem_of_mem_nhds (localizationUniform P {1} f S₂ hden₂) hv
+  obtain ⟨n₁, hn₁⟩ := (localizationUniform P {f, 1} 1 S₁ hden₁).mem_nhds_completion_iff.1 hu
+  obtain ⟨n₂, hn₂⟩ := (localizationUniform P {1} f S₂ hden₂).mem_nhds_completion_iff.1 hv
   -- approximate `x₁` by `a ∈ A` and `x₂` by `b ∈ A_f`, then correct `a` by `p`
-  obtain ⟨y, hy⟩ := exists_coe_sub_mem_completionIdealImage
-    (localizationUniform P {f, 1} 1 S₁ hden₁) (max n₁ n₂) x₁
+  obtain ⟨y, hy⟩ :=
+    (localizationUniform P {f, 1} 1 S₁ hden₁).exists_coe_sub_mem_completionIdealImage (max n₁ n₂) x₁
   -- every element of `A_1` comes from `A`
   obtain ⟨a, rfl⟩ := IsLocalization.Away.algebraMap_surjective_of_isIdempotentElem (1 : A) .one y
-  obtain ⟨b, hb⟩ := exists_coe_sub_mem_completionIdealImage
-    (localizationUniform P {1} f S₂ hden₂) (max n₁ n₂) x₂
+  obtain ⟨b, hb⟩ :=
+    (localizationUniform P {1} f S₂ hden₂).exists_coe_sub_mem_completionIdealImage (max n₁ n₂) x₂
   obtain ⟨p, hp, hq⟩ := exists_sub_mem_locIdealImage P f S₁ S₂ S₁₂ (max n₁ n₂)
     (awayLift_sub_mem_locIdealImage P f S₁ S₂ hden₂ S₁₂ h hy hb)
   refine ⟨_, huv ⟨?_, ?_⟩, a - p, rfl⟩
-  · exact toCompletionLoc_mem_of_sub_mem P {f, 1} 1 S₁ hden₁ hn₁ (le_max_left n₁ n₂) hy
-      (by simpa using hp)
-  · exact toCompletionLoc_mem_of_sub_mem P {1} f S₂ hden₂ hn₂ (le_max_right n₁ n₂) hb
-      (by rwa [map_sub, sub_right_comm])
+  -- `a - p = x₁ + (a - p - x₁)`, where `a - p - x₁ ∈ K_{max n₁ n₂} ⊆ K_{n₁}`; likewise at `x₂`
+  · simpa only [RingHom.prod_apply, add_sub_cancel] using
+      hn₁ _ (completionIdealImage_anti _ (le_max_left n₁ n₂)
+        (toCompletionLoc_sub_mem_completionIdealImage P {f, 1} 1 S₁ hden₁ (a := a - p) hy
+          (by simpa using hp)))
+  · simpa only [RingHom.prod_apply, add_sub_cancel] using
+      hn₂ _ (completionIdealImage_anti _ (le_max_right n₁ n₂)
+        (toCompletionLoc_sub_mem_completionIdealImage P {1} f S₂ hden₂ (a := a - p) hb
+          (by rwa [map_sub, sub_right_comm])))
 
 end Approximation
 

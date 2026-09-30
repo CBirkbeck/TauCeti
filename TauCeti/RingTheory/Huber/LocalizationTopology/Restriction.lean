@@ -312,6 +312,7 @@ element of `A_{s''}` that `IsLocalization.Away.lift` assigns to `x`. That compar
 `Aₛ → A_{s''}` sends `a/s` to `(a * r)/s''` (`TauCeti.Localization.awayLift_divBy`).
 
 On the image of `A` this is `restrictionRingHom_comp_toCompletionLoc`, evaluated at a point. -/
+@[simp]
 theorem restrictionRingHom_coe (x : S) :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
