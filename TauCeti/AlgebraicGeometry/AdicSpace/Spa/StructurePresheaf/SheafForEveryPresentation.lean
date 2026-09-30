@@ -149,8 +149,7 @@ theorem isSheafyForEveryPresentation_completionPlus_iff
     completionPlus_def Aplus ▸ hA.completion
   rw [isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf P',
     isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf P,
-    isSheaf_presentationLimitPresheaf_completionPlus_iff P P'
-      fun _ ha ↦ mem_powerBoundedSubring.mp (hA.le_powerBoundedSubring ha)]
+    isSheaf_presentationLimitPresheaf_completionPlus_iff P P' hA.isPowerBounded_of_mem]
   exact ⟨fun h ↦ ⟨hA, h.2⟩, fun h ↦ ⟨hA', h.2⟩⟩
 
 end Completion
