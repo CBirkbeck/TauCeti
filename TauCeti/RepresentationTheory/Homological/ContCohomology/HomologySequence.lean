@@ -67,6 +67,8 @@ coefficient maps `TauCeti.ofDiscreteModuleMap`, the form in which a consumer mee
 * `TauCeti.ContCohomology.DiscreteShortExact.coeffMap_proj_injective` and
   `coeffMap_incl_injective`: `Hⁿ(G, B) → Hⁿ(G, C)` is injective when `Hⁿ(G, A)` vanishes, and
   `Hⁿ⁺¹(G, A) → Hⁿ⁺¹(G, B)` is injective when `Hⁿ(G, C)` vanishes.
+* `TauCeti.ContCohomology.DiscreteShortExact.coeffMap_proj_surjective`: `Hⁿ(G, B) → Hⁿ(G, C)` is
+  surjective when `Hⁿ⁺¹(G, A)` vanishes.
 * `TauCeti.ContCohomology.DiscreteShortExact.delta_map`: the maps induced by compatible pairs
   commute with `δ`.
 * `TauCeti.ContCohomology.DiscreteShortExact.delta_naturality`: a morphism of short exact
@@ -277,6 +279,15 @@ theorem coeffMap_incl_injective {n : ℕ}
   (injective_iff_map_eq_zero _).2 fun x hx ↦ by
     obtain ⟨c, rfl⟩ := (S.longExact_exact₁ n x).1 hx
     rw [Subsingleton.elim c 0, _root_.map_zero]
+
+/-- If `Hⁿ⁺¹(G, A)` vanishes, the coefficient map `Hⁿ(G, B) → Hⁿ(G, C)` is surjective, by
+exactness at `Hⁿ(G, C)`: the connecting map `δ : Hⁿ(G, C) ⟶ Hⁿ⁺¹(G, A)` is zero, so every class
+of `Hⁿ(G, C)` lies in its kernel, which is the image of `Hⁿ(G, B)`. -/
+theorem coeffMap_proj_surjective {n : ℕ}
+    [Subsingleton (continuousCohomology (n + 1) (ofDiscreteModule ℤ G A))] :
+    Function.Surjective
+      (coeffMap (ofDiscreteModuleMap S.proj.toIntLinearMap S.proj_equivariant) n) :=
+  fun y ↦ (S.longExact_exact₃ n y).1 (Subsingleton.elim _ 0)
 
 section Map
 
