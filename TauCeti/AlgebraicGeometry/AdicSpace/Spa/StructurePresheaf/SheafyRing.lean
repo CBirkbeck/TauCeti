@@ -62,7 +62,7 @@ open CategoryTheory UniformSpace TauCeti.ValuationSpectrum _root_.TopologicalSpa
 
 namespace TauCeti.Huber
 
-universe u
+universe u v
 
 variable (A : Type u) [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
   [IsHuberRing A]
@@ -130,6 +130,7 @@ theorem isSheafyRing_iff_forall_isSheafyForEveryPresentation {B : Type u} [CommR
 
 /-- **Sheafiness is invariant under completion**: the completion `Â` of a Huber ring `A` is sheafy
 exactly when `A` is. -/
+@[simp]
 theorem isSheafyRing_completion_iff : IsSheafyRing (Completion A) ↔ IsSheafyRing A :=
   isSheafyRing_iff_forall_isSheafyForEveryPresentation.trans isSheafyRing_iff.symm
 
@@ -139,26 +140,25 @@ variable (A) in
 /-- **Wedhorn Definition 8.26**: a Huber ring `A` with completion `Â` is *stably sheafy* when every
 complete Hausdorff Huber ring `B` topologically of finite type over `Â`, in the sense of Wedhorn's
 Proposition and Definition 6.29(i) (`TauCeti.Huber.IsTopologicallyFiniteType`), is sheafy
-(`TauCeti.Huber.IsSheafyRing`). The rings `B` range over the universe of `A`; each such `B` is
-isomorphic, as a topological ring, to a quotient of its presenting algebra, which lies in that
-universe. -/
+(`TauCeti.Huber.IsSheafyRing`). The rings `B` range over an arbitrary universe `v`. -/
 def IsStablySheafyRing : Prop :=
-  ∀ (B : Type u) [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B]
+  ∀ (B : Type v) [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B]
     [IsHuberRing B] [CompleteSpace B] [T0Space B] (φ : Completion A →+* B),
     IsTopologicallyFiniteType φ → IsSheafyRing B
 
 /-- Unfolding lemma for the sealed definition `TauCeti.Huber.IsStablySheafyRing`. -/
-theorem isStablySheafyRing_iff : IsStablySheafyRing A ↔ ∀ (B : Type u) [CommRing B] [UniformSpace B]
-    [IsUniformAddGroup B] [IsTopologicalRing B] [IsHuberRing B] [CompleteSpace B] [T0Space B]
-    (φ : Completion A →+* B), IsTopologicallyFiniteType φ → IsSheafyRing B :=
+theorem isStablySheafyRing_iff : IsStablySheafyRing.{u, v} A ↔ ∀ (B : Type v) [CommRing B]
+    [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B] [IsHuberRing B] [CompleteSpace B]
+    [T0Space B] (φ : Completion A →+* B), IsTopologicallyFiniteType φ → IsSheafyRing B :=
   (Iff.rfl)
 
 /-- **Stable sheafiness on the rings themselves**: `A` is stably sheafy exactly when, for every
 complete Hausdorff Huber ring `B` topologically of finite type over `Â`, every ring of integral
 elements `B⁺` of `B` satisfies `TauCeti.Huber.IsSheafyForEveryPresentation`. -/
-theorem isStablySheafyRing_iff_forall_isSheafyForEveryPresentation : IsStablySheafyRing A ↔
-    ∀ (B : Type u) [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B]
-      [IsHuberRing B] [CompleteSpace B] [T0Space B] (φ : Completion A →+* B),
+theorem isStablySheafyRing_iff_forall_isSheafyForEveryPresentation :
+    IsStablySheafyRing.{u, v} A ↔ ∀ (B : Type v) [CommRing B] [UniformSpace B]
+      [IsUniformAddGroup B] [IsTopologicalRing B] [IsHuberRing B] [CompleteSpace B] [T0Space B]
+      (φ : Completion A →+* B),
       IsTopologicallyFiniteType φ → ∀ Bplus : Subring B, IsRingOfIntegralElements Bplus →
         IsSheafyForEveryPresentation Bplus := by
   rw [isStablySheafyRing_iff]
@@ -166,8 +166,8 @@ theorem isStablySheafyRing_iff_forall_isSheafyForEveryPresentation : IsStablyShe
   exact isSheafyRing_iff_forall_isSheafyForEveryPresentation
 
 /-- **A stably sheafy Huber ring is sheafy**, since the identity of `Â` is topologically of finite
-type. -/
-theorem IsStablySheafyRing.isSheafyRing (h : IsStablySheafyRing A) : IsSheafyRing A :=
+type. This uses the stable condition for rings `B` in the universe of `A`. -/
+theorem IsStablySheafyRing.isSheafyRing (h : IsStablySheafyRing.{u, u} A) : IsSheafyRing A :=
   isSheafyRing_completion_iff.mp <| isStablySheafyRing_iff.mp h _ (.id _)
     isStrictlyTopologicallyFiniteType_id.isTopologicallyFiniteType
 
