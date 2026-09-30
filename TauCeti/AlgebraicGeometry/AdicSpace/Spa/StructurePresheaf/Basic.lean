@@ -58,7 +58,7 @@ subsets avoids having to choose one.
 
 ## What this is not, yet
 
-The presheaf built here is **not identified with Wedhorn's `𝒪_X`**, and is named for what it is
+The presheaf built here is **not defined as Wedhorn's `𝒪_X`**, and is named for what it is
 rather than for what it is expected to become. Wedhorn indexes by rational *subsets* `U ⊆ V`, which
 presupposes that `𝒪_X(U)` is well defined; here the index is presentations, so the value depends a
 priori on presentation data. Two ingredients toward closing the gap are available:
@@ -75,8 +75,10 @@ priori on presentation data. Two ingredients toward closing the gap are availabl
 `TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.SubsetLimit` constructs the
 coordinate-ring diagram on rational subsets and its comparison with the presentation diagram, and
 puts these ingredients together into
-`TauCeti.ValuationSpectrum.presentationLimitIsoRationalSubsetLimit`. What that leaves open is the
-restriction maps: the two limits are identified value by value, not as presheaves.
+`TauCeti.ValuationSpectrum.presentationLimitIsoRationalSubsetLimit`. That isomorphism commutes
+with the restriction maps, and
+`TauCeti.ValuationSpectrum.presentationLimitPresheafIsoRationalSubsetLimitPresheaf` identifies the
+presheaf built here with the presheaf of limits over rational subsets.
 
 Nothing in this file computes `𝒪_X(V)`. What it establishes is self-contained: the limit exists,
 restriction along a containment is reindexing, and the two functor laws hold. On a rational open
