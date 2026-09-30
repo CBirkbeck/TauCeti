@@ -8,6 +8,8 @@ module
 public import Mathlib.Algebra.Homology.ConcreteCategory
 public import Mathlib.Algebra.Homology.HomologySequenceLemmas
 public import TauCeti.Algebra.Category.ModuleCat.Topology.Homology
+public import TauCeti.Algebra.Category.ModuleCat.Topology.Iso
+public import TauCeti.Algebra.Category.ModuleCat.Topology.Zero
 public import TauCeti.Algebra.Homology.ShortComplex.PreservesHomology
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.CompactDiscrete
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.ExactCochains
@@ -57,6 +59,8 @@ coefficient maps `TauCeti.ofDiscreteModuleMap`, the form in which a consumer mee
   connecting map of the forgotten cochain sequence, read through `mapHomologyIso`.
 * `TauCeti.ContCohomology.DiscreteShortExact.delta_apply`: `δ` on representatives: lift a
   cocycle on `C` to a cochain on `B`, differentiate, and read the result as a cocycle on `A`.
+* `TauCeti.ContCohomology.DiscreteShortExact.isIso_delta`: `δ` is an isomorphism when `Hⁿ(G, B)`
+  and `Hⁿ⁺¹(G, B)` vanish.
 * `TauCeti.ContCohomology.DiscreteShortExact.longExact_exact₁`,
   `longExact_exact₂` and `longExact_exact₃`: exactness at `Hⁿ⁺¹(G, A)`, `Hⁿ(G, B)` and
   `Hⁿ(G, C)`.
@@ -185,6 +189,31 @@ theorem delta_apply (n : ℕ) (z₃ : cocycles (ofDiscreteModule ℤ G C) n)
     (hS.δ n (n + 1) rfl y)) ?_).trans ((congrArg _ hδ).trans (hclass _ (n + 1) z₁))
   exact (congrArg _ (hclass _ n z₃).symm).trans
     (Iso.hom_inv_id_apply ((S.continuousCochainsShortExact.X₃.sc n).mapHomologyIso F) _)
+
+/-- **The connecting map is an isomorphism when the middle term is acyclic in the two adjacent
+degrees**: if `Hⁿ(G, B)` and `Hⁿ⁺¹(G, B)` vanish, then `δ : Hⁿ(G, C) ⟶ Hⁿ⁺¹(G, A)` is an
+isomorphism of topological modules. This is the snake-lemma statement
+`CategoryTheory.ShortComplex.ShortExact.isIso_δ` on the forgotten cochain complexes, transported
+to the discrete cohomology modules. -/
+theorem isIso_delta (n : ℕ) [Subsingleton (continuousCohomology n (ofDiscreteModule ℤ G B))]
+    [Subsingleton (continuousCohomology (n + 1) (ofDiscreteModule ℤ G B))] :
+    IsIso (S.delta n) := by
+  -- the middle term of the forgotten cochain sequence has zero homology in the two degrees
+  have hzero (m : ℕ) [Subsingleton (continuousCohomology m (ofDiscreteModule ℤ G B))] :
+      Limits.IsZero ((S.continuousCochainsShortExact.map
+        ((forget₂ (TopModuleCat ℤ) (ModuleCat ℤ)).mapHomologicalComplex _)).X₂.homology m) :=
+    ((forget₂ (TopModuleCat ℤ) (ModuleCat ℤ)).map_isZero (TopModuleCat.isZero_of_subsingleton
+      (continuousCohomology m (ofDiscreteModule ℤ G B)))).of_iso
+      ((S.continuousCochainsShortExact.X₂.sc m).mapHomologyIso
+        (forget₂ (TopModuleCat ℤ) (ModuleCat ℤ)))
+  have : IsIso ((forget₂ (TopModuleCat ℤ) (ModuleCat ℤ)).map (S.delta n)) := by
+    rw [S.forget₂_map_delta]
+    -- the objects of the composite match the ends of the two `mapHomologyIso`s only after
+    -- unfolding, which instance resolution does not do, so the instances are given by hand
+    exact IsIso.comp_isIso' (Iso.isIso_inv _) (IsIso.comp_isIso'
+      (S.continuousCochainsShortExact_shortExact.isIso_δ n (n + 1) rfl (hzero n) (hzero (n + 1)))
+      (Iso.isIso_hom _))
+  exact TopModuleCat.isIso_of_isIso_forget₂_map _
 
 /-- **Exactness at `Hⁿ⁺¹(G, A)`**: the image of the connecting map `Hⁿ(G, C) ⟶ Hⁿ⁺¹(G, A)` is
 the kernel of the coefficient map induced by `A → B`. -/
