@@ -529,7 +529,9 @@ theorem presentationLimitMap_comp {U V W : Opens ↥(spa Aplus)} (h₁ : W ≤ V
 /-- **The presheaf `V ↦ presentationLimit V`** on `Spa(A,A⁺)`, valued in
 `CompleteSeparatedTopCommRingCat`. Both functor laws are reindexing identities for the limit:
 restricting along `le_refl` is the identity on the index, and restricting twice is restricting
-once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available. -/
+once. When `A⁺` consists of power-bounded elements it is isomorphic to Wedhorn §8.1's `𝒪_X`,
+the presheaf of limits over rational subsets built from the same pair of definition `P`
+(`TauCeti.ValuationSpectrum.presentationLimitPresheafIsoRationalSubsetLimitPresheaf`). -/
 -- This definition is sealed, as are the three index functors above. Two consequences worth
 -- naming, because they are what the evaluation lemmas below look like: `_obj` closes with
 -- `(rfl)` rather than `rfl`, the parentheses letting the elaborator postpone a defeq check the

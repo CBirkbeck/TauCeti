@@ -30,9 +30,10 @@ sheafiness is the sheaf condition on that presheaf for every pair of definition 
 * `TauCeti.Huber.isSheafyRing_iff_isSheaf_rationalSubsetLimitPresheaf`: `A` is sheafy exactly
   when every presheaf `V ↦ lim_{U ⊆ V} Â⟨U⟩` of limits over rational subsets, for every ring of
   integral elements of `Â` and every pair of definition of `Â`, is a sheaf.
-* `TauCeti.Huber.IsSheafyRing.isSheafyForEveryPresentation_completionPlus`: if `A` is sheafy and
-  `A⁺` is a ring of integral elements of `A`, then `Â⁺`, the closure of the image of `A⁺`,
-  satisfies `TauCeti.Huber.IsSheafyForEveryPresentation`.
+* `TauCeti.Huber.IsSheafyRing.isSheafyForEveryPresentation`: if `A` is sheafy, every ring of
+  integral elements `A⁺` of `A` satisfies `TauCeti.Huber.IsSheafyForEveryPresentation`; the
+  intermediate step `TauCeti.Huber.IsSheafyRing.isSheafyForEveryPresentation_completionPlus` gives
+  the same for `Â⁺`, the closure of the image of `A⁺`.
 
 ## References
 
@@ -86,6 +87,15 @@ theorem IsSheafyRing.isSheafyForEveryPresentation_completionPlus (h : IsSheafyRi
     {Aplus : Subring A} (hAplus : IsRingOfIntegralElements Aplus) :
     IsSheafyForEveryPresentation (completionPlus Aplus) :=
   completionPlus_def Aplus ▸ isSheafyRing_iff.mp h _ hAplus.completion
+
+/-- If `A` is sheafy, every ring of integral elements `A⁺` of `A` satisfies
+`TauCeti.Huber.IsSheafyForEveryPresentation`: the sheaf condition on `Spa(Â, Â⁺)` descends to
+`Spa(A, A⁺)` by completion invariance,
+`TauCeti.Huber.isSheafyForEveryPresentation_completionPlus_iff`. -/
+theorem IsSheafyRing.isSheafyForEveryPresentation (h : IsSheafyRing A) {Aplus : Subring A}
+    (hAplus : IsRingOfIntegralElements Aplus) : IsSheafyForEveryPresentation Aplus :=
+  (isSheafyForEveryPresentation_completionPlus_iff hAplus).mp
+    (h.isSheafyForEveryPresentation_completionPlus hAplus)
 
 end TauCeti.Huber
 
