@@ -12,6 +12,7 @@ public import TauCeti.NumberTheory.LocalField.Uniformizer
 import TauCeti.Algebra.CharP.LocalRing
 import TauCeti.FieldTheory.Galois.FixedField
 import TauCeti.FieldTheory.Kummer.Extension
+import TauCeti.GroupTheory.OrderOfElement.Basic
 import TauCeti.NumberTheory.LocalField.PowerSubgroup.Basic
 import TauCeti.NumberTheory.LocalField.UnitsDecomposition
 
@@ -168,16 +169,15 @@ theorem mem_maximalUnramifiedExtension_of_pow_eq_one {n : ℕ} (hn : ¬ ringChar
   have hn0 : n ≠ 0 := by
     rintro rfl
     exact hn (dvd_zero _)
-  rw [maximalUnramifiedExtension_eq_adjoin]
-  refine subset_adjoin _ _ ⟨n.totient, (Nat.totient_pos.2 (Nat.pos_of_ne_zero hn0)).ne', ?_⟩
-  -- The order `q` of the residue field is a power of `p`, hence prime to `n`, so
-  -- `q ^ φ(n) ≡ 1 [MOD n]` by Euler's theorem.
-  let _ := Fintype.ofFinite 𝓀[K]
-  obtain ⟨d, hp, hd⟩ := FiniteField.card 𝓀[K] (ringChar 𝓀[K])
+  -- `q` is a power of `p`, hence prime to `n`.
   have hq : (Nat.card 𝓀[K]).Coprime n := by
+    let _ := Fintype.ofFinite 𝓀[K]
+    obtain ⟨d, hp, hd⟩ := FiniteField.card 𝓀[K] (ringChar 𝓀[K])
     rw [Nat.card_eq_fintype_card, hd]
-    exact ((Nat.Prime.coprime_iff_not_dvd hp).2 hn).pow_left _
-  rw [pow_eq_pow_mod _ hζ, Nat.ModEq.pow_totient hq, ← pow_eq_pow_mod _ hζ, pow_one]
+    exact (hp.coprime_iff_not_dvd.2 hn).pow_left _
+  rw [maximalUnramifiedExtension_eq_adjoin]
+  exact subset_adjoin _ _ ⟨n.totient, (Nat.totient_pos.2 (Nat.pos_of_ne_zero hn0)).ne',
+    pow_pow_totient_eq_self hq hζ⟩
 
 variable {K Ω} in
 /-- **Radicals of units are unramified.** If the residue characteristic of `K` does not divide `m`,
