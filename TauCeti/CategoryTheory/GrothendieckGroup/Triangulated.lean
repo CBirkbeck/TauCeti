@@ -239,6 +239,12 @@ theorem hom_ext {f g : TriangulatedK0 C →+ G} (h : ∀ X : C, f (of X) = g (of
 
 end HomExt
 
+/-- A homomorphism into triangulated `K₀` whose range contains the class of every object is
+surjective. -/
+theorem surjective_of_forall_of_mem_range {G : Type*} [AddGroup G] {f : G →+ TriangulatedK0 C}
+    (h : ∀ X : C, of X ∈ f.range) : Function.Surjective f :=
+  PresentedK0.surjective_of_forall_of_mem_range h
+
 variable {G : Type*} [AddCommGroup G]
 
 variable (C) in
@@ -440,18 +446,8 @@ theorem fromSplit_unique (f : SplitK0 C →+ TriangulatedK0 C)
 
 /-- The canonical comparison out of split `K₀` is surjective: the classes of objects generate
 triangulated `K₀`, so triangulated `K₀` is a quotient of split `K₀`. -/
-theorem fromSplit_surjective : Function.Surjective (fromSplit C) := by
-  intro x
-  induction x using TriangulatedK0.induction_on with
-  | zero => exact ⟨0, map_zero _⟩
-  | of X => exact ⟨SplitK0.of X, fromSplit_of X⟩
-  | add a b ha hb =>
-    obtain ⟨a', rfl⟩ := ha
-    obtain ⟨b', rfl⟩ := hb
-    exact ⟨a' + b', map_add _ _ _⟩
-  | neg a ha =>
-    obtain ⟨a', rfl⟩ := ha
-    exact ⟨-a', map_neg _ _⟩
+theorem fromSplit_surjective : Function.Surjective (fromSplit C) :=
+  surjective_of_forall_of_mem_range fun X => ⟨SplitK0.of X, fromSplit_of X⟩
 
 /-- **Naturality of the comparison out of split `K₀`** in a triangulated functor, which is in
 particular additive and so also acts on split `K₀`. -/

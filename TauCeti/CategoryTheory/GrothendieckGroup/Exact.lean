@@ -273,6 +273,11 @@ theorem hom_ext {f g : ExactK0 E →+ G} (h : ∀ X : C, f (of X) = g (of X)) : 
 
 end HomExt
 
+/-- A homomorphism into exact `K₀` whose range contains the class of every object is surjective. -/
+theorem surjective_of_forall_of_mem_range {G : Type*} [AddGroup G] {f : G →+ ExactK0 E}
+    (h : ∀ X : C, of X ∈ f.range) : Function.Surjective f :=
+  PresentedK0.surjective_of_forall_of_mem_range h
+
 variable {G : Type*} [AddCommGroup G]
 
 variable (E) in
@@ -566,18 +571,8 @@ theorem ofLE_unique (h : ∀ S : ShortComplex C, E.Conflation S → E''.Conflati
 /-- The comparison map is surjective: exact `K₀` is a quotient of the exact `K₀` of any exact
 structure with fewer conflations. -/
 theorem ofLE_surjective (h : ∀ S : ShortComplex C, E.Conflation S → E''.Conflation S) :
-    Function.Surjective (ofLE h) := by
-  intro x
-  induction x using ExactK0.induction_on with
-  | zero => exact ⟨0, map_zero _⟩
-  | of X => exact ⟨of X, ofLE_of h X⟩
-  | add a b ha hb =>
-    obtain ⟨a', rfl⟩ := ha
-    obtain ⟨b', rfl⟩ := hb
-    exact ⟨a' + b', map_add _ _ _⟩
-  | neg a ha =>
-    obtain ⟨a', rfl⟩ := ha
-    exact ⟨-a', map_neg _ _⟩
+    Function.Surjective (ofLE h) :=
+  surjective_of_forall_of_mem_range fun X => ⟨of X, ofLE_of h X⟩
 
 /-- The comparison map of an exact structure with itself is the identity. -/
 @[simp]
@@ -623,18 +618,8 @@ theorem fromSplit_unique (f : SplitK0 C →+ ExactK0 E)
 
 /-- The canonical comparison out of split `K₀` is surjective: the classes of objects generate
 exact `K₀`, so the exact `K₀` of any exact structure is a quotient of split `K₀`. -/
-theorem fromSplit_surjective : Function.Surjective (fromSplit E) := by
-  intro x
-  induction x using ExactK0.induction_on with
-  | zero => exact ⟨0, map_zero _⟩
-  | of X => exact ⟨SplitK0.of X, fromSplit_of (E := E) X⟩
-  | add a b ha hb =>
-    obtain ⟨a', rfl⟩ := ha
-    obtain ⟨b', rfl⟩ := hb
-    exact ⟨a' + b', map_add _ _ _⟩
-  | neg a ha =>
-    obtain ⟨a', rfl⟩ := ha
-    exact ⟨-a', map_neg _ _⟩
+theorem fromSplit_surjective : Function.Surjective (fromSplit E) :=
+  surjective_of_forall_of_mem_range fun X => ⟨SplitK0.of X, fromSplit_of (E := E) X⟩
 
 /-- The canonical comparison from split `K₀` to exact `K₀` is an equivalence when every
 conflation splits. -/
