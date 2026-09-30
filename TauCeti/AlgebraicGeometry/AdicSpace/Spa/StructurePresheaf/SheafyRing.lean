@@ -45,6 +45,10 @@ does not require completeness.
   Huber ring `B` is sheafy exactly when every ring of integral elements of `B` satisfies
   `TauCeti.Huber.IsSheafyForEveryPresentation`.
 * `TauCeti.Huber.isSheafyRing_completion_iff`: `Â` is sheafy exactly when `A` is.
+* `TauCeti.Huber.isSheafyRing_iff_of_completion_ringEquiv`: sheafiness depends only on the
+  completion, up to isomorphism of topological rings.
+* `TauCeti.Huber.isSheafyRing_iff_of_ringEquiv`: sheafiness is invariant under isomorphisms of
+  topological rings.
 * `TauCeti.Huber.isStablySheafyRing_iff_forall_isSheafyForEveryPresentation`: `A` is stably
   sheafy exactly when, for every `B` in the definition, every ring of integral elements of `B`
   satisfies `TauCeti.Huber.IsSheafyForEveryPresentation`.
@@ -121,18 +125,40 @@ theorem isSheafyRing_iff_forall_isSheafyForEveryPresentation {B : Type u} [CommR
     [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B] [IsHuberRing B] [CompleteSpace B]
     [T0Space B] : IsSheafyRing B ↔ ∀ Bplus : Subring B, IsRingOfIntegralElements Bplus →
       IsSheafyForEveryPresentation Bplus := by
-  refine ⟨fun h _ ↦ h.isSheafyForEveryPresentation, fun h ↦ isSheafyRing_iff.mpr fun _ hBplus ↦ ?_⟩
-  -- carry the plus ring of `B̂` to `B` along the topological ring isomorphism `B̂ ≃ B`
-  have he := (Completion.uniformContinuous_completeRingEquivSelf B).continuous
-  have he' := (Completion.uniformContinuous_completeRingEquivSelf_symm B).continuous
-  exact (isSheafyForEveryPresentation_iff_of_ringEquiv _ he he' rfl).mpr
-    (h _ (hBplus.map _ he he'))
+  refine ⟨fun h _ ↦ h.isSheafyForEveryPresentation, fun h ↦ isSheafyRing_iff.mpr ?_⟩
+  -- carry the plus rings of `B̂` to `B` along the topological ring isomorphism `B̂ ≃ B`
+  exact (forall_isSheafyForEveryPresentation_iff_of_ringEquiv _
+    (Completion.uniformContinuous_completeRingEquivSelf B).continuous
+    (Completion.uniformContinuous_completeRingEquivSelf_symm B).continuous).mpr h
 
 /-- **Sheafiness is invariant under completion**: the completion `Â` of a Huber ring `A` is sheafy
 exactly when `A` is. -/
 @[simp]
 theorem isSheafyRing_completion_iff : IsSheafyRing (Completion A) ↔ IsSheafyRing A :=
   isSheafyRing_iff_forall_isSheafyForEveryPresentation.trans isSheafyRing_iff.symm
+
+section RingEquiv
+
+variable {B : Type u} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B]
+  [IsHuberRing B]
+
+/-- **Sheafiness depends only on the completion**: if the completions `Â` and `B̂` of Huber rings
+`A` and `B` are isomorphic as topological rings, then `A` is sheafy exactly when `B` is. -/
+theorem isSheafyRing_iff_of_completion_ringEquiv (e : Completion A ≃+* Completion B)
+    (he : Continuous e) (he' : Continuous e.symm) : IsSheafyRing A ↔ IsSheafyRing B :=
+  isSheafyRing_iff.trans <|
+    (forall_isSheafyForEveryPresentation_iff_of_ringEquiv e he he').trans isSheafyRing_iff.symm
+
+/-- **Sheafiness is invariant under isomorphism**: if `e : A ≃+* B` is an isomorphism of
+topological rings between Huber rings, then `A` is sheafy exactly when `B` is. The corresponding
+statement for a plus ring `A⁺` and its image under `e` is
+`TauCeti.Huber.isSheafyForEveryPresentation_iff_of_ringEquiv`. -/
+theorem isSheafyRing_iff_of_ringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) :
+    IsSheafyRing A ↔ IsSheafyRing B :=
+  isSheafyRing_iff_of_completion_ringEquiv (Completion.mapRingEquiv e he he')
+    (Completion.continuous_mapRingEquiv e he he') (Completion.continuous_mapRingEquiv_symm e he he')
+
+end RingEquiv
 
 /-! ### Stably sheafy Huber rings -/
 
