@@ -43,8 +43,8 @@ available for every root, and `2 e_{n-1} = α_{n-1} - α_{n-2}`.
 Two numerical consequences close the loop with the discriminant computation of the base file.  The
 basis-free signed determinant of the checkerboard lattice is the determinant of the Cartan matrix,
 and, since the discriminant group has order four and the Cartan matrix is a Gram matrix of a
-positive form, `(CartanMatrix.D n).det = 4`.  The determinant of `CartanMatrix.D` is not otherwise
-available: this deduces it from the lattice, rather than the other way round.
+positive form, `(CartanMatrix.D n).det = 4`.  This derives the determinant of `CartanMatrix.D` from
+the lattice.
 
 ## Main declarations
 
@@ -62,8 +62,6 @@ available: this deduces it from the lattice, rather than the other way round.
 * `TauCeti.IntegralLattice.determinant_checkerboardLattice`: the signed determinant of the
   checkerboard lattice is `4`.
 * `CartanMatrix.D_det`: `(CartanMatrix.D n).det = 4` for `2 ≤ n`.
-* `TauCeti.DynkinType.det_typeDSimpleRoot_sq`: for `4 ≤ n`,
-  `(Matrix.of (typeDSimpleRoot n hn)).det ^ 2 = 4`.
 * `TauCeti.DynkinType.linearIndependent_typeDSimpleRoot_cast`: scalar-extension independence over
   a commutative domain where `2` is nonzero.
 
@@ -331,14 +329,7 @@ end CartanMatrix
 
 namespace TauCeti.DynkinType
 
-/-! ## The determinant square of the simple-root matrix -/
-
 variable {n : ℕ}
-
-/-- The determinant of the integral type-D simple-root matrix squares to `4`. -/
-theorem det_typeDSimpleRoot_sq (n : ℕ) (hn : 4 ≤ n) :
-    (Matrix.of (typeDSimpleRoot n hn)).det ^ 2 = 4 := by
-  rw [← det_cartanMatrixD_eq_det_typeDSimpleRoot_sq hn, CartanMatrix.D_det (by omega)]
 
 /-! ## Scalar extension of the simple-root independence -/
 
@@ -355,17 +346,9 @@ theorem linearIndependent_typeDSimpleRoot_cast {K : Type*} [CommRing K] [IsDomai
   have hdetcast : A.det = ((Matrix.of (typeDSimpleRoot n hn)).det : K) := by
     rw [hA]
     exact (Int.cast_det (R := K) (Matrix.of (typeDSimpleRoot n hn))).symm
-  have hdet_sq : A.det ^ 2 = (4 : K) := by
-    rw [hdetcast]
-    simpa only [Int.cast_pow, Int.cast_ofNat] using
-      congrArg (fun z : ℤ => (z : K)) (det_typeDSimpleRoot_sq n hn)
   have hdet : A.det ≠ 0 := by
-    intro hzero
-    have hfour : (4 : K) ≠ 0 := by
-      have hfour_eq : (4 : K) = (2 : K) ^ 2 := by norm_num
-      rw [hfour_eq]
-      exact pow_ne_zero 2 (NeZero.ne _)
-    exact hfour (by simpa [hzero] using hdet_sq.symm)
+    rw [hdetcast, det_typeDSimpleRoot_eq_two hn, Int.cast_ofNat]
+    exact NeZero.ne 2
   have hrows : LinearIndependent K (fun i => A i) :=
     Matrix.linearIndependent_rows_of_det_ne_zero hdet
   convert hrows using 1
