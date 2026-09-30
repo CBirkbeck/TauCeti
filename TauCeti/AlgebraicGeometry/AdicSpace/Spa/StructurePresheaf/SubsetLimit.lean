@@ -447,6 +447,15 @@ theorem rationalSubsetIndexRestrict_obj_open {V W : Opens ↥(spa Aplus)} (h : W
     (U : RationalSubsetIndex Aplus W) :
     (OrderDual.ofDual ((rationalSubsetIndexRestrict h).obj U)).1 = (OrderDual.ofDual U).1 := (rfl)
 
+omit [IsTopologicalRing A] in
+/-- Including a rational subset of `U` among those of `W`, and then among those of `V`, is including
+it among those of `V` directly. -/
+theorem rationalSubsetIndexRestrict_obj_restrict {U V W : Opens ↥(spa Aplus)} (h₁ : W ≤ V)
+    (h₂ : U ≤ W) (X : RationalSubsetIndex Aplus U) :
+    (rationalSubsetIndexRestrict h₁).obj ((rationalSubsetIndexRestrict h₂).obj X) =
+      (rationalSubsetIndexRestrict (h₂.trans h₁)).obj X :=
+  (rfl)
+
 /-- For `W ≤ V`, the presentations chosen for a rational subset `U` of `W` in `W` and in `V` both
 present `U`, so the comparison morphism of Proposition 8.2(1) runs from the second to the first. -/
 theorem rationalSubset_presentationIndex_subset_restrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
@@ -542,11 +551,12 @@ theorem rationalSubsetLimitMap_comp (hAplus : ∀ ⦃a : A⦄, a ∈ Aplus → I
     rationalSubsetLimitMap (P := P) hAplus h₁ ≫ rationalSubsetLimitMap hAplus h₂ =
       rationalSubsetLimitMap hAplus (h₂.trans h₁) := by
   refine limit.hom_ext fun U' ↦ ?_
-  -- both sides are one comparison morphism out of the same rational subset of `V`; the closing
-  -- `rfl` identifies restricting along `h₂` and then `h₁` with restricting along `h₂.trans h₁`,
-  -- which agree on objects by definition of `rationalSubsetIndexRestrict`
-  simp [reassoc_of% rationalSubsetLimitMap_comp_π hAplus]
-  rfl
+  -- both sides are one comparison morphism out of the same rational subset of `V`, reached by
+  -- restricting along `h₂` and then `h₁`, or along `h₂.trans h₁`
+  rw [Category.assoc, rationalSubsetLimitMap_comp_π, reassoc_of% rationalSubsetLimitMap_comp_π,
+    rationalSubsetLimitMap_comp_π,
+    ← limit.w _ (homOfLE (rationalSubsetIndexRestrict_obj_restrict h₁ h₂ U').le), Category.assoc]
+  simp
 
 /-- **The presheaf `V ↦ lim_{U ⊆ V} A⟨U⟩`** on `Spa(A,A⁺)` of Wedhorn §8.1, valued in
 `CompleteSeparatedTopCommRingCat`, with the coordinate rings of presentations over `P` and

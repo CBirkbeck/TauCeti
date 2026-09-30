@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Completion.Homeomorph
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.SheafForEveryPresentation
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.SubsetLimit
 
@@ -18,9 +17,9 @@ sheaf condition on a pair is `TauCeti.Huber.IsSheafyForEveryPresentation`, which
 presentation-indexed limit presheaf for every compatible pair of definition.
 
 That presheaf is isomorphic, as a presheaf, to Wedhorn's limit over rational subsets
-`V ↦ lim_{U ⊆ V} Â⟨U⟩` (`TauCeti.ValuationSpectrum.rationalSubsetLimitPresheaf`), so sheafiness is
-equivalently the sheaf condition on that presheaf, for every compatible pair of definition `P`;
-the coordinate rings in both presheaves are built from `P`.
+`V ↦ lim_{U ⊆ V} Â⟨U⟩` (`TauCeti.ValuationSpectrum.rationalSubsetLimitPresheaf`), whose coordinate
+rings are built from a pair of definition `P`. Since the sheaf condition does not depend on `P`,
+sheafiness is the sheaf condition on that presheaf for every pair of definition of `Â`.
 
 ## Main definitions
 
@@ -30,7 +29,7 @@ the coordinate rings in both presheaves are built from `P`.
 
 * `TauCeti.Huber.isSheafyRing_iff_isSheaf_rationalSubsetLimitPresheaf`: `A` is sheafy exactly
   when every presheaf `V ↦ lim_{U ⊆ V} Â⟨U⟩` of limits over rational subsets, for every ring of
-  integral elements of `Â` and every compatible pair of definition, is a sheaf.
+  integral elements of `Â` and every pair of definition of `Â`, is a sheaf.
 * `TauCeti.Huber.IsSheafyRing.isSheafyForEveryPresentation_completionPlus`: if `A` is sheafy and
   `A⁺` is a ring of integral elements of `A`, then `Â⁺`, the closure of the image of `A⁺`,
   satisfies `TauCeti.Huber.IsSheafyForEveryPresentation`.
@@ -66,17 +65,19 @@ theorem isSheafyRing_iff : IsSheafyRing A ↔ ∀ Aplus : Subring (Completion A)
   (Iff.rfl)
 
 /-- **Sheafiness through Wedhorn's limit over rational subsets**: `A` is sheafy exactly when, for
-every ring of integral elements `Â⁺` of `Â` and every pair of definition `P` of `Â` contained in
-it, the presheaf `V ↦ lim_{U ⊆ V} Â⟨U⟩` of limits over the rational subsets of `Spa(Â, Â⁺)`, with
-coordinate rings built from `P`, is a sheaf. `TauCeti.Huber.isSheafyRing_iff` states the same
-condition through the presentation-indexed presheaves. -/
+every ring of integral elements `Â⁺` of `Â` and every pair of definition `P` of `Â`, the presheaf
+`V ↦ lim_{U ⊆ V} Â⟨U⟩` of limits over the rational subsets of `Spa(Â, Â⁺)`, with coordinate rings
+built from `P`, is a sheaf. `P` need not be contained in `Â⁺`. -/
 theorem isSheafyRing_iff_isSheaf_rationalSubsetLimitPresheaf : IsSheafyRing A ↔
     ∀ (Aplus : Subring (Completion A)) (hAplus : IsRingOfIntegralElements Aplus)
-      (P : PairOfDefinition (Completion A)), P.ringOfDefinition ≤ Aplus → Presheaf.IsSheaf
+      (P : PairOfDefinition (Completion A)), Presheaf.IsSheaf
         (Opens.grothendieckTopology ↥(spa Aplus)) (rationalSubsetLimitPresheaf P Aplus fun _ ha ↦
           mem_powerBoundedSubring.mp (hAplus.le_powerBoundedSubring ha)) := by
   simp only [← isSheaf_presentationLimitPresheaf_iff_isSheaf_rationalSubsetLimitPresheaf]
-  exact isSheafyRing_iff.trans <| forall₂_congr fun _ hAplus ↦ ⟨(·.isSheaf), .mk hAplus⟩
+  refine isSheafyRing_iff.trans <| forall₂_congr fun _ hAplus ↦ ⟨fun h P ↦
+    ((isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf P).mp h).2, fun h ↦ ?_⟩
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := Completion A)
+  exact (isSheafyForEveryPresentation_iff_isRingOfIntegralElements_and_isSheaf P).mpr ⟨hAplus, h P⟩
 
 /-- If `A` is sheafy and `A⁺` is a ring of integral elements of `A`, then `Â⁺`, the closure of the
 image of `A⁺` in `Â`, satisfies `TauCeti.Huber.IsSheafyForEveryPresentation`. For this `Â⁺`,
