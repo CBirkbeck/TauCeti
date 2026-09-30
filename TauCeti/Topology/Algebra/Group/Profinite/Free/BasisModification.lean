@@ -160,6 +160,14 @@ theorem basisModification_of (w : X → pLowerCentralSeries p (freeProP p X) m) 
     basisModification w (of i) = of i * (w i : freeProP p X) :=
   lift_of _ _ i
 
+/-- **Every continuous endomorphism of `F` is a basis modification** at level `0`, by the family
+`x_i⁻¹ * φ(x_i)`. -/
+theorem eq_basisModification (φ : freeProP p X →ₜ* freeProP p X) :
+    φ = basisModification fun i ↦
+      (⟨(of i)⁻¹ * φ (of i), mem_pLowerCentralSeries_zero p _⟩ :
+        pLowerCentralSeries p (freeProP p X) 0) :=
+  hom_ext fun i ↦ by rw [basisModification_of, mul_inv_cancel_left]
+
 /-- **The basis modification is congruent to the identity modulo `λ_m(F)`.** -/
 theorem inv_mul_basisModification_mem_pLowerCentralSeries
     (w : X → pLowerCentralSeries p (freeProP p X) m) (g : freeProP p X) :
@@ -234,6 +242,17 @@ theorem exponentSum_basisModification [Finite X] (w : X → pLowerCentralSeries 
   · rw [hx, zero_smul, Pi.single_zero]
   · rw [(exponentSum_eq_one_iff p X _).mpr (hw x hx), toAdd_one, add_zero, ← Pi.single_smul,
       smul_eq_mul, mul_one]
+
+/-- **A continuous endomorphism moving each generator carrying a nonzero exponent by an element of
+the closed commutator subgroup preserves the exponent vector**: if `x_i⁻¹ * φ(x_i) ∈ closure [F, F]`
+for every `i` with `(exponentSum g)_i ≠ 0`, then `exponentSum (φ g) = exponentSum g`. -/
+theorem exponentSum_apply_eq_of_forall_inv_mul_apply_mem [Finite X]
+    (φ : freeProP p X →ₜ* freeProP p X) {g : freeProP p X}
+    (hφ : ∀ i, (exponentSum p X g).toAdd i ≠ 0 →
+      (of i)⁻¹ * φ (of i) ∈ (commutator (freeProP p X)).topologicalClosure) :
+    exponentSum p X (φ g) = exponentSum p X g := by
+  rw [congrArg (exponentSum p X) (DFunLike.congr_fun (eq_basisModification φ) g)]
+  exact exponentSum_basisModification _ hφ
 
 end ExponentSum
 
