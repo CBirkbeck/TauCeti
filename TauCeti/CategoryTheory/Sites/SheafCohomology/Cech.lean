@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.Homology.Opposite
 public import Mathlib.Algebra.Homology.SingleHomology
 public import Mathlib.CategoryTheory.Limits.FormalCoproducts.ExtraDegeneracy
-public import Mathlib.CategoryTheory.Sites.IsSheafFor
 public import Mathlib.CategoryTheory.Sites.SheafCohomology.Cech
 public import TauCeti.CategoryTheory.Sites.IsSheafFor
 
