@@ -410,11 +410,11 @@ def ConnectedFiberNumberedCoverClass.forgetNumbering :
 
 /-- Keeping only the point labelled `i`, on isomorphism classes: a label-preserving isomorphism
 preserves in particular the point labelled `i`. -/
-def ConnectedFiberNumberedCoverClass.markLabel (i : Fin n) :
-    ConnectedFiberNumberedCoverClass x n → ConnectedPointedCoverClass x n :=
-  Quotient.map (·.markLabel i) fun _ _ h => by
+def ConnectedFiberNumberedCoverClass.markLabel (C : ConnectedFiberNumberedCoverClass x n)
+    (i : Fin n) : ConnectedPointedCoverClass x n :=
+  Quotient.map (·.markLabel i) (fun _ _ h => by
     obtain ⟨f, hf⟩ := h
-    exact Exists.intro f (hf i)
+    exact Exists.intro f (hf i)) C
 
 /-- Forgetting the chosen point, on isomorphism classes. -/
 def ConnectedPointedCoverClass.forgetPoint :
@@ -429,9 +429,8 @@ theorem ConnectedFiberNumberedCoverClass.forgetNumbering_mk (c : ConnectedFiberN
   (rfl)
 
 @[simp]
-theorem ConnectedFiberNumberedCoverClass.markLabel_mk (i : Fin n)
-    (c : ConnectedFiberNumberedCover x n) :
-    (mk c).markLabel i = ConnectedPointedCoverClass.mk (c.markLabel i) :=
+theorem ConnectedFiberNumberedCoverClass.markLabel_mk (c : ConnectedFiberNumberedCover x n)
+    (i : Fin n) : (mk c).markLabel i = ConnectedPointedCoverClass.mk (c.markLabel i) :=
   (rfl)
 
 @[simp]
@@ -442,8 +441,8 @@ theorem ConnectedPointedCoverClass.forgetPoint_mk (c : ConnectedPointedCover x n
 /-- The forgetful triangle commutes: marking a label and then forgetting the point is forgetting
 the numbering. -/
 @[simp]
-theorem ConnectedFiberNumberedCoverClass.forgetPoint_markLabel (i : Fin n)
-    (C : ConnectedFiberNumberedCoverClass x n) :
+theorem ConnectedFiberNumberedCoverClass.forgetPoint_markLabel
+    (C : ConnectedFiberNumberedCoverClass x n) (i : Fin n) :
     (C.markLabel i).forgetPoint = C.forgetNumbering :=
   Quotient.inductionOn C fun _ => rfl
 
@@ -487,10 +486,11 @@ theorem forgetNumbering_smul (τ : Perm (Fin n)) (c : ConnectedFiberNumberedCove
     (τ • c).forgetNumbering = c.forgetNumbering :=
   (rfl)
 
+/-- Relabelling by `τ` and then marking the label `i` marks the original label `τ.symm i`. -/
 @[simp]
 theorem markLabel_smul (τ : Perm (Fin n)) (c : ConnectedFiberNumberedCover x n) (i : Fin n) :
-    (τ • c).markLabel (τ i) = c.markLabel i := by
-  have h : (τ • c).ν.symm (τ i) = c.ν.symm i := by simp
+    (τ • c).markLabel i = c.markLabel (τ.symm i) := by
+  have h : (τ • c).ν.symm i = c.ν.symm (τ.symm i) := by simp
   exact congrArg (fun e => ConnectedPointedCover.mk c.cover e ⟨c.ν⟩) h
 
 /-- An isomorphism of the underlying covers makes two numbered covers isomorphic after the
@@ -532,9 +532,11 @@ theorem forgetNumbering_smul (τ : Perm (Fin n)) (C : ConnectedFiberNumberedCove
     (τ • C).forgetNumbering = C.forgetNumbering :=
   Quotient.inductionOn C fun _ => rfl
 
+/-- Relabelling a class by `τ` and then marking the label `i` marks the original label
+`τ.symm i`. -/
 @[simp]
 theorem markLabel_smul (τ : Perm (Fin n)) (C : ConnectedFiberNumberedCoverClass x n)
-    (i : Fin n) : (τ • C).markLabel (τ i) = C.markLabel i :=
+    (i : Fin n) : (τ • C).markLabel i = C.markLabel (τ.symm i) :=
   Quotient.inductionOn C fun c => congrArg ConnectedPointedCoverClass.mk (c.markLabel_smul τ i)
 
 /-- **Forgetting the numbering is passing to the relabelling orbit.** Two numbered classes have
@@ -568,7 +570,7 @@ theorem markLabel_eq_markLabel_iff {C C' : ConnectedFiberNumberedCoverClass x n}
     rw [hτi]
     exact (congrArg c.ν he).trans (apply_symm_apply _ _)
   · rintro ⟨τ, rfl, rfl⟩
-    exact markLabel_smul τ C' j
+    rw [markLabel_smul, symm_apply_apply]
 
 /-- The bare isomorphism classes of connected covers of degree `n` are the relabelling orbits of
 the numbered classes. -/
@@ -598,10 +600,10 @@ noncomputable def markedOrbitRelQuotientEquiv :
       ConnectedPointedCoverClass x n :=
   (Quotient.congrRight fun ⟨C, i⟩ ⟨C', j⟩ => by
     rw [MulAction.orbitRel_apply, MulAction.mem_orbit_iff, Setoid.ker_def]
-    dsimp only
+    dsimp only [Function.uncurry_apply_pair]
     rw [markLabel_eq_markLabel_iff]
     simp [Prod.ext_iff, Perm.smul_def]).trans
-    (Setoid.quotientKerEquivOfSurjective (fun Ci => Ci.1.markLabel Ci.2) fun C =>
+    (Setoid.quotientKerEquivOfSurjective (Function.uncurry markLabel) fun C =>
       let ⟨N, i, h⟩ := C.exists_markLabel_eq
       ⟨(N, i), h⟩)
 
