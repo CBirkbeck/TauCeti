@@ -908,6 +908,16 @@ theorem explicitCoeff2_id [ContinuousMul G] :
     explicitCoeff2 G M (DistribMulActionHom.id G) continuous_id = AddMonoidHom.id _ :=
   explicitMap2_id G M
 
+/-- A coefficient map which is multiplication by `k` on `M` induces multiplication by `k` on
+explicit `H²`: the class of a `2`-cocycle `c` goes to the class of `k • c`. -/
+theorem explicitCoeff2_eq_nsmul [ContinuousMul G] (f : M →+[G] M) (hf : Continuous f) {k : ℕ}
+    (hk : ∀ m, f m = k • m) (x : H2 G M) : explicitCoeff2 G M f hf x = k • x := by
+  induction x using QuotientAddGroup.induction_on with
+  | _ c =>
+    rw [explicitCoeff2_mk, ← QuotientAddGroup.mk_nsmul]
+    exact congrArg (fun z : Z2 G M ↦ (z : H2 G M))
+      (Subtype.ext (funext fun ⟨g, h⟩ ↦ (cocyclesMap2_apply _ _ _ _ _ _ _ _ c g h).trans (hk _)))
+
 /-- Coefficient maps on explicit `H²` respect composition. -/
 theorem explicitCoeff2_comp [ContinuousMul G]
     {N : Type uN} [AddCommGroup N] [TopologicalSpace N]
