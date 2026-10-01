@@ -8,6 +8,7 @@ module
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.CohomologicalDimension.RightExact
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.CohomologicalDimension.SingleDegree
 public import TauCeti.RepresentationTheory.Homological.ContCohomology.CohomologicalDimension.TrivialFp
+public import TauCeti.RepresentationTheory.Homological.ContCohomology.Cup.Duality.RightExact
 public import TauCeti.Topology.Algebra.Group.Profinite.ProP.Devissage
 
 /-!
@@ -42,8 +43,12 @@ The file also records Tate's criterion for a profinite pro-`p` group: if `Hⁿ(G
 on the finite discrete `G`-modules killed by `p`, then `cd_p G ≤ n`. The vanishing of `Hⁿ⁺¹` on
 those modules is
 `TauCeti.subsingleton_continuousCohomology_succ_of_forall_coeffMap_proj_surjective`, and
-dévissage extends it to all finite `p`-primary modules. This is how the cohomological dimension of
-a Demushkin group is bounded (Serre, *Structure de certains pro-`p`-groupes*, §9.1).
+dévissage extends it to all finite `p`-primary modules. In degree `2` the right exactness follows
+from duality: if Tate's duality map `α₂ : H²(G, M) → Hom(H⁰(G, Hom(M, N)), H²(G, N))` is bijective
+for every finite discrete `M` killed by `p`, then `cd_p G ≤ 2`
+(`TauCeti.IsProP.cohomologicalDimensionAt_le_two_of_forall_dualityMap2_bijective`). This is how
+the cohomological dimension of a Demushkin group is bounded (Serre, *Structure de certains
+pro-`p`-groupes*, §9.1).
 
 ## Main results
 
@@ -58,6 +63,9 @@ a Demushkin group is bounded (Serre, *Structure de certains pro-`p`-groupes*, §
 * `TauCeti.IsProP.cohomologicalDimensionAt_le_of_forall_coeffMap_proj_surjective`: **Tate's
   criterion**: right exactness of `Hⁿ(G, -)` on the finite discrete `G`-modules killed by `p`
   gives `cd_p G ≤ n`.
+* `TauCeti.IsProP.cohomologicalDimensionAt_le_two_of_forall_dualityMap2_bijective`: **Tate's
+  duality criterion**: bijectivity of `α₂` on the finite discrete `G`-modules killed by `p` gives
+  `cd_p G ≤ 2`.
 
 ## References
 
@@ -74,7 +82,7 @@ namespace TauCeti
 
 open ContCohomology
 
-universe u
+universe u v
 
 variable {p : ℕ} [hp : Fact p.Prime] {G : Type u} [Group G] [TopologicalSpace G]
   [IsTopologicalGroup G]
@@ -181,5 +189,23 @@ theorem IsProP.cohomologicalDimensionAt_le_of_forall_coeffMap_proj_surjective
   exact hG.subsingleton_continuousCohomology_of_forall_smul_eq_self
     (fun A _ _ _ _ _ _ hA _ ↦
       subsingleton_continuousCohomology_succ_of_forall_coeffMap_proj_surjective h A hA) M hM
+
+/-- **Tate's duality criterion for `cd_p G ≤ 2`.** Let `G` be a profinite pro-`p` group and `N` a
+discrete `G`-module. If Tate's duality map in degree two,
+`α₂ : H²(G, M) → Hom(H⁰(G, InternalHom G M N), H²(G, N))`, is bijective for every finite discrete
+`G`-module `M` killed by `p`, then `cd_p G ≤ 2`: duality makes `H²(G, -)` right exact on those
+modules (`TauCeti.ContCohomology.DiscreteShortExact.coeffMap_proj_surjective_of_dualityMap2`), and
+right exactness bounds the dimension. For an infinite Demushkin group and `N = 𝔽_p` the hypothesis
+is Tate's perfect duality, and the conclusion is the upper bound in `cd_p G = 2`. -/
+theorem IsProP.cohomologicalDimensionAt_le_two_of_forall_dualityMap2_bijective
+    [TotallyDisconnectedSpace G] (N : Type v) [AddCommGroup N] [TopologicalSpace N]
+    [DiscreteTopology N] [DistribMulAction G N] [ContinuousSMul G N]
+    (h : ∀ (M : Type u) [AddCommGroup M] [TopologicalSpace M] [DiscreteTopology M]
+      [DistribMulAction G M] [ContinuousSMul G M] [Finite M], (∀ m : M, p • m = 0) →
+      Function.Bijective (dualityMap2 G M N)) :
+    cohomologicalDimensionAt.{u} p G ≤ 2 :=
+  hG.cohomologicalDimensionAt_le_of_forall_coeffMap_proj_surjective 2
+    fun _ B C _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ S _ hB hC ↦
+      S.coeffMap_proj_surjective_of_dualityMap2 N hB (h B hB).surjective (h C hC).injective
 
 end TauCeti
