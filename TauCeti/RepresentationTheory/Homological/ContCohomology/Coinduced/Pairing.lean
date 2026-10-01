@@ -42,8 +42,10 @@ Coind_U^G A × Coind_U^G B → Coind_U^G C,
     (f, f') ↦ (g ↦ μ (f g) (f' g)),
 ```
 
-which is `G`-equivariant for the right-translation action and commutes with evaluation at `1`. It
-is the coefficient pairing along which Shapiro's isomorphism is multiplicative.
+which is `G`-equivariant for the right-translation action and commutes with evaluation at `1`.
+Followed by the trace, the pointwise pairing is the pairing through which the internal hom out of
+a coinduced module is identified with a coinduced module, and the coefficient pairing along which
+Shapiro's isomorphism is multiplicative.
 
 ## Main definitions
 
