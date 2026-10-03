@@ -292,7 +292,10 @@ identifies the bottom boundary of `D₁` with the top boundary of `D₂`, and ma
 the outer boundary when a strand joins them: a strand follows an arc of one diagram, crosses the
 middle boundary into the other, and repeats until it reaches the outer boundary again. This is
 the multiplication of the Brauer algebra on the diagram basis, up to the power of `δ` counting
-the loops that close up in the middle. -/
+the loops that close up in the middle.
+
+Tested by: 4 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.composeDiagram) -/
 def composeDiagram (D₁ D₂ : BrauerDiagram k) : BrauerDiagram k :=
   .mk (BrauerDiagram.stackVal_involutive D₁ D₂).toPerm
     (fun x => by simpa using BrauerDiagram.stackVal_involutive D₁ D₂ x)

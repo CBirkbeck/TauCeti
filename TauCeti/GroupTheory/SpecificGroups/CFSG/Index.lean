@@ -832,7 +832,7 @@ end LieTypeIndex
 carrier-valued constructions take this subtype, so they need no branch for an invalid Dynkin rank
 or an excluded small group.
 
-Tested by: 3 unit tests
+Tested by: 4 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValidLieTypeIndex) -/
 abbrev ValidLieTypeIndex : Type _ := {d : LieTypeIndex // d.Valid}
 

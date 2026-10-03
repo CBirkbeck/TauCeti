@@ -79,7 +79,7 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasu
 Extends `SymmKernel`, so symmetry, measurability and boundedness come from there; the only new
 field is the pointwise range constraint.
 
-Tested by: 3 unit tests
+Tested by: 9 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.Graphon) -/
 structure Graphon (Ω : Type*) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     extends SymmKernel Ω μ where
@@ -161,7 +161,10 @@ theorem clampSymm_apply_of_symm_of_mem (μ : Measure Ω) [IsProbabilityMeasure �
 
 The parameter is taken in `unitInterval`, the same convention Mathlib's
 `SimpleGraph.binomialRandom` uses for `G(V, p)`, so that the later sampling compatibility statement
-needs no translation. -/
+needs no translation.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.Graphon.const) -/
 def const (μ : Measure Ω) [IsProbabilityMeasure μ] (p : I) : Graphon Ω μ where
   toFun _ _ := (p : ℝ)
   symm' _ _ := rfl

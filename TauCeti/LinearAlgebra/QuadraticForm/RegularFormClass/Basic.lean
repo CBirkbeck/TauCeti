@@ -171,7 +171,7 @@ noncomputable def _root_.QuadraticForm.orthogonalPairIsometryEquiv
 different ranks may be compared; `TauCeti.fst_eq_of_presentedForm_equivalent` shows that only
 presentations of equal rank are ever related.
 
-Tested by: 1 unit test
+Tested by: 3 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.regularFormSetoid) -/
 instance regularFormSetoid (K : Type u) [Field K] : Setoid (RegularFormPresentation K) where
   r p q := (presentedForm p).Equivalent (presentedForm q)
@@ -188,7 +188,10 @@ theorem regularFormSetoid_iff {p q : RegularFormPresentation K} :
 /-- Isometry classes of diagonal presentations. When `2` is invertible in `K` every presented
 form is regular and every regular form on a finite-dimensional space is presented, so this is
 exactly the set of isometry classes of regular finite-dimensional quadratic forms; over a field
-of characteristic two it is only the quotient of the diagonal presentations by isometry. -/
+of characteristic two it is only the quotient of the diagonal presentations by isometry.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.RegularFormClass) -/
 abbrev RegularFormClass (K : Type u) [Field K] : Type u := Quotient (regularFormSetoid K)
 
 /-- Two presentations have the same class exactly when they present isometric forms. -/

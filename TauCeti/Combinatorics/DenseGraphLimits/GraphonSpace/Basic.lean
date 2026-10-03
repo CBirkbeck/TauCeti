@@ -90,7 +90,10 @@ instance : MeasurableSpace (GraphonSpace Ω μ) := borel _
 topology. -/
 instance : BorelSpace (GraphonSpace Ω μ) := ⟨rfl⟩
 
-/-- The canonical graphon space over the unit interval with Lebesgue measure. -/
+/-- The canonical graphon space over the unit interval with Lebesgue measure.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.GraphonSpaceI) -/
 abbrev GraphonSpaceI : Type _ := GraphonSpace I (volume : Measure I)
 
 end DenseGraphLimits
