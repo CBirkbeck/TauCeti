@@ -16,8 +16,8 @@ import TauCeti.Analysis.PositiveDefinite.Function.GNS
 # Bochner's theorem on locally compact abelian groups
 
 A positive-definite function `φ` on a locally compact abelian group `G` that is continuous at `0`
-is the Fourier–Stieltjes transform `φ(g) = ∫ χ(g) dμ(χ)` of a finite positive measure `μ` on the
-Pontryagin dual of `G`.
+is the Fourier–Stieltjes transform `φ(g) = ∫ χ(g) dμ(χ)` of a finite inner regular positive
+measure `μ` on the Pontryagin dual of `G`.
 
 When the dual is Polish, that measure is unique, and conversely every finite Borel measure on
 the dual has a continuous positive-definite transform. Thus continuous positive-definite
@@ -39,7 +39,7 @@ regularity of the Haar measure.
 
 * `TauCeti.IsPositiveDefiniteSub.exists_pontryaginMeasureTransform_eq_of_continuousAt`: a
   positive-definite function, continuous at `0`, on a locally compact abelian group is the
-  Fourier–Stieltjes transform of a finite measure on the dual group.
+  Fourier–Stieltjes transform of a finite inner regular measure on the dual group.
 * `TauCeti.continuous_and_isPositiveDefiniteSub_iff_existsUnique_pontryaginMeasureTransform_eq`:
   the full Bochner characterization by unique finite measures on a locally compact abelian
   group with Polish dual.
@@ -63,10 +63,11 @@ variable {G : Type*} [AddCommGroup G] [TopologicalSpace G] [IsTopologicalAddGrou
 
 /-- **Bochner's theorem on a locally compact abelian group**, existence half.
 A positive-definite function that is continuous at `0` is the Fourier–Stieltjes transform of a
-finite measure on the Pontryagin dual. -/
+finite inner regular measure on the Pontryagin dual. -/
 theorem IsPositiveDefiniteSub.exists_pontryaginMeasureTransform_eq_of_continuousAt {φ : G → ℂ}
     (hφ : IsPositiveDefiniteSub φ) (hφ₀ : ContinuousAt φ 0) :
-    ∃ μ : FiniteMeasure (PontryaginDual (Multiplicative G)), μ.pontryaginMeasureTransform = φ := by
+    ∃ μ : FiniteMeasure (PontryaginDual (Multiplicative G)),
+      μ.toMeasure.InnerRegular ∧ μ.pontryaginMeasureTransform = φ := by
   -- `φ g = ⟪U(g) v, v⟫ = ⟪v, U(-g) v⟫` for the GNS representation `U` and the vector `v` at `0`,
   -- so `φ` is a matrix coefficient of the representation `g ↦ U(-g)`.
   let π : ContRepresentation ℂ (Multiplicative G) hφ.gnsSpace := .ofMonoidHom <|
@@ -80,8 +81,8 @@ theorem IsPositiveDefiniteSub.exists_pontryaginMeasureTransform_eq_of_continuous
   have hcont (v : hφ.gnsSpace) : Continuous fun g : G ↦ π (.ofAdd g) v := by
     simp_rw [hπ_apply]
     exact (hφ.continuous_gnsTranslation_apply hφ₀ v).comp continuous_neg
-  obtain ⟨μ, hμ⟩ := π.exists_pontryaginMeasureTransform_eq_inner hcont hπ (hφ.gnsVector 0)
-  refine ⟨μ, funext fun g ↦ ?_⟩
+  obtain ⟨μ, hμreg, hμ⟩ := π.exists_pontryaginMeasureTransform_eq_inner hcont hπ (hφ.gnsVector 0)
+  refine ⟨μ, hμreg, funext fun g ↦ ?_⟩
   rw [hμ, hπ_apply, ← hφ.gnsRepresentation_ofAdd, hφ.gnsRepresentation_gnsVector, add_zero,
     hφ.inner_gnsVector, zero_sub, neg_neg]
 
@@ -96,7 +97,7 @@ theorem continuous_and_isPositiveDefiniteSub_iff_existsUnique_pontryaginMeasureT
         μ.pontryaginMeasureTransform = φ := by
   constructor
   · rintro ⟨hcont, hφ⟩
-    obtain ⟨μ, hμ⟩ := hφ.exists_pontryaginMeasureTransform_eq_of_continuousAt hcont.continuousAt
+    obtain ⟨μ, -, hμ⟩ := hφ.exists_pontryaginMeasureTransform_eq_of_continuousAt hcont.continuousAt
     refine ⟨μ, hμ, fun ν hν ↦ ?_⟩
     exact FiniteMeasure.pontryaginMeasureTransform_injective (hν.trans hμ.symm)
   · rintro ⟨μ, rfl, _⟩
