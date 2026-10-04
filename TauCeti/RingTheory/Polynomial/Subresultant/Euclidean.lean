@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.RingTheory.Polynomial.Subresultant.Polynomial
-public import TauCeti.RingTheory.Polynomial.Subresultant.DegreeDrop
+public import TauCeti.RingTheory.Polynomial.Subresultant.DegreeDrop.Basic
 import TauCeti.Algebra.Polynomial.OfFn
 import Mathlib.Algebra.Polynomial.FieldDivision
 
