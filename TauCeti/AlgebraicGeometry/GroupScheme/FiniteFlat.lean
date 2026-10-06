@@ -27,7 +27,8 @@ affine base, see `TauCeti.FiniteLocallyFreeCommAffineGroupSchemeCat`.
   `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.Iso`: homomorphisms and isomorphisms, as
   morphisms and isomorphisms of the underlying group objects in `Grp (Over S)`.
 * `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.baseChange`: base change along a morphism
-  of schemes.
+  of schemes, with `grpMk_baseChange` identifying its group object with the image of that of `G`
+  under `(Over.pullback f).mapGrp`, and `Hom.baseChange`: base change of homomorphisms.
 
 ## References
 
@@ -90,30 +91,46 @@ def Section {S : Scheme.{u}} (G : FiniteFlatCommGroupScheme S) :=
 /-- A homomorphism of finite flat commutative group schemes over `S`: a morphism of the underlying
 group objects in `Grp (Over S)`, that is, a morphism of schemes over `S` compatible with the group
 laws. -/
-abbrev Hom {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) :=
+abbrev Hom {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) : Type u :=
   Grp.mk G.toOver ⟶ Grp.mk H.toOver
 
 /-- An isomorphism of finite flat commutative group schemes over `S`: an isomorphism of the
 underlying group objects in `Grp (Over S)`. -/
-abbrev Iso {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) :=
+abbrev Iso {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) : Type u :=
   Grp.mk G.toOver ≅ Grp.mk H.toOver
 
 /-- The base change of a finite flat commutative group scheme `G` over `S` along `f : T ⟶ S`: the
 fibre product of `G.structureMap` and `f`, with the second projection as structure morphism and
 the group law obtained by applying the pullback functor `Over.pullback f`. -/
-@[expose, implicit_reducible, simps carrier structureMap]
 noncomputable def baseChange {S T : Scheme.{u}} (G : FiniteFlatCommGroupScheme S) (f : T ⟶ S) :
     FiniteFlatCommGroupScheme T where
   carrier := pullback G.structureMap f
   structureMap := pullback.snd G.structureMap f
-  -- `Functor.grpObjObj` rather than `Over.grpObjMkPullbackSnd`, so that (with
-  -- `implicit_reducible`) the group object of a base change is `(Over.pullback f).mapGrp` applied
-  -- to that of `G`, and homomorphisms base change by `(Over.pullback f).mapGrp.map`
   grp := Functor.grpObjObj (F := Over.pullback f) (G := G.toOver)
   comm := Functor.isCommMonObj_obj (F := Over.pullback f) (M := G.toOver)
   finite := inferInstance
   flat := inferInstance
   locallyOfFinitePresentation := inferInstance
+
+/-- The underlying scheme of the base change of `G` along `f` is the fibre product of
+`G.structureMap` and `f`. -/
+theorem baseChange_carrier {S T : Scheme.{u}} (G : FiniteFlatCommGroupScheme S) (f : T ⟶ S) :
+    (G.baseChange f).carrier = pullback G.structureMap f :=
+  (rfl)
+
+/-- The group object underlying the base change of `G` along `f` is the image of the group object
+underlying `G` under the pullback functor `Over.pullback f`. -/
+theorem grpMk_baseChange {S T : Scheme.{u}} (G : FiniteFlatCommGroupScheme S) (f : T ⟶ S) :
+    Grp.mk (G.baseChange f).toOver = (Over.pullback f).mapGrp.obj (Grp.mk G.toOver) :=
+  (rfl)
+
+/-- The base change along `f : T ⟶ S` of a homomorphism of finite flat commutative group schemes
+over `S`: the image of the homomorphism under `(Over.pullback f).mapGrp`, read through
+`grpMk_baseChange`. -/
+noncomputable def Hom.baseChange {S T : Scheme.{u}} {G H : FiniteFlatCommGroupScheme S}
+    (φ : G.Hom H) (f : T ⟶ S) : (G.baseChange f).Hom (H.baseChange f) :=
+  eqToHom (G.grpMk_baseChange f) ≫ (Over.pullback f).mapGrp.map φ ≫
+    eqToHom (H.grpMk_baseChange f).symm
 
 end FiniteFlatCommGroupScheme
 
