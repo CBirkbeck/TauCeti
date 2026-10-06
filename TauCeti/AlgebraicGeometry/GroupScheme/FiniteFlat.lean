@@ -28,7 +28,8 @@ affine base, see `TauCeti.FiniteLocallyFreeCommAffineGroupSchemeCat`.
   morphisms and isomorphisms of the underlying group objects in `Grp (Over S)`.
 * `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.baseChange`: base change along a morphism
   of schemes, with `grpMk_baseChange` identifying its group object with the image of that of `G`
-  under `(Over.pullback f).mapGrp`, and `Hom.baseChange`: base change of homomorphisms.
+  under `(Over.pullback f).mapGrp`, and `Hom.baseChange`: base change of homomorphisms, with
+  `Hom.baseChange_eq`, `Hom.baseChange_id` and `Hom.baseChange_comp`.
 
 ## References
 
@@ -131,6 +132,26 @@ noncomputable def Hom.baseChange {S T : Scheme.{u}} {G H : FiniteFlatCommGroupSc
     (φ : G.Hom H) (f : T ⟶ S) : (G.baseChange f).Hom (H.baseChange f) :=
   eqToHom (G.grpMk_baseChange f) ≫ (Over.pullback f).mapGrp.map φ ≫
     eqToHom (H.grpMk_baseChange f).symm
+
+/-- The base change of a homomorphism is the image of the homomorphism under
+`(Over.pullback f).mapGrp`, read through `grpMk_baseChange`. -/
+theorem Hom.baseChange_eq {S T : Scheme.{u}} {G H : FiniteFlatCommGroupScheme S} (φ : G.Hom H)
+    (f : T ⟶ S) : φ.baseChange f = eqToHom (G.grpMk_baseChange f) ≫
+      (Over.pullback f).mapGrp.map φ ≫ eqToHom (H.grpMk_baseChange f).symm :=
+  (rfl)
+
+/-- Base change of homomorphisms preserves identities. -/
+@[simp]
+theorem Hom.baseChange_id {S T : Scheme.{u}} (G : FiniteFlatCommGroupScheme S) (f : T ⟶ S) :
+    Hom.baseChange (𝟙 (Grp.mk G.toOver)) f = 𝟙 _ := by
+  simp [Hom.baseChange_eq]
+
+/-- Base change of homomorphisms preserves composition. -/
+@[simp]
+theorem Hom.baseChange_comp {S T : Scheme.{u}} {G H K : FiniteFlatCommGroupScheme S}
+    (φ : G.Hom H) (ψ : H.Hom K) (f : T ⟶ S) :
+    Hom.baseChange (φ ≫ ψ) f = φ.baseChange f ≫ ψ.baseChange f := by
+  simp [Hom.baseChange_eq]
 
 end FiniteFlatCommGroupScheme
 
