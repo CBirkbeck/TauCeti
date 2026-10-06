@@ -153,10 +153,13 @@ noncomputable def projModelFunctionFieldEquiv [IsDomain R] :
 function `p(X, Y, Z) / Zⁿ`, for `p` whose class in the homogeneous coordinate ring has degree `n`,
 to `p(x, y, 1)`, where `x` and `y` are the classes of the affine coordinates in
 `W.toAffine.CoordinateRing`. -/
+@[simp]
 theorem projModelFunctionFieldEquiv_germToFunctionField_awayToSection_mk [IsDomain R] {n : ℕ}
     {p : MvPolynomial (Fin 3) R} (hp : Ideal.Quotient.mk _ p ∈ W.toProjective.grading (n • 1)) :
-    W.projModelFunctionFieldEquiv (W.projModel.germToFunctionField _
-      (Proj.awayToSection _ _ (Away.mk _ (W.toProjective.coord_mem_grading 2) n _ hp))) =
+    -- the section is not indexed: the type arguments of its coercion mention
+    -- `↑(CommRingCat.of (Away _ _))`, which `simp` reduces to `Away _ _` before rewriting
+    W.projModelFunctionFieldEquiv (W.projModel.germToFunctionField _ (no_index
+      (Proj.awayToSection _ _ (Away.mk _ (W.toProjective.coord_mem_grading 2) n _ hp)))) =
     algebraMap W.toAffine.CoordinateRing W.toAffine.FunctionField
       (aeval ![Affine.CoordinateRing.mk W.toAffine (Polynomial.C Polynomial.X),
         Affine.CoordinateRing.mk W.toAffine Polynomial.X, 1] p) :=
