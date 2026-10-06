@@ -26,6 +26,9 @@ For quasi-compact quasi-separated morphisms `f : Y ⟶ J` and `g : Y' ⟶ J`, a 
   over `J`.
 * `AlgebraicGeometry.Scheme.Hom.toNormalization_normalizationMap`: the induced morphism is
   compatible with the canonical morphisms from the sources.
+* `AlgebraicGeometry.Scheme.Hom.normalizationMap_id` and
+  `AlgebraicGeometry.Scheme.Hom.normalizationMap_comp`: the construction preserves identities and
+  composition.
 -/
 
 public section
@@ -59,5 +62,19 @@ morphisms from `Y` and `Y'`. -/
 theorem toNormalization_normalizationMap (φ : Y ⟶ Y') (hφ : φ ≫ g = f) :
     f.toNormalization ≫ f.normalizationMap g φ hφ = φ ≫ g.toNormalization := by
   simp [normalizationMap]
+
+/-- The identity of `Y` induces the identity of `f.normalization`. -/
+@[simp]
+theorem normalizationMap_id : f.normalizationMap f (𝟙 Y) (Category.id_comp f) = 𝟙 _ :=
+  normalization.hom_ext f _ _ f.fromNormalization (by simp) (by simp) (by simp)
+
+/-- The morphisms of relative normalizations induced by `φ` and then `ψ` compose to the one
+induced by `φ ≫ ψ`. -/
+@[reassoc (attr := simp)]
+theorem normalizationMap_comp {Y'' : Scheme.{u}} (h : Y'' ⟶ J) [QuasiCompact h] [QuasiSeparated h]
+    (φ : Y ⟶ Y') (hφ : φ ≫ g = f) (ψ : Y' ⟶ Y'') (hψ : ψ ≫ h = g) :
+    f.normalizationMap g φ hφ ≫ g.normalizationMap h ψ hψ =
+      f.normalizationMap h (φ ≫ ψ) (by rw [Category.assoc, hψ, hφ]) :=
+  normalization.hom_ext f _ _ h.fromNormalization (by simp) (by simp) (by simp)
 
 end AlgebraicGeometry.Scheme.Hom
