@@ -24,7 +24,8 @@ affine base, see `TauCeti.FiniteLocallyFreeCommAffineGroupSchemeCat`.
 * `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.Section`: sections of the structure
   morphism.
 * `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.Hom` and
-  `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.Iso`: homomorphisms and isomorphisms.
+  `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.Iso`: homomorphisms and isomorphisms, as
+  morphisms and isomorphisms of the underlying group objects in `Grp (Over S)`.
 * `TauCeti.AlgebraicGeometry.FiniteFlatCommGroupScheme.baseChange`: base change along a morphism
   of schemes.
 
@@ -86,28 +87,16 @@ with `s ≫ G.structureMap = 𝟙 S`. -/
 def Section {S : Scheme.{u}} (G : FiniteFlatCommGroupScheme S) :=
   {s : S ⟶ G.carrier // s ≫ G.structureMap = 𝟙 S}
 
-/-- A homomorphism of finite flat commutative group schemes over `S`: a morphism of schemes over
-`S` compatible with the group laws, that is, the data of a morphism
-`Grp.mk G.toOver ⟶ Grp.mk H.toOver` in `Grp (Over S)`. -/
-structure Hom {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) where
-  /-- The underlying morphism of schemes over `S`. -/
-  hom : G.toOver ⟶ H.toOver
-  /-- The underlying morphism is compatible with the group laws. -/
-  map_group : IsMonHom hom
+/-- A homomorphism of finite flat commutative group schemes over `S`: a morphism of the underlying
+group objects in `Grp (Over S)`, that is, a morphism of schemes over `S` compatible with the group
+laws. -/
+abbrev Hom {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) :=
+  Grp.mk G.toOver ⟶ Grp.mk H.toOver
 
-attribute [instance] Hom.map_group
-
-/-- An isomorphism of finite flat commutative group schemes over `S`: a pair of mutually inverse
-homomorphisms. -/
-structure Iso {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) where
-  /-- The forward homomorphism. -/
-  hom : Hom G H
-  /-- The inverse homomorphism. -/
-  inv : Hom H G
-  /-- The forward homomorphism followed by the inverse is the identity. -/
-  hom_inv_id : hom.hom ≫ inv.hom = 𝟙 G.toOver
-  /-- The inverse homomorphism followed by the forward one is the identity. -/
-  inv_hom_id : inv.hom ≫ hom.hom = 𝟙 H.toOver
+/-- An isomorphism of finite flat commutative group schemes over `S`: an isomorphism of the
+underlying group objects in `Grp (Over S)`. -/
+abbrev Iso {S : Scheme.{u}} (G H : FiniteFlatCommGroupScheme S) :=
+  Grp.mk G.toOver ≅ Grp.mk H.toOver
 
 /-- The base change of a finite flat commutative group scheme `G` over `S` along `f : T ⟶ S`: the
 fibre product of `G.structureMap` and `f`, with the second projection as structure morphism and
@@ -118,8 +107,8 @@ noncomputable def baseChange {S T : Scheme.{u}} (G : FiniteFlatCommGroupScheme S
   carrier := pullback G.structureMap f
   structureMap := pullback.snd G.structureMap f
   -- `Functor.grpObjObj` rather than `Over.grpObjMkPullbackSnd`, so that (with
-  -- `implicit_reducible`) instance search finds `IsMonHom ((Over.pullback f).map φ.hom)` for
-  -- `φ : Hom G H`
+  -- `implicit_reducible`) the group object of a base change is `(Over.pullback f).mapGrp` applied
+  -- to that of `G`, and homomorphisms base change by `(Over.pullback f).mapGrp.map`
   grp := Functor.grpObjObj (F := Over.pullback f) (G := G.toOver)
   comm := Functor.isCommMonObj_obj (F := Over.pullback f) (M := G.toOver)
   finite := inferInstance
