@@ -24,6 +24,9 @@ an affine point `(x, y)` to the section through the standard affine chart `D₊(
 
 ## Main definitions
 
+* `WeierstrassCurve.chartRingEval W h`: evaluation at a solution `(x, y)` of the affine
+  Weierstrass equation, the `K`-algebra map `K[X, Y, Z] ⧸ (W, Z - 1) → K` with `X ↦ x`, `Y ↦ y`
+  and `Z ↦ 1` on the coordinate ring of the chart `D₊(Z)`.
 * `WeierstrassCurve.projModelPointsEquiv W`: the equivalence between the sections of
   `projModel W ⟶ Spec K` and `W.toAffine.Point`.
 
@@ -31,8 +34,7 @@ an affine point `(x, y)` to the section through the standard affine chart `D₊(
 
 * `WeierstrassCurve.projModelPointsEquiv_projModelZero`: the zero section corresponds to `0`.
 * `WeierstrassCurve.projModelPointsEquiv_symm_some`: the affine point `(x, y)` corresponds to
-  `Spec` of the `K`-algebra map `K[X, Y, Z] ⧸ (W, Z - 1) → K` with `X ↦ x`, `Y ↦ y`, followed by
-  the inclusion of the chart `D₊(Z)`.
+  `Spec` of `chartRingEval` at `(x, y)`, followed by the inclusion of the chart `D₊(Z)`.
 
 ## References
 
@@ -61,6 +63,21 @@ universe u
 namespace WeierstrassCurve
 
 variable {K : Type u} [Field K] (W : WeierstrassCurve K)
+
+/-- Evaluation at a solution `(x, y)` of the affine Weierstrass equation on the coordinate ring
+`K[X, Y, Z] ⧸ (W, Z - 1)` of the standard affine chart `D₊(Z)`: the `K`-algebra map with `X ↦ x`,
+`Y ↦ y` and `Z ↦ 1`. -/
+noncomputable def chartRingEval {x y : K} (h : W.toAffine.Equation x y) :
+    W.toProjective.ChartRing 2 →ₐ[K] K :=
+  Ideal.Quotient.liftₐ _ (aeval ![x, y, 1]) fun _ hp ↦ RingHom.mem_ker.mp <| Ideal.span_le.mpr
+    (by simpa [Set.range_subset_iff, Fin.forall_fin_two, Projective.Equation] using
+      (W.toProjective.equation_some x y).mpr h) hp
+
+/-- `chartRingEval` sends the class of a polynomial `p` to its value `p(x, y, 1)`. -/
+@[simp]
+theorem chartRingEval_mk {x y : K} (h : W.toAffine.Equation x y) (p : MvPolynomial (Fin 3) K) :
+    W.chartRingEval h (Ideal.Quotient.mk _ p) = eval ![x, y, 1] p := by
+  simp [chartRingEval]
 
 section Chart
 
@@ -184,16 +201,23 @@ private noncomputable def sectionOfPoint (P : W.toProjective.Point) :
   P.point.liftOn (fun Q ↦ ⟨W.repPoint Q, W.repPoint_projModelOver Q⟩) fun _ Q ⟨u, h⟩ ↦
     Subtype.ext <| h ▸ W.repPoint_smul Q u
 
+private theorem sectionOfPoint_mk {Q : Fin 3 → K} (hQ : W.toProjective.NonsingularLift ⟦Q⟧) :
+    (W.sectionOfPoint ⟨hQ⟩).1 = W.repPoint Q := by
+  rw [sectionOfPoint, Quotient.liftOn_mk]
+
 private theorem exists_ne_zero_of_nonsingular {P : Fin 3 → K} (hP : W.toProjective.Nonsingular P) :
     ∃ i, P i ≠ 0 := by
   by_cases hz : P 2 = 0
   exacts [⟨1, Projective.Y_ne_zero_of_Z_eq_zero hP hz⟩, ⟨2, hz⟩]
 
 private theorem sectionOfPoint_injective : Function.Injective W.sectionOfPoint := by
-  rintro @⟨⟨P⟩, hP : W.toProjective.Nonsingular P⟩ @⟨⟨Q⟩, hQ : W.toProjective.Nonsingular Q⟩ h
+  rintro @⟨P, hP⟩ @⟨Q, hQ⟩ h
+  induction P, Q using Quotient.ind₂ with | _ P Q => ?_
+  have hPQ : W.repPoint P = W.repPoint Q :=
+    (W.sectionOfPoint_mk hP).symm.trans <| (congrArg Subtype.val h).trans <| W.sectionOfPoint_mk hQ
+  rw [Projective.nonsingularLift_iff] at hP hQ
   obtain ⟨i, hi⟩ := W.exists_ne_zero_of_nonsingular hP
   obtain ⟨j, hj⟩ := W.exists_ne_zero_of_nonsingular hQ
-  have hPQ : W.repPoint P = W.repPoint Q := congrArg Subtype.val h
   -- the point `P` lies on the chart `D₊(Xⱼ)` of `Q`
   have hPj : P j ≠ 0 := by
     rwa [← chartPoint_mem_basicOpen_iff hP.1 hi default, ← W.repPoint_eq hP.1 hi, hPQ,
@@ -201,10 +225,11 @@ private theorem sectionOfPoint_injective : Function.Injective W.sectionOfPoint :
   -- hence `P`, `Q` give the same `A_(Xⱼ) →+* K`, taking `Xₖ / Xⱼ` to `Pₖ / Pⱼ = Qₖ / Qⱼ`
   rw [W.repPoint_eq hP.1 hPj, W.repPoint_eq hQ.1 hj, chartPoint, chartPoint, cancel_mono,
     Spec.map_inj, CommRingCat.hom_ext_iff, CommRingCat.hom_ofHom, CommRingCat.hom_ofHom] at hPQ
-  refine Projective.Point.ext (Quotient.sound
-    ⟨Units.mk0 (P j / Q j) (div_ne_zero hPj hj), funext fun k ↦ ?_⟩)
-  change P j / Q j * Q k = P k
-  rw [div_mul_comm, ← chartHom_mk_X hQ.1 hj, ← hPQ, chartHom_mk_X, div_mul_cancel₀ _ hPj]
+  have hu : (P j / Q j) • Q = P := funext fun k ↦ by
+    rw [Pi.smul_apply, smul_eq_mul, div_mul_comm, ← chartHom_mk_X hQ.1 hj, ← hPQ, chartHom_mk_X,
+      div_mul_cancel₀ _ hPj]
+  exact Projective.Point.ext <| Quotient.sound <|
+    hu ▸ Projective.smul_equiv Q (div_ne_zero hPj hj).isUnit
 
 -- A morphism `Spec K ⟶ projModel W` factors through one of the standard charts `D₊(Xᵢ)`.
 private theorem exists_spec_map_comp_awayι (g : Spec (CommRingCat.of K) ⟶ W.projModel) :
@@ -229,11 +254,12 @@ private theorem sectionOfPoint_surjective : Function.Surjective W.sectionOfPoint
   -- `α` is a homomorphism over `K`
   rw [Category.assoc, awayι_projModelOver, ← Spec.map_comp, Spec.map_eq_id] at hg
   -- its values `Q` on the fractions `Xⱼ / Xᵢ` are homogeneous coordinates of `g`
-  obtain ⟨hQ, hQi, hαQ⟩ := exists_eq_chartHom (congrArg CommRingCat.Hom.hom hg) fun _ ↦ rfl
+  obtain ⟨hQ, hQi, hαQ⟩ := exists_eq_chartHom (α := α.hom) (congrArg CommRingCat.Hom.hom hg)
+    fun _ ↦ rfl
   refine ⟨⟨(Projective.nonsingularLift_iff _).mpr <| (Projective.equation_iff_nonsingular_of_ne_zero
-    fun h ↦ hQi (congrFun h i)).mp hQ⟩, Subtype.ext <| (W.repPoint_eq hQ hQi).trans ?_⟩
-  rw [chartPoint, ← hαQ]
-  rfl
+    fun h ↦ hQi (congrFun h i)).mp hQ⟩,
+    Subtype.ext <| (W.sectionOfPoint_mk _).trans <| (W.repPoint_eq hQ hQi).trans ?_⟩
+  rw [chartPoint, ← hαQ, CommRingCat.ofHom_hom]
 
 private theorem sectionOfPoint_bijective : Function.Bijective W.sectionOfPoint :=
   ⟨W.sectionOfPoint_injective, W.sectionOfPoint_surjective⟩
@@ -258,8 +284,9 @@ infinity. -/
 theorem projModelPointsEquiv_projModelZero :
     W.projModelPointsEquiv ⟨W.projModelZero, W.projModelZero_projModelOver⟩ = 0 := by
   have h : W.sectionOfPoint 0 = ⟨W.projModelZero, W.projModelZero_projModelOver⟩ := by
-    refine Subtype.ext (?_ : W.repPoint ![0, 1, 0] = W.projModelZero)
-    rw [W.repPoint_eq W.toProjective.equation_zero (i := 1) (by simp)]
+    refine Subtype.ext ?_
+    rw [Projective.Point.zero_def, sectionOfPoint_mk,
+      W.repPoint_eq W.toProjective.equation_zero (i := 1) (by simp)]
     simp only [chartPoint, chartHom, projModelZero, awayYEvalZero]
     -- both sides are `Spec` of evaluation at `[0 : 1 : 0]` on the chart `D₊(Y)`
     congr 4
@@ -267,28 +294,29 @@ theorem projModelPointsEquiv_projModelZero :
   simp [projModelPointsEquiv, ← h, Projective.Point.toAffineLift_zero]
 
 /-- The affine point `(x, y)` corresponds to the section through the chart `D₊(Z)` at which
-`X / Z = x` and `Y / Z = y`: `Spec` of the composite of the identification
-`A_(Z) ≃+* K[X, Y, Z] ⧸ (W, Z - 1)` with a `K`-algebra map `ψ` to `K` sending `X` to `x` and `Y` to
-`y`, followed by the inclusion of `D₊(Z)`. Such a `ψ` exists and is unique: it is
-`Ideal.Quotient.liftₐ _ (aeval ![x, y, 1]) _`. -/
-theorem projModelPointsEquiv_symm_some {x y : K} (h : W.toAffine.Nonsingular x y)
-    (ψ : W.toProjective.ChartRing 2 →ₐ[K] K) (hx : ψ (Ideal.Quotient.mk _ (X 0)) = x)
-    (hy : ψ (Ideal.Quotient.mk _ (X 1)) = y) :
+`X / Z = x` and `Y / Z = y`: `Spec` of the evaluation `chartRingEval` at `(x, y)` on
+`K[X, Y, Z] ⧸ (W, Z - 1)`, read on `A_(Z)` through `awayEquivChartRing`, followed by the
+inclusion of `D₊(Z)`. -/
+theorem projModelPointsEquiv_symm_some {x y : K} (h : W.toAffine.Nonsingular x y) :
     (W.projModelPointsEquiv.symm (.some x y h)).1 =
-      Spec.map (CommRingCat.ofHom ((ψ : W.toProjective.ChartRing 2 →+* K).comp
+      Spec.map (CommRingCat.ofHom ((W.chartRingEval h.1 : W.toProjective.ChartRing 2 →+* K).comp
         (W.toProjective.awayEquivChartRing 2 : _ →+* _))) ≫
         Proj.awayι W.toProjective.grading (W.toProjective.coord 2)
           (W.toProjective.coord_mem_grading 2) one_pos := by
+  classical
   -- the section of `[x : y : 1]`, read on the chart `D₊(Z)`
-  change W.repPoint ![x, y, 1] = _
-  obtain ⟨hP, hz, hψ⟩ := exists_eq_chartHom (α := (ψ : W.toProjective.ChartRing 2 →+* K).comp
-    (W.toProjective.awayEquivChartRing 2).toRingHom) (Q := ![x, y, 1])
-    -- `ψ` composed with the chart isomorphism is a homomorphism over `K`
+  rw [projModelPointsEquiv, Equiv.symm_trans_apply, Equiv.symm_symm, Equiv.ofBijective_apply,
+    AddEquiv.toEquiv_eq_coe, AddEquiv.coe_toEquiv_symm,
+    Projective.Point.toAffineAddEquiv_symm_apply, Projective.Point.fromAffine_some,
+    sectionOfPoint_mk]
+  obtain ⟨hP, hz, hψ⟩ := exists_eq_chartHom
+    (α := (W.chartRingEval h.1 : W.toProjective.ChartRing 2 →+* K).comp
+      (W.toProjective.awayEquivChartRing 2).toRingHom) (Q := ![x, y, 1])
+    -- `chartRingEval` composed with the chart isomorphism is a homomorphism over `K`
     (by simp [RingHom.ext_iff, ← W.toProjective.awayEquivChartRing_symm_comp_algebraMap])
     -- both send `Xₖ / Z` to the `k`-th coordinate of `[x : y : 1]`
-    fun k ↦ by fin_cases k <;> simp [hx, hy, chartRing_mk_X_self]
-  rw [W.repPoint_eq hP hz, chartPoint, ← hψ]
-  rfl
+    fun k ↦ by simp
+  rw [W.repPoint_eq hP hz, chartPoint, ← hψ, RingEquiv.toRingHom_eq_coe]
 
 end Equiv
 
