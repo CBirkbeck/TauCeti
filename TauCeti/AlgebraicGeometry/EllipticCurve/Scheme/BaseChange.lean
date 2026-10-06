@@ -7,8 +7,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Scheme.ProjModel
 import TauCeti.AlgebraicGeometry.EllipticCurve.Projective.Chart.BaseChange
--- Proof-only: the body of the zero section `projModelZero` is not exposed.
-import all TauCeti.AlgebraicGeometry.EllipticCurve.Scheme.ProjModel
 
 /-!
 # Base change of the projective Weierstrass model
@@ -218,22 +216,11 @@ theorem projModelBaseChange_projModelOver :
 
 /-- The base change morphism carries the zero section `[0 : 1 : 0]` of `projModel (W.map f)` to
 the zero section of `projModel W`. -/
-@[reassoc]
+@[reassoc (attr := simp)]
 theorem projModelZero_projModelBaseChange :
     (W.map f).projModelZero ≫ W.projModelBaseChange f =
       Spec.map (CommRingCat.ofHom f) ≫ W.projModelZero := by
-  have hY := W.toProjective.coord_mem_grading 1
-  have hFY : IsUnit ((W.map f).toProjective.evalZero.toRingHom
-      (W.baseChangeGradedHom f (W.toProjective.coord 1))) := by simp [baseChangeGradedHom_coord]
-  -- read the zero section of `projModel (W.map f)` on the chart away from the image of `Y`
-  rw [projModelBaseChange, projModelZero, projModelZero, awayYEvalZero, awayYEvalZero,
-    Proj.SpecMap_awayLift_awayι_eq _ _ one_pos (GradedFunLike.map_mem _ hY) one_pos _ hFY,
-    Category.assoc, Proj.awayι_comp_map _ _ one_pos _ hY]
-  simp only [← Spec.map_comp_assoc, ← CommRingCat.ofHom_comp, Away.lift_comp_map]
-  -- both sides are points of the chart `D₊(Y)` of `projModel W`: compare them on `a / Yⁿ`
-  congr 3
-  ext z
-  obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective _ hY z
-  simp [evalZero_baseChangeGradedHom]
+  rw [projModelBaseChange]
+  exact W.projModelZero_map _ _ f 1 fun _ _ _ ↦ by simp [evalZero_baseChangeGradedHom]
 
 end WeierstrassCurve
