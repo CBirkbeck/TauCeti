@@ -74,21 +74,8 @@ private theorem exists_smul_of_SpecMap_chartι_eq {A : CommRingCat.{u}} {i i' : 
     {β : CommRingCat.of (W.toProjective.ChartRing i') ⟶ A}
     (h : Spec.map α ≫ W.chartι i = Spec.map β ≫ W.chartι i') :
     ∃ u : Aˣ, α.hom ∘ W.toProjective.chartPoint i = u • (β.hom ∘ W.toProjective.chartPoint i') := by
-  have hP (i : Fin 3) : (W.toProjective.map (algebraMap R _)).Equation
-      (W.toProjective.chartPoint i) := W.toProjective.equation_chartPoint i
-  have hi (i : Fin 3) : IsUnit (W.toProjective.chartPoint i i) :=
-    (W.toProjective.chartPoint_self i).symm ▸ isUnit_one
-  -- the chart points pushed along `γ`, with types in the form `projModelPoint` expects
-  have hP' {i : Fin 3} (γ : W.toProjective.ChartRing i →+* A) :
-      (W.toProjective.map (γ.comp (algebraMap R _))).Equation (γ ∘ W.toProjective.chartPoint i) :=
-    (hP i).map γ
-  have hi' {i : Fin 3} (γ : W.toProjective.ChartRing i →+* A) :
-      IsUnit ((γ ∘ W.toProjective.chartPoint i) i) :=
-    (hi i).map γ
-  rw [W.chartι_eq_projModelPoint i (hP i) (hi i), W.chartι_eq_projModelPoint i' (hP i') (hi i'),
-    ← CommRingCat.ofHom_hom α, ← CommRingCat.ofHom_hom β,
-    SpecMap_projModelPoint α.hom (hi i) (hP' α.hom) (hi' α.hom),
-    SpecMap_projModelPoint β.hom (hi i') (hP' β.hom) (hi' β.hom),
+  rw [W.chartι_eq_projModelPoint i, W.chartι_eq_projModelPoint i', ← CommRingCat.ofHom_hom α,
+    ← CommRingCat.ofHom_hom β, SpecMap_projModelPoint, SpecMap_projModelPoint,
     projModelPoint_eq_projModelPoint_iff] at h
   exact h.2
 
@@ -140,8 +127,10 @@ private theorem cross_comp_chartPairLaw {A : CommRingCat.{u}} {i j : Fin 3}
       congrArg (CommRingCat.ofHom · ≫ φ) Algebra.TensorProduct.includeLeftRingHom_comp_algebraMap
     rw [hc]
     exact (W.toProjective.equation_chartPoint j).map _
-  change (fun m ↦ (φ.hom ∘ W.chartPairLaw i j) _) ⨯₃ (fun m ↦ (φ.hom ∘ W.chartPairLaw i j) _) = 0
-  rw [comp_chartPairLaw]
+  -- each law coordinate pushed along `φ` is the corresponding coordinate of a law at the images
+  have h := congrFun (W.comp_chartPairLaw φ)
+  simp only [Function.comp_apply] at h
+  simp only [h]
   cases s <;> cases s' <;> simp only [Sum.map_inl, Sum.map_inr, Sum.elim_inl, Sum.elim_inr]
   · exact cross_self _
   · exact Projective.addXYZ_cross_dblAddXYZ hP hQ
@@ -181,7 +170,7 @@ private theorem exists_SpecMap_additionOnPiece {A : CommRingCat.{u}} {i j : Fin 
   have key {P : Fin 3 → Localization.Away (W.chartPairLaw i j k)} {hP} {m : Fin 3}
       (hm : IsUnit (P m)) : ∃ hP' hm', Spec.map φ ≫ W.projModelPoint (algebraMap R _) hP hm =
         W.projModelPoint (CommRingCat.ofHom (algebraMap R _) ≫ φ).hom (P := φ.hom ∘ P) hP' hm' :=
-    ⟨_, _, SpecMap_projModelPoint φ.hom hm (hP.map φ.hom) (hm.map φ.hom)⟩
+    ⟨_, _, SpecMap_projModelPoint φ.hom hm⟩
   cases k
   · rw [additionOnPiece_inl]
     exact key _

@@ -167,14 +167,19 @@ theorem projModelPoint_smul (u : Sˣ) (hi : IsUnit (P i)) :
   simp only [Projective.evalHom_mk, Pi.smul_def, smul_eq_mul]
   exact hp.eval₂_const_mul g P u
 
+/-- A solution `P` of the projective Weierstrass equation of `W'.map g` maps along `ψ : S →+* T` to
+a solution `ψ ∘ P` of the equation of `W'.map (ψ.comp g)`. -/
+theorem Projective.Equation.map_comp {W' : Projective R} {T : Type u} [CommRing T] (ψ : S →+* T)
+    (h : (W'.map g).Equation P) : (W'.map (ψ.comp g)).Equation (ψ ∘ P) :=
+  h.map ψ
+
 /-- The point `projModelPoint W g hP hi` is natural in the ring `S`: composing it with `Spec ψ`
 for a ring homomorphism `ψ : S →+* T` gives the point with homogeneous coordinates `ψ ∘ P`, along
 `ψ.comp g`. -/
-@[reassoc]
-theorem SpecMap_projModelPoint {T : Type u} [CommRing T] (ψ : S →+* T) (hi : IsUnit (P i))
-    (hP' : (W.toProjective.map (ψ.comp g)).Equation (ψ ∘ P)) (hi' : IsUnit ((ψ ∘ P) i)) :
+@[reassoc (attr := simp)]
+theorem SpecMap_projModelPoint {T : Type u} [CommRing T] (ψ : S →+* T) (hi : IsUnit (P i)) :
     Spec.map (CommRingCat.ofHom ψ) ≫ W.projModelPoint g hP hi =
-      W.projModelPoint (ψ.comp g) hP' hi' := by
+      W.projModelPoint (ψ.comp g) (hP.map_comp ψ) (hi.map ψ) := by
   rw [projModelPoint, projModelPoint, ← Spec.map_comp_assoc, ← CommRingCat.ofHom_comp,
     Projective.awayEvalHom_def, Projective.awayEvalHom_def,
     RingHom.comp_homogeneousLocalizationAwayLift]
@@ -233,17 +238,17 @@ theorem projModelPoint_eq_projModelPoint_iff {g' : R →+* S} {Q : Fin 3 → S}
 variable (W) in
 /-- The standard affine chart `D₊(Xᵢ)` of the projective model is the point with homogeneous
 coordinates the universal point `chartPoint i` of the chart ring `R[X₀, X₁, X₂] ⧸ (W, Xᵢ - 1)`. -/
-theorem chartι_eq_projModelPoint (i : Fin 3)
-    (hP : (W.toProjective.map (algebraMap R _)).Equation (W.toProjective.chartPoint i))
-    (hi : IsUnit (W.toProjective.chartPoint i i)) :
-    W.chartι i = W.projModelPoint (algebraMap R _) hP hi := by
+theorem chartι_eq_projModelPoint (i : Fin 3) :
+    W.chartι i = W.projModelPoint (algebraMap R _) (W.toProjective.equation_map_chartPoint i)
+      (W.toProjective.isUnit_chartPoint_self i) := by
   rw [chartι_def, projModelPoint]
   congr 2
   ext z
   obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective _ (W.toProjective.coord_mem_grading i) z
   obtain ⟨p, hp, rfl⟩ := W.toProjective.mem_grading_iff.mp ha
   -- the unit coordinate is `1`, and evaluation at the classes of the variables is the quotient map
-  have hu : hi.unit = 1 := Units.ext (W.toProjective.chartPoint_self i)
+  have hu : (W.toProjective.isUnit_chartPoint_self i).unit = 1 :=
+    Units.ext (W.toProjective.chartPoint_self i)
   simp only [CommRingCat.hom_ofHom, RingEquiv.coe_toRingHom, Projective.awayEquivChartRing_mk,
     Projective.awayEvalHom_mk, Projective.evalHom_mk, hu, one_pow, inv_one, Units.val_one, mul_one]
   rw [← aeval_def, ← Ideal.Quotient.mkₐ_eq_mk R, aeval_unique (Ideal.Quotient.mkₐ R _)]
