@@ -70,6 +70,8 @@ zero section corresponding to the point at infinity.
 * `WeierstrassCurve.projModelPointsEquiv_projModelZero`: the zero section corresponds to `0`.
 * `WeierstrassCurve.projModelPointsEquiv_symm_some`: the affine point `(x, y)` corresponds to
   `Spec` of `chartRingEval` at `(x, y)`, followed by the inclusion of the chart `D₊(Z)`.
+* `WeierstrassCurve.projModelPointsEquiv_projModelPoint`: the section with homogeneous coordinates
+  `P` corresponds to the point `WeierstrassCurve.Projective.Point.toAffine W P`.
 
 ## References
 
@@ -83,13 +85,15 @@ Adapted from AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
 `projects/ModularCurves/ModularCurves/EllipticCurve/WeierstrassModel.lean`, declarations
 `specPoint_factors_through_chart`, `chartSolutionsEquiv`, `chartHomEquiv`,
 `chartPointOfHom_factors_iff`, `projModel_points` and `projModelPointsEquivEll` (with `_zero` and
-`_some`). Here the chart arguments are carried out over a local ring `R` with unit coordinates in
-place of nonzero ones, the model is the `Proj` of `WeierstrassCurve.Projective.CoordinateRing`, the
-charts are read through `WeierstrassCurve.Projective.awayEquivChartRing`, and the field statement is
-deduced through Mathlib's nonsingular projective points `WeierstrassCurve.Projective.Point` and
-their equivalence with `W.toAffine.Point`, in place of AINTLIB's split into the chart `D₊(Z)` and
-the point at infinity. The point `projModelPoint` of a solution with a unit coordinate over an
-arbitrary ring homomorphism `g : R →+* S` corresponds to AINTLIB's `chartHomOfTriple` (file
+`_some`), and file `AdditionSpecPoints.lean`, declaration `Dictionary.eq_toAffine`, as
+`projModelPointsEquiv_projModelPoint`. Here the chart arguments are carried out over a local ring
+`R` with unit coordinates in place of nonzero ones, the model is the `Proj` of
+`WeierstrassCurve.Projective.CoordinateRing`, the charts are read through
+`WeierstrassCurve.Projective.awayEquivChartRing`, and the field statement is deduced through
+Mathlib's nonsingular projective points `WeierstrassCurve.Projective.Point` and their equivalence
+with `W.toAffine.Point`, in place of AINTLIB's split into the chart `D₊(Z)` and the point at
+infinity. The point `projModelPoint` of a solution with a unit coordinate over an arbitrary ring
+homomorphism `g : R →+* S` corresponds to AINTLIB's `chartHomOfTriple` (file
 `AdditionChartHom.lean`) followed by the chart inclusion; here it evaluates the homogeneous
 coordinate ring at `P` in place of the source's dehomogenised chart ring.
 -/
@@ -531,6 +535,21 @@ theorem projModelPointsEquiv_symm_some {x y : K} (h : W.toAffine.Nonsingular x y
   rw [← projModelPointsEquivUnimodular_symm_mk_some, ← hP]
   simp only [projModelPointsEquiv, Equiv.symm_trans_apply, Equiv.symm_symm,
     AddEquiv.toEquiv_eq_coe, AddEquiv.coe_toEquiv_symm]
+
+/-- For a solution `P` of the projective Weierstrass equation with a unit coordinate `Pᵢ`, the
+section `projModelPoint W (RingHom.id K) hP hi` with homogeneous coordinates `P` corresponds to the
+point `WeierstrassCurve.Projective.Point.toAffine W P` of `W`: the point at infinity if `P₂ = 0`,
+and the affine point `(P₀ / P₂, P₁ / P₂)` otherwise. Unlike `projModelPointsEquiv_symm_some`, which
+describes the section of an affine point through the chart `D₊(Z)`, it applies to a section read
+through any chart `D₊(Xᵢ)`. -/
+theorem projModelPointsEquiv_projModelPoint {P : Fin 3 → K}
+    (hP : (W.toProjective.map (RingHom.id K)).Equation P) {i : Fin 3} (hi : IsUnit (P i)) :
+    W.projModelPointsEquiv ⟨W.projModelPoint (RingHom.id K) hP hi, by simp⟩ =
+      Projective.Point.toAffine W.toProjective P := by
+  -- the section is that of the unimodular class of `P`, which is the nonsingular point `⟦P⟧`
+  simp [projModelPointsEquiv, projModelPointsEquivUnimodular, Projective.Point.toAffineLift,
+    ← (W.sectionOfClass_mk <| (Projective.unimodularLift_iff P).mpr
+      ⟨hP, TauCeti.Module.isUnimodular_of_isUnit_apply hi⟩).trans (W.repPoint_eq hP hi)]
 
 end Field
 
