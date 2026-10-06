@@ -68,22 +68,22 @@ the first projections. -/
 @[reassoc (attr := simp)]
 theorem pullback.mapSnd_fst (π : Y ⟶ S) (a : T ⟶ S) (a' : T' ⟶ S) (k : T' ⟶ T) (hk : k ≫ a = a')
     [HasPullback π a] [HasPullback π a'] :
-    pullback.mapSnd π a a' k hk ≫ pullback.fst π a = pullback.fst π a' :=
-  (pullback.lift_fst _ _ _).trans (Category.comp_id _)
+    pullback.mapSnd π a a' k hk ≫ pullback.fst π a = pullback.fst π a' := by
+  simp [pullback.mapSnd]
 
 /-- Base change of the second factor along `k` is `k` on second factors: followed by the second
 projection of `pullback π a`, it is the second projection of `pullback π a'` followed by `k`. -/
 @[reassoc (attr := simp)]
 theorem pullback.mapSnd_snd (π : Y ⟶ S) (a : T ⟶ S) (a' : T' ⟶ S) (k : T' ⟶ T) (hk : k ≫ a = a')
     [HasPullback π a] [HasPullback π a'] :
-    pullback.mapSnd π a a' k hk ≫ pullback.snd π a = pullback.snd π a' ≫ k :=
-  pullback.lift_snd _ _ _
+    pullback.mapSnd π a a' k hk ≫ pullback.snd π a = pullback.snd π a' ≫ k := by
+  simp [pullback.mapSnd]
 
 /-- Base change of the second factor along the identity is the identity. -/
 @[simp]
 theorem pullback.mapSnd_id (π : Y ⟶ S) (a : T ⟶ S) [HasPullback π a] :
-    pullback.mapSnd π a a (𝟙 T) (by simp) = 𝟙 (pullback π a) :=
-  pullback.map_id
+    pullback.mapSnd π a a (𝟙 T) (by simp) = 𝟙 (pullback π a) := by
+  rw [pullback.mapSnd, pullback.map_id]
 
 /-- Base change of the second factor is compatible with composition: base change along
 `l : T'' ⟶ T'` followed by base change along `k : T' ⟶ T` is base change along `l ≫ k`. -/
