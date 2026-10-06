@@ -186,8 +186,23 @@ variable (W') in
 /-- The coordinates of the addition law attached to the line `Y = 0`, evaluated at two projective
 point representatives `P` and `Q` on a Weierstrass curve. On the curve, its diagonal is `dblXYZ`
 (`dblAddXYZ_self`). -/
-@[expose] def dblAddXYZ (P Q : Fin 3 → R) : Fin 3 → R :=
+def dblAddXYZ (P Q : Fin 3 → R) : Fin 3 → R :=
   ![W'.dblAddX P Q, W'.dblAddY P Q, W'.dblAddZ P Q]
+
+/-- The `X`-coordinate of `dblAddXYZ P Q` is `dblAddX P Q`. -/
+@[simp]
+theorem dblAddXYZ_X (P Q : Fin 3 → R) : W'.dblAddXYZ P Q x = W'.dblAddX P Q :=
+  (rfl)
+
+/-- The `Y`-coordinate of `dblAddXYZ P Q` is `dblAddY P Q`. -/
+@[simp]
+theorem dblAddXYZ_Y (P Q : Fin 3 → R) : W'.dblAddXYZ P Q y = W'.dblAddY P Q :=
+  (rfl)
+
+/-- The `Z`-coordinate of `dblAddXYZ P Q` is `dblAddZ P Q`. -/
+@[simp]
+theorem dblAddXYZ_Z (P Q : Fin 3 → R) : W'.dblAddXYZ P Q z = W'.dblAddZ P Q :=
+  (rfl)
 
 /-! ### Bihomogeneity -/
 
