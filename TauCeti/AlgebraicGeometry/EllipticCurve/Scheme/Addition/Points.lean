@@ -255,6 +255,7 @@ Bosma–Lenstra addition morphism `E ×_{Spec K} E ⟶ E` is the addition of `W.
 sends the pair of sections `(x, y)` to the section corresponding to the sum of the points
 corresponding to `x` and `y`. For points over an arbitrary homomorphism `g : R →+* K` to a field,
 given by homogeneous coordinates, see `lift_projModelPoint_additionMorphism_eq_add`. -/
+@[simp]
 theorem projModelPointsEquiv_lift_additionMorphism [DecidableEq K]
     (x y : {g : Spec (.of K) ⟶ W.projModel // g ≫ W.projModelOver = 𝟙 _}) :
     W.projModelPointsEquiv ⟨pullback.lift x.1 y.1 (x.2.trans y.2.symm) ≫ W.additionMorphism,
