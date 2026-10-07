@@ -58,6 +58,7 @@ theorem lift_algebraMap (f : S →ₐ[R] A) (s : S) : lift R' f (algebraMap S S'
   exact pushoutDesc_left S' f _ _ s
 
 /-- Two `R'`-algebra homomorphisms out of the pushout `S'` that agree on `S` are equal. -/
+@[ext (iff := false)]
 theorem algHom_ext' {f g : S' →ₐ[R'] A}
     (h : (f.restrictScalars R).comp (IsScalarTower.toAlgHom R S S') =
       (g.restrictScalars R).comp (IsScalarTower.toAlgHom R S S')) : f = g :=
