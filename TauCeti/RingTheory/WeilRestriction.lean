@@ -9,6 +9,8 @@ public import Mathlib.Algebra.Module.Projective
 public import Mathlib.RingTheory.Extension.Presentation.Basic
 
 import Mathlib.RingTheory.Finiteness.Projective
+import TauCeti.RingTheory.Extension.Presentation.Basic
+import TauCeti.RingTheory.IsTensorProduct.Pushout
 
 /-!
 # Weil restriction along a finite projective algebra
@@ -117,25 +119,6 @@ section Construction
 variable {A B C : Type*} [CommRing A] [CommRing B] [CommRing C] [Algebra A B] [Algebra B C]
   {ι σ : Type*} {T : Type*} [CommRing T] [Algebra A T]
 
--- The `B`-algebra homomorphism out of `C` sending the generators of `P` to a family `x` that
--- satisfies the relations of `P`.
-private def liftOfPresentation (P : Presentation B C ι σ) {D : Type*} [CommRing D] [Algebra B D]
-    (x : ι → D) (hx : ∀ r, aeval x (P.relation r) = 0) : C →ₐ[B] D :=
-  (aeval P.val).liftOfSurjective P.aeval_val_surjective (aeval x) <| by
-    -- the kernel of `aeval P.val` is spanned by the relations, which `aeval x` kills
-    simp only [AlgHom.toRingHom_eq_coe, RingHom.ker_coe_toRingHom]
-    rw [← P.ker_eq_ker_aeval_val, ← P.span_range_relation_eq_ker, Ideal.span_le]
-    exact Set.range_subset_iff.2 hx
-
-private lemma liftOfPresentation_val (P : Presentation B C ι σ) {D : Type*} [CommRing D]
-    [Algebra B D] (x : ι → D) (hx : ∀ r, aeval x (P.relation r) = 0) (i : ι) :
-    liftOfPresentation P x hx (P.val i) = x i := by
-  rw [liftOfPresentation, ← aeval_X (R := B) P.val i, AlgHom.liftOfSurjective_apply, aeval_X]
-
-private lemma algHom_ext_presentation (P : Presentation B C ι σ) {D : Type*} [Semiring D]
-    [Algebra B D] {f g : C →ₐ[B] D} (h : ∀ i, f (P.val i) = g (P.val i)) : f = g :=
-  (AlgHom.cancel_right P.aeval_val_surjective).1 <| MvPolynomial.algHom_ext fun i ↦ by simp [h]
-
 -- The family `i ↦ ∑ j, b j ⊗ X (i, j)` in `B ⊗[A] A[X]`, where `A[X]` is the polynomial ring in
 -- the variables `X (i, j)`. For a commutative `A`-algebra `T`, every family `ι → B ⊗[A] T` is its
 -- image under `B ⊗[A] g` for some `g : A[X] →ₐ[A] T`.
@@ -175,7 +158,7 @@ private lemma aeval_coordsOf_relation (P : Presentation B C ι σ) (K : Coords A
 -- The universal point of `RepresentingAlgebra P K`: it sends `P.val i` to the image of `pt K i`.
 private def universalPointOfPresentation (P : Presentation B C ι σ) (K : Coords A B) :
     C →ₐ[B] B ⊗[A] RepresentingAlgebra P K :=
-  liftOfPresentation P
+  P.lift
     (fun i ↦ Algebra.TensorProduct.lTensor (S := B) B (Ideal.Quotient.mkₐ A _) (pt K i)) fun r ↦ by
       -- expanded in the coordinates `K`, the `k`-th coordinate of the relation evaluated at
       -- `pt K` is `relation P K (.inr (r, k))`, which vanishes in the quotient
@@ -195,48 +178,13 @@ private def homEquivOfPresentation (P : Presentation B C ι σ) (K : Coords A B)
         Ideal.Quotient.mkₐ A _ (K.coord _ j (pt K i)) :=
       Ideal.Quotient.eq.2 (Ideal.subset_span ⟨.inl (i, j), rfl⟩)
     rw [Ideal.Quotient.liftₐ_comp, aeval_X, AlgHom.comp_apply, hrel, ← Coords.coord_lTensor]
-    simp [coordsOf, universalPointOfPresentation, liftOfPresentation_val, Coords.coord_lTensor]
-  right_inv h := algHom_ext_presentation P fun i ↦ by
-    rw [AlgHom.comp_apply, universalPointOfPresentation, liftOfPresentation_val,
+    simp [coordsOf, universalPointOfPresentation, Presentation.lift_val, Coords.coord_lTensor]
+  right_inv h := P.algHom_ext fun i ↦ by
+    rw [AlgHom.comp_apply, universalPointOfPresentation, Presentation.lift_val,
       ← AlgHom.comp_apply, ← Algebra.TensorProduct.map_id_comp, Ideal.Quotient.liftₐ_comp]
     exact lTensor_aeval_coordsOf_pt K _ i
 
 end Construction
-
-section BaseChangeAux
-
-variable {A B A' B' : Type*} [CommRing A] [CommRing B] [CommRing A'] [CommRing B'] [Algebra A B]
-  [Algebra A A'] [Algebra A' B'] [Algebra A B'] [Algebra B B'] [IsScalarTower A A' B']
-  [IsScalarTower A B B'] [IsPushout A B A' B']
-
-variable (B') in
--- The isomorphism `B ⊗[A] T ≃ B' ⊗[A'] T` is natural in the `A'`-algebra `T`.
-private lemma cancelBaseChangeAlg_symm_lTensor {T T' : Type*} [CommRing T] [Algebra A' T]
-    [Algebra A T] [IsScalarTower A A' T] [CommRing T'] [Algebra A' T'] [Algebra A T']
-    [IsScalarTower A A' T'] (g : T →ₐ[A'] T') (z : B ⊗[A] T) :
-    (IsPushout.cancelBaseChangeAlg A B A' B' T').symm
-        (Algebra.TensorProduct.lTensor (S := B) B (g.restrictScalars A) z) =
-      Algebra.TensorProduct.lTensor (S := B') B' g
-        ((IsPushout.cancelBaseChangeAlg A B A' B' T).symm z) := by
-  induction z <;> simp [*]
-
-variable {C C' Y : Type*} [CommRing C] [CommRing C'] [Algebra B C] [Algebra B' C'] [Algebra B C']
-  [Algebra C C'] [IsScalarTower B B' C'] [IsScalarTower B C C'] [IsPushout B C B' C']
-  [CommRing Y] [Algebra B' Y] [Algebra B Y] [IsScalarTower B B' Y]
-
--- The `B'`-algebra homomorphism `C' → Y` extending `f : C →ₐ[B] Y` along `C → C'`, where `C'` is
--- identified with the pushout `C ⊗[B] B'` through `IsPushout B C B' C'`.
-private def pushoutLift (f : C →ₐ[B] Y) : C' →ₐ[B'] Y :=
-  { pushoutDesc C' f (IsScalarTower.toAlgHom B B' Y) fun _ _ ↦ mul_comm _ _ with
-    commutes' := pushoutDesc_right C' f _ _ }
-
--- `B'`-algebra homomorphisms out of `C'` are determined by their restrictions to `C`.
-private lemma algHom_ext_pushout {f g : C' →ₐ[B'] Y}
-    (h : (f.restrictScalars B).comp (IsScalarTower.toAlgHom B C C') =
-      (g.restrictScalars B).comp (IsScalarTower.toAlgHom B C C')) : f = g :=
-  AlgHom.restrictScalars_injective B <| IsPushout.algHom_ext (R' := B') C' (by ext; simp) h
-
-end BaseChangeAux
 
 end WeilRestriction
 
@@ -310,7 +258,7 @@ variable (A B C) (A' B' C' : Type*) [CommRing A'] [CommRing B'] [CommRing C'] [A
 -- the point of `C` classified by `W → A' ⊗[A] W`, moved along
 -- `B ⊗[A] (A' ⊗[A] W) ≃ B' ⊗[A'] (A' ⊗[A] W)`.
 private def baseChangePoint : C' →ₐ[B'] B' ⊗[A'] (A' ⊗[A] WeilRestriction A B C) :=
-  pushoutLift <| (IsPushout.cancelBaseChangeAlg A B A' B' _).symm.toAlgHom.comp <|
+  IsPushout.lift B' <| (IsPushout.cancelBaseChangeAlg A B A' B' _).symm.toAlgHom.comp <|
     homEquiv A B C _ Algebra.TensorProduct.includeRight
 
 variable {A B C A' B' C'} [Algebra A' T] [IsScalarTower A A' T]
@@ -322,7 +270,7 @@ private lemma lTensor_baseChangePoint_algebraMap (g : A' ⊗[A] WeilRestriction 
         (baseChangePoint A B C A' B' C' (algebraMap C C' c)) =
       (IsPushout.cancelBaseChangeAlg A B A' B' T).symm
         (homEquiv A B C T ((g.restrictScalars A).comp Algebra.TensorProduct.includeRight) c) := by
-  simp [baseChangePoint, pushoutLift, ← cancelBaseChangeAlg_symm_lTensor,
+  simp [baseChangePoint, ← IsPushout.cancelBaseChangeAlg_symm_lTensor,
     Algebra.TensorProduct.map_id_comp]
 
 -- `A'`-algebra homomorphisms out of `A' ⊗[A] WeilRestriction A B C` are determined by their effect
@@ -348,7 +296,7 @@ private def baseChangeLift (h : C' →ₐ[B'] B' ⊗[A'] T) :
 private lemma lTensor_baseChangeLift_comp_baseChangePoint (h : C' →ₐ[B'] B' ⊗[A'] T) :
     (Algebra.TensorProduct.lTensor B' (baseChangeLift A B C h)).comp
       (baseChangePoint A B C A' B' C') = h := by
-  refine algHom_ext_pushout (B := B) (C := C) <| AlgHom.ext fun c ↦ ?_
+  refine IsPushout.algHom_ext' (R := B) (S := C) <| AlgHom.ext fun c ↦ ?_
   simp [lTensor_baseChangePoint_algebraMap, baseChangeLift]
 
 variable (A B C A' B' C') [Module.Finite A' B'] [Module.Projective A' B'] [FinitePresentation B' C']
