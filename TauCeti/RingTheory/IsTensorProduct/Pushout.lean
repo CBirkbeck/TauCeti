@@ -43,8 +43,10 @@ open scoped TensorProduct
 
 namespace Algebra.IsPushout
 
-variable {R S R' S' : Type*} [CommRing R] [CommRing S] [CommRing R'] [CommRing S'] [Algebra R S]
-  [Algebra R R'] [Algebra R' S'] [Algebra R S'] [Algebra S S'] [IsScalarTower R R' S']
+section CommSemiring
+
+variable {R S R' S' : Type*} [CommSemiring R] [CommSemiring S] [CommSemiring R'] [CommSemiring S']
+  [Algebra R S] [Algebra R R'] [Algebra R' S'] [Algebra R S'] [Algebra S S'] [IsScalarTower R R' S']
   [IsScalarTower R S S'] [IsPushout R S R' S']
 
 section Lift
@@ -90,14 +92,23 @@ theorem _root_.Module.Projective.of_isPushout [Module.Projective R S] :
   have := IsPushout.symm (inferInstance : IsPushout R S R' S')
   exact Module.Projective.of_equiv (IsPushout.equiv R R' S S').toLinearEquiv
 
+end Finiteness
+
+end CommSemiring
+
+section CommRing
+
+variable {R S R' S' : Type*} [CommRing R] [CommRing S] [CommRing R'] [CommRing S'] [Algebra R S]
+  [Algebra R R'] [Algebra R' S'] [Algebra R S'] [Algebra S S'] [IsScalarTower R R' S']
+  [IsScalarTower R S S'] [IsPushout R S R' S']
+
+variable (R S R' S') in
 /-- Finite presentation is stable under pushout: if `S` is a finitely presented `R`-algebra, then
 the pushout `S'` is a finitely presented `R'`-algebra. -/
 theorem _root_.Algebra.FinitePresentation.of_isPushout [FinitePresentation R S] :
     FinitePresentation R' S' := by
   have := IsPushout.symm (inferInstance : IsPushout R S R' S')
   exact FinitePresentation.equiv (IsPushout.equiv R R' S S')
-
-end Finiteness
 
 variable (S') in
 /-- The isomorphism `S ⊗[R] T ≃ₐ[S] S' ⊗[R'] T` is natural in the `R'`-algebra `T`. -/
@@ -108,5 +119,7 @@ theorem cancelBaseChangeAlg_symm_lTensor {T T' : Type*} [CommRing T] [Algebra R'
         (Algebra.TensorProduct.lTensor (S := S) S (g.restrictScalars R) z) =
       Algebra.TensorProduct.lTensor (S := S') S' g ((cancelBaseChangeAlg R S R' S' T).symm z) := by
   induction z <;> simp [*]
+
+end CommRing
 
 end Algebra.IsPushout
