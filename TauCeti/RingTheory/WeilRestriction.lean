@@ -5,8 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Module.Projective
-public import Mathlib.RingTheory.Extension.Presentation.Basic
 public import TauCeti.RingTheory.IsTensorProduct.Pushout
 
 import Mathlib.RingTheory.Finiteness.Projective
@@ -25,44 +23,40 @@ formation commutes with an arbitrary base change `A → A'`.
 
 ## Main definitions
 
-* `Algebra.WeilRestriction A B C`: an `A`-algebra representing `T ↦ (C →ₐ[B] B ⊗[A] T)`.
-* `Algebra.WeilRestriction.universalPoint A B C`: the universal point
+* `TauCeti.Algebra.WeilRestriction A B C`: an `A`-algebra representing `T ↦ (C →ₐ[B] B ⊗[A] T)`.
+* `TauCeti.Algebra.WeilRestriction.universalPoint A B C`: the universal point
   `C →ₐ[B] B ⊗[A] WeilRestriction A B C`.
-* `Algebra.WeilRestriction.homEquiv A B C T`: the bijection
+* `TauCeti.Algebra.WeilRestriction.homEquiv A B C T`: the bijection
   `(WeilRestriction A B C →ₐ[A] T) ≃ (C →ₐ[B] B ⊗[A] T)`, given by composing the universal point
   with `B ⊗[A] -`.
-* `Algebra.WeilRestriction.baseChangeAlgEquiv A B C A' B' C'`: for `B' = B ⊗[A] A'` and
+* `TauCeti.Algebra.WeilRestriction.baseChangeAlgEquiv A B C A' B' C'`: for `B' = B ⊗[A] A'` and
   `C' = C ⊗[B] B'` (expressed through `Algebra.IsPushout`), the `A'`-algebra isomorphism
   `A' ⊗[A] WeilRestriction A B C ≃ₐ[A'] WeilRestriction A' B' C'`.
 
 ## Main results
 
-* `Algebra.WeilRestriction.homEquiv_comp`: `homEquiv` is natural in the `A`-algebra `T`.
-* `Algebra.WeilRestriction.hom_ext`: homomorphisms out of the Weil restriction are determined by
-  their effect on the universal point.
-* `Algebra.WeilRestriction.instFinitePresentation`: the Weil restriction is of finite presentation
-  over `A`.
-* `Algebra.WeilRestriction.homEquiv_comp_baseChangeAlgEquiv`: `baseChangeAlgEquiv` is compatible
-  with the universal properties: for `g : WeilRestriction A' B' C' →ₐ[A'] T`, the point of `C`
-  classified by `g ∘ baseChangeAlgEquiv` restricted to `WeilRestriction A B C` is the restriction
-  to `C` of the point of `C'` classified by `g`.
+* `TauCeti.Algebra.WeilRestriction.homEquiv_comp`: `homEquiv` is natural in the `A`-algebra `T`.
+* `TauCeti.Algebra.WeilRestriction.hom_ext`: homomorphisms out of the Weil restriction are
+  determined by their effect on the universal point.
+* `TauCeti.Algebra.WeilRestriction.instFinitePresentation`: the Weil restriction is of finite
+  presentation over `A`.
+* `TauCeti.Algebra.WeilRestriction.homEquiv_comp_baseChangeAlgEquiv`: `baseChangeAlgEquiv` is
+  compatible with the universal properties: for `g : WeilRestriction A' B' C' →ₐ[A'] T`, the point
+  of `C` classified by `g ∘ baseChangeAlgEquiv` restricted to `WeilRestriction A B C` is the
+  restriction to `C` of the point of `C'` classified by `g`.
 
 ## References
 
 * S. Bosch, W. Lütkebohmert, M. Raynaud, *Néron Models*, §7.6.
 * [The Stacks Project, Section 05Y8](https://stacks.math.columbia.edu/tag/05Y8) (restriction of
   scalars), and [Lemma 05YC](https://stacks.math.columbia.edu/tag/05YC) (base change).
-
-## Provenance
-
-New in Tau Ceti; no code was ported.
 -/
 
 public noncomputable section
 
-open TensorProduct MvPolynomial
+open Algebra TensorProduct MvPolynomial
 
-namespace Algebra
+namespace TauCeti.Algebra
 
 namespace WeilRestriction
 
@@ -193,7 +187,7 @@ variable (A B C : Type*) [CommRing A] [CommRing B] [CommRing C] [Algebra A B] [A
 
 /-- The **Weil restriction** of a finitely presented `B`-algebra `C` along a finite projective
 `A`-algebra `B`: an `A`-algebra representing the functor sending an `A`-algebra `T` to the set
-`C →ₐ[B] B ⊗[A] T`, see `Algebra.WeilRestriction.homEquiv`. -/
+`C →ₐ[B] B ⊗[A] T`, see `WeilRestriction.homEquiv`. -/
 def WeilRestriction : Type _ :=
   WeilRestriction.RepresentingAlgebra (Presentation.ofFinitePresentation B C)
     (WeilRestriction.coords A B)
@@ -202,7 +196,7 @@ deriving CommRing, Algebra A
 namespace WeilRestriction
 
 /-- The universal point of the Weil restriction, corresponding to the identity of
-`WeilRestriction A B C` under `Algebra.WeilRestriction.homEquiv`: for every `A`-algebra `T`, each
+`WeilRestriction A B C` under `WeilRestriction.homEquiv`: for every `A`-algebra `T`, each
 `B`-algebra homomorphism `C →ₐ[B] B ⊗[A] T` is its composite with `B ⊗[A] g` for a unique
 `g : WeilRestriction A B C →ₐ[A] T`. -/
 def universalPoint : C →ₐ[B] B ⊗[A] WeilRestriction A B C :=
@@ -213,19 +207,19 @@ variable (T : Type*) [CommRing T] [Algebra A T]
 /-- The universal property of the Weil restriction: the bijection between `A`-algebra homomorphisms
 `g : WeilRestriction A B C →ₐ[A] T` and `B`-algebra homomorphisms `C →ₐ[B] B ⊗[A] T` that sends `g`
 to the composite `C → B ⊗[A] WeilRestriction A B C → B ⊗[A] T` of the universal point with
-`B ⊗[A] g`. It is natural in `T`, see `Algebra.WeilRestriction.homEquiv_comp`. -/
+`B ⊗[A] g`. It is natural in `T`, see `WeilRestriction.homEquiv_comp`. -/
 def homEquiv : (WeilRestriction A B C →ₐ[A] T) ≃ (C →ₐ[B] B ⊗[A] T) :=
   homEquivOfPresentation T (Presentation.ofFinitePresentation B C) (coords A B)
 
 variable {A B C T}
 
-/-- `Algebra.WeilRestriction.homEquiv` sends `g` to the composite of the universal point with
+/-- `WeilRestriction.homEquiv` sends `g` to the composite of the universal point with
 `B ⊗[A] g`. -/
 @[simp]
 theorem homEquiv_apply (g : WeilRestriction A B C →ₐ[A] T) :
     homEquiv A B C T g = (Algebra.TensorProduct.lTensor B g).comp (universalPoint A B C) := (rfl)
 
-/-- Naturality of `Algebra.WeilRestriction.homEquiv` in the `A`-algebra `T`: post-composing with
+/-- Naturality of `WeilRestriction.homEquiv` in the `A`-algebra `T`: post-composing with
 `h : T →ₐ[A] T'` corresponds to post-composing with `B ⊗[A] h`. -/
 theorem homEquiv_comp {T' : Type*} [CommRing T'] [Algebra A T'] (g : WeilRestriction A B C →ₐ[A] T)
     (h : T →ₐ[A] T') : homEquiv A B C T' (h.comp g) =
@@ -234,7 +228,7 @@ theorem homEquiv_comp {T' : Type*} [CommRing T'] [Algebra A T'] (g : WeilRestric
 
 /-- Two `A`-algebra homomorphisms out of the Weil restriction are equal if they agree on the
 universal point, that is, if they classify the same point `C →ₐ[B] B ⊗[A] T` under
-`Algebra.WeilRestriction.homEquiv`. See note [partially-applied ext lemmas]. -/
+`WeilRestriction.homEquiv`. See note [partially-applied ext lemmas]. -/
 @[ext]
 theorem hom_ext {g₁ g₂ : WeilRestriction A B C →ₐ[A] T}
     (h : (Algebra.TensorProduct.lTensor B g₁).comp (universalPoint A B C) =
@@ -305,7 +299,7 @@ variable (A B C A' B' C')
 `C' = C ⊗[B] B'`, as expressed by `Algebra.IsPushout A B A' B'` and `Algebra.IsPushout B C B' C'`,
 this is an isomorphism of `A'`-algebras from `A' ⊗[A] WeilRestriction A B C` to the Weil
 restriction of `C'` along `B'`. It is compatible with the universal properties, see
-`Algebra.WeilRestriction.homEquiv_comp_baseChangeAlgEquiv`. The finiteness hypotheses on `B'` and
+`WeilRestriction.homEquiv_comp_baseChangeAlgEquiv`. The finiteness hypotheses on `B'` and
 `C'` follow from the pushouts, and are filled in by default with `Module.Finite.of_isPushout`,
 `Module.Projective.of_isPushout` and `Algebra.FinitePresentation.of_isPushout`. -/
 def baseChangeAlgEquiv (hfin : Module.Finite A' B' := .of_isPushout A B A' B')
@@ -337,7 +331,7 @@ private lemma lTensor_baseChangeAlgEquiv_comp_baseChangePoint :
       (baseChangePoint A B C A' B' C') = universalPoint A' B' C' := by
   simp [baseChangeAlgEquiv, AlgEquiv.toAlgHom_ofAlgHom, lTensor_baseChangeLift_comp_baseChangePoint]
 
-/-- Compatibility of `Algebra.WeilRestriction.baseChangeAlgEquiv` with the universal properties.
+/-- Compatibility of `WeilRestriction.baseChangeAlgEquiv` with the universal properties.
 For `g : WeilRestriction A' B' C' →ₐ[A'] T`, let `g₀ : WeilRestriction A B C →ₐ[A] T` be the
 composite of `Algebra.TensorProduct.includeRight`, `baseChangeAlgEquiv` and `g`. Then the point
 `homEquiv A B C T g₀ : C →ₐ[B] B ⊗[A] T` is the composite of `algebraMap C C'`, the point
@@ -360,4 +354,4 @@ end BaseChange
 
 end WeilRestriction
 
-end Algebra
+end TauCeti.Algebra
