@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Projective.AdditionLaw.Basic
-import Mathlib.AlgebraicGeometry.EllipticCurve.Projective.Point
 import TauCeti.AlgebraicGeometry.EllipticCurve.Projective.Nonsingular
 import TauCeti.AlgebraicGeometry.EllipticCurve.Projective.Prime
 import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
