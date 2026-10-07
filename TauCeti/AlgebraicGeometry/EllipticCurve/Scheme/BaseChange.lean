@@ -262,9 +262,10 @@ theorem projModelPoint_projModelBaseChange {S : Type u} [CommRing S] {g : R' →
       W.projModelPoint (g.comp f) (by simpa only [← WeierstrassCurve.map_map] using hP) hi := by
   rw [projModelBaseChange]
   -- evaluation at `P` after extending coefficients along `f` is evaluation at `P` along `g.comp f`
-  refine projModelPoint_map _ _ (Ideal.Quotient.ringHom_ext (RingHom.ext fun p ↦ ?_)) hi hi
-  simp only [RingHom.comp_apply, GradedRingHom.coe_toRingHom, baseChangeGradedHom_mk,
-    Projective.evalHom_mk, eval₂_map]
+  refine projModelPoint_map _ _ 1 (fun n a ha ↦ ?_) hi hi
+  obtain ⟨p, -, rfl⟩ := W.toProjective.mem_grading_iff.mp ha
+  simp only [Units.val_one, one_pow, one_mul, baseChangeGradedHom_mk, Projective.evalHom_mk,
+    eval₂_map]
 
 /-! ### Identity and composition -/
 

@@ -59,7 +59,8 @@ zero section corresponding to the point at infinity.
 * `WeierstrassCurve.SpecMap_projModelPoint`: the point is natural in the ring `S`.
 * `WeierstrassCurve.projModelPoint_map`: `Proj.map F` of a graded ring homomorphism `F` of
   homogeneous coordinate rings carries the point with homogeneous coordinates `P'` to the point
-  with homogeneous coordinates `P`, when evaluation at `P'` after `F` is evaluation at `P`.
+  with homogeneous coordinates `P`, when the value of `F a` at `P'` is `cⁿ` times the value of `a`
+  at `P` for a unit `c` and every homogeneous `a` of degree `n`.
 * `WeierstrassCurve.chartι_eq_projModelPoint`: the chart `D₊(Xᵢ)` is the point with homogeneous
   coordinates the universal point of the chart ring.
 * `WeierstrassCurve.projModelPointsEquivUnimodular_projModelZero`: the zero section corresponds to
@@ -195,29 +196,32 @@ theorem SpecMap_projModelPoint {T : Type u} [CommRing T] (ψ : S →+* T) (hi : 
   simp [Projective.evalHom_mk, MvPolynomial.eval₂_comp_left]
 
 /-- Let `F` be a graded ring homomorphism from the homogeneous coordinate ring of `W` over `R` to
-that of `W'` over `R'`. If evaluation at `P'` along `g'`, after `F`, is evaluation at `P` along
-`g`, then `Proj.map F` carries the point of `projModel W'` with homogeneous coordinates `P'` to the
-point of `projModel W` with homogeneous coordinates `P`. The hypothesis may be checked on the
-classes of polynomials (`Ideal.Quotient.ringHom_ext`), or on `R` and on the coordinates `Xₖ`
-(`Projective.eq_evalHom`). -/
+that of `W'` over `R'`. If, for a unit `c` of `S` and every homogeneous `a` of degree `n`, the value
+of `F a` at `P'` along `g'` is `cⁿ` times the value of `a` at `P` along `g`, then `Proj.map F`
+carries the point of `projModel W'` with homogeneous coordinates `P'` to the point of `projModel W`
+with homogeneous coordinates `P`. -/
 @[reassoc]
 theorem projModelPoint_map {R' : Type u} [CommRing R'] {W' : WeierstrassCurve R'}
     (F : W.toProjective.grading →+*ᵍ W'.toProjective.grading)
     (hF : HomogeneousIdeal.irrelevant W'.toProjective.grading ≤
       (HomogeneousIdeal.irrelevant W.toProjective.grading).map F)
-    {g' : R' →+* S} {P' : Fin 3 → S} {hP' : (W'.toProjective.map g').Equation P'}
-    (h : (W'.toProjective.evalHom g' hP').comp F.toRingHom = W.toProjective.evalHom g hP)
+    {g' : R' →+* S} {P' : Fin 3 → S} {hP' : (W'.toProjective.map g').Equation P'} (c : Sˣ)
+    (h : ∀ n, ∀ a ∈ W.toProjective.grading n,
+      W'.toProjective.evalHom g' hP' (F a) = c ^ n * W.toProjective.evalHom g hP a)
     {j : Fin 3} (hj : IsUnit (P' j)) (hi : IsUnit (P i)) :
     W'.projModelPoint g' hP' hj ≫ Proj.map F hF = W.projModelPoint g hP hi := by
+  have hXi := W.toProjective.coord_mem_grading i
   -- the point of `projModel W'` may be read on the chart away from the image of `Xᵢ`
   have hFi : IsUnit (W'.toProjective.evalHom g' hP' (F (W.toProjective.coord i))) := by
-    rwa [← GradedRingHom.coe_toRingHom, ← RingHom.comp_apply, h, Projective.evalHom_mk, eval₂_X]
+    rw [h 1 _ hXi, pow_one, Projective.evalHom_mk, eval₂_X]
+    exact c.isUnit.mul hi
   rw [projModelPoint, projModelPoint, Projective.awayEvalHom_def, Projective.awayEvalHom_def,
-    Proj.SpecMap_awayLift_awayι_eq _ _ one_pos
-      (GradedFunLike.map_mem F (W.toProjective.coord_mem_grading i)) one_pos _ hFi, Category.assoc,
-    Proj.awayι_comp_map _ _ one_pos _ (W.toProjective.coord_mem_grading i),
-    ← Spec.map_comp_assoc, ← CommRingCat.ofHom_comp, Away.lift_comp_map]
-  simp only [h]
+    Proj.SpecMap_awayLift_awayι_eq _ _ one_pos (GradedFunLike.map_mem F hXi) one_pos _ hFi,
+    Category.assoc, Proj.awayι_comp_map _ _ one_pos _ hXi, ← Spec.map_comp_assoc,
+    ← CommRingCat.ofHom_comp, Away.lift_comp_map]
+  -- the two evaluations agree on fractions of degree zero, where the powers of `c` cancel
+  congr 3
+  exact Away.lift_eq_of_forall_mem _ _ c h hXi _ _
 
 /-- The point `projModelPoint W g hP hi` with homogeneous coordinates `P` sends a point `x` of
 `Spec S` into the standard chart `D₊(Xⱼ)` exactly when the coordinate `Pⱼ` does not lie in the
