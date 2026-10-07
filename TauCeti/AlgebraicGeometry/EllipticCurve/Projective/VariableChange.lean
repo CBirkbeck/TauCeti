@@ -94,6 +94,7 @@ theorem toMatrix_inv_mul_toMatrix (C : VariableChange R) : toMatrix C⁻¹ * toM
 
 /-- The matrix of a change of variables mapped along a ring homomorphism `f` is the matrix of the
 original change of variables with `f` applied to its entries. -/
+@[simp]
 theorem toMatrix_map {S : Type*} [CommRing S] (C : VariableChange R) (f : R →+* S) :
     (C.map f).toMatrix = C.toMatrix.map f := by
   ext i j

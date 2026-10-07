@@ -32,6 +32,8 @@ isomorphisms induced by changes of variables. No ellipticity is needed.
 * `WeierstrassCurve.projModelNeg_projModelOver`: negation lies over `Spec R`.
 * `WeierstrassCurve.projModelZero_projModelNeg`: negation fixes the zero section.
 * `WeierstrassCurve.projModelNeg_projModelNeg`: negation is an involution.
+* `WeierstrassCurve.isIso_projModelNeg`: negation is an isomorphism, its own inverse
+  (`WeierstrassCurve.inv_projModelNeg`).
 * `WeierstrassCurve.projModelPoint_projModelNeg`: negation sends the point with homogeneous
   coordinates `P` to the point with homogeneous coordinates `Projective.neg P`.
 * `WeierstrassCurve.projModelNeg_projModelBaseChange`: negation commutes with the base change
@@ -114,14 +116,14 @@ theorem projModelNeg_projModelNeg : W.projModelNeg ≫ W.projModelNeg = 𝟙 _ :
     W.negVariableChange_smul_self.symm, (eqToHom_comp_iff _ _ _).mp h.symm]
   simp
 
--- Transport of points along an equality of Weierstrass curves.
-@[reassoc]
-private theorem projModelPoint_eqToHom {W₁ W₂ : WeierstrassCurve R} (h : W₁ = W₂) {S : Type u}
-    [CommRing S] (g : R →+* S) {P : Fin 3 → S} (hP₁ : (W₁.toProjective.map g).Equation P)
-    (hP₂ : (W₂.toProjective.map g).Equation P) {i : Fin 3} (hi : IsUnit (P i)) :
-    W₁.projModelPoint g hP₁ hi ≫ eqToHom (congrArg projModel h) = W₂.projModelPoint g hP₂ hi := by
-  subst h
-  simp
+/-- The negation morphism is an isomorphism, being an involution. -/
+instance isIso_projModelNeg : IsIso W.projModelNeg :=
+  ⟨W.projModelNeg, W.projModelNeg_projModelNeg, W.projModelNeg_projModelNeg⟩
+
+/-- The negation morphism is its own inverse. -/
+@[simp]
+theorem inv_projModelNeg : inv W.projModelNeg = W.projModelNeg :=
+  IsIso.inv_eq_of_hom_inv_id W.projModelNeg_projModelNeg
 
 /-- The negation morphism sends the point `projModelPoint W g hP hi` with homogeneous coordinates
 `P` to the point with homogeneous coordinates `Projective.neg P = [P₀ : -P₁ - a₁P₀ - a₃P₂ : P₂]`,
@@ -134,15 +136,11 @@ theorem projModelPoint_projModelNeg {S : Type u} [CommRing S] {g : R →+* S} {P
     (hj : IsUnit ((W.toProjective.map g).neg P j)) :
     W.projModelPoint g hP hi ≫ W.projModelNeg =
       W.projModelPoint g (((W.toProjective.map g).equation_neg P).mpr hP) hj := by
-  -- `negVariableChange W` acts on homogeneous coordinates by `Projective.neg`
+  -- `negVariableChange W`, mapped along `g`, acts on homogeneous coordinates by `Projective.neg`
   have hQ : (W.negVariableChange.map g).toMatrix.mulVec P = (W.toProjective.map g).neg P := by
-    ext k
-    fin_cases k <;> simp [VariableChange.toMatrix_def, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Projective.neg_X, Projective.neg_Y, Projective.neg_Z, Projective.negY]
-    -- the `Y`-coordinate remains: `-a₁P₀ + (-1)³P₁ - a₃P₂ = -P₁ - a₁P₀ - a₃P₂`
-    ring
-  rw [projModelNeg, projModelPoint_eqToHom_assoc W.negVariableChange_smul_self.symm g hP
-    (by rwa [negVariableChange_smul_self]) hi,
+    rw [← negVariableChange_map]
+    exact (W.map g).toMatrix_negVariableChange_mulVec P
+  rw [projModelNeg, projModelPoint_eqToHom_assoc W.negVariableChange_smul_self.symm hi,
     projModelPoint_projModelVariableChangeIso_hom hi (hQ ▸ hj)]
   simp only [hQ]
 

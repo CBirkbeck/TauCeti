@@ -59,6 +59,8 @@ zero section corresponding to the point at infinity.
 * `WeierstrassCurve.SpecMap_projModelPoint`: the point is natural in the ring `S`.
 * `WeierstrassCurve.chartι_eq_projModelPoint`: the chart `D₊(Xᵢ)` is the point with homogeneous
   coordinates the universal point of the chart ring.
+* `WeierstrassCurve.projModelPoint_eqToHom`: an equality of Weierstrass curves identifies the
+  points with the same homogeneous coordinates.
 * `WeierstrassCurve.projModelPoint_projModelVariableChangeIso_hom`: the isomorphism
   `projModel (C • W) ≅ projModel W` induced by a change of variables `C` sends the point with
   homogeneous coordinates `P` to the point with homogeneous coordinates `(C.map g).toMatrix *ᵥ P`.
@@ -253,6 +255,17 @@ theorem chartι_eq_projModelPoint (i : Fin 3) :
   rw [← aeval_def, ← Ideal.Quotient.mkₐ_eq_mk R, aeval_unique (Ideal.Quotient.mkₐ R _)]
   exact congrArg (aeval · p) (funext fun k ↦ (W.toProjective.chartPoint_apply i k).symm)
 
+/-- Transport of points along an equality of Weierstrass curves: the point of `projModel W₁` with
+homogeneous coordinates `P`, followed by the identification of `projModel W₁` with `projModel W₂`
+induced by `h : W₁ = W₂`, is the point of `projModel W₂` with the same coordinates. -/
+@[reassoc]
+theorem projModelPoint_eqToHom {W₁ W₂ : WeierstrassCurve R} (h : W₁ = W₂)
+    {hP : (W₁.toProjective.map g).Equation P} (hi : IsUnit (P i)) :
+    W₁.projModelPoint g hP hi ≫ eqToHom (congrArg projModel h) =
+      W₂.projModelPoint g (h ▸ hP) hi := by
+  subst h
+  simp
+
 open Matrix in
 /-- The isomorphism `projModel (C • W) ≅ projModel W` induced by a change of variables `C` sends
 the point `projModelPoint (C • W) g hP hi` with homogeneous coordinates `P` to the point with
@@ -274,8 +287,7 @@ theorem projModelPoint_projModelVariableChangeIso_hom {C : VariableChange R}
     refine Projective.eq_evalHom _ _ _ (RingHom.ext fun r ↦ ?_) (funext fun k ↦ ?_)
     · simpa [variableChangeGradedHom_apply] using
         RingHom.congr_fun ((C • W).toProjective.evalHom_comp_algebraMap g hP) r
-    · simp [variableChangeGradedHom_apply, Projective.coord, VariableChange.toMatrix_map, mulVec,
-        dotProduct]
+    · simp [variableChangeGradedHom_apply, Projective.coord, mulVec, dotProduct]
   -- the image of `Xⱼ` under the change of variables takes the unit value `Qⱼ` at `P`
   have hFj : IsUnit ((C • W).toProjective.evalHom g hP
       (variableChangeGradedHom W C (W.toProjective.coord j))) := by

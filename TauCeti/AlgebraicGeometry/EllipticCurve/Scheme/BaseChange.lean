@@ -287,8 +287,7 @@ theorem projModelVariableChangeIso_hom_projModelBaseChange (C : VariableChange R
   exact ProjMap_eq_eqToHom_comp_ProjMap W (map_variableChange W C f) _ _
     (fun p ↦ linearSubst (C.map f).toMatrix (MvPolynomial.map f p))
     (fun p ↦ by simp [variableChangeGradedHom_apply, baseChangeGradedHom_mk])
-    (fun p ↦ by simp [variableChangeGradedHom_apply, baseChangeGradedHom_mk, map_linearSubst,
-      VariableChange.toMatrix_map]) _ _
+    (fun p ↦ by simp [variableChangeGradedHom_apply, baseChangeGradedHom_mk, map_linearSubst]) _ _
 
 /-! ### Base change along a ring isomorphism -/
 
