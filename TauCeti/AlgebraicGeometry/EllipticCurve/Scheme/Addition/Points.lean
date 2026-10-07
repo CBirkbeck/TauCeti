@@ -82,7 +82,7 @@ of the same directory, writes a point `p` of `E ×_{Spec R} E` with values in a 
 pair of its two projections, read as elements of `SpecPoints` (file `WeierstrassModel.lean`), the
 `K`-points over the `R`-algebra structure that `p` induces on `K`. Here the point has values in any
 local ring, and the two projections are given by homogeneous coordinates, by
-`WeierstrassCurve.exists_eq_projModelPoint`.
+`WeierstrassCurve.exists_ringHom_eq_projModelPoint` and `WeierstrassCurve.exists_eq_projModelPoint`.
 -/
 
 public section
@@ -220,7 +220,8 @@ with itself. Then there are a ring homomorphism `g : R →+* S` and solutions `P
 projective Weierstrass equation of `W.map g`, with unit coordinates `Pᵢ` and `Qⱼ`, such that `p` is
 the pair of the `S`-points of `E` with homogeneous coordinates `P` and `Q`. Such a `g` is unique,
 and `P` and `Q` are unique up to units (`projModelPoint_eq_projModelPoint_iff`). For a single point
-of `E` over a given `g`, see `exists_eq_projModelPoint`. No ellipticity is assumed. -/
+of `E`, see `exists_ringHom_eq_projModelPoint`, and `exists_eq_projModelPoint` over a given `g`. No
+ellipticity is assumed. -/
 theorem exists_eq_lift_projModelPoint {S : Type u} [CommRing S] [IsLocalRing S]
     (p : Spec (.of S) ⟶ pullback W.projModelOver W.projModelOver) :
     ∃ (g : R →+* S) (P Q : Fin 3 → S) (hP : (W.toProjective.map g).Equation P)
@@ -228,14 +229,13 @@ theorem exists_eq_lift_projModelPoint {S : Type u} [CommRing S] [IsLocalRing S]
       (hj : IsUnit (Q j)), p = pullback.lift (W.projModelPoint g hP hi) (W.projModelPoint g hQ hj)
         ((W.projModelPoint_projModelOver g hP hi).trans
           (W.projModelPoint_projModelOver g hQ hj).symm) := by
-  -- the two projections of `p` lie over the same morphism `Spec φ : Spec S ⟶ Spec R`
-  obtain ⟨φ, hφ⟩ := Spec.map_surjective (p ≫ pullback.fst _ _ ≫ W.projModelOver)
-  -- so each of them is a point with homogeneous coordinates, along `φ`
-  obtain ⟨P, hP, i, hi, h₁⟩ := W.exists_eq_projModelPoint (g := φ.hom) (x := p ≫ pullback.fst _ _)
-    (by rw [Category.assoc, ← hφ, CommRingCat.ofHom_hom])
-  obtain ⟨Q, hQ, j, hj, h₂⟩ := W.exists_eq_projModelPoint (g := φ.hom) (x := p ≫ pullback.snd _ _)
-    (by rw [Category.assoc, ← pullback.condition, ← hφ, CommRingCat.ofHom_hom])
-  exact ⟨φ.hom, P, Q, hP, hQ, i, j, hi, hj, pullback.hom_ext
+  -- the first projection of `p` is a point with homogeneous coordinates, along some `g`
+  obtain ⟨g, P, hP, i, hi, h₁⟩ := W.exists_ringHom_eq_projModelPoint (p ≫ pullback.fst _ _)
+  -- the second projection lies over the same morphism `Spec g`, so it is one too, along `g`
+  obtain ⟨Q, hQ, j, hj, h₂⟩ := W.exists_eq_projModelPoint (g := g) (x := p ≫ pullback.snd _ _)
+    (by rw [Category.assoc, ← pullback.condition, ← Category.assoc, h₁,
+      projModelPoint_projModelOver])
+  exact ⟨g, P, Q, hP, hQ, i, j, hi, hj, pullback.hom_ext
     (h₁.trans (pullback.lift_fst _ _ _).symm) (h₂.trans (pullback.lift_snd _ _ _).symm)⟩
 
 end LocalRing

@@ -8,14 +8,18 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Projective.Point
 
 /-!
-# Commutativity of the addition of point representatives on a projective Weierstrass curve
+# The group law on point representatives of a projective Weierstrass curve
 
 For a Weierstrass curve `W'` over a commutative ring, Mathlib's addition
 `WeierstrassCurve.Projective.add` of two point representatives `P` and `Q` is the doubling formula
 `dblXYZ P` if `P` and `Q` are equivalent, and the addition formula `addXYZ P Q` otherwise. Mathlib
 shows that over a field it induces a commutative group law on the nonsingular point classes. This
-file shows that over any commutative ring, and for all point representatives, `add P Q` and
-`add Q P` are equivalent: each coordinate of `addXYZ` changes sign when `P` and `Q` are swapped.
+file states laws of that group for point representatives, where they hold up to equivalence.
+
+Commutativity holds over any commutative ring and for all point representatives: `add P Q` and
+`add Q P` are equivalent, because each coordinate of `addXYZ` changes sign when `P` and `Q` are
+swapped. The identity law is the one of Mathlib's group, for a nonsingular point representative
+over a field.
 
 ## Main results
 
@@ -23,6 +27,8 @@ file shows that over any commutative ring, and for all point representatives, `a
   sign of the addition formula, `addXYZ P Q = -addXYZ Q P`.
 * `WeierstrassCurve.Projective.add_comm_equiv`: the sums `add P Q` and `add Q P` of two point
   representatives are equivalent.
+* `WeierstrassCurve.Projective.zero_add_equiv`: over a field, the sum `add ![0, 1, 0] P` of the
+  point at infinity and a nonsingular point representative `P` is equivalent to `P`.
 -/
 
 public section
@@ -70,5 +76,18 @@ theorem add_comm_equiv (P Q : Fin 3 → R) : W'.add P Q ≈ W'.add Q P := by
     rw [add_of_not_equiv h, add_of_not_equiv (mt Setoid.symm h), addXYZ_swap P Q,
       ← neg_one_smul R (W'.addXYZ Q P)]
     exact smul_equiv _ isUnit_one.neg
+
+section Field
+
+variable {F : Type*} [Field F] {W : Projective F} {P : Fin 3 → F}
+
+/-- Over a field, the sum `W.add ![0, 1, 0] P` of the point at infinity and a nonsingular point
+representative `P` is equivalent to `P`. -/
+theorem zero_add_equiv (hP : W.Nonsingular P) : W.add ![0, 1, 0] P ≈ P :=
+  Quotient.exact <| by
+    simpa only [addMap_eq] using addMap_of_Z_eq_zero_left nonsingular_zero
+      ((nonsingularLift_iff P).mpr hP) (fin3_def_ext 0 1 0).2.2
+
+end Field
 
 end WeierstrassCurve.Projective
