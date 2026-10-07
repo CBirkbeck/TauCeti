@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Projective.AdditionLaw.Equation
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Projective.Nonsingular
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Scheme.Addition.Morphism
 
 /-!
@@ -22,12 +23,12 @@ the addition law `addXYZ P Q` (resp. `dblAddXYZ P Q`) is a unit, then the additi
 the pair of these points to the point with homogeneous coordinates `addXYZ P Q`
 (resp. `dblAddXYZ P Q`).
 
-When `g : R →+* K` goes to a field and `P` and `Q` are nonsingular, one of the two laws does not
-vanish at `P` and `Q`, and its value represents their sum `add P Q` in Mathlib's projective group
-law on `W.map g`: the addition morphism sends the pair of `K`-points to the point with homogeneous
-coordinates `add P Q`. For a curve over a field `K`, through the identification
-`WeierstrassCurve.projModelPointsEquiv` of the sections of `E ⟶ Spec K` with the points
-`W.toAffine.Point` of `W`, the addition morphism is the addition of these points.
+When `g : R →+* K` goes to a field, `P` and `Q` are nonsingular, since `W` is elliptic. One of the
+two laws then does not vanish at `P` and `Q`, and its value represents their sum `add P Q` in
+Mathlib's projective group law on `W.map g`: the addition morphism sends the pair of `K`-points to
+the point with homogeneous coordinates `add P Q`. For a curve over a field `K`, through the
+identification `WeierstrassCurve.projModelPointsEquiv` of the sections of `E ⟶ Spec K` with the
+points `W.toAffine.Point` of `W`, the addition morphism is the addition of these points.
 
 ## Main results
 
@@ -37,8 +38,8 @@ coordinates `add P Q`. For a curve over a field `K`, through the identification
   homogeneous coordinates `addXYZ P Q` (resp. `dblAddXYZ P Q`), when one of its coordinates is a
   unit.
 * `WeierstrassCurve.lift_projModelPoint_additionMorphism_eq_add`: for `g : R →+* K` to a field, the
-  addition morphism sends the pair of `K`-points with nonsingular homogeneous coordinates `P` and
-  `Q` to the point with homogeneous coordinates their sum `add P Q`.
+  addition morphism sends the pair of `K`-points with homogeneous coordinates `P` and `Q` to the
+  point with homogeneous coordinates their sum `add P Q`.
 * `WeierstrassCurve.projModelPointsEquiv_lift_additionMorphism`: over a field `K`, the addition
   morphism agrees with the addition of the points `W.toAffine.Point` on the sections of
   `projModel W ⟶ Spec K`.
@@ -200,28 +201,34 @@ variable {R : Type u} [CommRing R] (W : WeierstrassCurve R)
 
 open Projective in
 /-- **The addition morphism on field-valued points.** Let `g : R →+* K` be a ring homomorphism to a
-field, and let `P` and `Q` be nonsingular point representatives of `W.map g` with unit coordinates
-`Pᵢ` and `Qⱼ`. Then the addition morphism `E ×_{Spec R} E ⟶ E` sends the pair of `K`-points of `E`
-with homogeneous coordinates `P` and `Q` to the `K`-point with homogeneous coordinates their sum
-`add P Q` in Mathlib's projective group law on `W.map g`, read on any chart `D₊(Xₘ)` on which it has
-a unit coordinate. -/
+field, and let `P` and `Q` be solutions of the projective Weierstrass equation of `W.map g` with
+unit coordinates `Pᵢ` and `Qⱼ`; as `W` is elliptic, they are nonsingular. Then the addition morphism
+`E ×_{Spec R} E ⟶ E` sends the pair of `K`-points of `E` with homogeneous coordinates `P` and `Q` to
+the `K`-point with homogeneous coordinates their sum `add P Q` in Mathlib's projective group law on
+`W.map g`, read on any chart `D₊(Xₘ)` on which it has a unit coordinate. -/
 theorem lift_projModelPoint_additionMorphism_eq_add [W.IsElliptic] {K : Type u} [Field K]
-    {g : R →+* K} {P Q : Fin 3 → K} (hP : (W.toProjective.map g).Nonsingular P)
-    (hQ : (W.toProjective.map g).Nonsingular Q) {i j m : Fin 3} (hi : IsUnit (P i))
+    {g : R →+* K} {P Q : Fin 3 → K} {hP : (W.toProjective.map g).Equation P}
+    {hQ : (W.toProjective.map g).Equation Q} {i j m : Fin 3} (hi : IsUnit (P i))
     (hj : IsUnit (Q j)) (hm : IsUnit ((W.toProjective.map g).add P Q m)) :
-    pullback.lift (W.projModelPoint g hP.1 hi) (W.projModelPoint g hQ.1 hj)
-        ((W.projModelPoint_projModelOver g hP.1 hi).trans
-          (W.projModelPoint_projModelOver g hQ.1 hj).symm) ≫ W.additionMorphism =
-      W.projModelPoint g (nonsingular_add hP hQ).1 hm := by
+    pullback.lift (W.projModelPoint g hP hi) (W.projModelPoint g hQ hj)
+        ((W.projModelPoint_projModelOver g hP hi).trans
+          (W.projModelPoint_projModelOver g hQ hj).symm) ≫ W.additionMorphism =
+      W.projModelPoint g (nonsingular_add
+        ((equation_iff_nonsingular_of_ne_zero (Function.ne_iff.mpr ⟨i, hi.ne_zero⟩)).mp hP)
+        ((equation_iff_nonsingular_of_ne_zero (Function.ne_iff.mpr ⟨j, hj.ne_zero⟩)).mp hQ)).1
+        hm := by
+  -- a solution with a nonzero coordinate on an elliptic curve over a field is nonsingular
+  have hP' := (equation_iff_nonsingular_of_ne_zero (Function.ne_iff.mpr ⟨i, hi.ne_zero⟩)).mp hP
+  have hQ' := (equation_iff_nonsingular_of_ne_zero (Function.ne_iff.mpr ⟨j, hj.ne_zero⟩)).mp hQ
   -- one of the two laws at `P` and `Q` is nonzero, and represents their sum
-  rcases addXYZ_ne_zero_or_dblAddXYZ_ne_zero hP hQ with h | h <;>
+  rcases addXYZ_ne_zero_or_dblAddXYZ_ne_zero hP' hQ' with h | h <;>
     obtain ⟨n, hn⟩ := Function.ne_iff.mp h
   · rw [W.lift_projModelPoint_additionMorphism_of_isUnit_addXYZ hi hj hn.isUnit,
       projModelPoint_eq_projModelPoint_iff]
     exact ⟨rfl, 1, by rw [one_smul, add_of_addXYZ_ne_zero h]⟩
   · rw [W.lift_projModelPoint_additionMorphism_of_isUnit_dblAddXYZ hi hj hn.isUnit,
       projModelPoint_eq_projModelPoint_iff]
-    obtain ⟨u, hu⟩ := dblAddXYZ_equiv_add hP hQ h
+    obtain ⟨u, hu⟩ := dblAddXYZ_equiv_add hP' hQ' h
     exact ⟨rfl, u, hu.symm⟩
 
 end Fibre
@@ -271,8 +278,8 @@ theorem projModelPointsEquiv_lift_additionMorphism [DecidableEq K]
   rw [hxP, hyQ, ← Projective.Point.toAffine_add hP hQ]
   -- the pair `(x, y)` is the pair of points with homogeneous coordinates `P` and `Q`, which the
   -- addition morphism sends to the point with homogeneous coordinates `add P Q`
-  simp [hx, hy, W.lift_projModelPoint_additionMorphism_eq_add (g := RingHom.id K) hP hQ hi hj
-    hm.isUnit]
+  simp [hx, hy, W.lift_projModelPoint_additionMorphism_eq_add (g := RingHom.id K) (hP := hP.1)
+    (hQ := hQ.1) hi hj hm.isUnit]
 
 end Field
 
