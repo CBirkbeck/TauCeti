@@ -5,7 +5,11 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Algebra.Module.Projective
+public import Mathlib.RingTheory.FiniteStability
 public import Mathlib.RingTheory.IsTensorProduct
+
+import Mathlib.RingTheory.TensorProduct.Finite
 
 /-!
 # Algebra homomorphisms out of a pushout over the base change
@@ -26,6 +30,9 @@ of `Algebra.IsPushout.cancelBaseChangeAlg` in the coefficient algebra.
 * `Algebra.IsPushout.lift_algebraMap`: `lift f` restricts to `f` on `S`.
 * `Algebra.IsPushout.algHom_ext'`: `R'`-algebra homomorphisms out of `S'` agreeing on `S` are
   equal.
+* `Module.Finite.of_isPushout`, `Module.Projective.of_isPushout`,
+  `Algebra.FinitePresentation.of_isPushout`: finiteness, projectivity and finite presentation are
+  stable under pushout.
 * `Algebra.IsPushout.cancelBaseChangeAlg_symm_lTensor`: the isomorphism
   `S ⊗[R] T ≃ₐ[S] S' ⊗[R'] T` is natural in the `R'`-algebra `T`.
 -/
@@ -65,6 +72,32 @@ theorem algHom_ext' {f g : S' →ₐ[R'] A}
   AlgHom.restrictScalars_injective R <| IsPushout.algHom_ext (R' := R') S' (by ext; simp) h
 
 end Lift
+
+section Finiteness
+
+variable (R S R' S')
+
+/-- Finiteness as a module is stable under pushout: if `S` is a finite `R`-module, then the pushout
+`S'` is a finite `R'`-module. -/
+theorem _root_.Module.Finite.of_isPushout [Module.Finite R S] : Module.Finite R' S' := by
+  have := IsPushout.symm (inferInstance : IsPushout R S R' S')
+  exact Module.Finite.equiv (IsPushout.equiv R R' S S').toLinearEquiv
+
+/-- Projectivity as a module is stable under pushout: if `S` is a projective `R`-module, then the
+pushout `S'` is a projective `R'`-module. -/
+theorem _root_.Module.Projective.of_isPushout [Module.Projective R S] :
+    Module.Projective R' S' := by
+  have := IsPushout.symm (inferInstance : IsPushout R S R' S')
+  exact Module.Projective.of_equiv (IsPushout.equiv R R' S S').toLinearEquiv
+
+/-- Finite presentation is stable under pushout: if `S` is a finitely presented `R`-algebra, then
+the pushout `S'` is a finitely presented `R'`-algebra. -/
+theorem _root_.Algebra.FinitePresentation.of_isPushout [FinitePresentation R S] :
+    FinitePresentation R' S' := by
+  have := IsPushout.symm (inferInstance : IsPushout R S R' S')
+  exact FinitePresentation.equiv (IsPushout.equiv R R' S S')
+
+end Finiteness
 
 variable (S') in
 /-- The isomorphism `S ⊗[R] T ≃ₐ[S] S' ⊗[R'] T` is natural in the `R'`-algebra `T`. -/

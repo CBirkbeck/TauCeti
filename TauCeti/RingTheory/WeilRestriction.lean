@@ -7,10 +7,10 @@ module
 
 public import Mathlib.Algebra.Module.Projective
 public import Mathlib.RingTheory.Extension.Presentation.Basic
+public import TauCeti.RingTheory.IsTensorProduct.Pushout
 
 import Mathlib.RingTheory.Finiteness.Projective
 import TauCeti.RingTheory.Extension.Presentation.Basic
-import TauCeti.RingTheory.IsTensorProduct.Pushout
 
 /-!
 # Weil restriction along a finite projective algebra
@@ -299,14 +299,18 @@ private lemma lTensor_baseChangeLift_comp_baseChangePoint (h : C' →ₐ[B'] B' 
   refine IsPushout.algHom_ext' (R := B) (S := C) <| AlgHom.ext fun c ↦ ?_
   simp [lTensor_baseChangePoint_algebraMap, baseChangeLift]
 
-variable (A B C A' B' C') [Module.Finite A' B'] [Module.Projective A' B'] [FinitePresentation B' C']
+variable (A B C A' B' C')
 
 /-- **The Weil restriction commutes with base change.** If `B' = B ⊗[A] A'` and
 `C' = C ⊗[B] B'`, as expressed by `Algebra.IsPushout A B A' B'` and `Algebra.IsPushout B C B' C'`,
 this is an isomorphism of `A'`-algebras from `A' ⊗[A] WeilRestriction A B C` to the Weil
 restriction of `C'` along `B'`. It is compatible with the universal properties, see
-`Algebra.WeilRestriction.homEquiv_comp_baseChangeAlgEquiv`. -/
-def baseChangeAlgEquiv :
+`Algebra.WeilRestriction.homEquiv_comp_baseChangeAlgEquiv`. The finiteness hypotheses on `B'` and
+`C'` follow from the pushouts, and are filled in by default with `Module.Finite.of_isPushout`,
+`Module.Projective.of_isPushout` and `Algebra.FinitePresentation.of_isPushout`. -/
+def baseChangeAlgEquiv (hfin : Module.Finite A' B' := .of_isPushout A B A' B')
+    (hproj : Module.Projective A' B' := .of_isPushout A B A' B')
+    (hfp : FinitePresentation B' C' := .of_isPushout B C B' C') :
     A' ⊗[A] WeilRestriction A B C ≃ₐ[A'] WeilRestriction A' B' C' :=
   -- `baseChangeLift` takes a target `T` with `[Algebra A T] [IsScalarTower A A' T]`: make the Weil
   -- restriction of `C'` along `B'` an `A`-algebra through `A → A'`
@@ -323,7 +327,8 @@ def baseChangeAlgEquiv :
       simp [Algebra.TensorProduct.map_id_comp, AlgHom.comp_assoc, ← homEquiv_apply,
         lTensor_baseChangeLift_comp_baseChangePoint])
 
-variable {A B C A' B' C'}
+variable {A B C A' B' C'} {hfin : Module.Finite A' B'} {hproj : Module.Projective A' B'}
+  {hfp : FinitePresentation B' C'}
 
 -- `baseChangeAlgEquiv` carries `baseChangePoint`, the base change of the universal point, to the
 -- universal point of `WeilRestriction A' B' C'`.
