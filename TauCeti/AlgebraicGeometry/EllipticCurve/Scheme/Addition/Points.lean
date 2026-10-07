@@ -267,9 +267,9 @@ theorem projModelPointsEquiv_lift_additionMorphism [DecidableEq K]
   have hne : W.toProjective.add P Q ≠ 0 := fun h ↦ by
     simp [h, Projective.nonsingular_iff] at hPQ
   obtain ⟨m, hm⟩ := Function.ne_iff.mp hne
-  rw [hxP, hyQ, ← Projective.Point.toAffine_add hP hQ,
-    ← W.projModelPointsEquiv_projModelPoint hPQ.1 hm.isUnit]
-  -- the pair `(x, y)` is the pair of points with homogeneous coordinates `P` and `Q`
+  rw [hxP, hyQ, ← Projective.Point.toAffine_add hP hQ]
+  -- the pair `(x, y)` is the pair of points with homogeneous coordinates `P` and `Q`, which the
+  -- addition morphism sends to the point with homogeneous coordinates `add P Q`
   simp [hx, hy, W.lift_projModelPoint_additionMorphism_eq_add (g := RingHom.id K) hP hQ hi hj
     hm.isUnit]
 

@@ -61,6 +61,8 @@ zero section corresponding to the point at infinity.
   coordinates the universal point of the chart ring.
 * `WeierstrassCurve.projModelPointsEquivUnimodular_projModelZero`: the zero section corresponds to
   the class of `(0, 1, 0)`.
+* `WeierstrassCurve.projModelPointsEquivUnimodular_projModelPoint`: the section with homogeneous
+  coordinates `P` corresponds to the class of `P`.
 * `WeierstrassCurve.projModelPointsEquivUnimodular_symm_mk`: the class of a representative `P`
   with unit coordinate `Pᵢ` corresponds to the section through the chart `D₊(Xᵢ)` at which
   `Xₖ / Xᵢ = Pₖ / Pᵢ`.
@@ -439,6 +441,22 @@ theorem projModelPointsEquivUnimodular_projModelZero :
   obtain ⟨p, -, rfl⟩ := W.toProjective.mem_grading_iff.mp ha
   simp [eval₂_id]
 
+/-- The section `projModelPoint W (RingHom.id R) hP hi` with homogeneous coordinates `P`, a
+solution of the projective Weierstrass equation with a unit coordinate `Pᵢ`, corresponds to the
+class of `P`. -/
+@[simp]
+theorem projModelPointsEquivUnimodular_projModelPoint {P : Fin 3 → R}
+    (hP : (W.toProjective.map (RingHom.id R)).Equation P) {i : Fin 3} (hi : IsUnit (P i)) :
+    (W.projModelPointsEquivUnimodular ⟨W.projModelPoint (RingHom.id R) hP hi, by simp⟩ :
+      Projective.PointClass R) = ⟦P⟧ := by
+  have hE : W.toProjective.Equation P := by simpa only [WeierstrassCurve.map_id] using hP
+  have hU : W.toProjective.UnimodularLift ⟦P⟧ := (Projective.unimodularLift_iff P).mpr
+    ⟨hE, TauCeti.Module.isUnimodular_of_isUnit_apply hi⟩
+  -- the section attached to the class of `P` is the point with homogeneous coordinates `P`
+  refine congrArg Subtype.val ((Equiv.symm_apply_eq _).mpr (Subtype.ext ?_) :
+    W.projModelPointsEquivUnimodular ⟨_, _⟩ = ⟨⟦P⟧, hU⟩)
+  rw [Equiv.ofBijective_apply, sectionOfClass_mk, W.repPoint_eq hE hi]
+
 /-- The class of a unimodular representative `P` with unit coordinate `Pᵢ` corresponds to the
 section through the chart `D₊(Xᵢ)` at which `Xₖ / Xᵢ = Pₖ / Pᵢ`: `Spec` of any `R`-algebra map
 `α : R[X₀, X₁, X₂] ⧸ (W, Xᵢ - 1) → R` with `α(Xₖ) = Pₖ / Pᵢ`, read on `A_(Xᵢ)` through
@@ -542,14 +560,25 @@ point `WeierstrassCurve.Projective.Point.toAffine W P` of `W`: the point at infi
 and the affine point `(P₀ / P₂, P₁ / P₂)` otherwise. Unlike `projModelPointsEquiv_symm_some`, which
 describes the section of an affine point through the chart `D₊(Z)`, it applies to a section read
 through any chart `D₊(Xᵢ)`. -/
+@[simp]
 theorem projModelPointsEquiv_projModelPoint {P : Fin 3 → K}
     (hP : (W.toProjective.map (RingHom.id K)).Equation P) {i : Fin 3} (hi : IsUnit (P i)) :
     W.projModelPointsEquiv ⟨W.projModelPoint (RingHom.id K) hP hi, by simp⟩ =
       Projective.Point.toAffine W.toProjective P := by
-  -- the section is that of the unimodular class of `P`, which is the nonsingular point `⟦P⟧`
-  simp [projModelPointsEquiv, projModelPointsEquivUnimodular, Projective.Point.toAffineLift,
-    ← (W.sectionOfClass_mk <| (Projective.unimodularLift_iff P).mpr
-      ⟨hP, TauCeti.Module.isUnimodular_of_isUnit_apply hi⟩).trans (W.repPoint_eq hP hi)]
+  classical
+  -- the section corresponds to the unimodular class of `P`, which is the nonsingular point `⟦P⟧`
+  have hNS : W.toProjective.NonsingularLift ⟦P⟧ :=
+    Projective.unimodularLift_iff_nonsingularLift.mp <| (Projective.unimodularLift_iff P).mpr
+      ⟨by simpa only [WeierstrassCurve.map_id] using hP,
+        TauCeti.Module.isUnimodular_of_isUnit_apply hi⟩
+  have h : (Projective.Point.equivUnimodularLift W.toProjective).symm
+      (W.projModelPointsEquivUnimodular ⟨W.projModelPoint (RingHom.id K) hP hi, by simp⟩) =
+        ⟨hNS⟩ :=
+    Projective.Point.ext <| by
+      rw [Projective.Point.equivUnimodularLift_symm_point,
+        projModelPointsEquivUnimodular_projModelPoint]
+  rw [projModelPointsEquiv, Equiv.trans_apply, Equiv.trans_apply, h, AddEquiv.toEquiv_eq_coe,
+    AddEquiv.coe_toEquiv, Projective.Point.toAffineAddEquiv_apply, Projective.Point.toAffineLift_eq]
 
 end Field
 
