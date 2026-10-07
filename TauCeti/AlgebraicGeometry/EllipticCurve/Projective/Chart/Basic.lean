@@ -249,24 +249,6 @@ theorem equation_chartPoint : (W'.baseChange (W'.ChartRing i)).Equation (W'.char
   rw [Equation, map_polynomial, eval_map, ← aeval_def, ← aeval_unique, Ideal.Quotient.mkₐ_eq_mk,
     ← chartRelation_zero W' i, Ideal.Quotient.mk_span_range]
 
-/-- The universal point of the chart `D₊(Xᵢ)` is a solution of the Weierstrass equation of `W'`
-mapped along the structure map `R →+* ChartRing W' i`. -/
-theorem equation_map_chartPoint :
-    (W'.map (algebraMap R (W'.ChartRing i))).Equation (W'.chartPoint i) :=
-  W'.equation_chartPoint i
-
-section Map
-
-variable {W'} {S T : Type*} [CommRing S] [CommRing T] {g : R →+* S} {P : Fin 3 → S}
-
-/-- A solution `P` of the projective Weierstrass equation of `W'.map g` maps along `ψ : S →+* T` to
-a solution `ψ ∘ P` of the equation of `W'.map (ψ.comp g)`. -/
-theorem Equation.map_comp (ψ : S →+* T) (h : (W'.map g).Equation P) :
-    (W'.map (ψ.comp g)).Equation (ψ ∘ P) :=
-  h.map ψ
-
-end Map
-
 section AwayEval
 
 variable {S : Type*} [CommRing S] (g : R →+* S) {P : Fin 3 → S} (hP : (W'.map g).Equation P) {i}

@@ -173,7 +173,8 @@ for a ring homomorphism `ψ : S →+* T` gives the point with homogeneous coordi
 @[reassoc (attr := simp)]
 theorem SpecMap_projModelPoint {T : Type u} [CommRing T] (ψ : S →+* T) (hi : IsUnit (P i)) :
     Spec.map (CommRingCat.ofHom ψ) ≫ W.projModelPoint g hP hi =
-      W.projModelPoint (ψ.comp g) (hP.map_comp ψ) (hi.map ψ) := by
+      W.projModelPoint (ψ.comp g)
+        (show (W.toProjective.map (ψ.comp g)).Equation (ψ ∘ P) from hP.map ψ) (hi.map ψ) := by
   rw [projModelPoint, projModelPoint, ← Spec.map_comp_assoc, ← CommRingCat.ofHom_comp,
     Projective.awayEvalHom_def, Projective.awayEvalHom_def,
     RingHom.comp_homogeneousLocalizationAwayLift]
@@ -233,7 +234,9 @@ variable (W) in
 /-- The standard affine chart `D₊(Xᵢ)` of the projective model is the point with homogeneous
 coordinates the universal point `chartPoint i` of the chart ring `R[X₀, X₁, X₂] ⧸ (W, Xᵢ - 1)`. -/
 theorem chartι_eq_projModelPoint (i : Fin 3) :
-    W.chartι i = W.projModelPoint (algebraMap R _) (W.toProjective.equation_map_chartPoint i)
+    W.chartι i = W.projModelPoint (algebraMap R _)
+      (show (W.toProjective.map (algebraMap R _)).Equation _ from
+        W.toProjective.equation_chartPoint i)
       (W.toProjective.chartPoint_self i ▸ isUnit_one) := by
   rw [chartι_def, projModelPoint]
   congr 2
