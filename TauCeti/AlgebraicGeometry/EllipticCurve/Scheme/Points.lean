@@ -234,14 +234,15 @@ variable (W) in
 coordinates the universal point `chartPoint i` of the chart ring `R[X₀, X₁, X₂] ⧸ (W, Xᵢ - 1)`. -/
 theorem chartι_eq_projModelPoint (i : Fin 3) :
     W.chartι i = W.projModelPoint (algebraMap R _) (W.toProjective.equation_map_chartPoint i)
-      (W.toProjective.isUnit_chartPoint_self i) := by
+      (W.toProjective.chartPoint_self i ▸ isUnit_one) := by
   rw [chartι_def, projModelPoint]
   congr 2
   ext z
   obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective _ (W.toProjective.coord_mem_grading i) z
   obtain ⟨p, hp, rfl⟩ := W.toProjective.mem_grading_iff.mp ha
   -- the unit coordinate is `1`, and evaluation at the classes of the variables is the quotient map
-  have hu : (W.toProjective.isUnit_chartPoint_self i).unit = 1 :=
+  have hu : (W.toProjective.chartPoint_self i ▸ isUnit_one :
+      IsUnit (W.toProjective.chartPoint i i)).unit = 1 :=
     Units.ext (W.toProjective.chartPoint_self i)
   simp only [CommRingCat.hom_ofHom, RingEquiv.coe_toRingHom, Projective.awayEquivChartRing_mk,
     Projective.awayEvalHom_mk, Projective.evalHom_mk, hu, one_pow, inv_one, Units.val_one, mul_one]

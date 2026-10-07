@@ -240,11 +240,6 @@ theorem chartPoint_apply (k : Fin 3) : W'.chartPoint i k = Ideal.Quotient.mk _ (
 theorem chartPoint_self : W'.chartPoint i i = 1 :=
   W'.chartRing_mk_X_self i
 
-/-- The `i`-th coordinate of the universal point of the chart `D₊(Xᵢ)` is a unit. -/
-theorem isUnit_chartPoint_self : IsUnit (W'.chartPoint i i) := by
-  rw [chartPoint_self]
-  exact isUnit_one
-
 /-- The universal point of the chart `D₊(Xᵢ)` is a solution of the Weierstrass equation over
 `ChartRing W' i`. -/
 theorem equation_chartPoint : (W'.baseChange (W'.ChartRing i)).Equation (W'.chartPoint i) := by
