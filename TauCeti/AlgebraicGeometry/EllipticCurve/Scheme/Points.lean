@@ -167,12 +167,6 @@ theorem projModelPoint_smul (u : Sˣ) (hi : IsUnit (P i)) :
   simp only [Projective.evalHom_mk, Pi.smul_def, smul_eq_mul]
   exact hp.eval₂_const_mul g P u
 
-/-- A solution `P` of the projective Weierstrass equation of `W'.map g` maps along `ψ : S →+* T` to
-a solution `ψ ∘ P` of the equation of `W'.map (ψ.comp g)`. -/
-theorem Projective.Equation.map_comp {W' : Projective R} {T : Type u} [CommRing T] (ψ : S →+* T)
-    (h : (W'.map g).Equation P) : (W'.map (ψ.comp g)).Equation (ψ ∘ P) :=
-  h.map ψ
-
 /-- The point `projModelPoint W g hP hi` is natural in the ring `S`: composing it with `Spec ψ`
 for a ring homomorphism `ψ : S →+* T` gives the point with homogeneous coordinates `ψ ∘ P`, along
 `ψ.comp g`. -/

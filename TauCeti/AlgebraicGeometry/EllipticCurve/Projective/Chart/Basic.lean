@@ -260,6 +260,18 @@ theorem equation_map_chartPoint :
     (W'.map (algebraMap R (W'.ChartRing i))).Equation (W'.chartPoint i) :=
   W'.equation_chartPoint i
 
+section Map
+
+variable {W'} {S T : Type*} [CommRing S] [CommRing T] {g : R →+* S} {P : Fin 3 → S}
+
+/-- A solution `P` of the projective Weierstrass equation of `W'.map g` maps along `ψ : S →+* T` to
+a solution `ψ ∘ P` of the equation of `W'.map (ψ.comp g)`. -/
+theorem Equation.map_comp (ψ : S →+* T) (h : (W'.map g).Equation P) :
+    (W'.map (ψ.comp g)).Equation (ψ ∘ P) :=
+  h.map ψ
+
+end Map
+
 section AwayEval
 
 variable {S : Type*} [CommRing S] (g : R →+* S) {P : Fin 3 → S} (hP : (W'.map g).Equation P) {i}
