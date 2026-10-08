@@ -25,25 +25,8 @@ is a left and a right inverse for the addition morphism: the morphisms `E ⟶ E 
 components `(ν, 𝟙)` and `(𝟙, ν)`, followed by the addition morphism, are the composite `π ≫ 0`
 of the structure morphism and the zero section.
 
-Over an integral domain `R`, the scheme `E` is integral, hence reduced, and it is separated, so
-two morphisms `E ⟶ E` are equal as soon as they agree on the points of `E` with values in its
-residue fields. Such a point has homogeneous coordinates `P` over a field, the negation morphism
-sends it to the point with homogeneous coordinates `neg P`, Mathlib's negation of `P`, and the
-composite `π ≫ 0` sends it to the point with homogeneous coordinates `(0, 1, 0)` over the same
-field. The addition morphism sends the pair of the points with homogeneous coordinates `neg P` and
-`P` to the point with homogeneous coordinates the sum `add (neg P) P` of Mathlib's addition of
-point representatives, and `add (neg P) P` and `(0, 1, 0)` represent the same point
-(`WeierstrassCurve.Projective.neg_add_cancel_equiv`).
-
-An elliptic Weierstrass curve over an arbitrary commutative ring is the base change of one over an
-integral domain (`WeierstrassCurve.exists_map_eq_of_isElliptic`). The left inverse law passes to a
-base change `W.map f`, because `projModel (W.map f)` is the base change of `projModel W`
-(`WeierstrassCurve.isPullback_projModelBaseChange`), and the addition morphism, the negation
-morphism and the zero section commute with base change
-(`WeierstrassCurve.additionMorphism_projModelBaseChange`,
-`WeierstrassCurve.projModelNeg_projModelBaseChange` and
-`WeierstrassCurve.projModelZero_projModelBaseChange`). The right inverse law follows from the left
-one, because the addition morphism is commutative (`WeierstrassCurve.additionMorphism_comm`).
+These equations supply the left and right inverse axioms for the projective model as a group
+object over `Spec R`. They hold over arbitrary commutative rings when the curve is elliptic.
 
 ## Main results
 
@@ -107,6 +90,28 @@ the components of the two morphisms to `E ×_S E`, where the source uses Mathlib
 -/
 
 public section
+
+/-
+Over an integral domain `R`, the scheme `E` is integral, hence reduced, and it is separated, so
+two morphisms `E ⟶ E` are equal as soon as they agree on the points of `E` with values in its
+residue fields. Such a point has homogeneous coordinates `P` over a field, the negation morphism
+sends it to the point with homogeneous coordinates `neg P`, Mathlib's negation of `P`, and the
+composite `π ≫ 0` sends it to the point with homogeneous coordinates `(0, 1, 0)` over the same
+field. The addition morphism sends the pair of the points with homogeneous coordinates `neg P` and
+`P` to the point with homogeneous coordinates the sum `add (neg P) P` of Mathlib's addition of
+point representatives, and `add (neg P) P` and `(0, 1, 0)` represent the same point
+(`WeierstrassCurve.Projective.neg_add_cancel_equiv`).
+
+An elliptic Weierstrass curve over an arbitrary commutative ring is the base change of one over an
+integral domain (`WeierstrassCurve.exists_map_eq_of_isElliptic`). The left inverse law passes to a
+base change `W.map f`, because `projModel (W.map f)` is the base change of `projModel W`
+(`WeierstrassCurve.isPullback_projModelBaseChange`), and the addition morphism, the negation
+morphism and the zero section commute with base change
+(`WeierstrassCurve.additionMorphism_projModelBaseChange`,
+`WeierstrassCurve.projModelNeg_projModelBaseChange` and
+`WeierstrassCurve.projModelZero_projModelBaseChange`). The right inverse law follows from the left
+one, because the addition morphism is commutative (`WeierstrassCurve.additionMorphism_comm`).
+-/
 
 open CategoryTheory Limits AlgebraicGeometry
 
