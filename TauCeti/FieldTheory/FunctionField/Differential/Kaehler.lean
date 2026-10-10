@@ -41,6 +41,8 @@ differentials are free of rank one on `d X`, and `F/k(x)` is separable, hence fo
 * `TauCeti.derivativeOfSeparating`: differentiation `y ↦ dy/dx` with respect to `x`, as a
   `k`-derivation of `F`, with `TauCeti.derivativeOfSeparating_smul_D` the identity
   `d y = (dy/dx) · dx` and `TauCeti.eq_derivativeOfSeparating` its uniqueness.
+* `TauCeti.derivativeOfSeparating_eq_zero_iff`: differentiation kills exactly the constants of
+  an exact characteristic-zero function field.
 * `Derivation.apply_eq_derivativeOfSeparating_smul`: the chain rule `D y = (dy/dx) • D x` for
   every derivation `D` of `F` over `k`.
 * `TauCeti.IsFunctionField.isSeparable_adjoin_iff_D_ne_zero`: the differential criterion for a
@@ -53,6 +55,10 @@ The result is Stichtenoth, *Algebraic Function Fields and Codes*, second edition
 one-dimensional with basis `dx`. The proof here is not his — he builds a differential module by
 hand from derivations, whereas this file reads the statement off Mathlib's base-change theory of
 Kähler differentials.
+
+The characteristic-zero constant-field criterion is used in the Wronskian treatment of
+Weierstrass points in D. M. Goldschmidt, *Algebraic Functions and Projective Curves*, GTM 215,
+Springer, 2003.
 -/
 
 public section
@@ -169,6 +175,25 @@ theorem _root_.Derivation.apply_eq_derivativeOfSeparating_smul {M : Type*} [AddC
     LinearMap.map_smul, D.liftKaehlerDifferential_comp_D]
 
 end Separating
+
+/-- Differentiation with respect to a separating element kills exactly the constants of
+an exact characteristic-zero function field. -/
+@[simp]
+theorem derivativeOfSeparating_eq_zero_iff [CharZero k] [Algebra.IsSeparable k⟮x⟯ F]
+    (hF : IsFunctionField k F) (hex : IsIntegrallyClosedIn k F)
+    (hx : Transcendental k x) (y : F) :
+    derivativeOfSeparating hx y = 0 ↔ ∃ a : k, algebraMap k F a = y := by
+  constructor
+  · intro hy
+    by_cases halg : IsAlgebraic k y
+    · let _ := hex
+      exact IsIntegrallyClosedIn.isIntegral_iff.mp halg.isIntegral
+    · let _ := hF.finiteDimensional_adjoin halg
+      have hDy : D k F y = 0 := by
+        rw [← derivativeOfSeparating_smul_D hx y, hy, zero_smul]
+      exact False.elim (D_ne_zero_of_separating halg hDy)
+  · rintro ⟨a, rfl⟩
+    exact (derivativeOfSeparating hx).map_algebraMap a
 
 variable [PerfectField k]
 
