@@ -121,7 +121,10 @@ private theorem deflations_abelian_eq :
 variable (C)
 
 /-- The canonical exact structure on an abelian category `C`, whose conflations are the
-short exact short complexes. -/
+short exact short complexes.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ExactStructure.abelian) -/
 noncomputable def ExactStructure.abelian : ExactStructure C where
   toConflationClass := ConflationClass.abelian C
   isInflation_id X := isInflation_abelian_of_mono (𝟙 X)

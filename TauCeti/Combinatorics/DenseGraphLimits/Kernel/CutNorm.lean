@@ -82,7 +82,10 @@ noncomputable def cutNormSet [IsFiniteMeasure μ] (K : SymmKernel Ω μ) : ℝ :
     |K.rectIntegral (ν : Measure Ω) S T|
 
 /-- The cut norm of a symmetric kernel: the supremum over measurable sets `S` and `T` of the
-absolute integral over `S × T`. -/
+absolute integral over `S × T`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.cutNorm) -/
 noncomputable def cutNorm [IsFiniteMeasure μ] (K : SymmKernel Ω μ) : ℝ := cutNormSet μ K
 
 /-- The **signed cut norm**: the supremum, over measurable `[-1,1]`-valued test functions `u` and

@@ -434,7 +434,10 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
 variable (A) in
 /-- The subring `A°` of power-bounded elements of a nonarchimedean commutative ring
-(Wedhorn Proposition 5.30). -/
+(Wedhorn Proposition 5.30).
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.powerBoundedSubring) -/
 def powerBoundedSubring : Subring A where
   carrier := {a : A | IsPowerBounded a}
   mul_mem' := IsPowerBounded.mul

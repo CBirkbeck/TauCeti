@@ -140,7 +140,10 @@ namespace Polynomial
 variable (k : Type*) [CommSemiring k]
 
 /-- The grading of the polynomial ring `k[X]` placing the monomial `X ^ n` in degree `-n`, so that
-multiplication by `X` lowers degree by one. -/
+multiplication by `X` lowers degree by one.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Polynomial.negDegreeGrading) -/
 noncomputable def negDegreeGrading : InternalGrading k k[X] :=
   InternalGrading.map
     ⟨AddMonoidAlgebra.gradeBy k ⇑(-Nat.castAddMonoidHom ℤ), AddMonoidAlgebra.gradeBy.isInternal _⟩

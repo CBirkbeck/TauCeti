@@ -132,7 +132,10 @@ that the separated completion of `A` be noetherian.
 
 This is the hypothesis of Wedhorn's Theorem 8.28, the strongly noetherian form of Tate
 acyclicity; Wedhorn states it for Tate rings, and every complete rank-one nonarchimedean
-field satisfies it (BGR 5.2.6 — not yet formalised). -/
+field satisfies it (BGR 5.2.6 — not yet formalised).
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.IsStronglyNoetherian) -/
 @[mk_iff]
 class IsStronglyNoetherian : Prop where
   isNoetherianRing (k : ℕ) : IsNoetherianRing (restrictedMvPowerSeriesCompletion k A)

@@ -68,7 +68,10 @@ variable {R : Type u} [CommRing R]
 
 The invertibility hypothesis is not used by the formula; it confines the definition to the
 setting where the diagonal form `⟨1, -1⟩` is the hyperbolic plane. In characteristic two it is
-`⟨1, 1⟩`, whose polar form vanishes identically. -/
+`⟨1, 1⟩`, whose polar form vanishes identically.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.hyperbolicPlane) -/
 def hyperbolicPlane (R : Type u) [CommRing R] [_i2 : Invertible (2 : R)] :
     QuadraticForm R (Fin 2 → R) :=
   weightedSumSquares R ![(1 : R), -1]

@@ -142,7 +142,10 @@ namespace Graphon
 `μ ⊗ μ`.
 
 This is the one place the strict carrier is traded for an a.e. class.  Outside this module use
-`Graphon.coeFn_toAEEqFun` and `Graphon.toAEEqFun_eq_iff` rather than unfolding the definition. -/
+`Graphon.coeFn_toAEEqFun` and `Graphon.toAEEqFun_eq_iff` rather than unfolding the definition.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.Graphon.toAEEqFun) -/
 def toAEEqFun (W : Graphon Ω μ) : (Ω × Ω) →ₘ[μ.prod μ] ℝ :=
   AEEqFun.mk (fun p => W p.1 p.2) W.measurable.aestronglyMeasurable
 

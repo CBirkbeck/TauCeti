@@ -138,7 +138,10 @@ end SpanMul
 with a finitely generated ideal `I` of `A₀` whose adic topology is the subspace topology.
 
 This is data rather than a proposition, because a Huber ring generally has many pairs of
-definition and the later theory chooses among them. -/
+definition and the later theory chooses among them.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.PairOfDefinition) -/
 structure PairOfDefinition (A : Type*) [CommRing A] [TopologicalSpace A] where
   /-- The ring of definition `A₀`. -/
   ringOfDefinition : Subring A
@@ -193,7 +196,7 @@ theorem IsPseudoUniformizer.map {A B F : Type*} [MonoidWithZero A] [TopologicalS
 /-- A *Tate ring* is a Huber ring containing a pseudouniformiser, that is, a topologically
 nilpotent unit.
 
-Tested by: 1 unit test
+Tested by: 2 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.IsTateRing) -/
 class IsTateRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] : Prop
     extends IsHuberRing A where

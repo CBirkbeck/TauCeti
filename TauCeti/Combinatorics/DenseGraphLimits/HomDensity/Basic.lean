@@ -158,7 +158,10 @@ theorem integrable_prod_edgeFactor (E : Finset (Sym2 V)) (G : Sym2 V → Graphon
 `W` along the edges of `F`.
 
 Outside this module, use `homDensity_def` to unfold `homDensity`; its definition is intentionally
-not exposed across module boundaries. -/
+not exposed across module boundaries.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.homDensity) -/
 def homDensity (F : SimpleGraph V) [DecidableRel F.Adj] (W : Graphon Ω μ) : ℝ :=
   ∫ x, ∏ e ∈ F.edgeFinset, edgeFactor W x e ∂(Measure.pi fun _ : V => μ)
 

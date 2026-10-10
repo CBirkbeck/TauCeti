@@ -84,10 +84,7 @@ variable {𝕜 G V : Type*} [NontriviallyNormedField 𝕜] [CompleteSpace 𝕜] 
 operator-valued action, as an element of `C(G, 𝕜)`.
 
 The underlying function is Mathlib's `Representation.character`; only the continuity is new, and it
-comes from `TauCeti.traceCLM`, the trace as a continuous linear functional.
-
-Tested by: 4 unit tests
-[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContRepresentation.character) -/
+comes from `TauCeti.traceCLM`, the trace as a continuous linear functional. -/
 noncomputable def character (π : ContRepresentation 𝕜 G V) (hπ : Continuous π) : C(G, 𝕜) where
   toFun := π.toRepresentation.character
   continuous_toFun := by

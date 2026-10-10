@@ -116,7 +116,10 @@ end BlockAverage
 /-- The block-average step graphon of `W` with respect to a measurable finite partition `P`.
 
 Its value on `p ×ˢ q` is Mathlib's set average of `W` over that rectangle.  In particular its
-value is zero when either side of the rectangle has measure zero. -/
+value is zero when either side of the rectangle has measure zero.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DenseGraphLimits.stepGraphonAvg) -/
 def stepGraphonAvg (P : Finpartition (Set.univ : Set Ω))
     (hP : ∀ p ∈ P.parts, MeasurableSet p) (W : Graphon Ω μ) : Graphon Ω μ :=
   stepGraphon (μ := μ) P hP (blockAverage P W) (blockAverage_comm P W)
