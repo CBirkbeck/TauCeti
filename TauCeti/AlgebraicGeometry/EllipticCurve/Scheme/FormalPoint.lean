@@ -8,8 +8,8 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.FormalGroup.WExpansion
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Scheme.Points
 import TauCeti.AlgebraicGeometry.EllipticCurve.Scheme.ZeroSection
+import TauCeti.AlgebraicGeometry.Scheme.PowerSeries
 import TauCeti.RingTheory.PowerSeries.SubstInv
-import TauCeti.RingTheory.Spectrum.Prime.PowerSeries
 
 /-!
 # The formal point of the projective Weierstrass model along the zero section
@@ -189,17 +189,6 @@ private theorem subst_eq_X_of_projModelFormalPoint_eq {s s' t' : R⟦X⟧} (hs :
       (by simp only [Function.comp_apply, Matrix.cons_val, RingHom.map_neg, RingHom.map_one])] at he
   simpa only [Function.comp_apply, Matrix.cons_val, AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
     coe_substAlgHom hs] using (congrFun he.2 0).symm
-
--- An open subset of `Spec R⟦X⟧` contains the image of `Spec R` under `Spec` of
--- `constantCoeff : R⟦X⟧ →+* R`, the locus `X = 0`, exactly when it is all of `Spec R⟦X⟧`.
-private theorem range_SpecMap_constantCoeff_subset_iff_eq_top {U : (Spec (.of R⟦X⟧)).Opens} :
-    Set.range (Spec.map (CommRingCat.ofHom (constantCoeff (R := R)))) ⊆ U ↔ U = ⊤ :=
-  -- the points of `Spec` of a ring are those of its prime spectrum (`Spec_carrier`), on which
-  -- `Spec.map` is `PrimeSpectrum.comap` (`Spec.map_apply`), both by definition, so this is
-  -- `PowerSeries.range_comap_constantCoeff_subset_iff_eq_top` for the open subset `U`; no lemma
-  -- carries an open subset across this identification, and Mathlib crosses it by a term in the
-  -- same way, in `Scheme.preimage_eq_top_of_closedPoint_mem`
-  range_comap_constantCoeff_subset_iff_eq_top
 
 -- A point of the projective model with values in `R⟦X⟧` that restricts to the zero section at
 -- `X = 0` has all its values on the chart `D₊(Y)`.
