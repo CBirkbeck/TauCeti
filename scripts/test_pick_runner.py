@@ -27,8 +27,6 @@ path = next(a for a in args[1:] if not a.startswith('-'))
 with open(os.environ['CALLS'], 'a') as f:
     f.write(path + '\n')
 pages = json.load(open(os.environ['FIXTURE'])).get(path)
-if pages is None and 'status=queued&created=' in path:
-    pages = json.load(open(os.environ['FIXTURE'])).get(path.split('&created=')[0] + '&per_page=100')
 if pages is None:
     print('API read failed: ' + path, file=sys.stderr)
     sys.exit(1)
@@ -59,21 +57,23 @@ class PickerTests(unittest.TestCase):
                 dict(total_count=1, workflow_runs=[dict(id=1)])],
             "repos/Test/code/actions/runs/1/jobs?per_page=100": [
                 dict(total_count=busy, jobs=[job() for _ in range(busy)])],
-            "rate_limit": [dict(resources=dict(core=dict(remaining=1000)))],
+            "rate_limit": [dict(resources=dict(core=dict(remaining=5000)))],
         }
 
-    def pick(self, fixture, budget="18"):
+    def pick(self, fixture, budget="18", app_token="installation-token"):
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
             (directory / "gh").write_text(FAKE_GH)
             (directory / "gh").chmod(0o755)
             (directory / "fixture.json").write_text(json.dumps(fixture))
             output, summary, calls = (directory / name for name in ["output", "summary", "calls"])
+            step = next(s for s in PICKER["jobs"]["pick"]["steps"] if s.get("id") == "pick")
+            selected_reserve = expression(step["env"]["API_RESERVE"], "", "", "", app_token)
             env = {**os.environ, "PATH": f"{directory}:{os.environ['PATH']}",
                    "ORG": "Test", "BUDGET": budget, "GITHUB_OUTPUT": str(output),
                    "GITHUB_STEP_SUMMARY": str(summary), "CALLS": str(calls),
                    "FIXTURE": str(directory / "fixture.json"),
-                   "QUEUED_LIMIT": "5", "RECENT_HOURS": "6"}
+                   "API_RESERVE": selected_reserve}
             step = next(s for s in PICKER["jobs"]["pick"]["steps"] if s.get("id") == "pick")
             result = subprocess.run(["bash", "-c", step["run"]], env=env,
                                     text=True, capture_output=True, timeout=20)
@@ -92,7 +92,7 @@ class PickerTests(unittest.TestCase):
         self.assertEqual(output, dict(github="true", budget="18", busy="2"))
         self.assertFalse(any("status=queued" in path for path in calls))
 
-    def test_budget_boundary_includes_picker_slot_inherited_by_build(self):
+    def test_budget_boundary_counts_picker_slot(self):
         for busy, expected in [(17, "true"), (18, "true"), (19, "false"), (20, "false")]:
             with self.subTest(busy=busy):
                 output, _, _ = self.pick(self.fixture(busy))
@@ -136,6 +136,45 @@ class PickerTests(unittest.TestCase):
                 self.assertEqual(output["github"], "false")
                 self.assertIn("Could not", summary)
 
+    def test_low_quota_preserves_budget_without_per_run_reads(self):
+        for remaining in [0, 1000, 1500]:
+            with self.subTest(remaining=remaining):
+                fixture = self.fixture()
+                fixture["rate_limit"][0]["resources"]["core"]["remaining"] = remaining
+                output, summary, calls = self.pick(fixture)
+                self.assertEqual(output["github"], "false")
+                self.assertIn("quota reserve", summary)
+                self.assertEqual(calls, ["rate_limit"])
+
+    def test_private_github_token_uses_its_separate_1000_request_budget(self):
+        fixture = self.fixture()
+        fixture["rate_limit"][0]["resources"]["core"]["remaining"] = 1000
+        output, _, _ = self.pick(fixture, app_token="")
+        self.assertEqual(output["github"], "true")
+        self.assertEqual(output["busy"], "2")
+
+    def test_projected_job_reads_preserve_reserve(self):
+        fixture = self.fixture()
+        fixture["rate_limit"][0]["resources"]["core"]["remaining"] = 1501
+        output, summary, calls = self.pick(fixture)
+        self.assertEqual(output["github"], "false")
+        self.assertIn("inspection would consume", summary)
+        self.assertFalse(any("/jobs?" in path for path in calls))
+
+    def test_quota_read_failure_falls_back_before_org_scan(self):
+        fixture = self.fixture()
+        del fixture["rate_limit"]
+        output, _, calls = self.pick(fixture)
+        self.assertEqual(output["github"], "false")
+        self.assertEqual(calls, ["rate_limit"])
+
+    def test_namespace_profile_is_not_hosted_capacity(self):
+        fixture = self.fixture()
+        fixture["repos/Test/code/actions/runs/1/jobs?per_page=100"][0]["jobs"].append(
+            dict(status="in_progress", labels=["namespace-profile-test"]))
+        output, _, _ = self.pick(fixture)
+        self.assertEqual(output["busy"], "2")
+
     def test_invalid_budget_falls_back(self):
         output, summary, calls = self.pick({}, budget="bad")
         self.assertEqual(output["github"], "false")
@@ -143,15 +182,18 @@ class PickerTests(unittest.TestCase):
         self.assertEqual(calls, [])
 
 
-def expression(value, event, action, picked):
+def expression(value, event, action, picked, app_token="installation-token"):
     """Evaluate the actual workflow expression's boolean/format/JSON subset."""
     source = value.removeprefix("${{").removesuffix("}}").strip()
     source = source.replace("\n", " ").replace("&&", " and ").replace("||", " or ")
     github = SimpleNamespace(event_name=event, event=SimpleNamespace(action=action), run_id=42)
     needs = SimpleNamespace(**{"pick-runner": SimpleNamespace(outputs=SimpleNamespace(github=picked))})
     source = source.replace("needs.pick-runner", "needs.__dict__['pick-runner']")
+    steps = SimpleNamespace(**{"app-token": SimpleNamespace(outputs=SimpleNamespace(token=app_token))})
+    variables = SimpleNamespace(PICKER_API_RESERVE="")
+    source = source.replace("steps.app-token", "steps.__dict__['app-token']")
     return eval(source, {"__builtins__": {}, "github": github, "needs": needs,
-                         "fromJSON": json.loads, "format": lambda s, *args: s.format(*args)})
+                         "steps": steps, "vars": variables, "fromJSON": json.loads, "format": lambda s, *args: s.format(*args)})
 
 
 class BatchPriorityTests(unittest.TestCase):

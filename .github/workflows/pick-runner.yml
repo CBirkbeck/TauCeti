@@ -11,13 +11,16 @@ name: pick-runner
 # GitHub "larger runner", which is billed even for public repositories.
 #
 # There is no API for the plan's current usage, so this counts it: every running hosted job
-# in every repository of the organisation, excluding Namespace and self-hosted jobs. The count includes
-# this job, whose slot the build inherits when this job ends. A build goes to GitHub only while the
+# in every repository of the organisation, excluding Namespace and self-hosted jobs. The picker
+# itself occupies one counted slot; its build becomes eligible after it ends. No slot is reserved
+# or transferred, and another job may take the freed slot. A build goes to GitHub only while the
 # count is at most `vars.HOSTED_RUNNER_BUDGET` (default 18). The budget sits below 20 for two
 # reasons: pickers running at the same moment each see the same count and can all choose GitHub,
 # and a slot held by an hour-long build is a slot the short label, merge and notification jobs
 # cannot use. Set the variable to 20 to use every slot.
 #
+# The App-token path preserves `vars.PICKER_API_RESERVE` requests (default 1500) for merge
+# and review automation. The separate per-repository `github.token` budget uses no shared reserve.
 # Any failure (API error, timeout or rate limit) answers Namespace,
 # and a caller whose picker did not produce an answer at all also falls back to Namespace. The job is
 # `continue-on-error`, so even a picker that crashes leaves the caller's run green: review.yml and
@@ -80,6 +83,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token || github.token }}
           ORG: ${{ github.repository_owner }}
           BUDGET: ${{ vars.HOSTED_RUNNER_BUDGET || '18' }}
+          API_RESERVE: ${{ steps.app-token.outputs.token && (vars.PICKER_API_RESERVE || '1500') || '0' }}
         run: |
           set -uo pipefail
           decide() {
@@ -92,6 +96,15 @@ jobs:
           api() { timeout 30 gh api "$@"; }
 
           case "$BUDGET" in ''|*[!0-9]*) decide false "HOSTED_RUNNER_BUDGET='$BUDGET' is not a number: using Namespace." ;; esac
+
+          case "$API_RESERVE" in ''|*[!0-9]*) decide false "Invalid picker API reserve: using Namespace." ;; esac
+          quota_available() {
+            remaining=$(api rate_limit --jq .resources.core.remaining) || return 1
+            case "$remaining" in ''|*[!0-9]*) return 1 ;; esac
+            [ "$remaining" -gt "$((10#$API_RESERVE + $1))" ]
+          }
+          # The picker shares the installation budget with merge and review automation.
+          quota_available 0 || decide false "Preserving the shared API quota reserve: using Namespace."
 
           repos=$(api --paginate "orgs/$ORG/repos?per_page=100" --jq '.[] | select(.archived | not) | .name') \
             || decide false "Could not list the repositories of $ORG: using Namespace."
@@ -107,10 +120,15 @@ jobs:
                    timeout 30 gh api --paginate "repos/$ORG/$0/actions/runs?status=in_progress&per_page=100" \
                      --jq ".workflow_runs[].id | \"$0 \(.)\""' | sort -u) \
             || decide false "Could not list the active runs in $ORG: using Namespace."
+          # Reserve one jobs request per run before starting the parallel reads. The margin
+          # also leaves room for pagination; this check is a snapshot, not a quota reservation.
+          run_count=$(printf '%s\n' "$runs" | awk 'NF { n++ } END { print n + 0 }')
+          quota_available "$run_count" \
+            || decide false "Active-run inspection would consume the shared API quota reserve: using Namespace."
           counts=$(printf '%s\n' "$runs" | xargs -r -P 8 -n 2 bash -c '
                      timeout 30 gh api --paginate "repos/$ORG/$0/actions/runs/$1/jobs?per_page=100" --jq \
                        "[.jobs[] | select(.status == \"in_progress\")
-                                 | select(any(.labels[]; startswith(\"nscloud-\")) | not)
+                                 | select(any(.labels[]; startswith(\"nscloud-\") or startswith(\"namespace-profile-\")) | not)
                                  | select(any(.labels[]; . == \"self-hosted\") | not)] | length"') \
             || decide false "Could not list the jobs of the active runs in $ORG: using Namespace."
           busy=$(printf '%s\n' "$counts" | awk '{ s += $1 } END { print s + 0 }')

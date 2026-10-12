@@ -80,8 +80,9 @@ jobs:
     if: ${{ !cancelled() }}
     # `container.privileged` is required and documented by Namespace for this case: without it
     # the job container's seccomp profile denies `pivot_root`, and bwrap cannot build its sandbox
-    # at all, for root as well as for the job user. The `-with-features` suffix on the machine
-    # label is what makes the feature label apply.
+    # at all, for root as well as for the job user. The machine name uses `-with-features`;
+    # bors appends its documented `;job.priority=1` option to that machine label. Its run-ID
+    # assignment is a separate option on the feature label.
     #
     # Both the provisioning and the feature are per-organisation configuration. A job whose
     # labels this organisation does not serve is not rejected: it sits queued with an empty
