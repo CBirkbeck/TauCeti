@@ -48,11 +48,13 @@ representation is involved, so it also covers class functions that are not chara
 
 ## Implementation notes
 
-Only the coefficient field and the invertibility of `Nat.card G` are assumed; no algebraic closure
-is needed, because each side is computed by
+The character identities assume only a coefficient field and the invertibility of `Nat.card G`;
+no algebraic closure is needed, because each side is computed by
 `TauCeti.ClassFunction.characterPairing_ofFDRep_eq_finrank` rather than by orthogonality of
 irreducible characters.  Invertibility of `Nat.card S` is not a separate hypothesis: it follows
 from `Subgroup.card_mul_index`, via `TauCeti.isUnit_natCard_subgroup`.
+The class-function identities need only a semifield of coefficients and the same invertibility
+hypothesis.
 
 That pairing-to-dimension lemma computes `⟨χ_V, χ_W⟩` as `finrank k (W ⟶ V)`, exchanging the two
 arguments.  So the identity stated in the order `⟨Ind χ, ψ⟩ = ⟨χ, Res ψ⟩` is read off the *second*
@@ -242,7 +244,7 @@ variable {k : Type u} {G : Type v} [Group G] {S : Subgroup G}
 
 /-! Both steps of the double count are cleared-denominator identities, so they need only a
 semiring. The underlying group-sum formula `Subgroup.natCard_nsmul_indClassFun` needs only additive
-coefficients. Only the normalized statements below divide and need a field. -/
+coefficients. Only the normalized statements below divide and need a semifield. -/
 
 section Semiring
 
@@ -271,15 +273,14 @@ private theorem sum_indTerm_mul_eq_sum_subtype [Fintype G] (f : S → k) {h : G 
         congr 1
         rw [hinv y]
         exact ClassFunction.mem_iff.mp hh y⁻¹ x
-    _ = ∑ y ∈ Finset.univ.filter (fun y : G => y ∈ S),
-          (if hy : y ∈ S then f ⟨y, hy⟩ else 0) * h y⁻¹ := by
-        refine (Finset.sum_subset (Finset.filter_subset _ _) fun y _ hy => ?_).symm
-        rw [Finset.mem_filter] at hy
-        rw [dite_eq_right fun hy' => hy ⟨Finset.mem_univ y, hy'⟩, zero_mul]
-    _ = ∑ s : S, (if hy : (s : G) ∈ S then f ⟨(s : G), hy⟩ else 0) * h (s : G)⁻¹ :=
-        Finset.sum_subtype (p := fun y : G => y ∈ S) _ (by simp) _
-    _ = ∑ s : S, f s * h ((s : G)⁻¹) :=
-        Finset.sum_congr rfl fun s _ => by rw [dite_eq_left s.2]
+    _ = ∑ s : S, f s * h ((s : G)⁻¹) := by
+        exact Finset.sum_congr_set (S : Set G) _ _
+          (fun y hy => by
+            simp only [SetLike.mem_coe] at hy
+            rw [dite_eq_left hy])
+          (fun y hy => by
+            simp only [SetLike.mem_coe] at hy
+            rw [dite_eq_right hy, zero_mul])
 
 open scoped Classical in
 /-- **The double count, in cleared-denominator form.** Summing the induced class function against a
@@ -308,7 +309,7 @@ private theorem natCard_mul_sum_indClassFun_mul [Fintype G] {f : S → k}
 
 end Semiring
 
-variable [Field k]
+variable [Semifield k]
 
 open scoped Classical in
 /-- **Frobenius reciprocity for class functions.**  The normalized pairing over `G` of an induced
