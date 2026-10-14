@@ -161,7 +161,10 @@ variable {D : Type u'} [Category.{v'} D] [Preadditive D] [HasZeroObject D]
 
 /-- The Grothendieck group of a Quillen exact structure `E` on an essentially small additive
 category: the free abelian group on the isomorphism classes of objects, modulo
-`[X₂] = [X₁] + [X₃]` for every `E`-conflation `X₁ ↪ X₂ ↠ X₃`. -/
+`[X₂] = [X₁] + [X₃]` for every `E`-conflation `X₁ ↪ X₂ ↠ X₃`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ExactK0) -/
 def ExactK0 (E : ExactStructure C) : Type w := PresentedK0 (exactRelations E)
 
 instance (E : ExactStructure C) : AddCommGroup (ExactK0 E) :=

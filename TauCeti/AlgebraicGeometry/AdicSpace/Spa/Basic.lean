@@ -97,7 +97,10 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 For a Huber ring `A` and a ring of integral elements `A⁺` this is **Wedhorn's adic spectrum
 `Spa (A, A⁺)`** (Definition 7.23); the definition itself asks for neither — an arbitrary
 subring of an arbitrary commutative ring with a topology — and the Wedhorn hypotheses enter
-only in later theorems. -/
+only in later theorems.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValuationSpectrum.spa) -/
 def spa (Aplus : Subring A) : Set (Spv A) :=
   cont A ∩ {v : Spv A | ∀ a ∈ Aplus, v.toValuativeRel.vle a 1}
 

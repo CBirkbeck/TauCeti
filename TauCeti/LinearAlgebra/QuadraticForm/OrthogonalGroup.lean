@@ -130,7 +130,10 @@ variable {R : Type u} {M : Type v} {N : Type w} [CommSemiring R]
 Mathlib's `Matrix.orthogonalGroup n R` is a coordinate version of this for the standard form on
 `n → R`: its matrices preserve `x ↦ ∑ i, x i ^ 2`, and are all of its isometries as soon as `2` is
 not a zero divisor in `R`. `QuadraticMap.IsometryEquiv Q Q` is the same underlying set as
-`orthogonalGroup Q` (see `orthogonalGroupEquivIsometryEquiv`) but carries no group structure. -/
+`orthogonalGroup Q` (see `orthogonalGroupEquivIsometryEquiv`) but carries no group structure.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.QuadraticMap.orthogonalGroup) -/
 def orthogonalGroup (Q : QuadraticMap R M N) : Subgroup (M ≃ₗ[R] M) where
   carrier := {f | ∀ m, Q (f m) = Q m}
   one_mem' _ := rfl

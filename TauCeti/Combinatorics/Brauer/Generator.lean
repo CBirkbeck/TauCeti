@@ -110,7 +110,10 @@ consecutive pair, the two indices of `Fin k` with values `i` and `i + 1` where `
 It is the identity diagram transported along the transposition exchanging the top point `a` with
 the bottom point `b`, which bends the strands ending at `a` and at `b` into a cap and a cup. On
 the degenerate pair `a = a` that transposition exchanges the two ends of a single identity strand,
-so it carries that strand to itself and `TauCeti.capCup_self` gives back the identity diagram. -/
+so it carries that strand to itself and `TauCeti.capCup_self` gives back the identity diagram.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.capCup) -/
 def capCup (a b : Fin k) : BrauerDiagram k :=
   PerfectMatching.congr (Equiv.swap (Sum.inr a) (Sum.inl b)) (permToBrauer 1)
 

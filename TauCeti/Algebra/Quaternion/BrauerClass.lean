@@ -48,7 +48,10 @@ noncomputable def quaternionCSA (a b : Kˣ) : CSA K :=
 @[simp] theorem quaternionCSA_def (a b : Kˣ) :
     quaternionCSA a b = CSA.of K ℍ[K,(a : K),(b : K)] := (rfl)
 
-/-- The Brauer class of the quaternion symbol `(a,b)` for unit parameters `a b : Kˣ`. -/
+/-- The Brauer class of the quaternion symbol `(a,b)` for unit parameters `a b : Kˣ`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.BrauerGroup.quaternionClass) -/
 noncomputable def quaternionClass (a b : Kˣ) : BrauerGroup K :=
   BrauerGroup.mk (quaternionCSA a b)
 

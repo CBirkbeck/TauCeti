@@ -78,7 +78,10 @@ variable (R : Type u) (M : Type v) [Semiring R] [AddCommMonoid M] [Module R M]
 /-- An internal integer grading of an `R`-module `M`.
 
 The `isInternal` field says that the canonical map from the external direct sum of the `piece p`
-to `M` is bijective.  Thus elements of `M` have unique finite homogeneous decompositions. -/
+to `M` is bijective.  Thus elements of `M` have unique finite homogeneous decompositions.
+
+Tested by: 4 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.InternalGrading) -/
 structure InternalGrading where
   /-- The submodule of elements of degree `p`. -/
   piece : ℤ → Submodule R M

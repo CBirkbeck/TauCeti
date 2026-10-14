@@ -580,7 +580,10 @@ abbrev smoothDiscreteι : SmoothDiscreteTopRep.{u, v, w} R G ⥤ TopRep.{w} R G 
 /-- A discrete `G`-module with continuous `G`-action, bundled: the source side of the dictionary
 as a category, so that the dictionary can be an equivalence rather than a constructor. The fields
 are exactly the instances `TauCeti.ofDiscreteModule` and
-`TauCeti.ofDiscreteModule_isSmoothDiscrete` ask for. -/
+`TauCeti.ofDiscreteModule_isSmoothDiscrete` ask for.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.DiscreteRep) -/
 structure DiscreteRep where
   /-- the underlying module -/
   V : Type w

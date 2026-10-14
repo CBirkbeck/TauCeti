@@ -31,7 +31,10 @@ open Topology
 
 variable (G : Type*) (X : Type*) [Group G] [MulAction G X]
 
-/-- The invariant subspace of points whose stabilizer is trivial. -/
+/-- The invariant subspace of points whose stabilizer is trivial.
+
+Tested by: 3 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.freeLocus) -/
 def freeLocus : SubMulAction G X where
   carrier := {x | MulAction.stabilizer G x = ⊥}
   smul_mem' g x hx := by

@@ -66,7 +66,10 @@ variable {m n : ℕ}
 
 /-- The cyclic triple of degree `n`: the sheets are rotated cyclically around `0` and in the
 opposite direction around `∞`, and are not permuted around `1`. For `n ≠ 0` it is the monodromy
-triple of the cover `z ↦ zⁿ` of the sphere; `cyclicTriple 0` is the formal empty triple. -/
+triple of the cover `z ↦ zⁿ` of the sphere; `cyclicTriple 0` is the formal empty triple.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PermutationTriple.cyclicTriple) -/
 def cyclicTriple (n : ℕ) : PermutationTriple n where
   σ0 := finRotate n
   σ1 := 1
@@ -199,7 +202,10 @@ theorem genus_chebyshevTriple : chebyshevTriple.genus = 0 := by
 /-! ### The torus triple -/
 
 /-- A degree-four triple of genus one: cyclic rotation around both `0` and `1`, and hence the
-square of the inverse rotation around `∞`. -/
+square of the inverse rotation around `∞`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PermutationTriple.torusTriple) -/
 def torusTriple : PermutationTriple 4 where
   σ0 := finRotate 4
   σ1 := finRotate 4

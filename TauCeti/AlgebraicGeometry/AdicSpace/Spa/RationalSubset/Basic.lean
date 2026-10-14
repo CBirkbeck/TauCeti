@@ -291,7 +291,10 @@ theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s
 
 /-- **The basic open `R(T/s)`, as an `Opens` of `spa A⁺`.** This packages
 `rationalSubset` with its openness; it is a *rational* subset in Wedhorn's sense exactly when
-`Ideal.span (T : Set A)` is open, which is not assumed here. -/
+`Ideal.span (T : Set A)` is open, which is not assumed here.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValuationSpectrum.spaBasicOpen) -/
 def spaBasicOpen (Aplus : Subring A) (T : Finset A) (s : A) :
     TopologicalSpace.Opens ↥(spa Aplus) :=
   ⟨Subtype.val ⁻¹' rationalSubset Aplus T s, isOpen_val_preimage_rationalSubset Aplus T s⟩

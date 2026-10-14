@@ -91,10 +91,7 @@ normalized Haar measure.
 
 The character is continuous and `G` is compact, so `ContinuousMap.toLp` applies; the normalization
 of Haar measure to a probability measure is what makes `‖characterLp π hπ‖ = 1` the right form of
-orthonormality.
-
-Tested by: 2 unit tests
-[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContRepresentation.characterLp) -/
+orthonormality. -/
 noncomputable def characterLp (π : ContRepresentation 𝕜 G V) (hπ : Continuous π) :
     Lp 𝕜 2 (haarProb G) :=
   ContinuousMap.toLp 2 (haarProb G) 𝕜 (character π hπ)

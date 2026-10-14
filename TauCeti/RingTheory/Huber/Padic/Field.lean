@@ -68,7 +68,10 @@ theorem isPseudoUniformizer_p : IsPseudoUniformizer (p : ℚ_[p]) := by
   exact isPseudoUniformizer_iff.mpr
     ⟨Ne.isUnit (by exact_mod_cast (Fact.out : p.Prime).ne_zero), hnil⟩
 
-/-- The pair of definition `(ℤ_[p], (p))` exhibiting `ℚ_[p]` as a Huber ring. -/
+/-- The pair of definition `(ℤ_[p], (p))` exhibiting `ℚ_[p]` as a Huber ring.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.Padic.pairOfDefinition) -/
 noncomputable def pairOfDefinition : PairOfDefinition ℚ_[p] where
   ringOfDefinition := _root_.PadicInt.subring p
   isOpen_ringOfDefinition := isOpen_padicIntSubring

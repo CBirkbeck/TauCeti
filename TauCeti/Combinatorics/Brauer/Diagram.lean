@@ -60,7 +60,7 @@ namespace TauCeti
 `Fin k ⊕ Fin k`, with `Sum.inl i` the `i`-th bottom point and `Sum.inr j` the `j`-th top
 point.  The value `D.val x` is the boundary point that the diagram matches with `x`.
 
-Tested by: 1 unit test
+Tested by: 2 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.BrauerDiagram) -/
 abbrev BrauerDiagram (k : ℕ) : Type _ := PerfectMatching (Fin k ⊕ Fin k)
 
@@ -150,7 +150,10 @@ theorem isCup_val : D.IsCup (D.val x) ↔ D.IsCup x := by
 
 end BrauerDiagram
 
-/-- The **permutation diagram** of `σ`, joining the bottom point `i` to the top point `σ i`. -/
+/-- The **permutation diagram** of `σ`, joining the bottom point `i` to the top point `σ i`.
+
+Tested by: 6 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.permToBrauer) -/
 def permToBrauer {k : ℕ} (σ : Equiv.Perm (Fin k)) : BrauerDiagram k :=
   .mk ((Equiv.sumComm (Fin k) (Fin k)).trans (Equiv.sumCongr σ.symm σ))
     (fun x => by rcases x with i | i <;> simp) fun x => by rcases x with i | i <;> simp

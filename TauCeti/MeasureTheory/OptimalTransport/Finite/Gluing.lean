@@ -130,7 +130,10 @@ private theorem finiteGluingWeight_sum (π : PMF (α × β)) (σ : PMF (β × γ
       simpa only [tsum_fintype] using (π.map Prod.snd).tsum_coe
 
 /-- The finite gluing of two laws with a common middle marginal.  At a zero-mass middle atom the
-formula is explicitly set to zero, making the intended value at such atoms visible. -/
+formula is explicitly set to zero, making the intended value at such atoms visible.
+
+Tested by: 2 unit tests
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=PMF.finiteGluing) -/
 def finiteGluing (h : π.map Prod.snd = σ.map Prod.fst) : PMF (α × β × γ) :=
   PMF.ofFintype (fun p => finiteGluingWeight π σ p.2.1 p.1 p.2.2) (finiteGluingWeight_sum π σ h)
 

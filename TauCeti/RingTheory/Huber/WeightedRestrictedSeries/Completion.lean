@@ -103,7 +103,7 @@ the weighted ring `TauCeti.Huber.weightedRestrictedSubring` at the trivial weigh
 `Tᵢ = {1}` — with respect to the uniformity of its ring topology. For `k = 0` this is the
 separated completion of `A` itself.
 
-Tested by: 2 unit tests
+Tested by: 5 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.Huber.restrictedMvPowerSeriesCompletion) -/
 noncomputable abbrev restrictedMvPowerSeriesCompletion : Type _ :=
   UniformSpace.Completion

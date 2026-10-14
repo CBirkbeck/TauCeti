@@ -691,7 +691,10 @@ those of
 topology on `G → M`, and that topology is not the intended one: it need not be discrete, the
 roadmap's witness being trivial `ZMod 2` coefficients on a product of infinitely many copies of
 `C₂`, where no finite set of evaluations isolates the zero character. The comparison of Layer 3 is
-therefore stated against `DiscreteH1`. -/
+therefore stated against `DiscreteH1`.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ContCohomology.H1) -/
 abbrev H1 :=
   let _h := B1_le_Z1 G M
   (Z1 G M) ⧸ ((B1 G M).addSubgroupOf (Z1 G M))

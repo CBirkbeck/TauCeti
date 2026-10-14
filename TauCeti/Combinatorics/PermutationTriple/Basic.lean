@@ -74,7 +74,7 @@ namespace TauCeti
 /-- A permutation triple of degree `n`: three permutations of the `n` sheets, one for each of the
 three branch points, whose product in the order `σinf * σ1 * σ0` is the identity.
 
-Tested by: 1 unit test
+Tested by: 2 unit tests
 [Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.PermutationTriple) -/
 structure PermutationTriple (n : ℕ) where
   /-- The monodromy around the first branch point. -/

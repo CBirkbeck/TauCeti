@@ -307,7 +307,10 @@ theorem isCompact_of_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A}
 /-! ### The rational basis as a family of opens -/
 
 /-- The rational family of `Spa(A,A⁺)`, presented as a set of `Opens` rather than of sets. This is
-the form `Opens.IsBasis` and the sheaf criteria on a basis take. -/
+the form `Opens.IsBasis` and the sheaf criteria on a basis take.
+
+Tested by: 1 unit test
+[Who and which](https://cbirkbeck.github.io/tauceti-reviewed-by-test/#d=TauCeti.ValuationSpectrum.spaRationalOpens) -/
 def spaRationalOpens (Aplus : Subring A) : Set (Opens (spa Aplus)) :=
   {U : Opens (spa Aplus) | (U : Set (spa Aplus)) ∈ spaRationalFamily Aplus}
 
