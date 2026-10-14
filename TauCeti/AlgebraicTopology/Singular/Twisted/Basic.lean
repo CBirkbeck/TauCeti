@@ -256,6 +256,17 @@ def ιTwistedChainComplex (k : ℕ) (σ : (TopCat.toSSet.obj X) _⦋k⦌) :
     L.obj (initialVertex σ) ⟶ (twistedChainComplex L).X k :=
   ιTwistedChains L σ
 
+/-- The cofan exhibiting the degree-`k` term of the twisted chain complex as a family indexed by the
+singular `k`-simplices. -/
+abbrev twistedChainComplexXCofan (k : ℕ) :
+    Cofan fun σ : (TopCat.toSSet.obj X) _⦋k⦌ ↦ L.obj (initialVertex σ) :=
+  Cofan.mk _ (ιTwistedChainComplex L k)
+
+/-- The degree-`k` term of the twisted chain complex is the coproduct, over the singular
+`k`-simplices `σ`, of the fibres of `L` at the initial vertices of `σ`. -/
+def isColimitTwistedChainComplexXCofan (k : ℕ) : IsColimit (twistedChainComplexXCofan L k) :=
+  coproductIsCoproduct _
+
 /-- Each degree of the twisted chain complex is the coproduct of the simplex fibres. -/
 lemma twistedChainComplex_X (k : ℕ) :
     (twistedChainComplex L).X k =
