@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 public import Mathlib.MeasureTheory.Measure.Stieltjes
 public import Mathlib.Probability.CDF
 public import Mathlib.Topology.Order.LeftRightLim
@@ -24,6 +25,11 @@ nonnegative point `x` it is the mass `μ` gives to the initial segment below the
 ## Main results
 
 * `MeasureTheory.Measure.continuous_cdf_of_noAtoms` proves continuity for atomless real laws;
+* `MeasureTheory.Measure.cdf_eq_zero_of_measure_Iio_eq_zero` shows that an atomless law with no
+  mass below a point has cdf zero there;
+* `TauCeti.Probability.one_sub_cdf_zero_eq_one` and
+  `TauCeti.Probability.one_sub_cdf_zero_eq_one_of_absolutelyContinuous` show that survival starts
+  at one for an atomless or absolutely continuous law carried by the nonnegative half-line;
 * `MeasureTheory.Measure.measure_Ioc_pos_iff_cdf_lt` characterizes positive interval mass by a
   strict increase of the cdf;
 * `MeasureTheory.Measure.cdf_sublevel_measure` evaluates the measure of a CDF sublevel set for
@@ -119,6 +125,12 @@ theorem measureReal_Ioc_eq_cdf_sub (ν : Measure ℝ) [IsProbabilityMeasure ν] 
   rw [← Iic_sdiff_Iic, measureReal_sdiff (Iic_subset_Iic.2 hab) measurableSet_Iic, cdf_eq_real,
     cdf_eq_real]
 
+/-- An atomless law that gives no mass to the open half-line below `c` has cdf zero at `c`. -/
+theorem cdf_eq_zero_of_measure_Iio_eq_zero (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    [NullSingletonClass ν] {c : ℝ} (hc : ν (Iio c) = 0) : cdf ν c = 0 := by
+  have h : ν (Iic c) = 0 := (measure_congr Iio_ae_eq_Iic).symm.trans hc
+  rw [cdf_eq_real, measureReal_def, h, ENNReal.toReal_zero]
+
 /-- A half-open interval has positive mass exactly when the cdf strictly increases across its
 endpoints. -/
 theorem measure_Ioc_pos_iff_cdf_lt (ν : Measure ℝ) [IsProbabilityMeasure ν] {a b : ℝ} :
@@ -173,3 +185,24 @@ theorem cdf_sublevel_measure (ν : Measure ℝ) [IsProbabilityMeasure ν] [NullS
     exact hνS
 
 end MeasureTheory.Measure
+
+namespace TauCeti.Probability
+
+variable {μ : Measure ℝ}
+
+/-- **Survival starts at one.** An atomless probability law carried by the nonnegative half-line
+has survival probability one at zero. -/
+theorem one_sub_cdf_zero_eq_one [IsProbabilityMeasure μ] [NullSingletonClass μ]
+    (h0 : μ (Iio 0) = 0) :
+    1 - cdf μ 0 = 1 := by
+  rw [Measure.cdf_eq_zero_of_measure_Iio_eq_zero μ h0, sub_zero]
+
+/-- **Survival starts at one for an absolutely continuous law.** A probability law absolutely
+continuous with respect to Lebesgue measure and carried by the nonnegative half-line has survival
+probability one at zero. -/
+theorem one_sub_cdf_zero_eq_one_of_absolutelyContinuous [IsProbabilityMeasure μ]
+    (hac : μ ≪ (volume : Measure ℝ)) (h0 : μ (Iio 0) = 0) : 1 - cdf μ 0 = 1 := by
+  have : NullSingletonClass μ := ⟨fun t ↦ hac (measure_singleton t)⟩
+  exact one_sub_cdf_zero_eq_one h0
+
+end TauCeti.Probability
