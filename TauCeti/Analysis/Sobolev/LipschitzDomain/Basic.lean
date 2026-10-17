@@ -37,7 +37,8 @@ the geometric hypotheses used to transport Sobolev trace and extension operators
 half-space through boundary charts and to patch them with a partition of unity.
 
 Locally Lipschitz boundary graphs extend to global graphs with the same constant and radii,
-using Mathlib's `LipschitzOnWith.extend_real`.
+using Mathlib's `LipschitzOnWith.extend_real`. The open set `TauCeti.chartEpigraph` and its
+support-containment lemmas provide the shared geometry for chart trace and extension operators.
 
 ## Main declarations
 
@@ -688,6 +689,39 @@ open scoped NNReal
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   {Omega : Set (WithLp 2 (ℝ × E))} {L : ℝ≥0}
   {e : WithLp 2 (ℝ × E) ≃ᵃⁱ[ℝ] WithLp 2 (ℝ × E)} {φ : E → ℝ} {a b : ℝ}
+
+/-- The points whose chart coordinates lie strictly above the graph of `φ`. -/
+def chartEpigraph (e : WithLp 2 (ℝ × E) ≃ᵃⁱ[ℝ] WithLp 2 (ℝ × E))
+    (hφ : Continuous φ) : TopologicalSpace.Opens (WithLp 2 (ℝ × E)) :=
+  TopologicalSpace.Opens.comap ⟨e, e.continuous⟩ (normalEpigraph ⟨φ, hφ⟩)
+
+/-- Membership in the chart epigraph is the graph inequality in chart coordinates. -/
+@[simp]
+theorem mem_chartEpigraph {hφ : Continuous φ} {x : WithLp 2 (ℝ × E)} :
+    x ∈ chartEpigraph e hφ ↔ φ (e x).snd < (e x).fst :=
+  mem_normalEpigraph _ _
+
+/-- The epigraph in chart coordinates is the inverse-chart preimage of the chart epigraph. -/
+theorem coe_normalEpigraph_eq_preimage (e : WithLp 2 (ℝ × E) ≃ᵃⁱ[ℝ] WithLp 2 (ℝ × E))
+    (hφ : Continuous φ) :
+    (normalEpigraph ⟨φ, hφ⟩ : Set (WithLp 2 (ℝ × E))) =
+      e.symm ⁻¹' chartEpigraph e hφ := by
+  ext x
+  simp [chartEpigraph]
+
+/-- On a cutoff supported in the chart cylinder, the chart epigraph lies in the domain. -/
+theorem chartEpigraph_inter_tsupport_subset
+    (h : Omega.IsLipschitzChartWith L e φ a b) {ψ : WithLp 2 (ℝ × E) → ℝ}
+    (hs : tsupport ψ ⊆ e ⁻¹' normalCylinder a b) :
+    (chartEpigraph e h.lipschitzWith.continuous : Set _) ∩ tsupport ψ ⊆ Omega :=
+  fun _ hx => (h.mem_iff (hs hx.2)).2 (mem_chartEpigraph.1 hx.1)
+
+/-- On a cutoff supported in the chart cylinder, the domain lies in the chart epigraph. -/
+theorem inter_tsupport_subset_chartEpigraph
+    (h : Omega.IsLipschitzChartWith L e φ a b) {ψ : WithLp 2 (ℝ × E) → ℝ}
+    (hs : tsupport ψ ⊆ e ⁻¹' normalCylinder a b) :
+    Omega ∩ tsupport ψ ⊆ chartEpigraph e h.lipschitzWith.continuous :=
+  fun _ hx => mem_chartEpigraph.2 ((h.mem_iff (hs hx.2)).1 hx.1)
 
 /-- A graph that is Lipschitz only on the tangential ball of a boundary chart can be extended
 to a global Lipschitz graph defining the same chart, with the same constant and radii. -/
