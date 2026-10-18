@@ -70,6 +70,8 @@ makes the monotone rearrangement of two real laws a transport plan between them.
   — the level lies between the left limit and the value of the cumulative distribution function
   at the quantile, with the same bounds at the upper quantile; for an atomless law
   `MeasureTheory.Measure.cdf_quantile` gives equality;
+* `Set.OrdConnected.quantile_mem` and `Set.OrdConnected.upperQuantile_mem` — interior quantiles
+  lie in every interval carrying the full mass of the measure;
 * `MeasureTheory.Measure.quantile_le_upperQuantile` and
   `MeasureTheory.Measure.upperQuantile_le_quantile` — the two quantile functions interleave;
 * `MeasureTheory.Measure.continuousWithinAt_Iio_quantile` and
@@ -441,6 +443,28 @@ theorem le_cdf_upperQuantile (μ : Measure ℝ) (h0 : 0 < t) (h1 : t < 1) :
 theorem measureReal_Iio_upperQuantile_le (μ : Measure ℝ) [IsProbabilityMeasure μ] (h0 : 0 < t)
     (h1 : t < 1) : μ.real (Iio (μ.upperQuantile t)) ≤ t :=
   (le_upperQuantile_iff μ h0 h1).mp le_rfl
+
+end MeasureTheory.Measure
+
+namespace Set.OrdConnected
+
+/-- **Interior quantiles lie in every interval of full mass.** -/
+theorem quantile_mem {μ : Measure ℝ} {s : Set ℝ} {t : ℝ} [IsProbabilityMeasure μ]
+    (hs : s.OrdConnected) (hμs : ∀ᵐ x ∂μ, x ∈ s) (h0 : 0 < t) (h1 : t < 1) :
+    μ.quantile t ∈ s :=
+  hs.mem_of_measureReal_Iio_le_of_le_cdf hμs (μ.measureReal_Iio_quantile_le h0 h1)
+    (μ.le_cdf_quantile h1) h0 h1
+
+/-- **Interior upper quantiles lie in every interval of full mass.** -/
+theorem upperQuantile_mem {μ : Measure ℝ} {s : Set ℝ} {t : ℝ} [IsProbabilityMeasure μ]
+    (hs : s.OrdConnected) (hμs : ∀ᵐ x ∂μ, x ∈ s) (h0 : 0 < t) (h1 : t < 1) :
+    μ.upperQuantile t ∈ s :=
+  hs.mem_of_measureReal_Iio_le_of_le_cdf hμs (μ.measureReal_Iio_upperQuantile_le h0 h1)
+    (μ.le_cdf_upperQuantile h0 h1) h0 h1
+
+end Set.OrdConnected
+
+namespace MeasureTheory.Measure
 
 /-- The cumulative distribution function at the upper quantile is exactly the level when the law
 has no atom at the upper quantile. -/
