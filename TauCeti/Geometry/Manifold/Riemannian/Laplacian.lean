@@ -363,6 +363,45 @@ theorem laplaceBeltrami_eq_sum_hessian (I : ModelWithCorners ℝ E H) {M : Type*
 open scoped Gradient Laplacian
 
 /-- On a finite-dimensional real inner-product space with its standard metric, the Riemannian
+divergence is the trace of the ordinary Fréchet derivative. -/
+theorem divergence_eq_trace_fderiv_model_space
+    {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
+    {V : ∀ y : F, TangentSpace (modelWithCornersSelf ℝ F) y} {x : F}
+    (hV : DifferentiableAt ℝ V x) :
+    let _ : RiemannianBundle (fun y : F ↦ TangentSpace (modelWithCornersSelf ℝ F) y) :=
+      ⟨(riemannianMetricVectorSpace F).toRiemannianMetric⟩
+    divergence (modelWithCornersSelf ℝ F) V x =
+      LinearMap.trace ℝ F (fderiv ℝ V x).toLinearMap := by
+  intro _
+  simp only [divergence]
+  let e := tangentSpaceCastModel (modelWithCornersSelf ℝ F) x
+  let A : TangentSpace (modelWithCornersSelf ℝ F) x →ₗ[ℝ]
+      TangentSpace (modelWithCornersSelf ℝ F) x :=
+    e.symm.toLinearEquiv.conj (fderiv ℝ V x).toLinearMap
+  have hconn := leviCivitaConnection_eq_fderiv_model_space (V := V) hV
+  have hconj (v : TangentSpace (modelWithCornersSelf ℝ F) x) :
+      e (A v) = fderiv ℝ V x (e v) := by
+    dsimp only [A]
+    rw [LinearEquiv.conj_apply_apply]
+    simp only [ContinuousLinearEquiv.coe_toLinearEquiv,
+      ContinuousLinearEquiv.coe_symm_toLinearEquiv, ContinuousLinearMap.coe_coe,
+      ContinuousLinearEquiv.symm_symm, e.apply_symm_apply]
+  have hA :
+      (CovariantDerivative.leviCivitaConnection (modelWithCornersSelf ℝ F) F V x).toLinearMap =
+        A := by
+    ext v
+    apply e.injective
+    calc
+      e ((CovariantDerivative.leviCivitaConnection
+          (modelWithCornersSelf ℝ F) F V x).toLinearMap v) =
+          fderiv ℝ V x (e v) := by
+        simpa only [e, ContinuousLinearMap.coe_coe,
+          ContinuousLinearEquiv.symm_apply_apply] using hconn (e v)
+      _ = e (A v) := (hconj v).symm
+  rw [hA]
+  exact (LinearMap.trace_conj' _ e.toLinearEquiv).symm
+
+/-- On a finite-dimensional real inner-product space with its standard metric, the Riemannian
 Hessian is the second Fréchet derivative. -/
 theorem hessian_eq_iteratedFDeriv_model_space
     {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
