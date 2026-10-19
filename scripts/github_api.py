@@ -179,6 +179,9 @@ class GitHub:
                        (headers.get("retry-after") or headers.get("x-ratelimit-remaining") == "0" or
                         any(word in message for word in ("rate limit", "abuse detection", "creating content too quickly", "was submitted too quickly"))))
             if limited:
+                print("github-api-limited: " + json.dumps({"credential": credential,
+                      "resource": headers.get("x-ratelimit-resource", "core"),
+                      "status": status}), file=sys.stderr)
                 now = time.time()
                 delay = retry_after(headers.get("retry-after"), now)
                 primary = headers.get("x-ratelimit-remaining") == "0" or (
@@ -230,6 +233,18 @@ class GitHub:
     def items(self, path):
         """Return every item from a paginated REST list, or propagate its failure."""
         return [row for page in self.pages(path) for row in page]
+
+    def skip_write(self, kind):
+        """Count an unchanged label/comment decision, without making a request.
+
+        Counts describe decisions, not hypothetical HTTP requests saved; one
+        label decision can otherwise require several mutations.
+        """
+        credential, _ = self._credential(False)
+        stat = self.stats.setdefault(credential, {"requests": 0, "reads": 0, "writes": 0, "buckets": {}})
+        skipped = stat.setdefault("skipped_writes", {})
+        skipped[kind] = skipped.get(kind, 0) + 1
+        print("github-api-skip: " + json.dumps({"credential": credential, "kind": kind}), file=sys.stderr)
 
     def report(self):
         """Write request/quota counters to stderr and the optional Actions step summary."""
