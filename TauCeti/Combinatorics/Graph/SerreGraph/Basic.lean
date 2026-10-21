@@ -235,7 +235,7 @@ if any, is not the reverse of the prefix dart. -/
 @[simp] theorem isReduced_nil (u : Γ.V) : IsReduced (nil u) := by
   simp [IsReduced]
 
-@[simp] theorem isReduced_single (e : Γ.E) :
+theorem isReduced_single (e : Γ.E) :
     IsReduced (cons e (nil (Γ.tgt e))) := by
   simp [IsReduced]
 
