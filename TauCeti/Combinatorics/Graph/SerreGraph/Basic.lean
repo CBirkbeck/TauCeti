@@ -74,6 +74,26 @@ def Valid (Γ : SerreGraph) : Γ.V → List Γ.E → Γ.V → Prop
 @[simp] theorem valid_cons (u v : Γ.V) (e : Γ.E) (es : List Γ.E) :
     Γ.Valid u (e :: es) v ↔ Γ.src e = u ∧ Γ.Valid (Γ.tgt e) es v := Iff.rfl
 
+/-- A concatenated edge list is valid exactly when both halves meet at some vertex. -/
+theorem valid_append_iff (u w : Γ.V) (es fs : List Γ.E) :
+    Γ.Valid u (es ++ fs) w ↔ ∃ v, Γ.Valid u es v ∧ Γ.Valid v fs w := by
+  induction es generalizing u with
+  | nil =>
+      simp only [List.nil_append, valid_nil]
+      constructor
+      · intro h
+        exact ⟨u, rfl, h⟩
+      · rintro ⟨v, rfl, h⟩
+        exact h
+  | cons e es ih =>
+      simp only [List.cons_append, valid_cons]
+      constructor
+      · rintro ⟨rfl, h⟩
+        obtain ⟨v, h₁, h₂⟩ := (ih (Γ.tgt e)).mp h
+        exact ⟨v, ⟨rfl, h₁⟩, h₂⟩
+      · rintro ⟨v, ⟨rfl, h₁⟩, h₂⟩
+        exact ⟨rfl, (ih (Γ.tgt e)).mpr ⟨v, h₁, h₂⟩⟩
+
 /-- A directed edge path with specified endpoints. -/
 structure Path (u v : Γ.V) where
   /-- The traversed darts. -/
@@ -104,18 +124,25 @@ variable {Γ} {u v w : Γ.V}
 @[simp] theorem cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     (cons e p).edges = e :: p.edges := rfl
 
-/-- The edge list of a concatenation satisfies the path incidence conditions. -/
-theorem valid_append (p : Γ.Path u v) (q : Γ.Path v w) :
-    Γ.Valid u (p.edges ++ q.edges) w := by
-  obtain ⟨es, hes⟩ := p
+/-- Induction on the edge list of a path, preserving the endpoints in each case. -/
+@[elab_as_elim] theorem induction {motive : ∀ {u v}, Γ.Path u v → Prop}
+    (p : Γ.Path u v) (hnil : ∀ u, motive (nil u))
+    (hcons : ∀ (e : Γ.E) {v} (q : Γ.Path (Γ.tgt e) v),
+      motive q → motive (cons e q)) : motive p := by
+  obtain ⟨es, h⟩ := p
   induction es generalizing u with
   | nil =>
-      simp only [List.nil_append] at *
-      subst u
-      exact q.valid
+      have huv := (Γ.valid_nil u v).mp h
+      subst v
+      exact hnil u
   | cons e es ih =>
-      simp only [valid_cons] at hes ⊢
-      exact ⟨hes.1, ih hes.2⟩
+      obtain ⟨rfl, ht⟩ := (Γ.valid_cons u v e es).mp h
+      exact hcons e ⟨es, ht⟩ (ih ht)
+
+/-- The edge list of a concatenation satisfies the path incidence conditions. -/
+theorem valid_append (p : Γ.Path u v) (q : Γ.Path v w) :
+    Γ.Valid u (p.edges ++ q.edges) w :=
+  (Γ.valid_append_iff u w p.edges q.edges).mpr ⟨v, p.valid, q.valid⟩
 
 /-- Concatenation of directed paths. -/
 @[expose] def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
@@ -176,7 +203,7 @@ theorem valid_reverse {es : List Γ.E} (h : Γ.Valid u es v) :
   rfl
 
 /-- Reversing a prefixed path moves its dart to the end with opposite orientation. -/
-theorem reverse_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
+theorem reverse_cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     (cons e p).reverse.edges = p.reverse.edges ++ [Γ.rev e] := by
   simp [List.reverse_cons, List.map_append]
 
@@ -192,7 +219,7 @@ def IsReduced (p : Γ.Path u v) : Prop :=
 
 /-- A prefixed path is reduced exactly when its tail is reduced and the first dart of the tail,
 if any, is not the reverse of the prefix dart. -/
-theorem isReduced_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
+@[simp] theorem isReduced_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     IsReduced (cons e p) ↔ p.IsReduced ∧ ∀ f ∈ p.edges.head?, f ≠ Γ.rev e := by
   simp only [IsReduced, cons_edges, List.isChain_cons, and_comm]
 
@@ -251,6 +278,10 @@ theorem reachable_equivalence : Equivalence Γ.Reachable :=
 /-- The setoid whose classes are the path components. -/
 def reachableSetoid : Setoid Γ.V := Setoid.mk Γ.Reachable Γ.reachable_equivalence
 
+/-- The relation of the path component setoid is path reachability. -/
+@[simp] theorem reachableSetoid_r (u v : Γ.V) :
+    Γ.reachableSetoid.r u v ↔ Γ.Reachable u v := Iff.rfl
+
 /-- Every pair of vertices is joined by a path. This holds vacuously for the empty graph. -/
 def Preconnected : Prop := ∀ u v : Γ.V, Γ.Reachable u v
 
@@ -289,7 +320,7 @@ abbrev point : SerreGraph where
   rev_ne := by intro e; exact e.elim
 
 /-- The graph with one vertex and no edges is a tree. -/
-theorem point_isTree : point.IsTree := by
+theorem single_vertex_isTree : point.IsTree := by
   refine ⟨⟨⟨PUnit.unit⟩, ?_⟩, ?_⟩
   · intro u v
     cases u
@@ -340,6 +371,10 @@ theorem rose_not_isTree {α : Type*} (a : α) : ¬(rose α).IsTree := by
   intro ht
   have h := ht.2 PUnit.unit (rosePetal a) (rosePetal_isReduced a)
   simp at h
+
+/-- The one petal rose has a nonempty reduced loop, so it is not a tree. -/
+theorem rose_one_not_tree : ¬(rose PUnit).IsTree :=
+  rose_not_isTree PUnit.unit
 
 end SerreGraph
 end TauCeti
