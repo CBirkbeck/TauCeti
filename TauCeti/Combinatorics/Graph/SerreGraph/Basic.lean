@@ -217,6 +217,10 @@ theorem reverse_cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
 def IsReduced (p : Γ.Path u v) : Prop :=
   p.edges.IsChain fun e f => f ≠ Γ.rev e
 
+/-- Reducedness means that consecutive darts in the edge list do not cancel. -/
+theorem isReduced_iff (p : Γ.Path u v) :
+    p.IsReduced ↔ p.edges.IsChain (fun e f => f ≠ Γ.rev e) := Iff.rfl
+
 /-- A prefixed path is reduced exactly when its tail is reduced and the first dart of the tail,
 if any, is not the reverse of the prefix dart. -/
 @[simp] theorem isReduced_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
@@ -285,13 +289,19 @@ def reachableSetoid : Setoid Γ.V := Setoid.mk Γ.Reachable Γ.reachable_equival
 /-- Every pair of vertices is joined by a path. This holds vacuously for the empty graph. -/
 def Preconnected : Prop := ∀ u v : Γ.V, Γ.Reachable u v
 
+/-- Preconnectedness means reachability between every pair of vertices. -/
+theorem preconnected_iff : Γ.Preconnected ↔ ∀ u v : Γ.V, Γ.Reachable u v := Iff.rfl
+
 /-- A Serre graph is connected when it has a vertex and any two vertices are joined. -/
 def Connected : Prop := Nonempty Γ.V ∧ Γ.Preconnected
 
-theorem connected_iff : Γ.Connected ↔ Nonempty Γ.V ∧ ∀ u v : Γ.V, Γ.Reachable u v :=
+/-- Connectedness is nonemptiness together with preconnectedness. -/
+theorem connected_iff : Γ.Connected ↔ Nonempty Γ.V ∧ Γ.Preconnected :=
   Iff.rfl
 
-/-- A tree is a nonempty connected Serre graph with no nonempty reduced closed path. -/
+/-- A tree is a nonempty connected Serre graph with no nonempty reduced closed path.
+This uses the reduced-closed-path formulation in place of Serre's no-circuits definition
+in *Trees*, Chapter I, §2.2. -/
 def IsTree : Prop :=
   Γ.Connected ∧ ∀ (u : Γ.V) (p : Γ.Path u u), p.IsReduced → p.edges = []
 
@@ -306,7 +316,7 @@ theorem edges_eq_nil_of_isReduced (h : Γ.IsTree) {u : Γ.V} (p : Γ.Path u u)
 
 end IsTree
 
-/-- Characterization of a Serre tree by connectedness and reduced closed paths. -/
+/-- Unfolds `IsTree`. -/
 theorem isTree_iff : Γ.IsTree ↔
     Γ.Connected ∧ ∀ (u : Γ.V) (p : Γ.Path u u), p.IsReduced → p.edges = [] := Iff.rfl
 
