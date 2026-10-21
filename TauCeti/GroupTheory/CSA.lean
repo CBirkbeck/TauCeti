@@ -102,13 +102,6 @@ theorem eq_centralizer (hG : IsCSA G) {M : Subgroup G}
     exact ((Subgroup.le_centralizer_iff_isMulCommutative.mpr hM.1) hg x hx).symm
   · exact (hG M hM).centralizer_singleton_le hx hx1
 
-/-- In a CSA group, the centralizer of a nonidentity element is abelian. -/
-theorem centralizer_isMulCommutative (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
-    IsMulCommutative (Subgroup.centralizer {x}) := by
-  obtain ⟨M, hle, hM⟩ := Subgroup.exists_le_maximalAbelian (Subgroup.zpowers x)
-  rw [← hG.eq_centralizer hM (hle (Subgroup.mem_zpowers x)) hx]
-  exact hM.1
-
 /-- The centralizer of a nonidentity element is maximal abelian; uniqueness among
 maximal abelian subgroups containing the element follows from `eq_centralizer`. -/
 theorem centralizer_isMaximalAbelian (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
@@ -117,6 +110,11 @@ theorem centralizer_isMaximalAbelian (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
   obtain ⟨M, hle, hM⟩ := Subgroup.exists_le_maximalAbelian (Subgroup.zpowers x)
   rw [← hG.eq_centralizer hM (hle (Subgroup.mem_zpowers x)) hx]
   exact hM
+
+/-- In a CSA group, the centralizer of a nonidentity element is abelian. -/
+theorem centralizer_isMulCommutative (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
+    IsMulCommutative (Subgroup.centralizer {x}) :=
+  (hG.centralizer_isMaximalAbelian hx).1
 
 /-- The centralizer of a nonidentity element in a CSA group is malnormal. -/
 theorem centralizer_isTISubgroup (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
@@ -146,34 +144,8 @@ theorem of_injective {H : Type*} [Group H] (hG : IsCSA G)
     intro x hx
     exact hle (Subgroup.mem_map_of_mem f hx)
   have hK_eq : K = M.comap f := hK.eq_of_le hcomap hKle
-  apply TauCeti.isTISubgroup_iff_inf_conj_smul_eq_bot.mpr
-  intro g hg
-  have hfg : f g ∉ M := by
-    intro h
-    apply hg
-    rw [hK_eq]
-    exact h
-  have hbot := TauCeti.isTISubgroup_iff_inf_conj_smul_eq_bot.mp (hG M hM) (f g) hfg
-  apply (Subgroup.eq_bot_iff_forall _).mpr
-  intro x hx
-  have hxK : x ∈ K := (Subgroup.mem_inf.mp hx).1
-  have hxconj := (Subgroup.mem_inf.mp hx).2
-  have hfx : f x ∈ M := by
-    rw [hK_eq] at hxK
-    exact hxK
-  have hconjK : g⁻¹ * x * g ∈ K := by
-    have h := (Subgroup.mem_pointwise_smul_iff_inv_smul_mem).mp hxconj
-    simpa [MulAut.smul_def] using h
-  have hfconj : (f g)⁻¹ * f x * f g ∈ M := by
-    rw [hK_eq] at hconjK
-    simpa [map_mul] using hconjK
-  apply hf
-  rw [map_one]
-  apply (Subgroup.eq_bot_iff_forall _).mp hbot
-  apply Subgroup.mem_inf.mpr
-  refine ⟨hfx, ?_⟩
-  apply (Subgroup.mem_pointwise_smul_iff_inv_smul_mem).mpr
-  simpa [MulAut.smul_def] using hfconj
+  rw [hK_eq]
+  exact (hG M hM).comap f hf
 
 /-- Every commutative group is CSA. -/
 theorem of_commGroup [IsMulCommutative G] : IsCSA G := by

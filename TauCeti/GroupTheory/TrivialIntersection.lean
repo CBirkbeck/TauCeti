@@ -122,6 +122,17 @@ theorem eq_one (hH : IsTISubgroup H) {g x : G} (hg : g ∉ H) (hx : x ∈ H)
     (hgx : g * x * g⁻¹ ∈ H) : x = 1 :=
   hH hg hx hgx
 
+/-- The preimage of a trivial-intersection subgroup under an injective homomorphism is
+trivial-intersection. -/
+theorem comap {K : Type*} [Group K] (f : K →* G) (hf : Function.Injective f)
+    (hH : IsTISubgroup H) : IsTISubgroup (H.comap f) := by
+  intro g x hg hx hgx
+  apply hf
+  rw [map_one]
+  apply hH (g := f g) hg hx
+  change f (g * x * g⁻¹) ∈ H at hgx
+  simpa only [map_mul, map_inv] using hgx
+
 /-- A nonidentity element of a trivial-intersection subgroup is conjugated out of it by every
 element outside it. -/
 theorem conj_notMem (hH : IsTISubgroup H) {g x : G} (hg : g ∉ H) (hx : x ∈ H) (hx1 : x ≠ 1) :
