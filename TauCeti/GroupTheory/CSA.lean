@@ -33,19 +33,12 @@ theorem exists_maximal_isMulCommutative (H : Subgroup G)
   classical
   apply zorn_le_nonempty₀ {K : Subgroup G | IsMulCommutative K} ?_ H hH
   intro c hc hcc y hy
-  let ub : Subgroup G := sSup c
-  have hdir : DirectedOn (· ≤ ·) c := hcc.directedOn
-  have hcomm : IsMulCommutative ub := by
-    apply IsMulCommutative.of_setLike_mul_comm
-    intro x hx z hz
-    obtain ⟨K, hK, hxK⟩ :=
-      (Subgroup.mem_sSup_of_directedOn ⟨y, hy⟩ hdir).mp hx
-    obtain ⟨L, hL, hzL⟩ :=
-      (Subgroup.mem_sSup_of_directedOn ⟨y, hy⟩ hdir).mp hz
-    obtain ⟨M, hM, hKM, hLM⟩ := hdir K hK L hL
-    have : IsMulCommutative M := hc hM
-    exact setLike_mul_comm (hKM hxK) (hLM hzL)
-  exact ⟨ub, hcomm, fun K hK => le_sSup hK⟩
+  have : ∀ K : c, IsMulCommutative (K : Subgroup G) := fun K => hc K.2
+  have hcomm : IsMulCommutative (sSup c : Subgroup G) := by
+    rw [sSup_eq_iSup']
+    have : Nonempty c := ⟨⟨y, hy⟩⟩
+    exact Subgroup.isMulCommutative_iSup hcc.directedOn.directed_val
+  exact ⟨sSup c, hcomm, fun K hK => le_sSup hK⟩
 
 end Subgroup
 
