@@ -189,11 +189,11 @@ theorem IsCSA.of_injective {H : Type*} [Group H] (hG : IsCSA G)
       simpa only [Subgroup.mem_comap, map_mul, map_inv, inv_inv] using hxConj'
     exact hf (by simpa using h1)
 
-/-- A product with a nontrivial abelian factor is not CSA if its other factor is nonabelian.
-The nonidentity element in the abelian factor commutes with every element, forcing the other
+/-- A product with a nontrivial factor is not CSA if its other factor is nonabelian.
+The nonidentity element in the second factor commutes with the first factor, forcing the latter
 factor to be abelian if commutation were transitive. -/
-theorem not_isCSA_prod_of_nontrivial_isMulCommutative {C : Type*} [Group C]
-    [IsMulCommutative C] [Nontrivial C] (hG : ¬ IsMulCommutative G) :
+theorem not_isCSA_prod_of_nontrivial {C : Type*} [Group C]
+    [Nontrivial C] (hG : ¬ IsMulCommutative G) :
     ¬ IsCSA (G × C) := by
   intro hprod
   obtain ⟨a, b, hab⟩ : ∃ a b : G, ¬ Commute a b := by

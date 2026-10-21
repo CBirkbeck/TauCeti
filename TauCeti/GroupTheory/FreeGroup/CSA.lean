@@ -22,7 +22,7 @@ namespace Group
 /-- The product of the free group on two generators with `ℤ` is not CSA. -/
 theorem not_isCSA_freeGroup_finTwo_prod_int :
     ¬ IsCSA (FreeGroup (Fin 2) × Multiplicative ℤ) := by
-  apply not_isCSA_prod_of_nontrivial_isMulCommutative
+  apply not_isCSA_prod_of_nontrivial
   intro hcomm
   have : IsMulCommutative (FreeGroup (Fin 2)) := hcomm
   have h : Commute (FreeGroup.of (0 : Fin 2)) (FreeGroup.of (1 : Fin 2)) :=
