@@ -29,9 +29,7 @@ theorem isCyclic_of_isMulCommutative [IsMulCommutative G] : IsCyclic G := by
   classical
   let b := IsFreeGroup.basis G
   have h : IsMulCommutative (FreeGroup (IsFreeGroup.Generators G)) :=
-    IsMulCommutative.of_comm fun x y => b.repr.symm.injective (by
-      simpa only [map_mul] using
-        (mul_comm' (b.repr.symm x) (b.repr.symm y)))
+    b.repr.surjective.isMulCommutative
   have : Subsingleton (IsFreeGroup.Generators G) :=
     FreeGroup.isMulCommutative_iff_subsingleton.mp h
   have : IsCyclic (FreeGroup (IsFreeGroup.Generators G)) :=
@@ -63,14 +61,8 @@ theorem commute_iff_exists_common_zpow (x y : G) :
   constructor
   · intro hxy
     let H : Subgroup G := Subgroup.closure ({x, y} : Set G)
-    have hp : ({x, y} : Set G).Pairwise Commute := by
-      intro a ha b hb hab
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha hb
-      rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
-      · exact (hab rfl).elim
-      · exact hxy
-      · exact hxy.symm
-      · exact (hab rfl).elim
+    have hp : ({x, y} : Set G).Pairwise Commute :=
+      Set.pairwise_pair_of_symm_of_refl.mpr hxy
     have : IsMulCommutative H := Subgroup.isMulCommutative_closure hp
     have hcyc : IsCyclic H := H.isCyclic_of_isMulCommutative
     obtain ⟨r, hr⟩ := (H.isCyclic_iff_exists_zpowers_eq_top).mp hcyc
