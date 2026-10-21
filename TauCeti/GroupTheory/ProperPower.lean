@@ -86,7 +86,7 @@ end Group
 namespace MulEquiv
 
 /-- A multiplicative equivalence preserves and reflects proper powers. -/
-@[simp] theorem isProperPower_iff {G H : Type*} [Group G] [Group H] (e : G ≃* H)
+@[simp] theorem isProperPower_map_iff {G H : Type*} [Group G] [Group H] (e : G ≃* H)
     {x : G} : Group.IsProperPower (e x) ↔ Group.IsProperPower x := by
   constructor
   · intro h

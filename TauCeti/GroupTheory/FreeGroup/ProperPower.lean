@@ -45,7 +45,7 @@ theorem not_isProperPower_commutator {a b : α} (hab : a ≠ b) :
   have ha : f (of a) = ⟨1, 0, 0⟩ := by simp [f]
   have hb : f (of b) = ⟨0, 1, 0⟩ := by simp [f, hab.symm]
   intro h
-  apply TauCeti.HeisenbergGroup.not_isProperPower_zOne
+  apply TauCeti.HeisenbergGroup.not_isProperPower_mk_zero_zero_one
   simpa [ha, hb, TauCeti.HeisenbergGroup.commutatorElement_eq] using
     Group.IsProperPower.map f h
 

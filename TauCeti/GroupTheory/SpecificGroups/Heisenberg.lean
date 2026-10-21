@@ -233,7 +233,7 @@ theorem isPGroup_zmod (p : ℕ) : IsPGroup p (HeisenbergGroup (ZMod p)) :=
 
 /-- The central element with third coordinate one in the integer Heisenberg group is not a
 proper power. -/
-theorem not_isProperPower_zOne :
+theorem not_isProperPower_mk_zero_zero_one :
     ¬ Group.IsProperPower (⟨0, 0, 1⟩ : HeisenbergGroup ℤ) := by
   intro h
   obtain ⟨y, n, hn, heq⟩ := Group.isProperPower_iff.mp h
