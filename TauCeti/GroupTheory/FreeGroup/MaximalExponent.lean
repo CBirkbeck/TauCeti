@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.GroupTheory.FreeGroup.CyclicallyReduced
+public import TauCeti.GroupTheory.FreeGroup.CyclicallyReduced
 public import Mathlib.Order.Lattice.Nat
 
 /-!
@@ -16,8 +16,7 @@ the exponent of any positive power representing a nonidentity element is bounded
 the length of that element's reduced word. This gives a root with greatest exponent,
 the first step in constructing the intrinsic maximal root of a free-group element.
 
-The length calculation follows the cyclic-reduction formula in Mathlib's
-`FreeGroup.reduceCyclically.reduce_flatten_replicate`.
+The length calculation is in `TauCeti.GroupTheory.FreeGroup.CyclicallyReduced`.
 -/
 
 public section
@@ -30,32 +29,9 @@ section
 
 variable [DecidableEq α]
 
-/-- A free-group element has empty cyclic reduction exactly when it is the identity. -/
-@[simp] theorem reduceCyclically_toWord_eq_nil {x : FreeGroup α} :
-    reduceCyclically x.toWord = [] ↔ x = 1 := by
-  constructor
-  · intro h
-    have hw := reduceCyclically.conj_conjugator_reduceCyclically x.toWord
-    rw [h, List.append_nil] at hw
-    have hm := congrArg mk hw
-    simpa [← mul_mk, ← inv_mk, mk_toWord] using hm.symm
-  · intro h
-    subst x
-    simp [toWord_one]
-
-/-- The reduced-word length of a positive power is the length of the conjugating
-prefix twice, plus the exponent times the cyclically reduced length. -/
-theorem norm_pow_eq (x : FreeGroup α) {n : ℕ} (hn : 0 < n) :
-    norm (x ^ n) = 2 * (reduceCyclically.conjugator x.toWord).length +
-      n * (reduceCyclically x.toWord).length := by
-  have hn0 : n ≠ 0 := by omega
-  simp [norm, toWord_pow,
-    reduceCyclically.reduce_flatten_replicate isReduced_toWord, hn0,
-    List.length_flatten, List.map_replicate]
-  omega
-
 /-- The exponent of a power representing a nonidentity element cannot exceed its
 reduced-word length. -/
+@[to_additive]
 theorem le_norm_of_pow_eq {x y : FreeGroup α} {n : ℕ}
     (hx : x ≠ 1) (hpow : y ^ n = x) : n ≤ norm x := by
   have hn : 0 < n := by
@@ -80,7 +56,8 @@ end
 
 /-- A nonidentity free-group element has a root whose exponent is greatest among
 all of its positive root exponents. This root is not a positive proper power. -/
-theorem exists_pow_eq_greatest_exponent {x : FreeGroup α} (hx : x ≠ 1) :
+@[to_additive]
+theorem exists_root_of_maximal_exponent {x : FreeGroup α} (hx : x ≠ 1) :
     ∃ r k, 0 < k ∧ r ^ k = x ∧
       (∀ (y : FreeGroup α) (n : ℕ), y ^ n = x → n ≤ k) ∧
       ∀ (y : FreeGroup α) (m : ℕ), 1 < m → y ^ m ≠ r := by
