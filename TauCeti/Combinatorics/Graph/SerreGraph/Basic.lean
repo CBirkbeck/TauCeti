@@ -65,7 +65,7 @@ theorem rev_injective : Function.Injective Γ.rev := Γ.rev_involutive.injective
 
 /-- A list of darts is a path from `u` to `v` when it can be traversed from `u` and ends at
 `v`. The empty list is a path precisely when its endpoints agree. -/
-@[expose] def Valid (Γ : SerreGraph) : Γ.V → List Γ.E → Γ.V → Prop
+def Valid (Γ : SerreGraph) : Γ.V → List Γ.E → Γ.V → Prop
   | u, [], v => u = v
   | u, e :: es, v => Γ.src e = u ∧ Γ.Valid (Γ.tgt e) es v
 
@@ -92,13 +92,14 @@ variable {Γ} {u v w : Γ.V}
   rfl
 
 /-- The empty path at a vertex. -/
-@[expose] def nil (u : Γ.V) : Γ.Path u u := ⟨[], rfl⟩
+@[expose] def nil (u : Γ.V) : Γ.Path u u :=
+  ⟨[], (Γ.valid_nil u u).mpr rfl⟩
 
 @[simp] theorem nil_edges (u : Γ.V) : (nil u).edges = [] := rfl
 
 /-- Prefix a path by a dart ending at its initial vertex. -/
 @[expose] def cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) : Γ.Path (Γ.src e) v :=
-  ⟨e :: p.edges, ⟨rfl, p.valid⟩⟩
+  ⟨e :: p.edges, (Γ.valid_cons (Γ.src e) v e p.edges).mpr ⟨rfl, p.valid⟩⟩
 
 @[simp] theorem cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     (cons e p).edges = e :: p.edges := rfl
@@ -180,7 +181,7 @@ theorem reverse_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
   simp [List.reverse_cons, List.map_append]
 
 /-- Reversal exchanges the order of concatenated paths. -/
-theorem reverse_append (p : Γ.Path u v) (q : Γ.Path v w) :
+@[simp] theorem reverse_append (p : Γ.Path u v) (q : Γ.Path v w) :
     (append p q).reverse = append q.reverse p.reverse := by
   ext
   simp [List.reverse_append, List.map_append]
@@ -189,8 +190,8 @@ theorem reverse_append (p : Γ.Path u v) (q : Γ.Path v w) :
 def IsReduced (p : Γ.Path u v) : Prop :=
   p.edges.IsChain fun e f => f ≠ Γ.rev e
 
-/-- A prefixed path is reduced exactly when its tail is reduced and its first dart does not
-reverse the new prefix. -/
+/-- A prefixed path is reduced exactly when its tail is reduced and the first dart of the tail,
+if any, is not the reverse of the prefix dart. -/
 theorem isReduced_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     IsReduced (cons e p) ↔ p.IsReduced ∧ ∀ f ∈ p.edges.head?, f ≠ Γ.rev e := by
   simp only [IsReduced, cons_edges, List.isChain_cons, and_comm]
@@ -216,17 +217,28 @@ end Path
 /-- Two vertices are path-connected when a directed path joins them. -/
 def Reachable (u v : Γ.V) : Prop := Nonempty (Γ.Path u v)
 
+namespace Path
+
+/-- A path witnesses reachability of its endpoints. -/
+theorem reachable {u v : Γ.V} (p : Γ.Path u v) : Γ.Reachable u v := ⟨p⟩
+
+end Path
+
+/-- Two vertices are reachable exactly when a path joins them. -/
+theorem reachable_iff_nonempty_path (u v : Γ.V) :
+    Γ.Reachable u v ↔ Nonempty (Γ.Path u v) := Iff.rfl
+
 namespace Reachable
 
 /-- Every vertex is reachable from itself. -/
-@[refl] theorem refl (u : Γ.V) : Γ.Reachable u u := ⟨Path.nil u⟩
+@[refl] protected theorem refl (u : Γ.V) : Γ.Reachable u u := ⟨Path.nil u⟩
 
 /-- Reversing a path reverses reachability. -/
-@[symm] theorem symm {u v : Γ.V} (h : Γ.Reachable u v) : Γ.Reachable v u :=
+@[symm] protected theorem symm {u v : Γ.V} (h : Γ.Reachable u v) : Γ.Reachable v u :=
   h.elim fun p => ⟨p.reverse⟩
 
 /-- Composing paths composes reachability. -/
-@[trans] theorem trans {u v w : Γ.V} (huv : Γ.Reachable u v)
+@[trans] protected theorem trans {u v w : Γ.V} (huv : Γ.Reachable u v)
     (hvw : Γ.Reachable v w) : Γ.Reachable u w :=
   huv.elim fun p => hvw.elim fun q => ⟨p.append q⟩
 
