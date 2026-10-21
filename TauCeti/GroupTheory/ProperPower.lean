@@ -6,6 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Group.Hom.Basic
+public import Mathlib.Algebra.Group.TypeTags.Basic
+public import Mathlib.Algebra.Group.Int.Defs
 
 /-!
 # Proper powers in groups
@@ -55,5 +57,17 @@ theorem isProperPower_zpow {G : Type*} [Group G] (y : G) {n : ℤ}
     exact isProperPower_pow y hn
   · rw [h, zpow_neg, zpow_natCast]
     simpa only [inv_pow] using isProperPower_pow y⁻¹ hn
+
+/-- The generator of the additive integers, viewed multiplicatively, is not a proper power. -/
+theorem not_isProperPower_ofAdd_one :
+    ¬ IsProperPower (Multiplicative.ofAdd (1 : ℤ)) := by
+  intro h
+  obtain ⟨y, n, hn, heq⟩ := isProperPower_iff.mp h
+  have hdiv : (n : ℤ) ∣ 1 := by
+    refine ⟨y.toAdd, ?_⟩
+    simpa using congrArg Multiplicative.toAdd heq
+  have hdiv' : n ∣ 1 := Int.natCast_dvd_natCast.mp hdiv
+  have hle : n ≤ 1 := Nat.le_of_dvd (by omega) hdiv'
+  omega
 
 end Group
