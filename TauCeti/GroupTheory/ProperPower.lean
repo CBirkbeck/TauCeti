@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Group.Hom.Basic
+public import Mathlib.Algebra.Group.Equiv.Basic
 public import Mathlib.Algebra.Group.TypeTags.Basic
 public import Mathlib.Algebra.Group.Int.Defs
 
@@ -58,6 +58,17 @@ theorem isProperPower_zpow {G : Type*} [Group G] (y : G) {n : ℤ}
   · rw [h, zpow_neg, zpow_natCast]
     simpa only [inv_pow] using isProperPower_pow y⁻¹ hn
 
+/-- An element is a proper power exactly when its inverse is. -/
+@[simp] theorem isProperPower_inv {G : Type*} [Group G] {x : G} :
+    IsProperPower x⁻¹ ↔ IsProperPower x := by
+  constructor
+  · rintro ⟨y, n, hn, heq⟩
+    refine ⟨y⁻¹, n, hn, ?_⟩
+    simpa only [inv_inv, inv_pow] using congrArg (fun z : G => z⁻¹) heq
+  · rintro ⟨y, n, hn, heq⟩
+    refine ⟨y⁻¹, n, hn, ?_⟩
+    simpa only [inv_pow] using congrArg (fun z : G => z⁻¹) heq
+
 /-- The generator of the additive integers, viewed multiplicatively, is not a proper power. -/
 theorem not_isProperPower_ofAdd_one :
     ¬ IsProperPower (Multiplicative.ofAdd (1 : ℤ)) := by
@@ -71,3 +82,15 @@ theorem not_isProperPower_ofAdd_one :
   omega
 
 end Group
+
+namespace MulEquiv
+
+/-- A multiplicative equivalence preserves and reflects proper powers. -/
+@[simp] theorem isProperPower_iff {G H : Type*} [Group G] [Group H] (e : G ≃* H)
+    {x : G} : Group.IsProperPower (e x) ↔ Group.IsProperPower x := by
+  constructor
+  · intro h
+    simpa using Group.IsProperPower.map e.symm h
+  · exact Group.IsProperPower.map e
+
+end MulEquiv
