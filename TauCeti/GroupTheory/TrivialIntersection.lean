@@ -176,7 +176,7 @@ theorem comap {K : Type*} [Group K] (hH : IsTISubgroup H) (f : K →* G)
   intro g x hg hx hgx
   apply hf
   have hfg : f g ∉ H := by simpa only [Subgroup.mem_comap] using hg
-  have hfx : f x ∈ H := hx
+  have hfx : f x ∈ H := Subgroup.mem_comap.mp hx
   have hfgx : f g * f x * (f g)⁻¹ ∈ H := by
     simpa only [Subgroup.mem_comap, map_mul, map_inv] using hgx
   simpa only [map_one] using hH hfg hfx hfgx

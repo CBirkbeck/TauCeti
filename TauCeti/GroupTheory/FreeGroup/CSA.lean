@@ -24,9 +24,6 @@ theorem not_isCSA_prod_int :
     ¬ IsCSA (FreeGroup (Fin 2) × Multiplicative ℤ) := by
   apply not_isCSA_prod_of_nontrivial
   intro hcomm
-  have : IsMulCommutative (FreeGroup (Fin 2)) := hcomm
-  have h : Commute (FreeGroup.of (0 : Fin 2)) (FreeGroup.of (1 : Fin 2)) :=
-    mul_comm' _ _
-  exact Fin.zero_ne_one (FreeGroup.eq_of_commute_of_of h)
+  exact not_subsingleton (Fin 2) (FreeGroup.isMulCommutative_iff_subsingleton.mp hcomm)
 
 end Group
