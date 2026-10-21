@@ -9,8 +9,7 @@ module
 public import Mathlib.GroupTheory.Subgroup.Centralizer
 -- `Commute.units_val_iff` transports commutation between units and their values.
 public import Mathlib.Algebra.Group.Commute.Units
-public import Mathlib.Algebra.Group.Torsion
-import Mathlib.Tactic.Group
+import TauCeti.Algebra.Group.Torsion
 
 /-!
 # Centralizers and maximal commutative subgroups
@@ -27,8 +26,6 @@ which is the form every concrete centralizer computation in a matrix group start
   exactly when the two commute as elements of the monoid.
 * `Subgroup.eq_of_centralizer_eq_self_of_le_of_isMulCommutative`: a self-centralizing subgroup is
   maximal among commutative subgroups.
-* `Commute.zpow_left_iff` and `Commute.pow_left_iff`: commuting with a nonzero power is equivalent
-  to commuting with its base in groups with unique roots.
 * `Subgroup.centralizer_zpow_eq` and `Subgroup.centralizer_pow_eq`: nonzero powers have the same
   centralizer as their base in groups with unique roots.
 -/
@@ -60,37 +57,6 @@ theorem eq_of_centralizer_eq_self_of_le_of_isMulCommutative {G : Type*} [Group G
     hle
 
 end Subgroup
-
-namespace Commute
-
-variable {G : Type*} [Group G] [HasUniqueRoots G] {x y : G}
-
-/-- In a group with unique roots, an element commutes with a nonzero integer power of `x`
-exactly when it commutes with `x`. -/
-@[simp]
-theorem zpow_left_iff {n : ℤ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x y := by
-  constructor
-  · intro h
-    have hconj : y⁻¹ * x * y = x := by
-      apply zpow_left_injective hn
-      calc
-        (y⁻¹ * x * y) ^ n = y⁻¹ * x ^ n * y := by
-          simpa only [inv_inv] using (conj_zpow (a := y⁻¹) (b := x) (i := n))
-        _ = x ^ n := h.symm.inv_mul_cancel
-    exact calc
-      x * y = y * (y⁻¹ * x * y) := by group
-      _ = y * x := by rw [hconj]
-  · intro h
-    exact h.zpow_left n
-
-/-- In a group with unique roots, an element commutes with a nonzero natural power of `x`
-exactly when it commutes with `x`. -/
-@[simp]
-theorem pow_left_iff {n : ℕ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x y := by
-  have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn
-  simpa only [zpow_natCast] using (zpow_left_iff (x := x) (y := y) hn')
-
-end Commute
 
 namespace Subgroup
 
