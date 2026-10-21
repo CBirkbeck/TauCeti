@@ -1,0 +1,32 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import Mathlib.GroupTheory.FreeGroup.Reduce
+public import TauCeti.GroupTheory.CSA
+
+/-!
+# A product of a free group with an abelian group is not CSA
+
+The free group on two generators is nonabelian, but its product with a nontrivial abelian group
+has a nonidentity central element. This provides a concrete test of commutation transitivity.
+-/
+
+public section
+
+namespace Group
+
+/-- The product of the free group on two generators with `ℤ` is not CSA. -/
+theorem not_isCSA_freeGroup_finTwo_prod_int :
+    ¬ IsCSA (FreeGroup (Fin 2) × Multiplicative ℤ) := by
+  apply not_isCSA_prod_of_nontrivial_isMulCommutative
+  intro hcomm
+  have : IsMulCommutative (FreeGroup (Fin 2)) := hcomm
+  have h : Commute (FreeGroup.of (0 : Fin 2)) (FreeGroup.of (1 : Fin 2)) :=
+    mul_comm' _ _
+  exact Fin.zero_ne_one (FreeGroup.eq_of_commute_of_of h)
+
+end Group
