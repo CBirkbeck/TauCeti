@@ -30,7 +30,8 @@ theorem isProperPower_iff {G : Type*} [Group G] {x : G} :
 namespace IsProperPower
 
 /-- Homomorphisms preserve proper powers. -/
-theorem map {G H : Type*} [Group G] [Group H] (f : G →* H) {x : G}
+theorem map {G H F : Type*} [Group G] [Group H] [FunLike F G H] [MonoidHomClass F G H]
+    (f : F) {x : G}
     (hx : IsProperPower x) : IsProperPower (f x) := by
   obtain ⟨y, n, hn, rfl⟩ := hx
   exact ⟨f y, n, hn, by simp⟩
