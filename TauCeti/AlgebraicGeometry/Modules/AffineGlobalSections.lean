@@ -8,6 +8,7 @@ module
 public import Mathlib.AlgebraicGeometry.Modules.Tilde
 public import Mathlib.AlgebraicGeometry.Group.Affine
 public import TauCeti.AlgebraicGeometry.Modules.GlobalSections
+public import TauCeti.AlgebraicGeometry.Modules.Localization
 public import Mathlib.Algebra.Category.ModuleCat.EpiMono
 public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 
@@ -17,6 +18,7 @@ public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 Mathlib's `AlgebraicGeometry.tildeEquiv` identifies quasicoherent modules on `Spec R` with
 `R`-modules. Consequently an epimorphism between quasicoherent modules is surjective on global
 sections, even when the epimorphism is taken in the category of all sheaves of modules.
+The same surjectivity holds over every affine open of an arbitrary scheme.
 
 Consequently, global sections preserve short exact sequences whose middle and right terms are
 quasicoherent. This is the affine exactness step used in Serre's affine acyclicity theorem; see
@@ -83,6 +85,27 @@ theorem shortExact_map_moduleSpecΓFunctor_of_isQuasicoherent
       (moduleSpecΓFunctor_map_surjective_of_epi_of_isQuasicoherent S.g)
   exact { exact := h.1, mono_f := h.2, epi_g := hΓ }
 
+variable {X : Scheme.{u}} {P Q : X.Modules}
+
+/-- An epimorphism between quasicoherent module sheaves is surjective on sections over every
+affine open. The epimorphism is taken in the ambient category of module sheaves. -/
+theorem _root_.AlgebraicGeometry.Scheme.Modules.Hom.app_surjective_of_epi_of_isAffineOpen
+    (f : P ⟶ Q) [Epi f] [P.IsQuasicoherent] [Q.IsQuasicoherent]
+    (U : X.Opens) (hU : IsAffineOpen U) : Function.Surjective (f.app U) := by
+  have : IsOpenImmersion hU.fromSpec := hU.isOpenImmersion_fromSpec
+  have : Epi ((Scheme.Modules.restrictFunctor hU.fromSpec).map f) := inferInstance
+  -- The global-section functor and the top component have identical underlying maps.
+  -- State surjectivity on sections to avoid carrying the module-category wrapper into `x`.
+  have hs : Function.Surjective (((Scheme.Modules.restrictFunctor hU.fromSpec).map f).app ⊤) :=
+    moduleSpecΓFunctor_map_surjective_of_epi_of_isQuasicoherent
+      ((Scheme.Modules.restrictFunctor hU.fromSpec).map f)
+  intro y
+  obtain ⟨x, hx⟩ := hs (Q.fromSpecSectionsEquiv hU y)
+  refine ⟨(P.fromSpecSectionsEquiv hU).symm x, (Q.fromSpecSectionsEquiv hU).injective ?_⟩
+  rw [← Scheme.Modules.Hom.fromSpecSectionsEquiv_naturality,
+    LinearEquiv.apply_symm_apply]
+  exact hx
+
 noncomputable section
 
 variable (R : Type u) [CommRing R] (A : CommRingCat.{u}) [Algebra R A]
@@ -115,6 +138,33 @@ instance (M : (Spec A).Modules) : IsScalarTower R A Γ(M, ⊤) :=
     rfl
 
 end Base
+
+/-- The canonical affine chart is a morphism over `Spec R` when its coordinate ring carries
+the algebra structure obtained by restricting the base-ring map. -/
+lemma isOver_fromSpec (X : Scheme.{u}) [X.Over (Spec (.of R))] (U : X.affineOpens) :
+    letI : Algebra R Γ(X, U) :=
+      ((X.baseRingToStructurePresheaf R).app (op U.val)).hom.toAlgebra
+    U.property.fromSpec.IsOver (Spec (.of R)) := by
+  let : Algebra R Γ(X, U) :=
+    ((X.baseRingToStructurePresheaf R).app (op U.val)).hom.toAlgebra
+  rw [Scheme.Hom.isOver_iff, specOverSpec_over]
+  have h := IsAffineOpen.SpecMap_appLE_fromSpec (X ↘ Spec (.of R))
+    (isAffineOpen_top _) U.property (by simp)
+  rw [IsAffineOpen.fromSpec_top, Scheme.isoSpec_Spec_inv, ← Spec.map_comp] at h
+  refine h.symm.trans ?_
+  congr 1
+  ext r
+  -- The displayed `letI` chooses exactly the local base-ring homomorphism.
+  change ((Scheme.ΓSpecIso (.of R)).inv ≫
+      (X ↘ Spec (.of R)).appLE ⊤ U.val _).hom r =
+    ((X.baseRingToStructurePresheaf R).app (op U.val)).hom r
+  rw [Scheme.baseRingToStructurePresheaf_app]
+  -- The algebra structure is the base-ring map on `U`; identify its bundled map with the
+  -- restriction of the global base-ring map.
+  change (X ↘ Spec (.of R)).appLE ⊤ U.val _ ((Scheme.ΓSpecIso (.of R)).inv r) =
+    X.presheaf.map U.val.leTop.op (Scheme.Modules.baseRingToGlobalSections R X r)
+  rw [Scheme.Modules.baseRingToGlobalSections_apply]
+  rfl
 
 end
 

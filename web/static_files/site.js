@@ -41,3 +41,29 @@ document.querySelectorAll(".copy-btn").forEach(function (button) {
     }
   });
 });
+
+// Fit the same-origin forecast document to its text; CSS supplies a no-JavaScript fallback.
+document.querySelectorAll("iframe.roadmap-exhaustion").forEach(function (frame) {
+  var observer;
+  function fit() {
+    var doc = frame.contentDocument;
+    var section = doc && doc.querySelector("section");
+    if (!section) return;
+    section.style.minHeight = "0";
+    frame.style.height = Math.ceil(section.getBoundingClientRect().height) + "px";
+  }
+  function loaded() {
+    if (observer) observer.disconnect();
+    var doc = frame.contentDocument;
+    var section = doc && doc.querySelector("section");
+    if (!section) return;
+    fit();
+    if (window.ResizeObserver) {
+      observer = new ResizeObserver(fit);
+      observer.observe(section);
+    }
+  }
+  frame.addEventListener("load", loaded);
+  window.addEventListener("resize", fit);
+  if (frame.contentDocument && frame.contentDocument.readyState === "complete") loaded();
+});

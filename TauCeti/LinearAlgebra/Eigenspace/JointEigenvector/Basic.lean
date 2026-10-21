@@ -15,7 +15,9 @@ import TauCeti.GroupTheory.FiniteAbelian.CharacterOrthogonality
 
 The eigenvalue function of a joint eigenvector of a monoid-hom representation
 `ρ : G →* Module.End K V` is a character: it maps `1` to `1`, is multiplicative, and, for
-a group, valued in units, assembling into `MonoidHom.unitHomOfJointEigenvector : G →* Kˣ`. This much
+a group, valued in units, assembling into `MonoidHom.unitHomOfJointEigenvector : G →* Kˣ`.
+For an algebra representation it is moreover additive and `R`-linear, assembling into
+`AlgHom.eigenvalueHomOfJointEigenvector : A →ₐ[R] K`. This much
 needs no division — a nonzero vector cancels over a commutative ring without zero divisors
 acting torsion-freely, and on a group multiplicativity exhibits the inverse of `χ g` as
 `χ g⁻¹`. This yields the simultaneous-diagonalization toolkit for a commuting family of
@@ -40,6 +42,8 @@ components of `M_k(Γ₁(N))`.
 
 * `MonoidHom.unitHomOfJointEigenvector`: the eigenvalue function of a nonzero joint eigenvector of a
   group representation, as a monoid homomorphism `G →* Kˣ`.
+* `AlgHom.eigenvalueHomOfJointEigenvector`: the eigenvalue function of a nonzero joint
+  eigenvector of an algebra representation, as an algebra homomorphism `A →ₐ[R] K`.
 * `iSupIndep_iInf_eigenspace`,
   `iSup_iInf_eigenspace_eq_top_of_isSemisimple`,
   `iSup_inf_iInf_eigenspace_of_invariant`: joint eigenspaces of a commuting family are
@@ -89,9 +93,27 @@ end BridgeScalars
 
 /-! ### Eigenvalues of a joint eigenvector
 
-Over a commutative ring with cancellation acting torsion-freely, so that a nonzero vector
-cancels.
+Group actions have nonzero joint eigenvalues over any commutative ring. Over a commutative
+ring with cancellation acting torsion-freely, a nonzero vector cancels, so the eigenvalue
+function also assembles into a homomorphism.
 -/
+
+section GroupScalars
+
+variable [CommRing K] [Module K V] [Group G]
+
+/-- The eigenvalues of a nonzero joint eigenvector of a group representation are nonzero,
+since each group element acts injectively. No cancellation or torsion-freeness is needed. -/
+lemma _root_.MonoidHom.eigenvalue_ne_zero_of_jointEigenvector
+    (ρ : G →* Module.End K V) (χ : G → K) (v : V)
+    (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
+    χ g ≠ 0 := by
+  intro hχ
+  apply hv
+  apply ((Module.End.isUnit_iff _).mp ((Group.isUnit g).map ρ)).injective
+  simpa [hχ] using Module.End.mem_eigenspace_iff.mp (hv_mem g)
+
+end GroupScalars
 
 section CancelScalars
 
@@ -124,6 +146,36 @@ lemma _root_.MonoidHom.eigenvalue_mul_of_jointEigenvector (ρ : G →* Module.En
 
 end MulOne
 
+section Algebra
+
+variable {R A : Type*} [CommSemiring R] [Semiring A] [Algebra R A] [Algebra R K] [Module R V]
+  [IsScalarTower R K V]
+
+/-- Given a joint eigenvector `v ≠ 0` for an algebra representation
+`ρ : A →ₐ[R] Module.End K V`, the eigenvalue function `χ : A → K` is an `R`-algebra
+homomorphism. -/
+def _root_.AlgHom.eigenvalueHomOfJointEigenvector (ρ : A →ₐ[R] Module.End K V) (χ : A → K)
+    (v : V) (hv : v ≠ 0) (hv_mem : ∀ a, v ∈ (ρ a).eigenspace (χ a)) : A →ₐ[R] K where
+  toFun := χ
+  map_one' := ρ.toMonoidHom.eigenvalue_one_of_jointEigenvector χ v hv hv_mem
+  map_mul' := ρ.toMonoidHom.eigenvalue_mul_of_jointEigenvector χ v hv hv_mem
+  map_zero' := (smul_left_inj hv).mp <| by
+    rw [← Module.End.mem_eigenspace_iff.mp (hv_mem 0), map_zero, zero_smul, LinearMap.zero_apply]
+  map_add' a b := (smul_left_inj hv).mp <| by
+    rw [← Module.End.mem_eigenspace_iff.mp (hv_mem (a + b)), add_smul,
+      ← Module.End.mem_eigenspace_iff.mp (hv_mem a), ← Module.End.mem_eigenspace_iff.mp (hv_mem b),
+      map_add, LinearMap.add_apply]
+  commutes' r := (smul_left_inj hv).mp <| by
+    rw [← Module.End.mem_eigenspace_iff.mp (hv_mem _), AlgHom.commutes,
+      Module.algebraMap_end_apply, algebraMap_smul]
+
+@[simp]
+lemma _root_.AlgHom.eigenvalueHomOfJointEigenvector_apply (ρ : A →ₐ[R] Module.End K V)
+    (χ : A → K) (v : V) (hv : v ≠ 0) (hv_mem : ∀ a, v ∈ (ρ a).eigenspace (χ a)) (a : A) :
+    ρ.eigenvalueHomOfJointEigenvector χ v hv hv_mem a = χ a := (rfl)
+
+end Algebra
+
 section Group
 
 variable [Group G]
@@ -142,16 +194,6 @@ def _root_.MonoidHom.unitHomOfJointEigenvector (ρ : G →* Module.End K V) (χ 
 lemma _root_.MonoidHom.unitHomOfJointEigenvector_apply (ρ : G →* Module.End K V) (χ : G → K)
     (v : V) (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
     ((ρ.unitHomOfJointEigenvector χ v hv hv_mem g) : K) = χ g := (rfl)
-
-/-- The eigenvalues of a nonzero joint eigenvector of a group representation are
-nonzero. -/
-lemma _root_.MonoidHom.eigenvalue_ne_zero_of_jointEigenvector
-    (ρ : G →* Module.End K V) (χ : G → K) (v : V)
-    (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
-    χ g ≠ 0 := by
-  have := nontrivial_of_ne v 0 hv
-  have := Module.nontrivial K V
-  simpa using (ρ.unitHomOfJointEigenvector χ v hv hv_mem g).ne_zero
 
 /-- If the joint eigenspace of an eigenvalue function `χ` of a group representation is
 nonzero, then `χ` is (the underlying function of) a character `G →* Kˣ`. -/
@@ -288,13 +330,13 @@ no finite-dimensionality assumption — the classical character projectors
 `|G|⁻¹ • ∑ d, χ(d)⁻¹ • ρ d` decompose every vector into joint eigenvectors, so the joint
 eigenspaces indexed by `G →* Kˣ` span. -/
 
-section FourierDecomposition
+section FourierProjector
 
-variable [CommRing K] [IsDomain K] [Module K V] [CommGroup G] [Finite G]
+variable [CommRing K] [Module K V] [Group G] [Finite G]
 
 -- The averaging sums below need a `Fintype G`, and it has to stay file-local: as a global
 -- instance (even a `private` one, which still ends up in the environment the linters see) it
--- reads as `[Finite α] → Fintype α` for *every* type `α`, because `G`'s `CommGroup` argument
+-- reads as `[Finite α] → Fintype α` for *every* type `α`, because `G`'s group structure
 -- is not used, and so perturbs instance resolution and `simp` normal forms library-wide.
 attribute [local instance] Fintype.ofFinite
 
@@ -307,7 +349,6 @@ private def fourierComponent (χ₀ : G →* Kˣ) (v : V) : V :=
   Ring.inverse (Nat.card G : K) • ∑ d : G, (((χ₀ d)⁻¹ : Kˣ) : K) • ρ d v
 
 variable (ρ) in
-omit [IsDomain K] in
 private lemma fourierComponent_mem (χ₀ : G →* Kˣ) (v : V) (g : G) :
     fourierComponent (ρ := ρ) χ₀ v ∈ (ρ g).eigenspace (χ₀ g) := by
   rw [Module.End.mem_eigenspace_iff, fourierComponent, map_smul,
@@ -317,7 +358,17 @@ private lemma fourierComponent_mem (χ₀ : G →* Kˣ) (v : V) (g : G) :
   exact Fintype.sum_equiv (Equiv.mulLeft g) _ _ fun d ↦ by
     simp [smul_smul, mul_comm]
 
-variable [HasEnoughRootsOfUnity K (Monoid.exponent G)]
+end FourierProjector
+
+section FourierDecomposition
+
+variable [CommRing K] [IsDomain K] [Module K V] [CommGroup G] [Finite G]
+
+attribute [local instance] Fintype.ofFinite
+
+open Finset
+
+variable {ρ : G →* Module.End K V} [HasEnoughRootsOfUnity K (Monoid.exponent G)]
 
 private lemma sum_fourierComponent (hunit : IsUnit (Nat.card G : K)) (v : V) :
     ∑ χ₀ : G →* Kˣ, fourierComponent (ρ := ρ) χ₀ v = v := by

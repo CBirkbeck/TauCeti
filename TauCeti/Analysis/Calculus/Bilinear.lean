@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
 public import Mathlib.Analysis.Calculus.FDeriv.Bilinear
+import TauCeti.Analysis.Calculus.SecondDerivative
 
 /-!
 # Derivatives of maps built from a continuous bilinear map
@@ -34,6 +35,8 @@ direction `w`; its derivative involves the second derivative of `u`.
   the constant `B.flip + B`.
 * `ContinuousLinearMap.hasFDerivAt_bilinear_fderiv_apply`: the derivative of
   `y ↦ B (u y) (∂_w u y)` at a point where `u` is `C²`.
+* `ContinuousLinearMap.contDiff_precomp_comp`: the pullback `(v, w) ↦ B (L v) (L w)` of a
+  continuous bilinear map `B` along a continuous linear map `L` depends smoothly on `(B, L)`.
 -/
 
 public section
@@ -95,13 +98,23 @@ theorem _root_.ContinuousLinearMap.hasFDerivAt_bilinear_fderiv_apply (B : F →L
     {u : E → F} {z : E} (hu : ContDiffAt 𝕜 2 u z) (w : E) :
     HasFDerivAt (fun y ↦ B (u y) (fderiv 𝕜 u y w))
       (B.precompR E (u z) ((fderiv 𝕜 (fderiv 𝕜 u) z).flip w) +
-        B.precompL E (fderiv 𝕜 u z) (fderiv 𝕜 u z w)) z := by
-  have hdu : DifferentiableAt 𝕜 (fderiv 𝕜 u) z :=
-    (hu.fderiv_right (m := 1) (by norm_num)).differentiableAt (by norm_num)
-  have hw : HasFDerivAt (fun y ↦ fderiv 𝕜 u y w) ((fderiv 𝕜 (fderiv 𝕜 u) z).flip w) z := by
-    simpa using hdu.hasFDerivAt.clm_apply (hasFDerivAt_const w z)
-  exact B.hasFDerivAt_of_bilinear (hu.differentiableAt (by norm_num)).hasFDerivAt hw
+        B.precompL E (fderiv 𝕜 u z) (fderiv 𝕜 u z w)) z :=
+  B.hasFDerivAt_of_bilinear (hu.differentiableAt (by norm_num)).hasFDerivAt
+    (hu.hasFDerivAt_fderiv_apply le_rfl w)
 
+/-- The pullback `(v, w) ↦ B (L v) (L w)` of a continuous bilinear map `B` along a continuous linear
+map `L` is `C^n` as a function of the pair `(B, L)`. -/
+theorem _root_.ContinuousLinearMap.contDiff_precomp_comp :
+    ContDiff 𝕜 n fun p : (F →L[𝕜] F →L[𝕜] G) × (E →L[𝕜] F) ↦
+      (ContinuousLinearMap.precomp G p.2).comp (p.1.comp p.2) := by
+  have h : (fun p : (F →L[𝕜] F →L[𝕜] G) × (E →L[𝕜] F) ↦
+      (ContinuousLinearMap.precomp G p.2).comp (p.1.comp p.2)) = fun p ↦
+      ((ContinuousLinearMap.compL 𝕜 E F G).flip p.2).comp (p.1.comp p.2) := by
+    ext p v w
+    rfl
+  rw [h]
+  exact ((ContinuousLinearMap.compL 𝕜 E F G).flip.contDiff.comp contDiff_snd).clm_comp
+    (contDiff_fst.clm_comp contDiff_snd)
 
 end TauCeti
 

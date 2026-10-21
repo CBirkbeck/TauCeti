@@ -66,8 +66,8 @@ theorem contMDiff_analyticMap (n : ℕ∞ω) :
   have : Finite (ToricRay υ.1) := ToricRay.finite_of_fg hυ.fg
   let κ := Finite.equivFin (ToricRay σ.1)
   let κ' := Finite.equivFin (ToricRay υ.1)
-  let g := (Φ.analyticChartGenerators σ hσ).2
-  let g' := (Ψ.analyticChartGenerators υ hυ).2
+  let g := (Φ.analyticChartGenerators σ).2
+  let g' := (Ψ.analyticChartGenerators υ).2
   let _ := affinePointTopology g
   let _ := coneChartedSpace Φ.lattice hσ.toIsToricCone hB κ g
   let _ := affinePointTopology g'
@@ -87,11 +87,9 @@ theorem contMDiff_analyticMap (n : ℕ∞ω) :
   refine (hloc.contMDiffAt hmem).congr_of_eventuallyEq ?_
   filter_upwards [hmem] with z hz
   obtain ⟨y, rfl⟩ := hP ▸ hz
-  have hPy : P.symm (Φ.analyticAffineChartι hΦ σ y) = y := by
-    rw [← Φ.analyticAffineChartPartialDiffeomorph_apply hΦ σ hB κ g n y]
-    exact P.left_inv ((Φ.analyticAffineChartPartialDiffeomorph_source hΦ σ hB κ g n).symm ▸
-      mem_univ y)
+  have hPy : P.symm (Φ.analyticAffineChartι hΦ σ y) = y :=
+    Φ.analyticAffineChartPartialDiffeomorph_symm_analyticAffineChartι hΦ σ hB κ g n y
   rw [analyticMap_analyticAffineChartι, Function.comp_apply, Function.comp_apply, hPy]
-  exact congrArg (Ψ.analyticAffineChartι hΨ υ) (f.analyticChartMap_apply hΦ hΨ _ y)
+  exact congrArg (Ψ.analyticAffineChartι hΨ υ) (f.analyticChartMap_apply _ y)
 
 end TauCeti.Toric.FanHom

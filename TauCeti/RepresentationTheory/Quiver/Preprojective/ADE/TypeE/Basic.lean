@@ -8,14 +8,16 @@ module
 public import TauCeti.Algebra.Ring.LadderValley
 public import TauCeti.Algebra.Algebra.NilpotentPair
 public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Diagram
-public import TauCeti.RepresentationTheory.Quiver.AdmissibleIdeal
+public import TauCeti.RepresentationTheory.Quiver.AdmissibleIdeal.Basic
 public import TauCeti.RepresentationTheory.Quiver.Preprojective.Admissible
+public import TauCeti.RepresentationTheory.Quiver.Preprojective.InducedSubgraph
+public import TauCeti.RepresentationTheory.Quiver.Preprojective.Isomorphism
 public import TauCeti.RepresentationTheory.Quiver.Zigzag.ADE.Preprojective
-public import TauCeti.RepresentationTheory.Quiver.Zigzag.Preprojective
+public import TauCeti.RepresentationTheory.Quiver.Preprojective.GraphOrientation
 public import TauCeti.RepresentationTheory.Quiver.Zigzag.Signless
 
 /-!
-# The preprojective algebras of `E₆` and `E₈` are finite-dimensional
+# The preprojective algebras of `E₆`, `E₇`, and `E₈` are finite-dimensional
 
 In the Bourbaki labelling of `Eₙ` (`n ≥ 4`, Mathlib's `CartanMatrix.E n`), the node `3` is the
 branch node, and three arms leave it: the leaf `1`; the arm `2, 0`; and the long arm
@@ -51,6 +53,12 @@ path of length at least `46` vanishes** in the signless algebra of `E₈`. Again
 sharp: the sharp bound is `h - 1 = 29`, for the Coxeter number `h = 30` of `E₈`. The `E₈`
 results are stated for the named Bourbaki-labelled graph `TauCeti.zigzagE8Graph`.
 
+For `E₇`, the Bourbaki-labelled inclusion into `E₈`, recorded in
+`TauCeti.DynkinType.cartanMatrix_E7_eq_submatrix_E8`, identifies its signless algebra with an
+induced subgraph quotient. This transfers finite dimensionality from `E₈` to `E₇`. The signless
+`E₇` instance retains the caller's neighborhood `Fintype` instances as parameters, so its
+conclusion refers to the quotient carrier formed with those enumerations.
+
 The signless algebra of a bipartite graph is the preprojective algebra of each of its
 orientations, by an explicit sign rescaling of the arrows. Thus the same bound holds in the
 preprojective algebra `Π_k(Q)` of every orientation `Q` of `E₆` or `E₈`, over every commutative
@@ -73,6 +81,9 @@ ring; the relation ideal is admissible, and `Π_k(Q)` is finite-dimensional over
   `TauCeti.instFiniteDimensionalPreprojectiveAlgebraE8` and
   `TauCeti.instFiniteDimensionalSignlessPreprojectiveAlgebraE8`: the same for `E₈`, with the
   bound `46`.
+* `TauCeti.instFiniteDimensionalPreprojectiveAlgebraE7` and
+  `TauCeti.instFiniteDimensionalSignlessPreprojectiveAlgebraE7`: the preprojective algebra of
+  every orientation of `E₇`, and the signless algebra of `E₇`, are finite-dimensional.
 
 ## References
 
@@ -90,7 +101,7 @@ open _root_.Quiver PathAlgebra DoubledQuiver
 
 /-- The neighbours of a vertex in a finite graph form a finite type; this is the finiteness
 structure of the orientation comparisons of
-`TauCeti.RepresentationTheory.Quiver.Zigzag.Preprojective`. -/
+`TauCeti.RepresentationTheory.Quiver.Preprojective.GraphOrientation`. -/
 noncomputable local instance eNeighborSetFintype {V : Type*} [Finite V] (G : SimpleGraph V)
     (i : V) : Fintype (G.neighborSet i) :=
   Fintype.ofFinite _
@@ -217,7 +228,8 @@ private theorem eDown_mul_eUp_add (a : Fin 3) (w : ℕ) :
       rcases eq_eArm_of_eAdj (by omega) hp hj with rfl | rfl <;> simp
     have hne : eArm n a w ≠ eArm n a (w + 2) := by
       obtain _ | _ | w := w
-      all_goals fin_cases a <;> simp [eArm] at hp ⊢ <;> omega
+      all_goals fin_cases a <;> simp [eArm] at hp ⊢
+      all_goals omega
     rw [Finset.sum_pair hne, add_comm] at h
     exact h
   · have h₁ : signlessArrow k G (eArm n a (w + 1 + 1)) (eArm n a (w + 1)) = 0 :=
@@ -459,7 +471,8 @@ section CommRing
 variable (k : Type*) [CommRing k]
 
 /-- **Every path of length at least `24` vanishes in the signless algebra of `E₆`.** -/
-@[simp]
+-- Not `@[simp]`: plain `simp` first rewrites the diagram's rank inside the left-hand side's
+-- types, after which the lemma no longer matches; use it with `exact`.
 theorem signlessPreprojectiveMk_E6_ofPath_eq_zero_of_le
     (x : Quiver.TotalPath (DoubledQuiver (diagramGraph DynkinType.E6.cartanMatrix)))
     (hx : 24 ≤ x.2.2.length) :
@@ -477,7 +490,8 @@ variable (o : Orientation (diagramGraph DynkinType.E6.cartanMatrix))
 
 /-- **Every path of length at least `24` vanishes in the preprojective algebra of `E₆`**, for
 every orientation of the `E₆` graph. -/
-@[simp]
+-- Not `@[simp]`: plain `simp` first rewrites the diagram's rank inside the left-hand side's
+-- types, after which the lemma no longer matches; use it with `exact`.
 theorem preprojectiveMk_E6_ofPath_eq_zero_of_le
     (x : Quiver.TotalPath
       (Symmetrify (OrientedQuiver (diagramGraph DynkinType.E6.cartanMatrix) o)))
@@ -530,12 +544,6 @@ end Field
 
 /-! ### The `E₈` diagram -/
 
-/-- The named `E₈` graph is the Bourbaki-labelled `Eₙ` diagram for `n = 8`. -/
-private theorem zigzagE8Graph_eq : zigzagE8Graph = diagramGraph (CartanMatrix.E 8) := by
-  ext i j
-  rw [zigzagE8Graph_adj, diagramGraph_E_adj]
-  fin_cases i <;> fin_cases j <;> simp only [EAdj] <;> decide
-
 /-- **Every product of fifteen backtracks at the branch node of `E₈` vanishes.** -/
 private theorem eSpan_eight_pow_fifteen (k : Type*) [CommRing k] : eSpan k 8 ^ 15 = ⊥ := by
   have hsum : eTurn k 8 0 + eTurn k 8 1 = -eTurn k 8 2 :=
@@ -560,7 +568,7 @@ theorem signlessPreprojectiveMk_E8_ofPath_eq_zero_of_le
     rintro G rfl x hx
     exact signlessPreprojectiveMk_ofPath_eq_zero_of_eSpan_pow k (n := 8) (by norm_num)
       (eSpan_eight_pow_fifteen k) x hx
-  exact key _ zigzagE8Graph_eq x hx
+  exact key _ (by rw [zigzagE8Graph_eq_diagramGraph, DynkinType.cartanMatrix_E8]; rfl) x hx
 
 variable (o : Orientation zigzagE8Graph)
 
@@ -607,5 +615,56 @@ instance instFiniteDimensionalSignlessPreprojectiveAlgebraE8 :
   (zigzagE8SignlessEquivPreprojective k).symm.toLinearEquiv.finiteDimensional
 
 end Field
+
+/-! ### The `E₇` diagram -/
+
+private abbrev e7Nodes := Set.range (Fin.castAdd 1 : Fin 7 → Fin 8)
+
+private noncomputable def e7InducedIso :
+    diagramGraph DynkinType.E7.cartanMatrix ≃g zigzagE8Graph.induce e7Nodes where
+  toEquiv := Equiv.ofInjective (Fin.castAdd 1 : Fin 7 → Fin 8) (Fin.castAdd_injective 7 1)
+  map_rel_iff' := fun {i j : Fin 7} => by
+    -- Normalize the range equivalence before rewriting the matrix: its coerced function
+    -- otherwise retains the `DynkinType.E7.rank` index underneath the `Fin 7` presentation.
+    change zigzagE8Graph.Adj (Fin.castAdd 1 i) (Fin.castAdd 1 j) ↔
+      (diagramGraph DynkinType.E7.cartanMatrix).Adj i j
+    rw [DynkinType.cartanMatrix_E7]
+    -- The Cartan-matrix equation also changes the implicit vertex type to `Fin 7`.
+    change zigzagE8Graph.Adj (Fin.castAdd 1 i) (Fin.castAdd 1 j) ↔
+      (diagramGraph (CartanMatrix.E 7)).Adj i j
+    rw [DynkinType.cartanMatrix_E7_eq_submatrix_E8,
+      diagramGraph_submatrix (Fin.castAdd_injective 7 1), SimpleGraph.comap_adj,
+      zigzagE8Graph_eq_diagramGraph, DynkinType.cartanMatrix_E8]
+    rfl
+
+private noncomputable def e7Coloring :
+    (diagramGraph DynkinType.E7.cartanMatrix).Coloring Bool :=
+  zigzagE8Coloring.comap
+    ((SimpleGraph.Embedding.induce e7Nodes).toHom.comp e7InducedIso.toHom)
+
+variable (k : Type*) [Field k]
+
+/-- The signless preprojective algebra of the Bourbaki-labelled `E₇` diagram is
+finite-dimensional over every field. -/
+instance instFiniteDimensionalSignlessPreprojectiveAlgebraE7
+    [∀ i, Fintype ((diagramGraph DynkinType.E7.cartanMatrix).neighborSet i)] :
+    FiniteDimensional k
+      (signlessPreprojectiveAlgebra k
+        (DoubledQuiver (diagramGraph DynkinType.E7.cartanMatrix))) := by
+  let := moduleFinite_signlessPreprojectiveAlgebra_induce k zigzagE8Graph e7Nodes
+  exact LinearEquiv.finiteDimensional
+    (signlessPreprojectiveAlgebraEquiv k e7InducedIso).symm.toLinearEquiv
+
+/-- The additive preprojective algebra of every orientation of `E₇` is finite-dimensional
+over every field. -/
+instance instFiniteDimensionalPreprojectiveAlgebraE7
+    (o : Orientation (diagramGraph DynkinType.E7.cartanMatrix)) :
+    FiniteDimensional k
+      (preprojectiveAlgebra k (OrientedQuiver (diagramGraph DynkinType.E7.cartanMatrix) o)) := by
+  let c := fun i : OrientedQuiver (diagramGraph DynkinType.E7.cartanMatrix) o =>
+    e7Coloring ((OrientedQuiver.vertexEquiv _ o).symm i)
+  have hc : ∀ ⦃i j⦄ (_ : i ⟶ j), c i ≠ c j := fun _ _ a => e7Coloring.valid a.1
+  exact ((orientationSignlessPreprojectiveAlgebraEquiv o k).trans
+    (symmetrifySignlessPreprojectiveAlgebraEquiv k hc)).toLinearEquiv.finiteDimensional
 
 end TauCeti

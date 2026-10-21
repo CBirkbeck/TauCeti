@@ -56,6 +56,8 @@ hypotheses; their values of `τ` are in `TorusLink/Tau.lean`.
   non-torsion degrees without that hypothesis.
 * `TauCeti.GridDiagram.IsKnot.tau_eq_of_linearEquiv`: a degree-zero graded `K[U]`-isomorphism
   of unblocked homologies identifies the invariants.
+* `TauCeti.GridDiagram.IsKnot.tau_eq_of_semilinearMap`: so does a grading-preserving bijection
+  that is semilinear along a ring homomorphism compatible with the evaluation `V_j ↦ U`.
 * `TauCeti.GridDiagram.IsKnot.tau_le_tau_sub_of_comp_eq_X_pow_smul`: over a Noetherian `K`, a
   homogeneous map of degree `δ` out of a non-torsion `GH⁻(G)` with a left inverse up to a power
   of `U` gives `τ(G') ≤ τ(G) - δ`.
@@ -120,6 +122,32 @@ theorem tau_eq_of_linearEquiv :
   intro e he
   rw [tau_def, tau_def, InternalGrading.supNonTorsionDegree_eq_of_linearEquiv e he]
 
+/-- A bijection between the unblocked homologies of two knot grids identifies their invariants
+`τ` if it preserves the Alexander grading and is semilinear along a ring homomorphism `σ` of the
+polynomial rings that commutes with the evaluation `V_j ↦ U`, such as a renaming of the variables.
+Such a map is then a graded `K[U]`-isomorphism of degree zero. -/
+theorem tau_eq_of_semilinearMap {σ : MvPolynomial (Fin n) K →+* MvPolynomial (Fin m) K}
+    (hσ : ∀ p, MvPolynomial.aeval (fun _ ↦ (Polynomial.X : K[X])) (σ p) =
+      MvPolynomial.aeval (fun _ ↦ (Polynomial.X : K[X])) p)
+    (f : G.unblockedHomology K →ₛₗ[σ] G'.unblockedHomology K) (hf : Function.Bijective f)
+    (hA : ∀ a y, y ∈ (hG.alexanderUnblockedHomologyGrading K).piece a →
+      f y ∈ (hG'.alexanderUnblockedHomologyGrading K).piece a) :
+    hG.tau K = hG'.tau K := by
+  let _ := hG.unblockedHomologyModule K
+  let _ := hG'.unblockedHomologyModule K
+  have : Nonempty (Fin n) := ⟨⟨0, Nat.pos_of_ne_zero hG.ne_zero⟩⟩
+  let f' : G.unblockedHomology K →ₗ[K[X]] G'.unblockedHomology K :=
+    { toFun := f
+      map_add' := map_add f
+      map_smul' := fun q y ↦ by
+        obtain ⟨p, rfl⟩ := MvPolynomial.aeval_const_X_surjective (Fin n) K q
+        rw [hG.aeval_smul_unblockedHomology, LinearMap.map_smulₛₗ, RingHom.id_apply, ← hσ,
+          hG'.aeval_smul_unblockedHomology] }
+  refine hG.tau_eq_of_linearEquiv K hG' (LinearEquiv.ofBijective f' hf)
+    (LinearMap.isHomogeneous_def.mpr fun a y hy ↦ ?_)
+  rw [add_zero]
+  exact hA a y hy
+
 variable [IsNoetherianRing K]
 
 /-- **Comparison of `τ` along a map with a left inverse up to a power of `U`.** Let `f` be a
@@ -143,7 +171,7 @@ theorem tau_le_tau_sub_of_comp_eq_X_pow_smul {δ : ℤ} (k : ℕ) :
   have h := InternalGrading.supNonTorsionDegree_add_le
     ((InternalGrading.nonTorsionDegrees_nonempty_iff _).mpr hT)
     (hG'.bddAbove_nonTorsionDegrees_alexanderUnblockedHomologyGrading K) hf
-    (Submodule.comap_torsion_le_of_comp_eq_smul (pow_mem Polynomial.X_mem_nonzeroDivisors k) hgf)
+    (Submodule.comap_torsion_le_of_comp_eq_smul (pow_mem Polynomial.X_mem_nonZeroDivisors k) hgf)
   rw [tau_def, tau_def]
   omega
 

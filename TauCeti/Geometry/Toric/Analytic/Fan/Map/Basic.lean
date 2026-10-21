@@ -23,7 +23,9 @@ On the chart of a cone `σ` the glued map is the chart map into the chart of the
 `TauCeti.Toric.FanHom.leastCone`, or equivalently into the chart of any target cone containing the
 image of `σ`. The construction is functorial: the identity morphism of a fan induces the identity,
 and a composite of fan morphisms induces the composite map. The inclusion of an open subfan
-induces the open-subfan map `TauCeti.Toric.Fan.subfanAnalyticMap`.
+induces the open-subfan map `TauCeti.Toric.Fan.subfanAnalyticMap`, so the open-subfan maps inherit
+this functoriality: on all the cones of a fan the open-subfan map is the identity, and for nested
+open subfans the open-subfan maps compose.
 
 ## Main declarations
 
@@ -36,6 +38,8 @@ induces the open-subfan map `TauCeti.Toric.Fan.subfanAnalyticMap`.
   functoriality.
 * `TauCeti.Toric.FanHom.analyticMap_subfanInclusion`: the inclusion of an open subfan induces the
   open-subfan map.
+* `TauCeti.Toric.Fan.subfanAnalyticMap_self` and `TauCeti.Toric.Fan.subfanAnalyticMap_comp`: the
+  functoriality of the open-subfan maps for nested open subfans.
 
 ## References
 
@@ -63,11 +67,11 @@ cone `υ` of `Ψ` into which the fan morphism carries `σ`: complex points are p
 map of dual semigroups induced by the fan morphism. -/
 noncomputable def analyticChartMap {σ : Φ.cones} {υ : Ψ.cones}
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V')) :
-    (Φ.analyticAffineChartDiagram hΦ).obj σ ⟶ (Ψ.analyticAffineChartDiagram hΨ).obj υ :=
+    (Φ.analyticAffineChartDiagram).obj σ ⟶ (Ψ.analyticAffineChartDiagram).obj υ :=
   letI := affinePointTopology
-    (Φ.analyticChartGenerators σ ((Fan.isRegular_iff.mp hΦ) σ.1 σ.2)).2
+    (Φ.analyticChartGenerators σ).2
   letI := affinePointTopology
-    (Ψ.analyticChartGenerators υ ((Fan.isRegular_iff.mp hΨ) υ.1 υ.2)).2
+    (Ψ.analyticChartGenerators υ).2
   TopCat.ofHom ⟨AffineSemigroupComplexPoint.comap
     (dualSemigroupMap Φ.lattice Ψ.lattice f.latticeMap f.realMap f.map_lattice h),
     AffineSemigroupComplexPoint.continuous_comap _ _ _⟩
@@ -76,8 +80,8 @@ noncomputable def analyticChartMap {σ : Φ.cones} {υ : Ψ.cones}
 @[simp]
 theorem analyticChartMap_apply {σ : Φ.cones} {υ : Ψ.cones}
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V'))
-    (x : (Φ.analyticAffineChartDiagram hΦ).obj σ) :
-    (f.analyticChartMap hΦ hΨ h x : AffineSemigroupComplexPoint (dualSemigroup Ψ.lattice υ.1)) =
+    (x : (Φ.analyticAffineChartDiagram).obj σ) :
+    (f.analyticChartMap h x : AffineSemigroupComplexPoint (dualSemigroup Ψ.lattice υ.1)) =
       AffineSemigroupComplexPoint.comap
         (dualSemigroupMap Φ.lattice Ψ.lattice f.latticeMap f.realMap f.map_lattice h) x :=
   (rfl)
@@ -86,8 +90,8 @@ theorem analyticChartMap_apply {σ : Φ.cones} {υ : Ψ.cones}
 @[reassoc]
 theorem map_comp_analyticChartMap {τ σ : Φ.cones} {υ : Ψ.cones} (hτσ : τ ⟶ σ)
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V')) :
-    (Φ.analyticAffineChartDiagram hΦ).map hτσ ≫ f.analyticChartMap hΦ hΨ h =
-      f.analyticChartMap hΦ hΨ (h.mono_left (SetLike.coe_subset_coe.mpr (leOfHom hτσ))) := by
+    (Φ.analyticAffineChartDiagram).map hτσ ≫ f.analyticChartMap h =
+      f.analyticChartMap (h.mono_left (SetLike.coe_subset_coe.mpr (leOfHom hτσ))) := by
   ext x : 1
   rw [TopCat.comp_app, analyticChartMap_apply, analyticChartMap_apply,
     Fan.analyticAffineChartDiagram_map_apply]
@@ -101,8 +105,8 @@ larger cone. -/
 @[reassoc]
 theorem analyticChartMap_comp_map {σ : Φ.cones} {κ υ : Ψ.cones}
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (κ.1 : Set V')) (hκυ : κ ⟶ υ) :
-    f.analyticChartMap hΦ hΨ h ≫ (Ψ.analyticAffineChartDiagram hΨ).map hκυ =
-      f.analyticChartMap hΦ hΨ (h.mono_right (SetLike.coe_subset_coe.mpr (leOfHom hκυ))) := by
+    f.analyticChartMap h ≫ (Ψ.analyticAffineChartDiagram).map hκυ =
+      f.analyticChartMap (h.mono_right (SetLike.coe_subset_coe.mpr (leOfHom hκυ))) := by
   ext x : 1
   rw [TopCat.comp_app, Fan.analyticAffineChartDiagram_map_apply, analyticChartMap_apply,
     analyticChartMap_apply]
@@ -116,12 +120,12 @@ cone into which the source cone is carried. -/
 theorem analyticChartMap_comp_analyticAffineChartι {σ : Φ.cones} {υ υ' : Ψ.cones}
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V'))
     (h' : Set.MapsTo f.realMap (σ.1 : Set V) (υ'.1 : Set V')) :
-    f.analyticChartMap hΦ hΨ h ≫ Ψ.analyticAffineChartι hΨ υ =
-      f.analyticChartMap hΦ hΨ h' ≫ Ψ.analyticAffineChartι hΨ υ' := by
+    f.analyticChartMap h ≫ Ψ.analyticAffineChartι hΨ υ =
+      f.analyticChartMap h' ≫ Ψ.analyticAffineChartι hΨ υ' := by
   -- Both composites factor through the chart of the intersection cone `υ ⊓ υ'`.
   have hκ : Set.MapsTo f.realMap (σ.1 : Set V) ((υ ⊓ υ').1 : Set V') := h.inter h'
-  rw [← f.analyticChartMap_comp_map hΦ hΨ hκ (homOfLE inf_le_left),
-    ← f.analyticChartMap_comp_map hΦ hΨ hκ (homOfLE inf_le_right), Category.assoc,
+  rw [← f.analyticChartMap_comp_map hκ (homOfLE inf_le_left),
+    ← f.analyticChartMap_comp_map hκ (homOfLE inf_le_right), Category.assoc,
     Category.assoc, Fan.analyticAffineChartDiagram_map_comp_analyticAffineChartι,
     Fan.analyticAffineChartDiagram_map_comp_analyticAffineChartι]
 
@@ -130,22 +134,22 @@ image, after the chart maps, in the realization of the target fan. -/
 private theorem analyticAffineChartι_analyticChartMap_eq_of_eq {σ τ : Φ.cones} {υ υ' : Ψ.cones}
     (hσ : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V'))
     (hτ : Set.MapsTo f.realMap (τ.1 : Set V) (υ'.1 : Set V'))
-    {x : (Φ.analyticAffineChartDiagram hΦ).obj σ} {y : (Φ.analyticAffineChartDiagram hΦ).obj τ}
+    {x : (Φ.analyticAffineChartDiagram).obj σ} {y : (Φ.analyticAffineChartDiagram).obj τ}
     (h : Φ.analyticAffineChartι hΦ σ x = Φ.analyticAffineChartι hΦ τ y) :
-    Ψ.analyticAffineChartι hΨ υ (f.analyticChartMap hΦ hΨ hσ x) =
-      Ψ.analyticAffineChartι hΨ υ' (f.analyticChartMap hΦ hΨ hτ y) := by
+    Ψ.analyticAffineChartι hΨ υ (f.analyticChartMap hσ x) =
+      Ψ.analyticAffineChartι hΨ υ' (f.analyticChartMap hτ y) := by
   -- Both points come from a point `z` of the chart of `σ ⊓ τ`, and both sides are the chart map
   -- of `z` into the chart of `υ`, seen in the target realization.
   obtain ⟨z, rfl, rfl⟩ := (Φ.analyticAffineChartι_eq_analyticAffineChartι_iff hΦ x y).mp h
   have hz : Set.MapsTo f.realMap ((σ ⊓ τ).1 : Set V) (υ.1 : Set V') :=
     hσ.mono_left (SetLike.coe_subset_coe.mpr inf_le_left)
   rw [Fan.analyticOverlapLeft_def, Fan.analyticOverlapRight_def]
-  have hzσ := ConcreteCategory.congr_hom ((f.map_comp_analyticChartMap_assoc hΦ hΨ
+  have hzσ := ConcreteCategory.congr_hom ((f.map_comp_analyticChartMap_assoc
     (homOfLE inf_le_left) hσ (Ψ.analyticAffineChartι hΨ υ)).trans
-      (f.analyticChartMap_comp_analyticAffineChartι hΦ hΨ _ hz)) z
-  have hzτ := ConcreteCategory.congr_hom ((f.map_comp_analyticChartMap_assoc hΦ hΨ
+      (f.analyticChartMap_comp_analyticAffineChartι hΨ _ hz)) z
+  have hzτ := ConcreteCategory.congr_hom ((f.map_comp_analyticChartMap_assoc
     (homOfLE inf_le_right) hτ (Ψ.analyticAffineChartι hΨ υ')).trans
-      (f.analyticChartMap_comp_analyticAffineChartι hΦ hΨ _ hz)) z
+      (f.analyticChartMap_comp_analyticAffineChartι hΨ _ hz)) z
   exact hzσ.trans hzτ.symm
 
 /-! ### The glued map -/
@@ -154,7 +158,7 @@ private theorem analyticAffineChartι_analyticChartMap_eq_of_eq {σ τ : Φ.cone
 morphism, glued from the chart maps into the charts of the least target cones. -/
 noncomputable def analyticMap : Φ.analyticRealization hΦ ⟶ Ψ.analyticRealization hΨ :=
   Limits.Multicoequalizer.desc (Φ.analyticGlueData hΦ).diagram (Ψ.analyticRealization hΨ)
-    (fun σ ↦ f.analyticChartMap hΦ hΨ (υ := ⟨f.leastCone σ.2, f.leastCone_mem σ.2⟩)
+    (fun σ ↦ f.analyticChartMap (υ := ⟨f.leastCone σ.2, f.leastCone_mem σ.2⟩)
       (f.mapsTo_leastCone σ.2) ≫
       Ψ.analyticAffineChartι hΨ ⟨f.leastCone σ.2, f.leastCone_mem σ.2⟩) (by
     rintro ⟨σ, τ⟩
@@ -176,18 +180,18 @@ noncomputable def analyticMap : Φ.analyticRealization hΦ ⟶ Ψ.analyticRealiz
 theorem analyticAffineChartι_comp_analyticMap {σ : Φ.cones} {υ : Ψ.cones}
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V')) :
     Φ.analyticAffineChartι hΦ σ ≫ f.analyticMap hΦ hΨ =
-      f.analyticChartMap hΦ hΨ h ≫ Ψ.analyticAffineChartι hΨ υ := by
+      f.analyticChartMap h ≫ Ψ.analyticAffineChartι hΨ υ := by
   rw [Fan.analyticAffineChartι_def, analyticMap]
   exact (Limits.Multicoequalizer.π_desc _ _ _ _ _).trans
-    (f.analyticChartMap_comp_analyticAffineChartι hΦ hΨ _ h)
+    (f.analyticChartMap_comp_analyticAffineChartι hΨ _ h)
 
 /-- On a point of the chart of a cone `σ`, the glued map is the chart map into the chart of any
 target cone `υ` into which the fan morphism carries `σ`. -/
 theorem analyticMap_analyticAffineChartι_of_mapsTo {σ : Φ.cones} {υ : Ψ.cones}
     (h : Set.MapsTo f.realMap (σ.1 : Set V) (υ.1 : Set V'))
-    (x : (Φ.analyticAffineChartDiagram hΦ).obj σ) :
+    (x : (Φ.analyticAffineChartDiagram).obj σ) :
     f.analyticMap hΦ hΨ (Φ.analyticAffineChartι hΦ σ x) =
-      Ψ.analyticAffineChartι hΨ υ (f.analyticChartMap hΦ hΨ h x) :=
+      Ψ.analyticAffineChartι hΨ υ (f.analyticChartMap h x) :=
   ConcreteCategory.congr_hom (f.analyticAffineChartι_comp_analyticMap hΦ hΨ h) x
 
 /-- On a point of the chart of a cone `σ`, the glued map is the chart map into the chart of the
@@ -195,10 +199,10 @@ least target cone `TauCeti.Toric.FanHom.leastCone`. This is the analytic counter
 `TauCeti.Toric.FanHom.affineToricChartι_comp_algebraicMap`. -/
 @[simp]
 theorem analyticMap_analyticAffineChartι (σ : Φ.cones)
-    (x : (Φ.analyticAffineChartDiagram hΦ).obj σ) :
+    (x : (Φ.analyticAffineChartDiagram).obj σ) :
     f.analyticMap hΦ hΨ (Φ.analyticAffineChartι hΦ σ x) =
       Ψ.analyticAffineChartι hΨ ⟨f.leastCone σ.2, f.leastCone_mem σ.2⟩
-        (f.analyticChartMap hΦ hΨ (υ := ⟨f.leastCone σ.2, f.leastCone_mem σ.2⟩)
+        (f.analyticChartMap (υ := ⟨f.leastCone σ.2, f.leastCone_mem σ.2⟩)
           (f.mapsTo_leastCone σ.2) x) :=
   f.analyticMap_analyticAffineChartι_of_mapsTo hΦ hΨ _ x
 
@@ -261,8 +265,58 @@ theorem analyticMap_subfanInclusion (S : Set (PointedCone ℝ V)) (hS : S ⊆ Φ
   rw [analyticChartMap_apply]
   refine (congrArg (AffineSemigroupComplexPoint.comap · _) ?_).trans
     ((congrFun AffineSemigroupComplexPoint.comap_id _).trans
-      (Φ.subfanAnalyticChartMap_apply hΦ S hS hface σ x).symm)
+      (Φ.subfanAnalyticChartMap_apply S hS hface σ x).symm)
   ext m n
   simp
 
 end TauCeti.Toric.FanHom
+
+/-! ### Functoriality of open-subfan maps -/
+
+namespace TauCeti.Toric.Fan
+
+universe u
+
+variable {N V : Type u} [AddCommGroup N] [AddCommGroup V] [Module ℝ V]
+  {i : N →+ V} (Φ : Fan i) (hΦ : Φ.IsRegular) (S : Set (PointedCone ℝ V)) (hS : S ⊆ Φ.cones)
+  (hface : ∀ ⦃σ τ⦄, σ ∈ S → τ.IsFaceOf σ → τ ∈ S)
+
+/-- The open-subfan map of a fan on all of its cones is the identity of its analytic
+realization. -/
+@[simp]
+theorem subfanAnalyticMap_self :
+    Φ.subfanAnalyticMap hΦ Φ.cones subset_rfl Φ.mem_of_isFaceOf =
+      𝟙 (Φ.analyticRealization hΦ) := by
+  rw [← FanHom.analyticMap_subfanInclusion, subfanInclusion_self]
+  exact FanHom.analyticMap_id hΦ
+
+/-- The open-subfan maps are functorial for nested open subfans: mapping the realization of a
+subfan `T` of the subfan `Φ.subfan S hS hface` into the realization of `Φ.subfan S hS hface`, and
+then into the realization of `Φ`, is the open-subfan map of `T` as a subfan of `Φ`. -/
+@[reassoc]
+theorem subfanAnalyticMap_comp (T : Set (PointedCone ℝ V))
+    (hT : T ⊆ (Φ.subfan S hS hface).cones) (hfaceT : ∀ ⦃σ τ⦄, σ ∈ T → τ.IsFaceOf σ → τ ∈ T) :
+    (Φ.subfan S hS hface).subfanAnalyticMap (hΦ.subfan S hS hface) T hT hfaceT ≫
+        Φ.subfanAnalyticMap hΦ S hS hface =
+      Φ.subfanAnalyticMap hΦ T ((hT.trans (Φ.subfan_cones S hS hface).subset).trans hS)
+        hfaceT := by
+  rw [← FanHom.analyticMap_subfanInclusion, ← FanHom.analyticMap_subfanInclusion,
+    ← FanHom.analyticMap_subfanInclusion, ← FanHom.analyticMap_comp,
+    subfanInclusion_comp_subfanInclusion]
+  -- The two sides differ only in the source fan, the subfan of a subfan on the left and the
+  -- subfan of `Φ` on the right, which agree by definition (`Fan.subfan_subfan`).
+  rfl
+
+/-- On points, the open-subfan maps are functorial for nested open subfans. -/
+@[simp]
+theorem subfanAnalyticMap_subfanAnalyticMap (T : Set (PointedCone ℝ V))
+    (hT : T ⊆ (Φ.subfan S hS hface).cones) (hfaceT : ∀ ⦃σ τ⦄, σ ∈ T → τ.IsFaceOf σ → τ ∈ T)
+    (x : ((Φ.subfan S hS hface).subfan T hT hfaceT).analyticRealization
+      ((hΦ.subfan S hS hface).subfan T hT hfaceT)) :
+    Φ.subfanAnalyticMap hΦ S hS hface
+        ((Φ.subfan S hS hface).subfanAnalyticMap (hΦ.subfan S hS hface) T hT hfaceT x) =
+      Φ.subfanAnalyticMap hΦ T ((hT.trans (Φ.subfan_cones S hS hface).subset).trans hS)
+        hfaceT x :=
+  ConcreteCategory.congr_hom (Φ.subfanAnalyticMap_comp hΦ S hS hface T hT hfaceT) x
+
+end TauCeti.Toric.Fan

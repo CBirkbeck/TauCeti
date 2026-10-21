@@ -23,8 +23,8 @@ origin and has derivative the inclusion of the kernel. For a surjective Fredholm
 `exists_sectionZeroChartModel` gives a chart modelled on `Fin n → 𝕜`, where `n` is the index,
 and identifies its tangent image with the kernel of the intrinsic section linearization.
 
-These are local parametrizations at a regular zero. No global smooth atlas or transversality
-theorem for sections is asserted here.
+The atlas on regular zero sets over Banach manifolds is constructed in `Section.Chart`;
+smooth compatibility is proved in `Section.Manifold`.
 
 ## References
 
@@ -50,7 +50,11 @@ variable {𝕜 X B F : Type*} {E : B → Type*}
   [TopologicalSpace (TotalSpace F E)]
   [∀ a, AddCommGroup (E a)] [∀ a, Module 𝕜 (E a)]
   [FiberBundle F E] [VectorBundle 𝕜 F E]
-  {b : X → B} {s : ∀ y, E (b y)} {x : X}
+  {b : X → B} {s : ∀ y, E (b y)}
+
+section Local
+
+variable {x : X}
   {e : Trivialization F (π F E)} [MemTrivializationAtlas e]
   {T : X →L[𝕜] F}
 
@@ -235,12 +239,39 @@ theorem hasStrictFDerivAt_coe_sectionZeroChart_symm
   exact (hasStrictFDerivAt_coe_levelSetChart_symm hf hT hker hcoord).congr_of_eventuallyEq
     (coe_sectionZeroChart_symm_eventuallyEq hb he hf hT hker hz hcoord).symm
 
+/-- Away from the origin, the inverse section-zero chart is smooth wherever its image lies
+in the neighbourhood on which the implicit coordinate derivative remains invertible. -/
+theorem contDiffAt_coe_sectionZeroChart_symm_of_mem {m : ℕ∞ω}
+    (hf : HasStrictFDerivAt (fun y ↦ (e ⟨b y, s y⟩).2) T x)
+    (hT : T.range = ⊤) (hker : T.ker.ClosedComplemented) (hz : s x = 0)
+    {k : ↥T.ker} (hk : k ∈ (sectionZeroChart hf hT hker hz).target)
+    (hmem : ((sectionZeroChart hf hT hker hz).symm k : X) ∈
+      hf.implicitCoordSource hT hker)
+    {A : X →L[𝕜] F}
+    (hA : HasFDerivAt (fun y ↦ (e ⟨b y, s y⟩).2) A
+      ((sectionZeroChart hf hT hker hz).symm k : X))
+    (hs : ContDiffAt 𝕜 m (fun y ↦ (e ⟨b y, s y⟩).2)
+      ((sectionZeroChart hf hT hker hz).symm k : X)) :
+    ContDiffAt 𝕜 m (fun j ↦ ((sectionZeroChart hf hT hker hz).symm j : X)) k := by
+  -- Unlike the level-set theorem, this needs no base-set hypothesis at the chart centre:
+  -- the extended fiber coordinate need not vanish there, even though the section does.
+  have ht := hk
+  rw [sectionZeroChart_target] at ht
+  have hval := coe_sectionZeroChart_symm_apply hf hT hker hz hk
+  have hinverse := hf.contDiffAt_implicitToOpenPartialHomeomorphOfComplemented_symm_of_mem
+    hT hker ht.1 (hval ▸ hmem) (hval ▸ hA) (hval ▸ hs)
+  have hslice : ContDiffAt 𝕜 m
+      (fun j : T.ker ↦ (hf.implicitToOpenPartialHomeomorphOfComplemented _ _ hT hker).symm
+        (0, j)) k := by
+    simpa only [Function.comp_def] using
+      hinverse.comp k (contDiffAt_const.prodMk contDiffAt_id)
+  apply hslice.congr_of_eventuallyEq
+  filter_upwards [(sectionZeroChart hf hT hker hz).open_target.mem_nhds hk] with j hj
+  exact coe_sectionZeroChart_symm_apply hf hT hker hz hj
+
 section Fredholm
 
 variable [CompleteSpace 𝕜]
-  {EB HB : Type*} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
-  [TopologicalSpace HB] {I : ModelWithCorners 𝕜 EB HB} [ChartedSpace HB B]
-  [ContMDiffVectorBundle 1 F E I]
 
 /-- A regular zero of a Fredholm section has a local parametrization of dimension the index.
 The parametrization is as smooth at its origin as the section's coordinates, and its derivative
@@ -249,10 +280,10 @@ is injective with image exactly the kernel of the intrinsic section linearizatio
 The base map may in particular be a manifold chart inverse, so the statement also applies to
 local parameter expressions of sections over Banach manifolds. -/
 theorem exists_sectionZeroChartModel {m : ℕ∞ω} {n : ℕ}
-    (hb : MDifferentiableAt 𝓘(𝕜, X) I b x) (he : b x ∈ e.baseSet)
+    (hb : ContinuousAt b x) (he : b x ∈ e.baseSet)
     (hf : HasStrictFDerivAt (fun y ↦ (e ⟨b y, s y⟩).2) T x)
     (hFred : ContinuousLinearMap.IsFredholm T)
-    (hsurj : Function.Surjective (sectionLinearization (𝕜 := 𝕜) (F := F) b s x))
+    (hsurj : Function.Surjective (sectionLinearization (F := F) 𝓘(𝕜, X) b s x))
     (hindex : ContinuousLinearMap.index T = n) (hz : s x = 0)
     (hs : ContDiffAt 𝕜 m (fun y ↦ (e ⟨b y, s y⟩).2) x) :
     ∃ χ : OpenPartialHomeomorph ↥{y | s y = 0} (Fin n → 𝕜),
@@ -260,10 +291,12 @@ theorem exists_sectionZeroChartModel {m : ℕ∞ω} {n : ℕ}
       ContDiffAt 𝕜 m (fun k ↦ (χ.symm k : X)) 0 ∧
       Function.Injective (fderiv 𝕜 (fun k ↦ (χ.symm k : X)) 0) ∧
       (fderiv 𝕜 (fun k ↦ (χ.symm k : X)) 0).range =
-        (sectionLinearization (𝕜 := 𝕜) (F := F) b s x).ker := by
-  have hsurjT := (surjective_sectionLinearization_iff hb he
-    hf.hasFDerivAt.differentiableAt hz).1 hsurj
-  rw [hf.hasFDerivAt.fderiv] at hsurjT
+        (sectionLinearization (F := F) 𝓘(𝕜, X) b s x).ker := by
+  have hsurjT : Function.Surjective T := by
+    have h := (surjective_sectionLinearization_iff hb he
+      hf.hasFDerivAt.differentiableAt.mdifferentiableAt hz).1 hsurj
+    rw [mvfderiv_eq_fderiv, hf.hasFDerivAt.fderiv, ContinuousLinearMap.coe_comp] at h
+    exact h.of_comp
   have hT : T.range = ⊤ := LinearMap.range_eq_top.2 hsurjT
   have hn : Module.finrank 𝕜 T.ker = n :=
     (ContinuousLinearMap.finrank_ker_eq_iff_index_eq T hsurjT).2 hindex
@@ -278,7 +311,7 @@ theorem exists_sectionZeroChartModel {m : ℕ∞ω} {n : ℕ}
       (T.ker.subtypeL.comp (K.symm : (Fin n → 𝕜) →L[𝕜] T.ker)) 0 := by
     have hd : HasFDerivAt (fun k ↦ (ψ.symm k : X)) T.ker.subtypeL (K.symm 0) := by
       simpa only [map_zero] using (hasStrictFDerivAt_coe_sectionZeroChart_symm
-        hb.continuousAt he hf hT hFred.closedComplemented_ker hz).hasFDerivAt
+        hb he hf hT hFred.closedComplemented_ker hz).hasFDerivAt
     have hc := hd.comp 0 (K.symm.hasFDerivAt)
     simpa only [map_zero, Function.comp_def, ← hχ] using hc
   have hinj : Function.Injective (T.ker.subtypeL.comp
@@ -286,27 +319,21 @@ theorem exists_sectionZeroChartModel {m : ℕ∞ω} {n : ℕ}
     Subtype.val_injective.comp K.symm.injective
   refine ⟨χ, ?_, ?_, ?_, ?_, ?_⟩
   · rw [OpenPartialHomeomorph.transHomeomorph_source]
-    exact mem_sectionZeroChart_source hb.continuousAt he hf hT hFred.closedComplemented_ker hz
+    exact mem_sectionZeroChart_source hb he hf hT hFred.closedComplemented_ker hz
   · rw [OpenPartialHomeomorph.transHomeomorph_apply, Function.comp_apply,
       ContinuousLinearEquiv.coe_toHomeomorph, sectionZeroChart_apply_self]
     exact map_zero _
   · have hψ : ContDiffAt 𝕜 m (fun k ↦ (ψ.symm k : X)) (K.symm 0) := by
       simpa only [map_zero] using contDiffAt_coe_sectionZeroChart_symm
-        hb.continuousAt he hf hT hFred.closedComplemented_ker hz hs
+        hb he hf hT hFred.closedComplemented_ker hz hs
     have hc := hψ.comp 0 K.symm.contDiff.contDiffAt
     simpa only [map_zero, Function.comp_def, ← hχ] using hc
   · rwa [hderiv.fderiv]
-  · rw [hderiv.fderiv, sectionLinearization_eq_symmL_comp hb he
-      hf.hasFDerivAt.differentiableAt hz, hf.hasFDerivAt.fderiv,
-      ← e.symm_continuousLinearEquivAt_eq' he]
-    simp only [ContinuousLinearMap.toLinearMap_comp, Submodule.toLinearMap_subtypeL,
-      ContinuousLinearEquiv.toLinearMap_toContinuousLinearMap]
-    rw [LinearMap.range_comp_of_range_eq_top T.ker.subtype
-      (f := K.symm.toLinearEquiv.toLinearMap) K.symm.toLinearEquiv.range,
-      LinearMap.ker_comp_of_ker_eq_bot T.toLinearMap
-        (LinearMap.ker_eq_bot.2 (e.continuousLinearEquivAt 𝕜 (b x) he).symm.injective)]
-    exact Submodule.range_subtype _
+  · rw [hderiv.fderiv]
+    exact range_subtypeL_comp_eq_ker_sectionLinearization hb he hf.hasFDerivAt.hasMFDerivAt hz K
 
 end Fredholm
+
+end Local
 
 end TauCeti

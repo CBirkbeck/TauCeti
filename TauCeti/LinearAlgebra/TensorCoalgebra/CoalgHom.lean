@@ -113,7 +113,7 @@ private theorem coalgHom_of_tprod (f : ReducedTensorWords R M →ₗ[R] N) {n : 
   rcases Nat.eq_zero_or_pos d.1 with hd | hd
   · rw [dite_eq_right (by omega), hd, subword_length_zero, map_zero, map_zero, LinearMap.zero_apply,
       LinearMap.zero_apply]
-  · have hdn := d.isLt
+  · have _ := d.isLt
     rw [dite_eq_left hd, subword_eq_of_tprod R x hd (by omega),
       subword_eq_of_tprod R x (a := d.1) (b := n - d.1) (by omega) (by omega), toModule_of]
     simp only [LinearMap.coe_comp, Function.comp_apply, TensorPower.splitAt_tprod,
@@ -320,6 +320,14 @@ and zero in every higher arity. -/
 theorem coalgHom_comp_letter (g : M →ₗ[R] N) :
     coalgHom R (g ∘ₗ letter R M) = ReducedTensorWords.map (R := R) g := by
   rw [(isCoalgHom_map g).eq_coalgHom, letter_comp_map]
+
+/-- Applying a linear map `g` to every letter of the values of the coalgebra morphism with Taylor
+components `f` gives the coalgebra morphism with Taylor components `g ∘ f`. -/
+theorem map_comp_coalgHom {P : Type uP} [AddCommMonoid P] [Module R P] (g : N →ₗ[R] P)
+    (f : ReducedTensorWords R M →ₗ[R] N) :
+    ReducedTensorWords.map (R := R) g ∘ₗ coalgHom R f = coalgHom R (g ∘ₗ f) := by
+  rw [((isCoalgHom_map g).comp (isCoalgHom_coalgHom f)).eq_coalgHom, ← LinearMap.comp_assoc,
+    letter_comp_map, LinearMap.comp_assoc, letter_comp_coalgHom]
 
 end CoalgHom
 

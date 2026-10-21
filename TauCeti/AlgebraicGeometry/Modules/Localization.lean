@@ -33,6 +33,8 @@ this module extends that affine result to arbitrary schemes.
   `Γ(M, U) ⟶ Γ(M, X.basicOpen f)` as a `Γ(X, U)`-linear map;
 * `AlgebraicGeometry.Scheme.Modules.isLocalizedModule_basicOpenRestrict`: for quasi-coherent
   `M` and affine `U`, this restriction map is the localization at the powers of `f`.
+* `AlgebraicGeometry.Scheme.Modules.exists_pow_smul_eq_map`: for quasi-coherent `M` and affine
+  `U`, a section over `X.basicOpen f` times a power of `f` extends to `U`.
 
 ## References
 
@@ -81,6 +83,48 @@ lemma _root_.AlgebraicGeometry.Scheme.Modules.basicOpenRestrict_apply (f : Γ(X,
     M.basicOpenRestrict f x = M.presheaf.map (homOfLE (X.basicOpen_le f)).op x :=
   (rfl)
 
+/-- For an affine open `U`, the sections of an `𝒪_X`-module `M` over `U` are the global sections
+of its restriction to the affine chart `Spec Γ(X, U) ⟶ X`, as `Γ(X, U)`-modules. Here
+`Γ(X, U)` acts on the global sections of a module on `Spec Γ(X, U)` as their ring of
+global functions. -/
+def _root_.AlgebraicGeometry.Scheme.Modules.fromSpecSectionsEquiv (hU : IsAffineOpen U) :
+    Γ(M, U) ≃ₗ[Γ(X, U)] Γ(M.restrict hU.fromSpec, ⊤) :=
+  have h : hU.fromSpec ''ᵁ ⊤ = U := by
+    rw [Scheme.Hom.image_top_eq_opensRange, hU.opensRange_fromSpec]
+  have : IsIso (homOfLE h.le) := homOfLE_isIso_of_eq _ h
+  LinearEquiv.ofBijective
+    { toFun := M.presheaf.map (homOfLE h.le).op ≫ (M.restrictAppIso hU.fromSpec ⊤).inv
+      map_add' := map_add _
+      -- Linearity is `presheaf_map_fromSpec_appIso_hom` at `⊤`.
+      map_smul' r x := by
+        rw [RingHom.id_apply, Scheme.Modules.smul_Spec_def, ConcreteCategory.comp_apply,
+          M.map_smul, Scheme.Modules.smul_restrictAppIso_inv_apply,
+          ← ConcreteCategory.comp_apply, hU.presheaf_map_fromSpec_appIso_hom ⊤]
+        rfl }
+    (ConcreteCategory.bijective_of_isIso
+      (M.presheaf.map (homOfLE h.le).op ≫ (M.restrictAppIso hU.fromSpec ⊤).inv))
+
+/-- The identification `Γ(M, U) ≃ Γ(M.restrict hU.fromSpec, ⊤)` is restriction of sections to
+the image of the affine chart, which is `U`. -/
+lemma _root_.AlgebraicGeometry.Scheme.Modules.fromSpecSectionsEquiv_apply (hU : IsAffineOpen U)
+    (x : Γ(M, U)) :
+    M.fromSpecSectionsEquiv hU x = (M.restrictAppIso hU.fromSpec ⊤).inv
+      (M.presheaf.map (homOfLE (by
+        rw [Scheme.Hom.image_top_eq_opensRange, hU.opensRange_fromSpec])).op x) :=
+  (rfl)
+
+/-- The affine-chart identification of sections commutes with maps of module sheaves. -/
+lemma _root_.AlgebraicGeometry.Scheme.Modules.Hom.fromSpecSectionsEquiv_naturality
+    {N : X.Modules} (f : M ⟶ N) (hU : IsAffineOpen U) (x : Γ(M, U)) :
+    ((Scheme.Modules.restrictFunctor hU.fromSpec).map f).app ⊤
+        (M.fromSpecSectionsEquiv hU x) =
+      N.fromSpecSectionsEquiv hU (f.app U x) := by
+  rw [Scheme.Modules.fromSpecSectionsEquiv_apply,
+    Scheme.Modules.fromSpecSectionsEquiv_apply]
+  -- The restriction functor and its section isomorphism only change scalar structures.
+  -- Their underlying maps are the components of `f` on the image open.
+  exact PresheafOfModules.naturality_apply f.val _ x
+
 open Scheme.Modules in
 /-- The sections of a quasi-coherent `𝒪_X`-module over the basic open `X.basicOpen f` of an
 affine open `U` are the localization of its sections over `U` at the powers of `f`. -/
@@ -95,16 +139,8 @@ theorem _root_.AlgebraicGeometry.Scheme.Modules.isLocalizedModule_basicOpenRestr
   have h₁ : hU.fromSpec ''ᵁ ⊤ = U := by
     rw [Scheme.Hom.image_top_eq_opensRange, hU.opensRange_fromSpec]
   have h₂ : hU.fromSpec ''ᵁ D = X.basicOpen f := hU.fromSpec_image_basicOpen f
-  -- `e₁` identifies `Γ(M, U)` with `Γ(N, ⊤)`; its linearity is
-  -- `presheaf_map_fromSpec_appIso_hom` at `⊤`.
-  let e₁ : Γ(M, U) →ₗ[Γ(X, U)] Γ(N, ⊤) :=
-    { toFun := M.presheaf.map (homOfLE h₁.le).op ≫ (M.restrictAppIso hU.fromSpec ⊤).inv
-      map_add' := map_add _
-      map_smul' r x := by
-        rw [RingHom.id_apply, smul_Spec_def, ConcreteCategory.comp_apply, M.map_smul,
-          smul_restrictAppIso_inv_apply, ← ConcreteCategory.comp_apply,
-          hU.presheaf_map_fromSpec_appIso_hom ⊤]
-        rfl }
+  -- `e₁` identifies `Γ(M, U)` with `Γ(N, ⊤)`.
+  let e₁ : Γ(M, U) →ₗ[Γ(X, U)] Γ(N, ⊤) := (M.fromSpecSectionsEquiv hU).toLinearMap
   -- `e₂` identifies `Γ(N, D(f))` with `Γ(M, X.basicOpen f)`; its linearity is
   -- `presheaf_map_fromSpec_appIso_hom` at `D(f)`, followed by restriction to `X.basicOpen f`.
   let e₂ : Γ(N, D) →ₗ[Γ(X, U)] Γ(M, X.basicOpen f) :=
@@ -140,20 +176,35 @@ theorem _root_.AlgebraicGeometry.Scheme.Modules.isLocalizedModule_basicOpenRestr
         ← Functor.map_comp]
       rfl
     exact LinearMap.ext fun x ↦ ConcreteCategory.congr_hom h x
-  have h₁iso : IsIso (M.presheaf.map (homOfLE h₁.le).op) := by
-    have : IsIso (homOfLE h₁.le) := homOfLE_isIso_of_eq _ h₁
-    infer_instance
   have h₂iso : IsIso (M.presheaf.map (homOfLE h₂.ge).op) := by
     have : IsIso (homOfLE h₂.ge) := homOfLE_isIso_of_eq _ h₂.symm
     infer_instance
-  have he₁ : Function.Bijective e₁ := ConcreteCategory.bijective_of_isIso
-    (M.presheaf.map (homOfLE h₁.le).op ≫ (M.restrictAppIso hU.fromSpec ⊤).inv)
+  have he₁ : Function.Bijective e₁ := (M.fromSpecSectionsEquiv hU).bijective
   have he₂ : Function.Bijective e₂ := ConcreteCategory.bijective_of_isIso
     ((M.restrictAppIso hU.fromSpec D).hom ≫ M.presheaf.map (homOfLE h₂.ge).op)
   unfold IsLocalizedModule.Away at hφ ⊢
   rw [he, IsLocalizedModule.comp_iff_of_bijective_left,
     IsLocalizedModule.comp_iff_of_bijective_right]
   exacts [hφ, he₁, he₂]
+
+open Scheme.Modules in
+/-- **Sections over a basic open extend after multiplication by a power of the function.** For a
+quasi-coherent `𝒪_X`-module `M`, an affine open `U` and `f ∈ Γ(X, U)`, every section `x` of `M`
+over the basic open `V = X.basicOpen f` has some `f ^ n • x` equal to the restriction of a
+section over `U`. The open `V` is arbitrary up to the equality `X.basicOpen f = V`. -/
+theorem _root_.AlgebraicGeometry.Scheme.Modules.exists_pow_smul_eq_map [M.IsQuasicoherent]
+    (hU : IsAffineOpen U) (f : Γ(X, U)) {V : X.Opens} (hV : X.basicOpen f = V) (hVU : V ≤ U)
+    (x : Γ(M, V)) : ∃ (n : ℕ) (y : Γ(M, U)),
+      X.presheaf.map (homOfLE hVU).op f ^ n • x = M.presheaf.map (homOfLE hVU).op y := by
+  subst hV
+  have := M.isLocalizedModule_basicOpenRestrict hU f
+  obtain ⟨⟨y, _, n, rfl⟩, hy⟩ :=
+    IsLocalizedModule.surj (Submonoid.powers f) (M.basicOpenRestrict f) x
+  -- `f ^ n` acts on sections over `X.basicOpen f` through its restriction
+  simp only [Submonoid.smul_def] at hy
+  rw [← IsScalarTower.algebraMap_smul Γ(X, X.basicOpen f), map_pow,
+    basicOpenRestrict_apply] at hy
+  exact ⟨n, y, hy⟩
 
 end
 

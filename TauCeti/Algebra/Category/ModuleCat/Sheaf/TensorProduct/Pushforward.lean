@@ -7,11 +7,12 @@ module
 
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
 public import TauCeti.Algebra.Category.ModuleCat.Presheaf.ChangeOfRings
+public import TauCeti.Algebra.Category.ModuleCat.Sheaf.Pushforward.Basic
 public import TauCeti.Algebra.Category.ModuleCat.Sheaf.TensorProduct.Monoidal
 public import TauCeti.CategoryTheory.Monoidal.Functor
 
 /-!
-# Pushforward of sheaves of modules is lax monoidal
+# Pushforward of sheaves of modules is lax symmetric monoidal
 
 Let `F : C ⥤ D` be a continuous functor between small sites, `R` and `S` sheaves of commutative
 rings on `D` and `C`, and `φ : S ⟶ F_* R` a morphism of the underlying sheaves of rings. This file
@@ -20,7 +21,9 @@ monoidal structure, whose tensor map `φ_* M ⊗ φ_* N ⟶ φ_* (M ⊗ N)` is i
 map `m ⊗ n ↦ m ⊗ n`, and whose unit map is Mathlib's `SheafOfModules.unitToPushforwardObjUnit φ`.
 Consequently the pullback functor, the left adjoint of the pushforward, is oplax monoidal: it
 carries comparison maps `φ^* (M ⊗ N) ⟶ φ^* M ⊗ φ^* N` and `φ^* S ⟶ R`, the latter being
-Mathlib's `SheafOfModules.pullbackObjUnitToUnit φ`.
+Mathlib's `SheafOfModules.pullbackObjUnitToUnit φ`. The pushforward tensor map respects symmetry
+(`SheafOfModules.pushforwardLaxBraided`), and so does the pullback tensor comparison
+(`SheafOfModules.pullback_map_braiding_hom_comp_δ`), without requiring its invertibility.
 
 The construction proceeds in three steps.
 
@@ -48,14 +51,18 @@ maps of the pullback along a composite are the composites of the comparison maps
 
 ## Main declarations
 
-* `SheafOfModules.presheafPushforward`: the pushforward of presheaves of modules underlying the
-  pushforward of sheaves of modules, with its lax monoidal structure;
-* `SheafOfModules.pushforwardLaxMonoidal`, with `SheafOfModules.pushforward_ε` and
-  `SheafOfModules.pushforward_μ`;
+* `SheafOfModules.presheafPushforwardLaxMonoidal` and
+  `SheafOfModules.presheafPushforwardLaxBraided`: the lax symmetric monoidal structure on the
+  pushforward of presheaves of modules underlying the pushforward of sheaves of modules
+  (`SheafOfModules.presheafPushforward`);
+* `SheafOfModules.pushforwardLaxMonoidal` and `SheafOfModules.pushforwardLaxBraided`, with
+  `SheafOfModules.pushforward_ε` and `SheafOfModules.pushforward_μ`;
 * `SheafOfModules.pullbackOplaxMonoidal`, with `SheafOfModules.pullback_η` and
   `SheafOfModules.pullback_δ`;
 * `SheafOfModules.forget_μ_comp_map_pushforward_μ`: the tensor map of the pushforward on underlying
   presheaves;
+* `SheafOfModules.pushforward_μ_app_tmul`: on sections, the tensor map of the pushforward sends
+  the class of `m ⊗ n` to the class of `m ⊗ n`;
 * `SheafOfModules.isMonoidal_pushforwardComp_hom`: composing pushforwards is compatible with their
   lax monoidal structures;
 * `SheafOfModules.pullback_comp_η` and `SheafOfModules.pullback_comp_δ`: composing pullbacks is
@@ -87,32 +94,26 @@ variable {D : Type u} [SmallCategory D] {K : GrothendieckTopology D}
   {F : C ⥤ D} [F.IsContinuous J K] {S : Sheaf J CommRingCat.{u}} {R : Sheaf K CommRingCat.{u}}
   (φ : ringCatSheaf S ⟶ (F.sheafPushforwardContinuous RingCat.{u} J K).obj (ringCatSheaf R))
 
-/-- The morphism of presheaves of commutative rings underlying `φ`. -/
-private def commRingCatHom : S.obj ⟶ F.op ⋙ R.obj where
-  app U := CommRingCat.ofHom (φ.hom.app U).hom
-  naturality _ _ f := by
-    ext x
-    exact congr($(φ.hom.naturality f).hom x)
-
-/-- The pushforward of presheaves of modules underlying `SheafOfModules.pushforward φ`. It is
-Mathlib's `PresheafOfModules.pushforward φ.hom`, with source and target written as presheaves of
-modules over the presheaves of rings `(ringCatSheaf R).obj` and `(ringCatSheaf S).obj`, so that it
-composes with `SheafOfModules.forget` and with sheafification. -/
-@[expose]
-def presheafPushforward :
-    PresheafOfModules.{u} (ringCatSheaf R).obj ⥤ PresheafOfModules.{u} (ringCatSheaf S).obj :=
-  PresheafOfModules.pushforward φ.hom
-
 /-- The pushforward of presheaves of modules is lax monoidal, sectionwise
 (`TauCeti.PresheafOfModules.pushforwardLaxMonoidal`). It is characterized by
 `presheafPushforward_ε_app_apply` and `presheafPushforward_μ_app_tmul`. -/
--- A definition rather than an `instance`, whose body would be exported, so that its body may use
--- the private `commRingCatHom`.
+-- A definition rather than an `instance`, whose body would be exported, so that its body, which
+-- uses `commRingCatHom`, stays unexported.
 @[instance_reducible]
 def presheafPushforwardLaxMonoidal : (presheafPushforward φ).LaxMonoidal :=
   PresheafOfModules.pushforwardLaxMonoidal F (commRingCatHom φ)
 
 attribute [instance] presheafPushforwardLaxMonoidal
+
+/-- The sectionwise tensor map of pushforward of presheaves of modules respects symmetry. -/
+-- As for `presheafPushforwardLaxMonoidal`, keep the body using `commRingCatHom` unexported.
+@[instance_reducible]
+def presheafPushforwardLaxBraided : (presheafPushforward φ).LaxBraided where
+  toLaxMonoidal := presheafPushforwardLaxMonoidal φ
+  braided M N :=
+    (PresheafOfModules.pushforwardLaxBraided F (commRingCatHom φ)).braided M N
+
+attribute [instance] presheafPushforwardLaxBraided
 
 /-- On sections over `U`, the unit map of the pushforward of presheaves of modules is `φ`. -/
 @[simp]
@@ -129,12 +130,15 @@ lemma presheafPushforward_μ_app_tmul (M N : PresheafOfModulesOfCommRing.{u} R.o
       m ⊗ₜ[R.obj.obj (F.op.obj U)] n :=
   PresheafOfModules.pushforward_μ_app_tmul F (commRingCatHom φ) M N U m n
 
-/-- On underlying presheaves of modules, the pushforward of a morphism of sheaves of modules is
-the pushforward of the underlying morphism of presheaves. -/
-lemma forget_map_pushforward_map {M N : SheafOfModules.{u} (ringCatSheaf R)} (f : M ⟶ N) :
-    (_root_.SheafOfModules.forget (ringCatSheaf S)).map
-        ((_root_.SheafOfModules.pushforward φ).map f) =
-      (presheafPushforward φ).map ((_root_.SheafOfModules.forget (ringCatSheaf R)).map f) :=
+/-- The braiding on the underlying presheaves of pushforward sheaves is the braiding on the
+pushforwards of their underlying presheaves. -/
+@[simp]
+private lemma braiding_hom_forget_pushforward_obj (M N : SheafOfModules.{u} (ringCatSheaf R)) :
+    (β_ ((_root_.SheafOfModules.forget (ringCatSheaf S)).obj
+        ((_root_.SheafOfModules.pushforward φ).obj M))
+      ((_root_.SheafOfModules.forget (ringCatSheaf S)).obj
+        ((_root_.SheafOfModules.pushforward φ).obj N))).hom =
+      (β_ ((presheafPushforward φ).obj M.val) ((presheafPushforward φ).obj N.val)).hom :=
   (rfl)
 
 section Comp
@@ -283,6 +287,53 @@ lemma forget_μ_comp_map_pushforward_μ (M N : SheafOfModules.{u} (ringCatSheaf 
   exact (congrArg _ ((sheafificationForgetAdjunction S).homEquiv_counit _ _ _).symm).trans
     (Equiv.apply_symm_apply _ _)
 
+/-- On pure tensors of sections, the tensor map of sheaf pushforward is the inclusion of
+the corresponding pure tensor on the source site into the sheaf tensor product. -/
+lemma pushforward_μ_app_tmul (M N : SheafOfModules.{u} (ringCatSheaf R)) (U : Cᵒᵖ)
+    (m : M.val.obj (F.op.obj U)) (n : N.val.obj (F.op.obj U)) :
+    (Functor.LaxMonoidal.μ (_root_.SheafOfModules.pushforward φ) M N).val.app U
+      ((Functor.LaxMonoidal.μ (_root_.SheafOfModules.forget (ringCatSheaf S))
+        ((_root_.SheafOfModules.pushforward φ).obj M)
+        ((_root_.SheafOfModules.pushforward φ).obj N)).app U (m ⊗ₜ[S.obj.obj U] n)) =
+    (Functor.LaxMonoidal.μ (_root_.SheafOfModules.forget (ringCatSheaf R)) M N).app
+      (F.op.obj U) (m ⊗ₜ[R.obj.obj (F.op.obj U)] n) := by
+  have h := congrArg (fun p ↦ (p.app U).hom (m ⊗ₜ[S.obj.obj U] n))
+    (forget_μ_comp_map_pushforward_μ φ M N)
+  -- Evaluate the presheaf composites as functions; their restriction-of-scalars wrappers
+  -- prevent rewriting the bundled module compositions directly.
+  change (Functor.LaxMonoidal.μ (_root_.SheafOfModules.pushforward φ) M N).val.app U
+      ((Functor.LaxMonoidal.μ (_root_.SheafOfModules.forget (ringCatSheaf S))
+        ((_root_.SheafOfModules.pushforward φ).obj M)
+        ((_root_.SheafOfModules.pushforward φ).obj N)).app U (m ⊗ₜ[S.obj.obj U] n)) =
+    (Functor.LaxMonoidal.μ (_root_.SheafOfModules.forget (ringCatSheaf R)) M N).app
+      (F.op.obj U)
+      ((Functor.LaxMonoidal.μ (presheafPushforward φ) M.val N.val).app U
+        (m ⊗ₜ[S.obj.obj U] n)) at h
+  exact h.trans (congrArg
+    ((Functor.LaxMonoidal.μ (_root_.SheafOfModules.forget (ringCatSheaf R)) M N).app
+      (F.op.obj U)) (presheafPushforward_μ_app_tmul φ M.val N.val U m n))
+
+/-- Pushforward of sheaves of modules respects symmetry: its lax tensor map commutes with
+interchanging the factors. -/
+instance pushforwardLaxBraided : (_root_.SheafOfModules.pushforward φ).LaxBraided where
+  toLaxMonoidal := pushforwardLaxMonoidal φ
+  braided M N := by
+    apply tensor_hom_ext
+    simp only [Functor.map_comp]
+    rw [forget_μ_comp_map_pushforward_μ_assoc]
+    -- The sectionwise characterization writes the objects as `M.val` rather than
+    -- `(forget _).obj M`; `erw` unfolds this wrapper when applying the braiding laws.
+    erw [Functor.LaxBraided.braided_assoc]
+    rw [forget_μ_comp_map_pushforward_μ, forget_map_pushforward_map]
+    erw [Category.assoc, ← Functor.map_comp]
+    erw [Functor.LaxBraided.braided]
+    erw [Functor.map_comp, Functor.LaxBraided.braided_assoc]
+    exact congrArg
+      (· ≫ Functor.LaxMonoidal.μ (presheafPushforward φ) N.val M.val ≫
+        (presheafPushforward φ).map
+          (Functor.LaxMonoidal.μ (_root_.SheafOfModules.forget (ringCatSheaf R)) N M))
+      (braiding_hom_forget_pushforward_obj φ M N).symm
+
 section Comp
 
 variable {E : Type u} [SmallCategory E] {L : GrothendieckTopology E}
@@ -368,6 +419,17 @@ lemma pullback_δ (M N : SheafOfModules.{u} (ringCatSheaf S)) :
             (_root_.SheafOfModules.pullbackPushforwardAdjunction φ).unit.app N) ≫
           Functor.LaxMonoidal.μ (_root_.SheafOfModules.pushforward φ) _ _) :=
   Adjunction.leftAdjointOplaxMonoidal_δ _ _ _
+
+/-- The canonical tensor comparison of pullback commutes with interchanging the factors.
+This statement does not require that the comparison be invertible. -/
+@[reassoc]
+lemma pullback_map_braiding_hom_comp_δ (M N : SheafOfModules.{u} (ringCatSheaf S)) :
+    (_root_.SheafOfModules.pullback φ).map (β_ M N).hom ≫
+        Functor.OplaxMonoidal.δ (_root_.SheafOfModules.pullback φ) N M =
+      Functor.OplaxMonoidal.δ (_root_.SheafOfModules.pullback φ) M N ≫
+        (β_ ((_root_.SheafOfModules.pullback φ).obj M)
+          ((_root_.SheafOfModules.pullback φ).obj N)).hom :=
+  (_root_.SheafOfModules.pullbackPushforwardAdjunction φ).map_braiding_hom_comp_δ M N
 
 section Comp
 

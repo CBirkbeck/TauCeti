@@ -6,17 +6,16 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Algebra.Category.ModuleCat.FiniteProjective.Dualizable
+public import TauCeti.AlgebraicGeometry.Modules.Quasicoherent.Basic
 public import TauCeti.AlgebraicGeometry.Modules.Tilde.Basic
 public import TauCeti.AlgebraicGeometry.Modules.Tilde.Monoidal
-public import TauCeti.AlgebraicGeometry.VectorBundle.Dual
-public import TauCeti.CategoryTheory.Monoidal.Rigid.Functor
 
 /-!
 # Dualizable quasicoherent sheaves on an affine scheme
 
 A quasicoherent sheaf `E` on `Spec R` is dualizable in the symmetric monoidal category
 `QuasicoherentSheaf (Spec R)` if and only if its module of global sections is finitely generated
-and projective, if and only if `E` is finite locally free.
+and projective.
 
 Since `M ↦ M~` is a fully faithful monoidal functor whose essential image consists of the
 quasicoherent sheaves, exact pairings between quasicoherent sheaves on `Spec R` are the images of
@@ -31,9 +30,7 @@ dualizable
 
 * `TauCeti.AlgebraicGeometry.QuasicoherentSheaf.nonempty_hasLeftDual_iff_finite_projective`:
   a quasicoherent sheaf on `Spec R` is dualizable if and only if its global sections form a
-  finite projective `R`-module;
-* `TauCeti.AlgebraicGeometry.QuasicoherentSheaf.nonempty_hasLeftDual_iff_isFiniteLocallyFree`:
-  a quasicoherent sheaf on `Spec R` is dualizable if and only if it is finite locally free.
+  finite projective `R`-module.
 -/
 
 public section
@@ -95,16 +92,6 @@ theorem nonempty_hasLeftDual_iff_finite_projective (E : QuasicoherentSheaf (Spec
       exactPairingCongrRight (Y' := (tildeEquiv (R := R)).functor.obj M)
         (tildeEquiv.counitIso.app E).symm
     exact ⟨⟨(tildeEquiv (R := R)).functor.obj (ᘁM)⟩⟩
-
-/-- A quasicoherent sheaf on `Spec R` is dualizable in `QuasicoherentSheaf (Spec R)` if and only if
-it is finite locally free. -/
-theorem nonempty_hasLeftDual_iff_isFiniteLocallyFree (E : QuasicoherentSheaf (Spec R)) :
-    Nonempty (HasLeftDual E) ↔ Scheme.Modules.isFiniteLocallyFree (Spec R) E.obj := by
-  refine ⟨fun h ↦ ?_, nonempty_hasLeftDual_of_isFiniteLocallyFree E⟩
-  obtain ⟨_, _⟩ := (nonempty_hasLeftDual_iff_finite_projective E).mp h
-  exact (Scheme.Modules.isFiniteLocallyFree (Spec R)).prop_of_iso
-    ((ObjectProperty.ι _).mapIso (tildeEquiv.counitIso.app E))
-    (isFiniteLocallyFree_tilde (moduleSpecΓFunctor.obj E.obj))
 
 end QuasicoherentSheaf
 

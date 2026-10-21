@@ -34,6 +34,8 @@ case the descent uses is `d = L N / p` with `p ∣ N` coprime to `L`, where the 
   specialisation, from `L N / p` to `N / p`.
 * `DirichletCharacter.exists_eq_comp_unitsMap_of_factorsThrough`: a factorisation of
   `MulChar.ofUnitHom χ` through `d`, read back on unit homomorphisms as `χ = χ₀ ∘ unitsMap`.
+* `DirichletCharacter.changeLevel_natCast_of_coprime`: changing the level preserves the values
+  at naturals prime to the new level.
 * `DirichletCharacter.even_changeLevel_iff`: changing the level preserves parity.
 * `DirichletCharacter.conductor_eq_prime_pow_of_emod_eq_of_apply_ne_apply`: a primitivity
   criterion at a prime-power level, obtained by comparing values on congruent units, and its
@@ -125,8 +127,9 @@ theorem exists_alt_unit_in_coset_with_char_separation {R : Type*} [CommMonoidWit
 to a multiple level `M` factors through `d`, then `ψ` factors through `gcd (N, d)`:
 `changeLevel` preserves the conductor, which then divides both the level `N` and `d`. -/
 theorem factorsThrough_gcd_of_changeLevel_factorsThrough {R : Type*} [CommMonoidWithZero R]
-    {N M d : ℕ} [NeZero N] [NeZero M] (hNM : N ∣ M) {ψ : DirichletCharacter R N}
+    {N M d : ℕ} [NeZero M] (hNM : N ∣ M) {ψ : DirichletCharacter R N}
     (hfac : (changeLevel hNM ψ).FactorsThrough d) : ψ.FactorsThrough (Nat.gcd N d) := by
+  have : NeZero N := ⟨fun hN ↦ NeZero.ne M (Nat.eq_zero_of_zero_dvd (hN ▸ hNM))⟩
   have hc : ψ.conductor ∣ d := by
     have := conductor_dvd_of_mem_conductorSet _ hfac
     rwa [conductor_changeLevel] at this
@@ -161,13 +164,16 @@ theorem exists_eq_comp_unitsMap_of_factorsThrough {R : Type*} [CommMonoidWithZer
     (hd : d ∣ N) {χ : (ZMod N)ˣ →* Rˣ}
     (hfac : FactorsThrough (MulChar.ofUnitHom χ : DirichletCharacter R N) d) :
     ∃ χ₀ : (ZMod d)ˣ →* Rˣ, χ = χ₀.comp (ZMod.unitsMap hd) := by
-  -- Proved forwards, by applying `MulChar.toUnitHom` to `eq_changeLevel`: `hfac.χ₀` mentions `χ`
-  -- through the type of `hfac`, so rewriting `χ` in the goal would break the motive.
   refine ⟨hfac.χ₀.toUnitHom, ?_⟩
-  have hχ : MulChar.toUnitHom (MulChar.ofUnitHom χ : DirichletCharacter R N) = χ :=
-    MulChar.equivToUnitHom.apply_symm_apply χ
   have h := congrArg MulChar.toUnitHom hfac.eq_changeLevel
-  rwa [DirichletCharacter.changeLevel_toUnitHom, hχ] at h
+  rw [changeLevel_toUnitHom] at h
+  simpa using h
+
+/-- Raising the level of a Dirichlet character does not change its value at a natural number
+prime to the new level. -/
+theorem changeLevel_natCast_of_coprime {R : Type*} [CommMonoidWithZero R] {d n : ℕ} (h : d ∣ n)
+    (χ : DirichletCharacter R d) {m : ℕ} (hm : m.Coprime n) : changeLevel h χ m = χ m := by
+  simpa using changeLevel_eq_cast_of_dvd' χ h (a := (m : ℤ)) (Nat.isCoprime_iff_coprime.mpr hm)
 
 /-- **Changing the level preserves parity**: the value at `-1` of a Dirichlet character is the
 value at `-1` of its lift to any multiple level. -/
