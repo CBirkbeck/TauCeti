@@ -32,13 +32,13 @@ open scoped commutatorElement
 def IsPrimitive {G : Type u} [Group G] (x : G) : Prop :=
   ∃ (ι : Type u) (b : FreeGroupBasis ι G) (i : ι), b i = x
 
+/-- A primitive element is exactly a member of some free basis. -/
+theorem isPrimitive_def {G : Type u} [Group G] (x : G) :
+    IsPrimitive x ↔ ∃ (ι : Type u) (b : FreeGroupBasis ι G) (i : ι), b i = x := Iff.rfl
+
 namespace IsPrimitive
 
 variable {G H : Type u} [Group G] [Group H]
-
-/-- A basis member is primitive. -/
-theorem of_basis {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) : IsPrimitive (b i) :=
-  ⟨ι, b, i, rfl⟩
 
 /-- A group isomorphism preserves primitive elements. -/
 theorem map_mulEquiv {x : G} (hx : IsPrimitive x) (e : G ≃* H) :
@@ -63,15 +63,20 @@ theorem ne_one {x : G} (hx : IsPrimitive x) : x ≠ 1 := by
   have : (0 : ℤ) = 1 := congrArg Multiplicative.toAdd hf
   exact (by decide : (0 : ℤ) ≠ 1) this
 
-/-- A square cannot be a member of a free basis. -/
-theorem not_sq (x : G) : ¬ IsPrimitive (x ^ 2) := by
+/-- A power with exponent at least two cannot be a member of a free basis. -/
+theorem not_pow (x : G) {n : ℕ} (hn : 2 ≤ n) : ¬ IsPrimitive (x ^ n) := by
   intro h
   obtain ⟨f, hf⟩ := h.exists_int_hom
-  rw [pow_two] at hf
-  rw [f.map_mul] at hf
+  rw [map_pow] at hf
   have hz := congrArg Multiplicative.toAdd hf
-  simp only [toAdd_mul, toAdd_ofAdd] at hz
+  simp only [toAdd_pow, toAdd_ofAdd, nsmul_eq_mul] at hz
+  have hd : (n : ℤ) ∣ 1 := ⟨(f x).toAdd, by simpa only [mul_comm] using hz.symm⟩
+  have hn1 : n = 1 := Nat.dvd_one.mp (by exact_mod_cast hd)
   omega
+
+/-- A square cannot be a member of a free basis. -/
+theorem not_sq (x : G) : ¬ IsPrimitive (x ^ 2) :=
+  not_pow x (by omega)
 
 /-- A commutator cannot be a member of a free basis. -/
 theorem not_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
@@ -86,9 +91,24 @@ theorem not_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
 
 end IsPrimitive
 
+end FreeGroup
+
+namespace FreeGroupBasis
+
+/-- A basis member is primitive. -/
+theorem isPrimitive {ι G : Type u} [Group G] (b : FreeGroupBasis ι G) (i : ι) :
+    FreeGroup.IsPrimitive (b i) :=
+  ⟨ι, b, i, rfl⟩
+
+end FreeGroupBasis
+
+namespace FreeGroup
+
+open scoped commutatorElement
+
 /-- A free generator is primitive. -/
 theorem isPrimitive_of {α : Type u} (a : α) : IsPrimitive (of a) := by
-  simpa using IsPrimitive.of_basis (FreeGroupBasis.ofFreeGroup α) a
+  simpa using (FreeGroupBasis.ofFreeGroup α).isPrimitive a
 
 /-- An element of a free group is primitive exactly when an automorphism
 sends a free generator to it. -/
@@ -138,7 +158,7 @@ theorem not_isPrimitive_one {α : Type u} : ¬ IsPrimitive (1 : FreeGroup α) :=
 
 /-- The square of a free generator is not primitive. -/
 theorem not_isPrimitive_sq {α : Type u} (a : α) : ¬ IsPrimitive ((of a) ^ 2) := by
-  exact IsPrimitive.not_sq (of a)
+  exact IsPrimitive.not_pow (of a) (by omega)
 
 /-- A commutator in a free group is not primitive, since every homomorphism
 to the integers kills it. -/
