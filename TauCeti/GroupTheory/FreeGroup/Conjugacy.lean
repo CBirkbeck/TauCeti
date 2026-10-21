@@ -16,7 +16,8 @@ Rotating a word conjugates the free-group element it represents. Together with M
 explicit cyclic-reduction conjugator, this relates rotation of cyclic reductions to
 conjugacy of the original elements.
 
-The word decomposition used here is from
+The explicit cyclic-reduction conjugator uses Mathlib's
+`FreeGroup.reduceCyclically.conj_conjugator_reduceCyclically` from
 `Mathlib.GroupTheory.FreeGroup.CyclicallyReduced`.
 -/
 
@@ -47,26 +48,26 @@ theorem isConj_mk_of_isRotated {u v : List (α × Bool)} (h : u.IsRotated v) :
   exact isConj_iff.mpr ⟨(mk (u.take (n % u.length)))⁻¹,
     by simpa only [inv_inv] using conj_mk_rotate u n⟩
 
-/-- The cyclic reduction of a reduced-word representative has an explicit group conjugator. -/
-theorem mk_conjugator_mul_mk_reduceCyclically (x : FreeGroup α) [DecidableEq α] :
-    mk (reduceCyclically.conjugator x.toWord) *
-        mk (reduceCyclically x.toWord) *
-        (mk (reduceCyclically.conjugator x.toWord))⁻¹ = x := by
-  rw [inv_mk, mul_mk, mul_mk,
-    reduceCyclically.conj_conjugator_reduceCyclically, mk_toWord]
+/-- The cyclic reduction of any word has an explicit group conjugator. -/
+theorem mk_conjugator_mul_mk_reduceCyclically (L : List (α × Bool)) [DecidableEq α] :
+    mk (reduceCyclically.conjugator L) *
+        mk (reduceCyclically L) *
+        (mk (reduceCyclically.conjugator L))⁻¹ = mk L := by
+  rw [inv_mk, mul_mk, mul_mk, reduceCyclically.conj_conjugator_reduceCyclically]
 
-/-- Every free-group element is conjugate to its cyclic reduction. -/
-theorem isConj_mk_reduceCyclically (x : FreeGroup α) [DecidableEq α] :
-    IsConj x (mk (reduceCyclically x.toWord)) := by
+/-- The element of any word is conjugate to the element of its cyclic reduction. -/
+theorem isConj_mk_reduceCyclically (L : List (α × Bool)) [DecidableEq α] :
+    IsConj (mk L) (mk (reduceCyclically L)) := by
   apply IsConj.symm
-  exact isConj_iff.mpr ⟨mk (reduceCyclically.conjugator x.toWord),
-    mk_conjugator_mul_mk_reduceCyclically x⟩
+  exact isConj_iff.mpr ⟨mk (reduceCyclically.conjugator L),
+    mk_conjugator_mul_mk_reduceCyclically L⟩
 
 /-- Elements whose cyclic reductions differ by a rotation are conjugate. -/
 theorem isConj_of_isRotated_reduceCyclically [DecidableEq α] {x y : FreeGroup α}
     (h : (reduceCyclically x.toWord).IsRotated (reduceCyclically y.toWord)) :
-    IsConj x y :=
-  (isConj_mk_reduceCyclically x).trans <|
-    (isConj_mk_of_isRotated h).trans (isConj_mk_reduceCyclically y).symm
+    IsConj x y := by
+  simpa only [mk_toWord] using
+    (isConj_mk_reduceCyclically x.toWord).trans <|
+      (isConj_mk_of_isRotated h).trans (isConj_mk_reduceCyclically y.toWord).symm
 
 end FreeGroup
