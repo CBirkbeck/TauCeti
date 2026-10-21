@@ -41,11 +41,24 @@ theorem zpow_left_iff {n : ℤ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x
   · intro h
     exact h.zpow_left n
 
+/-- In a group with unique roots, an element commutes with a nonzero integer power of `x`
+exactly when it commutes with `x`. -/
+@[simp]
+theorem zpow_right_iff {n : ℤ} (hn : n ≠ 0) : Commute y (x ^ n) ↔ Commute y x :=
+  Commute.symm_iff.trans ((zpow_left_iff hn).trans Commute.symm_iff)
+
 /-- In a group with unique roots, an element commutes with a nonzero natural power of `x`
 exactly when it commutes with `x`. -/
 @[simp]
 theorem pow_left_iff {n : ℕ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x y := by
   have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn
   simpa only [zpow_natCast] using (zpow_left_iff (x := x) (y := y) hn')
+
+/-- In a group with unique roots, an element commutes with a nonzero natural power of `x`
+exactly when it commutes with `x`. -/
+@[simp]
+theorem pow_right_iff {n : ℕ} (hn : n ≠ 0) : Commute y (x ^ n) ↔ Commute y x := by
+  have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn
+  simpa only [zpow_natCast] using (zpow_right_iff (x := x) (y := y) hn')
 
 end Commute

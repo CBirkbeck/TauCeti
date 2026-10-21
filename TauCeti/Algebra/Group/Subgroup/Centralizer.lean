@@ -68,8 +68,7 @@ with unique roots. -/
 theorem centralizer_zpow_eq {n : ℤ} (hn : n ≠ 0) :
     centralizer {x ^ n} = centralizer {x} := by
   ext y
-  simp only [mem_centralizer_singleton_iff, ← commute_iff_eq]
-  exact Commute.symm_iff.trans ((Commute.zpow_left_iff hn).trans Commute.symm_iff)
+  simp only [mem_centralizer_singleton_iff, ← commute_iff_eq, Commute.zpow_right_iff hn]
 
 /-- Taking a nonzero natural power does not change the centralizer of an element in a group
 with unique roots. -/
