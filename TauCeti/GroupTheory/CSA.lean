@@ -109,8 +109,8 @@ theorem centralizer_isMulCommutative (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
   rw [← hG.eq_centralizer hM (hle (Subgroup.mem_zpowers x)) hx]
   exact hM.1
 
-/-- The centralizer of a nonidentity element is the unique maximal abelian
-subgroup that contains it. -/
+/-- The centralizer of a nonidentity element is maximal abelian; uniqueness among
+maximal abelian subgroups containing the element follows from `eq_centralizer`. -/
 theorem centralizer_isMaximalAbelian (hG : IsCSA G) {x : G} (hx : x ≠ 1) :
     Maximal (fun H : Subgroup G => IsMulCommutative H)
       (Subgroup.centralizer {x}) := by
