@@ -33,6 +33,11 @@ def IsCSA (G : Type*) [Group G] : Prop :=
   ∀ M : Subgroup G, Maximal (fun H : Subgroup G => IsMulCommutative H) M →
     TauCeti.IsTISubgroup M
 
+/-- A group is CSA exactly when every maximal abelian subgroup is malnormal. -/
+theorem isCSA_def : IsCSA G ↔
+    ∀ M : Subgroup G, Maximal (fun H : Subgroup G => IsMulCommutative H) M →
+      TauCeti.IsTISubgroup M := Iff.rfl
+
 /-- Commutation is transitive through a nonidentity middle element. -/
 def IsCommTransitive (G : Type*) [Group G] : Prop :=
   ∀ ⦃x y z : G⦄, y ≠ 1 → Commute x y → Commute y z → Commute x z
@@ -164,9 +169,9 @@ theorem isCSA_of_commGroup (G : Type*) [CommGroup G] : IsCSA G := by
   intro g hg
   exact (hg (Subgroup.mem_top g)).elim
 
-/-- A product of a noncommutative group with a nontrivial commutative group
-is not CSA: a central element in the second factor joins noncommuting elements. -/
-theorem not_isCSA_prod_of_noncomm {A : Type*} [CommGroup A]
+/-- A product of a noncommutative group with a nontrivial group
+is not CSA: a nonidentity element in the second factor joins noncommuting elements. -/
+theorem not_isCSA_prod_of_noncomm {A : Type*} [Group A]
     (hG : ¬ IsMulCommutative G) (hA : ∃ t : A, t ≠ 1) :
     ¬ IsCSA (G × A) := by
   obtain ⟨a, b, hab⟩ : ∃ a b : G, a * b ≠ b * a := by
