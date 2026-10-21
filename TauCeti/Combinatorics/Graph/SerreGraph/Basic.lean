@@ -17,7 +17,7 @@ edges; this is the combinatorial carrier for labelled subgroup graphs and graphs
 The definition follows Serre, *Trees*, Chapter I, §2.1.
 -/
 
-@[expose] public section
+public section
 
 namespace TauCeti
 
@@ -48,7 +48,7 @@ def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
 
 /-- A list of darts is a path from `u` to `v` when it can be traversed from `u` and ends at
 `v`. The empty list is a path precisely when its endpoints agree. -/
-def Valid (Γ : SerreGraph) : Γ.V → List Γ.E → Γ.V → Prop
+@[expose] def Valid (Γ : SerreGraph) : Γ.V → List Γ.E → Γ.V → Prop
   | u, [], v => u = v
   | u, e :: es, v => Γ.src e = u ∧ Γ.Valid (Γ.tgt e) es v
 
@@ -75,12 +75,12 @@ variable {Γ} {u v w : Γ.V}
   rfl
 
 /-- The empty path at a vertex. -/
-def nil (u : Γ.V) : Γ.Path u u := ⟨[], rfl⟩
+@[expose] def nil (u : Γ.V) : Γ.Path u u := ⟨[], rfl⟩
 
 @[simp] theorem nil_edges (u : Γ.V) : (nil u).edges = [] := rfl
 
 /-- Prefix a path by a dart ending at its initial vertex. -/
-def cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) : Γ.Path (Γ.src e) v :=
+@[expose] def cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) : Γ.Path (Γ.src e) v :=
   ⟨e :: p.edges, ⟨rfl, p.valid⟩⟩
 
 @[simp] theorem cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
@@ -100,7 +100,7 @@ theorem valid_append (p : Γ.Path u v) (q : Γ.Path v w) :
       exact ⟨hes.1, ih hes.2⟩
 
 /-- Concatenation of directed paths. -/
-def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
+@[expose] def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
   ⟨p.edges ++ q.edges, valid_append p q⟩
 
 @[simp] theorem append_edges (p : Γ.Path u v) (q : Γ.Path v w) :
@@ -114,6 +114,7 @@ def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
   ext
   simp
 
+/-- Path concatenation is associative. -/
 theorem append_assoc (p : Γ.Path u v) (q : Γ.Path v w) {z : Γ.V}
     (r : Γ.Path w z) : append (append p q) r = append p (append q r) := by
   ext
@@ -134,12 +135,13 @@ theorem valid_reverse {es : List Γ.E} (h : Γ.Valid u es v) :
       exact valid_append ⟨_, ih ht⟩ ⟨_, hstep⟩
 
 /-- Reverse a path, reversing both the order and the orientation of its darts. -/
-def reverse (p : Γ.Path u v) : Γ.Path v u :=
+@[expose] def reverse (p : Γ.Path u v) : Γ.Path v u :=
   ⟨p.edges.reverse.map Γ.rev, valid_reverse p.valid⟩
 
 @[simp] theorem reverse_edges (p : Γ.Path u v) :
     p.reverse.edges = p.edges.reverse.map Γ.rev := rfl
 
+/-- Reversing a path twice returns the original path. -/
 @[simp] theorem reverse_reverse (p : Γ.Path u v) : p.reverse.reverse = p := by
   ext
   simp [List.map_map, Γ.rev_rev]
@@ -148,6 +150,7 @@ def reverse (p : Γ.Path u v) : Γ.Path v u :=
   ext
   rfl
 
+/-- Reversal exchanges the order of concatenated paths. -/
 theorem reverse_append (p : Γ.Path u v) (q : Γ.Path v w) :
     (append p q).reverse = append q.reverse p.reverse := by
   ext
@@ -156,6 +159,21 @@ theorem reverse_append (p : Γ.Path u v) (q : Γ.Path v w) :
 /-- A path has no immediately adjacent edge and reverse edge. -/
 def IsReduced (p : Γ.Path u v) : Prop :=
   p.edges.IsChain fun e f => f ≠ Γ.rev e
+
+/-- A prefixed path is reduced exactly when its tail is reduced and its first dart does not
+reverse the new prefix. -/
+theorem isReduced_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
+    IsReduced (cons e p) ↔ p.IsReduced ∧ ∀ f ∈ p.edges.head?, f ≠ Γ.rev e := by
+  simp only [IsReduced, cons_edges, List.isChain_cons, and_comm]
+
+/-- Reversing a path preserves and reflects reducedness. -/
+@[simp] theorem isReduced_reverse (p : Γ.Path u v) :
+    p.reverse.IsReduced ↔ p.IsReduced := by
+  simp only [IsReduced, reverse_edges, List.isChain_map, List.isChain_reverse]
+  apply List.IsChain.iff
+  intro e f
+  simp only [Γ.rev_rev]
+  exact ne_comm
 
 @[simp] theorem isReduced_nil (u : Γ.V) : IsReduced (nil u) := by
   simp [IsReduced]
@@ -200,6 +218,7 @@ abbrev point : SerreGraph where
   rev_rev := by intro e; exact e.elim
   rev_ne := by intro e; exact e.elim
 
+/-- The graph with one vertex and no edges is a tree. -/
 theorem point_isTree : point.IsTree := by
   refine ⟨⟨⟨PUnit.unit⟩, ?_⟩, ?_⟩
   · intro u v
@@ -214,7 +233,7 @@ theorem point_isTree : point.IsTree := by
       | cons e _ => exact PEmpty.elim e
 
 /-- The rose with petals indexed by `α`. Each petal has two distinct orientations. -/
-def rose (α : Type*) : SerreGraph where
+@[expose] def rose (α : Type*) : SerreGraph where
   V := PUnit
   E := α × Bool
   src := fun _ => PUnit.unit
@@ -228,6 +247,7 @@ def rose (α : Type*) : SerreGraph where
     cases e with
     | mk a b => cases b <;> simp
 
+/-- Every rose is connected, including the rose with no petals. -/
 theorem rose_connected (α : Type*) : (rose α).Connected := by
   refine ⟨⟨PUnit.unit⟩, ?_⟩
   intro u v
@@ -236,7 +256,7 @@ theorem rose_connected (α : Type*) : (rose α).Connected := by
   exact reachable_refl _ _
 
 /-- A petal is a nonempty reduced loop in the rose. -/
-def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
+@[expose] def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
   Path.cons (a, true) (Path.nil ((rose α).tgt (a, true)))
 
 @[simp] theorem rosePetal_edges {α : Type*} (a : α) :
@@ -245,6 +265,7 @@ def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
 theorem rosePetal_isReduced {α : Type*} (a : α) :
     (rosePetal a).IsReduced := Path.isReduced_single _
 
+/-- A rose with a petal is not a tree: the petal gives a nonempty reduced loop. -/
 theorem rose_not_isTree {α : Type*} (a : α) : ¬(rose α).IsTree := by
   intro ht
   have h := ht.2 PUnit.unit (rosePetal a) (rosePetal_isReduced a)
