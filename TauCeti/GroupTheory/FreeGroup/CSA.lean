@@ -9,7 +9,7 @@ public import Mathlib.GroupTheory.FreeGroup.Reduce
 public import TauCeti.GroupTheory.CSA
 
 /-!
-# A product of a free group with an abelian group is not CSA
+# `FreeGroup (Fin 2) × ℤ` is not CSA
 
 The free group on two generators is nonabelian, but its product with a nontrivial abelian group
 has a nonidentity central element. This provides a concrete test of commutation transitivity.
@@ -20,7 +20,7 @@ public section
 namespace Group
 
 /-- The product of the free group on two generators with `ℤ` is not CSA. -/
-theorem not_isCSA_freeGroup_finTwo_prod_int :
+theorem not_isCSA_prod_int :
     ¬ IsCSA (FreeGroup (Fin 2) × Multiplicative ℤ) := by
   apply not_isCSA_prod_of_nontrivial
   intro hcomm

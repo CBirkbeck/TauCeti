@@ -26,52 +26,26 @@ namespace Subgroup
 
 variable {G : Type*} [Group G]
 
-/-- An abelian subgroup maximal among abelian subgroups. -/
-def IsMaximalAbelian (H : Subgroup G) : Prop :=
-  IsMulCommutative H ∧ ∀ K : Subgroup G, IsMulCommutative K → H ≤ K → K ≤ H
-
-/-- A subgroup is maximal abelian exactly when it is abelian and contains every abelian
-subgroup above it. -/
-theorem isMaximalAbelian_iff (H : Subgroup G) :
-    H.IsMaximalAbelian ↔
-      IsMulCommutative H ∧ ∀ K : Subgroup G, IsMulCommutative K → H ≤ K → K ≤ H :=
-  Iff.rfl
-
-/-- A maximal abelian subgroup is abelian. -/
-theorem IsMaximalAbelian.isMulCommutative {H : Subgroup G} (hH : H.IsMaximalAbelian) :
-    IsMulCommutative H := hH.1
-
-/-- An abelian subgroup contained in a maximal abelian subgroup equals it. -/
-theorem IsMaximalAbelian.eq_of_le {H K : Subgroup G} (hH : H.IsMaximalAbelian)
-    (hK : IsMulCommutative K) (hHK : H ≤ K) : H = K :=
-  le_antisymm hHK (hH.2 K hK hHK)
-
 /-- Every abelian subgroup is contained in a maximal abelian subgroup. -/
-theorem exists_isMaximalAbelian_of_isMulCommutative (H : Subgroup G)
+theorem exists_maximal_isMulCommutative (H : Subgroup G)
     (hH : IsMulCommutative H) :
-    ∃ M : Subgroup G, H ≤ M ∧ M.IsMaximalAbelian := by
+    ∃ M : Subgroup G, H ≤ M ∧ Maximal (fun K : Subgroup G => IsMulCommutative K) M := by
   classical
-  let S : Set (Subgroup G) := {K | IsMulCommutative K ∧ H ≤ K}
-  have hchain : ∀ c ⊆ S, IsChain (· ≤ ·) c → ∃ ub ∈ S, ∀ K ∈ c, K ≤ ub := by
-    intro c hc hcc
-    by_cases hne : c.Nonempty
-    · let ub : Subgroup G := sSup c
-      have hdir : DirectedOn (· ≤ ·) c := hcc.directedOn
-      have hcomm : IsMulCommutative ub := by
-        apply IsMulCommutative.of_setLike_mul_comm
-        intro x hx y hy
-        obtain ⟨K, hK, hxK⟩ := (Subgroup.mem_sSup_of_directedOn hne hdir).mp hx
-        obtain ⟨L, hL, hyL⟩ := (Subgroup.mem_sSup_of_directedOn hne hdir).mp hy
-        obtain ⟨M, hM, hKM, hLM⟩ := hdir K hK L hL
-        have : IsMulCommutative M := (hc hM).1
-        exact setLike_mul_comm (hKM hxK) (hLM hyL)
-      have hHub : H ≤ ub := (hc hne.some_mem).2.trans (le_sSup hne.some_mem)
-      exact ⟨ub, ⟨hcomm, hHub⟩, fun K hK => le_sSup hK⟩
-    · have hc0 : c = ∅ := Set.not_nonempty_iff_eq_empty.mp hne
-      exact ⟨H, ⟨hH, le_rfl⟩, by simp [hc0]⟩
-  obtain ⟨M, hMS, hmax⟩ := zorn_le₀ S hchain
-  exact ⟨M, hMS.2, hMS.1, fun K hK hMK =>
-    (hmax ⟨hK, hMS.2.trans hMK⟩ hMK)⟩
+  apply zorn_le_nonempty₀ {K : Subgroup G | IsMulCommutative K} ?_ H hH
+  intro c hc hcc y hy
+  let ub : Subgroup G := sSup c
+  have hdir : DirectedOn (· ≤ ·) c := hcc.directedOn
+  have hcomm : IsMulCommutative ub := by
+    apply IsMulCommutative.of_setLike_mul_comm
+    intro x hx z hz
+    obtain ⟨K, hK, hxK⟩ :=
+      (Subgroup.mem_sSup_of_directedOn ⟨y, hy⟩ hdir).mp hx
+    obtain ⟨L, hL, hzL⟩ :=
+      (Subgroup.mem_sSup_of_directedOn ⟨y, hy⟩ hdir).mp hz
+    obtain ⟨M, hM, hKM, hLM⟩ := hdir K hK L hL
+    have : IsMulCommutative M := hc hM
+    exact setLike_mul_comm (hKM hxK) (hLM hzL)
+  exact ⟨ub, hcomm, fun K hK => le_sSup hK⟩
 
 end Subgroup
 
@@ -80,7 +54,9 @@ namespace Group
 variable (G : Type*) [Group G]
 
 /-- A group is CSA if each maximal abelian subgroup is malnormal. -/
-def IsCSA : Prop := ∀ M : Subgroup G, M.IsMaximalAbelian → TauCeti.IsTISubgroup M
+def IsCSA : Prop :=
+  ∀ M : Subgroup G, Maximal (fun K : Subgroup G => IsMulCommutative K) M →
+    TauCeti.IsTISubgroup M
 
 /-- Commutation in a group is transitive when the middle element is nonidentity. -/
 def IsCommTransitive : Prop :=
@@ -88,7 +64,8 @@ def IsCommTransitive : Prop :=
 
 /-- The defining malnormality condition for a CSA group. -/
 theorem isCSA_iff : IsCSA G ↔
-    ∀ M : Subgroup G, M.IsMaximalAbelian → TauCeti.IsTISubgroup M := Iff.rfl
+    ∀ M : Subgroup G, Maximal (fun K : Subgroup G => IsMulCommutative K) M →
+      TauCeti.IsTISubgroup M := Iff.rfl
 
 /-- The defining condition for commutation transitivity. -/
 theorem isCommTransitive_iff : IsCommTransitive G ↔
@@ -97,21 +74,21 @@ theorem isCommTransitive_iff : IsCommTransitive G ↔
 variable {G}
 
 /-- Every abelian group is CSA. -/
-theorem isCSA_of_isMulCommutative [IsMulCommutative G] : IsCSA G := by
-  dsimp [IsCSA]
+theorem IsCSA.of_commGroup [IsMulCommutative G] : IsCSA G := by
   intro M hM
   have htop : M = ⊤ := by
     apply hM.eq_of_le (by infer_instance : IsMulCommutative (⊤ : Subgroup G))
     exact le_top
   rw [htop]
-  exact TauCeti.isTISubgroup_iff_inf_conj_smul_eq_bot.mpr (by simp)
+  exact TauCeti.IsTISubgroup.top
 
 /-- A maximal abelian subgroup in a CSA group is the centralizer of each of its nonidentity
 elements. Hence it is the unique maximal abelian subgroup containing such an element. -/
 theorem IsCSA.eq_centralizer_of_mem (hG : IsCSA G) {M : Subgroup G}
-    (hM : M.IsMaximalAbelian) {y : G} (hyM : y ∈ M) (hy : y ≠ 1) :
+    (hM : Maximal (fun K : Subgroup G => IsMulCommutative K) M)
+    {y : G} (hyM : y ∈ M) (hy : y ≠ 1) :
     M = Subgroup.centralizer {y} := by
-  have : IsMulCommutative M := hM.1
+  have : IsMulCommutative M := hM.prop
   apply le_antisymm
   · intro x hx
     exact Subgroup.mem_centralizer_singleton_iff.mpr (setLike_mul_comm hx hyM)
@@ -119,19 +96,19 @@ theorem IsCSA.eq_centralizer_of_mem (hG : IsCSA G) {M : Subgroup G}
 
 /-- The centralizer of a nonidentity element in a CSA group is maximal abelian. -/
 theorem IsCSA.centralizer_isMaximalAbelian (hG : IsCSA G) {y : G} (hy : y ≠ 1) :
-    (Subgroup.centralizer {y}).IsMaximalAbelian := by
+    Maximal (fun K : Subgroup G => IsMulCommutative K) (Subgroup.centralizer {y}) := by
   let H : Subgroup G := Subgroup.closure {y}
   have hH : IsMulCommutative H := by
     apply Subgroup.isMulCommutative_closure
     simp
-  obtain ⟨M, hHM, hM⟩ := H.exists_isMaximalAbelian_of_isMulCommutative hH
+  obtain ⟨M, hHM, hM⟩ := H.exists_maximal_isMulCommutative hH
   have hyM : y ∈ M := hHM (Subgroup.subset_closure (by simp))
   simpa only [hG.eq_centralizer_of_mem hM hyM hy] using hM
 
 /-- CSA groups have transitive commutation through every nonidentity element. -/
 theorem IsCSA.isCommTransitive (hG : IsCSA G) : IsCommTransitive G := by
   intro x y z hy hxy hyz
-  have hC := (hG.centralizer_isMaximalAbelian hy).isMulCommutative
+  have hC := (hG.centralizer_isMaximalAbelian hy).prop
   have : IsMulCommutative (Subgroup.centralizer {y} : Subgroup G) := hC
   have hx : x ∈ Subgroup.centralizer {y} :=
     Subgroup.mem_centralizer_singleton_iff.mpr hxy.eq
@@ -139,17 +116,22 @@ theorem IsCSA.isCommTransitive (hG : IsCSA G) : IsCommTransitive G := by
     Subgroup.mem_centralizer_singleton_iff.mpr hyz.eq.symm
   exact setLike_mul_comm hx hz
 
-/-- A nonabelian CSA group has trivial center. -/
-theorem IsCSA.center_eq_bot (hG : IsCSA G) (h : ¬ IsMulCommutative G) :
+/-- A nonabelian commutative-transitive group has trivial center. -/
+theorem IsCommTransitive.center_eq_bot (hG : IsCommTransitive G)
+    (h : ¬ IsMulCommutative G) :
     Subgroup.center G = ⊥ := by
   apply (Subgroup.eq_bot_iff_forall _).mpr
   intro z hz
   by_contra hz1
   apply h
-  have htrans := hG.isCommTransitive
   exact ⟨⟨fun a b =>
-    (htrans a z b hz1 (Subgroup.mem_center_iff.mp hz a)
+    (hG a z b hz1 (Subgroup.mem_center_iff.mp hz a)
       (Subgroup.mem_center_iff.mp hz b).symm).eq⟩⟩
+
+/-- A nonabelian CSA group has trivial center. -/
+theorem IsCSA.center_eq_bot (hG : IsCSA G) (h : ¬ IsMulCommutative G) :
+    Subgroup.center G = ⊥ :=
+  hG.isCommTransitive.center_eq_bot h
 
 /-- An injective homomorphism into a CSA group has CSA domain. -/
 theorem IsCSA.of_injective {H : Type*} [Group H] (hG : IsCSA G)
@@ -157,44 +139,29 @@ theorem IsCSA.of_injective {H : Type*} [Group H] (hG : IsCSA G)
   intro M hM
   by_cases hbot : M = ⊥
   · subst M
-    apply TauCeti.isTISubgroup_iff_inf_conj_smul_eq_bot.mpr
-    simp
+    exact TauCeti.IsTISubgroup.bot
   · obtain ⟨⟨y, hyM⟩, hy1⟩ := Subgroup.ne_bot_iff_exists_ne_one.mp hbot
     have hy : y ≠ 1 := fun e => hy1 (Subtype.ext e)
     have hfy : f y ≠ 1 := fun e => hy (hf (by simpa using e))
     let C : Subgroup G := Subgroup.centralizer {f y}
-    have hC : C.IsMaximalAbelian := hG.centralizer_isMaximalAbelian hfy
-    have : IsMulCommutative C := hC.1
+    have hC : Maximal (fun K : Subgroup G => IsMulCommutative K) C :=
+      hG.centralizer_isMaximalAbelian hfy
+    have : IsMulCommutative C := hC.prop
     have hCM : IsMulCommutative (C.comap f) :=
       C.comap_injective_isMulCommutative hf
     have hMC : M ≤ C.comap f := by
-      have : IsMulCommutative M := hM.1
+      have : IsMulCommutative M := hM.prop
       intro x hx
       exact Subgroup.mem_centralizer_singleton_iff.mpr <|
         by simpa only [map_mul] using congrArg f (setLike_mul_comm hx hyM)
     have hM_eq : M = C.comap f := hM.eq_of_le hCM hMC
     rw [hM_eq]
-    apply TauCeti.isTISubgroup_iff_inf_conj_smul_eq_bot.mpr
-    intro g hg
-    apply (Subgroup.eq_bot_iff_forall _).mpr
-    intro x hx
-    obtain ⟨hxC, hxConj⟩ := Subgroup.mem_inf.mp hx
-    have hfg : f g ∉ C := hg
-    have hfginv : (f g)⁻¹ ∉ C := by simpa using hfg
-    have hxConj' : g⁻¹ * x * g ∈ C.comap f := by
-      rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem] at hxConj
-      simpa [MulAut.smul_def] using hxConj
-    have h1 : f x = 1 := by
-      apply (hG C hC).eq_one hfginv hxC
-      simpa only [Subgroup.mem_comap, map_mul, map_inv, inv_inv] using hxConj'
-    exact hf (by simpa using h1)
+    exact (hG C hC).comap f hf
 
-/-- A product with a nontrivial factor is not CSA if its other factor is nonabelian.
-The nonidentity element in the second factor commutes with the first factor, forcing the latter
-factor to be abelian if commutation were transitive. -/
-theorem not_isCSA_prod_of_nontrivial {C : Type*} [Group C]
+/-- If `G` is nonabelian and `C` is nontrivial, then `G × C` is not commutative transitive. -/
+theorem not_isCommTransitive_prod_of_nontrivial {C : Type*} [Group C]
     [Nontrivial C] (hG : ¬ IsMulCommutative G) :
-    ¬ IsCSA (G × C) := by
+    ¬ IsCommTransitive (G × C) := by
   intro hprod
   obtain ⟨a, b, hab⟩ : ∃ a b : G, ¬ Commute a b := by
     by_contra h
@@ -206,7 +173,13 @@ theorem not_isCSA_prod_of_nontrivial {C : Type*} [Group C]
   have hyz : Commute ((1, c) : G × C) (b, 1) :=
     Commute.prod (Commute.one_left b) (Commute.one_right c)
   have hpair : Commute ((a, 1) : G × C) (b, 1) :=
-    hprod.isCommTransitive _ _ _ (by simpa using hc) hxy hyz
+    hprod _ _ _ (by simpa using hc) hxy hyz
   exact hab (congrArg Prod.fst hpair.eq)
+
+/-- If `G` is nonabelian and `C` is nontrivial, then `G × C` is not CSA. -/
+theorem not_isCSA_prod_of_nontrivial {C : Type*} [Group C]
+    [Nontrivial C] (hG : ¬ IsMulCommutative G) :
+    ¬ IsCSA (G × C) :=
+  fun h => (not_isCommTransitive_prod_of_nontrivial hG) h.isCommTransitive
 
 end Group
