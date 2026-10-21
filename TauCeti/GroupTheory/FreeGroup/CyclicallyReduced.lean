@@ -20,7 +20,7 @@ namespace FreeGroup
 variable {α : Type*} [DecidableEq α]
 
 /-- A free-group element has empty cyclic reduction exactly when it is the identity. -/
-@[to_additive (attr := simp), simp]
+@[to_additive (attr := simp)]
 theorem reduceCyclically_toWord_eq_nil_iff {x : FreeGroup α} :
     reduceCyclically x.toWord = [] ↔ x = 1 := by
   constructor

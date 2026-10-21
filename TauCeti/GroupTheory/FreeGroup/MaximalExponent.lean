@@ -57,7 +57,7 @@ end
 /-- A nonidentity free-group element has a root whose exponent is greatest among
 all of its positive root exponents. This root is not a positive proper power. -/
 @[to_additive]
-theorem exists_root_of_maximal_exponent {x : FreeGroup α} (hx : x ≠ 1) :
+theorem exists_root_maximal_exponent {x : FreeGroup α} (hx : x ≠ 1) :
     ∃ r k, 0 < k ∧ r ^ k = x ∧
       (∀ (y : FreeGroup α) (n : ℕ), y ^ n = x → n ≤ k) ∧
       ∀ (y : FreeGroup α) (m : ℕ), 1 < m → y ^ m ≠ r := by
