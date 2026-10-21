@@ -7,7 +7,6 @@ module
 
 public import Mathlib.GroupTheory.FreeGroup.CyclicallyReduced
 public import Mathlib.Order.Lattice.Nat
-public import Mathlib.Order.Preorder.Finite
 
 /-!
 # Bounds on root exponents in a free group
@@ -31,15 +30,18 @@ section
 
 variable [DecidableEq α]
 
-/-- A nonidentity free-group element has a nonempty cyclically reduced word. -/
-theorem reduceCyclically_toWord_ne_nil {x : FreeGroup α} (hx : x ≠ 1) :
-    reduceCyclically x.toWord ≠ [] := by
-  intro h
-  apply hx
-  have hw := reduceCyclically.conj_conjugator_reduceCyclically x.toWord
-  rw [h, List.append_nil] at hw
-  have hm := congrArg mk hw
-  simpa [← mul_mk, ← inv_mk, mk_toWord] using hm.symm
+/-- A free-group element has empty cyclic reduction exactly when it is the identity. -/
+@[simp] theorem reduceCyclically_toWord_eq_nil {x : FreeGroup α} :
+    reduceCyclically x.toWord = [] ↔ x = 1 := by
+  constructor
+  · intro h
+    have hw := reduceCyclically.conj_conjugator_reduceCyclically x.toWord
+    rw [h, List.append_nil] at hw
+    have hm := congrArg mk hw
+    simpa [← mul_mk, ← inv_mk, mk_toWord] using hm.symm
+  · intro h
+    subst x
+    simp [toWord_one]
 
 /-- The reduced-word length of a positive power is the length of the conjugating
 prefix twice, plus the exponent times the cyclically reduced length. -/
@@ -52,15 +54,21 @@ theorem norm_pow_eq (x : FreeGroup α) {n : ℕ} (hn : 0 < n) :
     List.length_flatten, List.map_replicate]
   omega
 
-/-- The exponent of a nontrivial positive power cannot exceed its reduced-word length. -/
-theorem pow_exponent_le_norm {x y : FreeGroup α} {n : ℕ}
-    (hx : x ≠ 1) (hn : 0 < n) (hpow : y ^ n = x) : n ≤ norm x := by
+/-- The exponent of a power representing a nonidentity element cannot exceed its
+reduced-word length. -/
+theorem le_norm_of_pow_eq {x y : FreeGroup α} {n : ℕ}
+    (hx : x ≠ 1) (hpow : y ^ n = x) : n ≤ norm x := by
+  have hn : 0 < n := by
+    by_contra h
+    have hn0 : n = 0 := by omega
+    rw [hn0, pow_zero] at hpow
+    exact hx hpow.symm
   have hy : y ≠ 1 := by
     intro h
     rw [h, one_pow] at hpow
     exact hx hpow.symm
   have hl : 0 < (reduceCyclically y.toWord).length :=
-    List.length_pos_iff_ne_nil.mpr (reduceCyclically_toWord_ne_nil hy)
+    List.length_pos_iff_ne_nil.mpr (by simpa using hy)
   rw [← hpow, norm_pow_eq y hn]
   calc
     n = n * 1 := by omega
@@ -72,28 +80,34 @@ end
 
 /-- A nonidentity free-group element has a root whose exponent is greatest among
 all of its positive root exponents. This root is not a positive proper power. -/
-theorem exists_root_of_maximal_exponent {x : FreeGroup α} (hx : x ≠ 1) :
+theorem exists_pow_eq_greatest_exponent {x : FreeGroup α} (hx : x ≠ 1) :
     ∃ r k, 0 < k ∧ r ^ k = x ∧
-      (∀ (y : FreeGroup α) (n : ℕ), 0 < n → y ^ n = x → n ≤ k) ∧
+      (∀ (y : FreeGroup α) (n : ℕ), y ^ n = x → n ≤ k) ∧
       ∀ (y : FreeGroup α) (m : ℕ), 1 < m → y ^ m ≠ r := by
   classical
-  let s : Set ℕ := {n | 0 < n ∧ ∃ y : FreeGroup α, y ^ n = x}
-  have hs : s.Finite := (Set.finite_le_nat (norm x)).subset (by
+  let s : Set ℕ := {n | ∃ y : FreeGroup α, y ^ n = x}
+  have hbdd : BddAbove s := ⟨norm x, by
     intro n hn
-    obtain ⟨hn0, y, hy⟩ := hn
-    exact pow_exponent_le_norm hx hn0 hy)
+    obtain ⟨y, hy⟩ := hn
+    exact le_norm_of_pow_eq hx hy⟩
   have hne : s.Nonempty := ⟨1, by simp [s]⟩
-  obtain ⟨k, hk⟩ := hs.exists_maximal hne
-  obtain ⟨hk0, r, hr⟩ := hk.1
-  have hmax : ∀ (y : FreeGroup α) (n : ℕ), 0 < n → y ^ n = x → n ≤ k := by
-    intro y n hn hy
-    exact le_of_not_gt (fun h ↦ (hk.2 ⟨hn, y, hy⟩ h.le).not_gt h)
+  let k := sSup s
+  have hk : k ∈ s := Nat.sSup_mem hne hbdd
+  obtain ⟨r, hr⟩ := hk
+  have hk0 : 0 < k := by
+    by_contra h
+    have hkz : k = 0 := by omega
+    rw [hkz, pow_zero] at hr
+    exact hx hr.symm
+  have hmax : ∀ (y : FreeGroup α) (n : ℕ), y ^ n = x → n ≤ k := by
+    intro y n hy
+    exact le_csSup hbdd ⟨y, hy⟩
   refine ⟨r, k, hk0, hr, hmax, ?_⟩
   intro y m hm hpower
   have hroot : y ^ (m * k) = x := by
     rw [pow_mul, hpower, hr]
   have hlt : k < m * k := by
     simpa using Nat.mul_lt_mul_of_pos_right hm hk0
-  exact (hmax y (m * k) (by omega) hroot).not_gt hlt
+  exact (hmax y (m * k) hroot).not_gt hlt
 
 end FreeGroup
