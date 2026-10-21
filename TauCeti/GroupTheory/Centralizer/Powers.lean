@@ -26,6 +26,7 @@ variable {G : Type*} [Group G] [HasUniqueRoots G] {x y : G}
 
 /-- In a group with unique roots, an element commutes with a nonzero integer power of `x`
 exactly when it commutes with `x`. -/
+@[simp]
 theorem zpow_left_iff {n : ℤ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x y := by
   constructor
   · intro h
@@ -43,6 +44,7 @@ theorem zpow_left_iff {n : ℤ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x
 
 /-- In a group with unique roots, an element commutes with a nonzero natural power of `x`
 exactly when it commutes with `x`. -/
+@[simp]
 theorem pow_left_iff {n : ℕ} (hn : n ≠ 0) : Commute (x ^ n) y ↔ Commute x y := by
   have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn
   simpa only [zpow_natCast] using (zpow_left_iff (x := x) (y := y) hn')
@@ -55,6 +57,7 @@ variable {G : Type*} [Group G] [HasUniqueRoots G] (x : G)
 
 /-- Taking a nonzero integer power does not change the centralizer of an element in a group
 with unique roots. -/
+@[simp]
 theorem centralizer_zpow_eq {n : ℤ} (hn : n ≠ 0) :
     centralizer {x ^ n} = centralizer {x} := by
   ext y
@@ -67,6 +70,7 @@ theorem centralizer_zpow_eq {n : ℤ} (hn : n ≠ 0) :
 
 /-- Taking a nonzero natural power does not change the centralizer of an element in a group
 with unique roots. -/
+@[simp]
 theorem centralizer_pow_eq {n : ℕ} (hn : n ≠ 0) :
     centralizer {x ^ n} = centralizer {x} := by
   have hn' : (n : ℤ) ≠ 0 := by exact_mod_cast hn
