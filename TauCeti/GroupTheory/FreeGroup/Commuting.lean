@@ -40,24 +40,30 @@ theorem isCyclic_of_isMulCommutative [IsMulCommutative G] : IsCyclic G := by
 
 end IsFreeGroup
 
-namespace FreeGroup
+namespace Subgroup
 
-variable {α : Type*}
+variable {G : Type*} [Group G] [IsFreeGroup G]
 
 /-- Every abelian subgroup of a free group is cyclic, including the trivial subgroup. -/
-theorem isCyclic_subgroup_of_isMulCommutative
-    (H : Subgroup (FreeGroup α)) [IsMulCommutative H] : IsCyclic H := by
+theorem isCyclic_of_isMulCommutative
+    (H : Subgroup G) [IsMulCommutative H] : IsCyclic H := by
   have : IsFreeGroup H := H.isFreeGroupOfIsFreeGroup
   exact IsFreeGroup.isCyclic_of_isMulCommutative
 
+end Subgroup
+
+namespace IsFreeGroup
+
+variable {G : Type*} [Group G] [IsFreeGroup G]
+
 /-- Two elements of a free group commute exactly when they are integer powers of one element. -/
-theorem commute_iff_exists_common_zpow (x y : FreeGroup α) :
-    Commute x y ↔ ∃ r : FreeGroup α, ∃ m n : ℤ, x = r ^ m ∧ y = r ^ n := by
+theorem commute_iff_exists_common_zpow (x y : G) :
+    Commute x y ↔ ∃ r : G, ∃ m n : ℤ, x = r ^ m ∧ y = r ^ n := by
   classical
   constructor
   · intro hxy
-    let H : Subgroup (FreeGroup α) := Subgroup.closure ({x, y} : Set (FreeGroup α))
-    have hp : ({x, y} : Set (FreeGroup α)).Pairwise Commute := by
+    let H : Subgroup G := Subgroup.closure ({x, y} : Set G)
+    have hp : ({x, y} : Set G).Pairwise Commute := by
       intro a ha b hb hab
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha hb
       rcases ha with rfl | rfl <;> rcases hb with rfl | rfl
@@ -66,7 +72,7 @@ theorem commute_iff_exists_common_zpow (x y : FreeGroup α) :
       · exact hxy.symm
       · exact (hab rfl).elim
     have : IsMulCommutative H := Subgroup.isMulCommutative_closure hp
-    have hcyc : IsCyclic H := isCyclic_subgroup_of_isMulCommutative H
+    have hcyc : IsCyclic H := H.isCyclic_of_isMulCommutative
     obtain ⟨r, hr⟩ := (H.isCyclic_iff_exists_zpowers_eq_top).mp hcyc
     have hx : x ∈ Subgroup.zpowers r := hr.symm ▸ Subgroup.subset_closure (by simp)
     have hy : y ∈ Subgroup.zpowers r := hr.symm ▸ Subgroup.subset_closure (by simp)
@@ -76,4 +82,4 @@ theorem commute_iff_exists_common_zpow (x y : FreeGroup α) :
   · rintro ⟨r, m, n, rfl, rfl⟩
     exact (Commute.refl r).zpow_zpow m n
 
-end FreeGroup
+end IsFreeGroup
