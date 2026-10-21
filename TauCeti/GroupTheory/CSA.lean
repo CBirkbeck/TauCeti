@@ -42,6 +42,35 @@ theorem isCSA_def : IsCSA G ↔
 def IsCommTransitive (G : Type*) [Group G] : Prop :=
   ∀ ⦃x y z : G⦄, y ≠ 1 → Commute x y → Commute y z → Commute x z
 
+/-- The defining condition for commutation transitivity. -/
+theorem isCommTransitive_def : IsCommTransitive G ↔
+    ∀ ⦃x y z : G⦄, y ≠ 1 → Commute x y → Commute y z → Commute x z := Iff.rfl
+
+namespace IsCommTransitive
+
+/-- Apply commutation transitivity through a nonidentity element. -/
+theorem commute (h : IsCommTransitive G) {x y z : G} (hy : y ≠ 1)
+    (hxy : Commute x y) (hyz : Commute y z) : Commute x z :=
+  isCommTransitive_def.mp h hy hxy hyz
+
+/-- A noncommutative group with transitive commutation has trivial center. -/
+theorem center_eq_bot (h : IsCommTransitive G) (hnoncomm : ¬ IsMulCommutative G) :
+    Subgroup.center G = ⊥ := by
+  apply eq_bot_iff.mpr
+  intro z hz
+  by_contra hzne
+  apply hnoncomm
+  rw [← Subgroup.center_eq_top_iff]
+  rw [Subgroup.eq_top_iff']
+  intro x
+  rw [Subgroup.mem_center_iff]
+  intro y
+  have hzx := Subgroup.mem_center_iff.mp hz x
+  have hzy := Subgroup.mem_center_iff.mp hz y
+  exact h.commute hzne hzy hzx.symm
+
+end IsCommTransitive
+
 /-- Commutation transitivity says exactly that each nontrivial element has an
 abelian centralizer. -/
 theorem isCommTransitive_iff_centralizer_isMulCommutative :
@@ -101,19 +130,8 @@ theorem isCommTransitive (hG : IsCSA G) : IsCommTransitive G :=
 
 /-- A noncommutative CSA group has trivial center. -/
 theorem center_eq_bot (hG : IsCSA G) (hnoncomm : ¬ IsMulCommutative G) :
-    Subgroup.center G = ⊥ := by
-  apply eq_bot_iff.mpr
-  intro z hz
-  by_contra hzne
-  apply hnoncomm
-  rw [← Subgroup.center_eq_top_iff]
-  rw [Subgroup.eq_top_iff']
-  intro x
-  rw [Subgroup.mem_center_iff]
-  intro y
-  have hzx := Subgroup.mem_center_iff.mp hz x
-  have hzy := Subgroup.mem_center_iff.mp hz y
-  exact hG.isCommTransitive hzne hzy hzx.symm
+    Subgroup.center G = ⊥ :=
+  hG.isCommTransitive.center_eq_bot hnoncomm
 
 /-- An injective homomorphism into a CSA group makes its source CSA. -/
 theorem of_injective {H : Type*} [Group H] (hG : IsCSA G)
@@ -157,10 +175,8 @@ theorem of_injective {H : Type*} [Group H] (hG : IsCSA G)
   apply (Subgroup.mem_pointwise_smul_iff_inv_smul_mem).mpr
   simpa [MulAut.smul_def] using hfconj
 
-end IsCSA
-
 /-- Every commutative group is CSA. -/
-theorem isCSA_of_commGroup (G : Type*) [CommGroup G] : IsCSA G := by
+theorem of_commGroup [IsMulCommutative G] : IsCSA G := by
   intro M hM
   have htop : IsMulCommutative (⊤ : Subgroup G) := inferInstance
   have hMtop : M = ⊤ := hM.eq_of_le htop le_top
@@ -169,21 +185,31 @@ theorem isCSA_of_commGroup (G : Type*) [CommGroup G] : IsCSA G := by
   intro g hg
   exact (hg (Subgroup.mem_top g)).elim
 
+end IsCSA
+
 /-- A product of a noncommutative group with a nontrivial group
-is not CSA: a nonidentity element in the second factor joins noncommuting elements. -/
-theorem not_isCSA_prod_of_noncomm {A : Type*} [Group A]
-    (hG : ¬ IsMulCommutative G) (hA : ∃ t : A, t ≠ 1) :
-    ¬ IsCSA (G × A) := by
+is not commutation transitive: a nonidentity element in the second factor
+joins noncommuting elements. -/
+theorem not_isCommTransitive_prod_of_not_isMulCommutative {A : Type*}
+    [Group A] [Nontrivial A] (hG : ¬ IsMulCommutative G) :
+    ¬ IsCommTransitive (G × A) := by
   obtain ⟨a, b, hab⟩ : ∃ a b : G, a * b ≠ b * a := by
     simpa only [isMulCommutative_iff, not_forall] using hG
-  obtain ⟨t, ht⟩ := hA
+  obtain ⟨t, ht⟩ := exists_ne (1 : A)
   intro h
   have hmiddle : (1, t) ≠ (1 : G × A) := by simpa using ht
   have hleft : Commute (a, (1 : A)) ((1 : G), t) := by
     simp [commute_iff_eq]
   have hright : Commute ((1 : G), t) (b, (1 : A)) := by
     simp [commute_iff_eq]
-  have hfinal := h.isCommTransitive hmiddle hleft hright
+  have hfinal := h.commute hmiddle hleft hright
   exact hab (congrArg Prod.fst hfinal)
+
+/-- A product of a noncommutative group with a nontrivial group is not CSA. -/
+theorem not_isCSA_prod_of_not_isMulCommutative {A : Type*}
+    [Group A] [Nontrivial A] (hG : ¬ IsMulCommutative G) :
+    ¬ IsCSA (G × A) := by
+  intro h
+  exact not_isCommTransitive_prod_of_not_isMulCommutative hG h.isCommTransitive
 
 end Group
