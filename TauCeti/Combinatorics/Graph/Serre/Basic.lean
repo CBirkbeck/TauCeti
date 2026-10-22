@@ -28,6 +28,8 @@ public section
 
 universe u v w x y z
 
+namespace TauCeti
+
 /-- A graph in Serre's sense: every directed edge has a distinct reverse edge. Loops and parallel
 edges are permitted. -/
 structure SerreGraph where
@@ -51,17 +53,27 @@ variable (Γ : SerreGraph.{u, v})
 /-- Terminal vertex of a dart. -/
 @[expose] def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
 
+@[simp] theorem src_rev (e : Γ.E) : Γ.src (Γ.rev e) = Γ.tgt e := by
+  simp only [tgt]
+
 @[simp] theorem tgt_rev (e : Γ.E) : Γ.tgt (Γ.rev e) = Γ.src e := by
-  simp [tgt, Γ.rev_rev]
+  simp only [tgt, Γ.rev_rev]
+
+theorem rev_injective : Function.Injective Γ.rev := by
+  intro e f h
+  simpa only [Γ.rev_rev] using congrArg Γ.rev h
 
 /-- An orientation chooses one dart from each reverse pair. -/
 def IsOrientation (O : Set Γ.E) : Prop := ∀ e, e ∈ O ↔ Γ.rev e ∉ O
+
+theorem isOrientation_iff (O : Set Γ.E) :
+    Γ.IsOrientation O ↔ ∀ e, e ∈ O ↔ Γ.rev e ∉ O := Iff.rfl
 
 theorem IsOrientation.mem_rev_iff {O : Set Γ.E} (hO : Γ.IsOrientation O) (e : Γ.E) :
     Γ.rev e ∈ O ↔ e ∉ O := by
   simpa only [Γ.rev_rev] using hO (Γ.rev e)
 
-theorem IsOrientation.disjoint_rev {O : Set Γ.E} (hO : Γ.IsOrientation O)
+theorem IsOrientation.not_mem_and_rev_mem {O : Set Γ.E} (hO : Γ.IsOrientation O)
     (e : Γ.E) : ¬(e ∈ O ∧ Γ.rev e ∈ O) := by
   rintro ⟨he, hre⟩
   exact (hO e).mp he hre
@@ -75,11 +87,18 @@ theorem IsOrientation.disjoint_rev {O : Set Γ.E} (hO : Γ.IsOrientation O)
     @Quiver.HasInvolutiveReverse Γ.V Γ.toQuiver := by
   letI : Quiver Γ.V := Γ.toQuiver
   exact {
-    reverse' := fun {a b} e => ⟨Γ.rev e.1, ⟨e.2.2, by simpa [tgt, Γ.rev_rev] using e.2.1⟩⟩
+    reverse' := fun {a b} e =>
+      ⟨Γ.rev e.1, ⟨(Γ.src_rev e.1).trans e.2.2,
+        by simpa only [tgt_rev] using e.2.1⟩⟩
     inv' := by
       intro a b e
       apply Subtype.ext
       exact Γ.rev_rev e.1 }
+
+@[simp] theorem reverse_val {a b : Γ.V}
+    (f : @Quiver.Hom Γ.V Γ.toQuiver a b) :
+    (@Quiver.reverse Γ.V Γ.toQuiver Γ.toQuiverHasInvolutiveReverse.toHasReverse
+      a b f).1 = Γ.rev f.1 := rfl
 
 /-- A dart as an arrow of the associated quiver. -/
 @[expose] def dart (e : Γ.E) : @Quiver.Hom Γ.V Γ.toQuiver (Γ.src e) (Γ.tgt e) :=
@@ -95,6 +114,8 @@ theorem toQuiver_reverse (e : Γ.E) :
     (@Quiver.reverse Γ.V Γ.toQuiver Γ.toQuiverHasInvolutiveReverse.toHasReverse
       (Γ.src e) (Γ.tgt e) (Γ.dart e)).1 = Γ.rev e := rfl
 
+attribute [simp] SerreGraph.rev_rev
+
 /-- A morphism of Serre graphs maps vertices and darts and preserves incidence and reversal. -/
 structure Hom (Δ : SerreGraph.{w, x}) where
   /-- Vertex map. -/
@@ -106,6 +127,8 @@ structure Hom (Δ : SerreGraph.{w, x}) where
   /-- Reversal is preserved. -/
   map_rev : ∀ e, mapE (Γ.rev e) = Δ.rev (mapE e)
 
+attribute [simp] Hom.map_src Hom.map_rev
+
 @[ext] theorem Hom.ext {Δ : SerreGraph.{w, x}} {f g : Γ.Hom Δ}
     (hV : f.mapV = g.mapV) (hE : f.mapE = g.mapE) : f = g := by
   cases f
@@ -114,22 +137,44 @@ structure Hom (Δ : SerreGraph.{w, x}) where
 
 @[simp] theorem Hom.map_tgt {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ) (e : Γ.E) :
     Δ.tgt (f.mapE e) = f.mapV (Γ.tgt e) := by
-  simp [tgt, ← f.map_rev, f.map_src]
+  simp only [tgt, ← f.map_rev, f.map_src]
 
 /-- Identity morphism of a Serre graph. -/
-def Hom.id : Γ.Hom Γ where
+@[expose] def Hom.id : Γ.Hom Γ where
   mapV := _root_.id
   mapE := _root_.id
   map_src := by intros; rfl
   map_rev := by intros; rfl
 
+@[simp] theorem Hom.id_mapV : (Hom.id Γ).mapV = _root_.id := rfl
+@[simp] theorem Hom.id_mapE : (Hom.id Γ).mapE = _root_.id := rfl
+
 /-- Compose Serre-graph morphisms. -/
-def Hom.comp {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
+@[expose] def Hom.comp {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
     (f : Γ.Hom Δ) (g : Δ.Hom Θ) : Γ.Hom Θ where
   mapV := g.mapV ∘ f.mapV
   mapE := g.mapE ∘ f.mapE
   map_src := by intro e; simp [g.map_src, f.map_src]
   map_rev := by intro e; simp [g.map_rev, f.map_rev]
+
+@[simp] theorem Hom.comp_mapV {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
+    (f : Γ.Hom Δ) (g : Δ.Hom Θ) : (Hom.comp Γ f g).mapV = g.mapV ∘ f.mapV := rfl
+
+@[simp] theorem Hom.comp_mapE {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
+    (f : Γ.Hom Δ) (g : Δ.Hom Θ) : (Hom.comp Γ f g).mapE = g.mapE ∘ f.mapE := rfl
+
+@[simp] theorem Hom.id_comp {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ) :
+    Hom.comp Γ (Hom.id Γ) f = f := by
+  apply Hom.ext <;> rfl
+
+@[simp] theorem Hom.comp_id {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ) :
+    Hom.comp Γ f (Hom.id Δ) = f := by
+  apply Hom.ext <;> rfl
+
+theorem Hom.comp_assoc {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
+    {Ξ : SerreGraph} (f : Γ.Hom Δ) (g : Δ.Hom Θ) (h : Θ.Hom Ξ) :
+    Hom.comp Γ (Hom.comp Γ f g) h = Hom.comp Γ f (Hom.comp Δ g h) := by
+  apply Hom.ext <;> rfl
 
 /-- The Serre graph of a simple graph has its darts as directed edges. -/
 @[expose] def ofSimpleGraph {V : Type u} (G : SimpleGraph V) : SerreGraph.{u, u} where
@@ -143,6 +188,9 @@ def Hom.comp {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
 @[simp] theorem ofSimpleGraph_src {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
     (ofSimpleGraph G).src e = e.fst := rfl
 
+@[simp] theorem ofSimpleGraph_rev {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
+    (ofSimpleGraph G).rev e = e.symm := rfl
+
 @[simp] theorem ofSimpleGraph_tgt {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
     (ofSimpleGraph G).tgt e = e.snd := rfl
 
@@ -155,6 +203,12 @@ def Hom.comp {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
   rev_rev := by intro ⟨a, b⟩; cases b <;> rfl
   rev_ne := by intro ⟨a, b⟩; cases b <;> simp
 
+@[simp] theorem rose_src (α : Type w) (e : α × Bool) :
+    (rose α).src e = PUnit.unit := rfl
+
+@[simp] theorem rose_rev (α : Type w) (e : α × Bool) :
+    (rose α).rev e = (e.1, !e.2) := rfl
+
 /-- Each dart of a rose is a loop. -/
 @[simp] theorem rose_tgt (α : Type w) (e : α × Bool) :
     (rose α).tgt e = PUnit.unit := rfl
@@ -163,8 +217,8 @@ def Hom.comp {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
 theorem rose_isOrientation (α : Type w) :
     (rose α).IsOrientation {e | e.2 = true} := by
   intro ⟨a, b⟩
-  -- Reduce membership in the chosen dart set to its Boolean sign.
-  change (b = true) ↔ ¬(!b = true)
-  cases b <;> decide
+  exact (show (b = true) ↔ ¬(!b = true) by cases b <;> decide)
 
 end SerreGraph
+
+end TauCeti

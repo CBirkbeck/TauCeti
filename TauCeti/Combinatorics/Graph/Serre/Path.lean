@@ -17,6 +17,8 @@ edges. It is the local normal-form condition used for graph path groups and Stal
 
 public section
 
+namespace TauCeti
+
 namespace SerreGraph
 
 variable (Γ : SerreGraph)
@@ -59,3 +61,5 @@ theorem rose_isReduced_distinct_petals {α : Type*} {a b : α} (hab : a ≠ b) :
   simpa [Path.IsReduced, rose] using hab.symm
 
 end SerreGraph
+
+end TauCeti
