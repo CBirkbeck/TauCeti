@@ -43,6 +43,18 @@ def IsDiscriminatedBy (ιK : G →* K) (ιH : G →* H) : Prop :=
   ∀ s : Finset K, (∀ k ∈ s, k ≠ 1) →
     ∃ φ : GHom ιK ιH, ∀ k ∈ s, φ k ≠ 1
 
+/-- Characterization of separation by coefficient-preserving homomorphisms. -/
+theorem isSeparatedBy_def (ιK : G →* K) (ιH : G →* H) :
+    IsSeparatedBy ιK ιH ↔ ∀ k : K, k ≠ 1 → ∃ φ : GHom ιK ιH, φ k ≠ 1 :=
+  Iff.rfl
+
+/-- Characterization of discrimination by coefficient-preserving homomorphisms. -/
+theorem isDiscriminatedBy_def (ιK : G →* K) (ιH : G →* H) :
+    IsDiscriminatedBy ιK ιH ↔
+      ∀ s : Finset K, (∀ k ∈ s, k ≠ 1) →
+        ∃ φ : GHom ιK ιH, ∀ k ∈ s, φ k ≠ 1 :=
+  Iff.rfl
+
 namespace IsDiscriminatedBy
 
 /-- Discrimination implies separation by testing a singleton. -/
