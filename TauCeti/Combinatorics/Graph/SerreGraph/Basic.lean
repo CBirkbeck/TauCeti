@@ -40,6 +40,7 @@ structure SerreGraph where
   rev_ne : ∀ e, rev e ≠ e
 
 attribute [simp] SerreGraph.rev_rev
+attribute [simp] SerreGraph.rev_ne
 
 namespace SerreGraph
 
@@ -59,6 +60,10 @@ theorem rev_involutive : Function.Involutive Γ.rev := Γ.rev_rev
 
 /-- Reversing darts is injective. -/
 theorem rev_injective : Function.Injective Γ.rev := Γ.rev_involutive.injective
+
+/-- Reversing two darts gives the same dart exactly when they were equal. -/
+@[simp] theorem rev_inj {e f : Γ.E} : Γ.rev e = Γ.rev f ↔ e = f :=
+  Γ.rev_injective.eq_iff
 
 @[simp] theorem tgt_rev (e : Γ.E) : Γ.tgt (Γ.rev e) = Γ.src e := by
   simp only [tgt, Γ.rev_rev]
