@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Order.Zorn
+public import TauCeti.Algebra.Group.Subgroup.Centralizer
 public import TauCeti.GroupTheory.TrivialIntersection
 
 /-!
@@ -21,26 +21,6 @@ The definition follows Baumslag, Myasnikov and Remeslennikov, *Algebraic geometr
 -/
 
 public section
-
-namespace Subgroup
-
-variable {G : Type*} [Group G]
-
-/-- Every abelian subgroup is contained in a maximal abelian subgroup. -/
-theorem exists_maximal_isMulCommutative (H : Subgroup G)
-    (hH : IsMulCommutative H) :
-    ∃ M : Subgroup G, H ≤ M ∧ Maximal (fun K : Subgroup G => IsMulCommutative K) M := by
-  classical
-  apply zorn_le_nonempty₀ {K : Subgroup G | IsMulCommutative K} ?_ H hH
-  intro c hc hcc y hy
-  have : ∀ K : c, IsMulCommutative (K : Subgroup G) := fun K => hc K.2
-  have hcomm : IsMulCommutative (sSup c : Subgroup G) := by
-    rw [sSup_eq_iSup']
-    have : Nonempty c := ⟨⟨y, hy⟩⟩
-    exact Subgroup.isMulCommutative_iSup hcc.directedOn.directed_val
-  exact ⟨sSup c, hcomm, fun K hK => le_sSup hK⟩
-
-end Subgroup
 
 namespace Group
 
