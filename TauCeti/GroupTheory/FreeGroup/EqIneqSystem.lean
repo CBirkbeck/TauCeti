@@ -22,7 +22,7 @@ theorem over free groups*, §2.3.
 
 public section
 
-namespace TauCeti.FreeGroup
+namespace FreeGroup
 
 /-- A finite conjunction of equations and inequations in variables `X` with coefficient
 letters `A`. The lists need not be deduplicated: they are finite syntax, and their order has
@@ -50,11 +50,11 @@ theorem eval_eq_lift (v : X → G) (c : A → G) :
     eval v c (FreeGroup.of i) = Sum.elim v c i := by
   simp [eval]
 
-@[simp] theorem eval_of_inl (v : X → G) (c : A → G) (x : X) :
+theorem eval_of_inl (v : X → G) (c : A → G) (x : X) :
     eval v c (FreeGroup.of (Sum.inl x)) = v x := by
   simp [eval]
 
-@[simp] theorem eval_of_inr (v : X → G) (c : A → G) (a : A) :
+theorem eval_of_inr (v : X → G) (c : A → G) (a : A) :
     eval v c (FreeGroup.of (Sum.inr a)) = c a := by
   simp [eval]
 
@@ -164,4 +164,4 @@ theorem isSolution_commutator_of_pow :
 
 end EqIneqSystem
 
-end TauCeti.FreeGroup
+end FreeGroup
