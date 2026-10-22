@@ -19,8 +19,6 @@ and graphs of groups.
 
 The definition follows Serre, *Trees*, Chapter I, §2.1.
 
-The small computation definitions marked `@[expose]` must be exposed for Lean's module checker
-to export their characteristic equations. Those equations provide the rewriting interface.
 -/
 
 public section
@@ -50,13 +48,13 @@ namespace SerreGraph
 variable (Γ : SerreGraph)
 
 /-- The terminus of an edge is the origin of its reverse. -/
-@[expose] def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
+def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
 
 /-- The target of a dart is the source of its reverse. -/
-theorem tgt_def (e : Γ.E) : Γ.tgt e = Γ.src (Γ.rev e) := rfl
+theorem tgt_def (e : Γ.E) : Γ.tgt e = Γ.src (Γ.rev e) := (rfl)
 
 /-- The reverse dart starts at the original target. -/
-@[simp] theorem src_rev (e : Γ.E) : Γ.src (Γ.rev e) = Γ.tgt e := rfl
+@[simp] theorem src_rev (e : Γ.E) : Γ.src (Γ.rev e) = Γ.tgt e := (rfl)
 
 /-- Reversing darts is an involution. -/
 theorem rev_involutive : Function.Involutive Γ.rev := Γ.rev_rev
@@ -120,17 +118,17 @@ variable {Γ} {u v w : Γ.V}
   rfl
 
 /-- The empty path at a vertex. -/
-@[expose] def nil (u : Γ.V) : Γ.Path u u :=
+def nil (u : Γ.V) : Γ.Path u u :=
   ⟨[], (Γ.valid_nil u u).mpr rfl⟩
 
-@[simp] theorem nil_edges (u : Γ.V) : (nil u).edges = [] := rfl
+@[simp] theorem nil_edges (u : Γ.V) : (nil u).edges = [] := (rfl)
 
 /-- Prefix a path by a dart ending at its initial vertex. -/
-@[expose] def cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) : Γ.Path (Γ.src e) v :=
+def cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) : Γ.Path (Γ.src e) v :=
   ⟨e :: p.edges, (Γ.valid_cons (Γ.src e) v e p.edges).mpr ⟨rfl, p.valid⟩⟩
 
 @[simp] theorem cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
-    (cons e p).edges = e :: p.edges := rfl
+    (cons e p).edges = e :: p.edges := (rfl)
 
 /-- Induction on the edge list of a path, preserving the endpoints in each case. -/
 @[elab_as_elim] theorem induction {motive : ∀ {u v}, Γ.Path u v → Prop}
@@ -153,11 +151,11 @@ theorem valid_append (p : Γ.Path u v) (q : Γ.Path v w) :
   (Γ.valid_append_iff u w p.edges q.edges).mpr ⟨v, p.valid, q.valid⟩
 
 /-- Concatenation of directed paths. -/
-@[expose] def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
+def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
   ⟨p.edges ++ q.edges, valid_append p q⟩
 
 @[simp] theorem append_edges (p : Γ.Path u v) (q : Γ.Path v w) :
-    (append p q).edges = p.edges ++ q.edges := rfl
+    (append p q).edges = p.edges ++ q.edges := (rfl)
 
 @[simp] theorem nil_append (p : Γ.Path u v) : append (nil u) p = p := by
   ext
@@ -195,11 +193,11 @@ theorem valid_reverse {es : List Γ.E} (h : Γ.Valid u es v) :
       exact valid_append ⟨_, ih ht⟩ ⟨_, hstep⟩
 
 /-- Reverse a path, reversing both the order and the orientation of its darts. -/
-@[expose] def reverse (p : Γ.Path u v) : Γ.Path v u :=
+def reverse (p : Γ.Path u v) : Γ.Path v u :=
   ⟨p.edges.reverse.map Γ.rev, valid_reverse p.valid⟩
 
 @[simp] theorem reverse_edges (p : Γ.Path u v) :
-    p.reverse.edges = p.edges.reverse.map Γ.rev := rfl
+    p.reverse.edges = p.edges.reverse.map Γ.rev := (rfl)
 
 /-- Reversing a path twice returns the original path. -/
 @[simp] theorem reverse_reverse (p : Γ.Path u v) : p.reverse.reverse = p := by
@@ -393,11 +391,11 @@ theorem rose_connected (α : Type*) : (rose α).Connected := by
   exact Reachable.refl _ _
 
 /-- A petal is a nonempty reduced loop in the rose. -/
-@[expose] def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
+def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
   Path.cons (a, true) (Path.nil ((rose α).tgt (a, true)))
 
 @[simp] theorem rosePetal_edges {α : Type*} (a : α) :
-    (rosePetal a).edges = [(a, true)] := rfl
+    (rosePetal a).edges = [(a, true)] := (rfl)
 
 theorem rosePetal_isReduced {α : Type*} (a : α) :
     (rosePetal a).IsReduced := Path.isReduced_single _
