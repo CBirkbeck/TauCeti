@@ -18,6 +18,9 @@ and roses give basic examples. This is the combinatorial carrier for labelled su
 and graphs of groups.
 
 The definition follows Serre, *Trees*, Chapter I, §2.1.
+
+The small computation definitions marked `@[expose]` must be exposed for Lean's module checker
+to export their characteristic equations. Those equations provide the rewriting interface.
 -/
 
 public section
