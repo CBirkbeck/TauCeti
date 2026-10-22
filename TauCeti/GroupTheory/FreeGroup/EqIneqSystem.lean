@@ -50,18 +50,31 @@ theorem eval_eq_lift (v : X → G) (c : A → G) :
     eval v c (FreeGroup.of i) = Sum.elim v c i := by
   simp [eval]
 
-theorem eval_of_inl (v : X → G) (c : A → G) (x : X) :
-    eval v c (FreeGroup.of (Sum.inl x)) = v x := by
-  simp [eval]
-
-theorem eval_of_inr (v : X → G) (c : A → G) (a : A) :
-    eval v c (FreeGroup.of (Sum.inr a)) = c a := by
-  simp [eval]
-
 /-- A variable assignment solves a system when all equations vanish and all inequations
 remain nontrivial after evaluation. -/
 def IsSolution (S : EqIneqSystem X A) (v : X → G) (c : A → G) : Prop :=
   (∀ w ∈ S.eqs, eval v c w = 1) ∧ (∀ w ∈ S.ineqs, eval v c w ≠ 1)
+
+/-- Solving a system means satisfying every equation and every inequation. -/
+theorem isSolution_iff (S : EqIneqSystem X A) (v : X → G) (c : A → G) :
+    S.IsSolution v c ↔
+      (∀ w ∈ S.eqs, eval v c w = 1) ∧ (∀ w ∈ S.ineqs, eval v c w ≠ 1) :=
+  Iff.rfl
+
+/-- Every equation in a solved system evaluates to the identity. -/
+theorem IsSolution.eval_eq_one {S : EqIneqSystem X A} {v : X → G} {c : A → G}
+    (h : S.IsSolution v c) {w : FreeGroup (X ⊕ A)} (hw : w ∈ S.eqs) :
+    eval v c w = 1 := h.1 w hw
+
+/-- Every inequation in a solved system evaluates away from the identity. -/
+theorem IsSolution.eval_ne_one {S : EqIneqSystem X A} {v : X → G} {c : A → G}
+    (h : S.IsSolution v c) {w : FreeGroup (X ⊕ A)} (hw : w ∈ S.ineqs) :
+    eval v c w ≠ 1 := h.2 w hw
+
+/-- Equations and inequations together establish that an assignment solves a system. -/
+theorem isSolution_of_forall (S : EqIneqSystem X A) (v : X → G) (c : A → G)
+    (he : ∀ w ∈ S.eqs, eval v c w = 1) (hi : ∀ w ∈ S.ineqs, eval v c w ≠ 1) :
+    S.IsSolution v c := ⟨he, hi⟩
 
 /-- The empty system places no conditions on an assignment. -/
 def empty (X A : Type*) : EqIneqSystem X A := ⟨[], []⟩
@@ -72,6 +85,7 @@ def empty (X A : Type*) : EqIneqSystem X A := ⟨[], []⟩
 /-- The empty system has no inequations. -/
 @[simp] theorem ineqs_empty (X A : Type*) : (empty X A).ineqs = [] := by rfl
 
+/-- Every assignment solves the empty system. -/
 @[simp] theorem isSolution_empty (v : X → G) (c : A → G) :
     (empty X A).IsSolution v c := by
   simp [empty, IsSolution]
@@ -88,6 +102,7 @@ def append (S T : EqIneqSystem X A) : EqIneqSystem X A :=
 @[simp] theorem ineqs_append (S T : EqIneqSystem X A) :
     (S.append T).ineqs = S.ineqs ++ T.ineqs := by rfl
 
+/-- An assignment solves an appended system exactly when it solves both systems. -/
 @[simp] theorem isSolution_append (S T : EqIneqSystem X A) (v : X → G) (c : A → G) :
     (S.append T).IsSolution v c ↔ S.IsSolution v c ∧ T.IsSolution v c := by
   simp [IsSolution, append, List.mem_append, or_imp, forall_and, and_assoc,
@@ -95,21 +110,26 @@ def append (S T : EqIneqSystem X A) : EqIneqSystem X A :=
 
 /-- Evaluation commutes with a group homomorphism when the variables and coefficients are
 mapped along that homomorphism. -/
-theorem comp_eval (φ : G →* H) (v : X → G) (c : A → G) :
+@[simp] theorem comp_eval (φ : G →* H) (v : X → G) (c : A → G) :
     φ.comp (eval v c) = eval (φ ∘ v) (φ ∘ c) := by
-  apply MonoidHom.ext
-  intro w
-  apply FreeGroup.lift_unique
+  apply FreeGroup.ext_hom
   intro i
-  cases i <;> simp [eval, Function.comp_def]
+  cases i <;> simp [Function.comp_def]
+
+/-- Evaluation commutes pointwise with a group homomorphism. -/
+@[simp] theorem map_eval (φ : G →* H) (v : X → G) (c : A → G)
+    (w : FreeGroup (X ⊕ A)) :
+    φ (eval v c w) = eval (φ ∘ v) (φ ∘ c) w := by
+  rw [← comp_eval]
+  rfl
 
 /-- Equations remain solved after any group homomorphism. -/
-theorem eval_comp_eq_one (S : EqIneqSystem X A) (φ : G →* H)
+theorem eqs_comp_eq_one (S : EqIneqSystem X A) (φ : G →* H)
     (v : X → G) (c : A → G) (h : ∀ w ∈ S.eqs, eval v c w = 1) :
     ∀ w ∈ S.eqs, eval (φ ∘ v) (φ ∘ c) w = 1 := by
   intro w hw
-  rw [← comp_eval]
-  simp [h w hw]
+  rw [← map_eval, h w hw]
+  simp
 
 /-- Injective group homomorphisms preserve and reflect solutions, including inequations. -/
 theorem isSolution_comp_iff_of_injective (S : EqIneqSystem X A) (φ : G →* H)
@@ -137,30 +157,36 @@ theorem isSolution_iff_toWord {B : Type*} [DecidableEq B]
       (∀ w ∈ S.ineqs, (eval v c w).toWord ≠ []) := by
   simp only [IsSolution, FreeGroup.toWord_eq_nil_iff, ne_eq]
 
-/-- The inequation `x ≠ 1` given by a single variable letter excludes the identity assignment. -/
-theorem not_isSolution_one_singleton_ineq (x : X) (c : A → G) :
-    ¬ (⟨[], [FreeGroup.of (Sum.inl x)]⟩ : EqIneqSystem X A).IsSolution
-      (fun _ => (1 : G)) c := by
+/-- A single variable inequation is satisfied exactly when that variable is nontrivial. -/
+theorem isSolution_singleton_ineq_iff (x : X) (v : X → G) (c : A → G) :
+    (⟨[], [FreeGroup.of (Sum.inl x)]⟩ : EqIneqSystem X A).IsSolution v c ↔
+      v x ≠ 1 := by
   simp [IsSolution]
 
-/-- A nontrivial value of a variable satisfies the corresponding one-word inequation. -/
-theorem isSolution_singleton_ineq_of_ne_one (x : X) (v : X → G) (c : A → G)
-    (hx : v x ≠ 1) :
-    (⟨[], [FreeGroup.of (Sum.inl x)]⟩ : EqIneqSystem X A).IsSolution v c := by
-  simpa [IsSolution] using hx
+example (x : X) (c : A → G) :
+    ¬ (⟨[], [FreeGroup.of (Sum.inl x)]⟩ : EqIneqSystem X A).IsSolution
+      (fun _ => (1 : G)) c := by
+  simp [isSolution_singleton_ineq_iff]
 
 open scoped commutatorElement
-/-- In a free group, assigning `x = a` and `y = a²` solves the equation that `x` and `y`
-commute together with the inequation `x ≠ 1`. -/
-theorem isSolution_commutator_of_pow :
+/-- A commutator equation and a single variable inequation say that the variables commute
+and that the first is nontrivial. -/
+theorem isSolution_commutator_ineq_iff (x y : X) (v : X → G) (c : A → G) :
+    (⟨[⁅FreeGroup.of (Sum.inl x : X ⊕ A), FreeGroup.of (Sum.inl y : X ⊕ A)⁆],
+      [FreeGroup.of (Sum.inl x : X ⊕ A)]⟩ : EqIneqSystem X A).IsSolution v c ↔
+      Commute (v x) (v y) ∧ v x ≠ 1 := by
+  simp [IsSolution, map_commutatorElement, commutatorElement_eq_one_iff_commute]
+
+/-- In a free group on two generators, `x = a` and `y = a²` solve the commutator
+equation with the inequation `x ≠ 1`. -/
+example :
     (⟨[⁅FreeGroup.of (Sum.inl (0 : Fin 2) : Fin 2 ⊕ Fin 2),
         FreeGroup.of (Sum.inl (1 : Fin 2) : Fin 2 ⊕ Fin 2)⁆],
       [FreeGroup.of (Sum.inl (0 : Fin 2) : Fin 2 ⊕ Fin 2)]⟩ :
       EqIneqSystem (Fin 2) (Fin 2)).IsSolution
       (fun i => if i = 0 then FreeGroup.of (0 : Fin 2) else FreeGroup.of (0 : Fin 2) ^ 2)
       FreeGroup.of := by
-  simp [IsSolution, eval, map_commutatorElement,
-    commutatorElement_eq_one_iff_commute, FreeGroup.of_ne_one]
+  simp [isSolution_commutator_ineq_iff, FreeGroup.of_ne_one]
 
 end EqIneqSystem
 
