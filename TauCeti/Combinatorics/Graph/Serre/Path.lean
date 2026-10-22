@@ -21,6 +21,7 @@ namespace SerreGraph
 
 variable (Γ : SerreGraph)
 
+/-- Use the quiver of a Serre graph to form indexed paths. -/
 local instance : Quiver Γ.V := Γ.toQuiver
 
 /-- A Serre path has no consecutive pair of mutually reversed darts. -/
