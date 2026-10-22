@@ -236,6 +236,12 @@ if any, is not the reverse of the prefix dart. -/
   simp only [Γ.rev_rev]
   exact ne_comm
 
+/-- A concatenation is reduced when both paths are reduced and their junction does not cancel. -/
+theorem isReduced_append (p : Γ.Path u v) (q : Γ.Path v w) :
+    (p.append q).IsReduced ↔ p.IsReduced ∧ q.IsReduced ∧
+      ∀ e ∈ p.edges.getLast?, ∀ f ∈ q.edges.head?, f ≠ Γ.rev e := by
+  simp only [IsReduced, append_edges, List.isChain_append]
+
 @[simp] theorem isReduced_nil (u : Γ.V) : IsReduced (nil u) := by
   simp [IsReduced]
 
@@ -357,6 +363,18 @@ theorem single_vertex_isTree : point.IsTree := by
     intro e
     cases e with
     | mk a b => cases b <;> simp
+
+/-- Every dart of a rose starts at its sole vertex. -/
+@[simp] theorem rose_src {α : Type*} (a : α) (b : Bool) :
+    (rose α).src (a, b) = PUnit.unit := rfl
+
+/-- Reversal switches the orientation of a rose petal. -/
+@[simp] theorem rose_rev {α : Type*} (a : α) (b : Bool) :
+    (rose α).rev (a, b) = (a, !b) := rfl
+
+/-- Every dart of a rose ends at its sole vertex. -/
+@[simp] theorem rose_tgt {α : Type*} (a : α) (b : Bool) :
+    (rose α).tgt (a, b) = PUnit.unit := rfl
 
 /-- Every rose is connected, including the rose with no petals. -/
 theorem rose_connected (α : Type*) : (rose α).Connected := by
