@@ -73,9 +73,7 @@ theorem of_injective {ιK : G →* K} {ιL : G →* L} {ιH : G →* H}
   classical
   intro s hs
   obtain ⟨φ, hφ⟩ := h (s.image f) (by
-    intro l hl
-    obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hl
-    exact fun heq => hs k hk (hf (heq.trans (map_one f).symm)))
+    simpa only [Finset.forall_mem_image, map_ne_one_iff f hf] using hs)
   refine ⟨φ.comp f, ?_⟩
   intro k hk
   simpa [GHom.coe_comp] using hφ (f k) (Finset.mem_image.mpr ⟨k, hk, rfl⟩)
@@ -95,7 +93,7 @@ theorem of_injective {ιK : G →* K} {ιL : G →* L} {ιH : G →* H}
     (h : IsSeparatedBy ιL ιH) (f : GHom ιK ιL) (hf : Function.Injective f) :
     IsSeparatedBy ιK ιH := by
   intro k hk
-  obtain ⟨φ, hφ⟩ := h (f k) (fun heq => hk (hf (heq.trans (map_one f).symm)))
+  obtain ⟨φ, hφ⟩ := h (f k) ((map_ne_one_iff f hf).2 hk)
   exact ⟨φ.comp f, by simpa [GHom.coe_comp] using hφ⟩
 
 end IsSeparatedBy
