@@ -50,9 +50,6 @@ variable (Γ : SerreGraph)
 /-- The terminus of an edge is the origin of its reverse. -/
 def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
 
-/-- The target of a dart is the source of its reverse. -/
-theorem tgt_def (e : Γ.E) : Γ.tgt e = Γ.src (Γ.rev e) := (rfl)
-
 /-- The reverse dart starts at the original target. -/
 @[simp] theorem src_rev (e : Γ.E) : Γ.src (Γ.rev e) = Γ.tgt e := (rfl)
 
@@ -121,17 +118,17 @@ variable {Γ} {u v w : Γ.V}
 def nil (u : Γ.V) : Γ.Path u u :=
   ⟨[], (Γ.valid_nil u u).mpr rfl⟩
 
-@[simp] theorem nil_edges (u : Γ.V) : (nil u).edges = [] := (rfl)
+@[simp] theorem edges_nil (u : Γ.V) : (nil u).edges = [] := (rfl)
 
 /-- Prefix a path by a dart ending at its initial vertex. -/
 def cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) : Γ.Path (Γ.src e) v :=
   ⟨e :: p.edges, (Γ.valid_cons (Γ.src e) v e p.edges).mpr ⟨rfl, p.valid⟩⟩
 
-@[simp] theorem cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
+@[simp] theorem edges_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     (cons e p).edges = e :: p.edges := (rfl)
 
 /-- Induction on the edge list of a path, preserving the endpoints in each case. -/
-@[elab_as_elim] theorem induction {motive : ∀ {u v}, Γ.Path u v → Prop}
+@[elab_as_elim] theorem induction_on {motive : ∀ {u v}, Γ.Path u v → Prop}
     (p : Γ.Path u v) (hnil : ∀ u, motive (nil u))
     (hcons : ∀ (e : Γ.E) {v} (q : Γ.Path (Γ.tgt e) v),
       motive q → motive (cons e q)) : motive p := by
@@ -154,7 +151,7 @@ theorem valid_append (p : Γ.Path u v) (q : Γ.Path v w) :
 def append (p : Γ.Path u v) (q : Γ.Path v w) : Γ.Path u w :=
   ⟨p.edges ++ q.edges, valid_append p q⟩
 
-@[simp] theorem append_edges (p : Γ.Path u v) (q : Γ.Path v w) :
+@[simp] theorem edges_append (p : Γ.Path u v) (q : Γ.Path v w) :
     (append p q).edges = p.edges ++ q.edges := (rfl)
 
 @[simp] theorem nil_append (p : Γ.Path u v) : append (nil u) p = p := by
@@ -196,7 +193,7 @@ theorem valid_reverse {es : List Γ.E} (h : Γ.Valid u es v) :
 def reverse (p : Γ.Path u v) : Γ.Path v u :=
   ⟨p.edges.reverse.map Γ.rev, valid_reverse p.valid⟩
 
-@[simp] theorem reverse_edges (p : Γ.Path u v) :
+@[simp] theorem edges_reverse (p : Γ.Path u v) :
     p.reverse.edges = p.edges.reverse.map Γ.rev := (rfl)
 
 /-- Reversing a path twice returns the original path. -/
@@ -209,7 +206,7 @@ def reverse (p : Γ.Path u v) : Γ.Path v u :=
   rfl
 
 /-- Reversing a prefixed path moves its dart to the end with opposite orientation. -/
-theorem reverse_cons_edges (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
+theorem edges_reverse_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     (cons e p).reverse.edges = p.reverse.edges ++ [Γ.rev e] := by
   simp [List.reverse_cons, List.map_append]
 
@@ -231,12 +228,12 @@ theorem isReduced_iff (p : Γ.Path u v) :
 if any, is not the reverse of the prefix dart. -/
 @[simp] theorem isReduced_cons (e : Γ.E) (p : Γ.Path (Γ.tgt e) v) :
     IsReduced (cons e p) ↔ p.IsReduced ∧ ∀ f ∈ p.edges.head?, f ≠ Γ.rev e := by
-  simp only [IsReduced, cons_edges, List.isChain_cons, and_comm]
+  simp only [IsReduced, edges_cons, List.isChain_cons, and_comm]
 
 /-- Reversing a path preserves and reflects reducedness. -/
 @[simp] theorem isReduced_reverse (p : Γ.Path u v) :
     p.reverse.IsReduced ↔ p.IsReduced := by
-  simp only [IsReduced, reverse_edges, List.isChain_map, List.isChain_reverse]
+  simp only [IsReduced, edges_reverse, List.isChain_map, List.isChain_reverse]
   apply List.IsChain.iff
   intro e f
   simp only [Γ.rev_rev]
@@ -246,7 +243,7 @@ if any, is not the reverse of the prefix dart. -/
 theorem isReduced_append (p : Γ.Path u v) (q : Γ.Path v w) :
     (p.append q).IsReduced ↔ p.IsReduced ∧ q.IsReduced ∧
       ∀ e ∈ p.edges.getLast?, ∀ f ∈ q.edges.head?, f ≠ Γ.rev e := by
-  simp only [IsReduced, append_edges, List.isChain_append]
+  simp only [IsReduced, edges_append, List.isChain_append]
 
 @[simp] theorem isReduced_nil (u : Γ.V) : IsReduced (nil u) := by
   simp [IsReduced]
@@ -416,7 +413,7 @@ theorem rose_connected (α : Type*) : (rose α).Connected := by
 def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
   Path.cons (a, true) (Path.nil ((rose α).tgt (a, true)))
 
-@[simp] theorem rosePetal_edges {α : Type*} (a : α) :
+@[simp] theorem edges_rosePetal {α : Type*} (a : α) :
     (rosePetal a).edges = [(a, true)] := (rfl)
 
 theorem rosePetal_isReduced {α : Type*} (a : α) :
