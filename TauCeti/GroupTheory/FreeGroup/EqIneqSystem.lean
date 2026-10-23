@@ -22,7 +22,7 @@ theorem over free groups*, §2.3.
 
 public section
 
-namespace TauCeti.FreeGroup
+namespace TauCeti
 
 /-- A finite conjunction of equations and inequations in variables `X` with coefficient
 letters `A`. The lists need not be deduplicated: they are finite syntax, and their order has
@@ -190,4 +190,4 @@ example :
 
 end EqIneqSystem
 
-end TauCeti.FreeGroup
+end TauCeti
