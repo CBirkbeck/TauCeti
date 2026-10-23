@@ -36,15 +36,39 @@ def Path.IsReduced {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Prop
 @[simp] theorem Path.isReduced_toPath {a b : Γ.V} (e : Quiver.Hom a b) :
     Path.IsReduced Γ e.toPath := trivial
 
-@[simp] theorem Path.isReduced_cons_nil {a b : Γ.V} (e : Quiver.Hom a b) :
-    Path.IsReduced Γ (Quiver.Path.nil.cons e) := trivial
-
 /-- The reducedness test for a newly appended dart only examines the preceding dart. -/
 @[simp] theorem Path.isReduced_cons_cons {a b c d : Γ.V}
     (p : Γ.Path a b) (e : Quiver.Hom b c)
     (f : Quiver.Hom c d) :
     Path.IsReduced Γ ((p.cons e).cons f) ↔
       Path.IsReduced Γ (p.cons e) ∧ f.1 ≠ Γ.rev e.1 := Iff.rfl
+
+private theorem isReduced_pair_comp {a b c d : Γ.V}
+    (e : Quiver.Hom a b) (f : Quiver.Hom b c) (p : Γ.Path c d) :
+    Path.IsReduced Γ ((e.toPath.comp f.toPath).comp p) ↔
+      f.1 ≠ Γ.rev e.1 ∧ Path.IsReduced Γ (f.toPath.comp p) := by
+  induction p with
+  | nil => simp [Quiver.Path.comp, Path.IsReduced]
+  | cons p k ih =>
+    cases p with
+    | nil => simp [Quiver.Path.comp, Path.IsReduced]
+    | cons p l =>
+      simp only [Quiver.Path.comp_cons, Path.IsReduced] at ih ⊢
+      rw [← and_assoc, ← ih]
+
+/-- Reversing a path preserves the absence of immediate backtracking. -/
+@[simp] theorem Path.isReduced_reverse {a b : Γ.V} (p : Γ.Path a b) :
+    Path.IsReduced Γ p.reverse ↔ Path.IsReduced Γ p := by
+  induction p with
+  | nil => simp [Path.IsReduced]
+  | cons p e ih =>
+    cases p with
+    | nil => simp [Quiver.Path.reverse, Path.IsReduced]
+    | cons p f =>
+      rw [Quiver.Path.reverse, Quiver.Path.reverse, ← Quiver.Path.comp_assoc,
+        isReduced_pair_comp]
+      simp only [reverse_val, Γ.rev_rev, Path.isReduced_cons_cons]
+      exact (and_congr (ne_comm : Γ.rev f.1 ≠ e.1 ↔ e.1 ≠ Γ.rev f.1) ih).trans and_comm
 
 /-- Traversing a rose petal and then its reverse is a backtrack. -/
 theorem rose_not_isReduced_backtrack {α : Type*} (a : α) :

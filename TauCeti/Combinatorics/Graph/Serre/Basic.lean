@@ -51,7 +51,10 @@ namespace SerreGraph
 variable (Γ : SerreGraph.{u, v})
 
 /-- Terminal vertex of a dart. -/
-@[expose] def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
+def tgt (e : Γ.E) : Γ.V := Γ.src (Γ.rev e)
+
+/-- A dart ends where its reverse starts. -/
+theorem tgt_def (e : Γ.E) : Γ.tgt e = Γ.src (Γ.rev e) := (rfl)
 
 @[simp] theorem src_rev (e : Γ.E) : Γ.src (Γ.rev e) = Γ.tgt e := by
   simp only [tgt]
@@ -178,24 +181,6 @@ theorem Hom.comp_assoc {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
     Hom.comp h (Hom.comp g f) = Hom.comp (Hom.comp h g) f := by
   apply Hom.ext <;> rfl
 
-/-- The Serre graph of a simple graph has its darts as directed edges. -/
-@[expose] def ofSimpleGraph {V : Type u} (G : SimpleGraph V) : SerreGraph.{u, u} where
-  V := V
-  E := G.Dart
-  src := fun e => e.fst
-  rev := SimpleGraph.Dart.symm
-  rev_rev := SimpleGraph.Dart.symm_symm
-  rev_ne := SimpleGraph.Dart.symm_ne
-
-@[simp] theorem ofSimpleGraph_src {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
-    (ofSimpleGraph G).src e = e.fst := rfl
-
-@[simp] theorem ofSimpleGraph_rev {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
-    (ofSimpleGraph G).rev e = e.symm := rfl
-
-@[simp] theorem ofSimpleGraph_tgt {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
-    (ofSimpleGraph G).tgt e = e.snd := rfl
-
 /-- The rose on a type of petals. Each petal is a loop with two distinct darts. -/
 @[expose] def rose (α : Type w) : SerreGraph.{0, w} where
   V := PUnit
@@ -226,3 +211,25 @@ theorem rose_isOrientation (α : Type w) :
 end SerreGraph
 
 end TauCeti
+
+namespace SimpleGraph
+
+/-- The Serre graph of a simple graph has its darts as directed edges. -/
+@[expose] def toSerreGraph {V : Type u} (G : SimpleGraph V) : TauCeti.SerreGraph.{u, u} where
+  V := V
+  E := G.Dart
+  src := fun e => e.fst
+  rev := SimpleGraph.Dart.symm
+  rev_rev := SimpleGraph.Dart.symm_symm
+  rev_ne := SimpleGraph.Dart.symm_ne
+
+@[simp] theorem toSerreGraph_src {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
+    (toSerreGraph G).src e = e.fst := rfl
+
+@[simp] theorem toSerreGraph_rev {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
+    (toSerreGraph G).rev e = e.symm := rfl
+
+@[simp] theorem toSerreGraph_tgt {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
+    (toSerreGraph G).tgt e = e.snd := rfl
+
+end SimpleGraph
