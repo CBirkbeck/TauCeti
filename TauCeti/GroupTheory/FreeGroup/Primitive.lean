@@ -164,9 +164,12 @@ theorem IsPrimitive.not_mem_commutator {x : G} (hx : IsPrimitive x) :
     (Subgroup.commutator_mem_commutator (show x ∈ (⊤ : Subgroup G) from trivial)
       (show y ∈ (⊤ : Subgroup G) from trivial))
 
+/-- A power with exponent at least two is not primitive. -/
+theorem not_isPrimitive_pow (x : G) {n : ℕ} (hn : 2 ≤ n) : ¬ IsPrimitive (x ^ n) :=
+  fun h => h.not_isProperPower (Group.isProperPower_pow x hn)
+
 /-- The square of any group element is not primitive. -/
-@[simp] theorem not_isPrimitive_sq (x : G) : ¬ IsPrimitive (x ^ 2) := by
-  intro h
-  exact h.not_isProperPower (Group.isProperPower_pow _ (by decide))
+@[simp] theorem not_isPrimitive_sq (x : G) : ¬ IsPrimitive (x ^ 2) :=
+  not_isPrimitive_pow x (by decide)
 
 end TauCeti.FreeGroup
