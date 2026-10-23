@@ -22,6 +22,7 @@ theorem over free groups*, §2.3.
 
 public section
 
+-- Roadmap §3.3 specifies FreeGroup.EqIneqSystem as the public name.
 namespace FreeGroup
 
 /-- A finite conjunction of equations and inequations in variables `X` with coefficient
