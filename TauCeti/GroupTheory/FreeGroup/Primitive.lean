@@ -25,7 +25,7 @@ public section
 
 namespace Group
 
-universe u
+universe u v
 open scoped commutatorElement
 
 /-- An element of a group is primitive when it belongs to some free basis of the group. -/
@@ -38,12 +38,16 @@ theorem isPrimitive_iff {G : Type u} [Group G] {x : G} :
 namespace IsPrimitive
 
 /-- A primitive element is preserved by a group isomorphism. -/
-theorem map_mulEquiv {G H : Type u} [Group G] [Group H] {x : G}
+theorem map_mulEquiv {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
     (hx : IsPrimitive x) (e : G ≃* H) : IsPrimitive (e x) := by
   obtain ⟨ι, b, i, rfl⟩ := hx
-  exact ⟨ι, b.map e, i, by simp⟩
+  exact ⟨Set.range (b.map e),
+    (b.map e).reindex (Equiv.ofInjective _ (b.map e).injective),
+    ⟨(b.map e) i, ⟨i, rfl⟩⟩, by
+      rw [FreeGroupBasis.reindex_apply, Equiv.ofInjective_symm_apply,
+        FreeGroupBasis.map_apply]⟩
 
-@[simp] theorem map_mulEquiv_iff {G H : Type u} [Group G] [Group H] {x : G}
+@[simp] theorem map_mulEquiv_iff {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
     (e : G ≃* H) : IsPrimitive (e x) ↔ IsPrimitive x := by
   constructor
   · intro h
@@ -92,7 +96,8 @@ theorem not_isPrimitive_zpow {G : Type u} [Group G] (x : G) {n : ℤ}
   exact h.not_isProperPower (Group.isProperPower_zpow x hn)
 
 /-- A square cannot be a primitive element. -/
-theorem not_isPrimitive_sq {G : Type u} [Group G] (x : G) : ¬ IsPrimitive (x ^ 2) :=
+@[simp] theorem not_isPrimitive_sq {G : Type u} [Group G] (x : G) :
+    ¬ IsPrimitive (x ^ 2) :=
   not_isPrimitive_pow x (by omega)
 
 /-- An element of the commutator subgroup cannot belong to a free basis. -/
@@ -105,7 +110,7 @@ theorem not_isPrimitive_of_mem_commutator {G : Type u} [Group G] {x : G}
   exact hone (hf ▸ hcomm)
 
 /-- A commutator cannot belong to a free basis. -/
-theorem not_isPrimitive_commutator {G : Type u} [Group G] (x y : G) :
+@[simp] theorem not_isPrimitive_commutator {G : Type u} [Group G] (x y : G) :
     ¬ IsPrimitive ⁅x, y⁆ :=
   not_isPrimitive_of_mem_commutator
     (Subgroup.commutator_mem_commutator (Subgroup.mem_top x) (Subgroup.mem_top y))
@@ -116,9 +121,10 @@ namespace FreeGroupBasis
 
 /-- Every element of a free basis is primitive. -/
 @[simp]
-theorem isPrimitive {G : Type u} [Group G] {ι : Type u}
+theorem isPrimitive {G : Type u} [Group G] {ι : Type v}
     (b : FreeGroupBasis ι G) (i : ι) : Group.IsPrimitive (b i) :=
-  ⟨ι, b, i, rfl⟩
+  ⟨Set.range b, b.reindex (Equiv.ofInjective _ b.injective),
+    ⟨b i, ⟨i, rfl⟩⟩, by simp⟩
 
 end FreeGroupBasis
 
