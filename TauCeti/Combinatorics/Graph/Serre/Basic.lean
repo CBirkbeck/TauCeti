@@ -230,6 +230,7 @@ namespace SimpleGraph
     (toSerreGraph G).rev e = e.symm := rfl
 
 @[simp] theorem toSerreGraph_tgt {V : Type u} (G : SimpleGraph V) (e : G.Dart) :
-    (toSerreGraph G).tgt e = e.snd := rfl
+    (toSerreGraph G).tgt e = e.snd := by
+  exact (TauCeti.SerreGraph.tgt_def (toSerreGraph G) e).trans rfl
 
 end SimpleGraph
