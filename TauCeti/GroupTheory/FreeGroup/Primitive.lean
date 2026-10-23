@@ -177,15 +177,40 @@ def mulGeneratorEquiv {α : Type u} [DecidableEq α] (a b : α) (hab : a ≠ b)
   | mul x y hx hy =>
     simp [hx, hy]
 
-/-- Multiplying a free generator by an integral power of another gives a primitive element. -/
-theorem isPrimitive_of_mul_zpow {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
-    Group.IsPrimitive (of a * of b ^ n) := by
+end FreeGroup
+
+namespace FreeGroupBasis
+
+/-- Multiplying a basis element by an integral power of another gives a primitive element. -/
+theorem isPrimitive_mul_zpow {G : Type u} [Group G] {ι : Type v}
+    (b : FreeGroupBasis ι G) {i j : ι} (hij : i ≠ j) (n : ℤ) :
+    Group.IsPrimitive (b i * b j ^ n) := by
   classical
-  simpa using (isPrimitive_of a).map_mulEquiv (mulGeneratorEquiv a b hab n)
+  have hb (k : ι) : b.repr.symm (FreeGroup.of k) = b k := by
+    apply b.repr.injective
+    simp
+  simpa only [FreeGroup.mulGeneratorEquiv_apply_of_self, map_mul, map_zpow, hb] using
+    (((FreeGroup.isPrimitive_of i).map_mulEquiv
+      (FreeGroup.mulGeneratorEquiv i j hij n)).map_mulEquiv b.repr.symm)
+
+/-- The product of two distinct basis elements is primitive. -/
+theorem isPrimitive_mul {G : Type u} [Group G] {ι : Type v}
+    (b : FreeGroupBasis ι G) {i j : ι} (hij : i ≠ j) :
+    Group.IsPrimitive (b i * b j) := by
+  simpa using b.isPrimitive_mul_zpow hij 1
+
+end FreeGroupBasis
+
+namespace FreeGroup
+
+/-- Multiplying a free generator by an integral power of another gives a primitive element. -/
+theorem isPrimitive_of_mul_of_zpow {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
+    Group.IsPrimitive (of a * of b ^ n) := by
+  simpa using (FreeGroupBasis.ofFreeGroup α).isPrimitive_mul_zpow hab n
 
 /-- The product of two distinct free generators is primitive. -/
 theorem isPrimitive_of_mul_of {α : Type u} (a b : α) (hab : a ≠ b) :
     Group.IsPrimitive (of a * of b) := by
-  simpa using isPrimitive_of_mul_zpow a b hab 1
+  simpa using isPrimitive_of_mul_of_zpow a b hab 1
 
 end FreeGroup
