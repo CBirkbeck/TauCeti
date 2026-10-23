@@ -84,7 +84,7 @@ theorem IsOrientation.rev_notMem_of_mem {O : Set Γ.E} (hO : Γ.IsOrientation O)
 attribute [instance] toQuiver
 
 /-- Reversal on the quiver associated to a Serre graph. -/
-@[expose, instance_reducible] def toQuiverHasInvolutiveReverse :
+@[instance_reducible] def toQuiverHasInvolutiveReverse :
     @Quiver.HasInvolutiveReverse Γ.V Γ.toQuiver := by
   letI : Quiver Γ.V := Γ.toQuiver
   exact {
@@ -100,7 +100,7 @@ attribute [instance] toQuiverHasInvolutiveReverse
 
 @[simp] theorem reverse_val {a b : Γ.V}
     (f : Quiver.Hom a b) :
-    (Quiver.reverse f).1 = Γ.rev f.1 := rfl
+    (Quiver.reverse f).1 = Γ.rev f.1 := (rfl)
 
 /-- A dart as an arrow of the associated quiver. -/
 def dart (e : Γ.E) : Quiver.Hom (Γ.src e) (Γ.tgt e) :=
