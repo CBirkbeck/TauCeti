@@ -14,9 +14,11 @@ public import TauCeti.GroupTheory.FreeGroup.ProperPower
 
 An element is primitive if it occurs in a free basis. The definition applies to any group,
 and the basis witness ensures that the group is free. Primitive elements cannot be proper
-powers: a basis coordinate maps them to the generator of the infinite cyclic group.
+powers or lie in the commutator subgroup: a basis coordinate maps them to the generator
+of the infinite cyclic group. Primitivity is preserved by group isomorphisms.
 
-The Nielsen move replacing one free generator `a` by `a b` gives a nontrivial example.
+The Nielsen move replacing one free generator `a` by `a b ^ n` for a distinct generator
+`b` and any `n : ℤ` shows that `a b ^ n`, in particular `a b`, is primitive.
 -/
 
 public section
@@ -77,25 +79,43 @@ end IsPrimitive
   intro h
   exact h.ne_one rfl
 
-/-- A square cannot be a primitive element. -/
-theorem not_isPrimitive_sq {G : Type u} [Group G] (x : G) : ¬ IsPrimitive (x ^ 2) := by
+/-- A proper natural power cannot be a primitive element. -/
+theorem not_isPrimitive_pow {G : Type u} [Group G] (x : G) {n : ℕ} (hn : 2 ≤ n) :
+    ¬ IsPrimitive (x ^ n) := by
   intro h
-  exact h.not_isProperPower (Group.isProperPower_pow x (by omega))
+  exact h.not_isProperPower (Group.isProperPower_pow x hn)
+
+/-- A proper integer power cannot be a primitive element. -/
+theorem not_isPrimitive_zpow {G : Type u} [Group G] (x : G) {n : ℤ}
+    (hn : 2 ≤ n.natAbs) : ¬ IsPrimitive (x ^ n) := by
+  intro h
+  exact h.not_isProperPower (Group.isProperPower_zpow x hn)
+
+/-- A square cannot be a primitive element. -/
+theorem not_isPrimitive_sq {G : Type u} [Group G] (x : G) : ¬ IsPrimitive (x ^ 2) :=
+  not_isPrimitive_pow x (by omega)
+
+/-- An element of the commutator subgroup cannot belong to a free basis. -/
+theorem not_isPrimitive_of_mem_commutator {G : Type u} [Group G] {x : G}
+    (hx : x ∈ commutator G) : ¬ IsPrimitive x := by
+  intro h
+  obtain ⟨f, hf⟩ := h.exists_monoidHom_apply_eq_ofAdd_one
+  have hcomm : f x = 1 := (Abelianization.commutator_le_ker f hx)
+  have hone : (Multiplicative.ofAdd (1 : ℤ)) ≠ 1 := by decide
+  exact hone (hf ▸ hcomm)
 
 /-- A commutator cannot belong to a free basis. -/
 theorem not_isPrimitive_commutator {G : Type u} [Group G] (x y : G) :
-    ¬ IsPrimitive ⁅x, y⁆ := by
-  intro h
-  obtain ⟨f, hf⟩ := h.exists_monoidHom_apply_eq_ofAdd_one
-  have hcomm : f ⁅x, y⁆ = 1 := by simp [commutatorElement_def]
-  have hone : (Multiplicative.ofAdd (1 : ℤ)) ≠ 1 := by decide
-  exact hone (hf ▸ hcomm)
+    ¬ IsPrimitive ⁅x, y⁆ :=
+  not_isPrimitive_of_mem_commutator
+    (Subgroup.commutator_mem_commutator (Subgroup.mem_top x) (Subgroup.mem_top y))
 
 end Group
 
 namespace FreeGroupBasis
 
 /-- Every element of a free basis is primitive. -/
+@[simp]
 theorem isPrimitive {G : Type u} [Group G] {ι : Type u}
     (b : FreeGroupBasis ι G) (i : ι) : Group.IsPrimitive (b i) :=
   ⟨ι, b, i, rfl⟩
@@ -105,6 +125,7 @@ end FreeGroupBasis
 namespace FreeGroup
 
 /-- Every free generator is primitive. -/
+@[simp]
 theorem isPrimitive_of {α : Type u} (a : α) : Group.IsPrimitive (of a) :=
   (FreeGroupBasis.ofFreeGroup α).isPrimitive a
 
@@ -143,6 +164,23 @@ def mulGeneratorEquiv {α : Type u} [DecidableEq α] (a b : α) (hab : a ≠ b)
     (a b c : α) (hab : a ≠ b) (n : ℤ) (hca : c ≠ a) :
     (mulGeneratorEquiv a b hab n).symm (of c) = of c := by
   simp [mulGeneratorEquiv, hca]
+
+/-- The inverse of a Nielsen move uses the opposite exponent. -/
+@[simp] theorem mulGeneratorEquiv_symm {α : Type u} [DecidableEq α]
+    (a b : α) (hab : a ≠ b) (n : ℤ) :
+    (mulGeneratorEquiv a b hab n).symm = mulGeneratorEquiv a b hab (-n) := by
+  apply MulEquiv.ext
+  intro x
+  induction x using FreeGroup.induction_on with
+  | one => simp
+  | of c =>
+    by_cases hca : c = a
+    · subst c
+      simp
+    · simp [hca]
+  | inv_of c hc => simp [hc]
+  | mul x y hx hy =>
+    simp [hx, hy]
 
 /-- Multiplying a free generator by an integral power of another gives a primitive element. -/
 theorem isPrimitive_of_mul_zpow {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
