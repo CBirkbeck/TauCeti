@@ -154,17 +154,6 @@ def mulGeneratorEquiv {α : Type u} [DecidableEq α] (a b : α) (hab : a ≠ b)
     mulGeneratorEquiv a b hab n (of c) = of c := by
   simp [mulGeneratorEquiv, hca]
 
-@[simp] theorem mulGeneratorEquiv_symm_apply_of_self {α : Type u} [DecidableEq α]
-    (a b : α) (hab : a ≠ b) (n : ℤ) :
-    (mulGeneratorEquiv a b hab n).symm (of a) = of a * of b ^ (-n) := by
-  simp [mulGeneratorEquiv]
-
-/-- The inverse Nielsen automorphism fixes generators other than `a`. -/
-@[simp] theorem mulGeneratorEquiv_symm_apply_of_ne {α : Type u} [DecidableEq α]
-    (a b c : α) (hab : a ≠ b) (n : ℤ) (hca : c ≠ a) :
-    (mulGeneratorEquiv a b hab n).symm (of c) = of c := by
-  simp [mulGeneratorEquiv, hca]
-
 /-- The inverse of a Nielsen move uses the opposite exponent. -/
 @[simp] theorem mulGeneratorEquiv_symm {α : Type u} [DecidableEq α]
     (a b : α) (hab : a ≠ b) (n : ℤ) :
@@ -176,8 +165,8 @@ def mulGeneratorEquiv {α : Type u} [DecidableEq α] (a b : α) (hab : a ≠ b)
   | of c =>
     by_cases hca : c = a
     · subst c
-      simp
-    · simp [hca]
+      simp [mulGeneratorEquiv, zpow_neg]
+    · simp [mulGeneratorEquiv, hca]
   | inv_of c hc => simp [hc]
   | mul x y hx hy =>
     simp [hx, hy]
