@@ -73,10 +73,9 @@ theorem IsOrientation.mem_rev_iff {O : Set Γ.E} (hO : Γ.IsOrientation O) (e : 
     Γ.rev e ∈ O ↔ e ∉ O := by
   simpa only [Γ.rev_rev] using hO (Γ.rev e)
 
-theorem IsOrientation.not_mem_and_rev_mem {O : Set Γ.E} (hO : Γ.IsOrientation O)
-    (e : Γ.E) : ¬(e ∈ O ∧ Γ.rev e ∈ O) := by
-  rintro ⟨he, hre⟩
-  exact (hO e).mp he hre
+theorem IsOrientation.rev_notMem_of_mem {O : Set Γ.E} (hO : Γ.IsOrientation O)
+    (e : Γ.E) (he : e ∈ O) : Γ.rev e ∉ O :=
+  (hO e).mp he
 
 /-- The quiver whose arrows are the actual darts from their source to their target. -/
 @[expose, instance_reducible] def toQuiver : Quiver Γ.V where
@@ -108,11 +107,6 @@ theorem IsOrientation.not_mem_and_rev_mem {O : Set Γ.E} (hO : Γ.IsOrientation 
 
 /-- An indexed path in a Serre graph is a path of its associated quiver. -/
 abbrev Path (a b : Γ.V) : Type (max u v) := @Quiver.Path Γ.V Γ.toQuiver a b
-
-/-- Quiver arrow reversal agrees with the Serre reversal of a dart. -/
-theorem toQuiver_reverse (e : Γ.E) :
-    (@Quiver.reverse Γ.V Γ.toQuiver Γ.toQuiverHasInvolutiveReverse.toHasReverse
-      (Γ.src e) (Γ.tgt e) (Γ.dart e)).1 = Γ.rev e := rfl
 
 attribute [simp] SerreGraph.rev_rev
 
