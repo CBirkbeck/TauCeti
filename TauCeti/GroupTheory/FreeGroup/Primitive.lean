@@ -109,6 +109,13 @@ the inverse of the other generator. -/
   classical
   simp [nielsenMul]
 
+/-- The inverse Nielsen transformation fixes every other generator. -/
+@[simp] theorem nielsenMul_symm_of_ne {α : Type u} (a b i : α) (hab : a ≠ b)
+    (hi : i ≠ a) :
+    (nielsenMul a b hab).symm (FreeGroup.of i) = FreeGroup.of i := by
+  classical
+  simp [nielsenMul, hi]
+
 /-- The product of two distinct canonical generators is primitive. -/
 theorem isPrimitive_of_mul {α : Type u} (a b : α) (hab : a ≠ b) :
     IsPrimitive (FreeGroup.of a * FreeGroup.of b) := by
