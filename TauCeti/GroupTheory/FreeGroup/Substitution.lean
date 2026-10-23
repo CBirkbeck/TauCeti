@@ -72,7 +72,7 @@ theorem primrec_substituteWord [DecidableEq β] (f : α → List (β × Bool))
     (Primrec.list_flatMap Primrec.id
       ((primrec_substituteLetter f hf).comp Primrec.snd).to₂)
 
-/-- Evaluating a word under a primitive-recursive assignment of reduced words is
+/-- Evaluating a word under a primitive-recursive assignment of words is
 primitive recursive, with the reduced word of the value as output. -/
 theorem primrec_toWord_lift_mk [DecidableEq β] (f : α → List (β × Bool))
     (hf : Primrec f) :
