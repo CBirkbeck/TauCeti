@@ -22,7 +22,7 @@ public section
 
 open scoped commutatorElement
 
-namespace FreeGroup
+namespace TauCeti.FreeGroup
 
 universe u
 
@@ -32,10 +32,21 @@ variable {G : Type u} [Group G]
 def IsPrimitive (x : G) : Prop :=
   ∃ (ι : Type u) (b : FreeGroupBasis ι G) (i : ι), b i = x
 
+/-- A primitive element is exactly an element of some free basis. -/
+theorem isPrimitive_def (x : G) :
+    IsPrimitive x ↔ ∃ (ι : Type u) (b : FreeGroupBasis ι G) (i : ι), b i = x :=
+  Iff.rfl
+
+/-- Every element of a free basis is primitive. -/
+theorem isPrimitive_of_basis {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
+    IsPrimitive (b i) :=
+  ⟨ι, b, i, rfl⟩
+
 /-- The canonical generators of a free group are primitive. -/
 theorem isPrimitive_of {α : Type u} (a : α) :
     IsPrimitive (FreeGroup.of a) := by
-  exact ⟨α, FreeGroupBasis.ofFreeGroup α, a, FreeGroupBasis.ofFreeGroup_apply a⟩
+  simpa only [FreeGroupBasis.ofFreeGroup_apply] using
+    isPrimitive_of_basis (FreeGroupBasis.ofFreeGroup α) a
 
 /-- A group isomorphism carries primitive elements to primitive elements. -/
 theorem IsPrimitive.map_mulEquiv {H : Type u} [Group H]
@@ -120,4 +131,4 @@ theorem not_isPrimitive_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
   intro h
   exact h.not_isProperPower (Group.isProperPower_pow _ (by decide))
 
-end FreeGroup
+end TauCeti.FreeGroup
