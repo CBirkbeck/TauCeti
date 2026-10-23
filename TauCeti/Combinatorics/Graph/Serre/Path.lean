@@ -48,10 +48,10 @@ private theorem isReduced_pair_comp {a b c d : Γ.V}
     Path.IsReduced Γ ((e.toPath.comp f.toPath).comp p) ↔
       f.1 ≠ Γ.rev e.1 ∧ Path.IsReduced Γ (f.toPath.comp p) := by
   induction p with
-  | nil => simp [Quiver.Path.comp, Path.IsReduced]
+  | nil => simp [Quiver.Path.comp, Quiver.Hom.toPath, Path.IsReduced]
   | cons p k ih =>
     cases p with
-    | nil => simp [Quiver.Path.comp, Path.IsReduced]
+    | nil => simp [Quiver.Path.comp, Quiver.Hom.toPath, Path.IsReduced]
     | cons p l =>
       simp only [Quiver.Path.comp_cons, Path.IsReduced] at ih ⊢
       rw [← and_assoc, ← ih]
