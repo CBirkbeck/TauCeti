@@ -36,6 +36,9 @@ def Path.IsReduced {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Prop
 @[simp] theorem Path.isReduced_toPath {a b : Γ.V} (e : Quiver.Hom a b) :
     Path.IsReduced Γ e.toPath := trivial
 
+@[simp] theorem Path.isReduced_cons_nil {a b : Γ.V} (e : Quiver.Hom a b) :
+    Path.IsReduced Γ (Quiver.Path.nil.cons e) := trivial
+
 /-- The reducedness test for a newly appended dart only examines the preceding dart. -/
 @[simp] theorem Path.isReduced_cons_cons {a b c d : Γ.V}
     (p : Γ.Path a b) (e : Quiver.Hom b c)
