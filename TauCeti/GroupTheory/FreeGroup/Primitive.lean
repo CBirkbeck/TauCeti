@@ -38,12 +38,12 @@ theorem isPrimitive_def (x : G) :
   Iff.rfl
 
 /-- Every element of a free basis is primitive. -/
-theorem isPrimitive_of_basis {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
+@[simp] theorem isPrimitive_of_basis {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
     IsPrimitive (b i) :=
   ⟨ι, b, i, rfl⟩
 
 /-- The canonical generators of a free group are primitive. -/
-theorem isPrimitive_of {α : Type u} (a : α) :
+@[simp] theorem IsPrimitive.of {α : Type u} (a : α) :
     IsPrimitive (FreeGroup.of a) := by
   simpa only [FreeGroupBasis.ofFreeGroup_apply] using
     isPrimitive_of_basis (FreeGroupBasis.ofFreeGroup α) a
@@ -54,9 +54,17 @@ theorem IsPrimitive.map_mulEquiv {H : Type u} [Group H]
   obtain ⟨ι, b, i, rfl⟩ := hx
   exact ⟨ι, b.map e, i, FreeGroupBasis.map_apply b e i⟩
 
+/-- Primitivity is invariant under group isomorphisms. -/
+@[simp] theorem isPrimitive_map_mulEquiv_iff {H : Type u} [Group H]
+    (e : G ≃* H) {x : G} : IsPrimitive (e x) ↔ IsPrimitive x := by
+  constructor
+  · intro hx
+    simpa using hx.map_mulEquiv e.symm
+  · exact IsPrimitive.map_mulEquiv e
+
 /-- Replacing one free generator by its product with a different generator preserves a free
 basis. This is the elementary Nielsen transformation. -/
-private noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) :
+noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) :
     FreeGroup α ≃* FreeGroup α := by
   classical
   have hba : b ≠ a := Ne.symm hab
@@ -80,8 +88,24 @@ private noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) :
     · simp [f, g, hi]
   exact MonoidHom.toMulEquiv f g hgf hfg
 
-private theorem nielsenMul_of_left {α : Type u} (a b : α) (hab : a ≠ b) :
+/-- The Nielsen transformation sends the selected generator to its product with the other. -/
+@[simp] theorem nielsenMul_of_left {α : Type u} (a b : α) (hab : a ≠ b) :
     nielsenMul a b hab (FreeGroup.of a) = FreeGroup.of a * FreeGroup.of b := by
+  classical
+  simp [nielsenMul]
+
+/-- The Nielsen transformation fixes every other generator. -/
+@[simp] theorem nielsenMul_of_ne {α : Type u} (a b i : α) (hab : a ≠ b)
+    (hi : i ≠ a) :
+    nielsenMul a b hab (FreeGroup.of i) = FreeGroup.of i := by
+  classical
+  simp [nielsenMul, hi]
+
+/-- The inverse Nielsen transformation replaces the selected generator by its product with
+the inverse of the other generator. -/
+@[simp] theorem nielsenMul_symm_of_left {α : Type u} (a b : α) (hab : a ≠ b) :
+    (nielsenMul a b hab).symm (FreeGroup.of a) =
+      FreeGroup.of a * (FreeGroup.of b)⁻¹ := by
   classical
   simp [nielsenMul]
 
@@ -89,7 +113,7 @@ private theorem nielsenMul_of_left {α : Type u} (a b : α) (hab : a ≠ b) :
 theorem isPrimitive_of_mul {α : Type u} (a b : α) (hab : a ≠ b) :
     IsPrimitive (FreeGroup.of a * FreeGroup.of b) := by
   classical
-  have h := (isPrimitive_of a).map_mulEquiv (nielsenMul a b hab)
+  have h := (IsPrimitive.of a).map_mulEquiv (nielsenMul a b hab)
   simpa only [nielsenMul_of_left] using h
 
 /-- A primitive element has an integer character that takes value one on it. -/
@@ -116,7 +140,7 @@ theorem IsPrimitive.not_isProperPower {x : G} (hx : IsPrimitive x) :
   exact h.not_isProperPower Group.IsProperPower.one
 
 /-- A commutator is never primitive in a free group. -/
-theorem not_isPrimitive_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
+@[simp] theorem not_isPrimitive_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
   intro h
   obtain ⟨f, hf⟩ := h.exists_intCharacter
   have hcomm : ⁅f x, f y⁆ = 1 :=
@@ -126,7 +150,7 @@ theorem not_isPrimitive_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
   norm_num at this
 
 /-- The square of a canonical generator is not primitive. -/
-@[simp] theorem not_isPrimitive_of_sq {α : Type u} (a : α) :
+@[simp] theorem not_isPrimitive_sq {α : Type u} (a : α) :
     ¬ IsPrimitive (FreeGroup.of a ^ 2) := by
   intro h
   exact h.not_isProperPower (Group.isProperPower_pow _ (by decide))
