@@ -304,12 +304,34 @@ def Preconnected : Prop := ∀ u v : Γ.V, Γ.Reachable u v
 /-- Preconnectedness means reachability between every pair of vertices. -/
 theorem preconnected_iff : Γ.Preconnected ↔ ∀ u v : Γ.V, Γ.Reachable u v := Iff.rfl
 
+namespace Preconnected
+
+/-- Any two vertices of a preconnected graph are reachable. -/
+theorem reachable (h : Γ.Preconnected) (u v : Γ.V) : Γ.Reachable u v :=
+  (Γ.preconnected_iff.mp h) u v
+
+end Preconnected
+
 /-- A Serre graph is connected when it has a vertex and any two vertices are joined. -/
 def Connected : Prop := Nonempty Γ.V ∧ Γ.Preconnected
 
 /-- Connectedness is nonemptiness together with preconnectedness. -/
 theorem connected_iff : Γ.Connected ↔ Nonempty Γ.V ∧ Γ.Preconnected :=
   Iff.rfl
+
+namespace Connected
+
+/-- A connected graph has a vertex. -/
+theorem nonempty (h : Γ.Connected) : Nonempty Γ.V := (Γ.connected_iff.mp h).1
+
+/-- Any two vertices of a connected graph are reachable. -/
+theorem preconnected (h : Γ.Connected) : Γ.Preconnected := (Γ.connected_iff.mp h).2
+
+/-- A nonempty preconnected graph is connected. -/
+theorem mk (hV : Nonempty Γ.V) (hconn : Γ.Preconnected) : Γ.Connected :=
+  Γ.connected_iff.mpr ⟨hV, hconn⟩
+
+end Connected
 
 /-- A tree is a nonempty connected Serre graph with no nonempty reduced closed path.
 This uses the reduced-closed-path formulation in place of Serre's no-circuits definition
