@@ -148,7 +148,7 @@ theorem IsPrimitive.not_isProperPower {x : G} (hx : IsPrimitive x) :
   exact h.not_isProperPower Group.IsProperPower.one
 
 /-- A primitive element does not lie in the commutator subgroup. -/
-theorem IsPrimitive.not_mem_commutator {x : G} (hx : IsPrimitive x) :
+theorem IsPrimitive.notMem_commutator {x : G} (hx : IsPrimitive x) :
     x ∉ commutator G := by
   obtain ⟨f, hf⟩ := hx.exists_monoidHom_apply_eq_ofAdd_one
   intro h
@@ -160,7 +160,7 @@ theorem IsPrimitive.not_mem_commutator {x : G} (hx : IsPrimitive x) :
 /-- A commutator is never primitive in a free group. -/
 @[simp] theorem not_isPrimitive_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
   intro h
-  exact h.not_mem_commutator
+  exact h.notMem_commutator
     (Subgroup.commutator_mem_commutator (show x ∈ (⊤ : Subgroup G) from trivial)
       (show y ∈ (⊤ : Subgroup G) from trivial))
 
