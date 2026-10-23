@@ -35,17 +35,30 @@ def IsPrimitive {G : Type u} [Group G] (x : G) : Prop :=
 theorem isPrimitive_iff {G : Type u} [Group G] {x : G} :
     IsPrimitive x ↔ ∃ (ι : Type u) (b : FreeGroupBasis ι G) (i : ι), b i = x := Iff.rfl
 
+end Group
+
+namespace FreeGroupBasis
+
+/-- Every element of a free basis is primitive. -/
+@[simp]
+theorem isPrimitive {G : Type u} [Group G] {ι : Type v}
+    (b : FreeGroupBasis ι G) (i : ι) : Group.IsPrimitive (b i) :=
+  ⟨Set.range b, b.reindex (Equiv.ofInjective _ b.injective),
+    ⟨b i, ⟨i, rfl⟩⟩, by simp⟩
+
+end FreeGroupBasis
+
+namespace Group
+
+open scoped commutatorElement
+
 namespace IsPrimitive
 
 /-- A primitive element is preserved by a group isomorphism. -/
 theorem map_mulEquiv {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
     (hx : IsPrimitive x) (e : G ≃* H) : IsPrimitive (e x) := by
   obtain ⟨ι, b, i, rfl⟩ := hx
-  exact ⟨Set.range (b.map e),
-    (b.map e).reindex (Equiv.ofInjective _ (b.map e).injective),
-    ⟨(b.map e) i, ⟨i, rfl⟩⟩, by
-      rw [FreeGroupBasis.reindex_apply, Equiv.ofInjective_symm_apply,
-        FreeGroupBasis.map_apply]⟩
+  simpa using (b.map e).isPrimitive i
 
 @[simp] theorem map_mulEquiv_iff {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
     (e : G ≃* H) : IsPrimitive (e x) ↔ IsPrimitive x := by
@@ -116,17 +129,6 @@ theorem not_isPrimitive_of_mem_commutator {G : Type u} [Group G] {x : G}
     (Subgroup.commutator_mem_commutator (Subgroup.mem_top x) (Subgroup.mem_top y))
 
 end Group
-
-namespace FreeGroupBasis
-
-/-- Every element of a free basis is primitive. -/
-@[simp]
-theorem isPrimitive {G : Type u} [Group G] {ι : Type v}
-    (b : FreeGroupBasis ι G) (i : ι) : Group.IsPrimitive (b i) :=
-  ⟨Set.range b, b.reindex (Equiv.ofInjective _ b.injective),
-    ⟨b i, ⟨i, rfl⟩⟩, by simp⟩
-
-end FreeGroupBasis
 
 namespace FreeGroup
 
