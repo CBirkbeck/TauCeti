@@ -1,9 +1,8 @@
 """Ensure TauCeti runs and reads one TauCetiReview commit everywhere.
 
-The commit appears literally in exactly two kinds of place: the three reusable-workflow `uses:`
-lines (GitHub requires a literal there) and the checkout-merge-policy composite action. Every other
-reader of the merge policy goes through that action, and the reusable workflows check out their own
-commit, so re-pinning is one SHA replaced in four files.
+The policy commit appears in the three reusable-workflow `uses:` lines and their required
+`review_ref` inputs, and in the checkout-merge-policy composite action. Other policy readers
+go through that action; every explicit reference must agree.
 
 Run with: python3 scripts/test_workflow_pins.py
 """
