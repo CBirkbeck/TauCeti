@@ -8,7 +8,7 @@ module
 public import TauCeti.GroupTheory.FreeGroup.Nielsen
 public import Mathlib.GroupTheory.Commutator.Basic
 import Mathlib.Tactic.NormNum
-public import TauCeti.GroupTheory.ProperPower
+public import TauCeti.GroupTheory.FreeGroup.ProperPower
 
 /-!
 # Primitive elements of free groups
@@ -48,6 +48,12 @@ variable {G : Type u} [Group G]
     TauCeti.FreeGroup.IsPrimitive (b i) :=
   ⟨ι, b, i, rfl⟩
 
+/-- Applying a free basis to an index is the inverse of its representation map applied to
+the corresponding canonical generator. -/
+theorem repr_symm_apply_of {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
+    b.repr.symm (FreeGroup.of i) = b i :=
+  rfl
+
 end FreeGroupBasis
 
 namespace TauCeti.FreeGroup
@@ -85,19 +91,39 @@ theorem IsPrimitive.map_mulEquiv {H : Type u} [Group H]
     simpa using (IsPrimitive.of a).map_mulEquiv generatorInversion
   have inv_primitive {y : G} (hy : IsPrimitive y) : IsPrimitive y⁻¹ := by
     obtain ⟨ι, b, i, rfl⟩ := hy
-    change IsPrimitive (b.repr.symm (FreeGroup.of i))⁻¹
-    simpa using (inv_of i).map_mulEquiv b.repr.symm
+    simpa only [FreeGroupBasis.repr_symm_apply_of, map_inv] using
+      (inv_of i).map_mulEquiv b.repr.symm
   constructor
   · intro hx
     simpa only [inv_inv] using inv_primitive hx
   · exact inv_primitive
 
+end TauCeti.FreeGroup
+
+namespace FreeGroupBasis
+
+variable {G : Type u} [Group G]
+
+/-- The product of two distinct elements of a free basis is primitive. -/
+theorem isPrimitive_mul {ι : Type u} (b : FreeGroupBasis ι G) {i j : ι} (hij : i ≠ j) :
+    TauCeti.FreeGroup.IsPrimitive (b i * b j) := by
+  classical
+  have h := (TauCeti.FreeGroup.IsPrimitive.of i).map_mulEquiv
+    (TauCeti.FreeGroup.nielsenMul i j hij)
+  have h' := h.map_mulEquiv b.repr.symm
+  simpa only [TauCeti.FreeGroup.nielsenMul_of_left, map_mul, repr_symm_apply_of] using h'
+
+end FreeGroupBasis
+
+namespace TauCeti.FreeGroup
+
+variable {G : Type u} [Group G]
+
 /-- The product of two distinct canonical generators is primitive. -/
 theorem isPrimitive_of_mul_of {α : Type u} (a b : α) (hab : a ≠ b) :
     IsPrimitive (FreeGroup.of a * FreeGroup.of b) := by
-  classical
-  have h := (IsPrimitive.of a).map_mulEquiv (nielsenMul a b hab)
-  simpa only [nielsenMul_of_left] using h
+  simpa only [FreeGroupBasis.ofFreeGroup_apply] using
+    (FreeGroupBasis.ofFreeGroup α).isPrimitive_mul hab
 
 /-- A primitive element has an integer character that takes value one on it. -/
 theorem IsPrimitive.exists_monoidHom_apply_eq_ofAdd_one {x : G} (hx : IsPrimitive x) :
@@ -113,9 +139,10 @@ theorem IsPrimitive.exists_monoidHom_apply_eq_ofAdd_one {x : G} (hx : IsPrimitiv
 /-- Primitive elements cannot be proper powers. -/
 theorem IsPrimitive.not_isProperPower {x : G} (hx : IsPrimitive x) :
     ¬ Group.IsProperPower x := by
-  obtain ⟨f, hf⟩ := hx.exists_monoidHom_apply_eq_ofAdd_one
-  intro h
-  exact Group.not_isProperPower_ofAdd_one (hf ▸ Group.IsProperPower.map f h)
+  obtain ⟨ι, b, i, rfl⟩ := hx
+  simpa only [FreeGroupBasis.repr_symm_apply_of] using
+    (MulEquiv.isProperPower_map_iff b.repr.symm (x := FreeGroup.of i)).not.mpr
+      (FreeGroup.not_isProperPower_of i)
 
 /-- The identity is not primitive in a free group. -/
 @[simp] theorem not_isPrimitive_one : ¬ IsPrimitive (1 : G) := by
