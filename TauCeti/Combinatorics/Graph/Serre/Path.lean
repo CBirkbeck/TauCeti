@@ -23,9 +23,6 @@ namespace SerreGraph
 
 variable (Γ : SerreGraph)
 
-/-- Use the quiver of a Serre graph to form indexed paths. -/
-local instance : Quiver Γ.V := Γ.toQuiver
-
 /-- A Serre path has no consecutive pair of mutually reversed darts. -/
 def Path.IsReduced {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Prop
   | _, .nil => True
@@ -36,13 +33,13 @@ def Path.IsReduced {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Prop
 @[simp] theorem Path.isReduced_nil (a : Γ.V) :
     Path.IsReduced Γ (Quiver.Path.nil : Γ.Path a a) := trivial
 
-@[simp] theorem Path.isReduced_singleton {a b : Γ.V} (e : @Quiver.Hom Γ.V Γ.toQuiver a b) :
+@[simp] theorem Path.isReduced_singleton {a b : Γ.V} (e : Quiver.Hom a b) :
     Path.IsReduced Γ (Quiver.Path.nil.cons e) := trivial
 
 /-- The reducedness test for a newly appended dart only examines the preceding dart. -/
 @[simp] theorem Path.isReduced_cons_cons {a b c d : Γ.V}
-    (p : Γ.Path a b) (e : @Quiver.Hom Γ.V Γ.toQuiver b c)
-    (f : @Quiver.Hom Γ.V Γ.toQuiver c d) :
+    (p : Γ.Path a b) (e : Quiver.Hom b c)
+    (f : Quiver.Hom c d) :
     Path.IsReduced Γ ((p.cons e).cons f) ↔
       Path.IsReduced Γ (p.cons e) ∧ f.1 ≠ Γ.rev e.1 := Iff.rfl
 

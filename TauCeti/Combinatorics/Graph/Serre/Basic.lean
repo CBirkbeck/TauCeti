@@ -81,6 +81,8 @@ theorem IsOrientation.rev_notMem_of_mem {O : Set Γ.E} (hO : Γ.IsOrientation O)
 @[expose, instance_reducible] def toQuiver : Quiver Γ.V where
   Hom a b := {e : Γ.E // Γ.src e = a ∧ Γ.tgt e = b}
 
+attribute [instance] toQuiver
+
 /-- Reversal on the quiver associated to a Serre graph. -/
 @[expose, instance_reducible] def toQuiverHasInvolutiveReverse :
     @Quiver.HasInvolutiveReverse Γ.V Γ.toQuiver := by
@@ -94,19 +96,21 @@ theorem IsOrientation.rev_notMem_of_mem {O : Set Γ.E} (hO : Γ.IsOrientation O)
       apply Subtype.ext
       exact Γ.rev_rev e.1 }
 
+attribute [instance] toQuiverHasInvolutiveReverse
+
 @[simp] theorem reverse_val {a b : Γ.V}
-    (f : @Quiver.Hom Γ.V Γ.toQuiver a b) :
-    (@Quiver.reverse Γ.V Γ.toQuiver Γ.toQuiverHasInvolutiveReverse.toHasReverse
-      a b f).1 = Γ.rev f.1 := rfl
+    (f : Quiver.Hom a b) :
+    (Quiver.reverse f).1 = Γ.rev f.1 := rfl
 
 /-- A dart as an arrow of the associated quiver. -/
-@[expose] def dart (e : Γ.E) : @Quiver.Hom Γ.V Γ.toQuiver (Γ.src e) (Γ.tgt e) :=
+def dart (e : Γ.E) : Quiver.Hom (Γ.src e) (Γ.tgt e) :=
   ⟨e, rfl, rfl⟩
 
-@[simp] theorem dart_val (e : Γ.E) : (Γ.dart e).1 = e := rfl
+@[simp] theorem dart_val (e : Γ.E) : (Γ.dart e).1 = e := by
+  simp only [dart]
 
 /-- An indexed path in a Serre graph is a path of its associated quiver. -/
-abbrev Path (a b : Γ.V) : Type (max u v) := @Quiver.Path Γ.V Γ.toQuiver a b
+abbrev Path (a b : Γ.V) : Type (max u v) := Quiver.Path a b
 
 attribute [simp] SerreGraph.rev_rev
 
@@ -134,40 +138,44 @@ attribute [simp] Hom.map_src Hom.map_rev
   simp only [tgt, ← f.map_rev, f.map_src]
 
 /-- Identity morphism of a Serre graph. -/
-@[expose] def Hom.id : Γ.Hom Γ where
+def Hom.id : Γ.Hom Γ where
   mapV := _root_.id
   mapE := _root_.id
   map_src := by intros; rfl
   map_rev := by intros; rfl
 
-@[simp] theorem Hom.id_mapV : (Hom.id Γ).mapV = _root_.id := rfl
-@[simp] theorem Hom.id_mapE : (Hom.id Γ).mapE = _root_.id := rfl
+@[simp] theorem Hom.id_mapV : (Hom.id Γ).mapV = _root_.id := by
+  simp only [Hom.id]
+@[simp] theorem Hom.id_mapE : (Hom.id Γ).mapE = _root_.id := by
+  simp only [Hom.id]
 
 /-- Compose Serre-graph morphisms. -/
-@[expose] def Hom.comp {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
-    (f : Γ.Hom Δ) (g : Δ.Hom Θ) : Γ.Hom Θ where
+def Hom.comp {Γ : SerreGraph.{u, v}} {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
+    (g : Δ.Hom Θ) (f : Γ.Hom Δ) : Γ.Hom Θ where
   mapV := g.mapV ∘ f.mapV
   mapE := g.mapE ∘ f.mapE
   map_src := by intro e; simp [g.map_src, f.map_src]
   map_rev := by intro e; simp [g.map_rev, f.map_rev]
 
 @[simp] theorem Hom.comp_mapV {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
-    (f : Γ.Hom Δ) (g : Δ.Hom Θ) : (Hom.comp Γ f g).mapV = g.mapV ∘ f.mapV := rfl
+    (g : Δ.Hom Θ) (f : Γ.Hom Δ) : (Hom.comp g f).mapV = g.mapV ∘ f.mapV := by
+  simp only [Hom.comp]
 
 @[simp] theorem Hom.comp_mapE {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
-    (f : Γ.Hom Δ) (g : Δ.Hom Θ) : (Hom.comp Γ f g).mapE = g.mapE ∘ f.mapE := rfl
+    (g : Δ.Hom Θ) (f : Γ.Hom Δ) : (Hom.comp g f).mapE = g.mapE ∘ f.mapE := by
+  simp only [Hom.comp]
 
 @[simp] theorem Hom.id_comp {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ) :
-    Hom.comp Γ (Hom.id Γ) f = f := by
+    Hom.comp (Hom.id Δ) f = f := by
   apply Hom.ext <;> rfl
 
 @[simp] theorem Hom.comp_id {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ) :
-    Hom.comp Γ f (Hom.id Δ) = f := by
+    Hom.comp f (Hom.id Γ) = f := by
   apply Hom.ext <;> rfl
 
 theorem Hom.comp_assoc {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
     {Ξ : SerreGraph} (f : Γ.Hom Δ) (g : Δ.Hom Θ) (h : Θ.Hom Ξ) :
-    Hom.comp Γ (Hom.comp Γ f g) h = Hom.comp Γ f (Hom.comp Δ g h) := by
+    Hom.comp h (Hom.comp g f) = Hom.comp (Hom.comp h g) f := by
   apply Hom.ext <;> rfl
 
 /-- The Serre graph of a simple graph has its darts as directed edges. -/
@@ -211,7 +219,9 @@ theorem Hom.comp_assoc {Δ : SerreGraph.{w, x}} {Θ : SerreGraph.{y, z}}
 theorem rose_isOrientation (α : Type w) :
     (rose α).IsOrientation {e | e.2 = true} := by
   intro ⟨a, b⟩
-  exact (show (b = true) ↔ ¬(!b = true) by cases b <;> decide)
+  -- The carrier `(rose α).E` reduces definitionally to `α × Bool` here.
+  change (b = true) ↔ ¬(!b = true)
+  cases b <;> decide
 
 end SerreGraph
 
