@@ -27,6 +27,14 @@ the assigned word for a negative letter. -/
 def substituteLetter (f : α → List (β × Bool)) (a : α × Bool) : List (β × Bool) :=
   bif a.2 then f a.1 else invRev (f a.1)
 
+/-- A positive letter is replaced by its assigned word. -/
+@[simp] theorem substituteLetter_true (f : α → List (β × Bool)) (a : α) :
+    substituteLetter f (a, true) = f a := by simp [substituteLetter]
+
+/-- A negative letter is replaced by the inverse of its assigned word. -/
+@[simp] theorem substituteLetter_false (f : α → List (β × Bool)) (a : α) :
+    substituteLetter f (a, false) = invRev (f a) := by simp [substituteLetter]
+
 /-- Substitute words for the generators of a word and freely reduce the result. -/
 def substituteWord [DecidableEq β] (f : α → List (β × Bool))
     (w : List (α × Bool)) : List (β × Bool) :=
