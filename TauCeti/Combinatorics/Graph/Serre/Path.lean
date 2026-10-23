@@ -33,8 +33,8 @@ def Path.IsReduced {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Prop
 @[simp] theorem Path.isReduced_nil (a : Γ.V) :
     Path.IsReduced Γ (Quiver.Path.nil : Γ.Path a a) := trivial
 
-@[simp] theorem Path.isReduced_singleton {a b : Γ.V} (e : Quiver.Hom a b) :
-    Path.IsReduced Γ (Quiver.Path.nil.cons e) := trivial
+@[simp] theorem Path.isReduced_toPath {a b : Γ.V} (e : Quiver.Hom a b) :
+    Path.IsReduced Γ e.toPath := trivial
 
 /-- The reducedness test for a newly appended dart only examines the preceding dart. -/
 @[simp] theorem Path.isReduced_cons_cons {a b c d : Γ.V}
@@ -51,7 +51,7 @@ theorem rose_not_isReduced_backtrack {α : Type*} (a : α) :
   simp [Path.IsReduced, rose]
 
 /-- Traversing one rose petal and then the reverse of a different petal is reduced. -/
-theorem rose_isReduced_distinct_petals {α : Type*} {a b : α} (hab : a ≠ b) :
+theorem rose_isReduced_of_ne {α : Type*} {a b : α} (hab : a ≠ b) :
     Path.IsReduced (rose α)
       ((Quiver.Path.nil.cons ((rose α).dart (a, true))).cons
         ((rose α).dart (b, false))) := by
