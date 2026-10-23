@@ -88,17 +88,6 @@ theorem IsCSA.centralizer_isTISubgroup (hG : IsCSA G) {y : G} (hy : y ≠ 1) :
     TauCeti.IsTISubgroup (Subgroup.centralizer {y}) :=
   hG _ (hG.centralizer_isMaximalAbelian hy)
 
-/-- CSA groups have transitive commutation through every nonidentity element. -/
-theorem IsCSA.isCommTransitive (hG : IsCSA G) : IsCommTransitive G := by
-  intro x y z hy hxy hyz
-  have hC := (hG.centralizer_isMaximalAbelian hy).prop
-  have : IsMulCommutative (Subgroup.centralizer {y} : Subgroup G) := hC
-  have hx : x ∈ Subgroup.centralizer {y} :=
-    Subgroup.mem_centralizer_singleton_iff.mpr hxy.eq
-  have hz : z ∈ Subgroup.centralizer {y} :=
-    Subgroup.mem_centralizer_singleton_iff.mpr hyz.eq.symm
-  exact setLike_mul_comm hx hz
-
 /-- Commutation is transitive through a nonidentity element exactly when every nonidentity
 element has an abelian centralizer. -/
 theorem isCommTransitive_iff_centralizer_isMulCommutative :
@@ -108,14 +97,21 @@ theorem isCommTransitive_iff_centralizer_isMulCommutative :
   · intro h y hy
     apply IsMulCommutative.of_setLike_mul_comm
     intro a ha b hb
-    exact h a y b hy (Subgroup.mem_centralizer_singleton_iff.mp ha)
-      (Subgroup.mem_centralizer_singleton_iff.mp hb).symm
+    exact (h a y b hy
+      ((commute_iff_eq _ _).mpr (Subgroup.mem_centralizer_singleton_iff.mp ha))
+      ((commute_iff_eq _ _).mpr (Subgroup.mem_centralizer_singleton_iff.mp hb).symm)).eq
   · intro h x y z hy hxy hyz
     have hx : x ∈ Subgroup.centralizer {y} :=
-      Subgroup.mem_centralizer_singleton_iff.mpr hxy
+      Subgroup.mem_centralizer_singleton_iff.mpr hxy.eq
     have hz : z ∈ Subgroup.centralizer {y} :=
-      Subgroup.mem_centralizer_singleton_iff.mpr hyz.symm
-    exact (isMulCommutative_iff_of_setLike.mp (h y hy)) x hx z hz
+      Subgroup.mem_centralizer_singleton_iff.mpr hyz.eq.symm
+    exact (commute_iff_eq _ _).mpr
+      ((isMulCommutative_iff_of_setLike.mp (h y hy)) x hx z hz)
+
+/-- CSA groups have transitive commutation through every nonidentity element. -/
+theorem IsCSA.isCommTransitive (hG : IsCSA G) : IsCommTransitive G :=
+  isCommTransitive_iff_centralizer_isMulCommutative.mpr
+    (fun _ hy => hG.centralizer_isMulCommutative hy)
 
 /-- A nonabelian commutative-transitive group has trivial center. -/
 theorem IsCommTransitive.center_eq_bot (hG : IsCommTransitive G)
