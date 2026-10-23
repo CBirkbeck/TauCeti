@@ -33,7 +33,7 @@ def substituteWord [DecidableEq β] (f : α → List (β × Bool))
   reduce (w.flatMap (substituteLetter f))
 
 /-- Substitution agrees with the universal homomorphism from the free group. -/
-@[simp] theorem mk_substituteWord [DecidableEq β] (f : α → List (β × Bool))
+theorem mk_substituteWord [DecidableEq β] (f : α → List (β × Bool))
     (w : List (α × Bool)) :
     mk (substituteWord f w) = lift (fun a => mk (f a)) (mk w) := by
   simp only [substituteWord, reduce.self]
