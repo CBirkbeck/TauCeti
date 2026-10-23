@@ -50,7 +50,7 @@ variable {G : Type u} [Group G]
 
 /-- Applying a free basis to an index is the inverse of its representation map applied to
 the corresponding canonical generator. -/
-theorem repr_symm_apply_of {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
+@[simp] theorem repr_symm_apply_of {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
     b.repr.symm (FreeGroup.of i) = b i :=
   rfl
 
@@ -85,18 +85,17 @@ theorem IsPrimitive.map_mulEquiv {H : Type u} [Group H]
     IsPrimitive (g * x * g⁻¹) ↔ IsPrimitive x :=
   isPrimitive_map_mulEquiv_iff (MulAut.conj g)
 
-/-- An element is primitive exactly when its inverse is primitive. -/
-@[simp] theorem isPrimitive_inv {x : G} : IsPrimitive x⁻¹ ↔ IsPrimitive x := by
+/-- The inverse of a primitive element is primitive. -/
+theorem IsPrimitive.inv {x : G} (hx : IsPrimitive x) : IsPrimitive x⁻¹ := by
   have inv_of {α : Type u} (a : α) : IsPrimitive (FreeGroup.of a)⁻¹ := by
     simpa using (IsPrimitive.of a).map_mulEquiv generatorInversion
-  have inv_primitive {y : G} (hy : IsPrimitive y) : IsPrimitive y⁻¹ := by
-    obtain ⟨ι, b, i, rfl⟩ := hy
-    simpa only [FreeGroupBasis.repr_symm_apply_of, map_inv] using
-      (inv_of i).map_mulEquiv b.repr.symm
-  constructor
-  · intro hx
-    simpa only [inv_inv] using inv_primitive hx
-  · exact inv_primitive
+  obtain ⟨ι, b, i, rfl⟩ := hx
+  simpa only [FreeGroupBasis.repr_symm_apply_of, map_inv] using
+    (inv_of i).map_mulEquiv b.repr.symm
+
+/-- An element is primitive exactly when its inverse is primitive. -/
+@[simp] theorem isPrimitive_inv {x : G} : IsPrimitive x⁻¹ ↔ IsPrimitive x :=
+  ⟨fun h => by simpa using h.inv, IsPrimitive.inv⟩
 
 end TauCeti.FreeGroup
 
@@ -131,10 +130,9 @@ theorem IsPrimitive.exists_monoidHom_apply_eq_ofAdd_one {x : G} (hx : IsPrimitiv
   obtain ⟨ι, b, i, rfl⟩ := hx
   classical
   let f : G →* Multiplicative ℤ :=
-    (FreeGroup.lift (fun j : ι => if j = i then Multiplicative.ofAdd 1 else 1)).comp
-      b.repr.toMonoidHom
+    b.lift (fun j : ι => if j = i then Multiplicative.ofAdd 1 else 1)
   refine ⟨f, ?_⟩
-  simp [f, FreeGroupBasis.repr_apply_coe]
+  simp [f]
 
 /-- Primitive elements cannot be proper powers. -/
 theorem IsPrimitive.not_isProperPower {x : G} (hx : IsPrimitive x) :
@@ -149,15 +147,22 @@ theorem IsPrimitive.not_isProperPower {x : G} (hx : IsPrimitive x) :
   intro h
   exact h.not_isProperPower Group.IsProperPower.one
 
+/-- A primitive element does not lie in the commutator subgroup. -/
+theorem IsPrimitive.not_mem_commutator {x : G} (hx : IsPrimitive x) :
+    x ∉ commutator G := by
+  obtain ⟨f, hf⟩ := hx.exists_monoidHom_apply_eq_ofAdd_one
+  intro h
+  have : (Multiplicative.ofAdd (1 : ℤ)) = 1 := by
+    rw [← hf]
+    exact (Abelianization.commutator_le_ker f) h
+  norm_num at this
+
 /-- A commutator is never primitive in a free group. -/
 @[simp] theorem not_isPrimitive_commutator (x y : G) : ¬ IsPrimitive ⁅x, y⁆ := by
   intro h
-  obtain ⟨f, hf⟩ := h.exists_monoidHom_apply_eq_ofAdd_one
-  have hcomm : ⁅f x, f y⁆ = 1 :=
-    commutatorElement_eq_one_iff_mul_comm.mpr (mul_comm _ _)
-  have : (Multiplicative.ofAdd (1 : ℤ)) = 1 := by
-    rw [← hf, map_commutatorElement, hcomm]
-  norm_num at this
+  exact h.not_mem_commutator
+    (Subgroup.commutator_mem_commutator (show x ∈ (⊤ : Subgroup G) from trivial)
+      (show y ∈ (⊤ : Subgroup G) from trivial))
 
 /-- The square of any group element is not primitive. -/
 @[simp] theorem not_isPrimitive_sq (x : G) : ¬ IsPrimitive (x ^ 2) := by

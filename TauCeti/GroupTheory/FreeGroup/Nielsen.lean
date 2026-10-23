@@ -50,21 +50,14 @@ noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) :
     FreeGroup.lift (fun i => if i = a then FreeGroup.of a * FreeGroup.of b else FreeGroup.of i)
   let g : FreeGroup α →* FreeGroup α :=
     FreeGroup.lift (fun i => if i = a then FreeGroup.of a * (FreeGroup.of b)⁻¹ else FreeGroup.of i)
-  have hgf : g.comp f = MonoidHom.id (FreeGroup α) := by
-    apply FreeGroup.ext_hom
-    intro i
-    by_cases hi : i = a
-    · subst i
-      simp [f, g, hba]
-    · simp [f, g, hi]
-  have hfg : f.comp g = MonoidHom.id (FreeGroup α) := by
-    apply FreeGroup.ext_hom
-    intro i
-    by_cases hi : i = a
-    · subst i
-      simp [f, g, hba]
-    · simp [f, g, hi]
-  exact MonoidHom.toMulEquiv f g hgf hfg
+  have hinv : g.comp f = MonoidHom.id (FreeGroup α) ∧
+      f.comp g = MonoidHom.id (FreeGroup α) := by
+    constructor <;> apply FreeGroup.ext_hom <;> intro i <;> by_cases hi : i = a
+    all_goals
+      first
+      | subst i; simp [f, g, hba]
+      | simp [f, g, hi]
+  exact MonoidHom.toMulEquiv f g hinv.1 hinv.2
 
 /-- The Nielsen transformation sends the selected generator to its product with the other. -/
 @[simp] theorem nielsenMul_of_left {α : Type u} (a b : α) (hab : a ≠ b) :
