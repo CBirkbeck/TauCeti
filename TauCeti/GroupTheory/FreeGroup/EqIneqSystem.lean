@@ -22,8 +22,7 @@ theorem over free groups*, §2.3.
 
 public section
 
--- Roadmap §3.3 specifies FreeGroup.EqIneqSystem as the public name.
-namespace FreeGroup
+namespace TauCeti.FreeGroup
 
 /-- A finite conjunction of equations and inequations in variables `X` with coefficient
 letters `A`. The lists need not be deduplicated: they are finite syntax, and their order has
@@ -191,4 +190,4 @@ example :
 
 end EqIneqSystem
 
-end FreeGroup
+end TauCeti.FreeGroup
