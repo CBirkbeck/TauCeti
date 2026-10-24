@@ -211,12 +211,12 @@ theorem isPrimitive_of_mul_of {α : Type u} (a b : α) (hab : a ≠ b) :
 
 end FreeGroup
 
-namespace Group.IsPrimitive
+namespace FreeGroup
 
 /-- An element of a free group is primitive exactly when it is the image of a canonical
 generator under an automorphism. -/
-theorem iff_exists_mulEquiv_of {α : Type u} {x : FreeGroup α} :
-    IsPrimitive x ↔
+theorem isPrimitive_iff_exists_mulEquiv_of {α : Type u} {x : FreeGroup α} :
+    Group.IsPrimitive x ↔
       ∃ (e : FreeGroup α ≃* FreeGroup α) (a : α), e (FreeGroup.of a) = x := by
   constructor
   · rintro ⟨ι, b, i, rfl⟩
@@ -227,4 +227,4 @@ theorem iff_exists_mulEquiv_of {α : Type u} {x : FreeGroup α} :
   · rintro ⟨e, a, rfl⟩
     exact (FreeGroup.isPrimitive_of a).map_mulEquiv e
 
-end Group.IsPrimitive
+end FreeGroup
