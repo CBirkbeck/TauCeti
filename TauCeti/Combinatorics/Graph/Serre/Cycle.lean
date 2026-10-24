@@ -101,13 +101,13 @@ theorem single_mem_modTwoCycleSpace_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1
   exact incidenceBoundary_single_eq_zero_of_loop (ZMod 2) e h
 
 /-- An individual dart is an integral cycle exactly when it is a loop. -/
-@[simp] theorem single_mem_cycleLattice_iff (e : O) :
+theorem single_mem_cycleLattice_iff (e : O) :
     Finsupp.single e (1 : ℤ) ∈ Γ.cycleLattice O ↔ Γ.src e.1 = Γ.tgt e.1 := by
   rw [mem_cycleLattice_iff]
   exact incidenceBoundary_single_eq_zero_iff ℤ e
 
 /-- An individual dart is a binary cycle exactly when it is a loop. -/
-@[simp] theorem single_mem_modTwoCycleSpace_iff (e : O) :
+theorem single_mem_modTwoCycleSpace_iff (e : O) :
     Finsupp.single e (1 : ZMod 2) ∈ Γ.modTwoCycleSpace O ↔ Γ.src e.1 = Γ.tgt e.1 := by
   rw [mem_modTwoCycleSpace_iff]
   exact incidenceBoundary_single_eq_zero_iff (ZMod 2) e
