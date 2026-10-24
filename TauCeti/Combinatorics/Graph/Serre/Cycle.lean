@@ -65,42 +65,52 @@ variable {Γ O}
   simp [incidenceBoundary]
 
 /-- A chain is an integral cycle exactly when its signed incidence boundary vanishes. -/
-theorem mem_cycleLattice_iff (c : O →₀ ℤ) :
+@[simp] theorem mem_cycleLattice_iff (c : O →₀ ℤ) :
     c ∈ Γ.cycleLattice O ↔ Γ.integralCycleBoundary O c = 0 :=
   LinearMap.mem_ker
 
 /-- A binary chain is a cycle exactly when its incidence boundary vanishes. -/
-theorem mem_modTwoCycleSpace_iff (c : O →₀ ZMod 2) :
+@[simp] theorem mem_modTwoCycleSpace_iff (c : O →₀ ZMod 2) :
     c ∈ Γ.modTwoCycleSpace O ↔ Γ.modTwoCycleBoundary O c = 0 :=
   LinearMap.mem_ker
+
+/-- The incidence column of a loop vanishes over any ring. -/
+theorem incidenceBoundary_single_eq_zero_of_loop (R : Type*) [Ring R] (e : O)
+    (h : Γ.src e.1 = Γ.tgt e.1) :
+    Γ.incidenceBoundary O R (Finsupp.single e 1) = 0 := by
+  rw [incidenceBoundary_single, one_smul, ← h, sub_self]
+
+/-- Over a nontrivial ring, a single dart has zero incidence boundary exactly when it is a loop. -/
+theorem incidenceBoundary_single_eq_zero_iff (R : Type*) [Ring R] [Nontrivial R]
+    (e : O) :
+    Γ.incidenceBoundary O R (Finsupp.single e 1) = 0 ↔
+      Γ.src e.1 = Γ.tgt e.1 := by
+  rw [incidenceBoundary_single, one_smul, sub_eq_zero]
+  exact (Finsupp.single_left_inj (one_ne_zero : (1 : R) ≠ 0)).trans eq_comm
 
 /-- A loop is an integral cycle, for either choice of its orientation. -/
 theorem single_mem_cycleLattice_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1) :
     Finsupp.single e (1 : ℤ) ∈ Γ.cycleLattice O := by
-  rw [mem_cycleLattice_iff, incidenceBoundary_single, one_smul, ← h, sub_self]
+  rw [mem_cycleLattice_iff]
+  exact incidenceBoundary_single_eq_zero_of_loop ℤ e h
 
 /-- A loop is also a binary cycle. -/
 theorem single_mem_modTwoCycleSpace_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1) :
     Finsupp.single e (1 : ZMod 2) ∈ Γ.modTwoCycleSpace O := by
-  rw [mem_modTwoCycleSpace_iff, incidenceBoundary_single, one_smul, ← h, sub_self]
+  rw [mem_modTwoCycleSpace_iff]
+  exact incidenceBoundary_single_eq_zero_of_loop (ZMod 2) e h
 
 /-- An individual dart is an integral cycle exactly when it is a loop. -/
-theorem single_mem_cycleLattice_iff (e : O) :
+@[simp] theorem single_mem_cycleLattice_iff (e : O) :
     Finsupp.single e (1 : ℤ) ∈ Γ.cycleLattice O ↔ Γ.src e.1 = Γ.tgt e.1 := by
-  refine ⟨fun h => ?_, single_mem_cycleLattice_of_loop e⟩
-  by_contra hne
-  have hb := (mem_cycleLattice_iff (Γ := Γ) (O := O) _).mp h
-  have hs := congrArg (fun c : Γ.V →₀ ℤ => c (Γ.src e.1)) hb
-  simp [Ne.symm hne] at hs
+  rw [mem_cycleLattice_iff]
+  exact incidenceBoundary_single_eq_zero_iff ℤ e
 
 /-- An individual dart is a binary cycle exactly when it is a loop. -/
-theorem single_mem_modTwoCycleSpace_iff (e : O) :
+@[simp] theorem single_mem_modTwoCycleSpace_iff (e : O) :
     Finsupp.single e (1 : ZMod 2) ∈ Γ.modTwoCycleSpace O ↔ Γ.src e.1 = Γ.tgt e.1 := by
-  refine ⟨fun h => ?_, single_mem_modTwoCycleSpace_of_loop e⟩
-  by_contra hne
-  have hb := (mem_modTwoCycleSpace_iff (Γ := Γ) (O := O) _).mp h
-  have hs := congrArg (fun c : Γ.V →₀ ZMod 2 => c (Γ.src e.1)) hb
-  simp [Ne.symm hne] at hs
+  rw [mem_modTwoCycleSpace_iff]
+  exact incidenceBoundary_single_eq_zero_iff (ZMod 2) e
 
 /-- Reversing a dart negates its signed incidence column. -/
 theorem incidenceBoundary_rev (R : Type*) [Ring R] (e : Γ.E)
