@@ -6,8 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.GroupTheory.FreeGroup.Nielsen
-public import Mathlib.GroupTheory.Commutator.Basic
-import Mathlib.Tactic.NormNum
 import Mathlib.GroupTheory.FreeGroup.GeneratorEquiv
 public import TauCeti.GroupTheory.FreeGroup.ProperPower
 
