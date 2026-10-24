@@ -192,7 +192,7 @@ theorem comp_assoc {R S T U : StallingsGraph α}
   rw [T.read_def, S.read_def, f.word_mapPath]
 
 /-- A labelled morphism sends loops at any vertex to loops with the same reading. -/
-theorem subgroup_le_map (a : S.graph.V) :
+theorem subgroup_le_subgroup_mapV (a : S.graph.V) :
     S.subgroup a ≤ T.subgroup (f.graphHom.mapV a) := by
   rintro g ⟨p, rfl⟩
   exact ⟨f.graphHom.toPrefunctor.mapPath p, f.read_mapPath p⟩
@@ -200,7 +200,7 @@ theorem subgroup_le_map (a : S.graph.V) :
 /-- A based label-preserving morphism sends every accepted word to an accepted word. -/
 theorem subgroup_le (f : S.Hom T) : S.subgroup S.base ≤ T.subgroup T.base := by
   rw [← f.map_base]
-  exact f.subgroup_le_map S.base
+  exact f.subgroup_le_subgroup_mapV S.base
 
 end Hom
 

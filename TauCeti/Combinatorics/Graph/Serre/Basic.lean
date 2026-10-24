@@ -213,15 +213,6 @@ instance Hom.toPrefunctor_mapReverse {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ) :
     apply Subtype.ext
     simp only [Hom.toPrefunctor_map_val, Γ.reverse_val, Δ.reverse_val, f.map_rev]
 
-@[simp] theorem Hom.toPrefunctor_mapPath_reverse {Δ : SerreGraph.{w, x}}
-    (f : Γ.Hom Δ) {a b : Γ.V} (p : Γ.Path a b) :
-    f.toPrefunctor.mapPath p.reverse = (f.toPrefunctor.mapPath p).reverse := by
-  induction p with
-  | nil => simp
-  | cons p e ih =>
-    simp only [Quiver.Path.reverse, Prefunctor.mapPath_comp, Prefunctor.mapPath_toPath,
-      Prefunctor.mapPath_cons, Prefunctor.map_reverse, ih]
-
 /-- The rose on a type of petals. Each petal is a loop with two distinct darts. -/
 @[expose] def rose (α : Type w) : SerreGraph.{0, w} where
   V := PUnit
