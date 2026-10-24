@@ -202,25 +202,3 @@ theorem not_isPrimitive_pow (x : G) {n : ℕ} (hn : n ≠ 1) : ¬ IsPrimitive (x
   not_isPrimitive_pow x (by decide)
 
 end TauCeti.FreeGroup
-
-namespace FreeGroup
-
-/-- A free-group element is primitive exactly when an automorphism sends it to a canonical
-generator. -/
-theorem isPrimitive_iff_exists_mulEquiv {α : Type u} (x : FreeGroup α) :
-    TauCeti.FreeGroup.IsPrimitive x ↔
-      ∃ (e : FreeGroup α ≃* FreeGroup α) (a : α), e x = of a := by
-  constructor
-  · rintro ⟨ι, b, i, rfl⟩
-    let r : α ≃ ι := Equiv.ofFreeGroupEquiv b.repr
-    let b' : FreeGroupBasis α (FreeGroup α) := b.reindex r.symm
-    refine ⟨b'.repr, r.symm i, ?_⟩
-    have hb : b' (r.symm i) = b i := by simp [b']
-    rw [← hb]
-    exact b'.repr_apply_coe _
-  · rintro ⟨e, a, h⟩
-    refine ⟨α, FreeGroupBasis.ofRepr e, a, ?_⟩
-    apply e.injective
-    exact (FreeGroupBasis.repr_apply_coe (FreeGroupBasis.ofRepr e) a).trans h.symm
-
-end FreeGroup
