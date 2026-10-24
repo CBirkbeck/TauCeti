@@ -127,30 +127,40 @@ variable {G : Type*} [One G] [Inv G] [Mul G]
 
 end GroupStructure
 
-/-- The group language with additional constants named by `A`. -/
-abbrev Lcoeff (A : Type*) : Language := Language.group.withConstants A
+/-- Identity as a term in the group language with named coefficients. -/
+instance (A X : Type*) : One (Language.group[[A]].Term X) :=
+  ⟨Language.Constants.term (Sum.inl oneFunc)⟩
 
-/-- Interpret the coefficient constants using a map into the carrier. -/
-@[instance_reducible] def coeffStructure (G A : Type*) [One G] [Inv G] [Mul G] (c : A → G) :
-    (Lcoeff A).Structure G :=
-  letI := structureOfGroup G
-  letI := Language.constantsOn.structure c
-  inferInstance
+/-- Inversion as a term in the group language with named coefficients. -/
+instance (A X : Type*) : Inv (Language.group[[A]].Term X) :=
+  ⟨Language.Functions.apply₁ (Sum.inl invFunc : Language.group[[A]].Functions 1)⟩
 
-/-- The constant named by `a` denotes the chosen coefficient `c a`. -/
-theorem coeffStructure_funMap_con {G A : Type*} [One G] [Inv G] [Mul G] (c : A → G)
-    (a : A) (xs : Fin 0 → G) :
-    @Language.Structure.funMap (Lcoeff A) G (coeffStructure G A c) 0 (Sum.inr a) xs =
-      c a := by
-  rw [Subsingleton.elim xs (![] : Fin 0 → G)]
+/-- Multiplication as a term in the group language with named coefficients. -/
+instance (A X : Type*) : Mul (Language.group[[A]].Term X) :=
+  ⟨Language.Functions.apply₂ (Sum.inl mulFunc : Language.group[[A]].Functions 2)⟩
+
+section Coefficients
+
+variable {G A X : Type*} [One G] [Inv G] [Mul G]
+  [(Language.constantsOn A).Structure G] (v : X → G)
+
+/-- The identity term evaluates to the group identity in the coefficient language. -/
+@[simp] theorem realize_coeff_one :
+    Language.Term.realize v (1 : Language.group[[A]].Term X) = 1 := by
   rfl
 
-/-- A coefficient term evaluates to its named element. -/
-@[simp] theorem realize_con {G A X : Type*} [One G] [Inv G] [Mul G] (c : A → G)
-    (v : X → G) (a : A) :
-    @Language.Term.realize (Lcoeff A) G (coeffStructure G A c) X v
-      (Language.Constants.term (Sum.inr a)) = c a := by
-  exact coeffStructure_funMap_con c a default
+/-- Inversion of a coefficient term evaluates by inversion. -/
+@[simp] theorem realize_coeff_inv (t : Language.group[[A]].Term X) :
+    Language.Term.realize v t⁻¹ = (Language.Term.realize v t)⁻¹ := by
+  rfl
+
+/-- Multiplication of coefficient terms evaluates by multiplication. -/
+@[simp] theorem realize_coeff_mul (t s : Language.group[[A]].Term X) :
+    Language.Term.realize v (t * s) =
+      Language.Term.realize v t * Language.Term.realize v s := by
+  rfl
+
+end Coefficients
 
 end Group
 
@@ -174,13 +184,13 @@ end GroupAxiom
 
 end TauCeti
 
-namespace FirstOrder
+namespace FirstOrder.Language.Theory
 
 /-- The first-order theory axiomatizing groups. -/
-def Language.groupTheory : Language.group.Theory :=
+def group : Language.group.Theory :=
   Set.range TauCeti.GroupAxiom.toSentence
 
-end FirstOrder
+end FirstOrder.Language.Theory
 
 namespace TauCeti
 
@@ -206,33 +216,57 @@ section Axioms
 
 variable (G : Type*)
 
+end Axioms
+end Group
+
+namespace GroupAxiom
+
 /-- A group axiom holds in the canonical interpretation exactly when its group law holds. -/
-theorem GroupAxiom.realize_iff_toProp [One G] [Inv G] [Mul G] (a : GroupAxiom) :
+theorem realize_toSentence_iff_toProp [One G] [Inv G] [Mul G] (a : GroupAxiom) :
     (G ⊨ a.toSentence) ↔ a.toProp G := by
   cases a <;> simp [GroupAxiom.toSentence, GroupAxiom.toProp,
     Sentence.Realize, Formula.Realize, Fin.snoc]
 
+end GroupAxiom
+
+namespace Group
+
+open Language.Structure
+
+section Axioms
+
+variable (G : Type*)
+
 /-- Every group with its canonical language structure satisfies the group theory. -/
-theorem models_theory [Group G] : G ⊨ Language.groupTheory := by
+theorem model_group [Group G] : G ⊨ Language.Theory.group := by
   rw [Language.Theory.model_iff]
   intro φ hφ
   obtain ⟨a, rfl⟩ := hφ
-  rw [GroupAxiom.realize_iff_toProp]
+  rw [GroupAxiom.realize_toSentence_iff_toProp]
   cases a <;> simp [GroupAxiom.toProp, mul_assoc, one_mul, inv_mul_cancel]
 
 end Axioms
 
 section Models
 
-variable (G : Type*) [Language.group.Structure G] [G ⊨ Language.groupTheory]
+variable (G : Type*) [Language.group.Structure G] [G ⊨ Language.Theory.group]
 
 attribute [local instance] mulOfStructure invOfStructure oneOfStructure
 
+end Models
+end Group
+
+namespace GroupAxiom
+
+open _root_.TauCeti.Group Language.Structure
+
+variable (G : Type*) [Language.group.Structure G] [G ⊨ Language.Theory.group]
+
 /-- Each axiom of a group-language model holds for its extracted operations. -/
-theorem GroupAxiom.toProp_of_model (a : GroupAxiom) :
+theorem toProp_of_model (a : GroupAxiom) :
     @GroupAxiom.toProp G (mulOfStructure G) (invOfStructure G) (oneOfStructure G) a := by
   have h : G ⊨ a.toSentence :=
-    Language.Theory.realize_sentence_of_mem Language.groupTheory (Set.mem_range_self a)
+    Language.Theory.realize_sentence_of_mem Language.Theory.group (Set.mem_range_self a)
   -- The changes unfold the operations extracted from the symbols. Arity vectors are then
   -- compared by extensionality in the structure equality below.
   cases a
@@ -255,6 +289,18 @@ theorem GroupAxiom.toProp_of_model (a : GroupAxiom) :
       show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
       using h x
 
+end GroupAxiom
+
+namespace Group
+
+open Language.Structure
+
+section Models
+
+variable (G : Type*) [Language.group.Structure G] [G ⊨ Language.Theory.group]
+
+attribute [local instance] mulOfStructure invOfStructure oneOfStructure
+
 /-- A model of the three group axioms carries the group structure given by its symbols. -/
 @[instance_reducible] def groupOfModel : _root_.Group G :=
   _root_.Group.ofLeftAxioms
@@ -262,37 +308,42 @@ theorem GroupAxiom.toProp_of_model (a : GroupAxiom) :
     (GroupAxiom.toProp_of_model G .oneMul)
     (GroupAxiom.toProp_of_model G .invMulCancel)
 
-omit [G ⊨ Language.groupTheory] in
+omit [G ⊨ Language.Theory.group] in
 /-- The extracted group's identity is the interpretation of its identity symbol. -/
 theorem groupOfModel_one :
     letI : _root_.Group G := groupOfModel G
     (1 : G) = funMap oneFunc ![] := by
+  -- `Group.ofLeftAxioms` retains the supplied identity operation definitionally.
   change funMap oneFunc ![] = funMap oneFunc ![]
   rfl
 
-omit [G ⊨ Language.groupTheory] in
+omit [G ⊨ Language.Theory.group] in
 /-- Inversion in the group extracted from a model is the interpretation of its inverse symbol. -/
 theorem groupOfModel_inv (x : G) :
     letI : _root_.Group G := groupOfModel G
     x⁻¹ = funMap invFunc ![x] := by
+  -- `Group.ofLeftAxioms` retains the supplied inversion operation definitionally.
   change funMap invFunc ![x] = funMap invFunc ![x]
   rfl
 
-omit [G ⊨ Language.groupTheory] in
+omit [G ⊨ Language.Theory.group] in
 /-- Multiplication in the group extracted from a model is its multiplication symbol. -/
 theorem groupOfModel_mul (x y : G) :
     letI : _root_.Group G := groupOfModel G
     x * y = funMap mulFunc ![x, y] := by
+  -- `Group.ofLeftAxioms` retains the supplied multiplication operation definitionally.
   change funMap mulFunc ![x, y] = funMap mulFunc ![x, y]
   rfl
 
-omit [G ⊨ Language.groupTheory] in
+omit [G ⊨ Language.Theory.group] in
 /-- Reinterpreting the extracted group operations recovers the original language structure. -/
 theorem structureOfGroup_groupOfModel :
     letI : _root_.Group G := groupOfModel G
     structureOfGroup G = ‹Language.group.Structure G› := by
   apply Language.Structure.ext
   · funext n f xs
+    -- Unfold the canonical interpretation, then rewrite by the extracted operation lemmas.
+    -- The arity vectors are equal by extensionality at each coordinate.
     cases f
     · change (1 : G) = funMap oneFunc xs
       rw [groupOfModel_one G]
@@ -339,27 +390,26 @@ def groupLanguageHom (φ : G →* H) :
 /-- A coefficient-preserving group homomorphism respects the language with named constants. -/
 def coeffGroupLanguageHom (φ : G →* H) (c : A → G) (d : A → H)
     (hc : ∀ a, φ (c a) = d a) :
-    @Language.Hom (Lcoeff A) G H (coeffStructure G A c) (coeffStructure H A d) := by
+    @Language.Hom Language.group[[A]] G H
+      (@Language.withConstantsStructure Language.group G (structureOfGroup G) A
+        (Language.constantsOn.structure c))
+      (@Language.withConstantsStructure Language.group H (structureOfGroup H) A
+        (Language.constantsOn.structure d)) := by
   letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
   letI : (Language.constantsOn A).Structure H := Language.constantsOn.structure d
-  letI : (Lcoeff A).Structure G := coeffStructure G A c
-  letI : (Lcoeff A).Structure H := coeffStructure H A d
   refine { toFun := φ, map_fun' := ?_, map_rel' := ?_ }
   · intro n f xs
     cases f with
     | inl f =>
       rw [Language.withConstants_funMap_sumInl, Language.withConstants_funMap_sumInl]
-      convert (groupLanguageHom φ).map_fun f xs using 1 <;> rfl
+      exact (groupLanguageHom φ).map_fun f xs
     | inr f =>
       cases n with
       | zero =>
         dsimp only [Language.constantsOn, Language.constantsOnFunc] at f
-        -- Make the coefficient structure explicit so its characteristic lemma applies.
-        change φ (@Language.Structure.funMap (Language.group.withConstants A) G
-          (coeffStructure G A c) 0 (Sum.inr f) xs) =
-          @Language.Structure.funMap (Language.group.withConstants A) H
-            (coeffStructure H A d) 0 (Sum.inr f) (φ ∘ xs)
-        simpa only [coeffStructure_funMap_con] using hc f
+        simp only [Language.withConstants_funMap_sumInr]
+        change φ (c f) = d f
+        exact hc f
       | succ n => exact isEmptyElim f
   · intro n r
     cases r with
@@ -369,6 +419,7 @@ def coeffGroupLanguageHom (φ : G →* H) (c : A → G) (d : A → H)
 /-- The canonical language homomorphism acts as the original group homomorphism. -/
 @[simp] theorem groupLanguageHom_apply (φ : G →* H) (x : G) :
     groupLanguageHom φ x = φ x := by
+  -- Unfold the bundled homomorphism to expose its underlying monoid homomorphism.
   change φ x = φ x
   rfl
 
@@ -376,6 +427,7 @@ def coeffGroupLanguageHom (φ : G →* H) (c : A → G) (d : A → H)
 @[simp] theorem coeffGroupLanguageHom_apply (φ : G →* H) (c : A → G) (d : A → H)
     (hc : ∀ a, φ (c a) = d a) (x : G) :
     coeffGroupLanguageHom φ c d hc x = φ x := by
+  -- Unfold the bundled homomorphism to expose its underlying monoid homomorphism.
   change φ x = φ x
   rfl
 
