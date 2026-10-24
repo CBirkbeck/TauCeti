@@ -163,6 +163,14 @@ variable {G A X : Type*} [One G] [Inv G] [Mul G]
 
 end Coefficients
 
+/-- A named coefficient term evaluates to the chosen coefficient. -/
+@[simp] theorem realize_coeff_constant {G A X : Type*} [One G] [Inv G] [Mul G]
+    (c : A → G) (a : A) (v : X → G) :
+    letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
+    ((Language.group.con a).term : Language.group[[A]].Term X).realize v = c a := by
+  simp only [Language.Term.realize_constants]
+  rfl
+
 end Group
 
 open Language BoundedFormula
@@ -204,15 +212,15 @@ open Language.Structure
 section Axioms
 
 /-- The multiplication extracted from a group-language structure. -/
-@[instance_reducible] def mulOfStructure (G : Type*) [Language.group.Structure G] : Mul G :=
+@[expose, instance_reducible] def mulOfStructure (G : Type*) [Language.group.Structure G] : Mul G :=
   ⟨fun x y => funMap mulFunc ![x, y]⟩
 
 /-- The inversion extracted from a group-language structure. -/
-@[instance_reducible] def invOfStructure (G : Type*) [Language.group.Structure G] : Inv G :=
+@[expose, instance_reducible] def invOfStructure (G : Type*) [Language.group.Structure G] : Inv G :=
   ⟨fun x => funMap invFunc ![x]⟩
 
 /-- The identity extracted from a group-language structure. -/
-@[instance_reducible] def oneOfStructure (G : Type*) [Language.group.Structure G] : One G :=
+@[expose, instance_reducible] def oneOfStructure (G : Type*) [Language.group.Structure G] : One G :=
   ⟨funMap oneFunc ![]⟩
 
 variable (G : Type*)
@@ -224,6 +232,21 @@ namespace Group
 
 open Language.Structure
 
+/-- The extracted identity is the interpretation of the identity symbol. -/
+theorem oneOfStructure_one (G : Type*) [Language.group.Structure G] :
+    letI : One G := oneOfStructure G
+    (1 : G) = funMap oneFunc ![] := rfl
+
+/-- The extracted inversion is the interpretation of the inverse symbol. -/
+theorem invOfStructure_inv (G : Type*) [Language.group.Structure G] (x : G) :
+    letI : Inv G := invOfStructure G
+    x⁻¹ = funMap invFunc ![x] := rfl
+
+/-- The extracted multiplication is the interpretation of the multiplication symbol. -/
+theorem mulOfStructure_mul (G : Type*) [Language.group.Structure G] (x y : G) :
+    letI : Mul G := mulOfStructure G
+    x * y = funMap mulFunc ![x, y] := rfl
+
 /-- Interpreting the operations extracted from a language structure recovers that structure. -/
 theorem structureOfGroup_ofStructure (G : Type*) [Language.group.Structure G] :
     letI : One G := oneOfStructure G
@@ -233,15 +256,18 @@ theorem structureOfGroup_ofStructure (G : Type*) [Language.group.Structure G] :
   apply Language.Structure.ext
   · funext n f xs
     cases f
-    · change funMap oneFunc ![] = funMap oneFunc xs
+    · rw [@funMap_one G (oneOfStructure G) (invOfStructure G) (mulOfStructure G),
+        oneOfStructure_one G]
       congr 1
       exact Subsingleton.elim _ _
-    · change funMap invFunc ![xs 0] = funMap invFunc xs
+    · rw [@funMap_inv G (oneOfStructure G) (invOfStructure G) (mulOfStructure G),
+        invOfStructure_inv G]
       congr 1
       funext i
       fin_cases i
       rfl
-    · change funMap mulFunc ![xs 0, xs 1] = funMap mulFunc xs
+    · rw [@funMap_mul G (oneOfStructure G) (invOfStructure G) (mulOfStructure G),
+        mulOfStructure_mul G]
       congr 1
       funext i
       fin_cases i <;> rfl
@@ -325,35 +351,22 @@ omit [G ⊨ Language.Theory.group] in
 /-- The extracted group's identity is the interpretation of its identity symbol. -/
 theorem groupOfModel_one :
     letI : _root_.Group G := groupOfModel G
-    (1 : G) = funMap oneFunc ![] := by
-  -- `Group.ofLeftAxioms` retains the supplied identity operation definitionally.
-  change funMap oneFunc ![] = funMap oneFunc ![]
-  rfl
+    (1 : G) = funMap oneFunc ![] :=
+  oneOfStructure_one G
 
 omit [G ⊨ Language.Theory.group] in
 /-- Inversion in the group extracted from a model is the interpretation of its inverse symbol. -/
 theorem groupOfModel_inv (x : G) :
     letI : _root_.Group G := groupOfModel G
-    x⁻¹ = funMap invFunc ![x] := by
-  -- `Group.ofLeftAxioms` retains the supplied inversion operation definitionally.
-  change funMap invFunc ![x] = funMap invFunc ![x]
-  rfl
+    x⁻¹ = funMap invFunc ![x] :=
+  invOfStructure_inv G x
 
 omit [G ⊨ Language.Theory.group] in
 /-- Multiplication in the group extracted from a model is its multiplication symbol. -/
 theorem groupOfModel_mul (x y : G) :
     letI : _root_.Group G := groupOfModel G
-    x * y = funMap mulFunc ![x, y] := by
-  -- `Group.ofLeftAxioms` retains the supplied multiplication operation definitionally.
-  change funMap mulFunc ![x, y] = funMap mulFunc ![x, y]
-  rfl
-
-omit [G ⊨ Language.Theory.group] in
-/-- Reinterpreting the extracted group operations recovers the original language structure. -/
-theorem structureOfGroup_groupOfModel :
-    letI : _root_.Group G := groupOfModel G
-    structureOfGroup G = ‹Language.group.Structure G› := by
-  exact structureOfGroup_ofStructure G
+    x * y = funMap mulFunc ![x, y] :=
+  mulOfStructure_mul G x y
 
 end Models
 
