@@ -72,14 +72,14 @@ noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) 
   simp [nielsenMul, hi]
 
 /-- The inverse Nielsen transformation uses the opposite exponent. -/
-@[simp] theorem nielsenMul_symm_of_left {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
+theorem nielsenMul_symm_of_left {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
     (nielsenMul a b hab n).symm (FreeGroup.of a) =
       FreeGroup.of a * FreeGroup.of b ^ (-n) := by
   classical
   simp [nielsenMul]
 
 /-- The inverse Nielsen transformation fixes every other generator. -/
-@[simp] theorem nielsenMul_symm_of_ne {α : Type u} (a b i : α) (hab : a ≠ b) (n : ℤ)
+theorem nielsenMul_symm_of_ne {α : Type u} (a b i : α) (hab : a ≠ b) (n : ℤ)
     (hi : i ≠ a) :
     (nielsenMul a b hab n).symm (FreeGroup.of i) = FreeGroup.of i := by
   classical
@@ -95,8 +95,8 @@ noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) 
   | of c =>
     by_cases hca : c = a
     · subst c
-      simp [zpow_neg]
-    · simp [hca]
+      simp [nielsenMul_symm_of_left, zpow_neg]
+    · simp [hca, nielsenMul_symm_of_ne]
   | inv_of c hc => simp [hc]
   | mul x y hx hy => simp [hx, hy]
 
