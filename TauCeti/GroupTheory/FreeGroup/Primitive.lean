@@ -8,6 +8,7 @@ module
 public import TauCeti.GroupTheory.FreeGroup.Nielsen
 public import Mathlib.GroupTheory.Commutator.Basic
 import Mathlib.Tactic.NormNum
+import Mathlib.GroupTheory.FreeGroup.GeneratorEquiv
 public import TauCeti.GroupTheory.FreeGroup.ProperPower
 
 /-!
@@ -16,6 +17,11 @@ public import TauCeti.GroupTheory.FreeGroup.ProperPower
 An element is primitive if it occurs in a free basis. A primitive element admits an integer
 character taking value one, which separates it from proper powers, the identity, and
 commutators. The definition uses Mathlib's `FreeGroupBasis`, so it applies to any free group.
+
+For a free group, primitivity is equivalent to an automorphism sending the element to a canonical
+generator. Integer Nielsen transformations give primitive products with arbitrary integer powers
+of a distinct basis element. The automorphism characterization uses Mathlib's
+`Equiv.ofFreeGroupEquiv` to reindex a basis by the canonical generator type.
 -/
 
 public section
@@ -44,13 +50,15 @@ namespace FreeGroupBasis
 variable {G : Type u} [Group G]
 
 /-- Every element of a free basis is primitive. -/
-@[simp] theorem isPrimitive {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
-    TauCeti.FreeGroup.IsPrimitive (b i) :=
-  ⟨ι, b, i, rfl⟩
+@[simp] theorem isPrimitive {ι : Type*} (b : FreeGroupBasis ι G) (i : ι) :
+    TauCeti.FreeGroup.IsPrimitive (b i) := by
+  let e : ι ≃ Set.range b := Equiv.ofInjective b b.injective
+  refine ⟨Set.range b, b.reindex e, e i, ?_⟩
+  simp [e]
 
 /-- Applying a free basis to an index is the inverse of its representation map applied to
 the corresponding canonical generator. -/
-@[simp] theorem repr_symm_apply_of {ι : Type u} (b : FreeGroupBasis ι G) (i : ι) :
+@[simp] theorem repr_symm_apply_of {ι : Type*} (b : FreeGroupBasis ι G) (i : ι) :
     b.repr.symm (FreeGroup.of i) = b i :=
   rfl
 
@@ -67,13 +75,13 @@ variable {G : Type u} [Group G]
     (FreeGroupBasis.ofFreeGroup α).isPrimitive a
 
 /-- A group isomorphism carries primitive elements to primitive elements. -/
-theorem IsPrimitive.map_mulEquiv {H : Type u} [Group H]
+theorem IsPrimitive.map_mulEquiv {H : Type*} [Group H]
     (e : G ≃* H) {x : G} (hx : IsPrimitive x) : IsPrimitive (e x) := by
   obtain ⟨ι, b, i, rfl⟩ := hx
-  exact ⟨ι, b.map e, i, FreeGroupBasis.map_apply b e i⟩
+  simpa using (b.map e).isPrimitive i
 
 /-- Primitivity is invariant under group isomorphisms. -/
-@[simp] theorem isPrimitive_map_mulEquiv_iff {H : Type u} [Group H]
+@[simp] theorem isPrimitive_map_mulEquiv_iff {H : Type*} [Group H]
     (e : G ≃* H) {x : G} : IsPrimitive (e x) ↔ IsPrimitive x := by
   constructor
   · intro hx
@@ -103,14 +111,15 @@ namespace FreeGroupBasis
 
 variable {G : Type u} [Group G]
 
-/-- The product of two distinct elements of a free basis is primitive. -/
-theorem isPrimitive_mul {ι : Type u} (b : FreeGroupBasis ι G) {i j : ι} (hij : i ≠ j) :
-    TauCeti.FreeGroup.IsPrimitive (b i * b j) := by
+/-- A basis element times an integer power of a distinct basis element is primitive. -/
+theorem isPrimitive_mul_zpow {ι : Type*} (b : FreeGroupBasis ι G) {i j : ι}
+    (hij : i ≠ j) (n : ℤ) :
+    TauCeti.FreeGroup.IsPrimitive (b i * b j ^ n) := by
   classical
   have h := (TauCeti.FreeGroup.IsPrimitive.of i).map_mulEquiv
-    (TauCeti.FreeGroup.nielsenMul i j hij)
+    (TauCeti.FreeGroup.nielsenMul i j hij n)
   have h' := h.map_mulEquiv b.repr.symm
-  simpa only [TauCeti.FreeGroup.nielsenMul_of_left, map_mul, repr_symm_apply_of] using h'
+  simpa only [TauCeti.FreeGroup.nielsenMul_of_left, map_mul, map_zpow, repr_symm_apply_of] using h'
 
 end FreeGroupBasis
 
@@ -118,11 +127,16 @@ namespace TauCeti.FreeGroup
 
 variable {G : Type u} [Group G]
 
+/-- A canonical generator times any integer power of a distinct generator is primitive. -/
+theorem isPrimitive_of_mul_zpow {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
+    IsPrimitive (FreeGroup.of a * FreeGroup.of b ^ n) := by
+  simpa only [FreeGroupBasis.ofFreeGroup_apply] using
+    (FreeGroupBasis.ofFreeGroup α).isPrimitive_mul_zpow hab n
+
 /-- The product of two distinct canonical generators is primitive. -/
 theorem isPrimitive_of_mul_of {α : Type u} (a b : α) (hab : a ≠ b) :
     IsPrimitive (FreeGroup.of a * FreeGroup.of b) := by
-  simpa only [FreeGroupBasis.ofFreeGroup_apply] using
-    (FreeGroupBasis.ofFreeGroup α).isPrimitive_mul hab
+  simpa only [zpow_one] using isPrimitive_of_mul_zpow a b hab (1 : ℤ)
 
 /-- A primitive element has an integer character that takes value one on it. -/
 theorem IsPrimitive.exists_monoidHom_apply_eq_ofAdd_one {x : G} (hx : IsPrimitive x) :
@@ -164,12 +178,59 @@ theorem IsPrimitive.notMem_commutator {x : G} (hx : IsPrimitive x) :
     (Subgroup.commutator_mem_commutator (show x ∈ (⊤ : Subgroup G) from trivial)
       (show y ∈ (⊤ : Subgroup G) from trivial))
 
-/-- A power with exponent at least two is not primitive. -/
-theorem not_isPrimitive_pow (x : G) {n : ℕ} (hn : 2 ≤ n) : ¬ IsPrimitive (x ^ n) :=
-  fun h => h.not_isProperPower (Group.isProperPower_pow x hn)
+/-- A primitive element is not an integer power whose exponent is not a unit. -/
+theorem IsPrimitive.ne_zpow {x : G} (hx : IsPrimitive x) {y : G} {n : ℤ}
+    (hn : ¬ IsUnit n) : x ≠ y ^ n := by
+  obtain ⟨f, hf⟩ := hx.exists_monoidHom_apply_eq_ofAdd_one
+  intro h
+  rw [h, map_zpow] at hf
+  have hi : n * Multiplicative.toAdd (f y) = 1 := by
+    have hh := congrArg Multiplicative.toAdd hf
+    simpa using hh
+  exact hn (isUnit_iff_dvd_one.mpr ⟨_, hi.symm⟩)
+
+/-- A primitive element is not a natural-number power with exponent different from one. -/
+theorem IsPrimitive.ne_pow {x : G} (hx : IsPrimitive x) {y : G} {n : ℕ}
+    (hn : n ≠ 1) : x ≠ y ^ n := by
+  have hnu : ¬ IsUnit (n : ℤ) := by
+    intro hu
+    have hn1 : n = 1 := Nat.isUnit_iff.mp (Int.ofNat_isUnit.mp hu)
+    exact hn hn1
+  simpa only [zpow_natCast] using hx.ne_zpow (y := y) hnu
+
+/-- An integer power whose exponent is not a unit is not primitive. -/
+theorem not_isPrimitive_zpow (x : G) {n : ℤ} (hn : ¬ IsUnit n) :
+    ¬ IsPrimitive (x ^ n) :=
+  fun h => h.ne_zpow (y := x) hn rfl
+
+/-- A natural-number power with exponent different from one is not primitive. -/
+theorem not_isPrimitive_pow (x : G) {n : ℕ} (hn : n ≠ 1) : ¬ IsPrimitive (x ^ n) :=
+  fun h => h.ne_pow (y := x) hn rfl
 
 /-- The square of any group element is not primitive. -/
 @[simp] theorem not_isPrimitive_sq (x : G) : ¬ IsPrimitive (x ^ 2) :=
   not_isPrimitive_pow x (by decide)
 
 end TauCeti.FreeGroup
+
+namespace FreeGroup
+
+/-- A free-group element is primitive exactly when an automorphism sends it to a canonical
+generator. -/
+theorem isPrimitive_iff_exists_mulEquiv {α : Type u} (x : FreeGroup α) :
+    TauCeti.FreeGroup.IsPrimitive x ↔
+      ∃ (e : FreeGroup α ≃* FreeGroup α) (a : α), e x = of a := by
+  constructor
+  · rintro ⟨ι, b, i, rfl⟩
+    let r : α ≃ ι := Equiv.ofFreeGroupEquiv b.repr
+    let b' : FreeGroupBasis α (FreeGroup α) := b.reindex r.symm
+    refine ⟨b'.repr, r.symm i, ?_⟩
+    have hb : b' (r.symm i) = b i := by simp [b']
+    rw [← hb]
+    exact b'.repr_apply_coe _
+  · rintro ⟨e, a, h⟩
+    refine ⟨α, FreeGroupBasis.ofRepr e, a, ?_⟩
+    apply e.injective
+    exact (FreeGroupBasis.repr_apply_coe (FreeGroupBasis.ofRepr e) a).trans h.symm
+
+end FreeGroup
