@@ -149,6 +149,8 @@ variable {G A X : Type*} [One G] [Inv G] [Mul G]
 
 attribute [local instance] structureOfGroup
 
+-- The withConstants structure interprets each Sum.inl symbol using the base language,
+-- so realization reduces definitionally to the corresponding group operation below.
 /-- The identity term evaluates to the group identity in the coefficient language. -/
 @[simp] theorem realize_coeff_one :
     Language.Term.realize v (1 : Language.group[[A]].Term X) = 1 := by
@@ -208,15 +210,15 @@ open Language.Structure
 section Axioms
 
 /-- The multiplication extracted from a group-language structure. -/
-@[expose, instance_reducible] def mulOfStructure (G : Type*) [Language.group.Structure G] : Mul G :=
+@[instance_reducible] def mulOfStructure (G : Type*) [Language.group.Structure G] : Mul G :=
   ⟨fun x y => funMap mulFunc ![x, y]⟩
 
 /-- The inversion extracted from a group-language structure. -/
-@[expose, instance_reducible] def invOfStructure (G : Type*) [Language.group.Structure G] : Inv G :=
+@[instance_reducible] def invOfStructure (G : Type*) [Language.group.Structure G] : Inv G :=
   ⟨fun x => funMap invFunc ![x]⟩
 
 /-- The identity extracted from a group-language structure. -/
-@[expose, instance_reducible] def oneOfStructure (G : Type*) [Language.group.Structure G] : One G :=
+@[instance_reducible] def oneOfStructure (G : Type*) [Language.group.Structure G] : One G :=
   ⟨funMap oneFunc ![]⟩
 
 variable (G : Type*)
@@ -231,17 +233,17 @@ open Language.Structure
 /-- The extracted identity is the interpretation of the identity symbol. -/
 theorem oneOfStructure_one (G : Type*) [Language.group.Structure G] :
     letI : One G := oneOfStructure G
-    (1 : G) = funMap oneFunc ![] := rfl
+    (1 : G) = funMap oneFunc ![] := (rfl)
 
 /-- The extracted inversion is the interpretation of the inverse symbol. -/
 theorem invOfStructure_inv (G : Type*) [Language.group.Structure G] (x : G) :
     letI : Inv G := invOfStructure G
-    x⁻¹ = funMap invFunc ![x] := rfl
+    x⁻¹ = funMap invFunc ![x] := (rfl)
 
 /-- The extracted multiplication is the interpretation of the multiplication symbol. -/
 theorem mulOfStructure_mul (G : Type*) [Language.group.Structure G] (x y : G) :
     letI : Mul G := mulOfStructure G
-    x * y = funMap mulFunc ![x, y] := rfl
+    x * y = funMap mulFunc ![x, y] := (rfl)
 
 /-- Interpreting the operations extracted from a language structure recovers that structure. -/
 theorem structureOfGroup_ofStructure (G : Type*) [Language.group.Structure G] :
