@@ -140,6 +140,35 @@ attribute [simp] Hom.map_src Hom.map_rev
     Δ.tgt (f.mapE e) = f.mapV (Γ.tgt e) := by
   simp only [tgt, ← f.map_rev, f.map_src]
 
+/-- A Serre-graph morphism maps a path by applying its edge map to each dart. -/
+def Hom.mapPath {Γ : SerreGraph.{u, v}} {Δ : SerreGraph.{w, x}} (f : Γ.Hom Δ)
+    {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Δ.Path (f.mapV a) (f.mapV b)
+  | _, .nil => .nil
+  | _, .cons p e =>
+      (mapPath f p).cons ⟨f.mapE e.1,
+        by simpa only [f.map_src] using congrArg f.mapV e.2.1,
+        by simpa only [f.map_tgt] using congrArg f.mapV e.2.2⟩
+
+@[simp] theorem Hom.mapPath_nil {Γ : SerreGraph.{u, v}} {Δ : SerreGraph.{w, x}}
+    (f : Γ.Hom Δ) (a : Γ.V) :
+    f.mapPath (Quiver.Path.nil : Γ.Path a a) = Quiver.Path.nil := by
+  simp [Hom.mapPath]
+
+@[simp] theorem Hom.mapPath_cons {Γ : SerreGraph.{u, v}} {Δ : SerreGraph.{w, x}}
+    (f : Γ.Hom Δ) {a b c : Γ.V} (p : Γ.Path a b) (e : Quiver.Hom b c) :
+    f.mapPath (p.cons e) =
+      (f.mapPath p).cons ⟨f.mapE e.1,
+        by simpa only [f.map_src] using congrArg f.mapV e.2.1,
+        by simpa only [f.map_tgt] using congrArg f.mapV e.2.2⟩ := by
+  simp [Hom.mapPath]
+
+@[simp] theorem Hom.mapPath_comp {Γ : SerreGraph.{u, v}} {Δ : SerreGraph.{w, x}}
+    (f : Γ.Hom Δ) {a b c : Γ.V} (p : Γ.Path a b) (q : Γ.Path b c) :
+    f.mapPath (p.comp q) = (f.mapPath p).comp (f.mapPath q) := by
+  induction q with
+  | nil => simp
+  | cons q e ih => simp [ih]
+
 /-- Identity morphism of a Serre graph. -/
 def Hom.id : Γ.Hom Γ where
   mapV := _root_.id
