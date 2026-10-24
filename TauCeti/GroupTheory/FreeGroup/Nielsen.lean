@@ -10,8 +10,9 @@ public import Mathlib.GroupTheory.FreeGroup.IsFreeGroup
 /-!
 # Elementary automorphisms of free groups
 
-Inverting every generator and multiplying one generator by an integer power of another both give automorphisms of
-a free group. These transformations supply bases used to construct primitive elements.
+Inverting every generator and multiplying one generator by an integer power of another both give
+automorphisms of a free group. These transformations supply bases used to construct primitive
+elements.
 -/
 
 public section
@@ -40,8 +41,8 @@ noncomputable def generatorInversion {α : Type u} : FreeGroup α ≃* FreeGroup
     generatorInversion.symm (FreeGroup.of a) = (FreeGroup.of a)⁻¹ := by
   simp [generatorInversion]
 
-/-- Replacing one free generator by its product with an integer power of a different generator preserves a free
-basis. This is the elementary Nielsen transformation. -/
+/-- Replacing one free generator by its product with an integer power of a different generator
+preserves a free basis. This is the elementary Nielsen transformation. -/
 noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
     FreeGroup α ≃* FreeGroup α := by
   classical
@@ -49,7 +50,8 @@ noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) 
   let f : FreeGroup α →* FreeGroup α :=
     FreeGroup.lift (fun i => if i = a then FreeGroup.of a * FreeGroup.of b ^ n else FreeGroup.of i)
   let g : FreeGroup α →* FreeGroup α :=
-    FreeGroup.lift (fun i => if i = a then FreeGroup.of a * FreeGroup.of b ^ (-n) else FreeGroup.of i)
+    FreeGroup.lift (fun i =>
+      if i = a then FreeGroup.of a * FreeGroup.of b ^ (-n) else FreeGroup.of i)
   have hinv : g.comp f = MonoidHom.id (FreeGroup α) ∧
       f.comp g = MonoidHom.id (FreeGroup α) := by
     constructor <;> apply FreeGroup.ext_hom <;> intro i <;> by_cases hi : i = a
@@ -59,7 +61,8 @@ noncomputable def nielsenMul {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) 
       | simp [f, g, hi]
   exact MonoidHom.toMulEquiv f g hinv.1 hinv.2
 
-/-- The Nielsen transformation sends the selected generator to its product with the given integer power of the other. -/
+/-- The Nielsen transformation sends the selected generator to its product with the given integer
+power of the other. -/
 @[simp] theorem nielsenMul_of_left {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
     nielsenMul a b hab n (FreeGroup.of a) = FreeGroup.of a * FreeGroup.of b ^ n := by
   classical
