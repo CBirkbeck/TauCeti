@@ -118,7 +118,7 @@ theorem incidenceBoundary_rev_of_charTwo (R : Type*) [Ring R] [CharP R 2]
     (e : Γ.E) (he : e ∈ O) (hre : Γ.rev e ∈ O) :
     Γ.incidenceBoundary O R (Finsupp.single ⟨Γ.rev e, hre⟩ 1) =
       Γ.incidenceBoundary O R (Finsupp.single ⟨e, he⟩ 1) := by
-  rw [incidenceBoundary_rev]
+  rw [incidenceBoundary_rev R e he hre]
   ext v
   exact CharTwo.neg_eq _
 
@@ -209,19 +209,29 @@ theorem incidenceBoundary_mapDomain_inclusion {O' : Set Γ.E} (h : O ⊆ O')
     (R : Type*) [Ring R] (c : O →₀ R) :
     Γ.incidenceBoundary O' R (Finsupp.mapDomain (Set.inclusion h) c) =
       Γ.incidenceBoundary O R c := by
-  simpa using (Hom.id Γ).incidenceBoundary_mapDomain h R c
+  have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
+    intro e he
+    simpa only [Hom.id_mapE, id_eq] using h he
+  simpa only [Hom.id_mapE, Hom.id_mapV, id_eq, Finsupp.mapDomain_id] using
+    (Hom.id Γ).incidenceBoundary_mapDomain hO R c
 
 /-- Enlarging the dart set includes its integral cycle lattice in the larger lattice. -/
 theorem map_cycleLattice_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
     Submodule.map (Finsupp.lmapDomain ℤ ℤ (Set.inclusion h)) (Γ.cycleLattice O) ≤
-      Γ.cycleLattice O' :=
-  (Hom.id Γ).map_cycleLattice_le h
+      Γ.cycleLattice O' := by
+  have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
+    intro e he
+    simpa only [Hom.id_mapE, id_eq] using h he
+  simpa only [Hom.id_mapE, id_eq] using (Hom.id Γ).map_cycleLattice_le hO
 
 /-- Enlarging the dart set includes its binary cycle space in the larger space. -/
 theorem map_modTwoCycleSpace_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
     Submodule.map (Finsupp.lmapDomain (ZMod 2) (ZMod 2) (Set.inclusion h))
-        (Γ.modTwoCycleSpace O) ≤ Γ.modTwoCycleSpace O' :=
-  (Hom.id Γ).map_modTwoCycleSpace_le h
+        (Γ.modTwoCycleSpace O) ≤ Γ.modTwoCycleSpace O' := by
+  have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
+    intro e he
+    simpa only [Hom.id_mapE, id_eq] using h he
+  simpa only [Hom.id_mapE, id_eq] using (Hom.id Γ).map_modTwoCycleSpace_le hO
 
 end SerreGraph
 end TauCeti
