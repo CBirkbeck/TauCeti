@@ -186,7 +186,7 @@ theorem wordMap_preimage_V {Y : Type*} (w : Y → GX G X) (S : Set (GX G Y)) :
 
 /-- The singleton of a tuple of coefficients is the solution set of the equations specifying
 all its coordinates. -/
-theorem singleton_coeff_eq_V (g : X → G) :
+theorem singleton_comp_eq_V (g : X → G) :
     ({(ι ∘ g : X → H)} : Set (X → H)) =
       V ι (Set.range fun x => inr (FreeGroup.of x) * (inl (g x))⁻¹) := by
   ext v
@@ -202,7 +202,7 @@ theorem singleton_coeff_eq_V (g : X → G) :
 
 /-- If some coefficient remains nontrivial in `H`, an equation with that constant has no
 solutions. -/
-theorem V_singleton_coeff_eq_empty {g : G} (hg : ι g ≠ 1) :
+theorem V_singleton_inl_eq_empty {g : G} (hg : ι g ≠ 1) :
     V ι ({inl g} : Set (GX G X)) = ∅ := by
   ext v
   simp [hg]

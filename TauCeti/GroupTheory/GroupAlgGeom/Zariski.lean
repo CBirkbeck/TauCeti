@@ -24,8 +24,9 @@ can give different closed sets on the same underlying group of points.
 
 When the target is a domain over the coefficients and the coefficient image is nontrivial,
 commutator equations make finite unions algebraic. In that case all closed sets are algebraic
-and the closure of a set is the solution set of its ideal of vanishing equations. The image
-condition is essential when the coefficient map is not injective.
+and the closure of a set is the solution set of its ideal of vanishing equations. The
+nontrivial-image condition makes the empty set algebraic; it can fail even for injective
+coefficient maps when the coefficient group is trivial.
 
 ## References
 
@@ -113,65 +114,64 @@ theorem continuous_into_zariski_iff {A : Type*} [TopologicalSpace A]
     exact (hf S).isOpen_compl
 
 /-- A tuple of elements in the coefficient image is a closed point. -/
-theorem isClosed_singleton_coeff (g : X → G) :
+theorem isClosed_singleton_comp (g : X → G) :
     @IsClosed (X → H) (zariski ι X) ({(ι ∘ g : X → H)} : Set (X → H)) := by
-  rw [singleton_coeff_eq_V]
+  rw [singleton_comp_eq_V]
   exact isClosed_V _
 
 /-- Surjective coefficients make every point closed, hence the Zariski topology is T1. -/
-theorem zariski_t1 (hι : Function.Surjective ι) (X : Type*) :
+theorem t1Space_zariski (hι : Function.Surjective ι) (X : Type*) :
     @T1Space (X → H) (zariski ι X) := by
   refine @T1Space.mk (X → H) (zariski ι X) (fun v => ?_)
   choose g hg using fun x => hι (v x)
   have hv : (ι ∘ g : X → H) = v := funext hg
-  simpa only [hv] using (isClosed_singleton_coeff (ι := ι) g)
+  simpa only [hv] using (isClosed_singleton_comp (ι := ι) g)
 
 variable {Y : Type*}
 
 /-- A tuple of words defines a continuous map in the Zariski topologies on tuples. -/
-theorem eval_continuous (w : Y → GX G X) :
+theorem continuous_wordMap (w : Y → GX G X) :
     @Continuous (X → H) (Y → H) (zariski ι X) (zariski ι Y)
       (wordMap ι w) := by
-  apply continuous_generateFrom_iff.mpr
-  rintro U ⟨S, rfl⟩
-  rw [Set.preimage_compl, wordMap_preimage_V]
-  exact @IsClosed.isOpen_compl (X → H) (zariski ι X) _ (isClosed_V _)
+  letI := zariski ι X
+  exact continuous_into_zariski_iff.mpr fun S ↦ by
+    rw [wordMap_preimage_V]
+    exact isClosed_V _
 
 /-- Over a domain with a nontrivial coefficient image, the generated closed sets are exactly
 the algebraic sets. The nontrivial-image condition is needed for the empty closed set. -/
-theorem isClosed_iff_algebraic (hdom : IsGDomain ι) (hcoeff : ∃ g : G, ι g ≠ 1)
+theorem isClosed_iff_V (hdom : IsGDomain ι) (hcoeff : ∃ g : G, ι g ≠ 1)
     (Y : Set (X → H)) :
     @IsClosed (X → H) (zariski ι X) Y ↔ ∃ S : Set (GX G X), Y = V ι S := by
   constructor
   · intro hY
-    have hgen : TopologicalSpace.GenerateOpen
-        {U : Set (X → H) | ∃ S : Set (GX G X), U = (V ι S)ᶜ} Yᶜ :=
-      hY.isOpen_compl
-    have key {U : Set (X → H)}
-        (hU : TopologicalSpace.GenerateOpen
-          {U : Set (X → H) | ∃ S : Set (GX G X), U = (V ι S)ᶜ} U) :
-        ∃ S : Set (GX G X), Uᶜ = V ι S := by
-      induction hU with
-      | basic U hU =>
-          obtain ⟨S, rfl⟩ := hU
-          exact ⟨S, compl_compl _⟩
-      | univ =>
-          obtain ⟨g, hg⟩ := hcoeff
-          exact ⟨{inl g}, by simp [V_singleton_coeff_eq_empty hg]⟩
-      | inter U W _ _ ihU ihW =>
-          obtain ⟨S, hS⟩ := ihU
-          obtain ⟨T, hT⟩ := ihW
-          refine ⟨unionEquations S T, ?_⟩
-          rw [Set.compl_inter, hS, hT, V_unionEquations hdom]
-      | sUnion A hA ih =>
-          classical
-          let F (s : A) : Set (GX G X) := Classical.choose (ih s.1 s.2)
-          have hF (s : A) : (s.1)ᶜ = V ι (F s) := Classical.choose_spec (ih s.1 s.2)
-          refine ⟨⋃ s : A, F s, ?_⟩
-          rw [Set.sUnion_eq_iUnion, Set.compl_iUnion, V_iUnion]
-          simp_rw [hF]
-    obtain ⟨S, hS⟩ := key hgen
-    exact ⟨S, by simpa only [compl_compl] using hS⟩
+    classical
+    -- Algebraic sets satisfy the closed-set axioms. Compare this topology with the
+    -- generated topology using Mathlib's universal property instead of induction.
+    let T : TopologicalSpace (X → H) := TopologicalSpace.ofClosed
+      (Set.range (V ι))
+      (by
+        obtain ⟨g, hg⟩ := hcoeff
+        exact ⟨{inl g}, V_singleton_inl_eq_empty hg⟩)
+      (by
+        intro A hA
+        choose F hF using fun Y : A ↦ hA Y.property
+        refine ⟨⋃ Y : A, F Y, ?_⟩
+        rw [V_iUnion, Set.sInter_eq_iInter]
+        simp_rw [hF])
+      (by
+        rintro _ ⟨S, rfl⟩ _ ⟨U, rfl⟩
+        exact ⟨unionEquations S U, V_unionEquations hdom S U⟩)
+    have hle : T ≤ zariski ι X := TopologicalSpace.le_generateFrom_iff_subset_isOpen.mpr
+      (by
+        rintro _ ⟨S, rfl⟩
+        -- The open-set predicate of `ofClosed` is membership of the complement.
+        simpa only [T, TopologicalSpace.ofClosed, compl_compl] using
+          (Set.mem_range_self S : V ι S ∈ Set.range (V ι)))
+    have hTY := hle _ hY.isOpen_compl
+    obtain ⟨S, hS⟩ : Y ∈ Set.range (V ι) := by
+      simpa only [T, TopologicalSpace.ofClosed, compl_compl] using hTY
+    exact ⟨S, hS.symm⟩
   · rintro ⟨S, rfl⟩
     exact isClosed_V S
 
@@ -183,7 +183,7 @@ theorem closure_eq_V_I (hdom : IsGDomain ι) (hcoeff : ∃ g : G, ι g ≠ 1)
   apply Set.Subset.antisymm
   · exact @closure_minimal (X → H) (zariski ι X) Y (V ι (I ι Y))
       (subset_V_I Y) (isClosed_V _)
-  · obtain ⟨S, hS⟩ := (isClosed_iff_algebraic hdom hcoeff _).mp
+  · obtain ⟨S, hS⟩ := (isClosed_iff_V hdom hcoeff _).mp
       (@isClosed_closure (X → H) (zariski ι X) Y)
     have hYS : Y ⊆ V ι S := hS ▸ @subset_closure (X → H) (zariski ι X) Y
     have hSI : S ⊆ I ι Y := subset_I_iff.mpr hYS
