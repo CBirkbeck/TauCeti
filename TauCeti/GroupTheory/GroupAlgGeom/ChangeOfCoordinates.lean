@@ -10,10 +10,9 @@ public import TauCeti.GroupTheory.GroupAlgGeom.AlgebraicSet
 /-!
 # Changes of coordinates in equations over groups
 
-An automorphism of the free group with coefficients `G[X]` that fixes `G` acts on tuples in
-`H^X` by word evaluation. The action transports solution sets and radicals, and therefore
-induces an isomorphism of their coordinate groups. It also applies to inconsistent systems,
-whose coordinate maps need not embed the coefficients.
+A coefficient-preserving word homomorphism acts on tuples by evaluation. When it is bijective,
+this action transports solution sets and radicals, and induces an isomorphism of coordinate
+groups. The results apply to inconsistent systems and arbitrary coefficient homomorphisms.
 
 The construction is the invertible case of the word-map correspondence of Baumslag, Myasnikov
 and Remeslennikov, *Algebraic geometry over groups I*, §3.5.
@@ -21,220 +20,228 @@ and Remeslennikov, *Algebraic geometry over groups I*, §3.5.
 
 public section
 
-namespace TauCeti.GroupAlgGeom
+namespace TauCeti
+namespace GroupAlgGeom
 
 open Monoid.Coprod
 
-variable {G H X Y : Type*} [Group G] [Group H] (ι : G →* H)
+variable {G H X Y Z : Type*} [Group G] [Group H] (ι : G →* H)
 
-/-- A word homomorphism fixes the coefficients when it is the identity on the left
-free-product summand. -/
-def FixesCoefficients (σ : GX G Y →* GX G X) : Prop :=
-  ∀ g : G, σ (inl g) = inl g
+/-- Substitute the images of the variables under a coefficient-preserving word homomorphism. -/
+def wordMap (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) : Y → H :=
+  homEquiv ι ((evalGHom ι v).comp σ)
 
-namespace FixesCoefficients
+/-- A word map evaluates the image of each variable. -/
+@[simp] theorem wordMap_apply (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
+    (v : X → H) (y : Y) :
+    wordMap ι σ v y = eval ι v (σ (inr (FreeGroup.of y))) := by
+  simp [wordMap]
 
-variable {σ : GX G X ≃* GX G X}
+/-- Evaluation after a word map is composition with the word homomorphism. -/
+theorem eval_wordMap (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) :
+    eval ι (wordMap ι σ v) = (eval ι v).comp σ.toMonoidHom := by
+  apply MonoidHom.ext
+  intro w
+  have h := congrArg (fun f : GHom (inl : G →* GX G Y) ι => f w)
+    ((homEquiv ι).symm_apply_apply ((evalGHom ι v).comp σ))
+  simpa only [wordMap, homEquiv_symm_apply, coe_evalGHom, GHom.coe_comp,
+    Function.comp_apply, MonoidHom.comp_apply,
+    show σ.toMonoidHom w = σ w from rfl] using h
 
-/-- A coefficient-preserving word homomorphism fixes each coefficient. -/
-theorem apply_inl {σ : GX G Y →* GX G X} (hσ : FixesCoefficients σ)
-    (g : G) : σ (inl g) = inl g := hσ g
-
-/-- A word homomorphism fixing every coefficient satisfies `FixesCoefficients`. -/
-theorem of_apply_inl {σ : GX G Y →* GX G X}
-    (hσ : ∀ g : G, σ (inl g) = inl g) : FixesCoefficients σ := hσ
-
-/-- The identity word automorphism fixes the coefficients. -/
-theorem refl : FixesCoefficients (MulEquiv.refl (GX G X)).toMonoidHom := by
-  intro g
-  rfl
-
-/-- A composite of coefficient-preserving automorphisms fixes the coefficients. -/
-theorem trans {τ : GX G X ≃* GX G X} (hσ : FixesCoefficients σ.toMonoidHom)
-    (hτ : FixesCoefficients τ.toMonoidHom) :
-    FixesCoefficients (σ.trans τ).toMonoidHom := by
-  intro g
-  change τ (σ (inl g)) = inl g
-  have hs := hσ g
-  have ht := hτ g
-  change σ (inl g) = inl g at hs
-  change τ (inl g) = inl g at ht
-  rw [hs, ht]
-
-/-- The inverse of a coefficient-preserving automorphism also fixes the coefficients. -/
-theorem symm (hσ : FixesCoefficients σ.toMonoidHom) :
-    FixesCoefficients σ.symm.toMonoidHom := by
-  intro g
-  change σ.symm (inl g) = inl g
-  apply σ.injective
-  have hs := hσ g
-  change σ (inl g) = inl g at hs
-  simpa only [σ.apply_symm_apply] using hs.symm
-
-end FixesCoefficients
-
-/-- Substitute the images of the variables under `σ` into a point of `H^X`. -/
-def coordinateChange (σ : GX G Y →* GX G X) (v : X → H) : Y → H :=
-  fun x => eval ι v (σ (inr (FreeGroup.of x)))
-
-/-- The coordinate change evaluates the image of each variable. -/
-@[simp] theorem coordinateChange_apply (σ : GX G Y →* GX G X) (v : X → H) (y : Y) :
-    coordinateChange ι σ v y = eval ι v (σ (inr (FreeGroup.of y))) := by
-  simp [coordinateChange]
-
-/-- Substitution at a point is precomposition of evaluation by the word homomorphism. -/
-theorem eval_coordinateChange (σ : GX G Y →* GX G X)
-    (hσ : FixesCoefficients σ) (v : X → H) :
-    eval ι (coordinateChange ι σ v) = (eval ι v).comp σ := by
-  rw [show coordinateChange ι σ v =
-      (fun y => ((eval ι v).comp σ) (inr (FreeGroup.of y))) from
-    funext (fun y => coordinateChange_apply ι σ v y)]
-  exact eval_eq_of_comp_inl (f := (eval ι v).comp σ) (by
-    apply MonoidHom.ext
-    intro g
-    simp [hσ g])
-
-/-- The identity word automorphism leaves tuples unchanged. -/
-theorem coordinateChange_refl (v : X → H) :
-    coordinateChange ι (MulEquiv.refl (GX G X)).toMonoidHom v = v := by
+/-- The identity word homomorphism leaves tuples unchanged. -/
+@[simp] theorem wordMap_id (v : X → H) :
+    wordMap ι (GHom.id (inl : G →* GX G X)) v = v := by
   funext x
-  simp [coordinateChange]
+  simp
 
-/-- Coordinate changes compose in the opposite order to word automorphisms. -/
-theorem coordinateChange_trans (σ τ : GX G X ≃* GX G X)
-    (hτ : FixesCoefficients τ.toMonoidHom) (v : X → H) :
-    coordinateChange ι (σ.trans τ).toMonoidHom v =
-      coordinateChange ι σ.toMonoidHom (coordinateChange ι τ.toMonoidHom v) := by
-  funext x
-  rw [coordinateChange_apply, coordinateChange_apply,
-    eval_coordinateChange ι τ.toMonoidHom hτ v]
-  rfl
+/-- Word maps compose in the opposite order to word homomorphisms. -/
+theorem wordMap_comp (σ : GHom (inl : G →* GX G Z) (inl : G →* GX G Y))
+    (τ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) :
+    wordMap ι (τ.comp σ) v = wordMap ι σ (wordMap ι τ v) := by
+  funext z
+  rw [wordMap_apply, wordMap_apply, eval_wordMap]
+  simp only [GHom.coe_comp, Function.comp_apply, MonoidHom.comp_apply,
+    show τ.toMonoidHom (σ (inr (FreeGroup.of z))) =
+      τ (σ (inr (FreeGroup.of z))) from rfl]
 
 /-- A word map sends solutions to solutions of the inverse-image system. -/
-theorem coordinateChange_mem_V (σ : GX G Y →* GX G X)
-    (hσ : FixesCoefficients σ) (S : Set (GX G X)) (v : X → H)
-    (hv : v ∈ V ι S) : coordinateChange ι σ v ∈ V ι (σ ⁻¹' S) := by
+theorem wordMap_mem_V (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
+    (S : Set (GX G X)) (v : X → H) (hv : v ∈ V ι S) :
+    wordMap ι σ v ∈ V ι (σ ⁻¹' S) := by
   rw [mem_V] at hv ⊢
   intro s hs
-  rw [eval_coordinateChange ι σ hσ v]
+  rw [eval_wordMap ι σ v]
   exact hv (σ s) hs
 
-/-- A coefficient-preserving word automorphism acts bijectively on tuples in `H^X`. -/
-def coordinateChangeEquiv (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) : (X → H) ≃ (X → H) where
-  toFun := coordinateChange ι σ.toMonoidHom
-  invFun := coordinateChange ι σ.symm.toMonoidHom
+variable (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
+    (hσ : Function.Bijective σ)
+
+include σ hσ
+
+/-- The inverse of a bijective coefficient-preserving word homomorphism also preserves
+coefficients. -/
+noncomputable def GHom.symmOfBijective : GHom (inl : G →* GX G X) (inl : G →* GX G Y) where
+  toMonoidHom := (MulEquiv.ofBijective σ.toMonoidHom hσ).symm.toMonoidHom
+  map_coeff' g := by
+    apply hσ.1
+    rw [σ.map_coeff g]
+    have hc : σ ((MulEquiv.ofBijective σ.toMonoidHom hσ).symm.toMonoidHom
+        (inl g)) = σ.toMonoidHom ((MulEquiv.ofBijective σ.toMonoidHom hσ).symm
+        (inl g)) := rfl
+    exact hc.trans (MulEquiv.ofBijective_apply_symm_apply σ.toMonoidHom hσ)
+
+include ι
+
+/-- A bijective coefficient-preserving word map gives an equivalence of tuples. -/
+noncomputable def coordinateChangeEquiv : (X → H) ≃ (Y → H) where
+  toFun := wordMap ι σ
+  invFun := wordMap ι (σ.symmOfBijective hσ)
   left_inv v := by
     funext x
-    rw [coordinateChange_apply, eval_coordinateChange ι σ.toMonoidHom hσ]
-    simp
+    rw [wordMap_apply, eval_wordMap]
+    rw [MonoidHom.comp_apply]
+    change eval ι v (σ ((MulEquiv.ofBijective σ.toMonoidHom hσ).symm
+      (inr (FreeGroup.of x)))) = v x
+    have he := MulEquiv.ofBijective_apply_symm_apply σ.toMonoidHom hσ
+      (n := inr (FreeGroup.of x))
+    have hc : σ ((MulEquiv.ofBijective σ.toMonoidHom hσ).symm
+        (inr (FreeGroup.of x))) = inr (FreeGroup.of x) := he
+    rw [hc]
+    exact eval_inr_of ι v x
   right_inv v := by
-    funext x
-    rw [coordinateChange_apply, eval_coordinateChange ι σ.symm.toMonoidHom hσ.symm]
-    simp
+    funext y
+    rw [wordMap_apply, eval_wordMap, MonoidHom.comp_apply]
+    change eval ι v ((MulEquiv.ofBijective σ.toMonoidHom hσ).symm
+      (σ (inr (FreeGroup.of y)))) = v y
+    have he : (MulEquiv.ofBijective σ.toMonoidHom hσ).symm
+        (σ (inr (FreeGroup.of y))) = inr (FreeGroup.of y) := by
+      simpa only [show σ (inr (FreeGroup.of y)) =
+          (MulEquiv.ofBijective σ.toMonoidHom hσ) (inr (FreeGroup.of y)) from rfl]
+        using (MulEquiv.ofBijective σ.toMonoidHom hσ).symm_apply_apply
+          (inr (FreeGroup.of y))
+    rw [he]
+    exact eval_inr_of ι v y
 
-/-- The tuple equivalence applies the coordinate substitution. -/
-@[simp] theorem coordinateChangeEquiv_apply (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (v : X → H) :
-    coordinateChangeEquiv ι σ hσ v = coordinateChange ι σ.toMonoidHom v := by
+/-- The tuple equivalence applies the word map. -/
+@[simp] theorem coordinateChangeEquiv_apply (v : X → H) :
+    coordinateChangeEquiv ι σ hσ v = wordMap ι σ v := by
   simp [coordinateChangeEquiv]
 
-/-- The inverse tuple equivalence substitutes through the inverse automorphism. -/
-@[simp] theorem coordinateChangeEquiv_symm_apply (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (v : X → H) :
-    (coordinateChangeEquiv ι σ hσ).symm v = coordinateChange ι σ.symm.toMonoidHom v := by
+/-- The inverse tuple equivalence applies the inverse word map. -/
+@[simp] theorem coordinateChangeEquiv_symm_apply (v : Y → H) :
+    (coordinateChangeEquiv ι σ hσ).symm v = wordMap ι (σ.symmOfBijective hσ) v := by
   simp [coordinateChangeEquiv]
 
-/-- A tuple solves `S` exactly when its coordinate change solves the inverse-image system.
-The equivalence of solution sets is `coordinateChangeSolutions`. -/
-theorem coordinateChange_mem_V_iff (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) (v : X → H) :
-    coordinateChange ι σ.toMonoidHom v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
+/-- A tuple solves `S` exactly when its word map solves the inverse-image system. -/
+theorem wordMap_mem_V_iff (S : Set (GX G X)) (v : X → H) :
+    wordMap ι σ v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
   rw [mem_V, mem_V]
   constructor
   · intro hv s hs
-    have h := hv (σ.symm s) (by simp [hs])
-    rw [eval_coordinateChange ι σ.toMonoidHom hσ v] at h
-    simpa using h
+    obtain ⟨t, rfl⟩ := hσ.2 s
+    have h := hv t hs
+    rw [eval_wordMap ι σ v] at h
+    exact h
   · intro hv
-    exact (mem_V).1 (coordinateChange_mem_V ι σ.toMonoidHom hσ S v ((mem_V).2 hv))
+    exact (mem_V).1 (wordMap_mem_V ι σ S v ((mem_V).2 hv))
 
-/-- The change of coordinates restricts to an equivalence of solution sets. -/
-def coordinateChangeSolutions (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) :
+/-- A bijective word map restricts to an equivalence of solution sets. -/
+noncomputable def coordinateChangeSolutions (S : Set (GX G X)) :
     V ι S ≃ V ι (σ ⁻¹' S) :=
   (coordinateChangeEquiv ι σ hσ).subtypeEquiv
-    (fun v => (coordinateChange_mem_V_iff ι σ hσ S v).symm)
+    (fun v => (wordMap_mem_V_iff ι σ hσ S v).symm)
 
-/-- On tuples, the solution equivalence applies the coordinate substitution. -/
-@[simp] theorem coordinateChangeSolutions_apply_coe (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) (v : V ι S) :
-    ((coordinateChangeSolutions ι σ hσ S v : V ι (σ ⁻¹' S)) : X → H) =
-      coordinateChange ι σ.toMonoidHom v := by
+/-- On tuples, the solution equivalence applies the word map. -/
+@[simp] theorem coordinateChangeSolutions_apply_coe (S : Set (GX G X)) (v : V ι S) :
+    ((coordinateChangeSolutions ι σ hσ S v : V ι (σ ⁻¹' S)) : Y → H) =
+      wordMap ι σ v := by
   simp [coordinateChangeSolutions, Equiv.subtypeEquiv]
 
-/-- On tuples, the inverse solution equivalence substitutes through the inverse automorphism. -/
-@[simp] theorem coordinateChangeSolutions_symm_apply_coe (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
+/-- On tuples, the inverse solution equivalence applies the inverse word map. -/
+@[simp] theorem coordinateChangeSolutions_symm_apply_coe
+    (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
     (((coordinateChangeSolutions ι σ hσ S).symm v : V ι S) : X → H) =
-      coordinateChange ι σ.symm.toMonoidHom v := by
+      wordMap ι (σ.symmOfBijective hσ) v := by
   simp [coordinateChangeSolutions, Equiv.subtypeEquiv]
 
-/-- Radicals transform by inverse image under a coefficient-preserving word automorphism. -/
-theorem Rad_preimage (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) :
+/-- Radicals transform by inverse image under a bijective coefficient-preserving word map. -/
+theorem Rad_preimage (S : Set (GX G X)) :
     Rad ι (σ ⁻¹' S) = (Rad ι S).comap σ.toMonoidHom := by
   ext w
   simp only [Rad_def, mem_I, Subgroup.mem_comap]
   constructor
   · intro hw v hv
-    have hp : coordinateChange ι σ.toMonoidHom v ∈ V ι (σ ⁻¹' S) :=
-      (coordinateChange_mem_V_iff ι σ hσ S v).2 hv
+    have hp : wordMap ι σ v ∈ V ι (σ ⁻¹' S) :=
+      (wordMap_mem_V_iff ι σ hσ S v).2 hv
     have h := hw _ hp
-    rw [eval_coordinateChange ι σ.toMonoidHom hσ v] at h
+    rw [eval_wordMap ι σ v] at h
     exact h
   · intro hw v hv
     obtain ⟨u, rfl⟩ := (coordinateChangeEquiv ι σ hσ).surjective v
     have hu : u ∈ V ι S := by
-      apply (coordinateChange_mem_V_iff ι σ hσ S u).1
+      apply (wordMap_mem_V_iff ι σ hσ S u).1
       simpa using hv
     have h := hw u hu
-    rw [coordinateChangeEquiv_apply,
-      eval_coordinateChange ι σ.toMonoidHom hσ u]
+    rw [coordinateChangeEquiv_apply, eval_wordMap ι σ u]
     exact h
+
+namespace CoordGroup
 
 /-- A change of coordinates induces an isomorphism from the coordinate group of the
 transformed system to that of the original system. -/
-def coordinateGroupEquiv (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) :
+noncomputable def equivOfCoordinateChange (S : Set (GX G X)) :
     CoordGroup ι (σ ⁻¹' S) ≃* CoordGroup ι S :=
-  QuotientGroup.congr _ _ σ (by
+  QuotientGroup.congr _ _ (MulEquiv.ofBijective σ.toMonoidHom hσ) (by
     rw [Rad_preimage ι σ hσ S]
-    exact Subgroup.map_comap_eq_self_of_surjective σ.surjective _)
+    exact Subgroup.map_comap_eq_self_of_surjective hσ.2 _)
 
 @[simp]
-theorem coordinateGroupEquiv_mk (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) (w : GX G X) :
-    coordinateGroupEquiv ι σ hσ S (w : CoordGroup ι (σ ⁻¹' S)) =
+theorem equivOfCoordinateChange_mk (S : Set (GX G X)) (w : GX G Y) :
+    equivOfCoordinateChange ι σ hσ S (w : CoordGroup ι (σ ⁻¹' S)) =
       (σ w : CoordGroup ι S) :=
   QuotientGroup.congr_mk ..
 
-/-- The inverse coordinate-group isomorphism applies the inverse word automorphism. -/
+/-- The inverse coordinate-group isomorphism applies the inverse word homomorphism. -/
 @[simp]
-theorem coordinateGroupEquiv_symm_mk (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) (w : GX G X) :
-    (coordinateGroupEquiv ι σ hσ S).symm (w : CoordGroup ι S) =
-      (σ.symm w : CoordGroup ι (σ ⁻¹' S)) := by
-  apply (coordinateGroupEquiv ι σ hσ S).injective
+theorem equivOfCoordinateChange_symm_mk (S : Set (GX G X)) (w : GX G X) :
+    (equivOfCoordinateChange ι σ hσ S).symm (w : CoordGroup ι S) =
+      ((σ.symmOfBijective hσ) w : CoordGroup ι (σ ⁻¹' S)) := by
+  apply (equivOfCoordinateChange ι σ hσ S).injective
+  rw [MulEquiv.apply_symm_apply]
+  rw [equivOfCoordinateChange_mk]
+  exact (congrArg (fun x : GX G X => (x : CoordGroup ι S))
+    (MulEquiv.ofBijective_apply_symm_apply σ.toMonoidHom hσ (n := w))).symm
+
+/-- The induced coordinate-group isomorphism commutes with the coefficient maps. -/
+theorem equivOfCoordinateChange_comp_coeff (S : Set (GX G X)) :
+    (equivOfCoordinateChange ι σ hσ S).toMonoidHom.comp (coeff ι (σ ⁻¹' S)) =
+      coeff ι S := by
+  ext g
   simp
 
-/-- The induced coordinate-group isomorphism commutes with the coefficient homomorphisms. -/
-theorem coordinateGroupEquiv_comp_coeff (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ.toMonoidHom) (S : Set (GX G X)) :
-    (coordinateGroupEquiv ι σ hσ S).toMonoidHom.comp (CoordGroup.coeff ι (σ ⁻¹' S)) =
-      CoordGroup.coeff ι S := by
-  ext g
-  simpa [coordinateGroupEquiv_mk] using congrArg
-    (fun w : GX G X => (w : CoordGroup ι S)) (hσ g)
+/-- Precomposition with the coordinate-group isomorphism corresponds to the word map on
+solutions under the point–homomorphism equivalence. -/
+theorem homEquiv_comp_equivOfCoordinateChange (S : Set (GX G X))
+    (φ : GHom (coeff ι S) ι) :
+    homEquiv ι (σ ⁻¹' S)
+      (φ.comp ⟨(equivOfCoordinateChange ι σ hσ S).toMonoidHom,
+        fun g => by
+          change equivOfCoordinateChange ι σ hσ S (coeff ι (σ ⁻¹' S) g) = _
+          exact DFunLike.congr_fun (equivOfCoordinateChange_comp_coeff ι σ hσ S) g⟩) =
+      coordinateChangeSolutions ι σ hσ S (homEquiv ι S φ) := by
+  apply SetCoe.ext
+  funext y
+  simp only [homEquiv_apply_coe, GHom.coe_comp, Function.comp_apply,
+    coordinateChangeSolutions_apply_coe, wordMap_apply]
+  change φ (equivOfCoordinateChange ι σ hσ S
+    ((inr (FreeGroup.of y) : GX G Y) : CoordGroup ι (σ ⁻¹' S))) = _
+  rw [equivOfCoordinateChange_mk]
+  have he := congrArg (fun f : GHom (coeff ι S) ι =>
+      f (σ (inr (FreeGroup.of y)) : CoordGroup ι S))
+    ((homEquiv ι S).symm_apply_apply φ)
+  simpa only [homEquiv_symm_apply, evalGHom_mk] using he.symm
 
-end TauCeti.GroupAlgGeom
+end CoordGroup
+
+end GroupAlgGeom
+end TauCeti
