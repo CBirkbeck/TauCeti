@@ -52,7 +52,7 @@ normal closure of `x ^ n` when `n ≠ 1`.
 * `TauCeti.GroupAlgGeom.V_normalClosure`, `TauCeti.GroupAlgGeom.normalClosure_le_Rad`: a system
   and its normal closure have the same solutions, so `ncl(S) ≤ Rad_H(S)`.
 * `TauCeti.GroupAlgGeom.V_I_V`: `V(I(V(S))) = V(S)`.
-* `TauCeti.GroupAlgGeom.wordMap_preimage_V`: inverse images of algebraic sets under word maps
+* `TauCeti.GroupAlgGeom.preimage_wordMap_V`: inverse images of algebraic sets under word maps
   are algebraic.
 * `TauCeti.GroupAlgGeom.exists_finite_V_eq_of_finite`,
   `TauCeti.GroupAlgGeom.exists_subsingleton_V_eq`: with finitely many points, every system has a
@@ -170,7 +170,7 @@ theorem V_iUnion {κ : Sort*} (S : κ → Set (GX G X)) : V ι (⋃ k, S k) = �
 
 /-- Pulling an algebraic set back along a tuple of words substitutes those words into its
 equations. -/
-theorem wordMap_preimage_V {Y : Type*} (w : Y → GX G X) (S : Set (GX G Y)) :
+theorem preimage_wordMap_V {Y : Type*} (w : Y → GX G X) (S : Set (GX G Y)) :
     wordMap ι w ⁻¹' V ι S =
       V ι ((eval (inl : G →* GX G X) w) '' S) := by
   ext v
