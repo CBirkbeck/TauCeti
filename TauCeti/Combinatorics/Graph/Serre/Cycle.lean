@@ -8,6 +8,7 @@ module
 public import TauCeti.Combinatorics.Graph.Serre.Basic
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.Data.ZMod.Basic
+import Mathlib.Algebra.CharP.Two
 
 /-!
 # Incidence boundaries and cycle modules of Serre graphs
@@ -20,6 +21,11 @@ A loop has zero boundary over either ring, while parallel edges remain separate 
 The edge coordinates are the actual chosen darts. In particular, an orientation chooses one dart
 from each reversal pair, but the construction also works for an arbitrary subset of darts. These
 modules are the input to spanning-forest cycle bases and to the comparison with graph path groups.
+
+The incidence boundary commutes with graph morphisms and with enlarging the chosen dart set.
+Consequently cycles push forward along these maps. An injective vertex map and a surjective
+map on the chosen darts give equality of the image cycle modules; this includes graph
+isomorphisms carrying one chosen dart set onto the other.
 
 ## References
 
@@ -88,18 +94,6 @@ theorem incidenceBoundary_single_eq_zero_iff (R : Type*) [Ring R] [Nontrivial R]
   rw [incidenceBoundary_single, one_smul, sub_eq_zero]
   exact (Finsupp.single_left_inj (one_ne_zero : (1 : R) ≠ 0)).trans eq_comm
 
-/-- A loop is an integral cycle, for either choice of its orientation. -/
-theorem single_mem_cycleLattice_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1) :
-    Finsupp.single e (1 : ℤ) ∈ Γ.cycleLattice O := by
-  rw [mem_cycleLattice_iff]
-  exact incidenceBoundary_single_eq_zero_of_loop ℤ e h
-
-/-- A loop is also a binary cycle. -/
-theorem single_mem_modTwoCycleSpace_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1) :
-    Finsupp.single e (1 : ZMod 2) ∈ Γ.modTwoCycleSpace O := by
-  rw [mem_modTwoCycleSpace_iff]
-  exact incidenceBoundary_single_eq_zero_of_loop (ZMod 2) e h
-
 /-- An individual dart is an integral cycle exactly when it is a loop. -/
 theorem single_mem_cycleLattice_iff (e : O) :
     Finsupp.single e (1 : ℤ) ∈ Γ.cycleLattice O ↔ Γ.src e.1 = Γ.tgt e.1 := by
@@ -119,16 +113,115 @@ theorem incidenceBoundary_rev (R : Type*) [Ring R] (e : Γ.E)
       -Γ.incidenceBoundary O R (Finsupp.single ⟨e, he⟩ 1) := by
   simp [Γ.tgt_rev, Γ.src_rev, neg_sub]
 
-/-- In characteristic two the direction of a dart does not change its incidence column. -/
+/-- In characteristic two, reversing a dart preserves its incidence column. -/
+theorem incidenceBoundary_rev_of_charTwo (R : Type*) [Ring R] [CharP R 2]
+    (e : Γ.E) (he : e ∈ O) (hre : Γ.rev e ∈ O) :
+    Γ.incidenceBoundary O R (Finsupp.single ⟨Γ.rev e, hre⟩ 1) =
+      Γ.incidenceBoundary O R (Finsupp.single ⟨e, he⟩ 1) := by
+  rw [incidenceBoundary_rev]
+  ext v
+  exact CharTwo.neg_eq _
+
+/-- In characteristic two the direction of a dart does not change its binary incidence column. -/
 theorem modTwoCycleBoundary_rev (e : Γ.E) (he : e ∈ O) (hre : Γ.rev e ∈ O) :
     Γ.modTwoCycleBoundary O (Finsupp.single ⟨Γ.rev e, hre⟩ 1) =
-      Γ.modTwoCycleBoundary O (Finsupp.single ⟨e, he⟩ 1) := by
-  calc
-    _ = -Γ.modTwoCycleBoundary O (Finsupp.single ⟨e, he⟩ 1) :=
-      incidenceBoundary_rev (R := ZMod 2) e he hre
-    _ = _ := by
-      ext v
-      simp [sub_eq_add_neg, ZMod.neg_eq_self_mod_two, add_comm]
+      Γ.modTwoCycleBoundary O (Finsupp.single ⟨e, he⟩ 1) :=
+  incidenceBoundary_rev_of_charTwo (ZMod 2) e he hre
+
+/-- Incidence boundaries commute with the pushforward of chains along a graph morphism. -/
+theorem Hom.incidenceBoundary_mapDomain {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') (R : Type*) [Ring R] (c : O →₀ R) :
+    Δ.incidenceBoundary O' R
+        (Finsupp.mapDomain (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O') c) =
+      Finsupp.mapDomain f.mapV (Γ.incidenceBoundary O R c) := by
+  classical
+  induction c using Finsupp.induction_linear with
+  | zero => simp
+  | add c d hc hd => simp only [Finsupp.mapDomain_add, map_add, hc, hd]
+  | single e r => simp [Finsupp.mapDomain_sub, Finsupp.mapDomain_smul]
+
+/-- A graph morphism carries cycles to cycles over any coefficient ring. -/
+theorem Hom.map_ker_incidenceBoundary_le {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') (R : Type*) [Ring R] :
+    Submodule.map (Finsupp.lmapDomain R R
+        (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) (Γ.incidenceBoundary O R).ker ≤
+      (Δ.incidenceBoundary O' R).ker := by
+  intro y hy
+  obtain ⟨c, hc, rfl⟩ := Submodule.mem_map.mp hy
+  rw [LinearMap.mem_ker, Finsupp.lmapDomain_apply,
+    f.incidenceBoundary_mapDomain hO R, LinearMap.mem_ker.mp hc, Finsupp.mapDomain_zero]
+
+/-- If the vertex map is injective and every chosen target dart has a preimage, every target
+cycle is a pushforward. In particular this applies to graph isomorphisms carrying `O` onto `O'`. -/
+theorem Hom.map_ker_incidenceBoundary_eq {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') (R : Type*) [Ring R]
+    (hV : Function.Injective f.mapV)
+    (hE : Function.Surjective (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) :
+    Submodule.map (Finsupp.lmapDomain R R
+        (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) (Γ.incidenceBoundary O R).ker =
+      (Δ.incidenceBoundary O' R).ker := by
+  refine le_antisymm (f.map_ker_incidenceBoundary_le hO R) ?_
+  intro c hc
+  obtain ⟨b, rfl⟩ := Finsupp.mapDomain_surjective hE c
+  refine Submodule.mem_map.mpr ⟨b, LinearMap.mem_ker.mpr ?_, rfl⟩
+  apply Finsupp.mapDomain_injective hV
+  rw [Finsupp.mapDomain_zero]
+  exact (f.incidenceBoundary_mapDomain hO R b).symm.trans (LinearMap.mem_ker.mp hc)
+
+/-- Integral cycles push forward along graph morphisms. -/
+theorem Hom.map_cycleLattice_le {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') :
+    Submodule.map (Finsupp.lmapDomain ℤ ℤ
+        (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) (Γ.cycleLattice O) ≤
+      Δ.cycleLattice O' :=
+  f.map_ker_incidenceBoundary_le hO ℤ
+
+/-- Binary cycles push forward along graph morphisms. -/
+theorem Hom.map_modTwoCycleSpace_le {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') :
+    Submodule.map (Finsupp.lmapDomain (ZMod 2) (ZMod 2)
+        (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) (Γ.modTwoCycleSpace O) ≤
+      Δ.modTwoCycleSpace O' :=
+  f.map_ker_incidenceBoundary_le hO (ZMod 2)
+
+/-- An injective vertex map and a surjective map on chosen darts give equality of the image
+integral cycle lattice with the target lattice. -/
+theorem Hom.map_cycleLattice_eq {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') (hV : Function.Injective f.mapV)
+    (hE : Function.Surjective (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) :
+    Submodule.map (Finsupp.lmapDomain ℤ ℤ
+        (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) (Γ.cycleLattice O) =
+      Δ.cycleLattice O' :=
+  f.map_ker_incidenceBoundary_eq hO ℤ hV hE
+
+/-- An injective vertex map and a surjective map on chosen darts give equality of the image
+binary cycle space with the target space. -/
+theorem Hom.map_modTwoCycleSpace_eq {Δ : SerreGraph} (f : Γ.Hom Δ)
+    {O' : Set Δ.E} (hO : Set.MapsTo f.mapE O O') (hV : Function.Injective f.mapV)
+    (hE : Function.Surjective (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) :
+    Submodule.map (Finsupp.lmapDomain (ZMod 2) (ZMod 2)
+        (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O')) (Γ.modTwoCycleSpace O) =
+      Δ.modTwoCycleSpace O' :=
+  f.map_ker_incidenceBoundary_eq hO (ZMod 2) hV hE
+
+/-- Enlarging the chosen dart set does not change the boundary of an existing chain. -/
+theorem incidenceBoundary_mapDomain_inclusion {O' : Set Γ.E} (h : O ⊆ O')
+    (R : Type*) [Ring R] (c : O →₀ R) :
+    Γ.incidenceBoundary O' R (Finsupp.mapDomain (Set.inclusion h) c) =
+      Γ.incidenceBoundary O R c := by
+  simpa using (Hom.id Γ).incidenceBoundary_mapDomain h R c
+
+/-- Enlarging the dart set includes its integral cycle lattice in the larger lattice. -/
+theorem map_cycleLattice_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
+    Submodule.map (Finsupp.lmapDomain ℤ ℤ (Set.inclusion h)) (Γ.cycleLattice O) ≤
+      Γ.cycleLattice O' :=
+  (Hom.id Γ).map_cycleLattice_le h
+
+/-- Enlarging the dart set includes its binary cycle space in the larger space. -/
+theorem map_modTwoCycleSpace_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
+    Submodule.map (Finsupp.lmapDomain (ZMod 2) (ZMod 2) (Set.inclusion h))
+        (Γ.modTwoCycleSpace O) ≤ Γ.modTwoCycleSpace O' :=
+  (Hom.id Γ).map_modTwoCycleSpace_le h
 
 end SerreGraph
 end TauCeti
