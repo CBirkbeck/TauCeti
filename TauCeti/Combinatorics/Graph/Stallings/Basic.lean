@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Combinatorics.Graph.Serre.Path
+public import TauCeti.Combinatorics.Graph.Serre.Basic
 public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.Algebra.Group.End
 
@@ -13,9 +13,9 @@ public import Mathlib.Algebra.Group.End
 # Subgroups read by labelled graphs
 
 A labelled Serre graph assigns inverse letters to reversed darts. Reading the labels of
-closed paths at a vertex gives a subgroup of the free group. Morphisms of based labelled
-graphs preserve this subgroup. The base vertex matters: moving it along a path conjugates
-the accepted subgroup.
+closed paths at a vertex gives a subgroup of the free group. Based label-preserving morphisms
+send the accepted subgroup into that of the target. Moving the base vertex along a path
+conjugates the accepted subgroup.
 
 ## References
 
@@ -28,7 +28,7 @@ namespace TauCeti
 
 universe u v w
 
-/-- A Serre graph whose reversed darts have inverse free-group labels. -/
+/-- A based Serre graph with signed-letter dart labels, inverted by reversal. -/
 structure StallingsGraph (α : Type u) where
   /-- The underlying graph. -/
   graph : SerreGraph.{v, w}
@@ -67,6 +67,12 @@ def word {a : S.graph.V} : ∀ {b : S.graph.V}, S.graph.Path a b → List (α ×
 /-- The free-group element represented by the word of a path. -/
 def read {a b : S.graph.V} (p : S.graph.Path a b) : FreeGroup α :=
   FreeGroup.mk (S.word p)
+
+theorem read_def {a b : S.graph.V} (p : S.graph.Path a b) :
+    S.read p = FreeGroup.mk (S.word p) := by simp only [read]
+
+@[simp] theorem read_toPath {a b : S.graph.V} (e : Quiver.Hom a b) :
+    S.read e.toPath = FreeGroup.mk [S.label e.1] := by simp [read]
 
 @[simp] theorem read_nil (a : S.graph.V) :
     S.read (Quiver.Path.nil : S.graph.Path a a) = 1 := by
@@ -116,41 +122,85 @@ theorem subgroup_conj {a b : S.graph.V} (p : S.graph.Path a b) :
   · rintro ⟨q, hq⟩
     refine ⟨(p.reverse.comp q).comp p, ?_⟩
     simp only [read_comp, read_reverse]
-    rw [MulAut.conj_symm_apply] at hq
-    simp only [inv_inv] at hq
-    calc
-      (S.read p)⁻¹ * S.read q * S.read p =
-          (S.read p)⁻¹ * (S.read p * g * (S.read p)⁻¹) * S.read p := by rw [hq]
-      _ = g := by simp [mul_assoc]
+    simp only [MulAut.conj_symm_apply, inv_inv] at hq
+    rw [hq]
+    simp [mul_assoc]
 
-/-- A map of labelled graphs preserves the underlying darts and their labels. -/
+/-- A based Serre-graph morphism preserving dart labels. -/
 structure Hom (T : StallingsGraph α) where
   /-- The map of underlying Serre graphs. -/
   graphHom : S.graph.Hom T.graph
   /-- The distinguished vertex is preserved. -/
   map_base : graphHom.mapV S.base = T.base
   /-- Labels are preserved. -/
-  label_map : ∀ e, T.label (graphHom.mapE e) = S.label e
+  map_label : ∀ e, T.label (graphHom.mapE e) = S.label e
 
 namespace Hom
 
 variable {S} {T : StallingsGraph α} (f : S.Hom T)
 
+@[ext] theorem ext {f g : S.Hom T} (h : f.graphHom = g.graphHom) : f = g := by
+  cases f
+  cases g
+  cases h
+  rfl
+
+/-- Identity morphism of a based labelled graph. -/
+def id (S : StallingsGraph α) : S.Hom S where
+  graphHom := SerreGraph.Hom.id S.graph
+  map_base := by simp
+  map_label := by intro e; simp only [SerreGraph.Hom.id_mapE, id_eq]
+
+/-- Composition of based labelled-graph morphisms. -/
+def comp {R S T : StallingsGraph α} (g : S.Hom T) (f : R.Hom S) : R.Hom T where
+  graphHom := SerreGraph.Hom.comp g.graphHom f.graphHom
+  map_base := by
+    rw [SerreGraph.Hom.comp_mapV]
+    exact (congrArg g.graphHom.mapV f.map_base).trans g.map_base
+  map_label := by intro e; simp [g.map_label, f.map_label]
+
+@[simp] theorem id_graphHom (S : StallingsGraph α) :
+    (id S).graphHom = SerreGraph.Hom.id S.graph := by simp only [id]
+
+@[simp] theorem comp_graphHom {R S T : StallingsGraph α} (g : S.Hom T) (f : R.Hom S) :
+    (comp g f).graphHom = SerreGraph.Hom.comp g.graphHom f.graphHom := by
+  simp only [comp]
+
+@[simp] theorem id_comp (f : S.Hom T) : comp (id T) f = f := by
+  apply ext
+  simp
+
+@[simp] theorem comp_id (f : S.Hom T) : comp f (id S) = f := by
+  apply ext
+  simp
+
+theorem comp_assoc {R S T U : StallingsGraph α}
+    (f : R.Hom S) (g : S.Hom T) (h : T.Hom U) :
+    comp h (comp g f) = comp (comp h g) f := by
+  apply ext
+  exact SerreGraph.Hom.comp_assoc R.graph f.graphHom g.graphHom h.graphHom
+
 @[simp] theorem word_mapPath {a b : S.graph.V} (p : S.graph.Path a b) :
-    T.word (f.graphHom.mapPath p) = S.word p := by
+    T.word (f.graphHom.toPrefunctor.mapPath p) = S.word p := by
   induction p with
   | nil => simp
-  | cons p e ih => simp only [SerreGraph.Hom.mapPath_cons, word_cons, ih,
-      f.label_map]
+  | cons p e ih => simp only [Prefunctor.mapPath_cons, word_cons, ih,
+      f.graphHom.toPrefunctor_map_val, f.map_label]
 
 @[simp] theorem read_mapPath {a b : S.graph.V} (p : S.graph.Path a b) :
-    T.read (f.graphHom.mapPath p) = S.read p := by simp [StallingsGraph.read]
+    T.read (f.graphHom.toPrefunctor.mapPath p) = S.read p := by
+  rw [T.read_def, S.read_def, f.word_mapPath]
+
+/-- A labelled morphism sends loops at any vertex to loops with the same reading. -/
+theorem subgroup_le_map (a : S.graph.V) :
+    S.subgroup a ≤ T.subgroup (f.graphHom.mapV a) := by
+  rintro g ⟨p, rfl⟩
+  exact ⟨f.graphHom.toPrefunctor.mapPath p, f.read_mapPath p⟩
 
 /-- A based label-preserving morphism sends every accepted word to an accepted word. -/
 theorem subgroup_le (f : S.Hom T) : S.subgroup S.base ≤ T.subgroup T.base := by
-  rintro g ⟨p, rfl⟩
   rw [← f.map_base]
-  exact ⟨f.graphHom.mapPath p, f.read_mapPath p⟩
+  exact f.subgroup_le_map S.base
 
 end Hom
 
@@ -161,25 +211,29 @@ end Hom
   label := id
   label_rev := by intro ⟨a, b⟩; rfl
 
+@[simp] theorem rose_graph (α : Type*) : (rose α).graph = SerreGraph.rose α := rfl
+
+@[simp] theorem rose_base (α : Type*) : (rose α).base = PUnit.unit := rfl
+
+@[simp] theorem rose_label (α : Type*) (e : (rose α).graph.E) :
+    (rose α).label e = e := rfl
+
 /-- Every free-group element is read by a loop in the rose. -/
 theorem rose_subgroup_top (α : Type*) :
     (rose α).subgroup PUnit.unit = ⊤ := by
-  apply top_unique
+  rw [eq_top_iff]
   intro g _
-  have all : ∀ h : FreeGroup α, h ∈ (rose α).subgroup PUnit.unit := by
-    intro h
-    induction h using FreeGroup.induction_on with
-    | one => exact Subgroup.one_mem _
-    | of x =>
-      exact ⟨((rose α).graph.dart (x, true)).toPath, by
-        simp only [rose, read, word, Quiver.Hom.toPath, FreeGroup.of,
-          List.nil_append, id_eq]
-        congr 1
-        congr 1
-        exact (SerreGraph.dart_val (SerreGraph.rose α) (x, true))⟩
-    | inv_of x hx => exact Subgroup.inv_mem _ hx
-    | mul x y hx hy => exact Subgroup.mul_mem _ hx hy
-  exact all g
+  induction g using FreeGroup.induction_on with
+  | one => exact Subgroup.one_mem _
+  | of x =>
+    exact ⟨((rose α).graph.dart (x, true)).toPath, by
+      simp only [rose, read, word, Quiver.Hom.toPath, FreeGroup.of,
+        List.nil_append, id_eq]
+      congr 1
+      congr 1
+      exact SerreGraph.dart_val (SerreGraph.rose α) (x, true)⟩
+  | inv_of x hx => exact Subgroup.inv_mem _ (hx (by simp))
+  | mul x y hx hy => exact Subgroup.mul_mem _ (hx (by simp)) (hy (by simp))
 
 end StallingsGraph
 
