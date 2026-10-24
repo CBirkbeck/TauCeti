@@ -133,7 +133,7 @@ variable {Y : Type*}
 theorem continuous_wordMap (w : Y → GX G X) :
     @Continuous (X → H) (Y → H) (zariski ι X) (zariski ι Y)
       (wordMap ι w) := by
-  letI := zariski ι X
+  let := zariski ι X
   exact continuous_into_zariski_iff.mpr fun S ↦ by
     rw [wordMap_preimage_V]
     exact isClosed_V _
@@ -165,12 +165,14 @@ theorem isClosed_iff_V (hdom : IsGDomain ι) (hcoeff : ∃ g : G, ι g ≠ 1)
     have hle : T ≤ zariski ι X := TopologicalSpace.le_generateFrom_iff_subset_isOpen.mpr
       (by
         rintro _ ⟨S, rfl⟩
-        -- The open-set predicate of `ofClosed` is membership of the complement.
-        simpa only [T, TopologicalSpace.ofClosed, compl_compl] using
-          (Set.mem_range_self S : V ι S ∈ Set.range (V ι)))
+        -- Explicitly unfold the open-set predicate of `ofClosed` to complement membership.
+        change (V ι S)ᶜᶜ ∈ Set.range (V ι)
+        simpa only [compl_compl] using (Set.mem_range_self S))
     have hTY := hle _ hY.isOpen_compl
     obtain ⟨S, hS⟩ : Y ∈ Set.range (V ι) := by
-      simpa only [T, TopologicalSpace.ofClosed, compl_compl] using hTY
+      -- `T` declares complements of algebraic sets open; expose that predicate explicitly.
+      change Yᶜᶜ ∈ Set.range (V ι) at hTY
+      simpa only [compl_compl] using hTY
     exact ⟨S, hS.symm⟩
   · rintro ⟨S, rfl⟩
     exact isClosed_V S
