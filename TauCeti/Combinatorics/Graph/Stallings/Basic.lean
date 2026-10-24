@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Combinatorics.Graph.Serre.Basic
+public import TauCeti.Combinatorics.Quiver.PathWeight
 public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.Algebra.Group.End
 
@@ -66,21 +67,29 @@ def word {a : S.graph.V} : ∀ {b : S.graph.V}, S.graph.Path a b → List (α ×
 
 /-- The free-group element represented by the word of a path. -/
 def read {a b : S.graph.V} (p : S.graph.Path a b) : FreeGroup α :=
-  FreeGroup.mk (S.word p)
+  p.weight fun {i j} (e : @Quiver.Hom S.graph.V S.graph.toQuiver i j) =>
+    FreeGroup.mk [S.label e.1]
+
+@[simp] theorem read_cons {a b c : S.graph.V} (p : S.graph.Path a b)
+    (e : Quiver.Hom b c) : S.read (p.cons e) = S.read p * FreeGroup.mk [S.label e.1] := by
+  simp only [read, Quiver.Path.weight_cons]
 
 theorem read_def {a b : S.graph.V} (p : S.graph.Path a b) :
-    S.read p = FreeGroup.mk (S.word p) := by simp only [read]
+    S.read p = FreeGroup.mk (S.word p) := by
+  induction p with
+  | nil => simp [read, FreeGroup.one_eq_mk]
+  | cons p e ih => simp only [read_cons, word_cons, ih, FreeGroup.mul_mk]
 
 @[simp] theorem read_toPath {a b : S.graph.V} (e : Quiver.Hom a b) :
-    S.read e.toPath = FreeGroup.mk [S.label e.1] := by simp [read]
+    S.read e.toPath = FreeGroup.mk [S.label e.1] := by simp [Quiver.Hom.toPath, read]
 
 @[simp] theorem read_nil (a : S.graph.V) :
     S.read (Quiver.Path.nil : S.graph.Path a a) = 1 := by
-  simp [read, FreeGroup.one_eq_mk]
+  simp [read]
 
 @[simp] theorem read_comp {a b c : S.graph.V} (p : S.graph.Path a b)
     (q : S.graph.Path b c) : S.read (p.comp q) = S.read p * S.read q := by
-  simp [read, FreeGroup.mul_mk]
+  simp [read]
 
 @[simp] theorem word_reverse {a b : S.graph.V} (p : S.graph.Path a b) :
     S.word p.reverse = FreeGroup.invRev (S.word p) := by
@@ -91,7 +100,7 @@ theorem read_def {a b : S.graph.V} (p : S.graph.Path a b) :
 
 @[simp] theorem read_reverse {a b : S.graph.V} (p : S.graph.Path a b) :
     S.read p.reverse = (S.read p)⁻¹ := by
-  simp [read, FreeGroup.inv_mk]
+  simp [read_def, FreeGroup.inv_mk]
 
 /-- The subgroup of the free group read by closed paths at a vertex. -/
 def subgroup (a : S.graph.V) : Subgroup (FreeGroup α) where
@@ -134,6 +143,8 @@ structure Hom (T : StallingsGraph α) where
   map_base : graphHom.mapV S.base = T.base
   /-- Labels are preserved. -/
   map_label : ∀ e, T.label (graphHom.mapE e) = S.label e
+
+attribute [simp] Hom.map_base Hom.map_label
 
 namespace Hom
 
@@ -189,7 +200,8 @@ theorem comp_assoc {R S T U : StallingsGraph α}
 
 @[simp] theorem read_mapPath {a b : S.graph.V} (p : S.graph.Path a b) :
     T.read (f.graphHom.toPrefunctor.mapPath p) = S.read p := by
-  rw [T.read_def, S.read_def, f.word_mapPath]
+  simp only [read, Prefunctor.weight_mapPath, f.graphHom.toPrefunctor_map_val,
+    f.map_label]
 
 /-- A labelled morphism sends loops at any vertex to loops with the same reading. -/
 theorem subgroup_le_subgroup_mapV (a : S.graph.V) :
@@ -227,11 +239,14 @@ theorem rose_subgroup_top (α : Type*) :
   | one => exact Subgroup.one_mem _
   | of x =>
     exact ⟨((rose α).graph.dart (x, true)).toPath, by
-      simp only [rose, read, word, Quiver.Hom.toPath, FreeGroup.of,
-        List.nil_append, id_eq]
-      congr 1
-      congr 1
-      exact SerreGraph.dart_val (SerreGraph.rose α) (x, true)⟩
+      have hd : (((rose α).graph.dart (x, true)).1) = (x, true) :=
+        SerreGraph.dart_val (rose α).graph (x, true)
+      have hl : (rose α).label (x, true) = (x, true) := rose_label α (x, true)
+      calc
+        (rose α).read ((rose α).graph.dart (x, true)).toPath =
+            FreeGroup.mk [(rose α).label (((rose α).graph.dart (x, true)).1)] :=
+          (rose α).read_toPath ((rose α).graph.dart (x, true))
+        _ = FreeGroup.of x := by simp only [hd, hl, FreeGroup.of]⟩
   | inv_of x hx => exact Subgroup.inv_mem _ (hx (by simp))
   | mul x y hx hy => exact Subgroup.mul_mem _ (hx (by simp)) (hy (by simp))
 
