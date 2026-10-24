@@ -140,11 +140,12 @@ theorem coordinateGroupEquiv_mk (σ : GX G X ≃* GX G X)
       (σ w : CoordGroup ι S) :=
   QuotientGroup.congr_mk ..
 
-@[simp]
-theorem coordinateGroupEquiv_coeff (σ : GX G X ≃* GX G X)
-    (hσ : FixesCoefficients σ) (S : Set (GX G X)) (g : G) :
-    coordinateGroupEquiv ι σ hσ S (CoordGroup.coeff ι (σ ⁻¹' S) g) =
-      CoordGroup.coeff ι S g := by
-  rw [CoordGroup.coeff_apply, coordinateGroupEquiv_mk, hσ g, ← CoordGroup.coeff_apply]
+/-- The induced coordinate-group isomorphism commutes with the coefficient homomorphisms. -/
+theorem coordinateGroupEquiv_comp_coeff (σ : GX G X ≃* GX G X)
+    (hσ : FixesCoefficients σ) (S : Set (GX G X)) :
+    (coordinateGroupEquiv ι σ hσ S).toMonoidHom.comp (CoordGroup.coeff ι (σ ⁻¹' S)) =
+      CoordGroup.coeff ι S := by
+  ext g
+  simp [coordinateGroupEquiv_mk, hσ g]
 
 end TauCeti.GroupAlgGeom
