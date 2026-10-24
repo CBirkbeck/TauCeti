@@ -163,13 +163,6 @@ variable {G A X : Type*} [One G] [Inv G] [Mul G]
 
 end Coefficients
 
-/-- A named coefficient term evaluates to the value assigned to its name. -/
-@[simp] theorem realize_coeff_con {G A X : Type*} [One G] [Inv G] [Mul G]
-    (c : A → G) (v : X → G) (a : A) :
-    letI := Language.constantsOn.structure c
-    ((Language.group.con a).term : Language.group[[A]].Term X).realize v = c a := by
-  rfl
-
 end Group
 
 open Language BoundedFormula
