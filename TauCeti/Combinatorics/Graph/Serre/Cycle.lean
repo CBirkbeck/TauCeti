@@ -212,8 +212,13 @@ theorem incidenceBoundary_mapDomain_inclusion {O' : Set Γ.E} (h : O ⊆ O')
   have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
     intro e he
     simpa only [Hom.id_mapE, id_eq] using h he
-  simpa only [Hom.id_mapE, Hom.id_mapV, id_eq, Finsupp.mapDomain_id] using
-    (Hom.id Γ).incidenceBoundary_mapDomain hO R c
+  have hE : (fun e : O ↦ ⟨(Hom.id Γ).mapE e.1, hO e.2⟩ : O → O') =
+      Set.inclusion h := by
+    funext e
+    exact Subtype.ext (congrFun (Hom.id_mapE Γ) e.1)
+  have hb := (Hom.id Γ).incidenceBoundary_mapDomain hO R c
+  rw [hE, Hom.id_mapV, Finsupp.mapDomain_id] at hb
+  exact hb
 
 /-- Enlarging the dart set includes its integral cycle lattice in the larger lattice. -/
 theorem map_cycleLattice_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
