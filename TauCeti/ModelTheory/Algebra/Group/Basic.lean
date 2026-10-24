@@ -185,7 +185,9 @@ variable {G A X : Type*} [Group G]
     (Sum.inl mul) ![s.realize v, t.realize v] = s.realize v * t.realize v
   exact coeffStructure_funMap_mul G A c _
 
-@[simp] theorem realize_coeffOneTerm (c : A → G) (v : X → G) :
+-- Use this as an explicit rewrite: simp on a let-bound coefficient structure exceeds the
+-- recursion limit even for a reflexive equality in the underlying group.
+theorem realize_coeffOneTerm (c : A → G) (v : X → G) :
     letI := coeffStructure G A c
     (coeffOneTerm : (Lcoeff A).Term X).realize v = 1 := by
   change @Language.Structure.funMap (Lcoeff A) G (coeffStructure G A c) 0
