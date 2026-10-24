@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.GroupTheory.GroupAlgGeom.AlgebraicSet
+import TauCeti.GroupTheory.QuotientGroup.Map
 
 /-!
 # Changes of coordinates in equations over groups
@@ -184,10 +185,8 @@ noncomputable def equivOfCoordinateChange (S : Set (GX G X)) :
     CoordGroup ι (σ ⁻¹' S) ≃* CoordGroup ι S :=
   MulEquiv.ofBijective (homOfWordMap ι σ S).toMonoidHom (by
     constructor
-    · rw [← MonoidHom.ker_eq_bot_iff]
-      simp only [homOfWordMap]
-      rw [QuotientGroup.ker_map, ← Rad_preimage ι σ hσ S]
-      exact QuotientGroup.map_mk'_self _
+    · exact TauCeti.QuotientGroup.map_injective_of_eq_comap σ.toMonoidHom (Rad ι S)
+        (Rad_preimage ι σ hσ S)
     · intro q
       obtain ⟨w, rfl⟩ := QuotientGroup.mk_surjective q
       obtain ⟨v, rfl⟩ := hσ.2 w
@@ -207,37 +206,18 @@ theorem equivOfCoordinateChange_symm_mk (S : Set (GX G X)) (w : GX G X) :
   apply (equivOfCoordinateChange ι σ hσ S).injective
   simp
 
-/-- The induced coordinate-group isomorphism commutes with the coefficient maps. -/
-theorem equivOfCoordinateChange_comp_coeff (S : Set (GX G X)) :
-    (equivOfCoordinateChange ι σ hσ S).toMonoidHom.comp (coeff ι (σ ⁻¹' S)) =
-      coeff ι S := by
-  ext g
-  simp
-
-/-- The coordinate-group isomorphism as a coefficient-preserving homomorphism. -/
-noncomputable def gHomOfCoordinateChange (S : Set (GX G X)) :
-    GHom (coeff ι (σ ⁻¹' S)) (coeff ι S) where
-  toMonoidHom := (equivOfCoordinateChange ι σ hσ S).toMonoidHom
-  map_coeff' g := DFunLike.congr_fun (equivOfCoordinateChange_comp_coeff ι σ hσ S) g
-
-@[simp]
-theorem gHomOfCoordinateChange_apply (S : Set (GX G X))
-    (w : CoordGroup ι (σ ⁻¹' S)) :
-    gHomOfCoordinateChange ι σ hσ S w = equivOfCoordinateChange ι σ hσ S w := by
-  simp [gHomOfCoordinateChange]
-
 /-- Precomposition with the coordinate-group isomorphism corresponds to the word map on
 solutions under the point–homomorphism equivalence. -/
 theorem homEquiv_comp_equivOfCoordinateChange (S : Set (GX G X))
     (φ : GHom (coeff ι S) ι) :
     homEquiv ι (σ ⁻¹' S)
-      (φ.comp (gHomOfCoordinateChange ι σ hσ S)) =
+      (φ.comp (homOfWordMap ι σ S)) =
       coordinateChangeSolutions ι σ hσ S (homEquiv ι S φ) := by
   apply SetCoe.ext
   funext y
   simp only [homEquiv_apply_coe, GHom.coe_comp, Function.comp_apply,
     coordinateChangeSolutions_apply_coe, wordMap_apply]
-  rw [gHomOfCoordinateChange_apply, equivOfCoordinateChange_mk]
+  rw [homOfWordMap_mk]
   simp
 
 end CoordGroup
