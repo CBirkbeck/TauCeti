@@ -16,6 +16,8 @@ The language has a constant for the identity, a unary inverse symbol and a binar
 multiplication symbol. Adding named coefficients uses Mathlib's `Language.withConstants`.
 The interpretation in a group, and the three left-hand group axioms, give the semantic
 interface needed to turn group formulas into equations in words.
+A model of the group theory yields a group whose operations recover the symbol interpretations.
+Group homomorphisms, including those preserving named coefficients, induce language homomorphisms.
 
 The choice of symbols and coefficient letters follows Kharlampovich and Myasnikov,
 *Implicit function theorem over free groups*, §2.3. The language and structure interface
@@ -98,11 +100,11 @@ theorem mul_def (α : Type*) (t s : Language.group.Term α) :
     | mul => exact fun xs => xs 0 * xs 1
   RelMap r := nomatch r
 
-attribute [instance] structureOfGroup
-
 section GroupStructure
 
 variable {G : Type*} [One G] [Inv G] [Mul G]
+
+attribute [local instance] structureOfGroup
 
 /-- The identity symbol denotes the chosen identity operation. -/
 @[simp] theorem funMap_one (xs : Fin 0 → G) :
@@ -145,6 +147,8 @@ section Coefficients
 variable {G A X : Type*} [One G] [Inv G] [Mul G]
   [(Language.constantsOn A).Structure G] (v : X → G)
 
+attribute [local instance] structureOfGroup
+
 /-- The identity term evaluates to the group identity in the coefficient language. -/
 @[simp] theorem realize_coeff_one :
     Language.Term.realize v (1 : Language.group[[A]].Term X) = 1 := by
@@ -162,12 +166,6 @@ variable {G A X : Type*} [One G] [Inv G] [Mul G]
   rfl
 
 end Coefficients
-
-/-- A named coefficient symbol denotes the chosen coefficient. -/
-@[simp] theorem coe_con {G A : Type*} [One G] [Inv G] [Mul G]
-    (c : A → G) (a : A) :
-    letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
-    (↑(Language.group.con a) : G) = c a := rfl
 
 end Group
 
@@ -276,6 +274,8 @@ end Group
 
 namespace GroupAxiom
 
+attribute [local instance] Group.structureOfGroup
+
 /-- A group axiom holds in the canonical interpretation exactly when its group law holds. -/
 theorem realize_toSentence_iff_toProp [One G] [Inv G] [Mul G] (a : GroupAxiom) :
     (G ⊨ a.toSentence) ↔ a.toProp G := by
@@ -291,6 +291,8 @@ open Language.Structure
 section Axioms
 
 variable (G : Type*)
+
+attribute [local instance] structureOfGroup
 
 /-- Every group with its canonical language structure satisfies the group theory. -/
 instance model_group [Group G] : G ⊨ Language.Theory.group := by
@@ -378,6 +380,8 @@ open FirstOrder TauCeti TauCeti.Group
 section Homomorphisms
 
 variable {G H A : Type*} [Group G] [Group H]
+
+attribute [local instance] TauCeti.Group.structureOfGroup
 
 /-- A group homomorphism is a homomorphism of canonical group-language structures. -/
 def groupLanguageHom (φ : G →* H) :
