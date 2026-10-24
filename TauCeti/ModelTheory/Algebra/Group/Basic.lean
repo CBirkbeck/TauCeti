@@ -66,13 +66,13 @@ instance (α : Type*) : Inv (Language.group.Term α) :=
 instance (α : Type*) : Mul (Language.group.Term α) :=
   ⟨mulFunc.apply₂⟩
 
-@[simp] theorem one_def (α : Type*) :
+theorem one_def (α : Type*) :
     (1 : Language.group.Term α) = Language.Constants.term oneFunc := rfl
 
-@[simp] theorem inv_def (α : Type*) (t : Language.group.Term α) :
+theorem inv_def (α : Type*) (t : Language.group.Term α) :
     t⁻¹ = invFunc.apply₁ t := rfl
 
-@[simp] theorem mul_def (α : Type*) (t s : Language.group.Term α) :
+theorem mul_def (α : Type*) (t s : Language.group.Term α) :
     t * s = mulFunc.apply₂ t s := rfl
 
 /-- Interpret the group language using the operations of a group. -/
@@ -84,9 +84,7 @@ instance (α : Type*) : Mul (Language.group.Term α) :=
     | mul => exact fun xs => xs 0 * xs 1
   RelMap r := nomatch r
 
-/-- Every group has its canonical first-order group-language structure. -/
-instance instStructure (G : Type*) [Group G] : Language.group.Structure G :=
-  structureOfGroup G
+attribute [instance] structureOfGroup
 
 section GroupStructure
 
@@ -127,7 +125,7 @@ abbrev Lcoeff (A : Type*) : Language := Language.group.withConstants A
   inferInstance
 
 /-- The constant named by `a` denotes the chosen coefficient `c a`. -/
-@[simp] theorem coeffStructure_funMap_con {G A : Type*} [Group G] (c : A → G)
+theorem coeffStructure_funMap_con {G A : Type*} [Group G] (c : A → G)
     (a : A) (xs : Fin 0 → G) :
     @Language.Structure.funMap (Lcoeff A) G (coeffStructure G A c) 0 (Sum.inr a) xs =
       c a := by
@@ -184,14 +182,12 @@ section Axioms
   ⟨funMap oneFunc ![]⟩
 
 variable (G : Type*) [Group G]
-local instance : Language.group.Structure G := structureOfGroup G
 
 /-- A group axiom holds in the canonical interpretation exactly when its group law holds. -/
 theorem GroupAxiom.realize_iff_toProp (a : GroupAxiom) :
     (G ⊨ a.toSentence) ↔ a.toProp G := by
   cases a <;> simp [GroupAxiom.toSentence, GroupAxiom.toProp,
-    Sentence.Realize, Formula.Realize, Fin.snoc,
-    Language.Structure.funMap, Language.constantMap]
+    Sentence.Realize, Formula.Realize, Fin.snoc]
 
 /-- Every group with its canonical language structure satisfies the group theory. -/
 theorem models_theory : G ⊨ Language.groupTheory := by
@@ -221,16 +217,19 @@ theorem GroupAxiom.toProp_of_model (a : GroupAxiom) :
     -- The extracted multiplication and the language symbol are definitionally the same.
     change funMap mulFunc ![funMap mulFunc ![x, y], z] =
       funMap mulFunc ![x, funMap mulFunc ![y, z] ]
-    simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc] using h x y z
+    simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc,
+      mul_def] using h x y z
   · intro x
     change funMap mulFunc ![funMap oneFunc ![], x] = x
     simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc,
-      Language.constantMap, show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
+      one_def, mul_def, Language.constantMap,
+      show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
       using h x
   · intro x
     change funMap mulFunc ![funMap invFunc ![x], x] = funMap oneFunc ![]
     simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc,
-      Language.constantMap, show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
+      one_def, inv_def, mul_def, Language.constantMap,
+      show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
       using h x
 
 /-- A model of the three group axioms carries the group structure given by its symbols. -/
