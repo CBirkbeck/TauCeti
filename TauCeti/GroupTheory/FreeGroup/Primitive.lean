@@ -7,6 +7,7 @@ module
 
 public import Mathlib.GroupTheory.FreeGroup.IsFreeGroup
 public import Mathlib.GroupTheory.Commutator.Basic
+public import TauCeti.GroupTheory.FreeGroup.Nielsen
 public import TauCeti.GroupTheory.FreeGroup.ProperPower
 
 /-!
@@ -66,6 +67,27 @@ theorem map_mulEquiv {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
   · intro h
     simpa using h.map_mulEquiv e.symm
   · exact fun h => h.map_mulEquiv e
+
+/-- Conjugation preserves and reflects primitivity. -/
+@[simp] theorem conj_iff {G : Type u} [Group G] (g x : G) :
+    IsPrimitive (g * x * g⁻¹) ↔ IsPrimitive x :=
+  map_mulEquiv_iff (MulAut.conj g)
+
+/-- The inverse of a primitive element is primitive. -/
+theorem inv {G : Type u} [Group G] {x : G} (hx : IsPrimitive x) : IsPrimitive x⁻¹ := by
+  have inv_of {α : Type u} (a : α) : IsPrimitive (FreeGroup.of a)⁻¹ := by
+    simpa using ((FreeGroupBasis.ofFreeGroup α).isPrimitive a).map_mulEquiv
+      (TauCeti.FreeGroup.generatorInversion)
+  obtain ⟨ι, b, i, rfl⟩ := hx
+  have hb : b.repr.symm (FreeGroup.of i) = b i := by
+    apply b.repr.injective
+    simp
+  simpa only [map_inv, hb] using (inv_of i).map_mulEquiv b.repr.symm
+
+/-- An element is primitive exactly when its inverse is primitive. -/
+@[simp] theorem inv_iff {G : Type u} [Group G] {x : G} :
+    IsPrimitive x⁻¹ ↔ IsPrimitive x :=
+  ⟨fun h => by simpa using h.inv, inv⟩
 
 /-- A primitive element is not a proper power. -/
 theorem not_isProperPower {G : Type u} [Group G] {x : G} (hx : IsPrimitive x) :
