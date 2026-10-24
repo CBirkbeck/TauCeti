@@ -28,37 +28,26 @@ open Monoid.Coprod
 
 variable {G H X Y Z : Type*} [Group G] [Group H] (ι : G →* H)
 
-/-- Substitute the images of the variables under a coefficient-preserving word homomorphism. -/
-def wordMap (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) : Y → H :=
-  homEquiv ι ((evalGHom ι v).comp σ)
-
-/-- A word map evaluates the image of each variable. -/
-@[simp] theorem wordMap_apply (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (v : X → H) (y : Y) :
-    wordMap ι σ v y = eval ι v (σ (inr (FreeGroup.of y))) := by
-  simp [wordMap]
-
 /-- Evaluation after a word map is composition with the word homomorphism. -/
 theorem eval_wordMap (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) :
-    eval ι (wordMap ι σ v) = (eval ι v).comp σ.toMonoidHom := by
-  convert eval_eq_of_comp_inl (((evalGHom ι v).comp σ).comp_coeff) using 1
-  · congr 1
-    funext y
-    simp
-  · apply MonoidHom.ext
-    intro w
-    simp [GHom.coe_comp, coe_evalGHom]
+    eval ι (wordMap ι (fun y => σ (inr (FreeGroup.of y))) v) =
+      (eval ι v).comp σ.toMonoidHom := by
+  rw [← eval_comp_eval]
+  congr 1
+  exact eval_eq_of_comp_inl σ.comp_coeff
 
 /-- The identity word homomorphism leaves tuples unchanged. -/
 @[simp] theorem wordMap_id (v : X → H) :
-    wordMap ι (GHom.id (inl : G →* GX G X)) v = v := by
+    wordMap ι (fun x => inr (FreeGroup.of x)) v = v := by
   funext x
   simp
 
 /-- Word maps compose in the opposite order to word homomorphisms. -/
 theorem wordMap_comp (σ : GHom (inl : G →* GX G Z) (inl : G →* GX G Y))
     (τ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) :
-    wordMap ι (τ.comp σ) v = wordMap ι σ (wordMap ι τ v) := by
+    wordMap ι (fun z => (τ.comp σ) (inr (FreeGroup.of z))) v =
+      wordMap ι (fun y => σ (inr (FreeGroup.of y)))
+        (wordMap ι (fun x => τ (inr (FreeGroup.of x))) v) := by
   funext z
   rw [wordMap_apply, wordMap_apply, eval_wordMap]
   simp only [GHom.coe_comp, Function.comp_apply, MonoidHom.comp_apply,
@@ -67,7 +56,7 @@ theorem wordMap_comp (σ : GHom (inl : G →* GX G Z) (inl : G →* GX G Y))
 /-- A word map sends solutions to solutions of the inverse-image system. -/
 theorem wordMap_mem_V (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (S : Set (GX G X)) (v : X → H) (hv : v ∈ V ι S) :
-    wordMap ι σ v ∈ V ι (σ ⁻¹' S) := by
+    wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) := by
   rw [mem_V] at hv ⊢
   intro s hs
   rw [eval_wordMap ι σ v]
@@ -76,7 +65,7 @@ theorem wordMap_mem_V (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
 /-- A tuple solves `S` exactly when its word map solves the inverse-image system. -/
 theorem wordMap_mem_V_iff (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (hσ : Function.Surjective σ) (S : Set (GX G X)) (v : X → H) :
-    wordMap ι σ v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
+    wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
   rw [mem_V, mem_V]
   constructor
   · intro hv s hs
@@ -95,7 +84,8 @@ theorem Rad_preimage_le_comap
   intro w hw
   rw [Subgroup.mem_comap, mem_Rad]
   intro v hv
-  have h := (mem_Rad).1 hw (wordMap ι σ v) (wordMap_mem_V ι σ S v hv)
+  have h := (mem_Rad).1 hw
+    (wordMap ι (fun y => σ (inr (FreeGroup.of y))) v) (wordMap_mem_V ι σ S v hv)
   rwa [eval_wordMap] at h
 
 namespace CoordGroup
@@ -126,21 +116,25 @@ include ι
 
 /-- A bijective coefficient-preserving word map gives an equivalence of tuples. -/
 noncomputable def coordinateChangeEquiv : (X → H) ≃ (Y → H) where
-  toFun := wordMap ι σ
-  invFun := wordMap ι (σ.symmOfBijective hσ)
+  toFun := wordMap ι (fun y => σ (inr (FreeGroup.of y)))
+  invFun := wordMap ι (fun x => (σ.symmOfBijective hσ) (inr (FreeGroup.of x)))
   left_inv v := by
-    rw [← wordMap_comp, GHom.comp_symmOfBijective, wordMap_id]
+    rw [← wordMap_comp, GHom.comp_symmOfBijective]
+    simpa only [GHom.coe_id, id_eq] using wordMap_id (ι := ι) v
   right_inv v := by
-    rw [← wordMap_comp, GHom.symmOfBijective_comp, wordMap_id]
+    rw [← wordMap_comp, GHom.symmOfBijective_comp]
+    simpa only [GHom.coe_id, id_eq] using wordMap_id (ι := ι) v
 
 /-- The tuple equivalence applies the word map. -/
 @[simp] theorem coordinateChangeEquiv_apply (v : X → H) :
-    coordinateChangeEquiv ι σ hσ v = wordMap ι σ v := by
+    coordinateChangeEquiv ι σ hσ v =
+      wordMap ι (fun y => σ (inr (FreeGroup.of y))) v := by
   simp [coordinateChangeEquiv]
 
 /-- The inverse tuple equivalence applies the inverse word map. -/
 @[simp] theorem coordinateChangeEquiv_symm_apply (v : Y → H) :
-    (coordinateChangeEquiv ι σ hσ).symm v = wordMap ι (σ.symmOfBijective hσ) v := by
+    (coordinateChangeEquiv ι σ hσ).symm v =
+      wordMap ι (fun x => (σ.symmOfBijective hσ) (inr (FreeGroup.of x))) v := by
   simp [coordinateChangeEquiv]
 
 /-- A bijective word map restricts to an equivalence of solution sets. -/
@@ -152,14 +146,14 @@ noncomputable def coordinateChangeSolutions (S : Set (GX G X)) :
 /-- On tuples, the solution equivalence applies the word map. -/
 @[simp] theorem coordinateChangeSolutions_apply_coe (S : Set (GX G X)) (v : V ι S) :
     ((coordinateChangeSolutions ι σ hσ S v : V ι (σ ⁻¹' S)) : Y → H) =
-      wordMap ι σ v := by
+      wordMap ι (fun y => σ (inr (FreeGroup.of y))) v := by
   simp [coordinateChangeSolutions, Equiv.subtypeEquiv]
 
 /-- On tuples, the inverse solution equivalence applies the inverse word map. -/
 @[simp] theorem coordinateChangeSolutions_symm_apply_coe
     (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
     (((coordinateChangeSolutions ι σ hσ S).symm v : V ι S) : X → H) =
-      wordMap ι (σ.symmOfBijective hσ) v := by
+      wordMap ι (fun x => (σ.symmOfBijective hσ) (inr (FreeGroup.of x))) v := by
   simp [coordinateChangeSolutions, Equiv.subtypeEquiv]
 
 /-- Radicals transform by inverse image under a bijective coefficient-preserving word map. -/
