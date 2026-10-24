@@ -181,13 +181,9 @@ theorem IsPrimitive.notMem_commutator {x : G} (hx : IsPrimitive x) :
 /-- A primitive element is not an integer power whose exponent is not a unit. -/
 theorem IsPrimitive.ne_zpow {x : G} (hx : IsPrimitive x) {y : G} {n : ℤ}
     (hn : ¬ IsUnit n) : x ≠ y ^ n := by
-  obtain ⟨f, hf⟩ := hx.exists_monoidHom_apply_eq_ofAdd_one
   intro h
-  rw [h, map_zpow] at hf
-  have hi : n * Multiplicative.toAdd (f y) = 1 := by
-    have hh := congrArg Multiplicative.toAdd hf
-    simpa using hh
-  exact hn (isUnit_iff_dvd_one.mpr ⟨_, hi.symm⟩)
+  exact hn (Int.isUnit_iff_natAbs_eq.mpr
+    (Group.natAbs_eq_one_of_not_isProperPower_zpow (h ▸ hx.not_isProperPower)))
 
 /-- A primitive element is not a natural-number power with exponent different from one. -/
 theorem IsPrimitive.ne_pow {x : G} (hx : IsPrimitive x) {y : G} {n : ℕ}
