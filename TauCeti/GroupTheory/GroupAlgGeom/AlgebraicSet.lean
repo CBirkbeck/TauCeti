@@ -178,11 +178,11 @@ theorem wordMap_preimage_V {Y : Type*} (w : Y → GX G X) (S : Set (GX G Y)) :
   constructor
   · intro hv s hs
     obtain ⟨t, ht, rfl⟩ := hs
-    rw [← MonoidHom.comp_apply, eval_substitution]
+    rw [← MonoidHom.comp_apply, eval_comp_eval]
     exact hv t ht
   · intro hv t ht
     have := hv _ ⟨t, ht, rfl⟩
-    rwa [← MonoidHom.comp_apply, eval_substitution] at this
+    rwa [← MonoidHom.comp_apply, eval_comp_eval] at this
 
 /-- The singleton of a tuple of coefficients is the solution set of the equations specifying
 all its coordinates. -/

@@ -42,9 +42,9 @@ injectivity.
 
 * `MonoidHom.comp_eval`, `TauCeti.GroupAlgGeom.map_eval`: homomorphisms and `G`-homomorphisms
   commute with evaluation.
-* `TauCeti.GroupAlgGeom.eval_substitution`: evaluating after word substitution is evaluation
+* `TauCeti.GroupAlgGeom.eval_comp_eval`: evaluating after word substitution is evaluation
   at the substituted tuple.
-* `TauCeti.GroupAlgGeom.wordMap_comp`: composition of word maps is word substitution.
+* `TauCeti.GroupAlgGeom.wordMap_wordMap`: composition of word maps is word substitution.
 * `TauCeti.GroupAlgGeom.GX.equivOfIsEmpty`, `TauCeti.GroupAlgGeom.GX.equivFreeGroup`: `G[∅] ≅ G`
   and, for trivial `G`, `G[X] ≅ F(X)`, under which evaluation is `FreeGroup.lift`.
 * `TauCeti.GroupAlgGeom.GX.not_commute_inl_inr_of`: a nontrivial coefficient does not commute
@@ -292,18 +292,18 @@ theorem wordMap_apply {Y : Type*} (w : Y → GX G X) (v : X → H) (y : Y) :
 
 /-- Substituting words for variables and then evaluating agrees with evaluation of the
 substituted tuple. -/
-theorem eval_substitution {Y : Type*} (w : Y → GX G X) (v : X → H) :
+theorem eval_comp_eval {Y : Type*} (w : Y → GX G X) (v : X → H) :
     (eval ι v).comp (eval (inl : G →* GX G X) w) =
       eval ι (wordMap ι w v) := by
   rw [MonoidHom.comp_eval, eval_comp_inl]
   rfl
 
 /-- Composition of word maps is substitution of the defining words. -/
-theorem wordMap_comp {Y Z : Type*} (w : Y → GX G X) (u : Z → GX G Y) (v : X → H) :
+theorem wordMap_wordMap {Y Z : Type*} (w : Y → GX G X) (u : Z → GX G Y) (v : X → H) :
     wordMap ι u (wordMap ι w v) =
       wordMap ι (fun z => eval (inl : G →* GX G X) w (u z)) v := by
   funext z
-  exact (DFunLike.congr_fun (eval_substitution w v) (u z)).symm
+  exact (DFunLike.congr_fun (eval_comp_eval w v) (u z)).symm
 
 /-- `G`-homomorphisms commute with evaluation: `φ (w(v)) = w(φ ∘ v)`. -/
 @[simp]
