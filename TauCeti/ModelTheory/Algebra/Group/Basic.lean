@@ -19,7 +19,8 @@ interface needed to turn group formulas into equations in words.
 
 The choice of symbols and coefficient letters follows Kharlampovich and Myasnikov,
 *Implicit function theorem over free groups*, §2.3. The language and structure interface
-follows Mathlib's first-order language of rings.
+follows Mathlib's first-order language of rings. The axiom, theory and model construction
+follow `Mathlib.ModelTheory.Algebra.Field.Basic`.
 -/
 
 public section
@@ -162,6 +163,13 @@ variable {G A X : Type*} [One G] [Inv G] [Mul G]
 
 end Coefficients
 
+/-- A named coefficient term evaluates to the value assigned to its name. -/
+@[simp] theorem realize_coeff_con {G A X : Type*} [One G] [Inv G] [Mul G]
+    (c : A → G) (v : X → G) (a : A) :
+    letI := Language.constantsOn.structure c
+    ((Language.group.con a).term : Language.group[[A]].Term X).realize v = c a := by
+  rfl
+
 end Group
 
 open Language BoundedFormula
@@ -219,6 +227,36 @@ variable (G : Type*)
 end Axioms
 end Group
 
+namespace Group
+
+open Language.Structure
+
+/-- Interpreting the operations extracted from a language structure recovers that structure. -/
+theorem structureOfGroup_ofStructure (G : Type*) [Language.group.Structure G] :
+    letI : One G := oneOfStructure G
+    letI : Inv G := invOfStructure G
+    letI : Mul G := mulOfStructure G
+    structureOfGroup G = ‹Language.group.Structure G› := by
+  apply Language.Structure.ext
+  · funext n f xs
+    cases f
+    · change funMap oneFunc ![] = funMap oneFunc xs
+      congr 1
+      exact Subsingleton.elim _ _
+    · change funMap invFunc ![xs 0] = funMap invFunc xs
+      congr 1
+      funext i
+      fin_cases i
+      rfl
+    · change funMap mulFunc ![xs 0, xs 1] = funMap mulFunc xs
+      congr 1
+      funext i
+      fin_cases i <;> rfl
+  · funext n r xs
+    cases r
+
+end Group
+
 namespace GroupAxiom
 
 /-- A group axiom holds in the canonical interpretation exactly when its group law holds. -/
@@ -267,27 +305,9 @@ theorem toProp_of_model (a : GroupAxiom) :
     @GroupAxiom.toProp G (mulOfStructure G) (invOfStructure G) (oneOfStructure G) a := by
   have h : G ⊨ a.toSentence :=
     Language.Theory.realize_sentence_of_mem Language.Theory.group (Set.mem_range_self a)
-  -- The changes unfold the operations extracted from the symbols. Arity vectors are then
-  -- compared by extensionality in the structure equality below.
-  cases a
-  · intro x y z
-    -- The extracted multiplication and the language symbol are definitionally the same.
-    change funMap mulFunc ![funMap mulFunc ![x, y], z] =
-      funMap mulFunc ![x, funMap mulFunc ![y, z] ]
-    simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc,
-      mul_def] using h x y z
-  · intro x
-    change funMap mulFunc ![funMap oneFunc ![], x] = x
-    simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc,
-      one_def, mul_def, Language.constantMap,
-      show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
-      using h x
-  · intro x
-    change funMap mulFunc ![funMap invFunc ![x], x] = funMap oneFunc ![]
-    simpa [GroupAxiom.toSentence, Sentence.Realize, Formula.Realize, Fin.snoc,
-      one_def, inv_def, mul_def, Language.constantMap,
-      show (![] : Fin 0 → G) = default from Subsingleton.elim _ _]
-      using h x
+  rw [← Group.structureOfGroup_ofStructure G] at h
+  exact (@realize_toSentence_iff_toProp G (oneOfStructure G) (invOfStructure G)
+    (mulOfStructure G) a).1 h
 
 end GroupAxiom
 
@@ -340,28 +360,7 @@ omit [G ⊨ Language.Theory.group] in
 theorem structureOfGroup_groupOfModel :
     letI : _root_.Group G := groupOfModel G
     structureOfGroup G = ‹Language.group.Structure G› := by
-  apply Language.Structure.ext
-  · funext n f xs
-    -- Unfold the canonical interpretation, then rewrite by the extracted operation lemmas.
-    -- The arity vectors are equal by extensionality at each coordinate.
-    cases f
-    · change (1 : G) = funMap oneFunc xs
-      rw [groupOfModel_one G]
-      congr 1
-      exact Subsingleton.elim _ _
-    · change (xs 0)⁻¹ = funMap invFunc xs
-      rw [groupOfModel_inv G]
-      congr 1
-      funext i
-      fin_cases i
-      rfl
-    · change xs 0 * xs 1 = funMap mulFunc xs
-      rw [groupOfModel_mul G]
-      congr 1
-      funext i
-      fin_cases i <;> rfl
-  · funext n r xs
-    cases r
+  exact structureOfGroup_ofStructure G
 
 end Models
 
@@ -382,7 +381,7 @@ def groupLanguageHom (φ : G →* H) :
   toFun := φ
   map_fun' := by
     intro n f xs
-    cases f <;> simp [Language.Structure.funMap]
+    cases f <;> simp
   map_rel' := by
     intro n r
     cases r
@@ -406,8 +405,10 @@ def coeffGroupLanguageHom (φ : G →* H) (c : A → G) (d : A → H)
     | inr f =>
       cases n with
       | zero =>
+        -- At arity zero the constantsOn symbol type reduces to A.
         dsimp only [Language.constantsOn, Language.constantsOnFunc] at f
         simp only [Language.withConstants_funMap_sumInr]
+        -- The coercion of a named constant uses the chosen coefficient map.
         change φ (c f) = d f
         exact hc f
       | succ n => exact isEmptyElim f
