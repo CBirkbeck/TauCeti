@@ -128,15 +128,10 @@ namespace TauCeti.FreeGroup
 variable {G : Type u} [Group G]
 
 /-- A canonical generator times any integer power of a distinct generator is primitive. -/
-theorem isPrimitive_of_mul_zpow {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
+theorem isPrimitive_of_mul_of_zpow {α : Type u} (a b : α) (hab : a ≠ b) (n : ℤ) :
     IsPrimitive (FreeGroup.of a * FreeGroup.of b ^ n) := by
   simpa only [FreeGroupBasis.ofFreeGroup_apply] using
     (FreeGroupBasis.ofFreeGroup α).isPrimitive_mul_zpow hab n
-
-/-- The product of two distinct canonical generators is primitive. -/
-theorem isPrimitive_of_mul_of {α : Type u} (a b : α) (hab : a ≠ b) :
-    IsPrimitive (FreeGroup.of a * FreeGroup.of b) := by
-  simpa only [zpow_one] using isPrimitive_of_mul_zpow a b hab (1 : ℤ)
 
 /-- A primitive element has an integer character that takes value one on it. -/
 theorem IsPrimitive.exists_monoidHom_apply_eq_ofAdd_one {x : G} (hx : IsPrimitive x) :
@@ -178,30 +173,17 @@ theorem IsPrimitive.notMem_commutator {x : G} (hx : IsPrimitive x) :
     (Subgroup.commutator_mem_commutator (show x ∈ (⊤ : Subgroup G) from trivial)
       (show y ∈ (⊤ : Subgroup G) from trivial))
 
-/-- A primitive element is not an integer power whose exponent is not a unit. -/
-theorem IsPrimitive.ne_zpow {x : G} (hx : IsPrimitive x) {y : G} {n : ℤ}
-    (hn : ¬ IsUnit n) : x ≠ y ^ n := by
-  intro h
-  exact hn (Int.isUnit_iff_natAbs_eq.mpr
-    (Group.natAbs_eq_one_of_not_isProperPower_zpow (h ▸ hx.not_isProperPower)))
-
-/-- A primitive element is not a natural-number power with exponent different from one. -/
-theorem IsPrimitive.ne_pow {x : G} (hx : IsPrimitive x) {y : G} {n : ℕ}
-    (hn : n ≠ 1) : x ≠ y ^ n := by
-  have hnu : ¬ IsUnit (n : ℤ) := by
-    intro hu
-    have hn1 : n = 1 := Nat.isUnit_iff.mp (Int.ofNat_isUnit.mp hu)
-    exact hn hn1
-  simpa only [zpow_natCast] using hx.ne_zpow (y := y) hnu
-
 /-- An integer power whose exponent is not a unit is not primitive. -/
 theorem not_isPrimitive_zpow (x : G) {n : ℤ} (hn : ¬ IsUnit n) :
-    ¬ IsPrimitive (x ^ n) :=
-  fun h => h.ne_zpow (y := x) hn rfl
+    ¬ IsPrimitive (x ^ n) := by
+  intro hx
+  exact hn (Int.isUnit_iff_natAbs_eq.mpr
+    (Group.natAbs_eq_one_of_not_isProperPower_zpow hx.not_isProperPower))
 
 /-- A natural-number power with exponent different from one is not primitive. -/
-theorem not_isPrimitive_pow (x : G) {n : ℕ} (hn : n ≠ 1) : ¬ IsPrimitive (x ^ n) :=
-  fun h => h.ne_pow (y := x) hn rfl
+theorem not_isPrimitive_pow (x : G) {n : ℕ} (hn : n ≠ 1) : ¬ IsPrimitive (x ^ n) := by
+  simpa only [zpow_natCast] using
+    not_isPrimitive_zpow x (n := n) (by simpa [Int.ofNat_isUnit, Nat.isUnit_iff] using hn)
 
 /-- The square of any group element is not primitive. -/
 @[simp] theorem not_isPrimitive_sq (x : G) : ¬ IsPrimitive (x ^ 2) :=
