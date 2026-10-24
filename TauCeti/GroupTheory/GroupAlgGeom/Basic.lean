@@ -281,13 +281,14 @@ theorem comp_eval {ιK : G →* K} (φ : GHom ι ιK) :
   rw [MonoidHom.comp_eval, φ.comp_coeff, MonoidHom.coe_ofClass]
 
 /-- The word map determined by a tuple of words. -/
-@[expose] def wordMap {Y : Type*} (ι : G →* H) (w : Y → GX G X) (v : X → H) : Y → H :=
+def wordMap {Y : Type*} (ι : G →* H) (w : Y → GX G X) (v : X → H) : Y → H :=
   fun y => eval ι v (w y)
 
 /-- Evaluating the word map at a coordinate evaluates its defining word. -/
 @[simp]
 theorem wordMap_apply {Y : Type*} (w : Y → GX G X) (v : X → H) (y : Y) :
-    wordMap ι w v y = eval ι v (w y) := rfl
+    wordMap ι w v y = eval ι v (w y) := by
+  simp [wordMap]
 
 /-- Substituting words for variables and then evaluating agrees with evaluation of the
 substituted tuple. -/
