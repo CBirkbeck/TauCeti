@@ -6,8 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.GroupTheory.GroupAlgGeom.AlgebraicSet
-public import TauCeti.GroupTheory.GroupAlgGeom.Domain
-public import Mathlib.GroupTheory.Commutator.Basic
 public import Mathlib.Topology.Separation.Basic
 
 /-!
@@ -38,7 +36,6 @@ public section
 namespace TauCeti.GroupAlgGeom
 
 open Monoid.Coprod
-open scoped commutatorElement
 
 variable {G H : Type*} [Group G] [Group H]
 
@@ -55,25 +52,23 @@ theorem isClosed_V (S : Set (GX G X)) :
     @IsClosed (X → H) (zariski ι X) (V ι S) := by
   have h : @IsOpen (X → H) (zariski ι X) (V ι S)ᶜ :=
     TopologicalSpace.isOpen_generateFrom_of_mem
-      (show (V ι S)ᶜ ∈ {U : Set (X → H) | ∃ T : Set (GX G X), U = (V ι T)ᶜ} from
-        ⟨S, rfl⟩)
+      ⟨S, rfl⟩
   simpa only [compl_compl] using (@IsOpen.isClosed_compl (X → H) (zariski ι X) _ h)
 
-/-- The singleton of a tuple of coefficients is the solution set of the equations specifying
-all its coordinates. -/
-theorem singleton_coeff_eq_V (g : X → G) :
-    ({(ι ∘ g : X → H)} : Set (X → H)) =
-      V ι (Set.range fun x => inr (FreeGroup.of x) * (inl (g x))⁻¹) := by
-  ext v
-  simp only [Set.mem_singleton_iff, mem_V, Set.mem_range]
+/-- A map into a Zariski space is continuous exactly when every algebraic set has closed
+preimage. This characterization does not require a domain or nontrivial coefficients. -/
+theorem continuous_into_zariski_iff {A : Type*} [TopologicalSpace A]
+    {f : A → (X → H)} :
+    @Continuous A (X → H) _ (zariski ι X) f ↔
+      ∀ S : Set (GX G X), IsClosed (f ⁻¹' V ι S) := by
   constructor
-  · rintro rfl s ⟨x, rfl⟩
-    simp
-  · intro hv
-    funext x
-    have hx := hv _ ⟨x, rfl⟩
-    simpa only [Function.comp_apply, map_mul, map_inv, eval_inl, eval_inr_of,
-      mul_inv_eq_one] using hx
+  · intro hf S
+    exact (@continuous_iff_isClosed A (X → H) _ (zariski ι X) f).mp hf _ (isClosed_V S)
+  · intro hf
+    apply continuous_generateFrom_iff.mpr
+    rintro U ⟨S, rfl⟩
+    rw [Set.preimage_compl]
+    exact (hf S).isOpen_compl
 
 /-- A tuple of elements in the coefficient image is a closed point. -/
 theorem isClosed_singleton_coeff (g : X → G) :
@@ -99,50 +94,6 @@ theorem eval_continuous (w : Y → GX G X) :
   rintro U ⟨S, rfl⟩
   rw [Set.preimage_compl, wordMap_preimage_V]
   exact @IsClosed.isOpen_compl (X → H) (zariski ι X) _ (isClosed_V _)
-
-/-- The commutator equations defining the union of two algebraic sets over a domain. -/
-def unionEquations (S T : Set (GX G X)) : Set (GX G X) :=
-  {u | ∃ s ∈ S, ∃ t ∈ T, ∃ g : G, u = ⁅s, inl g * t * (inl g)⁻¹⁆}
-
-/-- The equations in `unionEquations S T` are the commutators of one equation from each
-system, conjugated by coefficients. -/
-@[simp]
-theorem mem_unionEquations {S T : Set (GX G X)} {u : GX G X} :
-    u ∈ unionEquations S T ↔
-      ∃ s ∈ S, ∃ t ∈ T, ∃ g : G, u = ⁅s, inl g * t * (inl g)⁻¹⁆ :=
-  Iff.rfl
-
-/-- Over a group with no zero divisors relative to its coefficients, finite unions of algebraic
-sets are algebraic. -/
-theorem V_unionEquations (hdom : IsGDomain ι) (S T : Set (GX G X)) :
-    V ι (unionEquations S T) = V ι S ∪ V ι T := by
-  classical
-  ext v
-  simp only [Set.mem_union, mem_V]
-  constructor
-  · intro h
-    by_contra hn
-    push Not at hn
-    obtain ⟨s, hs, hvs⟩ := hn.1
-    obtain ⟨t, ht, hvt⟩ := hn.2
-    obtain ⟨g, hg⟩ := (isGDomain_iff ι).mp hdom _ _ hvs hvt
-    have heq := h _ (show ⁅s, inl g * t * (inl g)⁻¹⁆ ∈ unionEquations S T from
-      ⟨s, hs, t, ht, g, rfl⟩)
-    apply hg
-    exact commutatorElement_eq_one_iff_commute.mp (by simpa using heq)
-  · intro hUnion u hu
-    simp only [mem_unionEquations] at hu
-    obtain ⟨s, hsS, t, htT, g, rfl⟩ := hu
-    rcases hUnion with hs | ht
-    · simp [map_commutatorElement, hs s hsS]
-    · simp [map_commutatorElement, ht t htT]
-
-/-- If some coefficient remains nontrivial in `H`, an equation with that constant has no
-solutions. -/
-theorem V_singleton_coeff_eq_empty {g : G} (hg : ι g ≠ 1) :
-    V ι ({inl g} : Set (GX G X)) = ∅ := by
-  ext v
-  simp [hg]
 
 /-- Over a domain with a nontrivial coefficient image, the generated closed sets are exactly
 the algebraic sets. The nontrivial-image condition is needed for the empty closed set. -/
