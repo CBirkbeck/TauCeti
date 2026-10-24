@@ -52,6 +52,8 @@ normal closure of `x ^ n` when `n ≠ 1`.
 * `TauCeti.GroupAlgGeom.V_normalClosure`, `TauCeti.GroupAlgGeom.normalClosure_le_Rad`: a system
   and its normal closure have the same solutions, so `ncl(S) ≤ Rad_H(S)`.
 * `TauCeti.GroupAlgGeom.V_I_V`: `V(I(V(S))) = V(S)`.
+* `TauCeti.GroupAlgGeom.wordMap_preimage_V`: inverse images of algebraic sets under word maps
+  are algebraic.
 * `TauCeti.GroupAlgGeom.I_singleton_comp`: the ideal of a point with coordinates `ι (g x)` is the
   normal closure of the equations `x (g x)⁻¹`, for injective `ι`.
 * `TauCeti.GroupAlgGeom.GX.quotientHomEquiv`: `G`-homomorphisms from `G[X] ⧸ N` to `H`
@@ -161,6 +163,22 @@ theorem V_union (S T : Set (GX G X)) : V ι (S ∪ T) = V ι S ∩ V ι T :=
 @[simp]
 theorem V_iUnion {κ : Sort*} (S : κ → Set (GX G X)) : V ι (⋃ k, S k) = ⋂ k, V ι (S k) :=
   upperPolar_iUnion _ S
+
+/-- Pulling an algebraic set back along a tuple of words substitutes those words into its
+equations. -/
+theorem wordMap_preimage_V {Y : Type*} (w : Y → GX G X) (S : Set (GX G Y)) :
+    (fun v : X → H => fun y => eval ι v (w y)) ⁻¹' V ι S =
+      V ι ((eval (inl : G →* GX G X) w) '' S) := by
+  ext v
+  simp only [Set.mem_preimage, mem_V, Set.mem_image]
+  constructor
+  · intro hv s hs
+    obtain ⟨t, ht, rfl⟩ := hs
+    rw [← MonoidHom.comp_apply, eval_substitution]
+    exact hv t ht
+  · intro hv t ht
+    have := hv _ ⟨t, ht, rfl⟩
+    rwa [← MonoidHom.comp_apply, eval_substitution] at this
 
 @[simp]
 theorem I_union (Y Z : Set (X → H)) : I ι (Y ∪ Z) = I ι Y ⊓ I ι Z :=

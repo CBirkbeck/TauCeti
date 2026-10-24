@@ -41,6 +41,8 @@ injectivity.
 
 * `MonoidHom.comp_eval`, `TauCeti.GroupAlgGeom.map_eval`: homomorphisms and `G`-homomorphisms
   commute with evaluation.
+* `TauCeti.GroupAlgGeom.eval_substitution`: evaluating after word substitution is evaluation
+  at the substituted tuple.
 * `TauCeti.GroupAlgGeom.GX.equivOfIsEmpty`, `TauCeti.GroupAlgGeom.GX.equivFreeGroup`: `G[∅] ≅ G`
   and, for trivial `G`, `G[X] ≅ F(X)`, under which evaluation is `FreeGroup.lift`.
 * `TauCeti.GroupAlgGeom.GX.not_commute_inl_inr_of`: a nontrivial coefficient does not commute
@@ -275,6 +277,14 @@ theorem hom_eval {F : Type*} [FunLike F H K] [MonoidHomClass F H K] (f : F) (w :
 theorem comp_eval {ιK : G →* K} (φ : GHom ι ιK) :
     (φ : H →* K).comp (eval ι v) = eval ιK (φ ∘ v) := by
   rw [MonoidHom.comp_eval, φ.comp_coeff, MonoidHom.coe_ofClass]
+
+/-- Substituting words for variables and then evaluating agrees with evaluation of the
+substituted tuple. -/
+theorem eval_substitution {Y : Type*} (w : Y → GX G X) (v : X → H) :
+    (eval ι v).comp (eval (inl : G →* GX G X) w) =
+      eval ι (fun y => eval ι v (w y)) := by
+  rw [MonoidHom.comp_eval, eval_comp_inl]
+  rfl
 
 /-- `G`-homomorphisms commute with evaluation: `φ (w(v)) = w(φ ∘ v)`. -/
 @[simp]
