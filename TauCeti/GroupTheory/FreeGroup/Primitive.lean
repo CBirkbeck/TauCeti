@@ -47,6 +47,12 @@ theorem isPrimitive {G : Type u} [Group G] {ι : Type v}
   ⟨Set.range b, b.reindex (Equiv.ofInjective _ b.injective),
     ⟨b i, ⟨i, rfl⟩⟩, by simp⟩
 
+/-- The inverse basis representation sends a free generator to its basis element. -/
+@[simp] theorem repr_symm_apply_of {G : Type u} [Group G] {ι : Type v}
+    (b : FreeGroupBasis ι G) (i : ι) : b.repr.symm (FreeGroup.of i) = b i := by
+  apply b.repr.injective
+  simp
+
 end FreeGroupBasis
 
 namespace Group
@@ -61,33 +67,14 @@ theorem map_mulEquiv {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
   obtain ⟨ι, b, i, rfl⟩ := hx
   simpa using (b.map e).isPrimitive i
 
-@[simp] theorem map_mulEquiv_iff {G : Type u} {H : Type v} [Group G] [Group H] {x : G}
-    (e : G ≃* H) : IsPrimitive (e x) ↔ IsPrimitive x := by
-  constructor
-  · intro h
-    simpa using h.map_mulEquiv e.symm
-  · exact fun h => h.map_mulEquiv e
-
-/-- Conjugation preserves and reflects primitivity. -/
-@[simp] theorem conj_iff {G : Type u} [Group G] (g x : G) :
-    IsPrimitive (g * x * g⁻¹) ↔ IsPrimitive x :=
-  map_mulEquiv_iff (MulAut.conj g)
-
 /-- The inverse of a primitive element is primitive. -/
 theorem inv {G : Type u} [Group G] {x : G} (hx : IsPrimitive x) : IsPrimitive x⁻¹ := by
   have inv_of {α : Type u} (a : α) : IsPrimitive (FreeGroup.of a)⁻¹ := by
     simpa using ((FreeGroupBasis.ofFreeGroup α).isPrimitive a).map_mulEquiv
       (TauCeti.FreeGroup.generatorInversion)
   obtain ⟨ι, b, i, rfl⟩ := hx
-  have hb : b.repr.symm (FreeGroup.of i) = b i := by
-    apply b.repr.injective
-    simp
-  simpa only [map_inv, hb] using (inv_of i).map_mulEquiv b.repr.symm
-
-/-- An element is primitive exactly when its inverse is primitive. -/
-@[simp] theorem inv_iff {G : Type u} [Group G] {x : G} :
-    IsPrimitive x⁻¹ ↔ IsPrimitive x :=
-  ⟨fun h => by simpa using h.inv, inv⟩
+  simpa only [map_inv, FreeGroupBasis.repr_symm_apply_of] using
+    (inv_of i).map_mulEquiv b.repr.symm
 
 /-- A primitive element is not a proper power. -/
 theorem not_isProperPower {G : Type u} [Group G] {x : G} (hx : IsPrimitive x) :
@@ -112,6 +99,34 @@ theorem exists_monoidHom_apply_eq_ofAdd_one {G : Type u} [Group G] {x : G}
   simpa using hf
 
 end IsPrimitive
+
+/-- An element is primitive exactly when its inverse is primitive. -/
+@[simp] theorem isPrimitive_inv {G : Type u} [Group G] {x : G} :
+    IsPrimitive x⁻¹ ↔ IsPrimitive x :=
+  ⟨fun h => by simpa using h.inv, IsPrimitive.inv⟩
+
+end Group
+
+namespace MulEquiv
+
+/-- Primitivity is preserved and reflected by a group isomorphism. -/
+@[simp] theorem isPrimitive_map_iff {G : Type u} {H : Type v} [Group G] [Group H]
+    (e : G ≃* H) {x : G} : Group.IsPrimitive (e x) ↔ Group.IsPrimitive x := by
+  constructor
+  · intro h
+    simpa using h.map_mulEquiv e.symm
+  · exact fun h => h.map_mulEquiv e
+
+end MulEquiv
+
+namespace Group
+
+open scoped commutatorElement
+
+/-- Conjugation preserves and reflects primitivity. -/
+@[simp] theorem isPrimitive_conj_iff {G : Type u} [Group G] (g x : G) :
+    IsPrimitive (g * x * g⁻¹) ↔ IsPrimitive x :=
+  MulEquiv.isPrimitive_map_iff (MulAut.conj g)
 
 /-- The identity is not a primitive element. -/
 @[simp] theorem not_isPrimitive_one {G : Type u} [Group G] : ¬ IsPrimitive (1 : G) := by
@@ -159,48 +174,6 @@ namespace FreeGroup
 theorem isPrimitive_of {α : Type u} (a : α) : Group.IsPrimitive (of a) :=
   (FreeGroupBasis.ofFreeGroup α).isPrimitive a
 
-/-- The Nielsen automorphism sending `a` to `a b ^ n` and fixing the other free generators. -/
-def mulGeneratorEquiv {α : Type u} [DecidableEq α] (a b : α) (hab : a ≠ b)
-    (n : ℤ) :
-    FreeGroup α ≃* FreeGroup α := by
-  refine MonoidHom.toMulEquiv
-    (FreeGroup.lift fun c => if c = a then of a * of b ^ n else of c)
-    (FreeGroup.lift fun c => if c = a then of a * of b ^ (-n) else of c) ?_ ?_
-  all_goals
-    apply FreeGroup.ext_hom
-    intro c
-    by_cases hca : c = a
-    · subst c
-      simp [hab.symm, mul_assoc]
-    · simp [hca]
-
-@[simp] theorem mulGeneratorEquiv_apply_of_self {α : Type u} [DecidableEq α]
-    (a b : α) (hab : a ≠ b) (n : ℤ) :
-    mulGeneratorEquiv a b hab n (of a) = of a * of b ^ n := by
-  simp [mulGeneratorEquiv]
-
-@[simp] theorem mulGeneratorEquiv_apply_of_ne {α : Type u} [DecidableEq α]
-    (a b c : α) (hab : a ≠ b) (n : ℤ) (hca : c ≠ a) :
-    mulGeneratorEquiv a b hab n (of c) = of c := by
-  simp [mulGeneratorEquiv, hca]
-
-/-- The inverse of a Nielsen move uses the opposite exponent. -/
-@[simp] theorem mulGeneratorEquiv_symm {α : Type u} [DecidableEq α]
-    (a b : α) (hab : a ≠ b) (n : ℤ) :
-    (mulGeneratorEquiv a b hab n).symm = mulGeneratorEquiv a b hab (-n) := by
-  apply MulEquiv.ext
-  intro x
-  induction x using FreeGroup.induction_on with
-  | one => simp
-  | of c =>
-    by_cases hca : c = a
-    · subst c
-      simp [mulGeneratorEquiv, zpow_neg]
-    · simp [mulGeneratorEquiv, hca]
-  | inv_of c hc => simp [hc]
-  | mul x y hx hy =>
-    simp [hx, hy]
-
 end FreeGroup
 
 namespace FreeGroupBasis
@@ -210,12 +183,10 @@ theorem isPrimitive_mul_zpow {G : Type u} [Group G] {ι : Type v}
     (b : FreeGroupBasis ι G) {i j : ι} (hij : i ≠ j) (n : ℤ) :
     Group.IsPrimitive (b i * b j ^ n) := by
   classical
-  have hb (k : ι) : b.repr.symm (FreeGroup.of k) = b k := by
-    apply b.repr.injective
-    simp
-  simpa only [FreeGroup.mulGeneratorEquiv_apply_of_self, map_mul, map_zpow, hb] using
+  simpa only [TauCeti.FreeGroup.nielsenMul_of_left, map_mul, map_zpow,
+    FreeGroupBasis.repr_symm_apply_of] using
     (((FreeGroup.isPrimitive_of i).map_mulEquiv
-      (FreeGroup.mulGeneratorEquiv i j hij n)).map_mulEquiv b.repr.symm)
+      (TauCeti.FreeGroup.nielsenMul i j hij n)).map_mulEquiv b.repr.symm)
 
 /-- The product of two distinct basis elements is primitive. -/
 theorem isPrimitive_mul {G : Type u} [Group G] {ι : Type v}
