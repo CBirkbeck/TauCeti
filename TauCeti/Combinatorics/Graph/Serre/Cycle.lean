@@ -220,23 +220,28 @@ theorem incidenceBoundary_mapDomain_inclusion {O' : Set Γ.E} (h : O ⊆ O')
   rw [hE, Hom.id_mapV, Finsupp.mapDomain_id] at hb
   exact hb
 
+/-- Enlarging the chosen dart set carries boundary-zero chains to boundary-zero chains over
+any coefficient ring. -/
+theorem map_ker_incidenceBoundary_le_of_subset {O' : Set Γ.E} (h : O ⊆ O')
+    (R : Type*) [Ring R] :
+    Submodule.map (Finsupp.lmapDomain R R (Set.inclusion h))
+        (Γ.incidenceBoundary O R).ker ≤ (Γ.incidenceBoundary O' R).ker := by
+  intro y hy
+  obtain ⟨c, hc, rfl⟩ := Submodule.mem_map.mp hy
+  rw [LinearMap.mem_ker, Finsupp.lmapDomain_apply, incidenceBoundary_mapDomain_inclusion]
+  exact LinearMap.mem_ker.mp hc
+
 /-- Enlarging the dart set includes its integral cycle lattice in the larger lattice. -/
 theorem map_cycleLattice_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
     Submodule.map (Finsupp.lmapDomain ℤ ℤ (Set.inclusion h)) (Γ.cycleLattice O) ≤
-      Γ.cycleLattice O' := by
-  have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
-    intro e he
-    simpa only [Hom.id_mapE, id_eq] using h he
-  simpa only [Hom.id_mapE, id_eq] using (Hom.id Γ).map_cycleLattice_le hO
+      Γ.cycleLattice O' :=
+  map_ker_incidenceBoundary_le_of_subset h ℤ
 
 /-- Enlarging the dart set includes its binary cycle space in the larger space. -/
 theorem map_modTwoCycleSpace_le_of_subset {O' : Set Γ.E} (h : O ⊆ O') :
     Submodule.map (Finsupp.lmapDomain (ZMod 2) (ZMod 2) (Set.inclusion h))
-        (Γ.modTwoCycleSpace O) ≤ Γ.modTwoCycleSpace O' := by
-  have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
-    intro e he
-    simpa only [Hom.id_mapE, id_eq] using h he
-  simpa only [Hom.id_mapE, id_eq] using (Hom.id Γ).map_modTwoCycleSpace_le hO
+        (Γ.modTwoCycleSpace O) ≤ Γ.modTwoCycleSpace O' :=
+  map_ker_incidenceBoundary_le_of_subset h (ZMod 2)
 
 end SerreGraph
 end TauCeti
