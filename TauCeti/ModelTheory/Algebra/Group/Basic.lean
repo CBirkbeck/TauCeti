@@ -164,7 +164,7 @@ variable {G A X : Type*} [One G] [Inv G] [Mul G]
 end Coefficients
 
 /-- A named coefficient symbol denotes the chosen coefficient. -/
-@[simp] theorem coe_coeff_constant {G A : Type*} [One G] [Inv G] [Mul G]
+@[simp] theorem coe_con {G A : Type*} [One G] [Inv G] [Mul G]
     (c : A → G) (a : A) :
     letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
     (↑(Language.group.con a) : G) = c a := rfl
