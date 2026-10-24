@@ -73,6 +73,18 @@ def coordinateChangeEquiv (σ : GX G X ≃* GX G X)
     funext x
     simp [coordinateChange, eval_coordinateChange ι σ.symm hσ.symm v]
 
+/-- The tuple equivalence applies the coordinate substitution. -/
+@[simp] theorem coordinateChangeEquiv_apply (σ : GX G X ≃* GX G X)
+    (hσ : FixesCoefficients σ) (v : X → H) :
+    coordinateChangeEquiv ι σ hσ v = coordinateChange ι σ v := by
+  simp [coordinateChangeEquiv]
+
+/-- The inverse tuple equivalence substitutes through the inverse automorphism. -/
+@[simp] theorem coordinateChangeEquiv_symm_apply (σ : GX G X ≃* GX G X)
+    (hσ : FixesCoefficients σ) (v : X → H) :
+    (coordinateChangeEquiv ι σ hσ).symm v = coordinateChange ι σ.symm v := by
+  simp [coordinateChangeEquiv]
+
 /-- A solution of `S` becomes a solution of the inverse image of `S` under a change of
 coordinates, and every solution of the latter arises this way. -/
 theorem coordinateChange_mem_V_iff (σ : GX G X ≃* GX G X)
@@ -93,6 +105,22 @@ def coordinateChangeSolutions (σ : GX G X ≃* GX G X)
     V ι S ≃ V ι (σ ⁻¹' S) :=
   (coordinateChangeEquiv ι σ hσ).subtypeEquiv
     (fun v => (coordinateChange_mem_V_iff ι σ hσ S v).symm)
+
+/-- On tuples, the solution equivalence applies the coordinate substitution. -/
+@[simp] theorem coe_coordinateChangeSolutions_apply (σ : GX G X ≃* GX G X)
+    (hσ : FixesCoefficients σ) (S : Set (GX G X)) (v : V ι S) :
+    ((coordinateChangeSolutions ι σ hσ S v : V ι (σ ⁻¹' S)) : X → H) =
+      coordinateChange ι σ v := by
+  change coordinateChangeEquiv ι σ hσ v = coordinateChange ι σ v
+  exact coordinateChangeEquiv_apply ι σ hσ v
+
+/-- On tuples, the inverse solution equivalence substitutes through the inverse automorphism. -/
+@[simp] theorem coe_coordinateChangeSolutions_symm_apply (σ : GX G X ≃* GX G X)
+    (hσ : FixesCoefficients σ) (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
+    (((coordinateChangeSolutions ι σ hσ S).symm v : V ι S) : X → H) =
+      coordinateChange ι σ.symm v := by
+  change (coordinateChangeEquiv ι σ hσ).symm v = coordinateChange ι σ.symm v
+  exact coordinateChangeEquiv_symm_apply ι σ hσ v
 
 /-- Radicals transform by inverse image under a coefficient-preserving word automorphism. -/
 theorem Rad_preimage (σ : GX G X ≃* GX G X)
