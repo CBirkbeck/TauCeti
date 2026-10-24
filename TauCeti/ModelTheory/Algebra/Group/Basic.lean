@@ -293,7 +293,7 @@ section Axioms
 variable (G : Type*)
 
 /-- Every group with its canonical language structure satisfies the group theory. -/
-theorem model_group [Group G] : G ⊨ Language.Theory.group := by
+instance model_group [Group G] : G ⊨ Language.Theory.group := by
   rw [Language.Theory.model_iff]
   intro φ hφ
   obtain ⟨a, rfl⟩ := hφ
