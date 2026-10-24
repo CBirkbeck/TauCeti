@@ -64,11 +64,6 @@ variable {Γ O}
       r • (Finsupp.single (Γ.tgt e.1) 1 - Finsupp.single (Γ.src e.1) 1) := by
   simp [incidenceBoundary]
 
-@[simp] theorem incidenceBoundary_single_one (R : Type*) [Ring R] (e : O) :
-    Γ.incidenceBoundary O R (Finsupp.single e 1) =
-      Finsupp.single (Γ.tgt e.1) 1 - Finsupp.single (Γ.src e.1) 1 := by
-  simp
-
 /-- A chain is an integral cycle exactly when its signed incidence boundary vanishes. -/
 theorem mem_cycleLattice_iff (c : O →₀ ℤ) :
     c ∈ Γ.cycleLattice O ↔ Γ.integralCycleBoundary O c = 0 :=
@@ -82,12 +77,12 @@ theorem mem_modTwoCycleSpace_iff (c : O →₀ ZMod 2) :
 /-- A loop is an integral cycle, for either choice of its orientation. -/
 theorem single_mem_cycleLattice_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1) :
     Finsupp.single e (1 : ℤ) ∈ Γ.cycleLattice O := by
-  rw [mem_cycleLattice_iff, incidenceBoundary_single_one, ← h, sub_self]
+  rw [mem_cycleLattice_iff, incidenceBoundary_single, one_smul, ← h, sub_self]
 
 /-- A loop is also a binary cycle. -/
 theorem single_mem_modTwoCycleSpace_of_loop (e : O) (h : Γ.src e.1 = Γ.tgt e.1) :
     Finsupp.single e (1 : ZMod 2) ∈ Γ.modTwoCycleSpace O := by
-  rw [mem_modTwoCycleSpace_iff, incidenceBoundary_single_one, ← h, sub_self]
+  rw [mem_modTwoCycleSpace_iff, incidenceBoundary_single, one_smul, ← h, sub_self]
 
 /-- An individual dart is an integral cycle exactly when it is a loop. -/
 theorem single_mem_cycleLattice_iff (e : O) :
