@@ -9,9 +9,7 @@ public import Mathlib.Algebra.Group.Subgroup.Basic
 public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.Data.ZMod.Defs
 public import TauCeti.GroupTheory.GroupAlgGeom.Basic
-public import TauCeti.GroupTheory.GroupAlgGeom.Domain
 import Mathlib.Data.ZMod.Basic
-import Mathlib.GroupTheory.Commutator.Basic
 import Mathlib.GroupTheory.FreeGroup.CyclicallyReduced
 import Mathlib.Logic.Equiv.Set
 import Mathlib.Order.Concept
@@ -82,7 +80,6 @@ public section
 namespace TauCeti.GroupAlgGeom
 
 open Monoid.Coprod Subgroup
-open scoped commutatorElement
 
 variable {G H X : Type*} [Group G] [Group H]
 
@@ -170,7 +167,7 @@ theorem V_iUnion {κ : Sort*} (S : κ → Set (GX G X)) : V ι (⋃ k, S k) = �
 /-- Pulling an algebraic set back along a tuple of words substitutes those words into its
 equations. -/
 theorem wordMap_preimage_V {Y : Type*} (w : Y → GX G X) (S : Set (GX G Y)) :
-    (fun v : X → H => fun y => eval ι v (w y)) ⁻¹' V ι S =
+    wordMap ι w ⁻¹' V ι S =
       V ι ((eval (inl : G →* GX G X) w) '' S) := by
   ext v
   simp only [Set.mem_preimage, mem_V, Set.mem_image]
@@ -198,42 +195,6 @@ theorem singleton_coeff_eq_V (g : X → G) :
     have hx := hv _ ⟨x, rfl⟩
     simpa only [Function.comp_apply, map_mul, map_inv, eval_inl, eval_inr_of,
       mul_inv_eq_one] using hx
-
-/-- The commutator equations defining the union of two algebraic sets over a domain. -/
-def unionEquations (S T : Set (GX G X)) : Set (GX G X) :=
-  {u | ∃ s ∈ S, ∃ t ∈ T, ∃ g : G, u = ⁅s, inl g * t * (inl g)⁻¹⁆}
-
-/-- The equations in `unionEquations S T` are the commutators of one equation from each
-system, conjugated by coefficients. -/
-@[simp]
-theorem mem_unionEquations {S T : Set (GX G X)} {u : GX G X} :
-    u ∈ unionEquations S T ↔
-      ∃ s ∈ S, ∃ t ∈ T, ∃ g : G, u = ⁅s, inl g * t * (inl g)⁻¹⁆ :=
-  Iff.rfl
-
-/-- Over a group with no zero divisors relative to its coefficients, finite unions of algebraic
-sets are algebraic. -/
-theorem V_unionEquations (hdom : IsGDomain ι) (S T : Set (GX G X)) :
-    V ι (unionEquations S T) = V ι S ∪ V ι T := by
-  classical
-  ext v
-  simp only [Set.mem_union, mem_V]
-  constructor
-  · intro h
-    by_contra hn
-    push Not at hn
-    obtain ⟨s, hs, hvs⟩ := hn.1
-    obtain ⟨t, ht, hvt⟩ := hn.2
-    obtain ⟨g, hg⟩ := (isGDomain_iff ι).mp hdom _ _ hvs hvt
-    have heq := h _ (mem_unionEquations.mpr ⟨s, hs, t, ht, g, rfl⟩)
-    apply hg
-    exact commutatorElement_eq_one_iff_commute.mp (by simpa using heq)
-  · intro hUnion u hu
-    simp only [mem_unionEquations] at hu
-    obtain ⟨s, hsS, t, htT, g, rfl⟩ := hu
-    rcases hUnion with hs | ht
-    · simp [map_commutatorElement, hs s hsS]
-    · simp [map_commutatorElement, ht t htT]
 
 /-- If some coefficient remains nontrivial in `H`, an equation with that constant has no
 solutions. -/

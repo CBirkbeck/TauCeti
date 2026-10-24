@@ -6,7 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.GroupTheory.GroupAlgGeom.AlgebraicSet
+public import TauCeti.GroupTheory.GroupAlgGeom.Domain
 public import Mathlib.Topology.Separation.Basic
+import Mathlib.GroupTheory.Commutator.Basic
 
 /-!
 # The Zariski topology of equations over groups
@@ -36,6 +38,7 @@ public section
 namespace TauCeti.GroupAlgGeom
 
 open Monoid.Coprod
+open scoped commutatorElement
 
 variable {G H : Type*} [Group G] [Group H]
 
@@ -46,6 +49,45 @@ variable {G H : Type*} [Group G] [Group H]
     {U | ∃ S : Set (GX G X), U = (V ι S)ᶜ}
 
 variable {X : Type*} {ι : G →* H}
+
+/-- The commutator equations defining the union of two algebraic sets over a domain. -/
+def unionEquations (S T : Set (GX G X)) : Set (GX G X) :=
+  {u | ∃ s ∈ S, ∃ t ∈ T, ∃ g : G, u = ⁅s, inl g * t * (inl g)⁻¹⁆}
+
+/-- The equations in `unionEquations S T` are the commutators of one equation from each
+system, conjugated by coefficients. -/
+@[simp]
+theorem mem_unionEquations {S T : Set (GX G X)} {u : GX G X} :
+    u ∈ unionEquations S T ↔
+      ∃ s ∈ S, ∃ t ∈ T, ∃ g : G, u = ⁅s, inl g * t * (inl g)⁻¹⁆ :=
+  Iff.rfl
+
+/-- Every solution of either system solves their commutator equations, in any group. -/
+theorem union_subset_V_unionEquations (S T : Set (GX G X)) :
+    V ι S ∪ V ι T ⊆ V ι (unionEquations S T) := by
+  intro v hUnion
+  rw [mem_V]
+  intro u hu
+  obtain ⟨s, hsS, t, htT, g, rfl⟩ := mem_unionEquations.mp hu
+  rcases hUnion with hs | ht
+  · simp [map_commutatorElement, (mem_V.mp hs) s hsS]
+  · simp [map_commutatorElement, (mem_V.mp ht) t htT]
+
+/-- Over a group with no zero divisors relative to its coefficients, finite unions of algebraic
+sets are algebraic. -/
+theorem V_unionEquations (hdom : IsGDomain ι) (S T : Set (GX G X)) :
+    V ι (unionEquations S T) = V ι S ∪ V ι T := by
+  apply Set.Subset.antisymm
+  · intro v h
+    by_contra hn
+    simp only [Set.mem_union, not_or, not_forall, mem_V] at hn
+    obtain ⟨s, hs, hvs⟩ := hn.1
+    obtain ⟨t, ht, hvt⟩ := hn.2
+    obtain ⟨g, hg⟩ := (isGDomain_iff ι).mp hdom _ _ hvs hvt
+    have heq := (mem_V.mp h) _ (mem_unionEquations.mpr ⟨s, hs, t, ht, g, rfl⟩)
+    apply hg
+    exact commutatorElement_eq_one_iff_commute.mp (by simpa using heq)
+  · exact union_subset_V_unionEquations S T
 
 /-- The solution set of any system of equations is Zariski closed. -/
 theorem isClosed_V (S : Set (GX G X)) :
@@ -89,7 +131,7 @@ variable {Y : Type*}
 /-- A tuple of words defines a continuous map in the Zariski topologies on tuples. -/
 theorem eval_continuous (w : Y → GX G X) :
     @Continuous (X → H) (Y → H) (zariski ι X) (zariski ι Y)
-      (fun v : X → H => fun y => eval ι v (w y)) := by
+      (wordMap ι w) := by
   apply continuous_generateFrom_iff.mpr
   rintro U ⟨S, rfl⟩
   rw [Set.preimage_compl, wordMap_preimage_V]
