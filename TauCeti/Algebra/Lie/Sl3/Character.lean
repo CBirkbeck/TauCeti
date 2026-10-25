@@ -59,7 +59,6 @@ variable (K : Type) [Field K]
 abbrev cartan := (diagonalCartan K (Fin 3)).comap (SpecialLinear.sl (Fin 3) K).incl
 
 /-- A trace-zero matrix belongs to the diagonal subalgebra exactly when it is diagonal. -/
-@[simp]
 theorem mem_cartan_iff_isDiag (A : SpecialLinear.sl (Fin 3) K) :
     A ∈ cartan K ↔ A.val.IsDiag := by
   simp only [cartan, LieSubalgebra.mem_comap, LieSubalgebra.coe_incl,
@@ -375,6 +374,7 @@ variable [Invertible (2 : K)]
 
 /- The direct tensor action is definitionally the restricted matrix action. Selecting it here
 keeps the weight-basis computation on the tensor-product API. -/
+/-- Use the tensor-product Lie ring action for the symmetric-square calculation. -/
 local instance (priority := 2000) :
     LieRingModule (cartan K) ((Fin 3 → K) ⊗[K] (Fin 3 → K)) :=
   TensorProduct.LieModule.lieRingModule
@@ -383,6 +383,7 @@ local instance (priority := 2000) :
     LieModule K (cartan K) ((Fin 3 → K) ⊗[K] (Fin 3 → K)) :=
   TensorProduct.LieModule.lieModule
 
+/-- Restrict the tensor-product Lie ring action to symmetric tensors. -/
 local instance (priority := 2000) :
     LieRingModule (cartan K) (symmetricTensors K (Fin 3 → K)) :=
   symmetricTensorsLieRingModule
