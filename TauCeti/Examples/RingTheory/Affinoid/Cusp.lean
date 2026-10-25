@@ -70,10 +70,7 @@ private theorem map_relation :
     TauCeti.Huber.coe_restrictedOptionEquiv_X_some (R := K) (σ := Unit) ()
   apply Subtype.ext
   rw [map_sub, map_pow, map_pow]
-  -- These subtype coercions are definitionally equal to the underlying series operations;
-  -- no rewrite lemma relates the two presentations.
-  change (Φ K (flatY K) : PowerSeries T) ^ 2 -
-    (Φ K (flatX K) : PowerSeries T) ^ 3 = _
+  simp only [AddSubgroupClass.coe_sub, SubmonoidClass.coe_pow]
   rw [hy, hx, coe_polynomialToRestricted]
   simp only [P, Polynomial.coe_sub, Polynomial.coe_pow, coe_X, coe_C, map_pow]
 
@@ -94,7 +91,8 @@ omit [CompleteSpace K] in
 private theorem cuspMap_C (a : K) : cuspMap K (algebraMap K T a) =
     algebraMap K (B ⧸ Ideal.span {flatY K ^ 2 - flatX K ^ 3}) a := by
   apply (E K).injective
-  -- The local ring homomorphism is a composition by definition, with no named rewrite lemma.
+  -- The ring-homomorphism composition retains a toRingHom projection that prevents
+  -- rewriting by RingEquiv.apply_symm_apply until this defining application is unfolded.
   change (E K) ((E K).symm _) = _
   rw [RingEquiv.apply_symm_apply, ← Ideal.Quotient.mk_algebraMap,
     ← Ideal.Quotient.mk_algebraMap, E, Ideal.quotientEquiv_mk]
@@ -105,6 +103,15 @@ private theorem cuspMap_C (a : K) : cuspMap K (algebraMap K T a) =
 noncomputable def cuspFiniteMap : T →ₐ[K] Cusp K where
   __ := cuspMap K
   commutes' := cuspMap_C K
+
+omit [CompleteSpace K] in
+/-- On any restricted series, the finite map is the quotient class of its inclusion as a
+series independent of Y, expressed by the inverse of the restricted-series iteration map. -/
+@[simp]
+theorem cuspFiniteMap_apply (f : T) : cuspFiniteMap K f =
+    Ideal.Quotient.mk _
+      ((TauCeti.Huber.restrictedOptionEquiv (R := K) (σ := Unit)
+        (c := fun _ => 1)).symm (algebraMap T S f)) := (rfl)
 
 /-- The X-coordinate map into the affinoid cusp is injective. -/
 theorem cuspFiniteMap_injective : Function.Injective (cuspFiniteMap K) := by
@@ -126,35 +133,16 @@ theorem cuspFiniteMap_finite : (cuspFiniteMap K).Finite := by
     (by rw [RingHom.finite_algebraMap]; infer_instance)
 
 omit [CompleteSpace K] in
-/-- The map on a restricted series is quotienting its iterated-series image after undoing
-the variable separation. -/
-theorem cuspFiniteMap_apply (f : T) : cuspFiniteMap K f =
-    Ideal.Quotient.mk _ ((TauCeti.Huber.restrictedOptionEquiv (R := K) (σ := Unit)
-      (c := fun _ => 1)).symm (algebraMap T S f)) := by
-  -- The algebra homomorphism uses the local ring homomorphism by definition;
-  -- unfolding this composition exposes the inverse quotient equivalence.
-  change (E K).symm (algebraMap T _ f) = _
-  apply (E K).injective
-  -- The native cusp presentation and the local flat-coordinate names are definitionally equal;
-  -- their subtype proof terms differ, so quotientEquiv_mk cannot rewrite before this change.
-  change (E K) ((E K).symm (algebraMap T _ f)) =
-    (E K) (Ideal.Quotient.mk _ ((Φ K).symm (algebraMap T S f)))
-  rw [RingEquiv.apply_symm_apply, E, Ideal.quotientEquiv_mk]
-  rw [← Ideal.Quotient.mk_algebraMap, RingEquiv.apply_symm_apply]
-
-omit [CompleteSpace K] in
 /-- The finite map sends X to the class of the X coordinate in the native two-variable quotient. -/
-@[simp] theorem cuspFiniteMap_X : cuspFiniteMap K
+@[simp]
+theorem cuspFiniteMap_X : cuspFiniteMap K
     (⟨MvPowerSeries.X (), MvPowerSeries.isRestricted_X _ _⟩ : T) =
     Ideal.Quotient.mk _
       (⟨MvPowerSeries.X (some ()), MvPowerSeries.isRestricted_X _ _⟩ : B) := by
   rw [cuspFiniteMap_apply]
   apply congrArg (Ideal.Quotient.mk _)
   apply (Φ K).injective
-  -- The public formula uses the comparison equivalence, abbreviated locally by Φ;
-  -- ordinary rewriting does not unfold this abbreviation or the coordinate wrappers.
-  change (Φ K) ((Φ K).symm (algebraMap T S (x K))) = (Φ K) (flatX K)
-  rw [RingEquiv.apply_symm_apply]
+  rw [Φ, RingEquiv.apply_symm_apply]
   apply Subtype.ext
   exact (TauCeti.Huber.coe_restrictedOptionEquiv_X_some (R := K) (σ := Unit)
     (c := fun _ => 1) ()).symm
@@ -162,7 +150,7 @@ omit [CompleteSpace K] in
 /-- The affinoid cusp has Krull dimension one. -/
 theorem ringKrullDim_cusp : ringKrullDim (Cusp K) = 1 := by
   let A := Cusp K
-  let := (cuspFiniteMap K).toAlgebra
+  let := (cuspFiniteMap K).toRingHom.toAlgebra
   have : Module.Finite T A := cuspFiniteMap_finite K
   have : Algebra.IsIntegral T A := Algebra.IsIntegral.of_finite T A
   have : FaithfulSMul T A := (faithfulSMul_iff_algebraMap_injective T A).mpr
