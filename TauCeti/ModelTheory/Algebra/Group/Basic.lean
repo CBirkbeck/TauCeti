@@ -478,8 +478,8 @@ theorem not_realize_commSentence_freeGroup_of {A : Type*} {a b : A} (hab : a ≠
     (realize_commSentence FreeGroup.of a b).mp h
   exact hab (FreeGroup.eq_of_commute_of_of hc)
 
-/-- Named elements commute in any commutative group. -/
-theorem realize_commSentence_commGroup {G A : Type*} [CommGroup G]
+/-- Named elements commute in any commutative multiplication structure. -/
+theorem realize_commSentence_commMagma {G A : Type*} [One G] [Inv G] [CommMagma G]
     (c : A → G) (a b : A) :
     letI : Language.group.Structure G := structureOfGroup G
     letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
@@ -502,7 +502,7 @@ example :
     letI : (Language.constantsOn (Fin 2)).Structure (Multiplicative (Fin 2 → ℤ)) :=
       Language.constantsOn.structure c
     Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 := by
-  exact realize_commSentence_commGroup _ 0 1
+  exact realize_commSentence_commMagma _ 0 1
 
 /-- Every atomic coefficient-language sentence holds in a subsingleton structure. -/
 theorem realize_of_isAtomic_subsingleton {G A : Type*} [Subsingleton G]
