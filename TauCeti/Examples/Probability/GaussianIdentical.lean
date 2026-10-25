@@ -28,6 +28,10 @@ namespace TauCeti.Examples.GaussianIdentical
 /-- The covariance of two identical unit-variance coordinates. -/
 def covariance : Matrix (Unit ⊕ Unit) (Unit ⊕ Unit) ℝ := fun _ _ => 1
 
+/-- Every entry of the covariance of two identical unit-variance coordinates is one. -/
+@[simp] theorem covariance_apply (i j : Unit ⊕ Unit) : covariance i j = 1 := by
+  simp only [covariance]
+
 /-- The joint covariance is positive semidefinite. -/
 theorem covariance_posSemidef : covariance.PosSemidef := by
   convert (Matrix.posSemidef_vecMulVec_self_star (fun _ : Unit ⊕ Unit => (1 : ℝ))) using 1
@@ -35,22 +39,34 @@ theorem covariance_posSemidef : covariance.PosSemidef := by
   simp only [covariance, Matrix.vecMulVec, Pi.star_apply, star_trivial, mul_one, Matrix.of_apply]
 
 /-- Conditioning one coordinate on the other leaves zero residual covariance. -/
-theorem gaussianCondCov_eq_zero : covariance.gaussianCondCov = 0 := by
+@[simp] theorem gaussianCondCov_eq_zero : covariance.gaussianCondCov = 0 := by
   ext i j
   simp only [Matrix.gaussianCondCov_apply_of_unique, covariance, mul_one, ne_eq, one_ne_zero,
     not_false_eq_true, div_self, sub_self, Matrix.zero_apply]
 
-/-- The Gaussian conditional kernel is the Dirac law at the observed value. -/
-theorem gaussianCondKernel_eq_dirac (x : EuclideanSpace ℝ Unit) :
-    (0 : EuclideanSpace ℝ (Unit ⊕ Unit)).gaussianCondKernel covariance x = Measure.dirac x := by
+end TauCeti.Examples.GaussianIdentical
+
+namespace EuclideanSpace
+
+/-- The Gaussian conditional kernel for identical coordinates is the Dirac law at the
+observed value. -/
+@[simp] theorem gaussianCondKernel_eq_dirac_identical (x : EuclideanSpace ℝ Unit) :
+    (0 : EuclideanSpace ℝ (Unit ⊕ Unit)).gaussianCondKernel
+      TauCeti.Examples.GaussianIdentical.covariance x = Measure.dirac x := by
   have h := EuclideanSpace.gaussianCondKernel_apply_of_unique_of_posSemidef
-    (0 : EuclideanSpace ℝ (Unit ⊕ Unit)) covariance_posSemidef x
-    (v₁ := 1) (v₂ := 1) (ρ := 1) rfl rfl (by norm_num [covariance])
+    (0 : EuclideanSpace ℝ (Unit ⊕ Unit))
+    TauCeti.Examples.GaussianIdentical.covariance_posSemidef x
+    (v₁ := 1) (v₂ := 1) (ρ := 1) rfl rfl
+    (by norm_num [TauCeti.Examples.GaussianIdentical.covariance])
   have hx : EuclideanSpace.single (default : Unit) (x default) = x := by
     ext i
     cases i
     simp only [PUnit.default_eq_unit, PiLp.single_eq_same]
   simpa [hx] using h
+
+end EuclideanSpace
+
+namespace TauCeti.Examples.GaussianIdentical
 
 /-- The native conditional distribution of identical Gaussian coordinates is Dirac
 almost everywhere under the law of the observation. -/
