@@ -35,6 +35,14 @@ private theorem one_nonneg : 0 ≤ (1 : Space) := fun _ => zero_le_one
 def semigroup : ContractionSemigroup Space :=
   ContractionSemigroup.ofMultiplication 1 one_nonneg
 
+/-- At time `t`, scalar decay multiplies by `exp (-t)`. -/
+@[simp]
+theorem semigroup_apply (t : ℝ≥0) :
+    semigroup t = Real.exp (-(t : ℝ)) • ContinuousLinearMap.id ℝ Space := by
+  ext f n
+  simpa [semigroup] using
+    ContractionSemigroup.ofMultiplication_apply_apply_apply (1 : Space) one_nonneg t f n
+
 /-- The scalar decay semigroup is the bounded-generator exponential for multiplication by `-1`. -/
 theorem eq_ofBounded : semigroup.toStronglyContinuousSemigroup =
     StronglyContinuousSemigroup.ofBounded (ContinuousLinearMap.mul ℝ Space (-1)) := by
@@ -47,19 +55,16 @@ theorem resolvent_eq_smul_id (lambda : ℝ) (h : 0 < lambda) :
       (lambda + 1)⁻¹ • ContinuousLinearMap.id ℝ Space := by
   rw [semigroup, ContractionSemigroup.ofMultiplication_resolvent_eq]
   ext f n
-  simp only [ContinuousLinearMap.mul_apply', BoundedContinuousFunction.coe_mul,
-    BoundedContinuousFunction.coe_addInv, BoundedContinuousFunction.coe_one, Pi.one_apply,
-    Pi.mul_apply, smul_apply, ContinuousLinearMap.id_apply, BoundedContinuousFunction.coe_smul,
-    smul_eq_mul]
+  simp
 
-/-- The actual resolvents satisfy the first resolvent identity. -/
-theorem resolvent_sub_resolvent (lambda mu : ℝ) (hlambda : 0 < lambda) (hmu : 0 < mu) :
+-- The actual resolvents satisfy the first resolvent identity.
+example (lambda mu : ℝ) (hlambda : 0 < lambda) (hmu : 0 < mu) :
     semigroup.resolvent lambda hlambda - semigroup.resolvent mu hmu =
       (mu - lambda) • (semigroup.resolvent lambda hlambda ∘L semigroup.resolvent mu hmu) :=
   semigroup.resolvent_sub_resolvent lambda mu hlambda hmu
 
-/-- The actual resolvent obeys the contraction-generator norm bound. -/
-theorem norm_resolvent_le (lambda : ℝ) (h : 0 < lambda) :
+-- The actual resolvent obeys the contraction-generator norm bound.
+example (lambda : ℝ) (h : 0 < lambda) :
     ‖semigroup.resolvent lambda h‖ ≤ 1 / lambda :=
   semigroup.resolvent_norm_le lambda h
 
