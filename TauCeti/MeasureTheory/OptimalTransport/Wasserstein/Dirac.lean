@@ -21,8 +21,7 @@ families, a Dirac law is a Wasserstein barycenter of Dirac inputs precisely when
 base-space Frechet barycenter. On the real line the quantile barycenter of Dirac laws is the
 Dirac law at the weighted mean.
 
-These are the Dirac calibration checks in OptimalTransport Layers 8 and 12. The barycenter
-comparison does not require properness or normalized weights.
+The barycenter comparison does not require properness or normalized weights.
 -/
 
 public section
