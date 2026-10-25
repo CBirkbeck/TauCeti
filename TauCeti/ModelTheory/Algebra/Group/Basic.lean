@@ -457,7 +457,8 @@ def commSentence {A : Type*} (a b : A) : (Language.group[[A]]).Sentence :=
   ((Language.group.con a).term * (Language.group.con b).term).equal
     ((Language.group.con b).term * (Language.group.con a).term)
 
-@[simp] theorem realize_commSentence {G A : Type*} [Group G] (c : A → G) (a b : A) :
+@[simp] theorem realize_commSentence {G A : Type*} [One G] [Inv G] [Mul G]
+    (c : A → G) (a b : A) :
     letI : Language.group.Structure G := structureOfGroup G
     letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
     G ⊨ commSentence a b ↔ c a * c b = c b * c a := by
@@ -501,13 +502,10 @@ theorem realize_commSentence_pi_single :
     Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 := by
   exact realize_commSentence_commGroup _ 0 1
 
-/-- Every atomic coefficient-language sentence holds in a subsingleton group. -/
-theorem realize_of_isAtomic_subsingleton {G A : Type*} [Group G] [Subsingleton G]
-    (c : A → G)
+/-- Every atomic coefficient-language sentence holds in a subsingleton structure. -/
+theorem realize_of_isAtomic_subsingleton {G A : Type*} [Subsingleton G]
+    [(Language.group[[A]]).Structure G]
     (φ : (Language.group[[A]]).Sentence) (hφ : φ.IsAtomic) :
-    letI : Language.group.Structure G := structureOfGroup _
-    letI : (Language.constantsOn A).Structure G :=
-      Language.constantsOn.structure c
     G ⊨ φ := by
   cases hφ with
   | equal _ _ => exact Subsingleton.elim _ _
