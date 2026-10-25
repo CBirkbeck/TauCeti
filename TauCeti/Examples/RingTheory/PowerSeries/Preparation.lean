@@ -11,8 +11,7 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 /-!
 # Weierstrass preparation at boundary and non-value-group radii
 
-These examples supply the X−1 and non-value-group-radius checks from
-TauCetiRoadmap/RestrictedPowerSeries/README.md, Layer 4. The polynomial X−1 is its own
+The polynomial X−1 is its own
 Weierstrass polynomial at radius 1, allowing a lower coefficient with norm 1. The same
 calculation works at radius √2 over Q₂, and this radius is proved not to be the norm of any
 Q₂ element. The degree-zero remainder check is already `IsMulDistinguished.weierstrassMod_eq_zero`.
