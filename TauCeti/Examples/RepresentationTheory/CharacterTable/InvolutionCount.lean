@@ -17,37 +17,33 @@ Finite enumeration independently counts the square roots of the identity in `Q�
 The character-table formula then verifies that the degree-weighted indicator sums are two and
 six respectively. The identity is included in each count.
 
-Roadmap: `RepresentationTheory/CharacterTheory`, Frobenius–Schur involution-count worked checks.
+
 -/
 
 public section
 
 namespace TauCeti.Examples.FrobeniusSchur
 
-/-- The quaternion group of order eight has two square roots of the identity. -/
-theorem card_squareRoot_one_quaternion :
-    Nat.card {g : QuaternionGroup 2 // g * g = 1} = 2 := by
-  rw [Nat.card_eq_fintype_card]
-  decide
-
-/-- The dihedral group of order eight has six square roots of the identity. -/
-theorem card_squareRoot_one_dihedral :
-    Nat.card {g : DihedralGroup 4 // g * g = 1} = 6 := by
-  rw [Nat.card_eq_fintype_card]
-  decide
-
-/-- The actual quaternion character table has degree-weighted indicator sum two. -/
-theorem sum_indicator_mul_degree_quaternion :
+/-- The quaternion square-root count and degree-weighted indicator sum are both two. -/
+example : Nat.card {g : QuaternionGroup 2 // g * g = 1} = 2 ∧
     (∑ i : Fin (Nat.card (ConjClasses (QuaternionGroup 2))),
       frobeniusSchurIndicatorRow ℂ i * (characterDegree ℂ i : ℂ)) = 2 := by
+  have hc : Nat.card {g : QuaternionGroup 2 // g * g = 1} = 2 := by
+    rw [Nat.card_eq_fintype_card]
+    decide
+  refine ⟨hc, ?_⟩
   rw [← card_squareRoot_one_eq_sum_frobeniusSchurIndicatorRow_mul_characterDegree]
-  simp only [card_squareRoot_one_quaternion, Nat.cast_ofNat]
+  simp only [hc, Nat.cast_ofNat]
 
-/-- The actual dihedral character table has degree-weighted indicator sum six. -/
-theorem sum_indicator_mul_degree_dihedral :
+/-- The dihedral square-root count and degree-weighted indicator sum are both six. -/
+example : Nat.card {g : DihedralGroup 4 // g * g = 1} = 6 ∧
     (∑ i : Fin (Nat.card (ConjClasses (DihedralGroup 4))),
       frobeniusSchurIndicatorRow ℂ i * (characterDegree ℂ i : ℂ)) = 6 := by
+  have hc : Nat.card {g : DihedralGroup 4 // g * g = 1} = 6 := by
+    rw [Nat.card_eq_fintype_card]
+    decide
+  refine ⟨hc, ?_⟩
   rw [← card_squareRoot_one_eq_sum_frobeniusSchurIndicatorRow_mul_characterDegree]
-  simp only [card_squareRoot_one_dihedral, Nat.cast_ofNat]
+  simp only [hc, Nat.cast_ofNat]
 
 end TauCeti.Examples.FrobeniusSchur
