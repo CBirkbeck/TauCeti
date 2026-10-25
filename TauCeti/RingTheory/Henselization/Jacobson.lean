@@ -64,4 +64,13 @@ theorem extended_le_jacobson (I : Ideal R) :
   simpa only [map_add, map_mul, map_one, AlgHom.commutes] using
     isUnit_stage_of_isUnit_quotient I B hu
 
+/-- Henselization along the unit ideal is the zero ring. -/
+theorem subsingleton_algebra_top : Subsingleton (algebra (⊤ : Ideal R)) := by
+  apply not_nontrivial_iff_subsingleton.mp
+  intro h
+  let := h
+  have hle := extended_le_jacobson (⊤ : Ideal R)
+  simp only [extended, Ideal.map_top] at hle
+  exact bot_ne_top (Ideal.jacobson_eq_top_iff.mp (top_le_iff.mp hle))
+
 end TauCeti.Henselization

@@ -9,6 +9,7 @@ public import Mathlib.RingTheory.Etale.Finite
 public import Mathlib.RingTheory.TotallySplit
 public import TauCeti.RingTheory.Etale.AdjoinRoot
 public import TauCeti.RingTheory.Etale.Idempotent
+public import TauCeti.RingTheory.Ideal.Prod
 public import TauCeti.RingTheory.Idempotents.Refinement
 public import TauCeti.RingTheory.Spectrum.Prime.FreeLocus
 public import TauCeti.RingTheory.Unramified.Section.Idempotent
@@ -193,11 +194,8 @@ theorem quotient_span_singleton (h : IsTotallySplit R T) {ε : T} (hε : IsIdemp
 idempotent `(0, 1)`. -/
 theorem of_prod_fst {A B : Type*} [CommRing A] [CommRing B] [Algebra R A] [Algebra R B]
     (h : IsTotallySplit R (A × B)) : IsTotallySplit R A := by
-  have hfst : RingHom.ker (AlgHom.fst R A B) = Ideal.span {((0, 1) : A × B)} := by
-    ext ⟨a, b⟩
-    simp only [RingHom.mem_ker, AlgHom.fst_apply, Ideal.mem_span_singleton']
-    refine ⟨fun ha ↦ ⟨(0, b), by simp [ha]⟩, fun ⟨⟨_, c⟩, hc⟩ ↦ ?_⟩
-    simpa using (congrArg Prod.fst hc).symm
+  have hfst : RingHom.ker (AlgHom.fst R A B) = Ideal.span {((0, 1) : A × B)} :=
+    RingHom.ker_fst_eq_span A B
   exact (h.quotient_span_singleton (ε := ((0, 1) : A × B)) (by ext <;> simp)).of_algEquiv
     ((Ideal.quotientEquivAlgOfEq R hfst.symm).trans
       (Ideal.quotientKerAlgEquivOfSurjective (f := AlgHom.fst R A B) Prod.fst_surjective))
