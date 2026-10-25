@@ -5,9 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.RingTheory.PowerSeries.Weierstrass.Strassmann
+public import TauCeti.RingTheory.PowerSeries.GaussNorm
 public import TauCeti.RingTheory.MvPowerSeries.TateAlgebra.AnalyticSubst
-public import TauCeti.NumberTheory.Padics.RingHoms
+public import Mathlib.NumberTheory.Padics.RingHoms
 public import TauCeti.NumberTheory.Padics.Basic
 public import Mathlib.FieldTheory.Finite.Basic
 public import Mathlib.NumberTheory.Padics.MahlerBasis
@@ -68,16 +68,20 @@ noncomputable def powSubFunction : C(ℤ_[p], ℚ_[p]) :=
   ⟨fun x => (x : ℚ_[p]) ^ p - x,
     (continuous_subtype_val.pow p).sub continuous_subtype_val⟩
 
+/-- The function evaluates to the polynomial X^p - X on each p-adic integer. -/
+@[simp]
+theorem powSubFunction_apply (x : ℤ_[p]) :
+    powSubFunction p x = (x : ℚ_[p]) ^ p - x := (rfl)
+
 /-- The supremum norm of `x ^ p - x` on Z_p is exactly `p⁻¹`. -/
 theorem norm_powSubFunction : ‖powSubFunction p‖ = (p : ℝ)⁻¹ := by
   apply le_antisymm
   · apply (ContinuousMap.norm_le _ (by positivity)).mpr
     intro x
-    simpa only [powSubFunction, ContinuousMap.coe_mk, ← PadicInt.coe_pow,
+    simpa only [powSubFunction_apply, ← PadicInt.coe_pow,
       ← PadicInt.coe_sub, PadicInt.norm_coe] using norm_pow_sub_le p x
   · have h := (powSubFunction p).norm_coe_le_norm (p : ℤ_[p])
-    change ‖((p : ℤ_[p]) : ℚ_[p]) ^ p - ((p : ℤ_[p]) : ℚ_[p])‖ ≤
-      ‖powSubFunction p‖ at h
+    rw [powSubFunction_apply] at h
     simpa only [PadicInt.coe_natCast, norm_prime_pow_sub] using h
 
 /-- Mahler's isometry gives the same norm `p⁻¹` for the coefficient sequence. -/
@@ -85,8 +89,8 @@ theorem norm_mahler_powSubFunction :
     ‖PadicInt.mahlerEquiv ℚ_[p] (powSubFunction p)‖ = (p : ℝ)⁻¹ := by
   rw [LinearIsometryEquiv.norm_map, norm_powSubFunction]
 
-/-- The nonzero polynomial `X ^ p - X` over F_p vanishes at every point. -/
-theorem X_pow_sub_X_nonzero_vanishes : (X ^ p - X : (ZMod p)[X]) ≠ 0 ∧
+-- The nonzero polynomial X^p - X over F_p vanishes at every point.
+example : (X ^ p - X : (ZMod p)[X]) ≠ 0 ∧
     ∀ x : ZMod p, (X ^ p - X : (ZMod p)[X]).eval x = 0 := by
   exact ⟨Polynomial.X_pow_sub_X_ne_zero hp.out.one_lt, fun x => by simp [ZMod.pow_card]⟩
 
@@ -95,18 +99,13 @@ section Translation
 variable (K : Type*) [NormedField K] [IsUltrametricDist K] [CompleteSpace K]
 local instance (i : Fin 1) : Fact (0 < (fun _ : Fin 1 => (1 : ℝ)) i) := ⟨zero_lt_one⟩
 
-/-- Translation by 1 is an automorphism of the unit-radius Tate algebra in one variable. -/
-noncomputable def translationOne :
-    MvPowerSeries.IsRestricted.subring (R := K) (fun _ : Fin 1 => (1 : ℝ)) ≃ₐ[K]
-      MvPowerSeries.IsRestricted.subring (R := K) (fun _ : Fin 1 => (1 : ℝ)) :=
-  TauCeti.MvPowerSeries.restrictedTranslateEquiv (fun _ : Fin 1 => (1 : K))
-    (fun _ => by simp)
-
-/-- The automorphism `translationOne` sends the variable to `X + 1`. -/
-theorem translationOne_X (i : Fin 1) :
-    translationOne K ⟨MvPowerSeries.X i, MvPowerSeries.isRestricted_X _ i⟩ =
-      ⟨MvPowerSeries.X i, MvPowerSeries.isRestricted_X _ i⟩ + 1 := by
-  simp [translationOne]
+-- Translation by 1 is an automorphism despite its nonzero constant term.
+example (i : Fin 1) :
+    TauCeti.MvPowerSeries.restrictedTranslateEquiv
+      (r := fun _ : Fin 1 => (1 : ℝ)) (fun _ => (1 : K)) (fun _ => by simp)
+      ⟨MvPowerSeries.X i, MvPowerSeries.isRestricted_X _ i⟩ =
+        ⟨MvPowerSeries.X i, MvPowerSeries.isRestricted_X _ i⟩ + 1 := by
+  simp
 
 end Translation
 end TauCeti.Examples.RestrictedPowerSeries
