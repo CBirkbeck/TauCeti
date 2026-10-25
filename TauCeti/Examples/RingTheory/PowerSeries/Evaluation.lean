@@ -17,7 +17,8 @@ public import Mathlib.NumberTheory.Padics.MahlerBasis
 
 Translation by 1 is an automorphism even though its constant term is nonzero. The polynomial
 `X ^ p - X` has Gauss norm 1 over Q_p, but all its values on Z_p have norm at most `p⁻¹`.
-Over the trivially valued field F_p, the same nonzero polynomial vanishes at every point.
+Over the trivially valued field F_p, the same nonzero polynomial vanishes at every point;
+its nonvanishing is `Polynomial.X_pow_sub_X_ne_zero`.
 The bound over Z_p is attained at p, giving the exact supremum and Mahler coefficient norms
 of this function. The two norms differ from its monomial Gauss norm.
 -/
@@ -84,13 +85,10 @@ theorem norm_mahler_powSubFunction :
     ‖PadicInt.mahlerEquiv ℚ_[p] (powSubFunction p)‖ = (p : ℝ)⁻¹ := by
   rw [LinearIsometryEquiv.norm_map, norm_powSubFunction]
 
-/-- The polynomial `X ^ p - X` over F_p is nonzero. -/
-theorem X_pow_sub_X_ne_zero : (X ^ p - X : (ZMod p)[X]) ≠ 0 :=
-  Polynomial.X_pow_sub_X_ne_zero hp.out.one_lt
-
 /-- The nonzero polynomial `X ^ p - X` over F_p vanishes at every point. -/
-theorem eval_X_pow_sub_X (x : ZMod p) : (X ^ p - X : (ZMod p)[X]).eval x = 0 := by
-  simp [ZMod.pow_card]
+theorem X_pow_sub_X_nonzero_vanishes : (X ^ p - X : (ZMod p)[X]) ≠ 0 ∧
+    ∀ x : ZMod p, (X ^ p - X : (ZMod p)[X]).eval x = 0 := by
+  exact ⟨Polynomial.X_pow_sub_X_ne_zero hp.out.one_lt, fun x => by simp [ZMod.pow_card]⟩
 
 section Translation
 
