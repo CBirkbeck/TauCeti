@@ -448,9 +448,9 @@ end Homomorphisms
 
 end MonoidHom
 
-namespace FirstOrder.Language.group
+namespace TauCeti.Group
 
-open TauCeti.Group
+open FirstOrder FirstOrder.Language
 
 /-- The coefficient sentence asserting that two named elements commute. -/
 def commSentence {A : Type*} (a b : A) : (Language.group[[A]]).Sentence :=
@@ -465,34 +465,50 @@ def commSentence {A : Type*} (a b : A) : (Language.group[[A]]).Sentence :=
   rfl
 
 /-- Distinct free generators do not satisfy the coefficient commutativity sentence. -/
-theorem realize_comm_false :
+theorem not_realize_commSentence_freeGroup_of {A : Type*} {a b : A} (hab : a ≠ b) :
+    letI : Language.group.Structure (FreeGroup A) := structureOfGroup _
+    letI : (Language.constantsOn A).Structure (FreeGroup A) :=
+      Language.constantsOn.structure FreeGroup.of
+    ¬ FreeGroup A ⊨ commSentence a b := by
+  intro h
+  have hc : Commute (FreeGroup.of a) (FreeGroup.of b) :=
+    (realize_commSentence FreeGroup.of a b).mp h
+  exact hab (FreeGroup.eq_of_commute_of_of hc)
+
+/-- Named elements commute in any commutative group. -/
+theorem realize_commSentence_commGroup {G A : Type*} [CommGroup G]
+    (c : A → G) (a b : A) :
+    letI : Language.group.Structure G := structureOfGroup G
+    letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
+    G ⊨ commSentence a b := by
+  exact (realize_commSentence c a b).mpr (mul_comm _ _)
+
+/-- The two free generators give a noncommutative coefficient interpretation. -/
+theorem not_realize_commSentence_freeGroup_fin2 :
     letI : Language.group.Structure (FreeGroup (Fin 2)) := structureOfGroup _
     letI : (Language.constantsOn (Fin 2)).Structure (FreeGroup (Fin 2)) :=
       Language.constantsOn.structure FreeGroup.of
-    ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 := by
-  intro h
-  have hc : Commute (FreeGroup.of (0 : Fin 2)) (FreeGroup.of 1) :=
-    (realize_commSentence FreeGroup.of 0 1).mp h
-  have heq : (0 : Fin 2) = 1 := FreeGroup.eq_of_commute_of_of hc
-  contradiction
+    ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 :=
+  not_realize_commSentence_freeGroup_of (by decide)
 
 /-- The standard basis of an abelian group satisfies coefficient commutativity. -/
-theorem realize_comm_true :
+theorem realize_commSentence_pi_single :
     let c : Fin 2 → Multiplicative (Fin 2 → ℤ) :=
       fun a => Multiplicative.ofAdd (Pi.single a 1)
     letI : Language.group.Structure (Multiplicative (Fin 2 → ℤ)) := structureOfGroup _
     letI : (Language.constantsOn (Fin 2)).Structure (Multiplicative (Fin 2 → ℤ)) :=
       Language.constantsOn.structure c
     Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 := by
-  exact (realize_commSentence _ 0 1).mpr (mul_comm _ _)
+  exact realize_commSentence_commGroup _ 0 1
 
-/-- Every atomic coefficient-language sentence holds in the trivial group. -/
-theorem trivial_models {A : Type*} (c : A → Multiplicative (Fin 0 → ℤ))
+/-- Every atomic coefficient-language sentence holds in a subsingleton group. -/
+theorem realize_of_isAtomic_subsingleton {G A : Type*} [Group G] [Subsingleton G]
+    (c : A → G)
     (φ : (Language.group[[A]]).Sentence) (hφ : φ.IsAtomic) :
-    letI : Language.group.Structure (Multiplicative (Fin 0 → ℤ)) := structureOfGroup _
-    letI : (Language.constantsOn A).Structure (Multiplicative (Fin 0 → ℤ)) :=
+    letI : Language.group.Structure G := structureOfGroup _
+    letI : (Language.constantsOn A).Structure G :=
       Language.constantsOn.structure c
-    Multiplicative (Fin 0 → ℤ) ⊨ φ := by
+    G ⊨ φ := by
   cases hφ with
   | equal _ _ => exact Subsingleton.elim _ _
   | rel r _ =>
@@ -500,4 +516,4 @@ theorem trivial_models {A : Type*} (c : A → Multiplicative (Fin 0 → ℤ))
     | inl r => cases r
     | inr r => cases r
 
-end FirstOrder.Language.group
+end TauCeti.Group
