@@ -48,21 +48,25 @@ end TauCeti.Examples.GaussianIdentical
 
 namespace EuclideanSpace
 
-/-- The Gaussian conditional kernel for identical coordinates is the Dirac law at the
-observed value. -/
-@[simp] theorem gaussianCondKernel_eq_dirac_identical (x : EuclideanSpace ℝ Unit) :
-    (0 : EuclideanSpace ℝ (Unit ⊕ Unit)).gaussianCondKernel
-      TauCeti.Examples.GaussianIdentical.covariance x = Measure.dirac x := by
-  have h := EuclideanSpace.gaussianCondKernel_apply_of_unique_of_posSemidef
+/-- The conditional mean of identical Gaussian coordinates is the observed value. -/
+@[simp] theorem gaussianCondMean_eq_self_identical (x : EuclideanSpace ℝ Unit) :
+    (0 : EuclideanSpace ℝ (Unit ⊕ Unit)).gaussianCondMean
+      TauCeti.Examples.GaussianIdentical.covariance x = x := by
+  ext i
+  cases i
+  have h := EuclideanSpace.gaussianCondMean_apply_of_unique_of_posSemidef
     (0 : EuclideanSpace ℝ (Unit ⊕ Unit))
-    TauCeti.Examples.GaussianIdentical.covariance_posSemidef x
+    TauCeti.Examples.GaussianIdentical.covariance_posSemidef x default
     (v₁ := 1) (v₂ := 1) (ρ := 1) rfl rfl
     (by norm_num [TauCeti.Examples.GaussianIdentical.covariance])
-  have hx : EuclideanSpace.single (default : Unit) (x default) = x := by
-    ext i
-    cases i
-    simp only [PUnit.default_eq_unit, PiLp.single_eq_same]
-  simpa [hx] using h
+  simpa using h
+
+/-- The Gaussian conditional kernel for identical coordinates is the Dirac law at the
+observed value. -/
+theorem gaussianCondKernel_eq_dirac_identical (x : EuclideanSpace ℝ Unit) :
+    (0 : EuclideanSpace ℝ (Unit ⊕ Unit)).gaussianCondKernel
+      TauCeti.Examples.GaussianIdentical.covariance x = Measure.dirac x := by
+  simp
 
 end EuclideanSpace
 
