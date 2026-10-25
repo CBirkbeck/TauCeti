@@ -29,16 +29,10 @@ namespace TauCeti.Examples.TateAlgebra
 
 variable (R : Type*) [NormedCommRing R] [IsUltrametricDist R]
 
-/-- Without variables, the unit-radius Tate algebra is the coefficient ring. -/
-noncomputable def zeroVariablesEquiv :
-    MvPowerSeries.IsRestricted.subring (R := R) (fun _ : PEmpty => (1 : ℝ)) ≃ₐ[R] R :=
-  (AlgEquiv.ofBijective (Algebra.ofId R _)
-    ⟨fun a b h => by
-      have hcoeff := congrArg (fun f : MvPowerSeries.IsRestricted.subring (R := R)
-        (fun _ : PEmpty => (1 : ℝ)) =>
-          MvPowerSeries.constantCoeff (f : MvPowerSeries PEmpty R)) h
-      simpa using hcoeff,
-      MvPowerSeries.algebraMap_isRestrictedSubring_surjective⟩).symm
+-- The zero-variable comparison evaluates each restricted series at its constant coefficient.
+example (f : MvPowerSeries.IsRestricted.subring (R := R) (fun _ : PEmpty => (1 : ℝ))) :
+    MvPowerSeries.IsRestricted.zeroVariablesEquiv R f =
+      MvPowerSeries.constantCoeff (f : MvPowerSeries PEmpty R) := by simp
 
 /-- The quotient by the degree-zero polynomial 1 is the zero ring. -/
 theorem subsingleton_quotient_one : Subsingleton (PowerSeries.IsRestricted.subring (R := R) 1 ⧸
@@ -47,22 +41,6 @@ theorem subsingleton_quotient_one : Subsingleton (PowerSeries.IsRestricted.subri
   infer_instance
 
 variable (K : Type*) [NormedField K] [IsUltrametricDist K] [CompleteSpace K]
-
-/-- Quotienting by a linear polynomial with root in the unit ball gives the coefficient field. -/
-noncomputable def linearQuotientEquiv (a : K) (ha : ‖a‖ ≤ 1) :
-    (PowerSeries.IsRestricted.subring (R := K) 1 ⧸
-      Ideal.span {polynomialToRestricted 1 (X - C a)}) ≃ₐ[K] K := by
-  have hd : IsDistinguished 1 1 ((X - C a : K[X]) : PowerSeries K) := by
-    simpa using isDistinguished_X_sub_C zero_lt_one ha
-  exact (hd.polynomialQuotientEquiv zero_lt_one (isMonicOfDegree_X_sub_one a)).symm.trans
-    (Polynomial.quotientSpanXSubCAlgEquiv a)
-
-/-- The linear quotient comparison sends the class of X to its prescribed root. -/
-@[simp]
-theorem linearQuotientEquiv_X (a : K) (ha : ‖a‖ ≤ 1) :
-    linearQuotientEquiv K a ha
-      (Ideal.Quotient.mk _ (polynomialToRestricted 1 (X : K[X]))) = a := by
-  simp [linearQuotientEquiv]
 
 /-- The unit-radius Tate algebra in one variable has dimension 1. -/
 theorem dimension_one : ringKrullDim
@@ -146,6 +124,7 @@ theorem quadraticBasis_apply (i : Fin 2) : quadraticBasis p i =
   rfl
 
 /-- The class of X in the quadratic restricted-series quotient satisfies X² = p. -/
+@[simp]
 theorem quadratic_X_sq :
     (Ideal.Quotient.mk
       (Ideal.span {polynomialToRestricted 1 (X ^ 2 - C (p : ℚ_[p]))})

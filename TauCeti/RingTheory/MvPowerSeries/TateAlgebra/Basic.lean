@@ -52,6 +52,8 @@ largest summand, so Mathlib's dominant-antidiagonal theorem applies.
 * `MvPowerSeries.exists_achievesGaussNorm` and `MvPowerSeries.exists_norm_coeff_mul_prod_gap`: a
   restricted series attains its norm, and its smaller weighted coefficient norms stay below a
   constant smaller than its norm.
+* `MvPowerSeries.IsRestricted.zeroVariablesEquiv` identifies the algebra without variables with
+  its coefficient ring, by the constant coefficient.
 * The restricted-series subring inherits `CompleteSpace`, `IsUltrametricDist`, and
   `NormMulClass` from its coefficient ring.
 * `MvPowerSeries.dense_closure_monomial`: polynomials with coefficients in a dense subset of the
@@ -615,6 +617,31 @@ theorem IsRestricted.coe_renameAlgEquiv (e : σ ≃ τ) (c : τ → ℝ)
     (renameAlgEquiv e c f : MvPowerSeries τ R) = renameEquiv R e f := (rfl)
 
 end Rename
+
+section Empty
+
+variable (R : Type*) [NormedCommRing R] [IsUltrametricDist R]
+
+/-- Without variables, the unit-radius Tate algebra is the coefficient ring. -/
+noncomputable def IsRestricted.zeroVariablesEquiv :
+    MvPowerSeries.IsRestricted.subring (R := R) (fun _ : PEmpty => (1 : ℝ)) ≃ₐ[R] R :=
+  (AlgEquiv.ofBijective (Algebra.ofId R _)
+    ⟨fun a b h => by
+      have hcoeff := congrArg (fun f : MvPowerSeries.IsRestricted.subring (R := R)
+        (fun _ : PEmpty => (1 : ℝ)) =>
+          MvPowerSeries.constantCoeff (f : MvPowerSeries PEmpty R)) h
+      simpa using hcoeff,
+      MvPowerSeries.algebraMap_isRestrictedSubring_surjective⟩).symm
+
+/-- The zero-variable comparison is the constant coefficient. -/
+@[simp]
+theorem IsRestricted.zeroVariablesEquiv_apply
+    (f : IsRestricted.subring (R := R) (fun _ : PEmpty => (1 : ℝ))) :
+    zeroVariablesEquiv R f = constantCoeff (f : MvPowerSeries PEmpty R) := by
+  obtain ⟨r, rfl⟩ := algebraMap_isRestrictedSubring_surjective (R := R) f
+  simp [zeroVariablesEquiv]
+
+end Empty
 
 end MvPowerSeries
 
