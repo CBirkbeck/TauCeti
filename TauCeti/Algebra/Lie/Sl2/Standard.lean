@@ -427,6 +427,34 @@ theorem lie_slFinTwoBasis_two (v : Sl2Std K n) : ⁅slFinTwoBasis K 2, v⁆ = di
   rw [lie_eq_rep_apply, rep_apply_basis]
   simp
 
+variable (K)
+
+/-- Every Lie algebra element acts as zero on the one-dimensional module `V(0)`. -/
+@[simp] theorem lie_eq_zero (x : SpecialLinear.sl (Fin 2) K) (v : Sl2Std K 0) : ⁅x, v⁆ = 0 := by
+  rw [eq_smul_single_add_smul_single_add_smul_singleSubSingle x zero_ne_one]
+  simp only [add_lie, smul_lie, ← slFinTwoBasis_zero, ← slFinTwoBasis_one,
+    ← slFinTwoBasis_two, Sl2Std.lie_slFinTwoBasis_zero, Sl2Std.lie_slFinTwoBasis_one,
+    Sl2Std.lie_slFinTwoBasis_two]
+  apply funext
+  intro i
+  fin_cases i
+  simp [Sl2Std.diag_apply]
+
+/-- The action on `V(1)` is ordinary multiplication by the underlying two-by-two matrix. -/
+theorem lie_eq_mulVec (x : SpecialLinear.sl (Fin 2) K) (v : Sl2Std K 1) :
+    (fun i : Fin 2 => (⁅x, v⁆ : Sl2Std K 1) i) = x.val.mulVec v := by
+  rw [eq_smul_single_add_smul_single_add_smul_singleSubSingle x zero_ne_one]
+  simp only [add_lie, smul_lie, ← slFinTwoBasis_zero, ← slFinTwoBasis_one,
+    ← slFinTwoBasis_two, Sl2Std.lie_slFinTwoBasis_zero, Sl2Std.lie_slFinTwoBasis_one,
+    Sl2Std.lie_slFinTwoBasis_two]
+  ext i
+  fin_cases i <;>
+    simp [Sl2Std.raise_apply, Sl2Std.lower_apply, Sl2Std.diag_apply,
+      Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+
+
+variable {K}
+
 /-- The lowering operator is the endomorphism by which `f` acts, which is the form in which
 `TauCeti/Algebra/Lie/Sl2/WeightString.lean` writes the weight string. -/
 theorem toEnd_slFinTwoBasis_one :
