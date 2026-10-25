@@ -14,8 +14,7 @@ public import TauCeti.Analysis.Normed.Operator.RowCompact.CompletelyContinuous
 Over a complete nontrivially normed ultrametric field, the operator on null sequences
 `x ↦ (∑' j, x j) e₀` is row compact and completely continuous. Nevertheless, every finite
 input-coordinate truncation has operator-norm error at least one. This distinguishes input
-truncation from the output truncations in the row-compact criterion, as required by
-CompactOperators §0.2.
+truncation from the output truncations in the row-compact criterion.
 -/
 
 public section
