@@ -1,0 +1,39 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import TauCeti.RepresentationTheory.Lie.Ado.ArbitraryField
+public import Mathlib.Algebra.Field.ZMod
+
+/-!
+# Ado–Iwasawa over the field with two elements
+
+This instantiates the arbitrary-field theorem on an arbitrary finite-dimensional Lie algebra
+in characteristic two. It checks that neither characteristic zero, algebraic closedness nor a
+lower bound on the characteristic is required.
+
+Roadmap: `RepresentationTheory/AdoIwasawa`, Layer 8 acceptance and Layer 9 characteristic dispatch.
+-/
+
+public section
+
+namespace TauCeti
+
+attribute [local instance 100] LieRing.ofAssociativeRing
+
+universe u
+
+local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+
+/-- A finite-dimensional Lie algebra over `𝔽₂` admits a faithful finite-dimensional action. -/
+theorem exists_faithful_finiteDimensional_zmod_two (L : Type u) [LieRing L]
+    [LieAlgebra (ZMod 2) L] [FiniteDimensional (ZMod 2) L] :
+    ∃ (V : Type u) (_ : AddCommGroup V) (_ : Module (ZMod 2) V)
+      (_ : FiniteDimensional (ZMod 2) V)
+      (ρ : L →ₗ⁅ZMod 2⁆ Module.End (ZMod 2) V), Function.Injective ρ :=
+  adoIwasawa (ZMod 2) L
+
+end TauCeti
