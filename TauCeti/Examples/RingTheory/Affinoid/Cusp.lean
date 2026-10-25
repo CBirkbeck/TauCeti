@@ -107,7 +107,6 @@ noncomputable def cuspFiniteMap : T →ₐ[K] Cusp K where
 omit [CompleteSpace K] in
 /-- On any restricted series, the finite map is the quotient class of its inclusion as a
 series independent of Y, expressed by the inverse of the restricted-series iteration map. -/
-@[simp]
 theorem cuspFiniteMap_apply (f : T) : cuspFiniteMap K f =
     Ideal.Quotient.mk _
       ((TauCeti.Huber.restrictedOptionEquiv (R := K) (σ := Unit)
