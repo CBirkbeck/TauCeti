@@ -8,6 +8,7 @@ module
 public import TauCeti.MeasureTheory.Measure.FrechetMean.TwoPoint
 public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Rearrangement
 public import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Space
+import TauCeti.Probability.Distributions.Dirac
 import TauCeti.Analysis.Normed.Group.WeightedVariance
 import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.Borel
 import TauCeti.MeasureTheory.OptimalTransport.Wasserstein.FrechetMean
@@ -97,6 +98,20 @@ theorem quantileBarycenter_def (w : ι → ℝ≥0) (μ : ι → Measure ℝ) :
     quantileBarycenter w μ =
       (volume.restrict (Ioo (0 : ℝ) 1)).map fun t ↦ ∑ i, (w i : ℝ) * (μ i).quantile t := by
   rw [quantileBarycenter]
+
+/-- The real quantile barycenter of Dirac laws is Dirac at the weighted sum of their atoms. -/
+@[simp]
+theorem quantileBarycenter_dirac (w : ι → ℝ≥0) (x : ι → ℝ) :
+    quantileBarycenter w (fun j => Measure.dirac (x j)) =
+      Measure.dirac (∑ j, (w j : ℝ) * x j) := by
+  rw [quantileBarycenter_def]
+  have h : (fun t => ∑ j, (w j : ℝ) * (Measure.dirac (x j)).quantile t) =ᵐ[
+      volume.restrict (Ioo (0 : ℝ) 1)] (fun _ => ∑ j, (w j : ℝ) * x j) := by
+    filter_upwards [ae_restrict_mem measurableSet_Ioo] with t ht
+    simp only [Measure.quantile_dirac _ ht.1 ht.2.le]
+  rw [Measure.map_congr h, Measure.map_const]
+  simp only [MeasurableSet.univ, Measure.restrict_apply, univ_inter, Real.volume_Ioo, sub_zero,
+    ENNReal.ofReal_one, one_smul]
 
 /-- The quantile barycenter is a probability law, whatever the weights and the laws. -/
 instance isProbabilityMeasure_quantileBarycenter (w : ι → ℝ≥0) (μ : ι → Measure ℝ) :

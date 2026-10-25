@@ -312,6 +312,22 @@ theorem mk_coe (μ : WassersteinSpace p X) :
 
 end Basic
 
+section Dirac
+
+variable [MeasurableSpace X] [PseudoMetricSpace X] [OpensMeasurableSpace X]
+
+/-- The Dirac law at `x`, as a native finite-moment Wasserstein point. -/
+def dirac (p : ℝ≥0∞) (x : X) : WassersteinSpace p X :=
+  mk ⟨Measure.dirac x, inferInstance⟩ (hasFiniteMoment_dirac p x)
+
+/-- The underlying measure of the finite-moment Dirac law is the original point mass. -/
+@[simp]
+theorem coe_dirac (p : ℝ≥0∞) (x : X) :
+    ((dirac p x : ProbabilityMeasure X) : Measure X) = Measure.dirac x :=
+  congrArg ProbabilityMeasure.toMeasure (coe_mk _ _)
+
+end Dirac
+
 section MetricGround
 
 variable [MeasurableSpace X] [PseudoMetricSpace X] [BorelSpace X] [SecondCountableTopology X]
@@ -481,6 +497,13 @@ theorem dist_def (μ ν : WassersteinSpace p X) :
     dist μ ν = (wassersteinEDist p
       ((μ : ProbabilityMeasure X) : Measure X) ((ν : ProbabilityMeasure X) : Measure X)).toReal :=
   (rfl)
+
+/-- The Dirac embedding preserves the ground distance for every Wasserstein exponent
+at least one. -/
+theorem isometry_dirac : Isometry (dirac (X := X) p) := by
+  intro x y
+  rw [edist_def, coe_dirac, coe_dirac]
+  exact wassersteinEDist_dirac_dirac (ne_of_gt (zero_lt_one.trans_le Fact.out)) x y
 
 end PseudoMetric
 
