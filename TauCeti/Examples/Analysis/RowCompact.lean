@@ -5,7 +5,6 @@ Authors: Codex
 -/
 module
 
-public import TauCeti.Topology.ContinuousMap.ZeroAtInfty.Matrix
 public import TauCeti.Analysis.Normed.Operator.RowCompact.CompletelyContinuous
 
 /-!
@@ -45,7 +44,7 @@ theorem summationOperator_apply (x : C₀(ℕ, K)) (i : ℕ) :
       ↓reduceIte, mul_one, mul_zero, tsum_zero]
 
 /-- The summation operator is row compact because only its zeroth output row is nonzero. -/
-theorem summationOperator_isRowCompact : (summationOperator (K := K)).IsRowCompact := by
+theorem isRowCompact_summationOperator : (summationOperator (K := K)).IsRowCompact := by
   apply ContinuousLinearMap.isRowCompact_of_norm_matrixCoeff_le
     (r := fun i => ‖single (0 : ℕ) (1 : K) i‖)
     (by simpa only [coe_single, norm_zero] using
@@ -84,10 +83,10 @@ theorem Finset.one_le_norm_summationOperator_sub_comp_indicator (s : Finset ℕ)
 
 namespace ZeroAtInftyContinuousMap
 
-/-- The summation operator is completely continuous by the native row-compact criterion. -/
-theorem summationOperator_isCompletelyContinuous :
+/-- The summation operator is completely continuous. -/
+theorem isCompletelyContinuous_summationOperator :
     (summationOperator (K := K)).IsCompletelyContinuous :=
-  ContinuousLinearMap.isRowCompact_iff_isCompletelyContinuous.mp summationOperator_isRowCompact
+  ContinuousLinearMap.isRowCompact_iff_isCompletelyContinuous.mp isRowCompact_summationOperator
 
 /-- Input-coordinate truncations fail to approximate the summation operator in norm. -/
 theorem not_tendsto_norm_summationOperator_sub_comp_indicator :
