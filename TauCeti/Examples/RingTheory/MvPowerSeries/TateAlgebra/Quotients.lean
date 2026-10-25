@@ -7,9 +7,7 @@ module
 
 public import TauCeti.RingTheory.MvPowerSeries.TateAlgebra.KrullDimension
 public import TauCeti.RingTheory.PowerSeries.Weierstrass.Quotient
-public import Mathlib.RingTheory.Polynomial.Quotient
-public import Mathlib.RingTheory.AdjoinRoot
-public import Mathlib.NumberTheory.Padics.PadicIntegers
+public import Mathlib.NumberTheory.Padics.PadicNumbers
 
 /-!
 # Quotient checks for Tate algebras
@@ -18,6 +16,9 @@ These examples identify the zero-variable algebra,
 compute the one-variable dimension and linear quotients, include the zero quotient by 1, and
 construct the basis 1, X of Q_p⟨X⟩/(X²-p) with its quadratic relation. The companion
 `Examples/RingTheory/MvPowerSeries/TateAlgebra/Expand.lean` supplies the radius-√p presentation.
+
+The quadratic basis transports Mathlib’s `AdjoinRoot.powerBasis` through
+`IsDistinguished.polynomialQuotientEquiv`, retaining its generator and defining relation.
 -/
 
 public section
@@ -26,25 +27,38 @@ open Polynomial
 open TauCeti.PowerSeries
 namespace TauCeti.Examples.TateAlgebra
 
-variable (K : Type*) [NormedField K] [IsUltrametricDist K] [CompleteSpace K]
+variable (R : Type*) [NormedCommRing R] [IsUltrametricDist R]
 
-/-- Without variables, the unit-radius Tate algebra is the coefficient field. -/
+/-- Without variables, the unit-radius Tate algebra is the coefficient ring. -/
 noncomputable def zeroVariablesEquiv :
-    MvPowerSeries.IsRestricted.subring (R := K) (fun _ : PEmpty => (1 : ℝ)) ≃ₐ[K] K :=
-  (AlgEquiv.ofBijective (Algebra.ofId K _)
-    ⟨(algebraMap K _).injective,
+    MvPowerSeries.IsRestricted.subring (R := R) (fun _ : PEmpty => (1 : ℝ)) ≃ₐ[R] R :=
+  (AlgEquiv.ofBijective (Algebra.ofId R _)
+    ⟨fun a b h => by
+      have hcoeff := congrArg (fun f : MvPowerSeries.IsRestricted.subring (R := R)
+        (fun _ : PEmpty => (1 : ℝ)) =>
+          MvPowerSeries.constantCoeff (f : MvPowerSeries PEmpty R)) h
+      simpa using hcoeff,
       MvPowerSeries.algebraMap_isRestrictedSubring_surjective⟩).symm
+
+/-- The quotient by the degree-zero polynomial 1 is the zero ring. -/
+theorem subsingleton_quotient_one : Subsingleton (PowerSeries.IsRestricted.subring (R := R) 1 ⧸
+    Ideal.span {(1 : PowerSeries.IsRestricted.subring (R := R) 1)}) := by
+  rw [Ideal.span_singleton_one]
+  infer_instance
+
+variable (K : Type*) [NormedField K] [IsUltrametricDist K] [CompleteSpace K]
 
 /-- Quotienting by a linear polynomial with root in the unit ball gives the coefficient field. -/
 noncomputable def linearQuotientEquiv (a : K) (ha : ‖a‖ ≤ 1) :
     (PowerSeries.IsRestricted.subring (R := K) 1 ⧸
-      Ideal.span {polynomialToRestricted 1 (X - C a)}) ≃ₐ[K] K :=
-  ((show IsDistinguished 1 1 ((X - C a : K[X]) : PowerSeries K) by
-    simpa using isDistinguished_X_sub_C zero_lt_one ha).polynomialQuotientEquiv
-      zero_lt_one (isMonicOfDegree_X_sub_one a)).symm.trans
+      Ideal.span {polynomialToRestricted 1 (X - C a)}) ≃ₐ[K] K := by
+  have hd : IsDistinguished 1 1 ((X - C a : K[X]) : PowerSeries K) := by
+    simpa using isDistinguished_X_sub_C zero_lt_one ha
+  exact (hd.polynomialQuotientEquiv zero_lt_one (isMonicOfDegree_X_sub_one a)).symm.trans
     (Polynomial.quotientSpanXSubCAlgEquiv a)
 
 /-- The linear quotient comparison sends the class of X to its prescribed root. -/
+@[simp]
 theorem linearQuotientEquiv_X (a : K) (ha : ‖a‖ ≤ 1) :
     linearQuotientEquiv K a ha
       (Ideal.Quotient.mk _ (polynomialToRestricted 1 (X : K[X]))) = a := by
@@ -61,13 +75,6 @@ theorem finrank_quotient_X_sub_one : Module.finrank K (PowerSeries.IsRestricted.
     Ideal.span {polynomialToRestricted 1 (X - C (1 : K))}) = 1 := by
   rw [(linearQuotientEquiv K 1 (by simp)).toLinearEquiv.finrank_eq]
   exact Module.finrank_self K
-
-omit [CompleteSpace K] in
-/-- The quotient by the degree-zero polynomial 1 is the zero ring. -/
-theorem subsingleton_quotient_one : Subsingleton (PowerSeries.IsRestricted.subring (R := K) 1 ⧸
-    Ideal.span {(1 : PowerSeries.IsRestricted.subring (R := K) 1)}) := by
-  rw [Ideal.span_singleton_one]
-  infer_instance
 
 variable (p : ℕ) [hp : Fact p.Prime]
 
@@ -117,8 +124,7 @@ private theorem quadraticPowerBasis_gen : (quadraticPowerBasis p).gen =
 /-- The power-basis generator satisfies the relation X² = p. -/
 private theorem quadraticPowerBasis_gen_sq :
     (quadraticPowerBasis p).gen ^ 2 = algebraMap ℚ_[p] _ p := by
-  change (quadraticQuotientEquiv p) (AdjoinRoot.root (X ^ 2 - C (p : ℚ_[p]))) ^ 2 = _
-  rw [← map_pow]
+  rw [quadraticPowerBasis, PowerBasis.map_gen, AdjoinRoot.powerBasis_gen, ← map_pow]
   have h : AdjoinRoot.root (X ^ 2 - C (p : ℚ_[p])) ^ 2 =
       algebraMap ℚ_[p] _ p := by
     have h := AdjoinRoot.eval₂_root (X ^ 2 - C (p : ℚ_[p]))
@@ -132,6 +138,7 @@ noncomputable def quadraticBasis : Module.Basis (Fin 2) ℚ_[p]
   (quadraticPowerBasis p).basis.reindex (finCongr (quadraticPowerBasis_dim p))
 
 /-- The two basis vectors of the quadratic quotient are exactly 1 and the class of X. -/
+@[simp]
 theorem quadraticBasis_apply (i : Fin 2) : quadraticBasis p i =
     (Ideal.Quotient.mk _ (polynomialToRestricted 1 (X : (ℚ_[p])[X]))) ^ (i : ℕ) := by
   simp only [quadraticBasis, Module.Basis.reindex_apply, PowerBasis.basis_eq_pow,
