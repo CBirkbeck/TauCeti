@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Probability.Distributions.Gaussian.LowDimension
 public import Mathlib.Tactic.NormNum
+import TauCeti.LinearAlgebra.Matrix.PosSemidef
 
 /-!
 # Conditioning identical Gaussian coordinates
@@ -34,9 +35,8 @@ def covariance : Matrix (Unit ⊕ Unit) (Unit ⊕ Unit) ℝ := fun _ _ => 1
 
 /-- The joint covariance is positive semidefinite. -/
 theorem covariance_posSemidef : covariance.PosSemidef := by
-  convert (Matrix.posSemidef_vecMulVec_self_star (fun _ : Unit ⊕ Unit => (1 : ℝ))) using 1
-  ext i j
-  simp only [covariance, Matrix.vecMulVec, Pi.star_apply, star_trivial, mul_one, Matrix.of_apply]
+  unfold covariance
+  exact TauCeti.posSemidef_const_one
 
 /-- Conditioning one coordinate on the other leaves zero residual covariance. -/
 @[simp] theorem gaussianCondCov_eq_zero : covariance.gaussianCondCov = 0 := by
