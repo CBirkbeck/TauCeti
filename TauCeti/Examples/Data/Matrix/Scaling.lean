@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Data.Matrix.Scaling.Support
 public import TauCeti.MeasureTheory.OptimalTransport.Finite.ProportionalFitting
 public import TauCeti.MeasureTheory.OptimalTransport.Finite.TransportMatrix
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
@@ -123,11 +122,9 @@ def transportMatrix : TransportMatrix rowPMF colPMF :=
     refine ⟨fun q => ?_, fun i => ?_, fun j => ?_⟩
     · rcases q with ⟨i, j⟩
       fin_cases i <;> fin_cases j <;> norm_num [plan]
-    · change ∑ j, plan i j = (ENNReal.ofReal (rowMass i)).toReal
-      rw [ENNReal.toReal_ofReal (rowMass_pos i).le]
+    · rw [rowPMF, PMF.ofFintype_apply, ENNReal.toReal_ofReal (rowMass_pos i).le]
       exact ((hasMarginals_def _ _ _).1 plan_hasMarginals).1 i
-    · change ∑ i, plan i j = (ENNReal.ofReal (colMass j)).toReal
-      rw [ENNReal.toReal_ofReal (colMass_pos j).le]
+    · rw [colPMF, PMF.ofFintype_apply, ENNReal.toReal_ofReal (colMass_pos j).le]
       exact ((hasMarginals_def _ _ _).1 plan_hasMarginals).2 j)
 
 /-- The native probability measure is a coupling of the prescribed probability laws. -/
