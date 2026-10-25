@@ -14,8 +14,7 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 /-!
 # Quotient checks for Tate algebras
 
-These are the basic dimension and quotient computations in
-TauCetiRoadmap/RestrictedPowerSeries/README.md, Layer 5. They identify the zero-variable algebra,
+These examples identify the zero-variable algebra,
 compute the one-variable dimension and linear quotients, include the zero quotient by 1, and
 construct the basis 1, X of Q_p⟨X⟩/(X²-p) with its quadratic relation. The companion
 `Examples/RingTheory/MvPowerSeries/TateAlgebra/Expand.lean` supplies the radius-√p presentation.
