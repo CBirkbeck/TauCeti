@@ -321,6 +321,38 @@ theorem stabilizerEquiv_symm_mk_apply (i : Fin n) (t : ConnectedTriple n)
   exact TauCeti.MulAction.orbitRelQuotientStabilizerEquiv_symm_mk_smul
     (G := Perm (Fin n)) i t τ
 
+private theorem relabeling_eq_one_of_marked_fixed {n : ℕ}
+    (g : Perm (Fin n)) (x : ConnectedTriple n × Fin n) (h : g • x = x) : g = 1 := by
+  apply PermutationTriple.eq_one_of_mem_automorphismGroup_of_apply_eq x.1.2.isPretransitive
+  · apply PermutationTriple.mem_automorphismGroup_iff.mpr
+    have ht : g • x.1.val = x.1.val :=
+      congrArg (fun z : ConnectedTriple n × Fin n => z.1.val) h
+    constructor
+    · rw [← PermutationTriple.smul_σ0, ht]
+    · rw [← PermutationTriple.smul_σ1, ht]
+  · exact congrArg Prod.snd h
+
+private noncomputable def markedFixedEquiv (n : ℕ) :
+    (Σ g : Perm (Fin n), fixedBy (ConnectedTriple n × Fin n) g) ≃
+      (ConnectedTriple n × Fin n) where
+  toFun x := x.2.val
+  invFun x := ⟨1, x, one_smul _ _⟩
+  left_inv := by
+    rintro ⟨g, x, hx⟩
+    have hg := relabeling_eq_one_of_marked_fixed g x hx
+    subst g
+    rfl
+  right_inv _ := rfl
+
+/-- Marking a label makes relabeling free, so a marked class has exactly `n!` representatives. -/
+theorem card_mul_factorial (n : ℕ) :
+    Nat.card (MarkedIsoClass n) * n.factorial = Fintype.card (ConnectedTriple n) * n := by
+  have h := Nat.card_congr ((markedFixedEquiv n).symm.trans
+    (sigmaFixedByEquivOrbitsProdGroup (Perm (Fin n)) (ConnectedTriple n × Fin n)))
+  rw [MarkedIsoClass]
+  simpa only [Nat.card_prod, Nat.card_eq_fintype_card, Fintype.card_fin,
+    Fintype.card_perm, Fintype.card_prod] using h.symm
+
 end MarkedIsoClass
 
 end TauCeti
