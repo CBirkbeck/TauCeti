@@ -8,7 +8,9 @@ module
 public import TauCeti.RingTheory.PowerSeries.Weierstrass.Strassmann
 public import TauCeti.RingTheory.MvPowerSeries.TateAlgebra.AnalyticSubst
 public import TauCeti.NumberTheory.Padics.RingHoms
+public import TauCeti.NumberTheory.Padics.Basic
 public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.NumberTheory.Padics.MahlerBasis
 
 /-!
 # Evaluation and translation checks for restricted power series
@@ -17,6 +19,8 @@ These are the three checks in TauCetiRoadmap/RestrictedPowerSeries/README.md, §
 Translation by 1 is an automorphism even though its constant term is nonzero. The polynomial
 `X ^ p - X` has Gauss norm 1 over Q_p, but all its values on Z_p have norm at most `p⁻¹`.
 Over the trivially valued field F_p, the same nonzero polynomial vanishes at every point.
+The bound over Z_p is attained at p, giving the exact supremum and Mahler coefficient norms
+requested by TauCetiRoadmap/PadicFunctionalAnalysis/README.md, §3.4.
 -/
 
 public section
@@ -49,6 +53,37 @@ theorem norm_pow_sub_le (x : ℤ_[p]) : ‖x ^ p - x‖ ≤ (p : ℝ)⁻¹ := by
   have h := (PadicInt.norm_le_pow_iff_mem_span_pow (x ^ p - x) 1).mpr (by
     simpa [← PadicInt.maximalIdeal_eq_span_p] using hm)
   simpa using h
+
+/-- The bound for `x ^ p - x` is attained at `x = p`. -/
+theorem norm_prime_pow_sub : ‖(p : ℚ_[p]) ^ p - p‖ = (p : ℝ)⁻¹ := by
+  have h : ‖(p : ℚ_[p]) ^ p‖ < ‖(p : ℚ_[p])‖ := by
+    rw [norm_pow]
+    exact pow_lt_self_of_lt_one₀ (norm_pos_iff.mpr (Nat.cast_ne_zero.mpr hp.out.ne_zero))
+      Padic.norm_p_lt_one hp.out.one_lt
+  rw [sub_eq_add_neg, IsUltrametricDist.norm_add_eq_max_of_norm_ne_norm
+    (by simpa only [norm_neg] using h.ne), norm_neg, max_eq_right h.le, Padic.norm_p]
+
+/-- Evaluation of `X ^ p - X` on the p-adic integers as a continuous Q_p-valued function. -/
+noncomputable def powSubFunction : C(ℤ_[p], ℚ_[p]) :=
+  ⟨fun x => (x : ℚ_[p]) ^ p - x,
+    (continuous_subtype_val.pow p).sub continuous_subtype_val⟩
+
+/-- The supremum norm of `x ^ p - x` on Z_p is exactly `p⁻¹`. -/
+theorem norm_powSubFunction : ‖powSubFunction p‖ = (p : ℝ)⁻¹ := by
+  apply le_antisymm
+  · apply (ContinuousMap.norm_le _ (by positivity)).mpr
+    intro x
+    simpa only [powSubFunction, ContinuousMap.coe_mk, ← PadicInt.coe_pow,
+      ← PadicInt.coe_sub, PadicInt.norm_coe] using norm_pow_sub_le p x
+  · have h := (powSubFunction p).norm_coe_le_norm (p : ℤ_[p])
+    change ‖((p : ℤ_[p]) : ℚ_[p]) ^ p - ((p : ℤ_[p]) : ℚ_[p])‖ ≤
+      ‖powSubFunction p‖ at h
+    simpa only [PadicInt.coe_natCast, norm_prime_pow_sub] using h
+
+/-- Mahler's isometry gives the same norm `p⁻¹` for the coefficient sequence. -/
+theorem norm_mahler_powSubFunction :
+    ‖PadicInt.mahlerEquiv ℚ_[p] (powSubFunction p)‖ = (p : ℝ)⁻¹ := by
+  rw [LinearIsometryEquiv.norm_map, norm_powSubFunction]
 
 /-- The polynomial `X ^ p - X` over F_p is nonzero. -/
 theorem X_pow_sub_X_ne_zero : (X ^ p - X : (ZMod p)[X]) ≠ 0 :=
