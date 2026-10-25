@@ -11,11 +11,9 @@ public import Mathlib.Algebra.Field.ZMod
 /-!
 # Ado–Iwasawa over the field with two elements
 
-This instantiates the arbitrary-field example an arbitrary finite-dimensional Lie algebra
+This instantiates Ado–Iwasawa for an arbitrary finite-dimensional Lie algebra
 in characteristic two. It checks that neither characteristic zero, algebraic closedness nor a
 lower bound on the characteristic is required.
-
-
 -/
 
 public section
@@ -25,8 +23,6 @@ namespace TauCeti.Examples.Ado
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 universe u
-
-local instance instFactPrimeTwo : Fact (Nat.Prime 2) := ⟨by decide⟩
 
 /-- A finite-dimensional Lie algebra over `𝔽₂` admits a faithful finite-dimensional action. -/
 example (L : Type u) [LieRing L]
