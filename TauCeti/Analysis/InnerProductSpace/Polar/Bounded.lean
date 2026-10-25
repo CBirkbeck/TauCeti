@@ -43,7 +43,8 @@ isometry, and when `|T|` is invertible it is `T |T|⁻¹`.
 * `ContinuousLinearMap.modulus_adjoint_comp_polarFactor`: the left polar decomposition
   `|T†| U = T`.
 * `ContinuousLinearMap.polarFactor_eq_comp_inverse`: `U = T |T|⁻¹` when `|T|` is invertible.
-* `ContinuousLinearMap.norm_sub_polarFactor_le`: `‖T - U‖ ≤ ‖|T| - 1‖` for an endomorphism `T`.
+* `ContinuousLinearMap.norm_sub_polarFactor_le`: `‖T - U‖ ≤ ‖|T| - 1‖` for a rectangular
+  operator `T`.
 
 ## References
 
@@ -219,8 +220,8 @@ theorem polarFactor_eq_comp_inverse (hT : IsUnit T.modulus) :
     T.polarFactor = T ∘L Ring.inverse T.modulus :=
   factorThru_eq_comp_inverse hT
 
-/-- The polar factor `U` of an endomorphism `T` satisfies `‖T - U‖ ≤ ‖|T| - 1‖`. -/
-theorem norm_sub_polarFactor_le (T : E →L[𝕜] E) : ‖T - T.polarFactor‖ ≤ ‖T.modulus - 1‖ :=
+/-- The polar factor `U` of a bounded rectangular operator `T` satisfies `‖T - U‖ ≤ ‖|T| - 1‖`. -/
+theorem norm_sub_polarFactor_le (T : E →L[𝕜] F) : ‖T - T.polarFactor‖ ≤ ‖T.modulus - 1‖ :=
   norm_sub_factorThru_le fun x ↦ (T.norm_modulus_apply x).ge
 
 end ContinuousLinearMap
