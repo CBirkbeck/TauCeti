@@ -15,7 +15,6 @@ The alternating group on four letters has order twelve. Its solvability follows 
 Burnside's `pᵃqᵇ` theorem with `p = 2`, `a = 2`, `q = 3`, `b = 1`, rather than through a
 pre-existing solvability instance.
 
-Roadmap: `RepresentationTheory/CharacterTheory`, Layer 4 and the order-twelve worked example.
 -/
 
 public section
@@ -23,7 +22,7 @@ public section
 namespace TauCeti
 
 /-- The alternating group `A₄`, of order `2² · 3`, is solvable. -/
-theorem isSolvable_alternatingGroup_four_by_burnside :
+example :
     Group.IsSolvable (alternatingGroup (Fin 4)) := by
   apply isSolvable_of_card_eq_prime_pow_mul_prime_pow
     (p := 2) (q := 3) (a := 2) (b := 1) (by decide) (by decide)
