@@ -462,7 +462,9 @@ def commSentence {A : Type*} (a b : A) : (Language.group[[A]]).Sentence :=
     letI : Language.group.Structure G := structureOfGroup G
     letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
     G ⊨ commSentence a b ↔ c a * c b = c b * c a := by
-  change c a * c b = c b * c a ↔ c a * c b = c b * c a
+  simp only [commSentence, Sentence.Realize, Formula.realize_equal,
+    realize_coeff_mul, Language.Term.realize_constants]
+  -- The constantsOn structure interprets each named constant a by c a.
   rfl
 
 /-- Distinct free generators do not satisfy the coefficient commutativity sentence. -/
@@ -484,16 +486,16 @@ theorem realize_commSentence_commGroup {G A : Type*} [CommGroup G]
     G ⊨ commSentence a b := by
   exact (realize_commSentence c a b).mpr (mul_comm _ _)
 
-/-- The two free generators give a noncommutative coefficient interpretation. -/
-theorem not_realize_commSentence_freeGroup_fin2 :
+-- The two free generators give a noncommutative coefficient interpretation.
+example :
     letI : Language.group.Structure (FreeGroup (Fin 2)) := structureOfGroup _
     letI : (Language.constantsOn (Fin 2)).Structure (FreeGroup (Fin 2)) :=
       Language.constantsOn.structure FreeGroup.of
     ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 :=
   not_realize_commSentence_freeGroup_of (by decide)
 
-/-- The standard basis of an abelian group satisfies coefficient commutativity. -/
-theorem realize_commSentence_pi_single :
+-- The standard basis of an abelian group satisfies coefficient commutativity.
+example :
     let c : Fin 2 → Multiplicative (Fin 2 → ℤ) :=
       fun a => Multiplicative.ofAdd (Pi.single a 1)
     letI : Language.group.Structure (Multiplicative (Fin 2 → ℤ)) := structureOfGroup _
