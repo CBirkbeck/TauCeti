@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Analysis.Fourier.Hardy.Toeplitz
+public import TauCeti.Analysis.Fourier.Hardy.Toeplitz.Basic
 
 /-!
 # Hankel operators and Toeplitz products
