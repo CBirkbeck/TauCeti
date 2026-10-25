@@ -20,13 +20,13 @@ Roadmap: `RepresentationTheory/AdoIwasawa`, Layer 8 acceptance and Layer 9 chara
 
 public section
 
-namespace TauCeti
+namespace TauCeti.Examples.Ado
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
 universe u
 
-local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+local instance instFactPrimeTwo : Fact (Nat.Prime 2) := ⟨by decide⟩
 
 /-- A finite-dimensional Lie algebra over `𝔽₂` admits a faithful finite-dimensional action. -/
 theorem exists_faithful_finiteDimensional_zmod_two (L : Type u) [LieRing L]
@@ -36,4 +36,4 @@ theorem exists_faithful_finiteDimensional_zmod_two (L : Type u) [LieRing L]
       (ρ : L →ₗ⁅ZMod 2⁆ Module.End (ZMod 2) V), Function.Injective ρ :=
   adoIwasawa (ZMod 2) L
 
-end TauCeti
+end TauCeti.Examples.Ado
