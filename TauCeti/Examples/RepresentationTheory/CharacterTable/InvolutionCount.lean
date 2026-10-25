@@ -7,8 +7,6 @@ module
 
 public import TauCeti.RepresentationTheory.CharacterTable.FrobeniusSchur.InvolutionCount
 public import Mathlib.GroupTheory.SpecificGroups.Quaternion
-public import Mathlib.GroupTheory.SpecificGroups.Dihedral
-public import Mathlib.Basic.Complex.Basic
 
 /-!
 # Frobenius–Schur counts for the quaternion and dihedral groups of order eight
@@ -16,8 +14,6 @@ public import Mathlib.Basic.Complex.Basic
 Finite enumeration independently counts the square roots of the identity in `Q₈` and `D₄`.
 The character-table formula then verifies that the degree-weighted indicator sums are two and
 six respectively. The identity is included in each count.
-
-
 -/
 
 public section
