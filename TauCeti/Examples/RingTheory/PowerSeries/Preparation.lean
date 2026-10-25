@@ -31,9 +31,10 @@ theorem preparation_X_sub_one {c : ℝ} (hc : 1 ≤ c)
     (he : IsUnit e) (hω : ω.IsMonicOfDegree 1)
     (h : (e : PowerSeries K) * (ω : PowerSeries K) = PowerSeries.X - 1) :
     e = 1 ∧ ω = X - 1 := by
+  have hnorm : ‖(1 : K)‖ ≤ c := by simpa using hc
   have hd : IsDistinguished c 1 (PowerSeries.X - (1 : PowerSeries K)) := by
     simpa using isDistinguished_X_sub_C (lt_of_lt_of_le zero_lt_one hc)
-      (show ‖(1 : K)‖ ≤ c by simpa using hc)
+      hnorm
   exact hd.eq_and_eq_of_mul_eq_mul (lt_of_lt_of_le zero_lt_one hc) he isUnit_one
     hω (by simpa using isMonicOfDegree_X_sub_one (1 : K)) h (by simp)
 
@@ -42,8 +43,10 @@ local instance : Fact (Nat.Prime 2) := ⟨by decide⟩
 /-- The positive radius √2 does not lie in the norm value group of Q₂. -/
 theorem sqrt_two_ne_norm (x : ℚ_[2]) : ‖x‖ ≠ Real.sqrt 2 := by
   intro h
+  have hnonneg : (0 : ℝ) ≤ 2 := by norm_num
+  have hone : (1 : ℝ) ≤ 2 := by norm_num
   have h1 : 1 < Real.sqrt 2 := by
-    nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num), Real.sqrt_nonneg 2]
+    nlinarith [Real.sq_sqrt hnonneg, Real.sqrt_nonneg 2]
   have h2 : Real.sqrt 2 < 2 := by norm_num
   have hx : x ≠ 0 := by
     intro hx
@@ -53,11 +56,11 @@ theorem sqrt_two_ne_norm (x : ℚ_[2]) : ‖x‖ ≠ Real.sqrt 2 := by
   norm_num only [Nat.cast_ofNat] at h
   by_cases hv : -(x.valuation) ≤ 0
   · have hn : (2 : ℝ) ^ (-x.valuation) ≤ 1 := by
-      simpa using zpow_le_zpow_right₀ (show (1 : ℝ) ≤ 2 by norm_num) hv
+      simpa using zpow_le_zpow_right₀ hone hv
     linarith
   · have hv : (1 : ℤ) ≤ -x.valuation := by omega
     have hn : 2 ≤ (2 : ℝ) ^ (-x.valuation) := by
-      simpa using zpow_le_zpow_right₀ (show (1 : ℝ) ≤ 2 by norm_num) hv
+      simpa using zpow_le_zpow_right₀ hone hv
     linarith
 
 /-- Preparation at a positive radius outside the Q₂ norm value group. -/
@@ -69,8 +72,9 @@ theorem preparation_sqrt_two :
   refine ⟨sqrt_two_ne_norm, (1, X - 1), ⟨isUnit_one, ?_, by simp⟩, ?_⟩
   · simpa using isMonicOfDegree_X_sub_one (1 : ℚ_[2])
   · rintro ⟨e, ω⟩ ⟨he, hω, h⟩
+    have hnonneg : (0 : ℝ) ≤ 2 := by norm_num
     have hc : 1 ≤ Real.sqrt 2 := by
-      nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num), Real.sqrt_nonneg 2]
+      nlinarith [Real.sq_sqrt hnonneg, Real.sqrt_nonneg 2]
     obtain ⟨he, hω⟩ := preparation_X_sub_one ℚ_[2] hc e ω he hω h
     exact Prod.ext he hω
 
