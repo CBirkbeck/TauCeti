@@ -82,13 +82,8 @@ theorem condDistrib_eq_dirac {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} 
       simp only [Matrix.submatrix_apply, covariance, Matrix.one_apply_eq]
     rw [heq]
     exact Matrix.PosDef.one
-  filter_upwards [TauCeti.Probability.condDistrib_multivariateGaussian_of_unique
-    X 0 hX covariance_posSemidef hblock (v₁ := 1) (v₂ := 1) (ρ := 1) rfl rfl
-    (by norm_num [covariance])] with x hx
-  have hs : EuclideanSpace.single (default : Unit) (x default) = x := by
-    ext i
-    cases i
-    simp only [PUnit.default_eq_unit, PiLp.single_eq_same]
-  simpa [hs] using hx
+  filter_upwards [TauCeti.Probability.condDistrib_multivariateGaussian
+    X 0 hX covariance_posSemidef hblock] with x hx
+  exact hx.trans (EuclideanSpace.gaussianCondKernel_eq_dirac_identical x)
 
 end TauCeti.Examples.GaussianIdentical
