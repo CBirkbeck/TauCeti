@@ -15,12 +15,11 @@ public import Mathlib.NumberTheory.Padics.MahlerBasis
 /-!
 # Evaluation and translation checks for restricted power series
 
-These are the three checks in TauCetiRoadmap/RestrictedPowerSeries/README.md, §2.4.
 Translation by 1 is an automorphism even though its constant term is nonzero. The polynomial
 `X ^ p - X` has Gauss norm 1 over Q_p, but all its values on Z_p have norm at most `p⁻¹`.
 Over the trivially valued field F_p, the same nonzero polynomial vanishes at every point.
 The bound over Z_p is attained at p, giving the exact supremum and Mahler coefficient norms
-requested by TauCetiRoadmap/PadicFunctionalAnalysis/README.md, §3.4.
+of this function. The two norms differ from its monomial Gauss norm.
 -/
 
 public section
