@@ -21,6 +21,7 @@ open CategoryTheory TauCeti.ContCohomology TauCeti.ContinuousCohomology
 
 namespace TauCeti.Examples.FiniteMackey
 
+/-- The discrete topology on the finite symmetric group used in this example. -/
 local instance permTopology : TopologicalSpace (Equiv.Perm (Fin 3)) := ⊥
 local instance permDiscrete : DiscreteTopology (Equiv.Perm (Fin 3)) := ⟨rfl⟩
 local instance permCompact : CompactSpace (Equiv.Perm (Fin 3)) := Finite.compactSpace
