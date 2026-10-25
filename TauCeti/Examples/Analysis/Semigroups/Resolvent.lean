@@ -22,7 +22,7 @@ public section
 noncomputable section
 
 open TauCeti.Semigroups
-open scoped BoundedContinuousFunction
+open scoped BoundedContinuousFunction NNReal
 
 namespace TauCeti.Examples.ScalarDecay
 
@@ -40,8 +40,7 @@ def semigroup : ContractionSemigroup Space :=
 theorem semigroup_apply (t : ℝ≥0) :
     semigroup t = Real.exp (-(t : ℝ)) • ContinuousLinearMap.id ℝ Space := by
   ext f n
-  simpa [semigroup] using
-    ContractionSemigroup.ofMultiplication_apply_apply_apply (1 : Space) one_nonneg t f n
+  simp [semigroup]
 
 /-- The scalar decay semigroup is the bounded-generator exponential for multiplication by `-1`. -/
 theorem eq_ofBounded : semigroup.toStronglyContinuousSemigroup =
