@@ -63,14 +63,14 @@ theorem padicIdealTower_transition (n : ℕ) :
 
 /-- Composite transitions preserve the underlying p-adic integer. -/
 @[simp]
-theorem coe_padicIdealTower_transitionOfLE {n m : ℕ} (h : n ≤ m)
+theorem padicIdealTower_transitionOfLE_coe {n m : ℕ} (h : n ≤ m)
     (x : (padicIdealTower p).obj (op m)) :
     ((padicIdealTower p).transitionOfLE h x : ℤ_[p]) = x := by
   rw [padicIdealTower_transitionOfLE, Submodule.coe_inclusion]
 
 /-- Single transitions preserve the underlying p-adic integer. -/
 @[simp]
-theorem coe_padicIdealTower_transition (n : ℕ)
+theorem padicIdealTower_transition_coe (n : ℕ)
     (x : (padicIdealTower p).obj (op (n + 1))) :
     ((padicIdealTower p).transition n x : ℤ_[p]) = x := by
   rw [padicIdealTower_transition, Submodule.coe_inclusion]
@@ -87,7 +87,7 @@ theorem not_isMittagLeffler_padicIdealTower : ¬(padicIdealTower p).IsMittagLeff
     exact LinearMap.mem_range_self _ e
   obtain ⟨b, hb⟩ := LinearMap.mem_range.mp hm
   have heq : (b : ℤ_[p]) = (p : ℤ_[p]) ^ N := by
-    simpa only [coe_padicIdealTower_transitionOfLE p] using congrArg Subtype.val hb
+    simpa only [padicIdealTower_transitionOfLE_coe p] using congrArg Subtype.val hb
   have hdiv : (p : ℤ_[p]) ^ (N + 1) ∣ (p : ℤ_[p]) ^ N := by
     rw [← heq]
     exact Ideal.mem_span_singleton.mp b.property
@@ -118,7 +118,7 @@ theorem subsingleton_limOne_padicIdealTower : Subsingleton (padicIdealTower p).l
   let b : (padicIdealTower p).Product := fun n =>
     ⟨(p : ℤ_[p]) ^ n * x n, Ideal.mem_span_singleton.mpr ⟨x n, rfl⟩⟩
   refine ⟨b, funext fun n => Subtype.ext ?_⟩
-  rw [ModuleTower.shift_apply, Submodule.coe_sub, coe_padicIdealTower_transition p n]
+  rw [ModuleTower.shift_apply, Submodule.coe_sub, padicIdealTower_transition_coe p n]
   dsimp only [b]
   rw [hc n, hx n, pow_succ]
   ring
