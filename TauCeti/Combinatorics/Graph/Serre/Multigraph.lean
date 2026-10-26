@@ -159,7 +159,7 @@ def Path.toWalk {u v : Γ.V} (p : Γ.Path u v) : Γ.toGraph.Walk u v := by
   | cons p e ih => simp [ih]
 
 /-- The final dart of a path contributes its undirected edge to the walk. -/
-@[simp] theorem Path.edges_toWalk_cons {u v w : Γ.V} (p : Γ.Path u v)
+theorem Path.edges_toWalk_cons {u v w : Γ.V} (p : Γ.Path u v)
     (e : Quiver.Hom v w) :
     (Path.toWalk Γ (p.cons e)).edges = (Path.toWalk Γ p).edges ++ [Γ.edge e.1] := by
   simp [Graph.IsLink.edges_toWalk]
