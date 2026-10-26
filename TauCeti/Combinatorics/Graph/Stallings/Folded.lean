@@ -32,6 +32,11 @@ variable {α : Type*} (S : StallingsGraph α)
 def IsFolded : Prop :=
   ∀ e f : S.graph.E, S.graph.src e = S.graph.src f → S.label e = S.label f → e = f
 
+/-- Foldedness is uniqueness of an outgoing dart with a given label. -/
+theorem isFolded_def : S.IsFolded ↔
+    ∀ e f : S.graph.E, S.graph.src e = S.graph.src f → S.label e = S.label f → e = f :=
+  Iff.rfl
+
 /-- In a folded graph, the target and label also determine a dart. -/
 theorem IsFolded.eq_of_tgt_label (hS : S.IsFolded) {e f : S.graph.E}
     (ht : S.graph.tgt e = S.graph.tgt f) (hl : S.label e = S.label f) : e = f := by
@@ -107,7 +112,7 @@ theorem IsFolded.path_eq_of_word_eq (hS : S.IsFolded) {a b : S.graph.V}
       exact ih q hword
 
 /-- The reduced word of a reduced path's reading is its actual label word. -/
-theorem IsFolded.toWord_read_eq_word [DecidableEq α] (hS : S.IsFolded)
+@[simp] theorem IsFolded.toWord_read_eq_word [DecidableEq α] (hS : S.IsFolded)
     {a b : S.graph.V} (p : S.graph.Path a b)
     (hp : SerreGraph.Path.IsReduced S.graph p) :
     (S.read p).toWord = S.word p := by
