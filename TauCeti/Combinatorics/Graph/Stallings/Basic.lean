@@ -74,7 +74,7 @@ def read {a b : S.graph.V} (p : S.graph.Path a b) : FreeGroup α :=
     (e : Quiver.Hom b c) : S.read (p.cons e) = S.read p * FreeGroup.mk [S.label e.1] := by
   simp only [read, Quiver.Path.weight_cons]
 
-theorem read_def {a b : S.graph.V} (p : S.graph.Path a b) :
+theorem read_eq_mk_word {a b : S.graph.V} (p : S.graph.Path a b) :
     S.read p = FreeGroup.mk (S.word p) := by
   induction p with
   | nil => simp [read, FreeGroup.one_eq_mk]
@@ -100,7 +100,7 @@ theorem read_def {a b : S.graph.V} (p : S.graph.Path a b) :
 
 @[simp] theorem read_reverse {a b : S.graph.V} (p : S.graph.Path a b) :
     S.read p.reverse = (S.read p)⁻¹ := by
-  simp [read_def, FreeGroup.inv_mk]
+  simp [read_eq_mk_word, FreeGroup.inv_mk]
 
 /-- The subgroup of the free group read by closed paths at a vertex. -/
 def subgroup (a : S.graph.V) : Subgroup (FreeGroup α) where
