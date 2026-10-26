@@ -75,6 +75,13 @@ noncomputable def Term.ofWord (w : FreeGroup (X ⊕ A)) : Language.group[[A]].Te
   classical
   exact (FreeGroup.toWord w).foldl (fun t e => t * Term.letter e) 1
 
+open Classical in
+/-- The canonical term is the left-associated product of the reduced word's letters. -/
+theorem Term.ofWord_def (w : FreeGroup (X ⊕ A)) :
+    Term.ofWord w = (FreeGroup.toWord w).foldl (fun t e => t * Term.letter e) 1 := by
+  unfold Term.ofWord
+  rfl
+
 private theorem toWord_foldl (l : List ((X ⊕ A) × Bool))
     (t : Language.group[[A]].Term X) :
     Term.toWord (l.foldl (fun u e => u * Term.letter e) t) =
