@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Dart
 public import Mathlib.Combinatorics.Quiver.Symmetric
+public import Mathlib.Combinatorics.Quiver.ConnectedComponent
 
 /-!
 # Graphs with edge reversal
@@ -116,10 +117,11 @@ def dart (e : Γ.E) : Quiver.Hom (Γ.src e) (Γ.tgt e) :=
 abbrev Path (a b : Γ.V) : Type (max u v) := Quiver.Path a b
 
 /-- A Serre graph is preconnected when any two vertices are joined by a path. -/
-def Preconnected : Prop := ∀ a b : Γ.V, Nonempty (Γ.Path a b)
+def Preconnected : Prop := Quiver.IsStronglyConnected Γ.V
 
 /-- Preconnectivity is pairwise Serre path reachability. -/
-theorem preconnected_iff : Γ.Preconnected ↔ ∀ a b, Nonempty (Γ.Path a b) := Iff.rfl
+theorem preconnected_iff : Γ.Preconnected ↔ ∀ a b, Nonempty (Γ.Path a b) :=
+  Quiver.isStronglyConnected_iff Γ.V
 
 /-- A Serre graph is connected when it is nonempty and path-connected. -/
 def Connected : Prop := Nonempty Γ.V ∧ Γ.Preconnected
