@@ -73,7 +73,7 @@ def Path.reduce {a b : Γ.V} : Γ.Path a b → Γ.Path a b
     Path.reduce Γ e.toPath = e.toPath := (rfl)
 
 /-- The reduction algorithm produces a path without adjacent reverse darts. -/
-theorem Path.isReduced_reduce {a b : Γ.V} (p : Γ.Path a b) :
+@[simp] theorem Path.isReduced_reduce {a b : Γ.V} (p : Γ.Path a b) :
     Path.IsReduced Γ (Path.reduce Γ p) := by
   induction p with
   | nil => simp [Path.reduce]
@@ -89,7 +89,7 @@ private theorem push_eq_cons_of_isReduced {a b c : Γ.V} (q : Γ.Path a b)
     simp [push, hne]
 
 /-- Reduction fixes paths that have no adjacent reverse darts. -/
-theorem Path.reduce_eq_self_of_isReduced {a b : Γ.V} (p : Γ.Path a b)
+@[simp] theorem Path.reduce_eq_self_of_isReduced {a b : Γ.V} (p : Γ.Path a b)
     (h : Path.IsReduced Γ p) : Path.reduce Γ p = p := by
   induction p with
   | nil => rfl
