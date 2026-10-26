@@ -65,11 +65,11 @@ def Path.reduce {a b : Γ.V} : Γ.Path a b → Γ.Path a b
   | .cons q e => push Γ (Path.reduce q) e
 
 /-- The empty path is already reduced. -/
-@[simp] theorem Path.reduce_nil (a : Γ.V) :
+theorem Path.reduce_nil (a : Γ.V) :
     Path.reduce Γ (Quiver.Path.nil : Γ.Path a a) = Quiver.Path.nil := (rfl)
 
 /-- A one-dart path is already reduced. -/
-@[simp] theorem Path.reduce_toPath {a b : Γ.V} (e : Quiver.Hom a b) :
+theorem Path.reduce_toPath {a b : Γ.V} (e : Quiver.Hom a b) :
     Path.reduce Γ e.toPath = e.toPath := (rfl)
 
 /-- The reduction algorithm produces a path without adjacent reverse darts. -/
@@ -175,7 +175,7 @@ theorem Path.eq_of_homotopic_of_isReduced {a b : Γ.V} {p q : Γ.Path a b}
     Path.reduce_eq_self_of_isReduced Γ q hq] using h.reduce_eq
 
 /-- Reduction is idempotent. -/
-@[simp] theorem Path.reduce_reduce {a b : Γ.V} (p : Γ.Path a b) :
+theorem Path.reduce_reduce {a b : Γ.V} (p : Γ.Path a b) :
     Path.reduce Γ (Path.reduce Γ p) = Path.reduce Γ p :=
   Path.reduce_eq_self_of_isReduced Γ _ (Path.isReduced_reduce Γ p)
 
