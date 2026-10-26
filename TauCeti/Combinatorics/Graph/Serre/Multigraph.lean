@@ -183,14 +183,12 @@ theorem exists_path_toWalk {u v : Γ.V} (p : Γ.toGraph.Walk u v) :
     · subst u
       subst v
       rcases ih with ⟨q, rfl⟩
-      let step : Quiver.Hom (Γ.tgt d) (Γ.src d) :=
-        ⟨Γ.rev d, by simp⟩
-      refine ⟨step.toPath.comp q, ?_⟩
+      refine ⟨(Quiver.reverse (Γ.dart d)).toPath.comp q, ?_⟩
       simp only [Path.toWalk_comp, Path.toWalk_toPath, Graph.IsLink.toWalk_eq_cons,
         Graph.Walk.cons_append,
         Graph.Walk.nil_append]
       simp only [Graph.Walk.cons.injEq, heq_eq_eq, and_true, true_and]
-      exact Γ.edge_rev d
+      simp only [reverse_val, dart_val, edge_rev]
 
 /-- Serre path reachability agrees with reachability in the underlying multigraph. -/
 theorem reachable_toGraph_iff (u v : Γ.V) :
