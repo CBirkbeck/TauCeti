@@ -115,6 +115,18 @@ def dart (e : Γ.E) : Quiver.Hom (Γ.src e) (Γ.tgt e) :=
 /-- An indexed path in a Serre graph is a path of its associated quiver. -/
 abbrev Path (a b : Γ.V) : Type (max u v) := Quiver.Path a b
 
+/-- A Serre graph is preconnected when any two vertices are joined by a path. -/
+def Preconnected : Prop := ∀ a b : Γ.V, Nonempty (Γ.Path a b)
+
+/-- Preconnectivity is pairwise Serre path reachability. -/
+theorem preconnected_iff : Γ.Preconnected ↔ ∀ a b, Nonempty (Γ.Path a b) := Iff.rfl
+
+/-- A Serre graph is connected when it is nonempty and path-connected. -/
+def Connected : Prop := Nonempty Γ.V ∧ Γ.Preconnected
+
+/-- Connectedness requires a vertex as well as preconnectivity. -/
+theorem connected_iff : Γ.Connected ↔ Nonempty Γ.V ∧ Γ.Preconnected := Iff.rfl
+
 attribute [simp] SerreGraph.rev_rev
 
 /-- A morphism of Serre graphs maps vertices and darts and preserves incidence and reversal. -/
