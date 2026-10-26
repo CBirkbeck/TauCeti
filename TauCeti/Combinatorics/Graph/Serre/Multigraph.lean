@@ -164,6 +164,20 @@ theorem Path.edges_toWalk_cons {u v w : Γ.V} (p : Γ.Path u v)
     (Path.toWalk Γ (p.cons e)).edges = (Path.toWalk Γ p).edges ++ [Γ.edge e.1] := by
   simp [Graph.IsLink.edges_toWalk]
 
+/-- A link in the underlying multigraph can be oriented as a Serre arrow. -/
+theorem exists_hom_of_toGraph_isLink {u v : Γ.V} {q : Γ.Edge}
+    (h : Γ.toGraph.IsLink q u v) :
+    ∃ e : Quiver.Hom u v, Γ.edge e.1 = q := by
+  obtain ⟨d, rfl⟩ := Γ.edge_surjective q
+  rw [toGraph_isLink, edgeEnds_edge, Sym2.eq_iff] at h
+  rcases h with ⟨hu, hv⟩ | ⟨hu, hv⟩
+  · subst u
+    subst v
+    exact ⟨Γ.dart d, by simp⟩
+  · subst u
+    subst v
+    exact ⟨Quiver.reverse (Γ.dart d), by simp⟩
+
 /-- Every walk between vertices lifts to a directed Serre path. A loop walk generally has
 more than one lift. -/
 theorem exists_path_toWalk {u v : Γ.V} (p : Γ.toGraph.Walk u v) :
@@ -171,24 +185,10 @@ theorem exists_path_toWalk {u v : Γ.V} (p : Γ.toGraph.Walk u v) :
   induction p with
   | nil => exact ⟨.nil, rfl⟩
   | @cons u v w e h p ih =>
-    obtain ⟨d, rfl⟩ := Γ.edge_surjective e
-    rw [toGraph_isLink] at h
-    rw [edgeEnds_edge, Sym2.eq_iff] at h
-    rcases h with ⟨hu, hv⟩ | ⟨hu, hv⟩
-    · subst u
-      subst v
-      rcases ih with ⟨q, rfl⟩
-      refine ⟨(Γ.dart d).toPath.comp q, ?_⟩
-      simp [Graph.IsLink.toWalk_eq_cons]
-    · subst u
-      subst v
-      rcases ih with ⟨q, rfl⟩
-      refine ⟨(Quiver.reverse (Γ.dart d)).toPath.comp q, ?_⟩
-      simp only [Path.toWalk_comp, Path.toWalk_toPath, Graph.IsLink.toWalk_eq_cons,
-        Graph.Walk.cons_append,
-        Graph.Walk.nil_append]
-      simp only [Graph.Walk.cons.injEq, heq_eq_eq, and_true, true_and]
-      simp only [reverse_val, dart_val, edge_rev]
+    obtain ⟨f, hf⟩ := Γ.exists_hom_of_toGraph_isLink h
+    rcases ih with ⟨q, rfl⟩
+    refine ⟨f.toPath.comp q, ?_⟩
+    simp [Graph.IsLink.toWalk_eq_cons, hf]
 
 /-- Serre path reachability agrees with reachability in the underlying multigraph. -/
 theorem reachable_toGraph_iff (u v : Γ.V) :
@@ -210,7 +210,7 @@ theorem connected_toGraph_iff : Γ.toGraph.Connected ↔ Γ.Connected := by
   · intro h
     rcases h with ⟨⟨u, _⟩, hreach⟩
     exact ⟨⟨u⟩, fun x y => (Γ.reachable_toGraph_iff x y).mp
-      (hreach (x := x) (y := y))⟩
+      (@hreach x y)⟩
   · intro h
     rcases h with ⟨⟨u⟩, hpath⟩
     exact ⟨⟨u, trivial⟩, fun x y => (Γ.reachable_toGraph_iff x y).mpr (hpath x y)⟩
