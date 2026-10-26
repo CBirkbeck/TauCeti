@@ -105,14 +105,18 @@ theorem edge_eq_iff (e f : Γ.E) :
 @[simp] theorem toGraph_isLink (q : Γ.Edge) (x y : Γ.V) :
     Γ.toGraph.IsLink q x y ↔ Γ.edgeEnds q = s(x, y) := Iff.rfl
 
+/-- A Serre dart links its endpoints in the underlying multigraph. -/
+theorem toGraph_isLink_edge {u v : Γ.V} (e : Quiver.Hom u v) :
+    Γ.toGraph.IsLink (Γ.edge e.1) u v := by
+  rw [toGraph_isLink, edgeEnds_edge]
+  exact congrArg₂ (fun x y => s(x, y)) e.2.1 e.2.2
+
 /-- Forget the directions of a Serre path, retaining its edge orbits. -/
 @[expose] def Path.toWalk {u v : Γ.V} (p : Γ.Path u v) : Γ.toGraph.Walk u v := by
   induction p with
   | nil => exact .nil
   | @cons a b p e ih =>
-    exact ih.append (.cons (Γ.edge e.1) (by
-      rw [toGraph_isLink, edgeEnds_edge]
-      exact congrArg₂ (fun x y => s(x, y)) e.2.1 e.2.2) .nil)
+    exact ih.append (Γ.toGraph_isLink_edge e).toWalk
 
 @[simp] theorem Path.toWalk_nil (u : Γ.V) :
     Path.toWalk Γ (Quiver.Path.nil : Γ.Path u u) = .nil := rfl
@@ -120,9 +124,7 @@ theorem edge_eq_iff (e f : Γ.E) :
 @[simp] theorem Path.toWalk_cons {u v w : Γ.V} (p : Γ.Path u v)
     (e : Quiver.Hom v w) :
     Path.toWalk Γ (p.cons e) = (Path.toWalk Γ p).append
-      (.cons (Γ.edge e.1) (by
-        rw [toGraph_isLink, edgeEnds_edge]
-        exact congrArg₂ (fun x y => s(x, y)) e.2.1 e.2.2) .nil) := rfl
+      (Γ.toGraph_isLink_edge e).toWalk := rfl
 
 @[simp] theorem Path.toWalk_comp {u v w : Γ.V} (p : Γ.Path u v)
     (q : Γ.Path v w) :
@@ -133,9 +135,7 @@ theorem edge_eq_iff (e f : Γ.E) :
     simp only [Quiver.Path.comp_cons, Path.toWalk_cons, ih, Graph.Walk.append_assoc]
 
 @[simp] theorem Path.toWalk_dart {u v : Γ.V} (e : Quiver.Hom u v) :
-    Path.toWalk Γ e.toPath = .cons (Γ.edge e.1) (by
-      rw [toGraph_isLink, edgeEnds_edge]
-      exact congrArg₂ (fun x y => s(x, y)) e.2.1 e.2.2) .nil := by
+    Path.toWalk Γ e.toPath = (Γ.toGraph_isLink_edge e).toWalk := by
   simp [Quiver.Hom.toPath]
 
 /-- Every walk between vertices lifts to a directed Serre path. A loop walk generally has
@@ -156,14 +156,15 @@ theorem exists_path_toWalk {u v : Γ.V} (p : Γ.toGraph.Walk u v) :
         subst v
         rcases ih with ⟨q, rfl⟩
         refine ⟨(Γ.dart d).toPath.comp q, ?_⟩
-        simp [edge]
+        simp [Graph.IsLink.toWalk_eq_cons, edge]
       · subst u
         subst v
         rcases ih with ⟨q, rfl⟩
         let step : Quiver.Hom (Γ.tgt d) (Γ.src d) :=
           ⟨Γ.rev d, by simp⟩
         refine ⟨step.toPath.comp q, ?_⟩
-        simp only [Path.toWalk_comp, Path.toWalk_dart, Graph.Walk.cons_append,
+        simp only [Path.toWalk_comp, Path.toWalk_dart, Graph.IsLink.toWalk_eq_cons,
+          Graph.Walk.cons_append,
           Graph.Walk.nil_append]
         simp only [Graph.Walk.cons.injEq, heq_eq_eq, and_true, true_and]
         exact Γ.edge_rev d
