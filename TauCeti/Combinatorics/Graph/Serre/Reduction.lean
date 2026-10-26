@@ -130,6 +130,22 @@ inductive Path.Homotopic {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Γ.Path a 
   | backtrack {b c : Γ.V} (p : Γ.Path a b) (e : Quiver.Hom b c) :
       Homotopic ((p.cons e).cons (Quiver.reverse e)) p
 
+attribute [refl] Path.Homotopic.refl
+attribute [symm] Path.Homotopic.symm
+attribute [trans] Path.Homotopic.trans
+
+omit [DecidableEq Γ.E] in
+/-- Backtrack homotopy is an equivalence relation on paths with fixed endpoints. -/
+theorem Path.Homotopic.equivalence (a b : Γ.V) :
+    Equivalence (Path.Homotopic Γ (a := a) (b := b)) :=
+  ⟨Path.Homotopic.refl, Path.Homotopic.symm, Path.Homotopic.trans⟩
+
+omit [DecidableEq Γ.E] in
+/-- The backtrack-homotopy relation on paths with fixed endpoints. -/
+def Path.Homotopic.setoid (a b : Γ.V) : Setoid (Γ.Path a b) where
+  r := Path.Homotopic Γ
+  iseqv := Path.Homotopic.equivalence Γ a b
+
 /-- Backtrack-homotopic paths have the same reduced form. -/
 theorem Path.Homotopic.reduce_eq {a b : Γ.V} {p q : Γ.Path a b}
     (h : Path.Homotopic Γ p q) : Path.reduce Γ p = Path.reduce Γ q := by
