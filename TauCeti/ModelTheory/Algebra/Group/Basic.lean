@@ -12,7 +12,6 @@ public import Mathlib.Algebra.Group.TypeTags.Basic
 public import Mathlib.GroupTheory.FreeGroup.Basic
 import Mathlib.GroupTheory.FreeGroup.Reduce
 import Mathlib.Tactic.FinCases
-public import Mathlib.ModelTheory.Complexity
 
 /-!
 # The first-order language of groups
@@ -543,22 +542,6 @@ attribute [local instance] structureOfGroup
   -- Realization of terms with named coefficients reduces definitionally to group operations.
   Iff.rfl
 
-/-- The sentence `a * b = b * a`, for the two basis constants, is false in the free group on two
-letters: an equation with constants can distinguish groups. -/
-theorem not_realize_commSentence_freeGroup :
-    letI := Language.constantsOn.structure (FreeGroup.of : Fin 2 → FreeGroup (Fin 2))
-    ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 := by
-  rw [realize_commSentence_iff, Commute, SemiconjBy]
-  decide
-
-/-- The sentence `a * b = b * a` is true in `ℤ²`, with the standard basis as constants. -/
-theorem realize_commSentence_multiplicative_pi :
-    letI := Language.constantsOn.structure
-      (fun i => Multiplicative.ofAdd (Pi.single i 1) : Fin 2 → Multiplicative (Fin 2 → ℤ))
-    Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 := by
-  rw [realize_commSentence_iff]
-  exact Commute.all _ _
-
 /-- Distinct free generators do not satisfy the coefficient commutativity sentence. -/
 theorem not_realize_commSentence_freeGroup_of {a b : A} (hab : a ≠ b) :
     letI := Language.constantsOn.structure (FreeGroup.of : A → FreeGroup A)
@@ -575,17 +558,18 @@ theorem realize_commSentence_commMagma [One G] [Inv G] [CommMagma G]
     G ⊨ commSentence a b := by
   exact (realize_commSentence_iff c a b).mpr (Commute.all _ _)
 
-/-- Every atomic coefficient-language sentence holds in a subsingleton structure. -/
-theorem realize_of_isAtomic_subsingleton [Subsingleton G]
-    [Language.group[[A]].Structure G]
-    (φ : Language.group[[A]].Sentence) (hφ : φ.IsAtomic) :
-    G ⊨ φ := by
-  cases hφ with
-  | equal _ _ => exact Subsingleton.elim _ _
-  | rel r _ =>
-    cases r with
-    | inl r => cases r
-    | inr r => cases r
+-- The coefficient sentence distinguishes the two free generators.
+example :
+    letI := Language.constantsOn.structure (FreeGroup.of : Fin 2 → FreeGroup (Fin 2))
+    ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 :=
+  not_realize_commSentence_freeGroup_of (by decide)
+
+-- The coefficient sentence holds for the standard basis of `ℤ²`.
+example :
+    letI := Language.constantsOn.structure
+      (fun i => Multiplicative.ofAdd (Pi.single i 1) : Fin 2 → Multiplicative (Fin 2 → ℤ))
+    Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 :=
+  realize_commSentence_commMagma _ 0 1
 
 end Coefficients
 
