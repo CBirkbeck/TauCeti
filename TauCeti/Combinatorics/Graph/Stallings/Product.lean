@@ -117,8 +117,7 @@ with identical signed labels. -/
     (S.prodSnd T).graphHom.mapE e = e.1.2 := rfl
 
 /-- Pair two morphisms with a common source into the labelled fibre product. -/
--- Exposure is required for the exported mapV and mapE simp lemmas below.
-@[expose] def prodLift {R : StallingsGraph.{u, z, t} α} {S : StallingsGraph.{u, v, w} α}
+def prodLift {R : StallingsGraph.{u, z, t} α} {S : StallingsGraph.{u, v, w} α}
     {T : StallingsGraph.{u, x, y} α} (f : R.Hom S) (g : R.Hom T) : R.Hom (S.prod T) where
   graphHom := {
     mapV := fun a => (f.graphHom.mapV a, g.graphHom.mapV a)
@@ -137,13 +136,13 @@ with identical signed labels. -/
 @[simp] theorem prodLift_mapV {R : StallingsGraph.{u, z, t} α}
     {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
     (f : R.Hom S) (g : R.Hom T) (a : R.graph.V) :
-    (prodLift f g).graphHom.mapV a = (f.graphHom.mapV a, g.graphHom.mapV a) := rfl
+    (prodLift f g).graphHom.mapV a = (f.graphHom.mapV a, g.graphHom.mapV a) := (rfl)
 
 @[simp] theorem prodLift_mapE {R : StallingsGraph.{u, z, t} α}
     {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
     (f : R.Hom S) (g : R.Hom T) (e : R.graph.E) :
     ((prodLift f g).graphHom.mapE e).1 =
-      (f.graphHom.mapE e, g.graphHom.mapE e) := rfl
+      (f.graphHom.mapE e, g.graphHom.mapE e) := (rfl)
 
 @[simp] theorem prodFst_comp_prodLift {R : StallingsGraph.{u, z, t} α}
     {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
