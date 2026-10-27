@@ -47,11 +47,11 @@ variable {Γ : SerreGraph} {v : Γ.V}
 noncomputable def ofPath (p : Γ.Path v v) : ReducedLoop Γ v :=
   ⟨Path.reduce Γ p, Path.isReduced_reduce Γ p⟩
 
-@[simp] theorem val_ofPath (p : Γ.Path v v) : (ofPath p).path = Path.reduce Γ p := by
+@[simp] theorem path_ofPath (p : Γ.Path v v) : (ofPath p).path = Path.reduce Γ p := by
   simp only [ofPath]
 
 /-- A reduced loop is unchanged by normalisation. -/
-@[simp] theorem ofPath_val (p : ReducedLoop Γ v) : ofPath p.path = p := by
+@[simp] theorem ofPath_path (p : ReducedLoop Γ v) : ofPath p.path = p := by
   apply ext
   exact Path.reduce_eq_self_of_isReduced Γ p.path p.isReduced
 
@@ -61,14 +61,14 @@ noncomputable instance : Mul (ReducedLoop Γ v) := ⟨fun p q => ofPath (p.path.
 
 noncomputable instance : Inv (ReducedLoop Γ v) := ⟨fun p => ofPath p.path.reverse⟩
 
-@[simp] theorem val_one : (1 : ReducedLoop Γ v).path = Quiver.Path.nil := by
+@[simp] theorem path_one : (1 : ReducedLoop Γ v).path = Quiver.Path.nil := by
   exact Path.reduce_nil Γ v
 
-@[simp] theorem val_mul (p q : ReducedLoop Γ v) :
-    (p * q).path = Path.reduce Γ (p.path.comp q.path) := val_ofPath _
+@[simp] theorem path_mul (p q : ReducedLoop Γ v) :
+    (p * q).path = Path.reduce Γ (p.path.comp q.path) := path_ofPath _
 
-@[simp] theorem val_inv (p : ReducedLoop Γ v) :
-    (p⁻¹).path = Path.reduce Γ p.path.reverse := val_ofPath _
+@[simp] theorem path_inv (p : ReducedLoop Γ v) :
+    (p⁻¹).path = Path.reduce Γ p.path.reverse := path_ofPath _
 
 noncomputable instance : Group (ReducedLoop Γ v) where
   toOne := inferInstance
@@ -76,20 +76,20 @@ noncomputable instance : Group (ReducedLoop Γ v) where
   toInv := inferInstance
   one_mul p := by
     apply ext
-    rw [val_mul, val_one, Quiver.Path.nil_comp]
+    rw [path_mul, path_one, Quiver.Path.nil_comp]
     exact Path.reduce_eq_self_of_isReduced Γ p.path p.isReduced
   mul_one p := by
     apply ext
-    rw [val_mul, val_one, Quiver.Path.comp_nil]
+    rw [path_mul, path_one, Quiver.Path.comp_nil]
     exact Path.reduce_eq_self_of_isReduced Γ p.path p.isReduced
   mul_assoc p q r := by
     apply ext
-    rw [val_mul, val_mul, val_mul, val_mul]
+    rw [path_mul, path_mul, path_mul, path_mul]
     rw [Path.reduce_comp_reduce_left, Path.reduce_comp_reduce_right,
       Quiver.Path.comp_assoc]
   inv_mul_cancel p := by
     apply ext
-    rw [val_mul, val_inv, val_one]
+    rw [path_mul, path_inv, path_one]
     rw [Path.reduce_comp_reduce_left]
     have h := Path.homotopic_comp_reverse Γ p.path.reverse
     simpa only [Quiver.Path.reverse_reverse, Path.reduce_nil] using h.reduce_eq Γ
@@ -97,13 +97,13 @@ noncomputable instance : Group (ReducedLoop Γ v) where
 @[simp] theorem ofPath_nil :
     ofPath (Quiver.Path.nil : Γ.Path v v) = 1 := by
   apply ext
-  rw [val_ofPath, Path.reduce_nil, val_one]
+  rw [path_ofPath, Path.reduce_nil, path_one]
 
 /-- The group product agrees with concatenation of arbitrary closed paths. -/
 @[simp] theorem ofPath_comp (p q : Γ.Path v v) :
     ofPath (p.comp q) = ofPath p * ofPath q := by
   apply ext
-  rw [val_ofPath, val_mul, val_ofPath, val_ofPath]
+  rw [path_ofPath, path_mul, path_ofPath, path_ofPath]
   rw [Path.reduce_comp_reduce_left, Path.reduce_comp_reduce_right]
 
 /-- Two closed paths represent the same loop precisely when they are backtrack homotopic. -/
