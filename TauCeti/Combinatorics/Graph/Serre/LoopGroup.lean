@@ -59,7 +59,8 @@ noncomputable instance : One (ReducedLoop Γ v) := ⟨ofPath Quiver.Path.nil⟩
 
 noncomputable instance : Mul (ReducedLoop Γ v) := ⟨fun p q => ofPath (p.path.comp q.path)⟩
 
-noncomputable instance : Inv (ReducedLoop Γ v) := ⟨fun p => ofPath p.path.reverse⟩
+instance : Inv (ReducedLoop Γ v) :=
+  ⟨fun p => ⟨p.path.reverse, (Path.isReduced_reverse Γ _).2 p.isReduced⟩⟩
 
 @[simp] theorem path_one : (1 : ReducedLoop Γ v).path = Quiver.Path.nil := by
   exact Path.reduce_nil Γ v
@@ -68,7 +69,7 @@ noncomputable instance : Inv (ReducedLoop Γ v) := ⟨fun p => ofPath p.path.rev
     (p * q).path = Path.reduce Γ (p.path.comp q.path) := path_ofPath _
 
 @[simp] theorem path_inv (p : ReducedLoop Γ v) :
-    (p⁻¹).path = Path.reduce Γ p.path.reverse := path_ofPath _
+    (p⁻¹).path = p.path.reverse := rfl
 
 noncomputable instance : Group (ReducedLoop Γ v) where
   toOne := inferInstance
@@ -90,7 +91,6 @@ noncomputable instance : Group (ReducedLoop Γ v) where
   inv_mul_cancel p := by
     apply ext
     rw [path_mul, path_inv, path_one]
-    rw [Path.reduce_comp_reduce_left]
     have h := Path.homotopic_comp_reverse Γ p.path.reverse
     simpa only [Quiver.Path.reverse_reverse, Path.reduce_nil] using h.reduce_eq Γ
 
