@@ -7,7 +7,10 @@ module
 
 public import Mathlib.ModelTheory.Semantics
 public import Mathlib.Algebra.Group.MinimalAxioms
-public import Mathlib.GroupTheory.FreeGroup.Reduce
+public import Mathlib.Algebra.Group.Pi.Basic
+public import Mathlib.Algebra.Group.TypeTags.Basic
+public import Mathlib.GroupTheory.FreeGroup.Basic
+import Mathlib.GroupTheory.FreeGroup.Reduce
 import Mathlib.Tactic.FinCases
 public import Mathlib.ModelTheory.Complexity
 
@@ -19,7 +22,12 @@ multiplication symbol. Adding named coefficients uses Mathlib's `Language.withCo
 The interpretation in a group, and the three left-hand group axioms, give the semantic
 interface needed to turn group formulas into equations in words.
 A model of the group theory yields a group whose operations recover the symbol interpretations.
+The multiplicative monoid `ℕ` is not a model, however inversion is interpreted.
 Group homomorphisms, including those preserving named coefficients, induce language homomorphisms.
+Including group-language terms into the coefficient language preserves the group operations.
+The coefficient sentence `a * b = b * a` holds exactly when the coefficients of `a` and `b`
+commute, so it is false in the free group on two letters and true in `ℤ²`, with the bases as
+coefficients.
 
 The choice of symbols and coefficient letters follows Kharlampovich and Myasnikov,
 *Implicit function theorem over free groups*, §2.3. The language and structure interface
@@ -448,66 +456,129 @@ end Homomorphisms
 
 end MonoidHom
 
-namespace TauCeti.Group
+namespace TauCeti
 
 open FirstOrder FirstOrder.Language
 
-/-- The coefficient sentence asserting that two named elements commute. -/
-def commSentence {A : Type*} (a b : A) : (Language.group[[A]]).Sentence :=
-  ((Language.group.con a).term * (Language.group.con b).term).equal
+namespace Group
+
+open Language.Structure
+
+section NotModel
+
+attribute [local instance] structureOfGroup
+
+/-- The multiplicative monoid `ℕ` is not a model of the group theory, however inversion is
+interpreted: the group theory is not satisfied by every monoid. -/
+theorem not_model_group_multiplicative_nat [Inv (Multiplicative ℕ)] :
+    ¬ Multiplicative ℕ ⊨ Language.Theory.group := fun h => by
+  have h' := (GroupAxiom.realize_toSentence_iff_toProp (G := Multiplicative ℕ) .invMulCancel).1
+    (Language.Theory.realize_sentence_of_mem Language.Theory.group (Set.mem_range_self _))
+  have h1 := congrArg Multiplicative.toAdd (h' (Multiplicative.ofAdd 1))
+  simp only [toAdd_mul, toAdd_ofAdd, toAdd_one] at h1
+  omega
+
+end NotModel
+
+section Coefficients
+
+variable {A α : Type*}
+
+/-- Including group-language terms into the coefficient language preserves the identity. -/
+@[simp] theorem onTerm_one :
+    (Language.group.lhomWithConstants A).onTerm (1 : Language.group.Term α) = 1 := by
+  rw [one_def, Language.Constants.term, LHom.onTerm]
+  exact congrArg (Language.Term.func _) (funext fun i => i.elim0)
+
+end Coefficients
+
+end Group
+
+end TauCeti
+
+namespace FirstOrder.Language.Term
+
+open TauCeti.Group
+
+variable {A α : Type*}
+
+/-- Including group-language terms into the coefficient language preserves inversion. -/
+@[simp] theorem onTerm_inv (t : Language.group.Term α) :
+    (Language.group.lhomWithConstants A).onTerm t⁻¹ =
+      ((Language.group.lhomWithConstants A).onTerm t)⁻¹ := by
+  rw [inv_def, Language.Functions.apply₁, LHom.onTerm]
+  exact congrArg (Language.Term.func _) (funext fun i => by fin_cases i; rfl)
+
+/-- Including group-language terms into the coefficient language preserves multiplication. -/
+@[simp] theorem onTerm_mul (t s : Language.group.Term α) :
+    (Language.group.lhomWithConstants A).onTerm (t * s) =
+      (Language.group.lhomWithConstants A).onTerm t *
+        (Language.group.lhomWithConstants A).onTerm s := by
+  rw [mul_def, Language.Functions.apply₂, LHom.onTerm]
+  exact congrArg (Language.Term.func _) (funext fun i => by fin_cases i <;> rfl)
+
+end FirstOrder.Language.Term
+
+namespace TauCeti
+
+open FirstOrder FirstOrder.Language
+
+namespace Group
+
+section Coefficients
+
+variable {A G : Type*}
+
+/-- The coefficient-language sentence `a * b = b * a`, for coefficient names `a b : A`. -/
+def commSentence (a b : A) : Language.group[[A]].Sentence :=
+  Language.Term.bdEqual ((Language.group.con a).term * (Language.group.con b).term)
     ((Language.group.con b).term * (Language.group.con a).term)
 
-@[simp] theorem realize_commSentence {G A : Type*} [One G] [Inv G] [Mul G]
-    (c : A → G) (a b : A) :
-    letI : Language.group.Structure G := structureOfGroup G
-    letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
-    G ⊨ commSentence a b ↔ c a * c b = c b * c a := by
-  simp only [commSentence, Sentence.Realize, Formula.realize_equal,
-    realize_coeff_mul, Language.Term.realize_constants]
-  -- The constantsOn structure interprets each named constant a by c a.
-  rfl
+attribute [local instance] structureOfGroup
+
+/-- The sentence `a * b = b * a` holds exactly when the coefficients of `a` and `b` commute. -/
+@[simp] theorem realize_commSentence_iff [One G] [Inv G] [Mul G] (c : A → G) (a b : A) :
+    letI := Language.constantsOn.structure c
+    G ⊨ commSentence a b ↔ Commute (c a) (c b) :=
+  -- Realization of terms with named coefficients reduces definitionally to group operations.
+  Iff.rfl
+
+/-- The sentence `a * b = b * a`, for the two basis constants, is false in the free group on two
+letters: an equation with constants can distinguish groups. -/
+theorem not_realize_commSentence_freeGroup :
+    letI := Language.constantsOn.structure (FreeGroup.of : Fin 2 → FreeGroup (Fin 2))
+    ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 := by
+  rw [realize_commSentence_iff, Commute, SemiconjBy]
+  decide
+
+/-- The sentence `a * b = b * a` is true in `ℤ²`, with the standard basis as constants. -/
+theorem realize_commSentence_multiplicative_pi :
+    letI := Language.constantsOn.structure
+      (fun i => Multiplicative.ofAdd (Pi.single i 1) : Fin 2 → Multiplicative (Fin 2 → ℤ))
+    Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 := by
+  rw [realize_commSentence_iff]
+  exact Commute.all _ _
 
 /-- Distinct free generators do not satisfy the coefficient commutativity sentence. -/
-theorem not_realize_commSentence_freeGroup_of {A : Type*} {a b : A} (hab : a ≠ b) :
-    letI : Language.group.Structure (FreeGroup A) := structureOfGroup _
-    letI : (Language.constantsOn A).Structure (FreeGroup A) :=
-      Language.constantsOn.structure FreeGroup.of
+theorem not_realize_commSentence_freeGroup_of {a b : A} (hab : a ≠ b) :
+    letI := Language.constantsOn.structure (FreeGroup.of : A → FreeGroup A)
     ¬ FreeGroup A ⊨ commSentence a b := by
   intro h
   have hc : Commute (FreeGroup.of a) (FreeGroup.of b) :=
-    (realize_commSentence FreeGroup.of a b).mp h
+    (realize_commSentence_iff FreeGroup.of a b).mp h
   exact hab (FreeGroup.eq_of_commute_of_of hc)
 
 /-- Named elements commute in any commutative multiplication structure. -/
-theorem realize_commSentence_commMagma {G A : Type*} [One G] [Inv G] [CommMagma G]
+theorem realize_commSentence_commMagma [One G] [Inv G] [CommMagma G]
     (c : A → G) (a b : A) :
-    letI : Language.group.Structure G := structureOfGroup G
-    letI : (Language.constantsOn A).Structure G := Language.constantsOn.structure c
+    letI := Language.constantsOn.structure c
     G ⊨ commSentence a b := by
-  exact (realize_commSentence c a b).mpr (mul_comm _ _)
-
--- The two free generators give a noncommutative coefficient interpretation.
-example :
-    letI : Language.group.Structure (FreeGroup (Fin 2)) := structureOfGroup _
-    letI : (Language.constantsOn (Fin 2)).Structure (FreeGroup (Fin 2)) :=
-      Language.constantsOn.structure FreeGroup.of
-    ¬ FreeGroup (Fin 2) ⊨ commSentence (0 : Fin 2) 1 :=
-  not_realize_commSentence_freeGroup_of (by decide)
-
--- The standard basis of an abelian group satisfies coefficient commutativity.
-example :
-    let c : Fin 2 → Multiplicative (Fin 2 → ℤ) :=
-      fun a => Multiplicative.ofAdd (Pi.single a 1)
-    letI : Language.group.Structure (Multiplicative (Fin 2 → ℤ)) := structureOfGroup _
-    letI : (Language.constantsOn (Fin 2)).Structure (Multiplicative (Fin 2 → ℤ)) :=
-      Language.constantsOn.structure c
-    Multiplicative (Fin 2 → ℤ) ⊨ commSentence (0 : Fin 2) 1 := by
-  exact realize_commSentence_commMagma _ 0 1
+  exact (realize_commSentence_iff c a b).mpr (Commute.all _ _)
 
 /-- Every atomic coefficient-language sentence holds in a subsingleton structure. -/
-theorem realize_of_isAtomic_subsingleton {G A : Type*} [Subsingleton G]
-    [(Language.group[[A]]).Structure G]
-    (φ : (Language.group[[A]]).Sentence) (hφ : φ.IsAtomic) :
+theorem realize_of_isAtomic_subsingleton [Subsingleton G]
+    [Language.group[[A]].Structure G]
+    (φ : Language.group[[A]].Sentence) (hφ : φ.IsAtomic) :
     G ⊨ φ := by
   cases hφ with
   | equal _ _ => exact Subsingleton.elim _ _
@@ -516,4 +587,8 @@ theorem realize_of_isAtomic_subsingleton {G A : Type*} [Subsingleton G]
     | inl r => cases r
     | inr r => cases r
 
-end TauCeti.Group
+end Coefficients
+
+end Group
+
+end TauCeti
