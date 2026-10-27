@@ -136,6 +136,7 @@ theorem reduceSnoc_eq_cons {a b c : Γ.V} (p : Γ.Path a b) (e : Quiver.Hom b c)
       rw [reduce_cons, ih hprev]
       exact reduceSnoc_eq_cons Γ (p.cons f) e hp
 
+/-- Reducing an already reduced path leaves it unchanged. -/
 theorem reduce_idem {a b : Γ.V} (p : Γ.Path a b) :
     reduce Γ (reduce Γ p) = reduce Γ p :=
   reduce_eq_self_of_isReduced Γ _ (isReduced_reduce Γ p)
