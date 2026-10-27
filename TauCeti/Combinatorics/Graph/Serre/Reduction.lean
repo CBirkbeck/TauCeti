@@ -183,8 +183,7 @@ theorem reduceSnoc_reverse {a b c : Γ.V} (p : Γ.Path a b)
 /-- Inserting a backtrack does not change a path's reduced form. -/
 @[simp] theorem reduce_backtrack {a b c : Γ.V} (p : Γ.Path a b)
     (e : Quiver.Hom b c) :
-    reduce Γ ((p.cons e).cons (Quiver.reverse e)) = reduce Γ p := by
-  simp only [reduce_cons]
+    reduceSnoc Γ (reduceSnoc Γ (reduce Γ p) e) (Quiver.reverse e) = reduce Γ p := by
   exact reduceSnoc_reverse Γ (reduce Γ p) (isReduced_reduce Γ p) e
 
 /-- Backtrack-homotopic paths have the same reduced form. -/
