@@ -27,7 +27,7 @@ public section
 namespace TauCeti
 namespace StallingsGraph
 
-universe u v w x y
+universe u v w x y z t
 
 variable {α : Type u}
 
@@ -63,6 +63,20 @@ with identical signed labels. -/
 @[simp] theorem prod_label (S : StallingsGraph.{u, v, w} α)
     (T : StallingsGraph.{u, x, y} α) (e : (S.prod T).graph.E) :
     (S.prod T).label e = S.label e.1.1 := rfl
+
+@[simp] theorem prod_src (S : StallingsGraph.{u, v, w} α)
+    (T : StallingsGraph.{u, x, y} α) (e : (S.prod T).graph.E) :
+    (S.prod T).graph.src e = (S.graph.src e.1.1, T.graph.src e.1.2) := rfl
+
+@[simp] theorem prod_rev (S : StallingsGraph.{u, v, w} α)
+    (T : StallingsGraph.{u, x, y} α) (e : (S.prod T).graph.E) :
+    ((S.prod T).graph.rev e).1 = (S.graph.rev e.1.1, T.graph.rev e.1.2) := rfl
+
+@[simp] theorem prod_tgt (S : StallingsGraph.{u, v, w} α)
+    (T : StallingsGraph.{u, x, y} α) (e : (S.prod T).graph.E) :
+    (S.prod T).graph.tgt e = (S.graph.tgt e.1.1, T.graph.tgt e.1.2) := by
+  simp only [SerreGraph.tgt_def, prod_src, prod_rev]
+  rfl
 
 /-- The first projection preserves the base point and labels. -/
 @[expose] def prodFst (S : StallingsGraph.{u, v, w} α)
@@ -102,12 +116,86 @@ with identical signed labels. -/
     (T : StallingsGraph.{u, x, y} α) (e : (S.prod T).graph.E) :
     (S.prodSnd T).graphHom.mapE e = e.1.2 := rfl
 
-/-- Every word read in the product is read in each factor. -/
+/-- Pair two morphisms with a common source into the labelled fibre product. -/
+@[expose] def prodLift {R : StallingsGraph.{u, z, t} α} {S : StallingsGraph.{u, v, w} α}
+    {T : StallingsGraph.{u, x, y} α} (f : R.Hom S) (g : R.Hom T) : R.Hom (S.prod T) where
+  graphHom := {
+    mapV := fun a => (f.graphHom.mapV a, g.graphHom.mapV a)
+    mapE := fun e => ⟨(f.graphHom.mapE e, g.graphHom.mapE e),
+      (f.map_label e).trans (g.map_label e).symm⟩
+    map_src := by
+      intro e
+      change (S.graph.src (f.graphHom.mapE e), T.graph.src (g.graphHom.mapE e)) =
+        (f.graphHom.mapV (R.graph.src e), g.graphHom.mapV (R.graph.src e))
+      exact Prod.ext (f.graphHom.map_src e) (g.graphHom.map_src e)
+    map_rev := by
+      intro e
+      apply Subtype.ext
+      change (f.graphHom.mapE (R.graph.rev e), g.graphHom.mapE (R.graph.rev e)) =
+        (S.graph.rev (f.graphHom.mapE e), T.graph.rev (g.graphHom.mapE e))
+      simp only [f.graphHom.map_rev, g.graphHom.map_rev] }
+  map_base := Prod.ext f.map_base g.map_base
+  map_label := by intro e; exact f.map_label e
+
+@[simp] theorem prodLift_mapV {R : StallingsGraph.{u, z, t} α}
+    {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
+    (f : R.Hom S) (g : R.Hom T) (a : R.graph.V) :
+    (prodLift f g).graphHom.mapV a = (f.graphHom.mapV a, g.graphHom.mapV a) := rfl
+
+@[simp] theorem prodLift_mapE {R : StallingsGraph.{u, z, t} α}
+    {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
+    (f : R.Hom S) (g : R.Hom T) (e : R.graph.E) :
+    ((prodLift f g).graphHom.mapE e).1 =
+      (f.graphHom.mapE e, g.graphHom.mapE e) := rfl
+
+@[simp] theorem prodFst_comp_prodLift {R : StallingsGraph.{u, z, t} α}
+    {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
+    (f : R.Hom S) (g : R.Hom T) : Hom.comp (S.prodFst T) (prodLift f g) = f := by
+  apply Hom.ext
+  rw [Hom.comp_graphHom]
+  apply SerreGraph.Hom.ext
+  · funext a
+    simp only [SerreGraph.Hom.comp_mapV, Function.comp_apply, prodLift_mapV]
+    rfl
+  · funext e
+    simp only [SerreGraph.Hom.comp_mapE, Function.comp_apply, prodFst_mapE]
+    rw [prodLift_mapE]
+
+@[simp] theorem prodSnd_comp_prodLift {R : StallingsGraph.{u, z, t} α}
+    {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
+    (f : R.Hom S) (g : R.Hom T) : Hom.comp (S.prodSnd T) (prodLift f g) = g := by
+  apply Hom.ext
+  rw [Hom.comp_graphHom]
+  apply SerreGraph.Hom.ext
+  · funext a
+    simp only [SerreGraph.Hom.comp_mapV, Function.comp_apply, prodLift_mapV]
+    rfl
+  · funext e
+    simp only [SerreGraph.Hom.comp_mapE, Function.comp_apply, prodSnd_mapE]
+    rw [prodLift_mapE]
+
+/-- A map into the product is determined by its two projections. -/
+theorem prodLift_unique {R : StallingsGraph.{u, z, t} α}
+    {S : StallingsGraph.{u, v, w} α} {T : StallingsGraph.{u, x, y} α}
+    (h : R.Hom (S.prod T)) :
+    prodLift (Hom.comp (S.prodFst T) h) (Hom.comp (S.prodSnd T) h) = h := by
+  apply Hom.ext
+  apply SerreGraph.Hom.ext
+  · funext a
+    simp only [prodLift_mapV, Hom.comp_graphHom, SerreGraph.Hom.comp_mapV,
+      Function.comp_apply, prodFst_mapV, prodSnd_mapV]
+    exact Prod.mk.eta
+  · funext e
+    apply Subtype.ext
+    simp only [prodLift_mapE, Hom.comp_graphHom, SerreGraph.Hom.comp_mapE,
+      Function.comp_apply, prodFst_mapE, prodSnd_mapE]
+
+/-- Every word read at a vertex pair is read at each coordinate. -/
 theorem prod_subgroup_le (S : StallingsGraph.{u, v, w} α)
-    (T : StallingsGraph.{u, x, y} α) :
-    (S.prod T).subgroup (S.prod T).base ≤
-      S.subgroup S.base ⊓ T.subgroup T.base := by
-  exact le_inf (S.prodFst T).subgroup_le (S.prodSnd T).subgroup_le
+    (T : StallingsGraph.{u, x, y} α) (a : S.graph.V) (b : T.graph.V) :
+    (S.prod T).subgroup (a, b) ≤ S.subgroup a ⊓ T.subgroup b := by
+  exact le_inf ((S.prodFst T).subgroup_le_subgroup_mapV (a, b))
+    ((S.prodSnd T).subgroup_le_subgroup_mapV (a, b))
 
 /-- Paths with the same sequence of signed labels pair to a path in the product. -/
 theorem exists_prod_path_of_word_eq (S : StallingsGraph.{u, v, w} α)
@@ -131,17 +219,17 @@ theorem exists_prod_path_of_word_eq (S : StallingsGraph.{u, v, w} α)
       obtain ⟨hpq, hef⟩ := List.append_inj' h (by simp)
       simp only [List.singleton_inj] at hef
       obtain ⟨r, hrS, hrT⟩ := ih q hpq
-      refine ⟨r.cons ⟨⟨(e.1, f.1), hef⟩, ?_, ?_⟩, ?_, ?_⟩
+      let k : (S.prod T).graph.E := ⟨(e.1, f.1), hef⟩
+      refine ⟨r.cons ⟨k, ?_, ?_⟩, ?_, ?_⟩
       · exact Prod.ext e.2.1 f.2.1
-      · have he := e.2.2
-        have hf := f.2.2
-        rw [S.graph.tgt_def] at he
-        rw [T.graph.tgt_def] at hf
-        simpa only [SerreGraph.tgt_def, prod] using Prod.ext he hf
-      · simpa [Prefunctor.mapPath, prodFst, SerreGraph.Hom.toPrefunctor] using
-          congrArg (fun z => z.cons e) hrS
-      · simpa [Prefunctor.mapPath, prodSnd, SerreGraph.Hom.toPrefunctor] using
-          congrArg (fun z => z.cons f) hrT
+      · rw [prod_tgt]
+        exact Prod.ext e.2.2 f.2.2
+      · erw [Prefunctor.mapPath_cons]
+        rw [hrS]
+        congr 1
+      · erw [Prefunctor.mapPath_cons]
+        rw [hrT]
+        congr 1
 
 /-- A product of folded labelled graphs is folded. -/
 theorem IsFolded.prod {S : StallingsGraph.{u, v, w} α}
@@ -154,47 +242,41 @@ theorem IsFolded.prod {S : StallingsGraph.{u, v, w} α}
   · apply hS e.1.1 f.1.1 (congrArg Prod.fst hsrc) hlabel
   · exact hT e.1.2 f.1.2 (congrArg Prod.snd hsrc) (e.2.symm.trans (hlabel.trans f.2))
 
-/-- Each labelled graph maps into its product with the rose on the right. -/
-def prodRoseHom (S : StallingsGraph.{u, v, w} α) :
-    S.Hom (S.prod (rose α)) where
+/-- The labels give a canonical morphism from any labelled graph to the rose. -/
+def toRose (S : StallingsGraph.{u, v, w} α) : S.Hom (rose α) where
   graphHom := {
-    mapV := fun a => (a, PUnit.unit)
-    mapE := fun e => ⟨(e, S.label e), rfl⟩
+    mapV := fun _ => PUnit.unit
+    mapE := S.label
     map_src := by intro e; rfl
-    map_rev := by
-      intro e
-      apply Subtype.ext
-      exact Prod.ext rfl (S.label_rev e) }
+    map_rev := S.label_rev }
   map_base := rfl
   map_label := by intro e; rfl
+
+/-- A morphism into the second factor makes the product accept exactly the first subgroup. -/
+theorem prod_subgroup_of_hom {S : StallingsGraph.{u, v, w} α}
+    {T : StallingsGraph.{u, x, y} α} (f : S.Hom T) :
+    (S.prod T).subgroup (S.prod T).base = S.subgroup S.base := by
+  apply le_antisymm
+  · exact (S.prodFst T).subgroup_le
+  · exact (prodLift (Hom.id S) f).subgroup_le
+
+/-- A morphism into the first factor makes the product accept exactly the second subgroup. -/
+theorem prod_subgroup_of_hom_right {S : StallingsGraph.{u, v, w} α}
+    {T : StallingsGraph.{u, x, y} α} (f : T.Hom S) :
+    (S.prod T).subgroup (S.prod T).base = T.subgroup T.base := by
+  apply le_antisymm
+  · exact (S.prodSnd T).subgroup_le
+  · exact (prodLift f (Hom.id T)).subgroup_le
 
 /-- The rose imposes no additional restriction on accepted words. -/
 theorem prod_rose_subgroup (S : StallingsGraph.{u, v, w} α) :
     (S.prod (rose α)).subgroup (S.prod (rose α)).base = S.subgroup S.base := by
-  apply le_antisymm
-  · exact (S.prodFst (rose α)).subgroup_le
-  · exact (S.prodRoseHom).subgroup_le
-
-/-- Each labelled graph maps into its product with the rose on the left. -/
-def roseProdHom (S : StallingsGraph.{u, v, w} α) :
-    S.Hom ((rose α).prod S) where
-  graphHom := {
-    mapV := fun a => (PUnit.unit, a)
-    mapE := fun e => ⟨(S.label e, e), rfl⟩
-    map_src := by intro e; rfl
-    map_rev := by
-      intro e
-      apply Subtype.ext
-      exact Prod.ext (S.label_rev e) rfl }
-  map_base := rfl
-  map_label := by intro e; rfl
+  exact prod_subgroup_of_hom S.toRose
 
 /-- A rose in the first factor imposes no additional restriction on accepted words. -/
 theorem rose_prod_subgroup (S : StallingsGraph.{u, v, w} α) :
     ((rose α).prod S).subgroup ((rose α).prod S).base = S.subgroup S.base := by
-  apply le_antisymm
-  · exact ((rose α).prodSnd S).subgroup_le
-  · exact (S.roseProdHom).subgroup_le
+  exact prod_subgroup_of_hom_right S.toRose
 
 end StallingsGraph
 end TauCeti
