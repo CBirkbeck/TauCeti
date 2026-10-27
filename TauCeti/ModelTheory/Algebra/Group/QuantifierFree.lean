@@ -7,7 +7,7 @@ module
 
 public import TauCeti.ModelTheory.Algebra.Group.TermWord
 public import TauCeti.GroupTheory.FreeGroup.EqIneqSystem
-public import Mathlib.ModelTheory.Complexity
+public import TauCeti.ModelTheory.Complexity
 
 /-!
 # Quantifier-free group formulas as finite families of word systems
@@ -23,21 +23,6 @@ The equations-and-inequations normal form follows Kharlampovich and Myasnikov,
 -/
 
 public section
-
-namespace FirstOrder.Language.BoundedFormula
-
-open FirstOrder
-
-/-- Every atomic formula over an algebraic language holds in a subsingleton structure. -/
-theorem realize_of_isAtomic_subsingleton {L : Language} [L.IsAlgebraic]
-    {G α : Type*} [Subsingleton G] [L.Structure G]
-    {n : ℕ} {φ : L.BoundedFormula α n} (hφ : φ.IsAtomic)
-    (v : α → G) (xs : Fin n → G) : φ.Realize v xs := by
-  cases hφ with
-  | equal _ _ => exact Subsingleton.elim _ _
-  | rel r _ => exact isEmptyElim r
-
-end FirstOrder.Language.BoundedFormula
 
 namespace FirstOrder.Language.group
 
