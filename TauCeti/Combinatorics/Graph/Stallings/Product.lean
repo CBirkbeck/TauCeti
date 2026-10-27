@@ -125,15 +125,11 @@ with identical signed labels. -/
       (f.map_label e).trans (g.map_label e).symm⟩
     map_src := by
       intro e
-      change (S.graph.src (f.graphHom.mapE e), T.graph.src (g.graphHom.mapE e)) =
-        (f.graphHom.mapV (R.graph.src e), g.graphHom.mapV (R.graph.src e))
       exact Prod.ext (f.graphHom.map_src e) (g.graphHom.map_src e)
     map_rev := by
       intro e
       apply Subtype.ext
-      change (f.graphHom.mapE (R.graph.rev e), g.graphHom.mapE (R.graph.rev e)) =
-        (S.graph.rev (f.graphHom.mapE e), T.graph.rev (g.graphHom.mapE e))
-      simp only [f.graphHom.map_rev, g.graphHom.map_rev] }
+      exact Prod.ext (f.graphHom.map_rev e) (g.graphHom.map_rev e) }
   map_base := Prod.ext f.map_base g.map_base
   map_label := by intro e; exact f.map_label e
 
@@ -224,12 +220,14 @@ theorem exists_prod_path_of_word_eq (S : StallingsGraph.{u, v, w} α)
       · exact Prod.ext e.2.1 f.2.1
       · rw [prod_tgt]
         exact Prod.ext e.2.2 f.2.2
-      · erw [Prefunctor.mapPath_cons]
+      · -- `erw` crosses the definitional equality between the product's vertex pairs
+        -- and the vertex type of its graph, which `rw` cannot unfold here.
+        erw [Prefunctor.mapPath_cons]
         rw [hrS]
-        congr 1
+        rfl
       · erw [Prefunctor.mapPath_cons]
         rw [hrT]
-        congr 1
+        rfl
 
 /-- A product of folded labelled graphs is folded. -/
 theorem IsFolded.prod {S : StallingsGraph.{u, v, w} α}
@@ -241,16 +239,6 @@ theorem IsFolded.prod {S : StallingsGraph.{u, v, w} α}
   apply Prod.ext
   · apply hS e.1.1 f.1.1 (congrArg Prod.fst hsrc) hlabel
   · exact hT e.1.2 f.1.2 (congrArg Prod.snd hsrc) (e.2.symm.trans (hlabel.trans f.2))
-
-/-- The labels give a canonical morphism from any labelled graph to the rose. -/
-def toRose (S : StallingsGraph.{u, v, w} α) : S.Hom (rose α) where
-  graphHom := {
-    mapV := fun _ => PUnit.unit
-    mapE := S.label
-    map_src := by intro e; rfl
-    map_rev := S.label_rev }
-  map_base := rfl
-  map_label := by intro e; rfl
 
 /-- A morphism into the second factor makes the product accept exactly the first subgroup. -/
 theorem prod_subgroup_of_hom {S : StallingsGraph.{u, v, w} α}
