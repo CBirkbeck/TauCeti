@@ -83,7 +83,7 @@ noncomputable def reduce {a : Γ.V} : ∀ {b : Γ.V}, Γ.Path a b → Γ.Path a 
   | _, .nil => .nil
   | _, .cons p e => reduceSnoc Γ (reduce p) e
 
-@[simp] theorem reduce_nil (a : Γ.V) :
+theorem reduce_nil (a : Γ.V) :
     reduce Γ (Quiver.Path.nil : Γ.Path a a) = .nil := by simp [reduce]
 
 @[simp] theorem reduce_cons {a b c : Γ.V} (p : Γ.Path a b) (e : Quiver.Hom b c) :
@@ -110,7 +110,7 @@ theorem isReduced_reduceSnoc {a b c : Γ.V} (p : Γ.Path a b)
 @[simp] theorem isReduced_reduce {a b : Γ.V} (p : Γ.Path a b) :
     IsReduced Γ (reduce Γ p) := by
   induction p with
-  | nil => simp
+  | nil => exact isReduced_nil Γ _
   | cons p e ih => exact isReduced_reduceSnoc Γ (reduce Γ p) ih e
 
 /-- A reduced path is fixed by appending a dart and reducing just that append. -/
@@ -130,13 +130,13 @@ theorem reduceSnoc_eq_cons {a b c : Γ.V} (p : Γ.Path a b) (e : Quiver.Hom b c)
   | nil => rfl
   | cons p e ih =>
     cases p with
-    | nil => simp [Quiver.Hom.toPath]
+    | nil => simp only [reduce_cons, reduce_nil, reduceSnoc_nil, Quiver.Hom.toPath]
     | cons p f =>
       have hprev := ((isReduced_cons_cons Γ p f e).mp hp).1
       rw [reduce_cons, ih hprev]
       exact reduceSnoc_eq_cons Γ (p.cons f) e hp
 
-@[simp] theorem reduce_idem {a b : Γ.V} (p : Γ.Path a b) :
+theorem reduce_idem {a b : Γ.V} (p : Γ.Path a b) :
     reduce Γ (reduce Γ p) = reduce Γ p :=
   reduce_eq_self_of_isReduced Γ _ (isReduced_reduce Γ p)
 
