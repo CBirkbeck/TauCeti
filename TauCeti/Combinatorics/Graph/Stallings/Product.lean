@@ -117,6 +117,7 @@ with identical signed labels. -/
     (S.prodSnd T).graphHom.mapE e = e.1.2 := rfl
 
 /-- Pair two morphisms with a common source into the labelled fibre product. -/
+-- Exposure is required for the exported mapV and mapE simp lemmas below.
 @[expose] def prodLift {R : StallingsGraph.{u, z, t} α} {S : StallingsGraph.{u, v, w} α}
     {T : StallingsGraph.{u, x, y} α} (f : R.Hom S) (g : R.Hom T) : R.Hom (S.prod T) where
   graphHom := {

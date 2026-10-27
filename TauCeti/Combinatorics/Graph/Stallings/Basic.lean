@@ -231,6 +231,7 @@ end Hom
     (rose α).label e = e := rfl
 
 /-- The labels give the canonical morphism from any labelled graph to the rose. -/
+-- Exposure is required for the exported mapV and mapE simp lemmas below.
 @[expose] def toRose (S : StallingsGraph α) : S.Hom (rose α) where
   graphHom := {
     mapV := fun _ => PUnit.unit
