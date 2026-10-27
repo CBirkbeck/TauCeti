@@ -107,7 +107,7 @@ theorem isReduced_reduceSnoc {a b c : Γ.V} (p : Γ.Path a b)
         (isReduced_cons_cons Γ q f e).mpr ⟨hp, h⟩
 
 /-- Every path reduces to a path with no immediate backtracking. -/
-theorem isReduced_reduce {a b : Γ.V} (p : Γ.Path a b) :
+@[simp] theorem isReduced_reduce {a b : Γ.V} (p : Γ.Path a b) :
     IsReduced Γ (reduce Γ p) := by
   induction p with
   | nil => simp
@@ -124,7 +124,7 @@ theorem reduceSnoc_eq_cons {a b c : Γ.V} (p : Γ.Path a b) (e : Quiver.Hom b c)
     exact reduceSnoc_cons_of_ne Γ p f e hne
 
 /-- Reduction fixes precisely the already reduced paths. -/
-theorem reduce_eq_self_of_isReduced {a b : Γ.V} (p : Γ.Path a b)
+@[simp] theorem reduce_eq_self_of_isReduced {a b : Γ.V} (p : Γ.Path a b)
     (hp : IsReduced Γ p) : reduce Γ p = p := by
   induction p with
   | nil => rfl
