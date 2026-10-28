@@ -27,75 +27,6 @@ open Monoid.Coprod
 
 variable {G H X Y Z : Type*} [Group G] [Group H] (ι : G →* H)
 
-/-- The inverse image of a solution set under the tuple word map is the solution set
-of the image system. -/
-theorem preimage_wordMap_V_of_GHom
-    (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (T : Set (GX G Y)) :
-    wordMap ι (fun y => σ (inr (FreeGroup.of y))) ⁻¹' V ι T = V ι (σ '' T) := by
-  calc
-    wordMap ι (fun y => σ (inr (FreeGroup.of y))) ⁻¹' V ι T =
-        V ι ((eval (inl : G →* GX G X)
-          (fun y => σ (inr (FreeGroup.of y)))) '' T) := preimage_wordMap_V _ _
-    _ = V ι (σ '' T) := congrArg (fun f : GX G Y →* GX G X => V ι (f '' T))
-      (eval_eq_of_comp_inl σ.comp_coeff)
-
-/-- A word map sends solutions to solutions of the inverse-image system. -/
-theorem wordMap_mem_V (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (S : Set (GX G X)) (v : X → H) (hv : v ∈ V ι S) :
-    wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) := by
-  have h := (Set.ext_iff.mp (preimage_wordMap_V_of_GHom ι σ (σ ⁻¹' S))) v
-  exact h.mpr (V_antitone ι (Set.image_preimage_subset σ S) hv)
-
-/-- A tuple solves `S` exactly when its word map solves the inverse-image system. -/
-theorem wordMap_mem_V_iff (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (hσ : Function.Surjective σ) (S : Set (GX G X)) (v : X → H) :
-    wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
-  simpa only [Set.mem_preimage, Set.image_preimage_eq S hσ] using
-    (Set.ext_iff.mp (preimage_wordMap_V_of_GHom ι σ (σ ⁻¹' S))) v
-
-/-- The word homomorphism `σ` maps the radical of the inverse-image system into the
-radical of the original system. -/
-theorem Rad_preimage_le_comap
-    (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (S : Set (GX G X)) :
-    Rad ι (σ ⁻¹' S) ≤ (Rad ι S).comap σ.toMonoidHom := by
-  intro w hw
-  rw [Subgroup.mem_comap, mem_Rad]
-  intro v hv
-  have h := (mem_Rad).1 hw
-    (wordMap ι (fun y => σ (inr (FreeGroup.of y))) v) (wordMap_mem_V ι σ S v hv)
-  rwa [eval_wordMap] at h
-
-namespace CoordGroup
-
-/-- A coefficient-preserving word map induces a homomorphism between coordinate groups. -/
-def homOfWordMap (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (S : Set (GX G X)) : GHom (coeff ι (σ ⁻¹' S)) (coeff ι S) where
-  toMonoidHom := QuotientGroup.map _ _ σ.toMonoidHom (Rad_preimage_le_comap ι σ S)
-  map_coeff' g := by
-    simp [coeff_apply]
-
-@[simp]
-theorem homOfWordMap_mk
-    (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (S : Set (GX G X)) (w : GX G Y) :
-    homOfWordMap ι σ S (w : CoordGroup ι (σ ⁻¹' S)) =
-      (σ w : CoordGroup ι S) := by
-  simp [homOfWordMap]
-
-/-- Precomposition with the coordinate-group word map corresponds to the word map on
-tuples under the point–homomorphism equivalence. -/
-theorem homEquiv_comp_homOfWordMap
-    (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
-    (S : Set (GX G X)) (φ : GHom (coeff ι S) ι) :
-    ((homEquiv ι (σ ⁻¹' S) (φ.comp (homOfWordMap ι σ S)) : Y → H)) =
-      wordMap ι (fun y => σ (inr (FreeGroup.of y))) (homEquiv ι S φ) := by
-  funext y
-  simp only [homEquiv_apply_coe, GHom.coe_comp, Function.comp_apply, wordMap_apply]
-  rw [homOfWordMap_mk, eval_homEquiv]
-
-end CoordGroup
-
 variable (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (hσ : Function.Bijective σ)
 
@@ -127,23 +58,23 @@ noncomputable def coordinateChangeEquiv : (X → H) ≃ (Y → H) where
   simp [coordinateChangeEquiv]
 
 /-- A bijective word map restricts to an equivalence of solution sets. -/
-noncomputable def coordinateChangeSolutions (S : Set (GX G X)) :
+noncomputable def coordinateChangeEquivV (S : Set (GX G X)) :
     V ι S ≃ V ι (σ ⁻¹' S) :=
   (coordinateChangeEquiv ι σ hσ).subtypeEquiv
     (fun v => (wordMap_mem_V_iff ι σ hσ.2 S v).symm)
 
 /-- On tuples, the solution equivalence applies the word map. -/
-@[simp] theorem coordinateChangeSolutions_apply_coe (S : Set (GX G X)) (v : V ι S) :
-    ((coordinateChangeSolutions ι σ hσ S v : V ι (σ ⁻¹' S)) : Y → H) =
+@[simp] theorem coordinateChangeEquivV_apply_coe (S : Set (GX G X)) (v : V ι S) :
+    ((coordinateChangeEquivV ι σ hσ S v : V ι (σ ⁻¹' S)) : Y → H) =
       wordMap ι (fun y => σ (inr (FreeGroup.of y))) v := by
-  simp [coordinateChangeSolutions, Equiv.subtypeEquiv]
+  simp [coordinateChangeEquivV, Equiv.subtypeEquiv]
 
 /-- On tuples, the inverse solution equivalence applies the inverse word map. -/
-@[simp] theorem coordinateChangeSolutions_symm_apply_coe
+@[simp] theorem coordinateChangeEquivV_symm_apply_coe
     (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
-    (((coordinateChangeSolutions ι σ hσ S).symm v : V ι S) : X → H) =
+    (((coordinateChangeEquivV ι σ hσ S).symm v : V ι S) : X → H) =
       wordMap ι (fun x => (σ.symmOfBijective hσ) (inr (FreeGroup.of x))) v := by
-  simp [coordinateChangeSolutions, Equiv.subtypeEquiv]
+  simp [coordinateChangeEquivV, Equiv.subtypeEquiv]
 
 /-- Radicals transform by inverse image under a bijective coefficient-preserving word map. -/
 theorem Rad_preimage (S : Set (GX G X)) :
@@ -194,15 +125,22 @@ theorem equivOfCoordinateChange_toMonoidHom (S : Set (GX G X)) :
   induction x using QuotientGroup.induction_on with
   | _ w => simp
 
-/-- Precomposition with the coordinate-group isomorphism corresponds to the word map on
-solution tuples. -/
-theorem homEquiv_comp_equivOfCoordinateChange (S : Set (GX G X))
-    (φ : GHom (coeff ι S) ι) :
-    (fun y => φ (equivOfCoordinateChange ι σ hσ S
-      ((inr (FreeGroup.of y) : GX G Y) : CoordGroup ι (σ ⁻¹' S)))) =
-      wordMap ι (fun y => σ (inr (FreeGroup.of y))) (homEquiv ι S φ) := by
-  funext y
-  simp only [equivOfCoordinateChange_mk, wordMap_apply, eval_homEquiv]
+/-- The coordinate-group isomorphism fixes coefficients. -/
+@[simp]
+theorem equivOfCoordinateChange_coeff (S : Set (GX G X)) (g : G) :
+    equivOfCoordinateChange ι σ hσ S (coeff ι (σ ⁻¹' S) g) = coeff ι S g := by
+  change (equivOfCoordinateChange ι σ hσ S).toMonoidHom
+    (coeff ι (σ ⁻¹' S) g) = coeff ι S g
+  rw [equivOfCoordinateChange_toMonoidHom]
+  exact DFunLike.congr_fun (homOfWordMap ι σ S).comp_coeff g
+
+/-- The inverse coordinate-group isomorphism fixes coefficients. -/
+@[simp]
+theorem equivOfCoordinateChange_symm_coeff (S : Set (GX G X)) (g : G) :
+    (equivOfCoordinateChange ι σ hσ S).symm (coeff ι S g) =
+      coeff ι (σ ⁻¹' S) g := by
+  apply (equivOfCoordinateChange ι σ hσ S).injective
+  simp
 
 end CoordGroup
 
