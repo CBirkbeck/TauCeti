@@ -528,6 +528,12 @@ variable (ι : G →* H) (S : Set (GX G X)) (T : Set (GX G Y))
 def MapsToWordMap (w : Y → GX G X) : Prop :=
   Set.MapsTo (wordMap ι w) (V ι S) (V ι T)
 
+/-- A tuple of words maps solutions of `S` to solutions of `T` precisely when its word map
+does so at every solution. -/
+theorem mapsToWordMap_iff (w : Y → GX G X) :
+    MapsToWordMap ι S T w ↔ ∀ v ∈ V ι S, wordMap ι w v ∈ V ι T :=
+  Iff.rfl
+
 /-- A word map between algebraic sets pulls equations vanishing on the target back to
 equations vanishing on the source. -/
 theorem Rad_le_comap_of_mapsToWordMap (w : Y → GX G X) (hw : MapsToWordMap ι S T w) :
@@ -536,7 +542,7 @@ theorem Rad_le_comap_of_mapsToWordMap (w : Y → GX G X) (hw : MapsToWordMap ι 
   rw [Subgroup.mem_comap, mem_Rad]
   intro v hv
   rw [← MonoidHom.comp_apply, eval_comp_eval]
-  exact (mem_Rad.mp ht) _ (hw hv)
+  exact (mem_Rad.mp ht) _ ((mapsToWordMap_iff ι S T w).mp hw v hv)
 
 /-- A word map between algebraic sets induces a coefficient-preserving homomorphism of
 coordinate groups in the opposite direction. -/

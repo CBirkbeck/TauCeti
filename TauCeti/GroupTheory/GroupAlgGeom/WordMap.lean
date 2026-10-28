@@ -43,7 +43,7 @@ theorem exists_wordMap_representation (φ : GHom (coeff ι T) (coeff ι S)) :
     exact QuotientGroup.mk_surjective _
   choose w hw using hsurj
   have hmap : MapsToWordMap ι S T w := by
-    unfold MapsToWordMap
+    rw [mapsToWordMap_iff]
     intro v hv
     let ψ : GHom (coeff ι T) ι := (evalGHom v hv).comp φ
     have hcoords : wordMap ι w v = (homEquiv ι T ψ : Y → H) := by
