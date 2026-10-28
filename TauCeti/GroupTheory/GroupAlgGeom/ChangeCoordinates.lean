@@ -139,14 +139,23 @@ theorem coordGroupChangeCoordinates_mk (e : GX G X ≃* GX G X)
       (e.symm w : CoordGroup ι (e.symm '' S)) :=
   QuotientGroup.congr_mk _ _ _ _ _
 
+/-- The inverse word automorphism fixes coefficients in the transformed coordinate group. -/
 @[simp]
+theorem coordGroupChangeCoordinates_symm_inl (e : GX G X ≃* GX G X)
+    (he : ∀ g : G, e (inl g) = inl g) (S : Set (GX G X)) (g : G) :
+    (e.symm (inl g) : CoordGroup ι (e.symm '' S)) =
+      CoordGroup.coeff ι (e.symm '' S) g := by
+  rw [CoordGroup.coeff_apply]
+  congr 1
+  apply e.injective
+  simp [he]
+
+/-- The change-of-coordinates isomorphism fixes coefficients. -/
 theorem coordGroupChangeCoordinates_coeff (e : GX G X ≃* GX G X)
     (he : ∀ g : G, e (inl g) = inl g) (S : Set (GX G X)) (g : G) :
     coordGroupChangeCoordinates ι e he S (CoordGroup.coeff ι S g) =
       CoordGroup.coeff ι (e.symm '' S) g := by
-  rw [CoordGroup.coeff_apply, CoordGroup.coeff_apply, coordGroupChangeCoordinates_mk]
-  congr 1
-  apply e.injective
-  simp [he]
+  simpa only [CoordGroup.coeff_apply, coordGroupChangeCoordinates_mk] using
+    coordGroupChangeCoordinates_symm_inl ι e he S g
 
 end TauCeti.GroupAlgGeom
