@@ -135,10 +135,17 @@ theorem Hom.incidenceBoundary_mapDomain {Δ : SerreGraph} (f : Γ.Hom Δ)
         (Finsupp.mapDomain (fun e : O ↦ ⟨f.mapE e.1, hO e.2⟩ : O → O') c) =
       Finsupp.mapDomain f.mapV (Γ.incidenceBoundary O R c) := by
   classical
-  induction c using Finsupp.induction_linear with
-  | zero => simp
-  | add c d hc hd => simp only [Finsupp.mapDomain_add, map_add, hc, hd]
-  | single e r => simp [Finsupp.mapDomain_sub, Finsupp.mapDomain_smul]
+  let mapE : O → O' := fun e => ⟨f.mapE e.1, hO e.2⟩
+  have hcol (e : O) :
+      (Finsupp.lmapDomain R R f.mapV)
+          (Finsupp.single (Γ.tgt e.1) 1 - Finsupp.single (Γ.src e.1) 1) =
+        Finsupp.single (Δ.tgt (mapE e).1) 1 -
+          Finsupp.single (Δ.src (mapE e).1) 1 := by
+    simp [mapE, Finsupp.lmapDomain_apply, Finsupp.mapDomain_sub]
+  simpa only [incidenceBoundary, LinearMap.comp_apply, Finsupp.lmapDomain_apply, mapE] using
+    congrArg (fun g => g c)
+      (Finsupp.lmapDomain_linearCombination R mapE
+        (Finsupp.lmapDomain R R f.mapV) hcol)
 
 /-- A graph morphism carries cycles to cycles over any coefficient ring. -/
 theorem Hom.map_ker_incidenceBoundary_le {Δ : SerreGraph} (f : Γ.Hom Δ)
@@ -209,16 +216,8 @@ theorem incidenceBoundary_mapDomain_inclusion {O' : Set Γ.E} (h : O ⊆ O')
     (R : Type*) [Ring R] (c : O →₀ R) :
     Γ.incidenceBoundary O' R (Finsupp.mapDomain (Set.inclusion h) c) =
       Γ.incidenceBoundary O R c := by
-  have hO : Set.MapsTo (Hom.id Γ).mapE O O' := by
-    intro e he
-    simpa only [Hom.id_mapE, id_eq] using h he
-  have hE : (fun e : O ↦ ⟨(Hom.id Γ).mapE e.1, hO e.2⟩ : O → O') =
-      Set.inclusion h := by
-    funext e
-    exact Subtype.ext (congrFun (Hom.id_mapE Γ) e.1)
-  have hb := (Hom.id Γ).incidenceBoundary_mapDomain hO R c
-  rw [hE, Hom.id_mapV, Finsupp.mapDomain_id] at hb
-  exact hb
+  simp only [incidenceBoundary, Finsupp.linearCombination_mapDomain]
+  rfl
 
 /-- Enlarging the chosen dart set carries boundary-zero chains to boundary-zero chains over
 any coefficient ring. -/
