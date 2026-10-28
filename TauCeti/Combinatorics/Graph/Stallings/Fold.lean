@@ -110,7 +110,8 @@ def foldHom : S.Hom (S.foldAt f₁ f₂ hsrc hlabel) where
   map_label := by intro e; rfl
 
 /-- The base of a fold is the image of the original base. -/
-@[simp] theorem foldAt_base :
+-- Hom.map_base already simplifies the right-hand side to the left-hand side.
+theorem foldAt_base :
     (S.foldAt f₁ f₂ hsrc hlabel).base =
       (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV S.base := by
   unfold foldAt foldHom
