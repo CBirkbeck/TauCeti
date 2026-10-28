@@ -67,6 +67,7 @@ noncomputable def coordinateChangeEquivV (S : Set (GX G X)) :
 @[simp] theorem coordinateChangeEquivV_apply_coe (S : Set (GX G X)) (v : V ι S) :
     ((coordinateChangeEquivV ι σ hσ S v : V ι (σ ⁻¹' S)) : Y → H) =
       wordMap ι (fun y => σ (inr (FreeGroup.of y))) v := by
+  -- The subtype equivalence applies the tuple equivalence to the underlying value.
   change coordinateChangeEquiv ι σ hσ (v : X → H) = _
   simp
 
@@ -75,6 +76,7 @@ noncomputable def coordinateChangeEquivV (S : Set (GX G X)) :
     (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
     (((coordinateChangeEquivV ι σ hσ S).symm v : V ι S) : X → H) =
       wordMap ι (fun x => (σ.symmOfBijective hσ) (inr (FreeGroup.of x))) v := by
+  -- The inverse subtype equivalence applies the inverse tuple equivalence to the value.
   change (coordinateChangeEquiv ι σ hσ).symm (v : Y → H) = _
   simp
 
