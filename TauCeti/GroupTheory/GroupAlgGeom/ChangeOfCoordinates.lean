@@ -128,10 +128,13 @@ theorem equivOfCoordinateChange_toMonoidHom (S : Set (GX G X)) :
 /-- The coordinate-group isomorphism fixes coefficients. -/
 theorem equivOfCoordinateChange_coeff (S : Set (GX G X)) (g : G) :
     equivOfCoordinateChange ι σ hσ S (coeff ι (σ ⁻¹' S) g) = coeff ι S g := by
-  change (equivOfCoordinateChange ι σ hσ S).toMonoidHom
-    (coeff ι (σ ⁻¹' S) g) = coeff ι S g
-  rw [equivOfCoordinateChange_toMonoidHom]
-  exact DFunLike.congr_fun (homOfWordMap ι σ S).comp_coeff g
+  calc
+    equivOfCoordinateChange ι σ hσ S (coeff ι (σ ⁻¹' S) g) =
+        (equivOfCoordinateChange ι σ hσ S).toMonoidHom
+          (coeff ι (σ ⁻¹' S) g) := rfl
+    _ = (homOfWordMap ι σ S).toMonoidHom (coeff ι (σ ⁻¹' S) g) := by
+      rw [equivOfCoordinateChange_toMonoidHom]
+    _ = coeff ι S g := DFunLike.congr_fun (homOfWordMap ι σ S).comp_coeff g
 
 /-- The inverse coordinate-group isomorphism fixes coefficients. -/
 theorem equivOfCoordinateChange_symm_coeff (S : Set (GX G X)) (g : G) :
