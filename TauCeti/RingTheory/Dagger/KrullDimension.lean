@@ -11,7 +11,7 @@ public import Mathlib.RingTheory.KrullDimension.Basic
 import Mathlib.RingTheory.KrullDimension.Field
 import Mathlib.RingTheory.KrullDimension.NonZeroDivisors
 import TauCeti.RingTheory.KrullDimension.Basic
-import TauCeti.RingTheory.KrullDimension.Integral
+public import TauCeti.RingTheory.KrullDimension.Integral
 import TauCeti.RingTheory.KrullDimension.Quotient
 
 /-!
@@ -68,7 +68,7 @@ private theorem ringKrullDim_quotient_span_le_option {σ : Type*} [Finite σ]
     (RingHom.Finite.of_surjective _ Ideal.Quotient.mk_surjective) hz
   let : Algebra (W σ) (W (Option σ) ⧸ J) :=
     (π.comp optionC).toRingHom.toAlgebra
-  have : Module.Finite (W σ) (W (Option σ) ⧸ J) := hfin
+  have : Module.Finite (W σ) (W (Option σ) ⧸ J) := RingHom.finite_algebraMap.mp hfin
   have : Algebra.IsIntegral (W σ) (W (Option σ) ⧸ J) := Algebra.IsIntegral.of_finite _ _
   rw [ringKrullDim_eq_of_ringEquiv (Ideal.quotientEquiv _ J e.toRingEquiv
     (by simp [J, Ideal.map_span]))]
@@ -101,6 +101,14 @@ theorem ringKrullDim_eq_natCard {σ : Type*} [Finite σ] :
 instance finiteRingKrullDim {σ : Type*} [Finite σ] : FiniteRingKrullDim (W σ) :=
   .of_ringKrullDim_eq_natCast ringKrullDim_eq_natCard
 
+/-- An algebra integral over an injectively embedded Monsky–Washnitzer algebra has dimension
+equal to its number of variables. Applied to a finite Noether normalisation, this identifies
+the normalisation dimension intrinsically. -/
+theorem ringKrullDim_eq_natCard_of_isIntegral {σ : Type*} [Finite σ]
+    {A : Type*} [CommRing A] [Algebra (W σ) A] [Algebra.IsIntegral (W σ) A]
+    [FaithfulSMul (W σ) A] : ringKrullDim A = Nat.card σ := by
+  rw [ringKrullDim_eq_of_isIntegral_of_faithfulSMul (R := W σ), ringKrullDim_eq_natCard]
+
 end washnitzerAlgebra
 
 namespace IsDaggerAlgebra
@@ -116,12 +124,12 @@ theorem exists_ringKrullDim_eq_finite_injective [Nontrivial A] :
   obtain ⟨d, g, -, hg, hfin⟩ := washnitzerAlgebra.exists_finite_injective
     (AlgHom.Finite.of_surjective π hπ)
   let := g.toRingHom.toAlgebra
-  have : Module.Finite (W (Fin d)) A := hfin
+  have : Module.Finite (W (Fin d)) A := RingHom.finite_algebraMap.mp hfin
   have : Algebra.IsIntegral (W (Fin d)) A := Algebra.IsIntegral.of_finite _ _
   have : FaithfulSMul (W (Fin d)) A :=
     (faithfulSMul_iff_algebraMap_injective (W (Fin d)) A).mpr hg
   refine ⟨d, ?_, g, hg, hfin⟩
-  simpa using (ringKrullDim_eq_of_isIntegral_of_faithfulSMul (R := W (Fin d)) (S := A))
+  simpa using washnitzerAlgebra.ringKrullDim_eq_natCard_of_isIntegral (K := K) (σ := Fin d) (A := A)
 
 include K in
 /-- A nonzero dagger algebra has finite Krull dimension. The zero algebra instead has
