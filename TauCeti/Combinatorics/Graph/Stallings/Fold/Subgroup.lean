@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Combinatorics.Graph.Stallings.Fold
+public import TauCeti.Combinatorics.Graph.Stallings.Fold.Basic
 
 /-!
 # The subgroup accepted by a Stallings fold
