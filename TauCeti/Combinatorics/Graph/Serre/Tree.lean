@@ -21,6 +21,8 @@ is a reduced loop.
 
 public section
 
+universe u v
+
 namespace TauCeti
 namespace SerreGraph
 
@@ -46,64 +48,27 @@ theorem isTree_iff : Γ.IsTree ↔
     Γ.Connected ∧ ∀ (u : Γ.V) (p : Γ.Path u u), Path.IsReduced Γ p →
       p = Quiver.Path.nil := Iff.rfl
 
-/-- The Serre graph with one vertex and no edges. -/
-def point : SerreGraph where
-  V := PUnit
-  E := PEmpty
-  src := PEmpty.elim
-  rev := PEmpty.elim
-  rev_rev := by intro e; exact e.elim
-  rev_ne := by intro e; exact e.elim
-
 /-- The graph with one vertex and no edges is a tree. -/
-theorem single_vertex_isTree : point.IsTree := by
-  change point.Connected ∧ ∀ (u : point.V) (p : point.Path u u),
-    Path.IsReduced point p → p = Quiver.Path.nil
+theorem single_vertex_isTree : point.{u, v}.IsTree := by
+  rw [isTree_iff]
   refine ⟨?_, ?_⟩
-  · rw [point.connected_iff]
+  · rw [point.{u, v}.connected_iff]
     refine ⟨⟨PUnit.unit⟩, ?_⟩
-    rw [point.preconnected_iff]
+    rw [point.{u, v}.preconnected_iff]
     intro u v
     cases u
     cases v
-    exact ⟨Quiver.Path.nil⟩
+    exact ⟨(@Quiver.Path.nil point.{u, v}.V point.{u, v}.toQuiver PUnit.unit)⟩
   · intro u p _
     cases p with
     | nil => rfl
     | cons p e => exact e.1.elim
 
-/-- Every rose is connected, including the rose without petals. -/
-theorem rose_connected (α : Type*) : (rose α).Connected := by
-  rw [(rose α).connected_iff]
-  refine ⟨⟨PUnit.unit⟩, ?_⟩
-  rw [(rose α).preconnected_iff]
-  intro u v
-  cases u
-  cases v
-  exact ⟨Quiver.Path.nil⟩
-
-/-- A rose petal is a closed path of length one. -/
-def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
-  ((rose α).dart (a, true)).toPath
-
-/-- A rose petal is the path consisting of its positive dart. -/
-theorem rosePetal_eq_toPath {α : Type*} (a : α) :
-    rosePetal a = ((rose α).dart (a, true)).toPath := (rfl)
-
-@[simp] theorem rosePetal_length {α : Type*} (a : α) :
-    (rosePetal a).length = 1 := by
-  rw [rosePetal_eq_toPath]
-  exact Quiver.Path.length_toPath _
-
-/-- A rose petal is reduced. -/
-theorem rosePetal_isReduced {α : Type*} (a : α) :
-    Path.IsReduced (rose α) (rosePetal a) := by
-  exact Path.isReduced_toPath _ _
-
 /-- A rose with a petal is not a tree. -/
 theorem rose_not_isTree {α : Type*} (a : α) : ¬(rose α).IsTree := by
   intro h
   have hp := h.eq_nil_of_isReduced (rose α) (rosePetal a) (rosePetal_isReduced a)
+  rw [rosePetal_eq_toPath] at hp
   cases hp
 
 /-- The one-petal rose is not a tree. -/
