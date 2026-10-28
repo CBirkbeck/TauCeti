@@ -116,4 +116,11 @@ theorem foldAt_subgroup (x : S.graph.V) :
     exact S.mem_subgroup_iff.mpr ⟨p.comp r, by simp [hp, hr]⟩
   · exact (S.foldHom f₁ f₂ hsrc hlabel).subgroup_le_subgroup_mapV x
 
+/-- A single Stallings fold preserves the subgroup accepted at its base vertex. -/
+@[simp]
+theorem foldAt_subgroup_base :
+    (S.foldAt f₁ f₂ hsrc hlabel).subgroup
+      (S.foldAt f₁ f₂ hsrc hlabel).base = S.subgroup S.base := by
+  rw [← (S.foldHom f₁ f₂ hsrc hlabel).map_base, foldAt_subgroup]
+
 end TauCeti.StallingsGraph
