@@ -109,6 +109,31 @@ def foldHom : S.Hom (S.foldAt f₁ f₂ hsrc hlabel) where
   map_base := rfl
   map_label := by intro e; rfl
 
+/-- The base of a fold is the image of the original base. -/
+@[simp] theorem foldAt_base :
+    (S.foldAt f₁ f₂ hsrc hlabel).base =
+      (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV S.base := by
+  unfold foldAt foldHom
+  rfl
+
+/-- Two vertices have the same image exactly when the fold relation identifies them. -/
+theorem foldHom_mapV_eq_iff (x y : S.graph.V) :
+    (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV x =
+      (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV y ↔
+      Relation.EqvGen (fun a b => a = S.graph.tgt f₁ ∧ b = S.graph.tgt f₂) x y := by
+  change Quot.mk (vertexRel S f₁ f₂) x = Quot.mk (vertexRel S f₁ f₂) y ↔ _
+  exact ⟨Quot.eqvGen_exact, Quot.eqvGen_sound⟩
+
+/-- Two darts have the same image exactly when the fold relation identifies them. -/
+theorem foldHom_mapE_eq_iff (e e' : S.graph.E) :
+    (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapE e =
+      (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapE e' ↔
+      Relation.EqvGen (fun a b =>
+        (a = f₁ ∧ b = f₂) ∨
+          (a = S.graph.rev f₁ ∧ b = S.graph.rev f₂)) e e' := by
+  change Quot.mk (dartRel S f₁ f₂) e = Quot.mk (dartRel S f₁ f₂) e' ↔ _
+  exact ⟨Quot.eqvGen_exact, Quot.eqvGen_sound⟩
+
 /-- The two selected darts have the same image in the fold. -/
 theorem foldHom_mapE_eq :
     (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapE f₁ =
@@ -122,17 +147,17 @@ theorem foldHom_mapV_tgt_eq :
   vertex_sound S f₁ f₂
 
 /-- Every vertex of the fold comes from the original graph. -/
-theorem foldHom_surjective_mapV :
+theorem foldHom_mapV_surjective :
     Function.Surjective (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV :=
   Quot.mk_surjective
 
 /-- Every dart of the fold comes from the original graph. -/
-theorem foldHom_surjective_mapE :
+theorem foldHom_mapE_surjective :
     Function.Surjective (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapE :=
   Quot.mk_surjective
 
 /-- A labelled morphism that identifies the folded darts factors through their fold. -/
-def foldDesc {T : StallingsGraph α} (g : S.Hom T)
+def foldLift {T : StallingsGraph α} (g : S.Hom T)
     (h : g.graphHom.mapE f₁ = g.graphHom.mapE f₂) :
     (S.foldAt f₁ f₂ hsrc hlabel).Hom T where
   graphHom := {
@@ -164,49 +189,66 @@ def foldDesc {T : StallingsGraph α} (g : S.Hom T)
     induction e using Quot.ind with
     | _ e => exact g.map_label e
 
+/-- The lifted vertex map computes on vertices from the original graph. -/
+@[simp] theorem foldLift_mapV_foldHom {T : StallingsGraph α} (g : S.Hom T)
+    (h : g.graphHom.mapE f₁ = g.graphHom.mapE f₂) (x : S.graph.V) :
+    (S.foldLift f₁ f₂ hsrc hlabel g h).graphHom.mapV
+      ((S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV x) = g.graphHom.mapV x := by
+  -- Quot.lift computes on the vertex representative supplied by Quot.mk.
+  unfold foldLift foldHom foldAt
+  rfl
+
+/-- The lifted dart map computes on darts from the original graph. -/
+@[simp] theorem foldLift_mapE_foldHom {T : StallingsGraph α} (g : S.Hom T)
+    (h : g.graphHom.mapE f₁ = g.graphHom.mapE f₂) (e : S.graph.E) :
+    (S.foldLift f₁ f₂ hsrc hlabel g h).graphHom.mapE
+      ((S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapE e) = g.graphHom.mapE e := by
+  -- Quot.lift computes on the dart representative supplied by Quot.mk.
+  unfold foldLift foldHom foldAt
+  rfl
+
 /-- Composing the fold quotient with its descended morphism recovers the original map. -/
-@[simp] theorem foldDesc_comp_foldHom {T : StallingsGraph α} (g : S.Hom T)
+@[simp] theorem foldLift_comp_foldHom {T : StallingsGraph α} (g : S.Hom T)
     (h : g.graphHom.mapE f₁ = g.graphHom.mapE f₂) :
-    Hom.comp (S.foldDesc f₁ f₂ hsrc hlabel g h) (S.foldHom f₁ f₂ hsrc hlabel) = g := by
+    Hom.comp (S.foldLift f₁ f₂ hsrc hlabel g h) (S.foldHom f₁ f₂ hsrc hlabel) = g := by
   apply Hom.ext
   apply SerreGraph.Hom.ext
   · funext x
-    simp only [Hom.comp_graphHom, SerreGraph.Hom.comp_mapV, Function.comp_apply]
-    unfold foldDesc foldHom foldAt
-    rfl
+    simp
   · funext e
-    simp only [Hom.comp_graphHom, SerreGraph.Hom.comp_mapE, Function.comp_apply]
-    unfold foldDesc foldHom foldAt
-    rfl
+    simp
 
-/-- A morphism out of a fold is determined by its composite with the quotient morphism. -/
-theorem foldDesc_unique {T : StallingsGraph α} (g : S.Hom T)
+/-- Morphisms out of a fold agree if they agree after composition with its quotient map. -/
+theorem foldHom_ext {T : StallingsGraph α}
+    {k k' : (S.foldAt f₁ f₂ hsrc hlabel).Hom T}
+    (hkk : Hom.comp k (S.foldHom f₁ f₂ hsrc hlabel) =
+      Hom.comp k' (S.foldHom f₁ f₂ hsrc hlabel)) : k = k' := by
+  apply Hom.ext
+  apply SerreGraph.Hom.ext
+  · funext x
+    obtain ⟨y, rfl⟩ := S.foldHom_mapV_surjective f₁ f₂ hsrc hlabel x
+    simpa only [Hom.comp_graphHom, SerreGraph.Hom.comp_mapV,
+      Function.comp_apply] using congrArg (fun m : S.Hom T => m.graphHom.mapV y) hkk
+  · funext e
+    obtain ⟨d, rfl⟩ := S.foldHom_mapE_surjective f₁ f₂ hsrc hlabel e
+    simpa only [Hom.comp_graphHom, SerreGraph.Hom.comp_mapE,
+      Function.comp_apply] using congrArg (fun m : S.Hom T => m.graphHom.mapE d) hkk
+
+/-- The lift is the unique morphism whose composite with the quotient map is `g`. -/
+theorem foldLift_unique {T : StallingsGraph α} (g : S.Hom T)
     (h : g.graphHom.mapE f₁ = g.graphHom.mapE f₂)
     (k : (S.foldAt f₁ f₂ hsrc hlabel).Hom T)
     (hk : Hom.comp k (S.foldHom f₁ f₂ hsrc hlabel) = g) :
-    k = S.foldDesc f₁ f₂ hsrc hlabel g h := by
-  apply Hom.ext
-  apply SerreGraph.Hom.ext
-  · funext x
-    obtain ⟨y, rfl⟩ := S.foldHom_surjective_mapV f₁ f₂ hsrc hlabel x
-    have hcomp := congrArg (fun m : S.Hom T => m.graphHom.mapV y) hk
-    have hdesc := congrArg (fun m : S.Hom T => m.graphHom.mapV y)
-      (S.foldDesc_comp_foldHom f₁ f₂ hsrc hlabel g h)
-    simpa only [Hom.comp_graphHom, SerreGraph.Hom.comp_mapV,
-      Function.comp_apply] using hcomp.trans hdesc.symm
-  · funext e
-    obtain ⟨d, rfl⟩ := S.foldHom_surjective_mapE f₁ f₂ hsrc hlabel e
-    have hcomp := congrArg (fun m : S.Hom T => m.graphHom.mapE d) hk
-    have hdesc := congrArg (fun m : S.Hom T => m.graphHom.mapE d)
-      (S.foldDesc_comp_foldHom f₁ f₂ hsrc hlabel g h)
-    simpa only [Hom.comp_graphHom, SerreGraph.Hom.comp_mapE,
-      Function.comp_apply] using hcomp.trans hdesc.symm
+    k = S.foldLift f₁ f₂ hsrc hlabel g h :=
+  S.foldHom_ext f₁ f₂ hsrc hlabel
+    (hk.trans (S.foldLift_comp_foldHom f₁ f₂ hsrc hlabel g h).symm)
 
-/-- A fold of a finite labelled graph still has finitely many vertices and darts. -/
-theorem foldAt_finite [Finite S.graph.V] [Finite S.graph.E] :
-    Finite (S.foldAt f₁ f₂ hsrc hlabel).graph.V ∧
-      Finite (S.foldAt f₁ f₂ hsrc hlabel).graph.E := by
-  exact ⟨Finite.of_surjective _ (S.foldHom_surjective_mapV f₁ f₂ hsrc hlabel),
-    Finite.of_surjective _ (S.foldHom_surjective_mapE f₁ f₂ hsrc hlabel)⟩
+/-- A fold of a graph with finitely many vertices has finitely many vertices. -/
+instance [Finite S.graph.V] : Finite (S.foldAt f₁ f₂ hsrc hlabel).graph.V :=
+  Finite.of_surjective _ (S.foldHom_mapV_surjective f₁ f₂ hsrc hlabel)
+
+/-- A fold of a graph with finitely many darts has finitely many darts. -/
+instance [Finite S.graph.E] : Finite (S.foldAt f₁ f₂ hsrc hlabel).graph.E :=
+  Finite.of_surjective _ (S.foldHom_mapE_surjective f₁ f₂ hsrc hlabel)
 
 end TauCeti.StallingsGraph
