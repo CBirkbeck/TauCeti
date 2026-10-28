@@ -86,6 +86,15 @@ theorem rose_connected (α : Type*) : (rose α).Connected := by
 def rosePetal {α : Type*} (a : α) : (rose α).Path PUnit.unit PUnit.unit :=
   ((rose α).dart (a, true)).toPath
 
+/-- A rose petal is the path consisting of its positive dart. -/
+theorem rosePetal_eq_toPath {α : Type*} (a : α) :
+    rosePetal a = ((rose α).dart (a, true)).toPath := (rfl)
+
+@[simp] theorem rosePetal_length {α : Type*} (a : α) :
+    (rosePetal a).length = 1 := by
+  rw [rosePetal_eq_toPath]
+  exact Quiver.Path.length_toPath _
+
 /-- A rose petal is reduced. -/
 theorem rosePetal_isReduced {α : Type*} (a : α) :
     Path.IsReduced (rose α) (rosePetal a) := by
