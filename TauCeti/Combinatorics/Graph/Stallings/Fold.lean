@@ -109,19 +109,12 @@ def foldHom : S.Hom (S.foldAt f₁ f₂ hsrc hlabel) where
   map_base := rfl
   map_label := by intro e; rfl
 
-/-- The base of a fold is the image of the original base. -/
--- Hom.map_base already simplifies the right-hand side to the left-hand side.
-theorem foldAt_base :
-    (S.foldAt f₁ f₂ hsrc hlabel).base =
-      (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV S.base := by
-  unfold foldAt foldHom
-  rfl
-
 /-- Two vertices have the same image exactly when the fold relation identifies them. -/
 theorem foldHom_mapV_eq_iff (x y : S.graph.V) :
     (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV x =
       (S.foldHom f₁ f₂ hsrc hlabel).graphHom.mapV y ↔
       Relation.EqvGen (fun a b => a = S.graph.tgt f₁ ∧ b = S.graph.tgt f₂) x y := by
+  -- The vertex map of foldHom reduces to Quot.mk for the vertex relation.
   change Quot.mk (vertexRel S f₁ f₂) x = Quot.mk (vertexRel S f₁ f₂) y ↔ _
   exact ⟨Quot.eqvGen_exact, Quot.eqvGen_sound⟩
 
@@ -132,6 +125,7 @@ theorem foldHom_mapE_eq_iff (e e' : S.graph.E) :
       Relation.EqvGen (fun a b =>
         (a = f₁ ∧ b = f₂) ∨
           (a = S.graph.rev f₁ ∧ b = S.graph.rev f₂)) e e' := by
+  -- The dart map of foldHom reduces to Quot.mk for the dart relation.
   change Quot.mk (dartRel S f₁ f₂) e = Quot.mk (dartRel S f₁ f₂) e' ↔ _
   exact ⟨Quot.eqvGen_exact, Quot.eqvGen_sound⟩
 
