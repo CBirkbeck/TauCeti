@@ -178,8 +178,7 @@ theorem exists_hom_of_toGraph_isLink {u v : Γ.V} {q : Γ.Edge}
     subst v
     exact ⟨Quiver.reverse (Γ.dart d), by simp⟩
 
-/-- Every walk between vertices lifts to a directed Serre path. A loop walk generally has
-more than one lift. -/
+/-- Every walk between vertices lifts to a directed Serre path. -/
 theorem exists_path_toWalk {u v : Γ.V} (p : Γ.toGraph.Walk u v) :
     ∃ q : Γ.Path u v, q.toWalk = p := by
   induction p with
