@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.GroupTheory.GroupAlgGeom.AlgebraicSet
-import TauCeti.GroupTheory.QuotientGroup.Map
 
 /-!
 # Changes of coordinates in equations over groups
@@ -28,59 +27,35 @@ open Monoid.Coprod
 
 variable {G H X Y Z : Type*} [Group G] [Group H] (ι : G →* H)
 
-/-- Evaluation after a word map is composition with the word homomorphism. -/
-theorem eval_wordMap (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) :
-    eval ι (wordMap ι (fun y => σ (inr (FreeGroup.of y))) v) =
-      (eval ι v).comp σ.toMonoidHom := by
-  rw [← eval_comp_eval]
-  congr 1
-  exact eval_eq_of_comp_inl σ.comp_coeff
-
-/-- The identity word homomorphism leaves tuples unchanged. -/
-@[simp] theorem wordMap_id (v : X → H) :
-    wordMap ι (fun x => inr (FreeGroup.of x)) v = v := by
-  funext x
-  simp
-
-/-- Word maps compose in the opposite order to word homomorphisms. -/
-theorem wordMap_comp (σ : GHom (inl : G →* GX G Z) (inl : G →* GX G Y))
-    (τ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (v : X → H) :
-    wordMap ι (fun z => (τ.comp σ) (inr (FreeGroup.of z))) v =
-      wordMap ι (fun y => σ (inr (FreeGroup.of y)))
-        (wordMap ι (fun x => τ (inr (FreeGroup.of x))) v) := by
-  rw [wordMap_wordMap]
-  congr 1
-  funext z
-  simp only [GHom.coe_comp, Function.comp_apply]
-  exact (DFunLike.congr_fun (eval_eq_of_comp_inl τ.comp_coeff)
-    (σ (inr (FreeGroup.of z)))).symm
+/-- The inverse image of a solution set under the tuple word map is the solution set
+of the image system. -/
+theorem preimage_wordMap_V_of_GHom
+    (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
+    (T : Set (GX G Y)) :
+    wordMap ι (fun y => σ (inr (FreeGroup.of y))) ⁻¹' V ι T = V ι (σ '' T) := by
+  calc
+    wordMap ι (fun y => σ (inr (FreeGroup.of y))) ⁻¹' V ι T =
+        V ι ((eval (inl : G →* GX G X)
+          (fun y => σ (inr (FreeGroup.of y)))) '' T) := preimage_wordMap_V _ _
+    _ = V ι (σ '' T) := congrArg (fun f : GX G Y →* GX G X => V ι (f '' T))
+      (eval_eq_of_comp_inl σ.comp_coeff)
 
 /-- A word map sends solutions to solutions of the inverse-image system. -/
 theorem wordMap_mem_V (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (S : Set (GX G X)) (v : X → H) (hv : v ∈ V ι S) :
     wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) := by
-  have h := (Set.ext_iff.mp
-    (preimage_wordMap_V (ι := ι) (fun y => σ (inr (FreeGroup.of y))) (σ ⁻¹' S))) v
-  have heval : eval (inl : G →* GX G X) (fun y => σ (inr (FreeGroup.of y))) =
-      σ.toMonoidHom := eval_eq_of_comp_inl σ.comp_coeff
-  rw [heval] at h
+  have h := (Set.ext_iff.mp (preimage_wordMap_V_of_GHom ι σ (σ ⁻¹' S))) v
   exact h.mpr (V_antitone ι (Set.image_preimage_subset σ S) hv)
 
 /-- A tuple solves `S` exactly when its word map solves the inverse-image system. -/
 theorem wordMap_mem_V_iff (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (hσ : Function.Surjective σ) (S : Set (GX G X)) (v : X → H) :
     wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
-  have h := (Set.ext_iff.mp
-    (preimage_wordMap_V (ι := ι) (fun y => σ (inr (FreeGroup.of y))) (σ ⁻¹' S))) v
-  have heval : eval (inl : G →* GX G X) (fun y => σ (inr (FreeGroup.of y))) =
-      σ.toMonoidHom := eval_eq_of_comp_inl σ.comp_coeff
-  rw [heval] at h
-  change _ ↔ v ∈ V ι (σ '' (σ ⁻¹' S)) at h
-  rw [Set.image_preimage_eq S hσ] at h
-  exact h
+  simpa only [Set.mem_preimage, Set.image_preimage_eq S hσ] using
+    (Set.ext_iff.mp (preimage_wordMap_V_of_GHom ι σ (σ ⁻¹' S))) v
 
-/-- A word map sends the radical of the inverse-image system into the radical of the
-original system. -/
+/-- The word homomorphism `σ` maps the radical of the inverse-image system into the
+radical of the original system. -/
 theorem Rad_preimage_le_comap
     (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X)) (S : Set (GX G X)) :
     Rad ι (σ ⁻¹' S) ≤ (Rad ι S).comap σ.toMonoidHom := by
@@ -107,6 +82,17 @@ theorem homOfWordMap_mk
     homOfWordMap ι σ S (w : CoordGroup ι (σ ⁻¹' S)) =
       (σ w : CoordGroup ι S) := by
   simp [homOfWordMap]
+
+/-- Precomposition with the coordinate-group word map corresponds to the word map on
+tuples under the point–homomorphism equivalence. -/
+theorem homEquiv_comp_homOfWordMap
+    (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
+    (S : Set (GX G X)) (φ : GHom (coeff ι S) ι) :
+    ((homEquiv ι (σ ⁻¹' S) (φ.comp (homOfWordMap ι σ S)) : Y → H)) =
+      wordMap ι (fun y => σ (inr (FreeGroup.of y))) (homEquiv ι S φ) := by
+  funext y
+  simp only [homEquiv_apply_coe, GHom.coe_comp, Function.comp_apply, wordMap_apply]
+  rw [homOfWordMap_mk, eval_homEquiv]
 
 end CoordGroup
 
@@ -198,19 +184,25 @@ theorem equivOfCoordinateChange_symm_mk (S : Set (GX G X)) (w : GX G X) :
   apply (equivOfCoordinateChange ι σ hσ S).injective
   simp
 
+/-- The coordinate-group equivalence has the coefficient-preserving word-map homomorphism
+as its underlying homomorphism. -/
+theorem equivOfCoordinateChange_toMonoidHom (S : Set (GX G X)) :
+    (equivOfCoordinateChange ι σ hσ S).toMonoidHom =
+      (homOfWordMap ι σ S).toMonoidHom := by
+  apply MonoidHom.ext
+  intro x
+  induction x using QuotientGroup.induction_on with
+  | _ w => simp
+
 /-- Precomposition with the coordinate-group isomorphism corresponds to the word map on
-solutions under the point–homomorphism equivalence. -/
+solution tuples. -/
 theorem homEquiv_comp_equivOfCoordinateChange (S : Set (GX G X))
     (φ : GHom (coeff ι S) ι) :
-    homEquiv ι (σ ⁻¹' S)
-      (φ.comp (homOfWordMap ι σ S)) =
-      coordinateChangeSolutions ι σ hσ S (homEquiv ι S φ) := by
-  apply SetCoe.ext
+    (fun y => φ (equivOfCoordinateChange ι σ hσ S
+      ((inr (FreeGroup.of y) : GX G Y) : CoordGroup ι (σ ⁻¹' S)))) =
+      wordMap ι (fun y => σ (inr (FreeGroup.of y))) (homEquiv ι S φ) := by
   funext y
-  simp only [homEquiv_apply_coe, GHom.coe_comp, Function.comp_apply,
-    coordinateChangeSolutions_apply_coe, wordMap_apply]
-  rw [homOfWordMap_mk]
-  simp
+  simp only [equivOfCoordinateChange_mk, wordMap_apply, eval_homEquiv]
 
 end CoordGroup
 

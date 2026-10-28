@@ -459,7 +459,7 @@ theorem homEquiv_symm_apply (v : V ι S) : (homEquiv ι S).symm v = evalGHom v v
 
 /-- Evaluation at a solution agrees with the corresponding coordinate-group homomorphism. -/
 @[simp]
-theorem homEquiv_eval_mk (S : Set (GX G X)) (φ : GHom (coeff ι S) ι) (w : GX G X) :
+theorem eval_homEquiv (S : Set (GX G X)) (φ : GHom (coeff ι S) ι) (w : GX G X) :
     eval ι (homEquiv ι S φ) w = φ (w : CoordGroup ι S) := by
   exact DFunLike.congr_fun (GX.eval_eq_comp_mk' φ) w
 
