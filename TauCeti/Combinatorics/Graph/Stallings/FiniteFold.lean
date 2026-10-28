@@ -66,16 +66,10 @@ private theorem exists_folded_quotient_aux {α : Type u} (n : ℕ) :
       let q := S.foldHom e f hs hl
       let h := Hom.comp g q
       refine ⟨T, hTV, hTE, hT, h, ?_, ?_⟩
-      · intro x
-        obtain ⟨y, rfl⟩ := hgV x
-        obtain ⟨z, rfl⟩ := S.foldHom_mapV_surjective e f hs hl y
-        exact ⟨z, by simp only [h, q, Hom.comp_graphHom,
-          SerreGraph.Hom.comp_mapV, Function.comp_apply]⟩
-      · intro x
-        obtain ⟨y, rfl⟩ := hgE x
-        obtain ⟨z, rfl⟩ := S.foldHom_mapE_surjective e f hs hl y
-        exact ⟨z, by simp only [h, q, Hom.comp_graphHom,
-          SerreGraph.Hom.comp_mapE, Function.comp_apply]⟩
+      · simpa only [h, q, Hom.comp_graphHom, SerreGraph.Hom.comp_mapV] using
+          hgV.comp (S.foldHom_mapV_surjective e f hs hl)
+      · simpa only [h, q, Hom.comp_graphHom, SerreGraph.Hom.comp_mapE] using
+          hgE.comp (S.foldHom_mapE_surjective e f hs hl)
 
 /-- A finite labelled graph has a folded quotient, reached by a based label-preserving
 morphism surjective on vertices and darts. -/
