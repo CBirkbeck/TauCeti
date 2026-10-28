@@ -48,33 +48,36 @@ theorem wordMap_comp (σ : GHom (inl : G →* GX G Z) (inl : G →* GX G Y))
     wordMap ι (fun z => (τ.comp σ) (inr (FreeGroup.of z))) v =
       wordMap ι (fun y => σ (inr (FreeGroup.of y)))
         (wordMap ι (fun x => τ (inr (FreeGroup.of x))) v) := by
+  rw [wordMap_wordMap]
+  congr 1
   funext z
-  rw [wordMap_apply, wordMap_apply, eval_wordMap]
-  simp only [GHom.coe_comp, Function.comp_apply, MonoidHom.comp_apply,
-    GHom.toMonoidHom_eq_coe, MonoidHom.coe_ofClass]
+  simp only [GHom.coe_comp, Function.comp_apply]
+  exact (DFunLike.congr_fun (eval_eq_of_comp_inl τ.comp_coeff)
+    (σ (inr (FreeGroup.of z)))).symm
 
 /-- A word map sends solutions to solutions of the inverse-image system. -/
 theorem wordMap_mem_V (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (S : Set (GX G X)) (v : X → H) (hv : v ∈ V ι S) :
     wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) := by
-  rw [mem_V] at hv ⊢
-  intro s hs
-  rw [eval_wordMap ι σ v]
-  exact hv (σ s) hs
+  have h := (Set.ext_iff.mp
+    (preimage_wordMap_V (ι := ι) (fun y => σ (inr (FreeGroup.of y))) (σ ⁻¹' S))) v
+  have heval : eval (inl : G →* GX G X) (fun y => σ (inr (FreeGroup.of y))) =
+      σ.toMonoidHom := eval_eq_of_comp_inl σ.comp_coeff
+  rw [heval] at h
+  exact h.mpr (V_antitone ι (Set.image_preimage_subset σ S) hv)
 
 /-- A tuple solves `S` exactly when its word map solves the inverse-image system. -/
 theorem wordMap_mem_V_iff (σ : GHom (inl : G →* GX G Y) (inl : G →* GX G X))
     (hσ : Function.Surjective σ) (S : Set (GX G X)) (v : X → H) :
     wordMap ι (fun y => σ (inr (FreeGroup.of y))) v ∈ V ι (σ ⁻¹' S) ↔ v ∈ V ι S := by
-  rw [mem_V, mem_V]
-  constructor
-  · intro hv s hs
-    obtain ⟨t, rfl⟩ := hσ s
-    have h := hv t hs
-    rw [eval_wordMap ι σ v] at h
-    exact h
-  · intro hv
-    exact (mem_V).1 (wordMap_mem_V ι σ S v ((mem_V).2 hv))
+  have h := (Set.ext_iff.mp
+    (preimage_wordMap_V (ι := ι) (fun y => σ (inr (FreeGroup.of y))) (σ ⁻¹' S))) v
+  have heval : eval (inl : G →* GX G X) (fun y => σ (inr (FreeGroup.of y))) =
+      σ.toMonoidHom := eval_eq_of_comp_inl σ.comp_coeff
+  rw [heval] at h
+  change _ ↔ v ∈ V ι (σ '' (σ ⁻¹' S)) at h
+  rw [Set.image_preimage_eq S hσ] at h
+  exact h
 
 /-- A word map sends the radical of the inverse-image system into the radical of the
 original system. -/
@@ -177,20 +180,15 @@ namespace CoordGroup
 transformed system to that of the original system. -/
 noncomputable def equivOfCoordinateChange (S : Set (GX G X)) :
     CoordGroup ι (σ ⁻¹' S) ≃* CoordGroup ι S :=
-  MulEquiv.ofBijective (homOfWordMap ι σ S).toMonoidHom (by
-    constructor
-    · exact TauCeti.QuotientGroup.map_injective_of_eq_comap σ.toMonoidHom (Rad ι S)
-        (Rad_preimage ι σ hσ S)
-    · intro q
-      obtain ⟨w, rfl⟩ := QuotientGroup.mk_surjective q
-      obtain ⟨v, rfl⟩ := hσ.2 w
-      exact ⟨v, homOfWordMap_mk ι σ S v⟩)
+  QuotientGroup.congr _ _ (MulEquiv.ofBijective σ.toMonoidHom hσ) (by
+    rw [Rad_preimage ι σ hσ S]
+    exact Subgroup.map_comap_eq_self_of_surjective hσ.2 _)
 
 @[simp]
 theorem equivOfCoordinateChange_mk (S : Set (GX G X)) (w : GX G Y) :
     equivOfCoordinateChange ι σ hσ S (w : CoordGroup ι (σ ⁻¹' S)) =
-      (σ w : CoordGroup ι S) :=
-  homOfWordMap_mk ι σ S w
+      (σ w : CoordGroup ι S) := by
+  simp [equivOfCoordinateChange]
 
 /-- The inverse coordinate-group isomorphism applies the inverse word homomorphism. -/
 @[simp]

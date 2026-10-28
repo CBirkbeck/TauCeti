@@ -461,9 +461,7 @@ theorem homEquiv_symm_apply (v : V ι S) : (homEquiv ι S).symm v = evalGHom v v
 @[simp]
 theorem homEquiv_eval_mk (S : Set (GX G X)) (φ : GHom (coeff ι S) ι) (w : GX G X) :
     eval ι (homEquiv ι S φ) w = φ (w : CoordGroup ι S) := by
-  have he := congrArg (fun f : GHom (coeff ι S) ι => f (w : CoordGroup ι S))
-    ((homEquiv ι S).symm_apply_apply φ)
-  simpa only [homEquiv_symm_apply, evalGHom_mk] using he
+  exact DFunLike.congr_fun (GX.eval_eq_comp_mk' φ) w
 
 /-- A `G`-homomorphism out of `G_{R(S)}` is determined by its values on the variables. -/
 @[ext]
