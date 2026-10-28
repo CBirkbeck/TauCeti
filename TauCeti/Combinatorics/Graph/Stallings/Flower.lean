@@ -32,8 +32,8 @@ namespace TauCeti.StallingsGraph
 
 variable {α : Type*}
 
-/-- The internal vertices of the petals of a list of words.
-The exposed carrier lets dependent quiver paths elaborate at concrete positions. -/
+/-- Vertices of the flower: `none` is the base vertex and `some ⟨i, j⟩` is the
+`(j+1)`st interior vertex of petal `i`. -/
 @[expose] def FlowerVertex (ws : List (List (α × Bool))) :=
   Option (Σ i : Fin ws.length, Fin (ws[i].length - 1))
 
@@ -86,13 +86,18 @@ edges, and a one-letter word contributes a loop at the base vertex. -/
 
 @[simp] theorem flowerPos_zero (ws : List (List (α × Bool))) (i : Fin ws.length) :
     flowerPos ws i 0 = none := by
-  simp [flowerPos]
-  rfl
+  exact dite_eq_right (by omega)
 
 @[simp] theorem flowerPos_length (ws : List (List (α × Bool))) (i : Fin ws.length) :
     flowerPos ws i ws[i.val].length = none := by
-  simp [flowerPos]
-  rfl
+  change flowerPos ws i ws[i].length = none
+  exact dite_eq_right (by omega)
+
+/-- An interior position is the corresponding vertex of its petal. -/
+theorem flowerPos_of_pos_of_lt (ws : List (List (α × Bool))) (i : Fin ws.length)
+    (k : ℕ) (h0 : 0 < k) (hk : k < ws[i].length) :
+    flowerPos ws i k = some ⟨i, ⟨k - 1, by omega⟩⟩ := by
+  exact dite_eq_left ⟨h0, hk⟩
 
 @[simp] theorem flower_tgt_forward (ws : List (List (α × Bool)))
     (i : Fin ws.length) (j : Fin ws[i].length) :
@@ -148,7 +153,7 @@ theorem exists_flower_prefix (ws : List (List (α × Bool)))
       exact List.take_concat_get' _ _ hlt
 
 /-- Every input word is read by a loop around its petal. -/
-theorem word_mem_flower_subgroup (ws : List (List (α × Bool)))
+theorem mk_mem_flower_subgroup (ws : List (List (α × Bool)))
     (i : Fin ws.length) :
     FreeGroup.mk ws[i] ∈ (flower ws).subgroup (flower ws).base := by
   have hloop := exists_flower_prefix ws i ws[i.val].length le_rfl
@@ -167,7 +172,7 @@ theorem closure_le_flower_subgroup (ws : List (List (α × Bool))) :
   apply (Subgroup.closure_le _).mpr
   rintro g ⟨w, hw, rfl⟩
   obtain ⟨i, rfl⟩ := List.mem_iff_get.mp hw
-  exact word_mem_flower_subgroup ws i
+  exact mk_mem_flower_subgroup ws i
 
 private def flowerPotential (ws : List (List (α × Bool))) :
     FlowerVertex ws → FreeGroup α
@@ -179,14 +184,13 @@ private theorem flowerPotential_pos (ws : List (List (α × Bool)))
     flowerPotential ws (flowerPos ws i k) =
       if k = ws[i].length then 1 else FreeGroup.mk ((ws[i]).take k) := by
   by_cases hlast : k = ws[i].length
-  · have hnot : ¬(0 < k ∧ k < ws[i].length) := by omega
-    simp [flowerPos, flowerPotential, hlast]
+  · simp [flowerPos, flowerPotential, hlast]
   · by_cases hzero : k = 0
     · subst k
       simp [flowerPos, flowerPotential, FreeGroup.one_eq_mk]
-    · have hi : 0 < k ∧ k < ws[i].length := by omega
-      have hpos : flowerPos ws i k = some ⟨i, ⟨k - 1, by omega⟩⟩ := by
-        simp [FlowerVertex, flowerPos]; omega
+    · have h0 : 0 < k := by omega
+      have hlt : k < ws[i].length := by omega
+      have hpos := flowerPos_of_pos_of_lt ws i k h0 hlt
       rw [hpos]
       simp only [flowerPotential, ite_eq_right hlast]
       have heq : k - 1 + 1 = k := by omega
@@ -260,36 +264,36 @@ theorem flower_subgroup (ws : List (List (α × Bool))) :
     simpa only [flower_base, flowerPotential, one_mul, inv_one, mul_one] using h
   · exact closure_le_flower_subgroup ws
 
-/-- The flower has finitely many vertices and darts, regardless of the alphabet. -/
-theorem flower_finite (ws : List (List (α × Bool))) :
-    Finite (flower ws).graph.V ∧ Finite (flower ws).graph.E := by
-  -- The graph fields reduce to finite dependent sums; the explicit change avoids opaque
-  -- graph projections in module compilation.
-  change Finite (FlowerVertex ws) ∧ Finite (FlowerDart ws)
-  unfold FlowerVertex FlowerDart
-  constructor <;> infer_instance
+/-- The flower has finitely many vertices, regardless of the alphabet. -/
+instance flower_finite_vertex (ws : List (List (α × Bool))) :
+    Finite (flower ws).graph.V := by
+  change Finite (FlowerVertex ws)
+  unfold FlowerVertex
+  infer_instance
 
-/-- Every internal vertex is reachable from the base along its petal. -/
+/-- The flower has finitely many darts, regardless of the alphabet. -/
+instance flower_finite_dart (ws : List (List (α × Bool))) :
+    Finite (flower ws).graph.E := by
+  change Finite (FlowerDart ws)
+  unfold FlowerDart
+  infer_instance
+
+/-- Every vertex of the flower is reachable by a path from the base vertex. -/
 theorem flower_reachable (ws : List (List (α × Bool)))
     (v : (flower ws).graph.V) : Nonempty ((flower ws).graph.Path (flower ws).base v) := by
-  have hpath (i : Fin ws.length) (k : ℕ) (hk : k ≤ ws[i].length) :
-      Nonempty ((flower ws).graph.Path none (flowerPos ws i k)) := by
-    induction k with
-    | zero => exact ⟨.nil⟩
-    | succ k ih =>
-        have hk0 : k ≤ ws[i].length := by omega
-        have hk1 : k < ws[i].length := by omega
-        obtain ⟨p⟩ := ih hk0
-        exact ⟨p.comp (flowerForward ws i k hk1)⟩
   cases v with
   | none => exact ⟨.nil⟩
   | some p =>
       obtain ⟨i, j⟩ := p
       have hj : j.val + 1 < ws[i].length := by omega
       have hpos : flowerPos ws i (j.val + 1) = some ⟨i, j⟩ := by
-        simp [FlowerVertex, flowerPos]; omega
+        rw [flowerPos_of_pos_of_lt ws i (j.val + 1) (by omega) hj]
+        congr 1
       have hk : j.val + 1 ≤ ws[i].length := by omega
-      simpa only [flower_base, hpos] using hpath i (j.val + 1) hk
+      obtain ⟨p, -⟩ := exists_flower_prefix ws i (j.val + 1) hk
+      simpa only [hpos] using (⟨p⟩ :
+        Nonempty ((flower ws).graph.Path (flower ws).base
+          (flowerPos ws i (j.val + 1))))
 
 /-- The flower is connected, even for an empty list of words. -/
 theorem flower_connected (ws : List (List (α × Bool))) :
