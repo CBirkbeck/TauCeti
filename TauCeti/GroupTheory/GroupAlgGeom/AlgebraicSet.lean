@@ -505,12 +505,10 @@ theorem eval_homEquiv (S : Set (GX G X)) (φ : GHom (coeff ι S) ι) (w : GX G X
   have htuple : (homEquiv ι S φ : X → H) =
       (fun x => φ (inr (FreeGroup.of x) : GX G X)) :=
     funext (homEquiv_apply_coe φ)
-  calc
-    eval ι (homEquiv ι S φ) w =
-        eval ι (fun x => φ (inr (FreeGroup.of x) : GX G X)) w := by rw [htuple]
-    _ = ((φ : CoordGroup ι S →* H).comp (QuotientGroup.mk' (Rad ι S))) w :=
-      DFunLike.congr_fun (GX.eval_eq_comp_mk' φ) w
-    _ = φ (w : CoordGroup ι S) := by rw [MonoidHom.comp_apply]; rfl
+  rw [htuple]
+  exact (DFunLike.congr_fun (GX.eval_eq_comp_mk' φ) w).trans (by
+    rw [MonoidHom.comp_apply, QuotientGroup.mk'_apply]
+    rfl)
 
 /-- A `G`-homomorphism out of `G_{R(S)}` is determined by its values on the variables. -/
 @[ext]

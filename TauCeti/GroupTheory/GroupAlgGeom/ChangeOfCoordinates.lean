@@ -67,14 +67,16 @@ noncomputable def coordinateChangeEquivV (S : Set (GX G X)) :
 @[simp] theorem coordinateChangeEquivV_apply_coe (S : Set (GX G X)) (v : V ι S) :
     ((coordinateChangeEquivV ι σ hσ S v : V ι (σ ⁻¹' S)) : Y → H) =
       wordMap ι (fun y => σ (inr (FreeGroup.of y))) v := by
-  simp [coordinateChangeEquivV, Equiv.subtypeEquiv]
+  change coordinateChangeEquiv ι σ hσ (v : X → H) = _
+  simp
 
 /-- On tuples, the inverse solution equivalence applies the inverse word map. -/
 @[simp] theorem coordinateChangeEquivV_symm_apply_coe
     (S : Set (GX G X)) (v : V ι (σ ⁻¹' S)) :
     (((coordinateChangeEquivV ι σ hσ S).symm v : V ι S) : X → H) =
       wordMap ι (fun x => (σ.symmOfBijective hσ) (inr (FreeGroup.of x))) v := by
-  simp [coordinateChangeEquivV, Equiv.subtypeEquiv]
+  change (coordinateChangeEquiv ι σ hσ).symm (v : Y → H) = _
+  simp
 
 /-- Radicals transform by inverse image under a bijective coefficient-preserving word map. -/
 theorem Rad_preimage (S : Set (GX G X)) :
@@ -128,13 +130,7 @@ theorem equivOfCoordinateChange_toMonoidHom (S : Set (GX G X)) :
 /-- The coordinate-group isomorphism fixes coefficients. -/
 theorem equivOfCoordinateChange_coeff (S : Set (GX G X)) (g : G) :
     equivOfCoordinateChange ι σ hσ S (coeff ι (σ ⁻¹' S) g) = coeff ι S g := by
-  calc
-    equivOfCoordinateChange ι σ hσ S (coeff ι (σ ⁻¹' S) g) =
-        (equivOfCoordinateChange ι σ hσ S).toMonoidHom
-          (coeff ι (σ ⁻¹' S) g) := rfl
-    _ = (homOfWordMap ι σ S).toMonoidHom (coeff ι (σ ⁻¹' S) g) := by
-      rw [equivOfCoordinateChange_toMonoidHom]
-    _ = coeff ι S g := DFunLike.congr_fun (homOfWordMap ι σ S).comp_coeff g
+  simp [coeff_apply]
 
 /-- The inverse coordinate-group isomorphism fixes coefficients. -/
 theorem equivOfCoordinateChange_symm_coeff (S : Set (GX G X)) (g : G) :
