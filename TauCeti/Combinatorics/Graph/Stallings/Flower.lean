@@ -89,7 +89,8 @@ edges, and a one-letter word contributes a loop at the base vertex. -/
   exact dite_eq_right (by omega)
 
 @[simp] theorem flowerPos_length (ws : List (List (α × Bool))) (i : Fin ws.length) :
-    flowerPos ws i ws[i].length = none := by
+    flowerPos ws i ws[i.val].length = none := by
+  simp only [flowerPos, Fin.getElem_fin]
   exact dite_eq_right (by omega)
 
 /-- An interior position is the corresponding vertex of its petal. -/
@@ -156,7 +157,8 @@ theorem mk_mem_flower_subgroup (ws : List (List (α × Bool)))
     (i : Fin ws.length) :
     FreeGroup.mk ws[i] ∈ (flower ws).subgroup (flower ws).base := by
   have hloop := exists_flower_prefix ws i ws[i].length le_rfl
-  rw [flowerPos_length] at hloop
+  have hlen : ws[i].length = ws[i.val].length := by simp only [Fin.getElem_fin]
+  rw [hlen, flowerPos_length] at hloop
   rw [← flower_base ws] at hloop
   obtain ⟨p, hp⟩ := hloop
   apply (flower ws).mem_subgroup_iff.mpr
