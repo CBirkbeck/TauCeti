@@ -52,6 +52,14 @@ noncomputable def cycleSpace : Submodule (ZMod 2) (O → ZMod 2) :=
         (Γ.modTwoCycleBoundary O c) := by
   simp [cycleBoundary]
 
+/-- Taking Finsupp coordinates of a finite-function boundary recovers the original boundary. -/
+@[simp] theorem cycleBoundary_symm (c : O → ZMod 2) :
+    (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) Γ.V).symm
+      (Γ.cycleBoundary O c) =
+        Γ.modTwoCycleBoundary O
+          ((Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O).symm c) := by
+  simp [cycleBoundary]
+
 /-- A binary dart contributes at both endpoints. A loop contributes twice at the same
 vertex, hence contributes zero. -/
 @[simp] theorem cycleBoundary_single [DecidableEq Γ.V] [DecidableEq O] (e : O) :
@@ -69,7 +77,8 @@ theorem mem_cycleSpace_iff (c : O → ZMod 2) :
       (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O).symm c ∈
         Γ.modTwoCycleSpace O := by
   simp only [mem_cycleSpace_iff_cycleBoundary, mem_modTwoCycleSpace_iff]
-  simp [cycleBoundary]
+  rw [← (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) Γ.V).symm.map_eq_zero_iff,
+    cycleBoundary_symm]
 
 /-- A single binary edge is a cycle exactly when it is a loop. -/
 theorem single_mem_cycleSpace_iff [DecidableEq O] (e : O) :
