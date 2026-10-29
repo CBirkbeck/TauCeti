@@ -89,8 +89,7 @@ edges, and a one-letter word contributes a loop at the base vertex. -/
   exact dite_eq_right (by omega)
 
 @[simp] theorem flowerPos_length (ws : List (List (α × Bool))) (i : Fin ws.length) :
-    flowerPos ws i ws[i.val].length = none := by
-  change flowerPos ws i ws[i].length = none
+    flowerPos ws i ws[i].length = none := by
   exact dite_eq_right (by omega)
 
 /-- An interior position is the corresponding vertex of its petal. -/
@@ -156,7 +155,7 @@ theorem exists_flower_prefix (ws : List (List (α × Bool)))
 theorem mk_mem_flower_subgroup (ws : List (List (α × Bool)))
     (i : Fin ws.length) :
     FreeGroup.mk ws[i] ∈ (flower ws).subgroup (flower ws).base := by
-  have hloop := exists_flower_prefix ws i ws[i.val].length le_rfl
+  have hloop := exists_flower_prefix ws i ws[i].length le_rfl
   rw [flowerPos_length] at hloop
   rw [← flower_base ws] at hloop
   obtain ⟨p, hp⟩ := hloop
@@ -267,16 +266,12 @@ theorem flower_subgroup (ws : List (List (α × Bool))) :
 /-- The flower has finitely many vertices, regardless of the alphabet. -/
 instance flower_finite_vertex (ws : List (List (α × Bool))) :
     Finite (flower ws).graph.V := by
-  change Finite (FlowerVertex ws)
-  unfold FlowerVertex
-  infer_instance
+  exact inferInstanceAs (Finite (Option (Σ i : Fin ws.length, Fin (ws[i].length - 1))))
 
 /-- The flower has finitely many darts, regardless of the alphabet. -/
 instance flower_finite_dart (ws : List (List (α × Bool))) :
     Finite (flower ws).graph.E := by
-  change Finite (FlowerDart ws)
-  unfold FlowerDart
-  infer_instance
+  exact inferInstanceAs (Finite ((Σ i : Fin ws.length, Fin ws[i].length) × Bool))
 
 /-- Every vertex of the flower is reachable by a path from the base vertex. -/
 theorem flower_reachable (ws : List (List (α × Bool)))
