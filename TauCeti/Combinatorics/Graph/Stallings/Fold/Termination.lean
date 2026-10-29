@@ -37,6 +37,13 @@ def FoldStep (S T : StallingsGraph.{u, v, w} α) : Prop :=
   ∃ e f, ∃ hsrc : S.graph.src e = S.graph.src f,
     ∃ hlabel : S.label e = S.label f, e ≠ f ∧ T = S.foldAt e f hsrc hlabel
 
+/-- Characterize a fold step by its two distinct darts and the resulting quotient. -/
+theorem foldStep_iff (S T : StallingsGraph.{u, v, w} α) :
+    FoldStep S T ↔
+      ∃ e f, ∃ hsrc : S.graph.src e = S.graph.src f,
+        ∃ hlabel : S.label e = S.label f, e ≠ f ∧ T = S.foldAt e f hsrc hlabel :=
+  Iff.rfl
+
 /-- A finite sequence of Stallings folds, including the empty sequence. -/
 abbrev FoldSequence (S T : StallingsGraph.{u, v, w} α) : Prop :=
   Relation.ReflTransGen FoldStep S T
@@ -121,14 +128,5 @@ theorem exists_foldSequence_isFolded (S : StallingsGraph.{u, v, w} α)
           Relation.ReflTransGen.single ⟨e, f, hsrc, hlabel, hne, rfl⟩
         exact ⟨T, hstep.trans hchain, hfolded⟩
   exact aux (Nat.card S.graph.E) S rfl
-
-/-- The folded quotient obtained by finite folding accepts exactly the original subgroup. -/
-theorem exists_foldSequence_isFolded_subgroup_base_eq
-    (S : StallingsGraph.{u, v, w} α) [Finite S.graph.E] :
-    ∃ T : StallingsGraph.{u, v, w} α,
-      FoldSequence S T ∧ T.IsFolded ∧
-        T.subgroup T.base = S.subgroup S.base := by
-  obtain ⟨T, h, hT⟩ := S.exists_foldSequence_isFolded
-  exact ⟨T, h, hT, h.subgroup_base⟩
 
 end TauCeti.StallingsGraph
