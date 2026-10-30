@@ -191,8 +191,11 @@ theorem cosetGraph_connected : (cosetGraph H).graph.Connected := by
 
 /-- The based core of the coset graph is the canonical connected folded core
 representing a subgroup. -/
-@[expose] def subgroupGraph (H : Subgroup (FreeGroup α)) : StallingsGraph α :=
+def subgroupGraph (H : Subgroup (FreeGroup α)) : StallingsGraph α :=
   (cosetGraph H).core
+
+/-- The subgroup graph is the based core of the coset graph. -/
+theorem subgroupGraph_def : subgroupGraph H = (cosetGraph H).core := (rfl)
 
 /-- The based core of the coset graph reads precisely the given subgroup. -/
 @[simp] theorem subgroupGraph_subgroup :
@@ -208,27 +211,8 @@ theorem subgroupGraph_isCore :
     (subgroupGraph H).graph.IsCore (subgroupGraph H).base :=
   (cosetGraph H).core_isCore
 
-/-- The quiver induced by the subgroup core graph, used for paths in this file. -/
-@[instance_reducible] local instance subgroupGraphQuiver :
-    Quiver (subgroupGraph H).graph.V := (subgroupGraph H).graph.toQuiver
-
-/-- Reversal of darts in the quiver of the subgroup core graph. -/
-@[instance_reducible] local instance subgroupGraphReverse :
-    Quiver.HasInvolutiveReverse (subgroupGraph H).graph.V :=
-  (subgroupGraph H).graph.toQuiverHasInvolutiveReverse
-
 /-- The canonical subgroup graph is connected, including when the subgroup is trivial. -/
 theorem subgroupGraph_connected : (subgroupGraph H).graph.Connected := by
-  apply (subgroupGraph H).graph.connected_iff.mpr
-  refine ⟨⟨(subgroupGraph H).base⟩, ?_⟩
-  rw [(subgroupGraph H).graph.preconnected_iff]
-  intro a b
-  obtain ⟨p⟩ :=
-    (((subgroupGraph H).graph.isCore_iff (subgroupGraph H).base).mp
-      (subgroupGraph_isCore H)).1 a
-  obtain ⟨q⟩ :=
-    (((subgroupGraph H).graph.isCore_iff (subgroupGraph H).base).mp
-      (subgroupGraph_isCore H)).1 b
-  exact ⟨p.reverse.comp q⟩
+  exact (subgroupGraph_isCore H).connected
 
 end Subgroup
