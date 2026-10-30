@@ -500,6 +500,16 @@ theorem wedge_comm (φ : RoughForm I M ℝ k) (ψ : RoughForm I M ℝ l) (x : M)
   simpa only [wedge] using wedgeWith_comm (ContinuousLinearMap.mul ℝ ℝ)
     (fun a b ↦ mul_comm a b) φ ψ x v
 
+/-- Wedging with the `0`-form of a function on the right multiplies a form pointwise by the
+function. -/
+@[simp]
+theorem wedge_ofFunction (φ : RoughForm I M ℝ k) (f : M → ℝ) :
+    φ.wedge (RoughForm.ofFunction I f) = fun x ↦ f x • φ x := by
+  funext x
+  ext v
+  rw [wedge_comm, ofFunction_wedge_apply]
+  simp
+
 end RoughForm
 
 /-- On a trivial value bundle, the bundle wedge is the fixed-coefficient rough-form wedge. -/
