@@ -25,7 +25,7 @@ sequence; uniqueness up to based labelled isomorphism is a separate property of 
 
 public section
 
-namespace FreeGroup
+namespace TauCeti.StallingsGraph
 
 universe u
 
@@ -109,4 +109,4 @@ theorem subgroup_stallingsGraph (ws : List (List (α × Bool))) :
   rw [subgroup_stallingsGraph]
   simp
 
-end FreeGroup
+end TauCeti.StallingsGraph
