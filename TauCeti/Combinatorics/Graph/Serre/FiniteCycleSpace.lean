@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Combinatorics.Graph.Serre.Cycle
-public import Mathlib.LinearAlgebra.Finsupp.Pi
 
 /-!
 # Binary cycles in finite coordinates
@@ -42,6 +41,16 @@ noncomputable def cycleBoundary : (O → ZMod 2) →ₗ[ZMod 2] (Γ.V → ZMod 2
 noncomputable def cycleSpace : Submodule (ZMod 2) (O → ZMod 2) :=
   (Γ.cycleBoundary O).ker
 
+/-- The finite-coordinate cycle space is the kernel of its incidence boundary. -/
+theorem cycleSpace_eq_ker : Γ.cycleSpace O = (Γ.cycleBoundary O).ker := by
+  unfold cycleSpace
+  rfl
+
+/-- A finite binary edge chain is a cycle exactly when its boundary vanishes. -/
+@[simp] theorem mem_cycleSpace_iff (c : O → ZMod 2) :
+    c ∈ Γ.cycleSpace O ↔ Γ.cycleBoundary O c = 0 :=
+  LinearMap.mem_ker
+
 @[simp] theorem cycleBoundary_apply (c : O → ZMod 2) (v : Γ.V) :
     Γ.cycleBoundary O c v =
       Γ.modTwoCycleBoundary O
@@ -58,7 +67,7 @@ noncomputable def cycleSpace : Submodule (ZMod 2) (O → ZMod 2) :=
     incidenceBoundary_single, Finsupp.single_apply, Pi.single_apply, eq_comm]
 
 /-- A finite binary edge chain is a cycle precisely when its Finsupp representation is one. -/
-@[simp] theorem mem_cycleSpace_iff (c : O → ZMod 2) :
+theorem mem_cycleSpace_iff_finsupp (c : O → ZMod 2) :
     c ∈ Γ.cycleSpace O ↔
       (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O).symm c ∈
         Γ.modTwoCycleSpace O := by
@@ -75,52 +84,28 @@ theorem cycleBoundary_finsupp :
   ext c v
   simp [cycleBoundary]
 
-private noncomputable def cycleSpaceToFinsupp :
-    Γ.cycleSpace O →ₗ[ZMod 2] Γ.modTwoCycleSpace O where
-  toFun := fun c => ⟨(Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O).symm c,
-    (Γ.mem_cycleSpace_iff O c).mp c.property⟩
-  map_add' := by
-    intro a b
-    apply Subtype.ext
-    simp
-  map_smul' := by
-    intro r a
-    apply Subtype.ext
-    simp
-
 /-- The binary cycle space in finite-function coordinates is linearly equivalent to the
 Finsupp kernel, with each edge coordinate preserved. -/
 noncomputable def cycleSpaceFinsuppEquiv :
-    Γ.cycleSpace O ≃ₗ[ZMod 2] Γ.modTwoCycleSpace O where
-  toLinearMap := Γ.cycleSpaceToFinsupp O
-  invFun := fun c => ⟨(Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O) c,
-    by rw [Γ.mem_cycleSpace_iff]; simp [c.property]⟩
-  left_inv := by
-    intro c
-    apply Subtype.ext
-    simp [cycleSpaceToFinsupp]
-  right_inv := by
-    intro c
-    apply Subtype.ext
-    simp [cycleSpaceToFinsupp]
+    Γ.cycleSpace O ≃ₗ[ZMod 2] Γ.modTwoCycleSpace O := by
+  let e := (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O).symm
+  have h : (Γ.cycleSpace O).map e.toLinearMap = Γ.modTwoCycleSpace O := by
+    ext c
+    rw [Submodule.mem_map_equiv]
+    simpa [e] using
+      (Γ.mem_cycleSpace_iff_finsupp O (e.symm c))
+  exact e.ofSubmodules (Γ.cycleSpace O) (Γ.modTwoCycleSpace O) h
 
 @[simp] theorem cycleSpaceFinsuppEquiv_apply (c : Γ.cycleSpace O) :
     (Γ.cycleSpaceFinsuppEquiv O c : O →₀ ZMod 2) =
       (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O).symm c :=
   by
-    rw [cycleSpaceFinsuppEquiv]
-    simp [cycleSpaceToFinsupp]
+    simp only [cycleSpaceFinsuppEquiv, LinearEquiv.ofSubmodules_apply]
 
 @[simp] theorem cycleSpaceFinsuppEquiv_symm_apply (c : Γ.modTwoCycleSpace O) :
     ((Γ.cycleSpaceFinsuppEquiv O).symm c : O → ZMod 2) =
       (Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O) c := by
-  let e := Finsupp.linearEquivFunOnFinite (ZMod 2) (ZMod 2) O
-  have h := congrArg Subtype.val ((Γ.cycleSpaceFinsuppEquiv O).apply_symm_apply c)
-  rw [cycleSpaceFinsuppEquiv_apply] at h
-  calc
-    ((Γ.cycleSpaceFinsuppEquiv O).symm c : O → ZMod 2) =
-        e (e.symm ((Γ.cycleSpaceFinsuppEquiv O).symm c : O → ZMod 2)) :=
-      (e.apply_symm_apply _).symm
-    _ = e c := congrArg e h
+  simp only [cycleSpaceFinsuppEquiv, LinearEquiv.ofSubmodules_symm_apply,
+    LinearEquiv.symm_symm]
 
 end TauCeti.SerreGraph
