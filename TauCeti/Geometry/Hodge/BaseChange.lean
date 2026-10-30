@@ -410,6 +410,14 @@ noncomputable def rationalMapToComplexHom (hℚ : IsBaseChange ℚ ιℚ)
   (isBaseChange_rationalToComplexMap hℚ hℂ).linearMapLeftRightHom
     (rationalToComplexMap h'ℚ ι'ℂ)
 
+/-- The bundled complexification sends a rational vector to the image of that vector. -/
+@[simp]
+theorem rationalMapToComplexHom_rationalToComplexMap (hℚ : IsBaseChange ℚ ιℚ)
+    (hℂ : IsBaseChange ℂ ιℂ) (h'ℚ : IsBaseChange ℚ ι'ℚ) (f : Vℚ →ₗ[ℚ] V'ℚ) (x : Vℚ) :
+    rationalMapToComplexHom (ι'ℂ := ι'ℂ) hℚ hℂ h'ℚ f (rationalToComplexMap hℚ ιℂ x) =
+      rationalToComplexMap h'ℚ ι'ℂ (f x) :=
+  IsBaseChange.linearMapLeftRightHom_comp_apply _ _ _ _
+
 /-- The generic base-change hom agrees with the Hodge-facing complexification map. -/
 theorem rationalMapToComplexHom_apply (hℚ : IsBaseChange ℚ ιℚ)
     (hℂ : IsBaseChange ℂ ιℂ) (h'ℚ : IsBaseChange ℚ ι'ℚ) (h'ℂ : IsBaseChange ℂ ι'ℂ)
@@ -418,7 +426,7 @@ theorem rationalMapToComplexHom_apply (hℚ : IsBaseChange ℚ ιℚ)
   apply (isBaseChange_rationalToComplexMap hℚ hℂ).algHom_ext
   intro x
   rw [rationalMapToComplex_rationalToComplexMap]
-  exact IsBaseChange.linearMapLeftRightHom_comp_apply _ _ _ _
+  exact rationalMapToComplexHom_rationalToComplexMap hℚ hℂ h'ℚ f x
 
 /-- Complexification sends the zero rational map to the zero complex map. -/
 @[simp]
