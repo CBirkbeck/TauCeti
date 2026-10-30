@@ -67,13 +67,13 @@ theorem ofPath_eq_iff_homotopic (p q : Γ.Path v v) :
   exact ⟨fun h => congrArg toPath h, fun h => ext h⟩
 
 /-- Multiplication in the reduced path group. -/
-def mul (p q : PathGroup Γ v) : PathGroup Γ v := ofPath (p.toPath.comp q.toPath)
+private def mul (p q : PathGroup Γ v) : PathGroup Γ v := ofPath (p.toPath.comp q.toPath)
 
 /-- The empty path. -/
-def one : PathGroup Γ v := ofPath Quiver.Path.nil
+private def one : PathGroup Γ v := ofPath Quiver.Path.nil
 
 /-- Reverse a reduced closed path. -/
-def inv (p : PathGroup Γ v) : PathGroup Γ v := ofPath p.toPath.reverse
+private def inv (p : PathGroup Γ v) : PathGroup Γ v := ofPath p.toPath.reverse
 
 private theorem toPath_mul_raw (p q : PathGroup Γ v) :
     (mul p q).toPath = Path.reduce Γ (p.toPath.comp q.toPath) := rfl
@@ -87,9 +87,9 @@ private theorem toPath_inv_raw (p : PathGroup Γ v) :
   simp only [Path.reduce_eq_self_of_isReduced Γ p.toPath p.isReduced]
 
 instance : Group (PathGroup Γ v) where
-  mul := mul
-  one := one
-  inv := inv
+  mul p q := ofPath (p.toPath.comp q.toPath)
+  one := ofPath Quiver.Path.nil
+  inv p := ofPath p.toPath.reverse
   mul_assoc a b c := by
     -- The group laws are checked on the raw operations before the instance is available.
     change mul (mul a b) c = mul a (mul b c)
