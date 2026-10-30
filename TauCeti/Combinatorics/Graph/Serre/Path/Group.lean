@@ -45,10 +45,15 @@ noncomputable section
 @[ext] theorem ext {p q : PathGroup Γ v} (h : p.toPath = q.toPath) : p = q :=
   by cases p; cases q; cases h; rfl
 
+/-- The underlying reduced path determines a path group element. -/
+theorem toPath_injective : Function.Injective (toPath : PathGroup Γ v → Γ.Path v v) :=
+  fun _ _ => ext
+
 /-- The class of a closed path, represented by its reduced form. -/
 def ofPath (p : Γ.Path v v) : PathGroup Γ v :=
   ⟨Path.reduce Γ p, Path.isReduced_reduce Γ p⟩
 
+-- The exported theorem cannot unfold the hidden body of `ofPath`; prove this privately first.
 private theorem toPath_ofPath_raw (p : Γ.Path v v) :
     (ofPath p).toPath = Path.reduce Γ p := rfl
 
@@ -58,6 +63,16 @@ private theorem toPath_ofPath_raw (p : Γ.Path v v) :
 @[simp] theorem ofPath_toPath (p : PathGroup Γ v) : ofPath p.toPath = p := by
   apply ext
   exact Path.reduce_eq_self_of_isReduced Γ p.toPath p.isReduced
+
+/-- Every reduced-path group element is represented by a closed path. -/
+theorem ofPath_surjective : Function.Surjective (ofPath : Γ.Path v v → PathGroup Γ v) :=
+  fun p => ⟨p.toPath, ofPath_toPath p⟩
+
+/-- Prove a property of path group elements by checking classes of closed paths. -/
+@[elab_as_elim] theorem induction_on {P : PathGroup Γ v → Prop} (g : PathGroup Γ v)
+    (h : ∀ p : Γ.Path v v, P (ofPath p)) : P g := by
+  obtain ⟨p, rfl⟩ := ofPath_surjective g
+  exact h p
 
 /-- Two closed paths represent the same group element exactly when they are backtrack
 homotopic. -/
@@ -86,6 +101,8 @@ private theorem toPath_inv_raw (p : PathGroup Γ v) :
   rw [inv, toPath_ofPath, Path.reduce_reverse]
   simp only [Path.reduce_eq_self_of_isReduced Γ p.toPath p.isReduced]
 
+-- The exported instance cannot refer to private operation definitions. Its fields repeat their
+-- bodies, while the private names make the laws available before the instance is constructed.
 instance : Group (PathGroup Γ v) where
   mul p q := ofPath (p.toPath.comp q.toPath)
   one := ofPath Quiver.Path.nil
