@@ -46,10 +46,14 @@ noncomputable section
   by cases p; cases q; cases h; rfl
 
 /-- The class of a closed path, represented by its reduced form. -/
-@[expose] def ofPath (p : Γ.Path v v) : PathGroup Γ v :=
+def ofPath (p : Γ.Path v v) : PathGroup Γ v :=
   ⟨Path.reduce Γ p, Path.isReduced_reduce Γ p⟩
 
-@[simp] theorem toPath_ofPath (p : Γ.Path v v) : (ofPath p).toPath = Path.reduce Γ p := rfl
+private theorem toPath_ofPath_raw (p : Γ.Path v v) :
+    (ofPath p).toPath = Path.reduce Γ p := rfl
+
+@[simp] theorem toPath_ofPath (p : Γ.Path v v) :
+    (ofPath p).toPath = Path.reduce Γ p := toPath_ofPath_raw p
 
 @[simp] theorem ofPath_toPath (p : PathGroup Γ v) : ofPath p.toPath = p := by
   apply ext
@@ -63,21 +67,21 @@ theorem ofPath_eq_iff_homotopic (p q : Γ.Path v v) :
   exact ⟨fun h => congrArg toPath h, fun h => ext h⟩
 
 /-- Multiplication in the reduced path group. -/
-@[expose] def mul (p q : PathGroup Γ v) : PathGroup Γ v := ofPath (p.toPath.comp q.toPath)
+def mul (p q : PathGroup Γ v) : PathGroup Γ v := ofPath (p.toPath.comp q.toPath)
 
 /-- The empty path. -/
-@[expose] def one : PathGroup Γ v := ofPath Quiver.Path.nil
+def one : PathGroup Γ v := ofPath Quiver.Path.nil
 
 /-- Reverse a reduced closed path. -/
-@[expose] def inv (p : PathGroup Γ v) : PathGroup Γ v := ofPath p.toPath.reverse
+def inv (p : PathGroup Γ v) : PathGroup Γ v := ofPath p.toPath.reverse
 
-@[simp] theorem toPath_mul (p q : PathGroup Γ v) :
+private theorem toPath_mul_raw (p q : PathGroup Γ v) :
     (mul p q).toPath = Path.reduce Γ (p.toPath.comp q.toPath) := rfl
 
-@[simp] theorem toPath_one : (one : PathGroup Γ v).toPath = Quiver.Path.nil := by
+private theorem toPath_one_raw : (one : PathGroup Γ v).toPath = Quiver.Path.nil := by
   simp [one]
 
-@[simp] theorem toPath_inv (p : PathGroup Γ v) :
+private theorem toPath_inv_raw (p : PathGroup Γ v) :
     (inv p).toPath = p.toPath.reverse := by
   rw [inv, toPath_ofPath, Path.reduce_reverse]
   simp only [Path.reduce_eq_self_of_isReduced Γ p.toPath p.isReduced]
@@ -90,24 +94,37 @@ instance : Group (PathGroup Γ v) where
     -- The group laws are checked on the raw operations before the instance is available.
     change mul (mul a b) c = mul a (mul b c)
     apply ext
-    simp only [toPath_mul, Path.reduce_comp_reduce_left,
+    simp only [toPath_mul_raw, Path.reduce_comp_reduce_left,
       Path.reduce_comp_reduce_right, Quiver.Path.comp_assoc]
   one_mul a := by
     change mul one a = a
     apply ext
-    simp only [toPath_mul, toPath_one, Quiver.Path.nil_comp]
+    simp only [toPath_mul_raw, toPath_one_raw, Quiver.Path.nil_comp]
     exact Path.reduce_eq_self_of_isReduced Γ a.toPath a.isReduced
   mul_one a := by
     change mul a one = a
     apply ext
-    simp only [toPath_mul, toPath_one, Quiver.Path.comp_nil]
+    simp only [toPath_mul_raw, toPath_one_raw, Quiver.Path.comp_nil]
     exact Path.reduce_eq_self_of_isReduced Γ a.toPath a.isReduced
   inv_mul_cancel a := by
     change mul (inv a) a = one
     apply ext
-    simp only [toPath_mul, toPath_inv, toPath_one, Path.reduce_reverse_comp]
+    simp only [toPath_mul_raw, toPath_inv_raw, toPath_one_raw, Path.reduce_reverse_comp]
 
-@[simp] theorem ofPath_nil : ofPath (Quiver.Path.nil : Γ.Path v v) = 1 := rfl
+@[simp] theorem toPath_mul (p q : PathGroup Γ v) :
+    (p * q).toPath = Path.reduce Γ (p.toPath.comp q.toPath) :=
+  toPath_mul_raw p q
+
+@[simp] theorem toPath_one : (1 : PathGroup Γ v).toPath = Quiver.Path.nil :=
+  toPath_one_raw
+
+@[simp] theorem toPath_inv (p : PathGroup Γ v) :
+    (p⁻¹).toPath = p.toPath.reverse :=
+  toPath_inv_raw p
+
+@[simp] theorem ofPath_nil : ofPath (Quiver.Path.nil : Γ.Path v v) = 1 := by
+  apply ext
+  simp
 
 /-- Concatenation of closed paths becomes multiplication in the reduced path group. -/
 @[simp] theorem ofPath_comp (p q : Γ.Path v v) :
@@ -115,7 +132,7 @@ instance : Group (PathGroup Γ v) where
   -- Expand the group operation to its path construction.
   change ofPath (p.comp q) = mul (ofPath p) (ofPath q)
   apply ext
-  simp only [toPath_ofPath, toPath_mul, Path.reduce_comp_reduce_left,
+  simp only [toPath_ofPath, toPath_mul_raw, Path.reduce_comp_reduce_left,
     Path.reduce_comp_reduce_right]
 
 /-- Reversing a closed path becomes inversion in the reduced path group. -/
@@ -124,7 +141,7 @@ instance : Group (PathGroup Γ v) where
   -- Expand inversion to reversal of a representative.
   change ofPath p.reverse = inv (ofPath p)
   apply ext
-  simp only [toPath_ofPath, toPath_inv, Path.reduce_reverse]
+  simp only [toPath_ofPath, toPath_inv_raw, Path.reduce_reverse]
 
 end
 end PathGroup
