@@ -77,9 +77,11 @@ abbrev cosetGraph (H : Subgroup (FreeGroup α)) : StallingsGraph α where
   label := Prod.snd
   label_rev := by intro e; rfl
 
+/-- The quiver induced by the coset Serre graph, used for paths in this file. -/
 @[instance_reducible] local instance cosetGraphQuiver :
     Quiver (cosetGraph H).graph.V := (cosetGraph H).graph.toQuiver
 
+/-- Reversal of darts in the quiver of the coset Serre graph. -/
 @[instance_reducible] local instance cosetGraphReverse :
     Quiver.HasInvolutiveReverse (cosetGraph H).graph.V :=
   (cosetGraph H).graph.toQuiverHasInvolutiveReverse
@@ -206,9 +208,11 @@ theorem subgroupGraph_isCore :
     (subgroupGraph H).graph.IsCore (subgroupGraph H).base :=
   (cosetGraph H).core_isCore
 
+/-- The quiver induced by the subgroup core graph, used for paths in this file. -/
 @[instance_reducible] local instance subgroupGraphQuiver :
     Quiver (subgroupGraph H).graph.V := (subgroupGraph H).graph.toQuiver
 
+/-- Reversal of darts in the quiver of the subgroup core graph. -/
 @[instance_reducible] local instance subgroupGraphReverse :
     Quiver.HasInvolutiveReverse (subgroupGraph H).graph.V :=
   (subgroupGraph H).graph.toQuiverHasInvolutiveReverse
