@@ -55,7 +55,7 @@ theorem exists_folded_quotient (S : StallingsGraph.{u, v, w} α)
             T.subgroup T.base = S.subgroup S.base from by
     obtain ⟨T, hTv, hTe, f, hfold, hv, he, hsub⟩ := h (card S) S rfl
     exact ⟨T, hTv, hTe, f, hfold, hv, he, hsub,
-      fun hS => f.graphHom.connected_of_surjective hS hv⟩
+      fun hS => f.graphHom.connected_of_surjective hv hS⟩
   intro n
   induction n using Nat.strong_induction_on with
   | h n ih =>
