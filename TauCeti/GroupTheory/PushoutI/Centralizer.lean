@@ -6,7 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.GroupTheory.PushoutI.Reduced
-public import Mathlib.GroupTheory.Subgroup.Centralizer
+public import TauCeti.GroupTheory.TrivialIntersection
 
 /-!
 # Centralizers of elements of a factor of an amalgamated product
@@ -37,7 +37,11 @@ along the centralizer of a nontrivial element of a CSA group.
 
 * `Monoid.PushoutI.centralizer_of_eq_map`: the centralizer of an element of a factor that is not
   conjugate in that factor into the amalgamated subgroup.
-* `Monoid.PushoutI.centralizer_of_eq_map_of_isTISubgroup`: the centralizer of a nontrivial factor
+* `TauCeti.PushoutI.list_prod_inv_mul_base_mul_list_prod_notMem_range`: if the first letter of a
+  reduced list lies in a factor `G j` other than `G i`, and the amalgamated subgroup is malnormal in
+  `G j`, the product `w` of the list satisfies `w⁻¹ * h * w ∉ G i` for every nontrivial `h` in the
+  amalgamated subgroup.
+* `TauCeti.PushoutI.centralizer_of_eq_map_of_isTISubgroup`: the centralizer of a nontrivial factor
   element in an amalgam whose edge groups are malnormal in the other factors.
 
 ## Implementation notes
@@ -51,8 +55,8 @@ in no factor (`Monoid.PushoutI.list_prod_inv_mul_of_mul_list_prod_notMem_range_o
 lies in the amalgamated subgroup, malnormality turns the first letter `k ∈ G j` of `w` into the
 letter `k⁻¹ * g' * k` outside the amalgamated subgroup, and the conjugate is a reduced word that is
 either of length at least three or a single letter of `G j`. Neither lies in `G i`, since `G i`
-meets `G j` only in the amalgamated subgroup
-(`Monoid.PushoutI.list_prod_inv_mul_base_mul_list_prod_notMem_range`). The two theorems share the
+meets `G j` only in the amalgamated subgroup (`TauCeti.PushoutI.of_mem_range_of_iff`,
+`TauCeti.PushoutI.list_prod_inv_mul_base_mul_list_prod_notMem_range`). The two theorems share the
 reduction to these conjugates and differ only in how they rule them out.
 
 ## References
@@ -95,10 +99,7 @@ private theorem centralizer_of_eq_map_of_forall (hφ : ∀ i, Injective (φ i)) 
     · refine ⟨a, mem_centralizer_singleton_iff.2 (of_injective hφ i ?_), by simp⟩
       simpa using (mem_centralizer_singleton_iff.1 hx).eq
     refine (hg a L hL hc hred hhead ⟨g, ?_⟩).elim
-    have hx' : (of (φ := φ) i a * (L.map fun l => of l.1 l.2).prod)⁻¹ * of i g *
-        (of i a * (L.map fun l => of l.1 l.2).prod) = of i g := by
-      rw [mul_assoc, ← mem_centralizer_singleton_iff.1 hx, inv_mul_cancel_left]
-    simpa [mul_assoc] using hx'.symm
+    simpa [mul_assoc] using (mem_centralizer_singleton_iff.1 hx).inv_mul_cancel.symm
   · simpa using map_centralizer_le_centralizer_image {g} (of (φ := φ) i)
 
 /-- **Centralizers of factor elements away from the amalgamated subgroup.** If an element `g` of
@@ -111,11 +112,48 @@ theorem centralizer_of_eq_map (hφ : ∀ i, Injective (φ i)) {i : ι} {g : G i}
   centralizer_of_eq_map_of_forall hφ fun a _ hL hc hred hhead =>
     list_prod_inv_mul_of_mul_list_prod_notMem_range_of hφ hL hc hred (by simpa using hg a⁻¹) hhead
 
+end Monoid.PushoutI
+
+open Monoid Monoid.PushoutI
+
+namespace TauCeti.PushoutI
+
+open Function Subgroup
+
+variable {ι : Type*} {G : ι → Type*} {H : Type*} [∀ i, Group (G i)] [Group H]
+  {φ : ∀ i, H →* G i}
+
+/-- In an amalgamated product of groups, let `w` be the product of a list of letters, consecutive
+ones from different factors and none of them in the amalgamated subgroup, whose first letter `k`
+lies in a factor `G j` other than `G i`, and suppose that the amalgamated subgroup is malnormal in
+`G j`. Then `w⁻¹ * h * w` is not in `G i` for any nontrivial `h` in the amalgamated subgroup. -/
+theorem list_prod_inv_mul_base_mul_list_prod_notMem_range (hφ : ∀ i, Injective (φ i)) {i j : ι}
+    (hji : j ≠ i) (hH : IsTISubgroup (φ j).range) {k : G j} {L : List (Σ i, G i)}
+    (hc : (⟨j, k⟩ :: L).IsChain fun l l' => l.1 ≠ l'.1)
+    (hred : ∀ l ∈ ⟨j, k⟩ :: L, l.2 ∉ (φ l.1).range) {h : H} (h1 : h ≠ 1) :
+    ((⟨j, k⟩ :: L).map fun l => of l.1 l.2).prod⁻¹ * base φ h *
+      ((⟨j, k⟩ :: L).map fun l => of l.1 l.2).prod ∉ (of (φ := φ) i).range := by
+  -- By malnormality, `k⁻¹ * h * k` is a letter of `G j` outside the amalgamated subgroup.
+  have hm : k⁻¹ * φ j h * k ∉ (φ j).range := by
+    simpa using hH.conj_notMem (g := k⁻¹) (by simpa using hred _ List.mem_cons_self)
+      ⟨h, rfl⟩ ((map_ne_one_iff _ (hφ j)).2 h1)
+  have hconj : ((⟨j, k⟩ :: L).map fun l => of (φ := φ) l.1 l.2).prod⁻¹ * base φ h *
+      ((⟨j, k⟩ :: L).map fun l => of l.1 l.2).prod = (L.map fun l => of (φ := φ) l.1 l.2).prod⁻¹ *
+        of j (k⁻¹ * φ j h * k) * (L.map fun l => of l.1 l.2).prod := by
+    rw [← of_apply_eq_base φ j]
+    simp [mul_assoc]
+  rw [hconj]
+  rcases eq_or_ne L [] with rfl | hL
+  · simpa using mt (of_mem_range_of_iff hφ hji).1 hm
+  · exact list_prod_inv_mul_of_mul_list_prod_notMem_range_of hφ hL (List.isChain_cons.1 hc).2
+      (fun l hl => hred l (List.mem_cons_of_mem _ hl)) hm
+      (fun l hl => ((List.isChain_cons.1 hc).1 l hl).symm)
+
 /-- **Centralizers in an amalgam with malnormal edge group.** If the structure maps are injective
 and their images are malnormal in the factors other than `G i`, the centralizer in the amalgam of a
 nontrivial element `g` of `G i` is the image of its centralizer in `G i`. -/
 theorem centralizer_of_eq_map_of_isTISubgroup (hφ : ∀ j, Injective (φ j)) {i : ι}
-    (hH : ∀ j, j ≠ i → TauCeti.IsTISubgroup (φ j).range) {g : G i} (hg : g ≠ 1) :
+    (hH : ∀ j, j ≠ i → IsTISubgroup (φ j).range) {g : G i} (hg : g ≠ 1) :
     centralizer {(of i g : PushoutI φ)} = (centralizer {g}).map (of i) := by
   refine centralizer_of_eq_map_of_forall hφ fun a L hL hc hred hhead => ?_
   by_cases hgr : a⁻¹ * g * a ∈ (φ i).range
@@ -132,7 +170,7 @@ theorem centralizer_of_eq_map_of_isTISubgroup (hφ : ∀ j, Injective (φ j)) {i
 /-- In the double `K ∗_C K` of a group along a malnormal subgroup `C`, for instance the centralizer
 of a nontrivial element of a CSA group, the centralizer of a nontrivial element of the first copy
 of `K` is its centralizer in `K`. -/
-example {K : Type*} [Group K] {C : Subgroup K} (hC : TauCeti.IsTISubgroup C) {g : K}
+example {K : Type*} [Group K] {C : Subgroup K} (hC : IsTISubgroup C) {g : K}
     (hg : g ≠ 1) :
     centralizer {(of false g : PushoutI fun _ : Bool => C.subtype)} =
       (centralizer {g}).map (of (φ := fun _ : Bool => C.subtype) false) :=
@@ -146,8 +184,7 @@ example : ∃ y ∈ centralizer {(of false (.ofAdd 2) :
       PushoutI fun _ : Bool => (powMonoidHom 2 : Multiplicative ℤ →* Multiplicative ℤ))},
     y ∉ (of false).range := by
   set φ₂ : Bool → Multiplicative ℤ →* Multiplicative ℤ := fun _ => powMonoidHom 2
-  have hφ : ∀ b, Injective (φ₂ b) := fun _ m n h => by
-    simpa [φ₂] using congrArg (fun z : Multiplicative ℤ => z.toAdd) h
+  have hφ : ∀ b, Injective (φ₂ b) := fun _ => pow_left_injective (by decide : (2 : ℕ) ≠ 0)
   have hp (b : Bool) : φ₂ b (.ofAdd 1) = .ofAdd 2 :=
     Multiplicative.toAdd.injective (by simp [φ₂])
   have h2 (b : Bool) : of (φ := φ₂) b (.ofAdd 2) = base φ₂ (.ofAdd 1) := by
@@ -162,4 +199,4 @@ example : ∃ y ∈ centralizer {(of false (.ofAdd 2) :
     simp [φ₂] at this
     omega
 
-end Monoid.PushoutI
+end TauCeti.PushoutI

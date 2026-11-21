@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.GroupTheory.PushoutI
-public import TauCeti.GroupTheory.TrivialIntersection
 
 /-!
 # Reduced words in an amalgamated product
@@ -25,12 +24,7 @@ precisely that reduced words whose products agree up to the amalgamated subgroup
 sequence of factors; in particular the product of a reduced word of two or more letters is in no
 factor. This file states these facts for lists of letters `⟨i, g⟩` with `g : G i`, consecutive
 letters in different factors, which is the form in which they are applied to concrete words. In
-particular a letter of `G i` lies in another factor only if it lies in the amalgamated subgroup. If
-`g` is a letter outside the amalgamated subgroup and `w` the product of a reduced list not starting
-in the factor of `g`, then `w⁻¹ * g * w` is again the product of a reduced list. If instead
-`h ≠ 1` lies in the amalgamated subgroup and this subgroup is malnormal in the factor of the first
-letter `k` of `w`, then `k⁻¹ * h * k` is a letter outside it, and `w⁻¹ * h * w` is again the
-product of a reduced list.
+particular a letter of `G i` lies in another factor only if it lies in the amalgamated subgroup.
 
 ## Main results
 
@@ -39,8 +33,6 @@ product of a reduced list.
 * `Monoid.PushoutI.exists_eq_of_mul_list_prod`: every element is `g * w` with `g` in a given
   factor `G i` and `w` the product of a reduced list of letters not starting in `G i`.
 * `Monoid.PushoutI.exists_reduced_toList_eq`: a reduced list of letters is a reduced word.
-* `Monoid.PushoutI.of_mem_range_of_iff`: a letter of `G i` lies in another factor exactly when it
-  lies in the amalgamated subgroup.
 * `Monoid.PushoutI.list_prod_notMem_range_base`: the product of a nonempty reduced list of letters
   is not in the amalgamated subgroup.
 * `Monoid.PushoutI.map_fst_eq_of_base_mul_list_prod_eq`: two reduced lists of letters whose
@@ -52,10 +44,8 @@ product of a reduced list.
   list that does not start in the factor of `g` is not in the amalgamated subgroup.
 * `Monoid.PushoutI.list_prod_inv_mul_of_mul_list_prod_notMem_range_of`: if moreover the list is
   nonempty, this conjugate lies in no factor.
-* `Monoid.PushoutI.list_prod_inv_mul_base_mul_list_prod_notMem_range`: if the first letter of a
-  reduced list lies in a factor `G j` other than `G i`, and the amalgamated subgroup is malnormal in
-  `G j`, the product `w` of the list satisfies `w⁻¹ * h * w ∉ G i` for every nontrivial `h` in the
-  amalgamated subgroup.
+* `TauCeti.PushoutI.of_mem_range_of_iff`: a letter of `G i` lies in another factor exactly when it
+  lies in the amalgamated subgroup.
 
 ## References
 
@@ -136,16 +126,6 @@ theorem exists_eq_of_mul_list_prod (i : ι) (x : PushoutI φ) :
       fun l hl => ((List.isChain_cons.1 hc).1 l hl).symm, ?_⟩
     simp only [List.map_cons, List.prod_cons, map_mul, mul_assoc]
   · exact ⟨φ i h, _, hc, hred, by simpa using hj, rfl⟩
-
-/-- In an amalgamated product of groups, a letter of `G i` lies in another factor `G j` exactly
-when it lies in the amalgamated subgroup. -/
-theorem of_mem_range_of_iff (hφ : ∀ i, Injective (φ i)) {i j : ι} (hij : i ≠ j) {g : G i} :
-    of (φ := φ) i g ∈ (of (φ := φ) j).range ↔ g ∈ (φ i).range := by
-  refine ⟨fun hg => ?_, fun ⟨h, hh⟩ => ⟨φ j h, by rw [of_apply_eq_base, ← hh, of_apply_eq_base]⟩⟩
-  obtain ⟨h, hh⟩ : of i g ∈ (base φ).range := by
-    rw [← inf_of_range_eq_base_range hφ hij]
-    exact ⟨⟨g, rfl⟩, hg⟩
-  exact ⟨h, of_injective hφ i (by rw [of_apply_eq_base, hh])⟩
 
 /-- A list of letters, consecutive ones from different factors and none of them in the amalgamated
 subgroup, spells a reduced word of the free product with the same product. -/
@@ -277,30 +257,25 @@ theorem list_prod_inv_mul_of_mul_list_prod_notMem_range_of (hφ : ∀ i, Injecti
   have := List.length_pos_of_ne_nil hL
   omega
 
-/-- In an amalgamated product of groups, let `w` be the product of a list of letters, consecutive
-ones from different factors and none of them in the amalgamated subgroup, whose first letter `k`
-lies in a factor `G j` other than `G i`, and suppose that the amalgamated subgroup is malnormal in
-`G j`. Then `w⁻¹ * h * w` is not in `G i` for any nontrivial `h` in the amalgamated subgroup. -/
-theorem list_prod_inv_mul_base_mul_list_prod_notMem_range (hφ : ∀ i, Injective (φ i)) {i j : ι}
-    (hji : j ≠ i) (hH : TauCeti.IsTISubgroup (φ j).range) {k : G j} {L : List (Σ i, G i)}
-    (hc : (⟨j, k⟩ :: L).IsChain fun l l' => l.1 ≠ l'.1)
-    (hred : ∀ l ∈ ⟨j, k⟩ :: L, l.2 ∉ (φ l.1).range) {h : H} (h1 : h ≠ 1) :
-    ((⟨j, k⟩ :: L).map fun l => of l.1 l.2).prod⁻¹ * base φ h *
-      ((⟨j, k⟩ :: L).map fun l => of l.1 l.2).prod ∉ (of (φ := φ) i).range := by
-  -- By malnormality, `k⁻¹ * h * k` is a letter of `G j` outside the amalgamated subgroup.
-  have hm : k⁻¹ * φ j h * k ∉ (φ j).range := by
-    simpa using hH.conj_notMem (g := k⁻¹) (by simpa using hred _ List.mem_cons_self)
-      ⟨h, rfl⟩ ((map_ne_one_iff _ (hφ j)).2 h1)
-  have hconj : ((⟨j, k⟩ :: L).map fun l => of (φ := φ) l.1 l.2).prod⁻¹ * base φ h *
-      ((⟨j, k⟩ :: L).map fun l => of l.1 l.2).prod = (L.map fun l => of (φ := φ) l.1 l.2).prod⁻¹ *
-        of j (k⁻¹ * φ j h * k) * (L.map fun l => of l.1 l.2).prod := by
-    rw [← of_apply_eq_base φ j]
-    simp [mul_assoc]
-  rw [hconj]
-  rcases eq_or_ne L [] with rfl | hL
-  · simpa using mt (of_mem_range_of_iff hφ hji).1 hm
-  · exact list_prod_inv_mul_of_mul_list_prod_notMem_range_of hφ hL (List.isChain_cons.1 hc).2
-      (fun l hl => hred l (List.mem_cons_of_mem _ hl)) hm
-      (fun l hl => ((List.isChain_cons.1 hc).1 l hl).symm)
-
 end Monoid.PushoutI
+
+open Monoid.PushoutI
+
+namespace TauCeti.PushoutI
+
+open Function
+
+variable {ι : Type*} {G : ι → Type*} {H : Type*} [∀ i, Group (G i)] [Group H]
+  {φ : ∀ i, H →* G i}
+
+/-- In an amalgamated product of groups, a letter of `G i` lies in another factor `G j` exactly
+when it lies in the amalgamated subgroup. -/
+theorem of_mem_range_of_iff (hφ : ∀ i, Injective (φ i)) {i j : ι} (hij : i ≠ j) {g : G i} :
+    of (φ := φ) i g ∈ (of (φ := φ) j).range ↔ g ∈ (φ i).range := by
+  refine ⟨fun hg => ?_, fun ⟨h, hh⟩ => ⟨φ j h, by rw [of_apply_eq_base, ← hh, of_apply_eq_base]⟩⟩
+  obtain ⟨h, hh⟩ : of i g ∈ (base φ).range := by
+    rw [← inf_of_range_eq_base_range hφ hij]
+    exact ⟨⟨g, rfl⟩, hg⟩
+  exact ⟨h, of_injective hφ i (by rw [of_apply_eq_base, hh])⟩
+
+end TauCeti.PushoutI

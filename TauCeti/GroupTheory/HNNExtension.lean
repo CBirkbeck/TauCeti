@@ -16,12 +16,12 @@ import TauCeti.GroupTheory.HNNExtension.NormalForm
 
 Let `HNNExtension G A B φ` be the HNN extension of `G` along an isomorphism `φ : A ≃* B` of
 subgroups, with stable letter `t`, so that `t * a * t⁻¹ = φ a` for `a ∈ A`. Britton's lemma, in
-the form `HNNExtension.head_inv_mul_mul_head_mem_toSubgroup`, shows that these are the only
-elements `g` of `G` with `t * g * t⁻¹` in `G`: `t * g * t⁻¹` lies in `G` exactly when `g ∈ A`, and
-`t⁻¹ * g * t` lies in `G` exactly when `g ∈ B`. Consequently `g ∈ G` commutes with `t` exactly when
-`g ∈ A` and `φ g = g`; for the HNN extension along the identity of `A`, exactly when `g ∈ A`.
-Since `G` and `t` generate the HNN extension, `g` is central in it exactly when it is moreover
-central in `G`.
+the form `TauCeti.HNNExtension.t_zpow_mul_of_mul_t_zpow_inv_mem_range_iff`, shows that these are
+the only elements `g` of `G` with `t * g * t⁻¹` in `G`: `t * g * t⁻¹` lies in `G` exactly when
+`g ∈ A`, and `t⁻¹ * g * t` lies in `G` exactly when `g ∈ B`. Consequently `g ∈ G` commutes with
+`t` exactly when `g ∈ A` and `φ g = g`; for the HNN extension along the identity of `A`, exactly
+when `g ∈ A`. Since `G` and `t` generate the HNN extension, `g` is central in it exactly when it
+is moreover central in `G`.
 
 This controls commutation transitivity in an HNN extension along the identity of `A`. If `c ∈ A`
 is nontrivial then `t` commutes with `c`, so if commutation is transitive through `c` then every
@@ -82,20 +82,14 @@ variable {G : Type*} [Group G] {A B : Subgroup G} {φ : A ≃* B}
 /-- The stable letter conjugates `g` into the base group exactly when `g ∈ A`. -/
 theorem t_mul_of_mul_inv_t_mem_range_iff {g : G} :
     t * of g * t⁻¹ ∈ (of : G →* HNNExtension G A B φ).range ↔ g ∈ A := by
-  refine ⟨fun h => ?_, fun hg => ⟨φ ⟨g, hg⟩, equiv_eq_conj (φ := φ) ⟨g, hg⟩⟩⟩
-  -- `t⁻¹` is the product of the reduced word with head `1` and the single letter `t ^ (-1)`.
-  simpa using head_inv_mul_mul_head_mem_toSubgroup (c := g)
-    (w := ⟨1, [(-1, 1)], List.isChain_singleton _⟩) rfl
-    (by simpa [NormalWord.ReducedWord.prod] using h)
+  simpa using TauCeti.HNNExtension.t_zpow_mul_of_mul_t_zpow_inv_mem_range_iff (φ := φ) (u := 1)
+    (g := g)
 
 /-- The inverse of the stable letter conjugates `g` into the base group exactly when `g ∈ B`. -/
 theorem inv_t_mul_of_mul_t_mem_range_iff {g : G} :
     t⁻¹ * of g * t ∈ (of : G →* HNNExtension G A B φ).range ↔ g ∈ B := by
-  refine ⟨fun h => ?_, fun hg => ⟨φ.symm ⟨g, hg⟩, equiv_symm_eq_conj (φ := φ) ⟨g, hg⟩⟩⟩
-  -- `t` is the product of the reduced word with head `1` and the single letter `t ^ 1`.
-  simpa using head_inv_mul_mul_head_mem_toSubgroup (c := g)
-    (w := ⟨1, [(1, 1)], List.isChain_singleton _⟩) rfl
-    (by simpa [NormalWord.ReducedWord.prod] using h)
+  simpa using TauCeti.HNNExtension.t_zpow_mul_of_mul_t_zpow_inv_mem_range_iff (φ := φ) (u := -1)
+    (g := g)
 
 /-- An element of the base group commutes with the stable letter exactly when it lies in `A`
 and is fixed by `φ`. -/

@@ -79,7 +79,7 @@ theorem centralizer_ofProd_eq_range_ofProd (hT : TauCeti.IsTISubgroup (centraliz
     rw [centralizer_eq_top_iff_subset, Set.singleton_subset_iff, Subgroup.center_prod,
       CommGroup.center_eq_top]
     exact ⟨hp₁, mem_top _⟩
-  rw [ofProd_def, Monoid.PushoutI.centralizer_of_eq_map_of_isTISubgroup
+  rw [ofProd_def, TauCeti.PushoutI.centralizer_of_eq_map_of_isTISubgroup
     (centralizerExtMap_injective u n) (i := true) ?_ hp, hA, ← MonoidHom.range_eq_map]
   rintro (_ | _) h
   · simpa using hT

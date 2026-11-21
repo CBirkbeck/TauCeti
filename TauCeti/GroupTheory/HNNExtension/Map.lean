@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.GroupTheory.HNNExtension
+import TauCeti.GroupTheory.HNNExtension.NormalForm
 
 /-!
 # Homomorphisms of HNN extensions induced by a homomorphism of the base groups
@@ -109,17 +110,15 @@ theorem map_injective {f : G →* H} (hf : Function.Injective f) {hA : A ≤ A'.
         (hB' : B'.comap f ≤ B) :
     Function.Injective (map f hA hφ) := by
   refine (injective_iff_map_eq_one _).2 fun x hx ↦ ?_
-  obtain ⟨d⟩ := NormalWord.TransversalPair.nonempty G A B
   -- Write `x` as a reduced word `w`; its image is a reduced word representing `1`.
-  set w := (NormalWord.equiv φ d x).toReducedWord
-  have hw : w.prod φ = x := (NormalWord.equiv φ d).symm_apply_apply x
+  obtain ⟨w, rfl⟩ := exists_reducedWord_prod_eq x
   have hw' : (mapReducedWord hA' hB' w).prod φ' ∈ (of : H →* HNNExtension H A' B' φ').range := by
-    rw [prod_mapReducedWord f hA hφ, hw, hx]
+    rw [prod_mapReducedWord f hA hφ, hx]
     exact one_mem _
   -- By Britton's lemma the image has no stable letters, so neither has `w`.
   have hnil : w.toList = [] :=
     List.map_eq_nil_iff.1 (ReducedWord.toList_eq_nil_of_mem_of_range _ _ hw')
-  have hx' : x = of w.head := by simp [← hw, NormalWord.ReducedWord.prod, hnil]
+  have hx' : w.prod φ = of w.head := by simp [NormalWord.ReducedWord.prod, hnil]
   rw [hx', map_of, map_eq_one_iff _ (of_injective (φ := φ')), map_eq_one_iff _ hf] at hx
   rw [hx', hx, map_one]
 
